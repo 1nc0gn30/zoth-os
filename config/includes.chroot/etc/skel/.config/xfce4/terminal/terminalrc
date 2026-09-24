@@ -1,0 +1,18 @@
+[Configuration]
+FontName=Hack 12
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBordersDefault=TRUE
+MiscCursorBlinks=TRUE
+MiscDefaultGeometry=110x32
+MiscMenubarDefault=FALSE
+MiscToolbarDefault=FALSE
+ScrollingBar=TERMINAL
+BackgroundMode=TERMINAL
+ColorForeground=#e7eee4
+ColorBackground=#080b09
+ColorCursor=#d7b56d
+ColorCursorUseDefault=FALSE
+ColorBoldIsBright=TRUE
+ColorPalette=#1a1f1c;#e15d5d;#3ddc97;#d7b56d;#9bb6e0;#c9a0dc;#7ec8c3;#e7eee4;#5c665f;#ff8b8b;#7dffc0;#ffe1a0;#c5d7f5;#e0c0ea;#b6ebe4;#f7faf6
+TitleMode=TERMINAL_TITLE

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# =============================================================================
+# ZothOS Apex Telemetry HUD v5.0 (Electron Engine - Single Instance Guaranteed)
+# =============================================================================
+set -e
+
+HUD_DIR="/opt/zoth-hud"
+LOCKFILE="/tmp/zoth-hud.lock"
+
+exec 200>"$LOCKFILE"
+if ! flock -n 200; then
+    echo "[!] ZothOS Telemetry HUD is already running."
+    exit 0
+fi
+
+# Check for Electron binary
+if command -v electron >/dev/null 2>&1; then
+    exec electron --no-sandbox "$HUD_DIR" "$@"
+elif [ -f "/usr/lib/node_modules/electron/dist/electron" ]; then
+    exec /usr/lib/node_modules/electron/dist/electron --no-sandbox "$HUD_DIR" "$@"
+elif command -v npx >/dev/null 2>&1; then
+    exec npx electron --no-sandbox "$HUD_DIR" "$@"
+else
+    OS_BIN="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)/zoth-os"
+    if [[ -x "$OS_BIN" ]]; then
+        exec "$OS_BIN"
+    fi
+    echo "[!] Electron is not installed, and the Zoth OS desk was not found." >&2
+    exit 1
+fi

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ZothOS Cockpit
+Comment=Unified Alchemical System Telemetry & Control Panel
+Exec=konsole -e /usr/local/bin/zoth-cockpit
+Icon=/usr/share/pixmaps/zoth-cockpit.png
+Terminal=false
+Categories=System;Settings;
+Keywords=cockpit;dashboard;diagnostics;system;monitor;os;
+MimeType=application/x-zoth-cockpit;
+StartupNotify=true

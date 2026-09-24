@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Zoth Signal Guard
+Exec=/opt/Signal/signal-desktop --no-sandbox %U
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/signal-desktop.png
+StartupWMClass=signal
+Comment=Sovereign Encrypted Voice, Video & Text Messenger
+MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
+Categories=Network;Chat;InstantMessaging;

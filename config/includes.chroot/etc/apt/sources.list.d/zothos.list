@@ -1,0 +1,8 @@
+# =============================================================================
+#  ZOTHOS APT SOURCES
+#  The custom ZOTHOS repo has been discontinued.
+#  All packages now come from Debian Trixie + Kali + Parrot official repos.
+# =============================================================================
+
+# ZOTHOS packages are pre-deployed in the chroot at /opt/zoth-studio
+# and /usr/local/bin — no external APT repo needed.

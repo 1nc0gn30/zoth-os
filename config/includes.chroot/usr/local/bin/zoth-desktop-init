@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  ZOTHOS Apex Desktop Initialization Engine v4
+#  Applies theme, wallpaper, compositor, HUD, hotkeys, notifications, panel
+#  Added: animated background launch + picom auto-restart watchdog
+# =============================================================================
+
+log() { echo "[zoth-desktop-init] $*"; }
+
+# ── 1. Update icon caches ──────────────────────────────────────────────────
+log "Updating icon caches..."
+gtk-update-icon-cache -f -q /usr/share/icons/hicolor       2>/dev/null || true
+gtk-update-icon-cache -f -q /usr/share/icons/Zoth-Hermetic 2>/dev/null || true
+
+# ── 2. Trust all desktop launchers ────────────────────────────────────────
+log "Trusting desktop launchers..."
+if [[ -d "$HOME/Desktop" ]]; then
+    chmod +x "$HOME"/Desktop/*.desktop 2>/dev/null || true
+    for f in "$HOME"/Desktop/*.desktop; do
+        [[ -f "$f" ]] || continue
+        gio set "$f" metadata::trusted true 2>/dev/null || true
+    done
+fi
+
+# ── 3. XFCE4 theme settings ────────────────────────────────────────────────
+log "Applying ZOTHOS APEX theme..."
+xfconf-query -c xfwm4 -p /general/theme           -s "Zoth-Hermetic-Matrix" 2>/dev/null || true
+xfconf-query -c xfwm4 -p /general/easy_click      -s "Alt"                  2>/dev/null || true
+xfconf-query -c xfwm4 -p /general/button_layout   -s "O|HMC"                2>/dev/null || true
+xfconf-query -c xfwm4 -p /general/title_font      -s "JetBrains Mono Bold 9" 2>/dev/null || true
+xfconf-query -c xfwm4 -p /general/show_frame_shadow -s true                 2>/dev/null || true
+
+xfconf-query -c xsettings -p /Net/ThemeName       -s "Zoth-Hermetic-Matrix" 2>/dev/null || true
+xfconf-query -c xsettings -p /Net/IconThemeName   -s "Zoth-Hermetic"        2>/dev/null || true
+xfconf-query -c xsettings -p /Gtk/FontName        -s "JetBrains Mono 10"    2>/dev/null || true
+xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "JetBrains Mono 10"  2>/dev/null || true
+xfconf-query -c xsettings -p /Gtk/CursorThemeName -s "Adwaita"              2>/dev/null || true
+xfconf-query -c xsettings -p /Xft/DPI             -s 96                     2>/dev/null || true
+xfconf-query -c xsettings -p /Xft/Antialias       -s 1                      2>/dev/null || true
+xfconf-query -c xsettings -p /Xft/HintStyle       -s "hintfull"             2>/dev/null || true
+xfconf-query -c xsettings -p /Xft/RGBA            -s "rgb"                  2>/dev/null || true
+
+# ── 4. Set Custom Sovereign Hotkeys ────────────────────────────────────────
+log "Configuring sovereign hotkeys..."
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>h" -n -t string -s "konsole --title 'Hermes Agent Sovereign Workstation' --geometry=110x35 -e hermes" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>n" -n -t string -s "konsole --title 'ZOTHOS Tool Nexus' --geometry=110x35 -e zoth-tool-nexus" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>g" -n -t string -s "konsole --title 'NullAI Ghostmode' --geometry=100x30 -e zoth-ghost" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>o" -n -t string -s "konsole --title 'OpenCode AI' --geometry=100x30 -e opencode" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>m" -n -t string -s "konsole --title 'Reality Switcher' --geometry=90x25 -e zoth-mode" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>s" -n -t string -s "konsole --title 'ZOTHOS Security Arsenal' --geometry=100x30 -e zoth-sec" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>d" -n -t string -s "zoth-desk-toggle" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>k" -n -t string -s "zoth-keys" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>Return" -n -t string -s "konsole" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>c" -n -t string -s "konsole --title ZOTHOS --geometry=110x32 -e zoth-cockpit" 2>/dev/null || true
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>y" -n -t string -s "maya" 2>/dev/null || true
+
+# ── 5. Wallpaper across all monitors ──────────────────────────────────────
+log "Setting wallpaper..."
+WALLPAPER="/usr/share/backgrounds/zothos/zothos-field.png"
+
+if [[ -f "$WALLPAPER" ]]; then
+    for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep "last-image"); do
+        xfconf-query -c xfce4-desktop -p "$prop" -s "$WALLPAPER" 2>/dev/null || true
+    done
+    for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep "image-style"); do
+        xfconf-query -c xfce4-desktop -p "$prop" -s 5 2>/dev/null || true
+    done
+    feh --bg-fill "$WALLPAPER" 2>/dev/null || true
+fi
+
+# ── 6. Start picom compositor with auto-restart watchdog ─────────────────
+log "Starting compositor with watchdog..."
+
+PICOM_CONF="/etc/xdg/picom/picom-matrix.conf"
+COMPOSITOR_LOG="/tmp/zoth-compositor.log"
+
+# Picom auto-restart watchdog (5s backoff)
+(
+    while true; do
+        if command -v picom &>/dev/null && [[ -f "$PICOM_CONF" ]]; then
+            picom --config "$PICOM_CONF" --daemon 2>>"$COMPOSITOR_LOG" &
+            echo "$(date): picom started with matrix config (PID: $!)" >> "$COMPOSITOR_LOG"
+        elif command -v picom &>/dev/null; then
+            picom --backend glx --shadow --fading --blur-background --daemon 2>>"$COMPOSITOR_LOG" &
+            echo "$(date): picom started with fallback config (PID: $!)" >> "$COMPOSITOR_LOG"
+        elif command -v compton &>/dev/null; then
+            compton --backend glx --shadow --fading --daemon 2>>"$COMPOSITOR_LOG" &
+            echo "$(date): compton started (PID: $!)" >> "$COMPOSITOR_LOG"
+        else
+            echo "$(date): WARNING - No compositor found" >> "$COMPOSITOR_LOG"
+        fi
+
+        # Wait for compositor to exit
+        while pgrep -x picom &>/dev/null || pgrep -x compton &>/dev/null; do
+            sleep 5
+        done
+
+        echo "$(date): compositor exited, restarting in 5s..." >> "$COMPOSITOR_LOG"
+        sleep 5
+    done
+) >>"$COMPOSITOR_LOG" 2>&1 &
+WATCHDOG_PID=$!
+echo $WATCHDOG_PID > /tmp/zoth-picom-watchdog.pid
+log "Picom watchdog started (PID: $WATCHDOG_PID)"
+
+# ── 7. Launch animated background (if installed) ─────────────────────────
+log "Checking for animated background engine..."
+
+ANIMATED_BG="/usr/local/bin/zoth-animated-bg"
+if [[ -x "$ANIMATED_BG" ]]; then
+    log "Starting animated matrix rain background..."
+    DISPLAY="${DISPLAY:-:0}" "$ANIMATED_BG" start >>/tmp/zoth-animated-bg-async.log 2>&1 &
+    log "Animated background launched"
+else
+    log "zoth-animated-bg not found or not executable — skipping"
+fi
+
+# ── 8. Launch Telemetry HUD & All-Seeing Eye AI Pet ───────────────────────
+log "Starting Desktop Telemetry HUD..."
+if ! pgrep -f "opt/zoth-hud" &>/dev/null; then
+    DISPLAY="${DISPLAY:-:0}" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" /usr/local/bin/zoth-desktop-hud >/tmp/hud_init.log 2>&1 &
+    disown
+fi
+
+log "Desktop pet stays off unless Electron is installed."
+
+# ── 9. Reload xfdesktop & panel ────────────────────────────────────────────
+log "Reloading XFCE desktop..."
+sleep 1
+xfdesktop --reload 2>/dev/null || true
+sleep 0.5
+
+# ── 10. Live System Notification ────────────────────────────────────────────
+notify-send -i zoth-mark -u low "ZOTHOS" "Desk is ready." 2>/dev/null || true
+
+log "ZOTHOS desktop initialization complete ✓"
+exit 0

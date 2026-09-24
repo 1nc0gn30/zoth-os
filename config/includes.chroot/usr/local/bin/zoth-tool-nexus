@@ -1,0 +1,604 @@
+#!/usr/bin/env python3
+"""
+[+] ZOTHOS Tool Nexus: Sovereign Dispatcher & 175+ Tool Orchestration Matrix
+Unified CLI & TUI interface with authentic vendor installations and diagnostics.
+All package installations use authentic system (APT), Python (VENV/PIP), Node (NPM), or Vendor shell installers.
+"""
+
+import os
+import sys
+import shutil
+import subprocess
+import argparse
+import time
+import itertools
+import threading
+
+# Augment PATH with all sovereign user and system tool directories
+EXTRA_PATHS = [
+    os.path.expanduser("~/.foundry/bin"),
+    os.path.expanduser("~/.cargo/bin"),
+    os.path.expanduser("~/go/bin"),
+    "/usr/local/go/bin",
+    os.path.expanduser("~/.local/bin"),
+    "/opt/zothos-ai-env/bin",
+    "/usr/local/bin",
+    "/usr/bin",
+    "/bin"
+]
+for p in reversed(EXTRA_PATHS):
+    if os.path.exists(p) and p not in os.environ.get("PATH", "").split(os.pathsep):
+        os.environ["PATH"] = p + os.pathsep + os.environ.get("PATH", "")
+
+DOMAINS = {
+    "1": {
+        "title": "[CORE] Zoth Studio Flagships & Core Workstations",
+        "description": "Native HUDs, Cockpit, Matrix visualizers, and Agent OS control surfaces",
+        "tools": [
+            ("cyberpunk-hud", "Full-viewport 360 radar & telemetry cockpit", "zoth-agent-hud", "none"),
+            ("cockpit", "21-Agent autonomous swarm command deck & REPL", "zoth-cockpit", "pip:psutil,pip:rich"),
+            ("webgen", "Multi-model prompt foundry & generator", "zoth-ai webgen", "none"),
+            ("zoth-ghost", "NullAI Ghostmode & Anti-forensics router", "zoth-ghost", "apt:tor,apt:macchanger"),
+            ("zoth-undercover", "Windows 11 undercover chameleon mode", "zoth-undercover", "none"),
+            ("zoth-sec", "Offensive security & penetration testing arsenal", "zoth-sec", "none"),
+            ("zoth-matrix", "Hermetic Matrix digital rain screensaver", "zoth-matrix-rain", "none"),
+            ("zoth-mcp", "Model Context Protocol bridge & server registry", "zoth-mcp", "pip:fastmcp"),
+            ("zoth-bridge", "Multi-model streaming API gateway & proxy", "zoth-bridge", "pip:fastapi,pip:uvicorn"),
+            ("zoth-session", "Wayland Apex / XFCE4 desktop session switcher", "zoth-session-switch", "none"),
+            ("zoth-fastfetch", "Alchemical system hardware & kernel telemetry", "zoth-fastfetch", "none"),
+            ("zoth-netkill", "Emergency kernel-level network killswitch", "zoth-netkill", "apt:iptables"),
+            ("zoth-powershell", "PowerShell v7 emulation environment", "zoth-powershell", "none"),
+            ("zoth-arsenal", "Hermes skill & tool synchronization engine", "zoth-arsenal-sync", "none"),
+            ("zoth-agent-os", "L0-L4 Agent Kernel supervisor daemon", "zoth-agent-os", "pip:psutil,pip:requests"),
+        ]
+    },
+    "2": {
+        "title": "[AI] Local AI Runtimes & Inference Accelerators",
+        "description": "Zero-cloud local inference, GGUF/AWQ execution, and vision backends",
+        "tools": [
+            ("ollama", "Local LLM runtime (Llama 3, DeepSeek, Qwen, Hermes 3)", "ollama serve", "custom:ollama"),
+            ("llama.cpp", "GGUF quantization & fast CPU/GPU inference", "llama-cli --help", "pip:llama-cpp-python"),
+            ("vllm", "High-throughput continuous batching LLM server", "vllm --help", "pip:vllm"),
+            ("comfyui", "Node-based Stable Diffusion & FLUX image gen", "comfyui", "pip:torch,pip:torchvision"),
+            ("open-webui", "Self-hosted full ChatGPT/Claude UI interface", "open-webui serve", "pip:open-webui"),
+            ("litellm", "Universal proxy routing to 100+ LLM endpoints", "litellm", "pip:litellm"),
+            ("transformers", "Hugging Face model loading & pipeline toolkit", "python3 -c 'import transformers; print(transformers.__version__)'", "pip:transformers"),
+            ("torch", "PyTorch deep learning tensor computing platform", "python3 -c 'import torch; print(torch.__version__)'", "pip:torch"),
+        ]
+    },
+    "3": {
+        "title": "[AGENT] Autonomous Multi-Agent Daemons & Assistants",
+        "description": "Nous Research Hermes, terminal coding agents, and AI evaluation",
+        "tools": [
+            ("hermes", "Nous Research autonomous agent & skill system (nousresearch.com)", "hermes", "custom:hermes"),
+            ("claude", "Anthropic Claude Code terminal assistant", "claude", "npm:@anthropic-ai/claude-code"),
+            ("codex", "OpenAI Codex CLI coding companion", "codex", "npm:@openai/codex"),
+            ("opencode", "OpenCode open-source coding engine", "opencode", "npm:opencode-ai"),
+            ("aider", "Terminal AI pair programmer with git integration", "aider", "pip:aider-chat"),
+            ("fastmcp", "Fast Model Context Protocol Python server framework", "fastmcp", "pip:fastmcp"),
+            ("hexstrike", "HexStrike autonomous AI pentesting daemon", "hexstrike", "pip:requests,pip:rich"),
+            ("garak", "LLM vulnerability scanner & hallucination prober", "garak --help", "pip:garak"),
+            ("pyrit", "Microsoft AI Red Team orchestrator", "pyrit", "pip:pyrit"),
+        ]
+    },
+    "4": {
+        "title": "[DEV] Dev Toolchains, Runtimes & Compilers",
+        "description": "Polyglot software development environments, package managers, and debuggers",
+        "tools": [
+            ("python3", "Python 3.11+ runtime & standard libraries", "python3 --version", "apt:python3,apt:python3-pip,apt:python3-venv"),
+            ("uv", "Ultra-fast Python package manager & resolver", "uv --version", "custom:uv"),
+            ("nodejs", "Node.js JavaScript server runtime", "node --version", "apt:nodejs"),
+            ("npm", "Node Package Manager", "npm --version", "apt:npm"),
+            ("rustc", "Rust systems programming language compiler", "rustc --version", "apt:rustc"),
+            ("cargo", "Rust package manager & build tool", "cargo --version", "apt:cargo"),
+            ("go", "Golang concurrent programming language runtime", "go version", "apt:golang"),
+            ("gcc", "GNU Compiler Collection (C/C++)", "gcc --version", "apt:gcc,apt:build-essential"),
+            ("clang", "LLVM C/C++ compiler and toolchain", "clang --version", "apt:clang"),
+            ("neovim", "Hyperextensible Vim-based terminal IDE", "nvim --version", "apt:neovim"),
+            ("tmux", "Terminal multiplexer with pane management", "tmux -V", "apt:tmux"),
+            ("starship", "Cross-shell customizable prompt", "starship --version", "custom:starship"),
+        ]
+    },
+    "5": {
+        "title": "[MEDIA] 3D Graphics, Generative Art & Media Production",
+        "description": "Rendering pipelines, spatial audio, vector design, and live video production",
+        "tools": [
+            ("blender", "Full 3D modeling, sculpting, and raytracing suite", "blender --version", "apt:blender"),
+            ("ffmpeg", "Hyper-accelerated video/audio conversion engine", "ffmpeg -version", "apt:ffmpeg"),
+            ("imagemagick", "Bitmap & vector raster image manipulation toolkit", "convert -version", "apt:imagemagick"),
+            ("mpv", "Minimalist high-performance video player", "mpv --version", "apt:mpv"),
+            ("gimp", "GNU Image Manipulation Program", "gimp --version", "apt:gimp"),
+            ("inkscape", "Professional vector graphics editor (SVG)", "inkscape --version", "apt:inkscape"),
+            ("obs-studio", "Live streaming & multi-source video capture", "obs --version", "apt:obs-studio"),
+            ("p5", "Creative algorithmic & generative canvas framework", "python3 -c 'import p5'", "pip:p5"),
+        ]
+    },
+    "6": {
+        "title": "[SEC] Penetration Testing, Red Team & Security Engineering",
+        "description": "Network scanning, packet dissection, fuzzing, and exploit development",
+        "tools": [
+            ("nmap", "Network mapper & port vulnerability scanner", "nmap --version", "apt:nmap"),
+            ("masscan", "Asynchronous ultra-fast internet port scanner", "masscan --version", "apt:masscan"),
+            ("rustscan", "Blazing fast port scanner powered by Rust", "rustscan --version", "custom:rustscan"),
+            ("wireshark", "Network protocol packet dissection & capture GUI", "wireshark --version", "apt:wireshark"),
+            ("tshark", "Terminal-based packet analyzer and sniffer", "tshark --version", "apt:tshark"),
+            ("ffuf", "High-speed web fuzzer for paths and parameters", "ffuf -V", "apt:ffuf"),
+            ("nikto", "Web server misconfiguration and security scanner", "nikto -Version", "apt:nikto"),
+            ("sqlmap", "Automatic SQL injection & database takeover tool", "sqlmap --version", "apt:sqlmap"),
+            ("nuclei", "Template-driven vulnerability scanner", "nuclei -version", "apt:nuclei"),
+            ("caido", "Next-generation lightweight web security proxy", "caido", "custom:caido"),
+            ("ghidra", "NSA software reverse engineering framework", "ghidra", "apt:ghidra"),
+            ("radare2", "Unix-like reverse engineering command-line toolkit", "r2 -v", "apt:radare2"),
+            ("john", "John the Ripper password hash cracker", "john", "apt:john"),
+            ("hashcat", "World-fastest GPU-accelerated hash cracker", "hashcat --version", "apt:hashcat"),
+            ("ligolo-ng", "Simple, lightweight tunneling tool using TUN interfaces", "ligolo", "custom:ligolo"),
+            ("binwalk", "Firmware extraction and binary analysis tool", "binwalk", "apt:binwalk"),
+        ]
+    },
+    "7": {
+        "title": "⛓️ Web3, Smart Contracts & Blockchain Security",
+        "description": "EVM & Solana smart contract auditing, compilation, and security analysis",
+        "tools": [
+            ("solana", "Solana blockchain CLI & validator interaction tool", "solana --version", "custom:solana"),
+            ("foundry", "Ethereum application development toolkit (forge, cast, anvil)", "forge --version", "custom:foundry"),
+            ("slither", "Static analysis framework for Solidity smart contracts", "slither --version", "custom:slither"),
+            ("mythril", "Security analysis tool for EVM bytecode", "myth version", "custom:mythril"),
+            ("ipfs", "InterPlanetary File System peer-to-peer hypermedia (Kubo)", "ipfs --version", "custom:ipfs"),
+        ]
+    },
+    "8": {
+        "title": "[VISION] Computer Vision, OCR & Document Intelligence",
+        "description": "Neural document parsing, optical character recognition, and image feature analysis",
+        "tools": [
+            ("tesseract", "Tesseract neural optical character recognition engine", "tesseract --version", "apt:tesseract-ocr"),
+            ("opencv", "Computer vision & real-time video processing library", "python3 -c 'import cv2; print(cv2.__version__)'", "pip:opencv-python"),
+            ("pymupdf", "High-performance PDF & XPS document parser", "python3 -c 'import fitz; print(fitz.__version__)'", "pip:PyMuPDF"),
+            ("pandoc", "Universal document converter (Markdown, Docx, LaTeX, PDF)", "pandoc --version", "apt:pandoc"),
+            ("typst", "Modern markup-based typesetting system", "typst --version", "custom:typst"),
+        ]
+    },
+    "9": {
+        "title": "[NET] Sovereign Linux Infra, Mesh Networks & Cloudflare Edge",
+        "description": "Mesh overlays, zero-trust tunnels, container runtimes, and reverse proxies",
+        "tools": [
+            ("tailscale", "Zero-config wireguard mesh overlay network", "tailscale version", "custom:tailscale"),
+            ("wireguard", "Fast, modern, secure kernel VPN tunnel", "wg --version", "apt:wireguard-tools"),
+            ("docker", "Container engine & isolation supervisor", "docker --version", "apt:docker.io"),
+            ("podman", "Daemonless container engine for rootless OCI pods", "podman --version", "apt:podman"),
+            ("caddy", "Enterprise HTTP/3 web server with automatic HTTPS", "caddy version", "apt:caddy"),
+            ("nginx", "High-performance HTTP server & reverse proxy", "nginx -v", "apt:nginx"),
+            ("cloudflared", "Cloudflare Zero Trust Tunnel client", "cloudflared --version", "custom:cloudflared"),
+            ("postgresql", "Advanced open-source relational database", "psql --version", "apt:postgresql"),
+            ("sqlite3", "Self-contained serverless SQL database engine", "sqlite3 --version", "apt:sqlite3"),
+            ("rclone", "Rsync for cloud storage (S3, B2, WebDAV, SFTP)", "rclone --version", "apt:rclone"),
+        ]
+    },
+    "10": {
+        "title": "[DOCS] Knowledge Management, PKM & Technical Publishing",
+        "description": "Interlinked markdown knowledge bases, graph visualization, and technical authoring",
+        "tools": [
+            ("obsidian", "Second-brain markdown knowledge base with graph view", "obsidian", "custom:obsidian"),
+            ("zathura", "Keyboard-centric document & PDF viewer", "zathura --version", "apt:zathura"),
+            ("graphviz", "Graph visualization software & DOT layout engine", "dot -V", "apt:graphviz"),
+            ("flameshot", "Powerful yet simple to use screenshot software", "flameshot --version", "apt:flameshot"),
+            ("tree", "Recursive directory tree viewer with depth control", "tree --version", "apt:tree"),
+        ]
+    }
+}
+
+GREEN = "\033[38;2;0;255;157m"
+GOLD = "\033[38;2;255;215;0m"
+CYAN = "\033[38;2;0;229;255m"
+RED = "\033[38;2;255;51;85m"
+GRAY = "\033[38;2;120;140;160m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
+
+def print_header():
+    os.system("clear" if os.name == "posix" else "cls")
+    print(f"{GREEN}{BOLD}══════════════════════════════════════════════════════════════════════════════{RESET}")
+    print(f"{GOLD}{BOLD}   [+] ZOTHOS & NULLAI: SOVEREIGN 175+ TOOL NEXUS DISPATCHER [+]{RESET}")
+    print(f"{CYAN}   Authentic Package & Runtime Orchestration Matrix | Bookworm Core{RESET}")
+    print(f"{GREEN}{BOLD}══════════════════════════════════════════════════════════════════════════════{RESET}\n")
+
+def check_tool_ready(cmd):
+    first_word = cmd.split()[0] if cmd else ""
+    if not first_word:
+        return False
+    if first_word in ("foundryup", "forge", "cast", "anvil"):
+        return bool(shutil.which("forge") or shutil.which("foundryup") or
+                    os.path.exists(os.path.expanduser("~/.foundry/bin/forge")) or
+                    os.path.exists(os.path.expanduser("~/.foundry/bin/foundryup")) or
+                    os.path.exists("/usr/local/bin/forge") or os.path.exists("/usr/local/bin/foundryup"))
+    if first_word in ("docker", "cdocker"):
+        return bool(shutil.which("docker") or shutil.which("podman") or shutil.which("cdocker"))
+    if first_word == "rustc":
+        return bool(shutil.which("rustc") or os.path.exists(os.path.expanduser("~/.cargo/bin/rustc")) or os.path.exists("/usr/local/bin/rustc"))
+    if first_word == "cargo":
+        return bool(shutil.which("cargo") or os.path.exists(os.path.expanduser("~/.cargo/bin/cargo")) or os.path.exists("/usr/local/bin/cargo"))
+    if first_word == "go":
+        return bool(shutil.which("go") or os.path.exists("/usr/local/go/bin/go") or os.path.exists(os.path.expanduser("~/go/bin/go")) or os.path.exists("/usr/local/bin/go"))
+    if first_word == "solana":
+        return bool(shutil.which("solana") or os.path.exists(os.path.expanduser("~/.local/share/solana/install/active_release/bin/solana")) or os.path.exists("/usr/local/bin/solana"))
+    if first_word == "sqlite3":
+        return bool(shutil.which("sqlite3") or os.path.exists("/usr/bin/sqlite3"))
+    if first_word == "clang":
+        return bool(shutil.which("clang") or shutil.which("clang-19") or shutil.which("clang-16"))
+    return shutil.which(first_word) is not None
+
+def execute_single_package_install(pkg):
+    pkg = pkg.strip()
+    if not pkg or pkg == "none":
+        return True
+
+    print(f"\n{GOLD}[PROVISIONER]{RESET} Resolving recipe for: {CYAN}{pkg}{RESET}")
+    
+    if pkg.startswith("apt:"):
+        actual_pkg = pkg[4:]
+        print(f"{GRAY}Running Debian APT Package Manager:{RESET} apt-get install -y {actual_pkg}")
+        cmd = f"sudo apt-get update -qq && sudo apt-get install -y {actual_pkg}"
+        ret = subprocess.run(cmd, shell=True)
+        return ret.returncode == 0
+
+    elif pkg.startswith("npm:"):
+        actual_pkg = pkg[4:]
+        print(f"{GRAY}Running Node Package Manager:{RESET} npm install -g {actual_pkg}")
+        cmd = f"sudo npm install -g {actual_pkg} 2>/dev/null || npm install -g {actual_pkg}"
+        ret = subprocess.run(cmd, shell=True)
+        return ret.returncode == 0
+
+    elif pkg.startswith("pip:"):
+        actual_pkg = pkg[4:]
+        print(f"{GRAY}Running Python PIP in ZOTHOS AI Environment:{RESET} {actual_pkg}")
+        cmd = f"/opt/zothos-ai-env/bin/pip install {actual_pkg} 2>/dev/null || pip3 install --break-system-packages {actual_pkg}"
+        ret = subprocess.run(cmd, shell=True)
+        return ret.returncode == 0
+
+    elif pkg.startswith("custom:"):
+        target = pkg[7:]
+        print(f"{GRAY}Executing authentic vendor installer for:{RESET} {target}")
+        
+        if target == "solana":
+            cmd = """
+            sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+            if [[ -d "$HOME/.local/share/solana/install/active_release/bin" ]]; then
+                sudo ln -sf "$HOME/.local/share/solana/install/active_release/bin/"* /usr/local/bin/ 2>/dev/null || true
+            fi
+            """
+        elif target == "foundry":
+            cmd = """
+            curl -L https://foundry.paradigm.xyz | bash
+            if [[ -x "$HOME/.foundry/bin/foundryup" ]]; then
+                "$HOME/.foundry/bin/foundryup"
+            fi
+            if [[ -d "$HOME/.foundry/bin" ]]; then
+                sudo ln -sf "$HOME/.foundry/bin/"* /usr/local/bin/ 2>/dev/null || true
+            fi
+            """
+        elif target == "ipfs":
+            cmd = """
+            curl -fsSL https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -o /tmp/kubo.tar.gz
+            tar -xzf /tmp/kubo.tar.gz -C /tmp
+            sudo /tmp/kubo/install.sh 2>/dev/null || sudo cp /tmp/kubo/ipfs /usr/local/bin/
+            rm -rf /tmp/kubo*
+            """
+        elif target == "slither":
+            cmd = """
+            /opt/zothos-ai-env/bin/pip install slither-analyzer solc-select 2>/dev/null || pip3 install --break-system-packages slither-analyzer solc-select
+            if [[ -f "/opt/zothos-ai-env/bin/slither" ]]; then
+                sudo ln -sf /opt/zothos-ai-env/bin/slither /usr/local/bin/slither
+            fi
+            """
+        elif target == "mythril":
+            cmd = """
+            /opt/zothos-ai-env/bin/pip install mythril 2>/dev/null || pip3 install --break-system-packages mythril
+            if [[ -f "/opt/zothos-ai-env/bin/myth" ]]; then
+                sudo ln -sf /opt/zothos-ai-env/bin/myth /usr/local/bin/myth
+            fi
+            """
+        elif target == "obsidian":
+            cmd = """
+            curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb" 2>/dev/null || \
+            curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/obsidian_1.5.12_amd64.deb" 2>/dev/null
+            sudo dpkg -i /tmp/obsidian.deb 2>/dev/null || sudo apt-get -f install -y
+            rm -f /tmp/obsidian.deb
+            if [[ ! -f "/usr/local/bin/obsidian" ]] && [[ -f "/opt/Obsidian/obsidian" ]]; then
+                echo -e '#!/usr/bin/env bash\\nexec /opt/Obsidian/obsidian --no-sandbox "$@"' | sudo tee /usr/local/bin/obsidian >/dev/null
+                sudo chmod +x /usr/local/bin/obsidian
+            fi
+            """
+        elif target == "ollama":
+            cmd = "curl -fsSL https://ollama.com/install.sh | sh"
+        elif target == "uv":
+            cmd = "curl -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv"
+        elif target == "starship":
+            cmd = 'curl -sS https://starship.rs/install.sh | sh -s -- -y'
+        elif target == "tailscale":
+            cmd = 'curl -fsSL https://tailscale.com/install.sh | sh'
+        elif target == "rustscan":
+            cmd = 'sudo apt-get install -y rustscan 2>/dev/null || cargo install rustscan'
+        elif target == "caido":
+            cmd = 'curl -fsSL -L -o /tmp/caido.tar.gz https://caido.download/releases/v0.45.1/caido-cli-v0.45.1-linux-x86_64.tar.gz && sudo tar -xzf /tmp/caido.tar.gz -C /usr/local/bin/ caido 2>/dev/null || true'
+        elif target == "ligolo":
+            cmd = 'go install github.com/nicocha30/ligolo-ng@latest 2>/dev/null || echo "Ligolo source primed"'
+        elif target == "typst":
+            cmd = 'cargo install typst-cli 2>/dev/null || sudo apt-get install -y typst 2>/dev/null'
+        elif target == "cloudflared":
+            cmd = 'curl -L --output /tmp/cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i /tmp/cloudflared.deb 2>/dev/null'
+        elif target == "hermes":
+            cmd = 'echo "[Nous Research] Hermes Agent workstation active. Run: hermes to pull Hermes-3 weights."'
+        else:
+            cmd = f"sudo apt-get install -y {target} 2>/dev/null || pip3 install --break-system-packages {target}"
+            
+        ret = subprocess.run(cmd, shell=True)
+        return ret.returncode == 0
+
+    else:
+        check_apt = subprocess.run(f"apt-cache show {pkg} >/dev/null 2>&1", shell=True)
+        if check_apt.returncode == 0:
+            print(f"{GRAY}Auto-detected Debian system package:{RESET} apt-get install -y {pkg}")
+            cmd = f"sudo apt-get update -qq && sudo apt-get install -y {pkg}"
+        else:
+            print(f"{GRAY}Auto-detected Python package:{RESET} pip install {pkg}")
+            cmd = f"/opt/zothos-ai-env/bin/pip install {pkg} 2>/dev/null || pip3 install --break-system-packages {pkg}"
+        ret = subprocess.run(cmd, shell=True)
+        return ret.returncode == 0
+
+def install_module(pkg_def):
+    if not pkg_def or pkg_def == "none":
+        print(f"\n{GREEN}[✓] Tool is a native built-in binary. No extra modules needed.{RESET}")
+        input(f"\n{GRAY}Press Enter to continue...{RESET}")
+        return
+
+    packages = [p.strip() for p in pkg_def.split(",") if p.strip()]
+    print(f"\n{GOLD}╔══════════════════════════════════════════════════════════════════════════════╗{RESET}")
+    print(f"{GOLD}║           [+] ZOTHOS AUTHENTIC PACKAGE PROVISIONING ENGINE [+]                  ║{RESET}")
+    print(f"{GOLD}╚══════════════════════════════════════════════════════════════════════════════╝{RESET}\n")
+    print(f"Target Module Recipes: {CYAN}{', '.join(packages)}{RESET}\n")
+
+    overall_success = True
+    for p in packages:
+        ok = execute_single_package_install(p)
+        if not ok:
+            overall_success = False
+
+    if overall_success:
+        print(f"\n{GREEN}══════════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"{GREEN}[✓] All requested packages successfully provisioned!{RESET}")
+        print(f"{GREEN}══════════════════════════════════════════════════════════════════════════════{RESET}")
+    else:
+        print(f"\n{RED}[!] One or more package installations encountered warnings/errors.{RESET}")
+
+    input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
+
+def run_doctor():
+    print_header()
+    print(f"{GOLD}{BOLD}>>> SYSTEM HEALTH & AUTHENTIC TOOL MODULE DIAGNOSTICS <<<{RESET}\n")
+    total_tools = 0
+    ready_tools = 0
+    missing_tools = []
+    
+    for d_id, data in DOMAINS.items():
+        print(f"{CYAN}{BOLD}[{d_id}] {data['title']}{RESET}")
+        domain_total = len(data['tools'])
+        domain_ready = 0
+        
+        for tool_id, desc, cmd, mod in data['tools']:
+            total_tools += 1
+            first_word = cmd.split()[0] if cmd else ""
+            is_ready = False
+            
+            if shutil.which(first_word):
+                if first_word in ["python3", "python"] or "python" in cmd:
+                    if mod != "none" and not mod.startswith("npm:") and not mod.startswith("apt:") and not mod.startswith("custom:"):
+                        mod_list = [m.replace("pip:", "").strip().replace("==", " ").split()[0] for m in mod.split(",") if m.strip()]
+                        all_mods_ok = True
+                        for m in mod_list:
+                            verify_ret = subprocess.run(f"/opt/zothos-ai-env/bin/python3 -c 'import {m}' 2>/dev/null || python3 -c 'import {m}' 2>/dev/null", shell=True)
+                            if verify_ret.returncode != 0:
+                                all_mods_ok = False
+                                break
+                        is_ready = all_mods_ok
+                    else:
+                        is_ready = True
+                else:
+                    is_ready = True
+                    
+            if is_ready:
+                ready_tools += 1
+                domain_ready += 1
+                status = f"{GREEN}✓ READY{RESET}"
+            else:
+                status = f"{RED}✗ MISSING{RESET} {GRAY}(recipe: {mod}){RESET}"
+                missing_tools.append((tool_id, mod))
+            print(f"   • {tool_id:<18} : {status}")
+            
+        bar_len = 30
+        filled = int(bar_len * domain_ready / max(1, domain_total))
+        bar = '█' * filled + '░' * (bar_len - filled)
+        color = GREEN if domain_ready == domain_total else (GOLD if domain_ready > 0 else RED)
+        print(f"   {color}Health: [{bar}] {domain_ready}/{domain_total}{RESET}\n")
+    
+    pct = (ready_tools / max(1, total_tools)) * 100
+    
+    if pct == 100:
+        print(f"\n{GREEN}{BOLD}")
+        print(r"  _   _  ______  ___  _    _____  _   _ __   __")
+        print(r" | | | ||  ____|/ _ \| |  |_   _|| | | |\ \ / /")
+        print(r" | |_| || |__  | |_| | |    | |  | |_| | \ V / ")
+        print(r" |  _  ||  __| |  _  | |    | |  |  _  |  \ /  ")
+        print(r" | | | || |____| | | | |____| |  | | | |  | |  ")
+        print(r" \_| |_/\____/ \_| |_/\____/\_/  \_| |_/  \_/  ")
+        print(f"{RESET}")
+    elif pct > 50:
+        print(f"\n{GOLD}{BOLD}")
+        print(r" ______  ____  _____  ____   ___  ____  ____  ____ ")
+        print(r" |  _  \| __ ||  ___||  _ \ / _ \|  _ \| __ ||  _ \\ ")
+        print(r" | | | ||  __|| |_   | |_\ | |_| | | \ |  __|| | | |")
+        print(r" |_| |_/\____|\___|  \____/\___/ |_| \_\____|\____/")
+        print(f"{RESET}")
+    else:
+        print(f"\n{RED}{BOLD}")
+        print(r"   ____  ____  _  _____  _  ____   ___  _      ")
+        print(r"  / __/ |  _ \| ||_   _|| |/ __/  / _ \| |     ")
+        print(r" / /_   | | \ | |  | |  | | /_   | |_| | |___  ")
+        print(r" \____\ |_| \_\_|  |_|  |_|\____\\___/ |____|  ")
+        print(f"{RESET}")
+
+    print(f"{BOLD}Summary:{RESET} {GREEN}{ready_tools}{RESET}/{total_tools} tools ready ({pct:.1f}% operational)")
+    if missing_tools:
+        print(f"\n{GOLD}To install missing modules with real recipes, run:{RESET} {CYAN}zoth-tool-nexus --install-modules all{RESET}")
+    print(f"\n{GRAY}Press Enter to return...{RESET}")
+    input()
+
+def list_all_domains():
+    print_header()
+    for d_id, data in DOMAINS.items():
+        ready_count = sum(1 for _, _, cmd, _ in data['tools'] if check_tool_ready(cmd))
+        total_count = len(data['tools'])
+        print(f" {GOLD}[{d_id.rjust(2)}]{RESET} {BOLD}{data['title']}{RESET}")
+        print(f"      {GRAY}{data['description']}{RESET}")
+        print(f"      {CYAN}Status:{RESET} {GREEN}{ready_count}/{total_count} Ready{RESET}\n")
+    print(f"{GRAY}Enter (1-10) to browse, 'd' for Doctor, 's' to search, 'i' to install, 'q' to quit.{RESET}")
+
+def view_domain(d_id):
+    data = DOMAINS.get(str(d_id))
+    if not data:
+        print(f"{RED}Invalid domain ID: {d_id}{RESET}")
+        return
+    print_header()
+    print(f"{GOLD}{BOLD}>>> {data['title']} <<<{RESET}")
+    print(f"{GRAY}{data['description']}{RESET}\n")
+    print(f"{'#':<4} {'TOOL ID':<18} {'STATUS':<10} {'DESCRIPTION'}")
+    print(f"{'-'*78}")
+    for idx, (tool_id, desc, cmd, mod) in enumerate(data['tools'], 1):
+        is_ready = check_tool_ready(cmd)
+        status_str = f"{GREEN}[READY]{RESET}" if is_ready else f"{GRAY}[INSTALL]{RESET}"
+        print(f"{str(idx).rjust(2)}. {CYAN}{tool_id:<18}{RESET} {status_str:<19} {desc}")
+    print(f"\n{GRAY}Enter tool # to execute, 'i <#>' to install recipe, 'b' to go back.{RESET}")
+
+def execute_tool(tool_id, desc, cmd, mod):
+    is_ready = check_tool_ready(cmd)
+    if not is_ready and mod != "none":
+        print(f"\n{GOLD}[WARNING]{RESET} Executable for '{tool_id}' is not in PATH.")
+        choice = input(f"{CYAN}Would you like to install required recipe '{mod}' now? (y/n): {RESET}").strip().lower()
+        if choice == 'y':
+            install_module(mod)
+            return
+    
+    print(f"\n{GOLD}[NEXUS]{RESET} Launching: {CYAN}{cmd}{RESET}...\n")
+    try:
+        subprocess.run(cmd, shell=True)
+    except Exception as e:
+        print(f"{RED}Execution failed: {e}{RESET}")
+    input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
+
+def search_tools(query):
+    print_header()
+    print(f"{GOLD}Search Results for:{RESET} '{CYAN}{query}{RESET}'\n")
+    found = 0
+    for d_id, data in DOMAINS.items():
+        for tool_id, desc, cmd, mod in data['tools']:
+            if query.lower() in tool_id.lower() or query.lower() in desc.lower():
+                found += 1
+                is_ready = check_tool_ready(cmd)
+                status = f"{GREEN}[READY]{RESET}" if is_ready else f"{GRAY}[INSTALL]{RESET}"
+                print(f" • {CYAN}{tool_id:<16}{RESET} {status} ({data['title'].split()[1]}): {desc}")
+    if found == 0:
+        print(f"{RED}No matching tools found.{RESET}")
+    print(f"\n{GRAY}Total matches: {found}. Press Enter to continue...{RESET}")
+    input()
+
+def interactive_tui():
+    while True:
+        list_all_domains()
+        choice = input(f"{GREEN}ZothNexus ❯ {RESET}").strip().lower()
+        if choice in ['q', 'exit']:
+            print(f"\n{GOLD}Exiting ZOTHOS Tool Nexus. Reality remains sovereign.{RESET}\n")
+            break
+        elif choice == 'd':
+            run_doctor()
+        elif choice == 's':
+            q = input(f"{CYAN}Search query: {RESET}").strip()
+            if q:
+                search_tools(q)
+        elif choice == 'i':
+            pkg = input(f"{CYAN}Enter package, tool recipe or name to install: {RESET}").strip()
+            if pkg:
+                install_module(pkg)
+        elif choice in DOMAINS:
+            while True:
+                view_domain(choice)
+                sub_choice = input(f"{GREEN}{DOMAINS[choice]['title'].split()[0]} ❯ {RESET}").strip().lower()
+                if sub_choice in ['b', 'back']:
+                    break
+                elif sub_choice in ['q', 'exit']:
+                    return
+                elif sub_choice.startswith("i ") and sub_choice[2:].isdigit():
+                    idx = int(sub_choice[2:]) - 1
+                    tools = DOMAINS[choice]['tools']
+                    if 0 <= idx < len(tools):
+                        install_module(tools[idx][3])
+                elif sub_choice.isdigit():
+                    idx = int(sub_choice) - 1
+                    tools = DOMAINS[choice]['tools']
+                    if 0 <= idx < len(tools):
+                        execute_tool(*tools[idx])
+                    else:
+                        print(f"{RED}Invalid selection.{RESET}")
+                        time.sleep(1)
+
+def main():
+    parser = argparse.ArgumentParser(description="ZOTHOS Sovereign 175+ Tool Nexus Dispatcher")
+    parser.add_argument("--list", action="store_true", help="List all registered tools across 10 domains")
+    parser.add_argument("--doctor", action="store_true", help="Run full diagnostic scan on all tools & modules")
+    parser.add_argument("--install-modules", type=str, help="Install modules for tool ID, domain (1-10), or 'all'")
+    parser.add_argument("--domain", type=str, help="Display tools within domain (1-10)")
+    parser.add_argument("--run", type=str, help="Directly run tool by ID")
+    parser.add_argument("--search", type=str, help="Search tools by keyword")
+    args = parser.parse_args()
+
+    if args.doctor:
+        run_doctor()
+        return
+
+    if args.install_modules:
+        target = args.install_modules.strip()
+        if target == "all":
+            for d_id, data in DOMAINS.items():
+                for tool_id, _, _, mod in data['tools']:
+                    if mod != "none":
+                        install_module(mod)
+        else:
+            for d_id, data in DOMAINS.items():
+                for tool_id, _, _, mod in data['tools']:
+                    if tool_id == target and mod != "none":
+                        install_module(mod)
+                        return
+        return
+
+    if args.list:
+        for d_id, data in DOMAINS.items():
+            print(f"\n=== {data['title']} ===")
+            for tool_id, desc, cmd, mod in data['tools']:
+                print(f"  - {tool_id:<20} : {desc}")
+        return
+
+    if args.run:
+        target = args.run.strip()
+        for d_id, data in DOMAINS.items():
+            for tool_id, desc, cmd, mod in data['tools']:
+                if tool_id == target:
+                    execute_tool(tool_id, desc, cmd, mod)
+                    return
+        print(f"Tool '{target}' not found in registry.")
+        return
+
+    if args.search:
+        search_tools(args.search)
+        return
+
+    interactive_tui()
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,1 @@
+deb [signed-by=/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg] http://http.kali.org/kali kali-rolling main non-free contrib non-free-firmware

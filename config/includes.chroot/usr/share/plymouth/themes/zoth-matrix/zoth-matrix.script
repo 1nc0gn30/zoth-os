@@ -1,0 +1,310 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  ZOTHOS — Hermetic Matrix Plymouth Boot Splash v4.0 (Azoth Sovereign Edition)
+#  Multi-phase animated boot: 3D Golden Azoth Seal + Emerald Phosphor Matrix Rain
+#  + Orbital Celestial Ring + Radiant Progress Bar + LUKS Crypt Prompt Support
+# ═══════════════════════════════════════════════════════════════════════════════
+
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+# ── Obsidian void background with emerald gradient ─────────────────────────
+Window.SetBackgroundTopColor(0.015, 0.024, 0.020);  # #040605 deep obsidian void
+Window.SetBackgroundBottomColor(0.000, 0.000, 0.000); # #000000 absolute black
+
+# ── Multi-tier Starfield / Particle Nebula Layer ────────────────────────────
+star_count = 160;
+stars = [];
+
+for (i = 0; i < star_count; i++) {
+    stars[i] = {
+        x:      Math.Random() * screen_width,
+        y:      Math.Random() * screen_height,
+        size:   Math.Random() * 1.8 + 0.6,
+        alpha:  Math.Random() * 0.4 + 0.1,
+        speed:  Math.Random() * 1.5 + 0.5
+    };
+}
+
+# ── Emerald Phosphor Digital Matrix Rain Layer ─────────────────────────────
+MAX_DROPS = 90;
+drops = [];
+
+for (i = 0; i < MAX_DROPS; i++) {
+    drops[i] = {
+        x:          Math.Random() * screen_width,
+        y:          Math.Random() * screen_height * -1.2,
+        speed:      Math.Random() * 5.0 + 3.0,
+        len:        Math.Random() * 32.0 + 12.0,
+        brightness: Math.Random() * 0.7 + 0.3,
+        hue:        Math.Random() # subtle shift between emerald and cyan
+    };
+}
+
+# ── Ambient Emerald Phosphor Bloom Backdrop ────────────────────────────────
+glow_image = Image("glow.png");
+if (glow_image != null) {
+    glow_scale = Math.Min(screen_width, screen_height) / 700.0;
+    glow_sprite = Sprite(glow_image);
+    glow_sprite.SetScale(glow_scale, glow_scale);
+    glow_sprite.SetX(screen_width / 2 - glow_image.GetWidth() * glow_scale / 2);
+    glow_sprite.SetY(screen_height / 2 - glow_image.GetHeight() * glow_scale / 2 - 40);
+    glow_sprite.SetOpacity(0.55);
+    glow_sprite.SetZ(10);
+}
+
+# ── Central Alchemical Seal (3D Golden Azoth Emblem) ───────────────────────
+seal_image = Image("seal.png");
+if (seal_image != null) {
+    seal_scale = Math.Min(screen_width, screen_height) / 460.0;
+    seal_sprite = Sprite(seal_image);
+    seal_sprite.SetScale(seal_scale, seal_scale);
+    seal_sprite.SetX(screen_width / 2 - seal_image.GetWidth() * seal_scale / 2);
+    seal_sprite.SetY(screen_height / 2 - seal_image.GetHeight() * seal_scale / 2 - 40);
+    seal_sprite.SetOpacity(0.92);
+    seal_sprite.SetZ(30);
+}
+
+# ── 3D Golden Orbital Ring (Precession & Celestial Trajectory) ──────────────
+ring_image = Image("ring.png");
+ring_angle = 0.0;
+if (ring_image != null) {
+    ring_scale = Math.Min(screen_width, screen_height) / 580.0;
+    ring_sprite = Sprite(ring_image);
+    ring_sprite.SetScale(ring_scale, ring_scale);
+    ring_sprite.SetX(screen_width / 2 - ring_image.GetWidth() * ring_scale / 2);
+    ring_sprite.SetY(screen_height / 2 - ring_image.GetHeight() * ring_scale / 2 - 40);
+    ring_sprite.SetOpacity(0.70);
+    ring_sprite.SetZ(35);
+}
+
+# ── Brand Typography ────────────────────────────────────────────────────────
+title_layer = Image.Text("ZOTHOS", 0.0, 1.0, 0.62, 1.0, "JetBrains Mono Bold 44");
+title_sprite = Sprite(title_layer);
+title_sprite.SetPosition(screen_width / 2 - title_layer.GetWidth() / 2, screen_height / 2 + 100, 100);
+
+subtitle_layer = Image.Text("The Sovereign AI & Offensive Security OS", 0.0, 0.95, 0.95, 0.85, "JetBrains Mono Medium 16");
+subtitle_sprite = Sprite(subtitle_layer);
+subtitle_sprite.SetPosition(screen_width / 2 - subtitle_layer.GetWidth() / 2, screen_height / 2 + 155, 100);
+
+version_layer = Image.Text("v12.0.0 · Azoth Edition · Immutable Core", 0.98, 0.78, 0.14, 0.70, "JetBrains Mono Regular 12");
+version_sprite = Sprite(version_layer);
+version_sprite.SetPosition(screen_width / 2 - version_layer.GetWidth() / 2, screen_height / 2 + 185, 100);
+
+# ── Boot Progress Bar Engine ────────────────────────────────────────────────
+bar_width = Math.Min(screen_width * 0.55, 640);
+bar_height = 10;
+bar_x = (screen_width - bar_width) / 2;
+bar_y = screen_height / 2 + 225;
+
+# Progress Trough / Box
+box_img = Image("progress_box.png");
+if (box_img != null) {
+    box_sprite = Sprite(box_img);
+    box_sprite.SetPosition(bar_x - 1, bar_y - 1, 150);
+} else {
+    bar_bg = Image.Rectangle(bar_width, bar_height);
+    bar_bg_sprite = Sprite(bar_bg);
+    bar_bg_sprite.SetPosition(bar_x, bar_y, 150);
+    bar_bg_sprite.SetColor(0.04, 0.07, 0.06, 0.95);
+}
+
+bar_fill = Image.Rectangle(0, bar_height);
+bar_fill_sprite = Sprite(bar_fill);
+bar_fill_sprite.SetPosition(bar_x, bar_y, 200);
+
+# Dynamic Progress Label
+progress_text_layer = Image.Text("✦ INITIALIZING ZOTHOS CORE", 0.0, 1.0, 0.62, 0.90, "JetBrains Mono Bold 13");
+progress_text_sprite = Sprite(progress_text_layer);
+progress_text_sprite.SetPosition(screen_width / 2 - progress_text_layer.GetWidth() / 2, bar_y + bar_height + 18, 100);
+
+# Global boot state
+global.boot_progress = 0.0;
+global.smooth_progress = 0.0;
+global.status_message = "Initializing Kernel...";
+
+# ── Interactive Prompts (Password / Question / LUKS) ───────────────────────
+lock_image = Image("lock.png");
+lock_sprite = Sprite(lock_image);
+lock_sprite.SetPosition(screen_width / 2 - 32, screen_height / 2 - 120, 500);
+lock_sprite.SetOpacity(0.0);
+
+box_dialog_image = Image("box.png");
+box_dialog_sprite = Sprite(box_dialog_image);
+box_dialog_sprite.SetPosition(screen_width / 2 - 170, screen_height / 2 - 40, 500);
+box_dialog_sprite.SetOpacity(0.0);
+
+prompt_text_sprite = Sprite();
+prompt_text_sprite.SetPosition(screen_width / 2 - 160, screen_height / 2 - 75, 510);
+prompt_text_sprite.SetOpacity(0.0);
+
+bullet_image = Image("bullet.png");
+bullets = [];
+
+# ── Animation Callback (60 FPS Refresh) ─────────────────────────────────────
+fun refresh_callback() {
+    refresh_count = Plymouth.GetRefreshCount();
+
+    # 1. Twinkling Background Starfield
+    for (i = 0; i < star_count; i++) {
+        local.s = stars[i];
+        local.alpha = 0.10 + Math.Sin(refresh_count * 0.02 * local.s.speed + i) * 0.30;
+        star_pt = Image.Point(local.s.size, local.s.size);
+        star_sp = Sprite(star_pt);
+        star_sp.SetPosition(local.s.x, local.s.y, 5);
+        star_sp.SetColor(0.6, 0.9, 0.8, local.alpha);
+    }
+
+    # 2. Emerald Phosphor Matrix Digital Rain
+    for (i = 0; i < MAX_DROPS; i++) {
+        drops[i].y = drops[i].y + drops[i].speed;
+        if (drops[i].y > screen_height + drops[i].len) {
+            drops[i].y = -drops[i].len - (Math.Random() * 40.0);
+            drops[i].x = Math.Random() * screen_width;
+            drops[i].speed = Math.Random() * 5.0 + 3.0;
+            drops[i].len = Math.Random() * 32.0 + 12.0;
+            drops[i].brightness = Math.Random() * 0.7 + 0.3;
+            drops[i].hue = Math.Random();
+        }
+        drop_pt = Image.Line(0, 0, 0, drops[i].len);
+        drop_sp = Sprite(drop_pt);
+        drop_sp.SetPosition(drops[i].x, drops[i].y, 8);
+        if (drops[i].hue > 0.7) {
+            drop_sp.SetColor(0.0, 0.9, 1.0, drops[i].brightness); # cyan streak
+        } else {
+            drop_sp.SetColor(0.0, 1.0, 0.62, drops[i].brightness); # emerald streak
+        }
+    }
+
+    # 3. Ambient Glow Pulsing
+    if (glow_sprite != null) {
+        local.glow_pulse = 0.45 + Math.Sin(refresh_count * 0.04) * 0.15;
+        glow_sprite.SetOpacity(local.glow_pulse);
+    }
+
+    # 4. Central Seal Breathing
+    if (seal_sprite != null) {
+        local.seal_pulse = 0.88 + Math.Sin(refresh_count * 0.035) * 0.12;
+        seal_sprite.SetOpacity(local.seal_pulse);
+    }
+
+    # 5. Golden Orbital Ring Trajectory & Tilt
+    ring_angle = ring_angle + 0.018;
+    if (ring_sprite != null) {
+        local.orbit_x = Math.Sin(ring_angle) * screen_width * 0.08;
+        local.orbit_y = Math.Cos(ring_angle * 0.8) * 18.0;
+        ring_sprite.SetX(screen_width / 2 - ring_image.GetWidth() * ring_scale / 2 + local.orbit_x);
+        ring_sprite.SetY(screen_height / 2 - ring_image.GetHeight() * ring_scale / 2 - 40 + local.orbit_y);
+        local.ring_opacity = 0.60 + Math.Sin(ring_angle * 2.5) * 0.25;
+        ring_sprite.SetOpacity(local.ring_opacity);
+    }
+
+    # 6. Smooth Boot Progress Interpolation
+    global.smooth_progress = global.smooth_progress + (global.boot_progress - global.smooth_progress) * 0.12;
+    if (global.smooth_progress > 1.0) global.smooth_progress = 1.0;
+    if (global.smooth_progress < 0.0) global.smooth_progress = 0.0;
+
+    local.fill_w = Math.Floor(bar_width * global.smooth_progress);
+    if (local.fill_w < 1) local.fill_w = 1;
+
+    fill_rect = Image.Rectangle(local.fill_w, bar_height);
+    bar_fill_sprite.SetImage(fill_rect);
+    bar_fill_sprite.SetPosition(bar_x, bar_y, 200);
+
+    # Radiant color blend: Emerald (0.0, 1.0, 0.62) -> Gold (0.98, 0.84, 0.14)
+    local.r = 0.0 + global.smooth_progress * 0.98;
+    local.g = 1.0 - global.smooth_progress * 0.16;
+    local.b = 0.62 - global.smooth_progress * 0.48;
+    bar_fill_sprite.SetColor(local.r, local.g, local.b, 0.95);
+
+    # 7. Milestone Phase Status Strings
+    if (global.smooth_progress < 0.20) {
+        local.phase_msg = "✦ INITIALIZING SOVEREIGN KERNEL";
+    } else if (global.smooth_progress < 0.40) {
+        local.phase_msg = "✦ MOUNTING ARSENAL [KALI + PARROT]";
+    } else if (global.smooth_progress < 0.65) {
+        local.phase_msg = "✦ ACTIVATING SECURITY & TOR CLOAK";
+    } else if (global.smooth_progress < 0.88) {
+        local.phase_msg = "✦ STARTING AI & FRONTIER AGENT ENGINES";
+    } else {
+        local.phase_msg = "✦ TRANSMUTING REALITY [ZOTHOS APEX]";
+    }
+
+    pt_img = Image.Text(local.phase_msg, 0.0, 1.0, 0.62, 0.95, "JetBrains Mono Bold 13");
+    progress_text_sprite.SetImage(pt_img);
+    progress_text_sprite.SetPosition(screen_width / 2 - pt_img.GetWidth() / 2, bar_y + bar_height + 18, 100);
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+# ── Boot Progress Callback ──────────────────────────────────────────────────
+fun boot_progress_callback(duration, progress) {
+    global.boot_progress = progress;
+}
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+# ── Status Update Callback ──────────────────────────────────────────────────
+fun update_status_callback(status) {
+    global.status_message = status;
+}
+Plymouth.SetUpdateStatusFunction(update_status_callback);
+
+# ── Root Mounted Callback ───────────────────────────────────────────────────
+fun root_mounted_callback() {
+    global.boot_progress = 0.65;
+}
+Plymouth.SetRootMountedFunction(root_mounted_callback);
+
+# ── LUKS / Password Input Callback ──────────────────────────────────────────
+fun display_password_callback(prompt, bullets_count) {
+    lock_sprite.SetOpacity(1.0);
+    box_dialog_sprite.SetOpacity(0.95);
+
+    p_img = Image.Text(prompt, 0.98, 0.84, 0.14, 1.0, "JetBrains Mono Bold 13");
+    prompt_text_sprite.SetImage(p_img);
+    prompt_text_sprite.SetPosition(screen_width / 2 - 150, screen_height / 2 - 75, 510);
+    prompt_text_sprite.SetOpacity(1.0);
+
+    # Render bullets
+    local.start_bx = screen_width / 2 - 140;
+    local.by = screen_height / 2 - 26;
+    for (i = 0; i < 16; i++) {
+        if (i < bullets_count) {
+            if (bullets[i] == null) {
+                bullets[i] = Sprite(bullet_image);
+                bullets[i].SetPosition(local.start_bx + (i * 18), local.by, 520);
+            }
+            bullets[i].SetOpacity(1.0);
+        } else if (bullets[i] != null) {
+            bullets[i].SetOpacity(0.0);
+        }
+    }
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+# ── Display Normal Callback ─────────────────────────────────────────────────
+fun display_normal_callback() {
+    lock_sprite.SetOpacity(0.0);
+    box_dialog_sprite.SetOpacity(0.0);
+    prompt_text_sprite.SetOpacity(0.0);
+    for (i = 0; i < 16; i++) {
+        if (bullets[i] != null) {
+            bullets[i].SetOpacity(0.0);
+        }
+    }
+}
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+# ── Display Message Callback ────────────────────────────────────────────────
+fun display_message_callback(text) {
+    p_img = Image.Text(text, 0.0, 1.0, 0.62, 1.0, "JetBrains Mono Regular 12");
+    prompt_text_sprite.SetImage(p_img);
+    prompt_text_sprite.SetPosition(screen_width / 2 - p_img.GetWidth() / 2, screen_height / 2 + 270, 510);
+    prompt_text_sprite.SetOpacity(0.9);
+}
+Plymouth.SetDisplayMessageFunction(display_message_callback);
+
+# ── Quit Function ───────────────────────────────────────────────────────────
+fun quit_callback() {
+    # Fade out smoothly on quit
+}
+Plymouth.SetQuitFunction(quit_callback);

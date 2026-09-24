@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=NullAI HexStrike AI Terminal
+GenericName=Sovereign Red Teaming Workstation
+Comment=NullAI HexStrike AI Terminal — Red Team Autonomous Workstation
+Exec=konsole -e /usr/local/bin/hexstrike
+Icon=hexstrike
+Terminal=false
+Categories=Security;Development;System;Utility;
+Keywords=NullAI;HexStrike;Terminal;AI;RedTeam;PenTest;Security;Exploit;
+StartupNotify=true

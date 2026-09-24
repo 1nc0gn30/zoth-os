@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Firefox Navigator
+Comment=Hardened Privacy & Web Research Browser
+Exec=/usr/bin/firefox-esr %u
+Icon=/usr/share/pixmaps/firefox.png
+Terminal=false
+Categories=Network;WebBrowser;
+StartupNotify=true

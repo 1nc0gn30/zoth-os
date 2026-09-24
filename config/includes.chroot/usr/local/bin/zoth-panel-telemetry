@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+cpu=$(awk '/^cpu /{u=$2+$4; t=$2+$3+$4+$5+$6+$7+$8; if (t>0) printf "%d", (u/t)*100}' /proc/stat)
+ram=$(awk '/MemAvailable/{a=$2} /MemTotal/{t=$2} END{printf "%.1fG", (t-a)/1024/1024}' /proc/meminfo)
+echo "<txt><span color=\"#d7b56d\">${cpu}%  ·  ${ram}</span></txt>"
+echo "<tool>ZOTHOS</tool>"
+echo "<click>zoth-os</click>"

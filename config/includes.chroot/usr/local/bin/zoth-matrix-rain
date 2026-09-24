@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth Matrix Rain — Phosphor Green Terminal Cascade Visualizer
+# ==============================================================================
+if ! command -v cmatrix >/dev/null 2>&1 && [[ ! -f /opt/zothos-ai-env/bin/cmatrix ]]; then
+    echo -e "\e[1;32m[*] Installing Matrix Rain engine (cmatrix)...\e[0m"
+    apt-get install -y cmatrix 2>/dev/null || true
+fi
+
+if [[ -f /opt/zothos-ai-env/bin/cmatrix ]]; then
+    exec /opt/zothos-ai-env/bin/cmatrix -o 8 -l -u 4 -C green -b "$@" 2>/dev/null
+elif command -v cmatrix >/dev/null 2>&1; then
+    exec cmatrix -o 8 -l -u 4 -C green -b "$@" 2>/dev/null
+else
+    echo -e "\e[1;32m[*] Matrix Rain initialized — scrolling green phosphor terminal.\e[0m"
+    echo -e "\e[1;32m[*] Piping ANSI rain to terminal...\e[0m"
+    python3 - "$@" <<'PYEOF' 2>/dev/null
+import sys, time, random, os, shutil
+COLS, ROWS = shutil.get_terminal_size()
+SCR = [[" " for _ in range(COLS)] for _ in range(ROWS)]
+drops = [(random.randint(0, ROWS-1), random.randint(0, COLS-1)) for _ in range(COLS//4)]
+green = "\033[32m"
+bright = "\033[1;32m"
+reset = "\033[0m"
+while True:
+    os.system("clear")
+    for r, c in drops:
+        ch = random.choice("01+-*/$#%%@&")
+        color = bright if random.random() < 0.15 else green
+        if r < ROWS:
+            SCR[r][c] = f"{color}{ch}{reset}"
+        drops = [(r+1, c) if r+1 < ROWS else (0, c) for r, c in drops]
+    for row in SCR:
+        print("".join(row))
+    time.sleep(0.05)
+PYEOF
+fi

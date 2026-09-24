@@ -1,0 +1,218 @@
+{
+  "description": "ZOTHOS Master Model Context Protocol (MCP) Server Registry",
+  "version": "3.0.0",
+  "mcpServers": {
+    "hexstrike-ai": {
+      "command": "python3",
+      "args": [
+        "/usr/share/hexstrike-ai/hexstrike_mcp.py",
+        "--server",
+        "http://127.0.0.1:8000"
+      ],
+      "description": "HexStrike AI v6.0 - Autonomous Penetration Testing & Cybersecurity Arsenal MCP Server",
+      "offline": true,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}/.hexstrike",
+      "fallbackHandler": "/usr/local/bin/zoth-sec mcp",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${ZOTH_HOME}",
+        "/usr/share/zothos",
+        "/opt",
+        "/etc/zothos",
+        "/var/lib/zothos",
+        "/tmp"
+      ],
+      "description": "Local Filesystem MCP Server - Safe sandboxed file operations",
+      "offline": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "python3 /usr/local/bin/zoth-agent-os mcp_fs",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "description": "Memory MCP Server - Graph-based persistent knowledge & memory for AI agents",
+      "offline": true,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "/var/lib/zothos/memory",
+      "fallbackHandler": "sqlite3 /var/lib/zothos/memory.db",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "description": "Puppeteer MCP Server - Headless & visible browser automation, clicks, navigation, screenshots",
+      "offline": true,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp/puppeteer_sandbox",
+      "fallbackHandler": "chromium --headless --remote-debugging-port=9222",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "kali-parrot-sectools": {
+      "command": "python3",
+      "args": [
+        "/usr/local/bin/zoth-sec",
+        "mcp"
+      ],
+      "description": "Kali Linux & Parrot OS Unified Security Tools MCP Bridge - Nmap, Masscan, SQLMap, Nuclei, FFUF, Gobuster",
+      "offline": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "/usr/local/bin/zoth-sec",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-sqlite",
+        "--db-path",
+        "/var/lib/zothos/knowledge.db"
+      ],
+      "description": "SQLite Database MCP Server - Query, mutate and explore SQLite stores",
+      "offline": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/var/lib/zothos/knowledge.db",
+      "fallbackHandler": "python3 -c 'import sqlite3'",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "duckdb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@duckdb/mcp-server",
+        "--db-path",
+        "/var/lib/zothos/analytics.duckdb"
+      ],
+      "description": "DuckDB Analytical Database MCP Server - High-performance vectorized OLAP & AI data queries",
+      "offline": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/var/lib/zothos/analytics.duckdb",
+      "fallbackHandler": "python3 -c 'import duckdb'",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "hermes-bridge": {
+      "command": "hermes",
+      "args": [
+        "mcp"
+      ],
+      "description": "Nous Research Hermes Agent MCP Bridge - Autonomous multi-step tool-calling agent runtime",
+      "offline": true,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}/.hermes",
+      "fallbackHandler": "/usr/local/bin/hermes",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "zoth-agent-os": {
+      "command": "python3",
+      "args": [
+        "/usr/local/bin/zoth-agent-os",
+        "mcp"
+      ],
+      "description": "ZOTHOS Autonomous OS Control MCP Server - Ring-gated system execution & GUI automation",
+      "offline": true,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "/usr/local/bin/zoth-agent-os",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "description": "Fetch MCP Server - Web scraping, HTTP requests, and text extraction",
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "curl -s",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": ""
+      },
+      "description": "Brave Search MCP Server - Real-time web intelligence and search",
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "/usr/share/zothos/docs",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "description": "GitHub MCP Server - PRs, repositories, commits, and issue automation",
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "git",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://postgres@localhost:5432/zothos"
+      ],
+      "description": "PostgreSQL MCP Server - Enterprise relational database manipulation",
+      "offline": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "postgresql://postgres@localhost:5432/zothos",
+      "fallbackHandler": "sqlite3 /var/lib/zothos/knowledge.db",
+      "timeout": 120,
+      "alwaysAllow": []
+    }
+  }
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth Pet HUD — All-Seeing Eye Companion Overlay
+# ==============================================================================
+set -euo pipefail
+
+ELECTRON_BIN=""
+for e in /usr/local/bin/electron /opt/electron/electron /tmp/electron/electron "$(which electron 2>/dev/null || true)"; do
+    if [[ -x "$e" ]]; then
+        ELECTRON_BIN="$e"
+        break
+    fi
+done
+
+if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-}" ]]; then
+    if [[ -d "/opt/zoth-hud" && -f "/opt/zoth-hud/main.js" ]]; then
+        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-hud "$@"
+    elif [[ -d "/opt/zoth-desktop-pet" && -f "/opt/zoth-desktop-pet/main.js" ]]; then
+        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-desktop-pet "$@"
+    fi
+fi
+
+konsole --noclose -e bash -c "echo -e '\e[1;33m[*] Zoth Pet HUD Active.\e[0m'; exec bash"

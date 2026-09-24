@@ -1,0 +1,207 @@
+/* ==========================================================================
+   🜂 ZOTHOS APEX GLASS & OBSIDIAN THEME (GTK-3.0 / GTK-3.24) 🜄
+   Luxury Dark Void, Obsidian Glass, Glowing Emerald & Gold Accents
+   ========================================================================== */
+
+@define-color base_color #06090e;
+@define-color bg_color #0a0e17;
+@define-color card_bg rgba(12, 18, 28, 0.82);
+@define-color fg_color #f1f5f9;
+@define-color text_color #00ff9d;
+@define-color selected_bg_color #00ff9d;
+@define-color selected_fg_color #06090e;
+@define-color tooltip_bg_color #0a0e17;
+@define-color tooltip_fg_color #00ff9d;
+@define-color border_color rgba(0, 255, 157, 0.22);
+@define-color border_glow rgba(0, 255, 157, 0.55);
+@define-color gold_accent #ffd700;
+@define-color cyan_accent #00e5ff;
+
+/* Global Window Surface */
+window, .background {
+    background-color: @bg_color;
+    color: @fg_color;
+    font-family: "JetBrains Mono", "Fira Code", "Inter", "Ubuntu", sans-serif;
+}
+
+/* Rubberband Drag-Selection Box */
+rubberband,
+.rubberband,
+flowbox rubberband,
+treeview.view rubberband,
+XfdesktopIconView.view rubberband {
+    background-color: rgba(0, 255, 157, 0.18);
+    border: 1.5px solid #00ff9d;
+    border-radius: 6px;
+    box-shadow: 0 0 16px rgba(0, 255, 157, 0.5);
+}
+
+/* Desktop Icon View Styling and Dynamic Selection/Hover Animation */
+XfdesktopIconView.view {
+    background-color: transparent;
+    color: #e2e8f0;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600;
+    font-size: 11px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 255, 157, 0.35);
+}
+
+XfdesktopIconView.view .label {
+    background-color: rgba(10, 16, 26, 0.72);
+    border: 1px solid rgba(0, 255, 157, 0.22);
+    border-radius: 8px;
+    padding: 3px 8px;
+    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+XfdesktopIconView.view .label:hover,
+XfdesktopIconView.view:hover {
+    background-color: rgba(0, 255, 157, 0.25);
+    border-color: #00ff9d;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(0, 255, 157, 0.65), 0 4px 12px rgba(0, 0, 0, 0.85);
+}
+
+XfdesktopIconView.view:selected,
+XfdesktopIconView.view .label:selected {
+    background: linear-gradient(135deg, rgba(0, 255, 157, 0.4), rgba(0, 229, 255, 0.25));
+    border: 1.5px solid #00ff9d;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.85), inset 0 0 8px rgba(0, 255, 157, 0.3);
+}
+
+/* Headerbars and Window Titlebars */
+headerbar, .titlebar {
+    background: linear-gradient(180deg, rgba(16, 24, 38, 0.95), rgba(10, 14, 23, 0.98));
+    border-bottom: 1px solid @border_color;
+    color: @text_color;
+    min-height: 38px;
+    padding: 0 8px;
+}
+
+headerbar .title {
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.4);
+}
+
+headerbar .subtitle {
+    color: #64748b;
+    font-size: 80%;
+}
+
+/* Action Buttons */
+button {
+    background: linear-gradient(180deg, rgba(20, 30, 48, 0.8), rgba(12, 18, 30, 0.9));
+    color: #e2e8f0;
+    border: 1px solid @border_color;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 600;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover {
+    background: rgba(0, 255, 157, 0.18);
+    border-color: @border_glow;
+    box-shadow: 0 0 12px rgba(0, 255, 157, 0.4);
+    color: #ffffff;
+}
+
+button:active, button:checked {
+    background: @selected_bg_color;
+    color: @selected_fg_color;
+    box-shadow: 0 0 16px rgba(0, 255, 157, 0.7);
+}
+
+/* Inputs & Text Fields */
+entry, textview {
+    background-color: #05080e;
+    color: #00ff9d;
+    border: 1px solid @border_color;
+    border-radius: 6px;
+    padding: 7px 12px;
+    transition: all 150ms ease-in-out;
+}
+
+entry:focus, textview:focus {
+    border-color: #00ff9d;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+}
+
+/* Context Menus & Popovers */
+menu, .menu, popover.background {
+    background: rgba(10, 14, 23, 0.96);
+    border: 1px solid @border_color;
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85), 0 0 16px rgba(0, 255, 157, 0.2);
+}
+
+menuitem {
+    color: #e2e8f0;
+    padding: 7px 14px;
+    border-radius: 4px;
+}
+
+menuitem:hover {
+    background: linear-gradient(90deg, rgba(0, 255, 157, 0.25), rgba(0, 229, 255, 0.15));
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Top Status Panel & Floating Bottom Dock */
+.xfce4-panel.panel-1,
+#XfcePanelWindow.panel-1,
+#XfcePanelWindow {
+    background: rgba(8, 12, 20, 0.88);
+    border-bottom: 1px solid rgba(0, 255, 157, 0.25);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+}
+
+.xfce4-panel.panel-2 {
+    background: rgba(10, 15, 25, 0.85);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 255, 157, 0.25);
+    margin-bottom: 8px;
+}
+
+.xfce4-panel button,
+#XfcePanelWindow button {
+    background: rgba(18, 26, 42, 0.65);
+    border: 1px solid rgba(0, 255, 157, 0.18);
+    border-radius: 6px;
+    margin: 2px 3px;
+    padding: 2px 10px;
+    color: #00ff9d;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    transition: all 120ms ease-in-out;
+}
+
+.xfce4-panel button:hover,
+#XfcePanelWindow button:hover {
+    background: rgba(0, 255, 157, 0.25);
+    border-color: #00ff9d;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.45);
+    color: #ffffff;
+}
+
+.xfce4-panel button:checked,
+#XfcePanelWindow button:checked {
+    background: rgba(0, 255, 157, 0.35);
+    border-color: #00ff9d;
+    color: #ffffff;
+    box-shadow: inset 0 0 8px rgba(0, 255, 157, 0.5);
+}
+
+#whiskermenu-button {
+    background: linear-gradient(135deg, rgba(0, 255, 157, 0.35), rgba(255, 215, 0, 0.2));
+    border: 1px solid #00ff9d;
+    border-radius: 6px;
+    color: #ffffff;
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(0, 255, 157, 0.8);
+}

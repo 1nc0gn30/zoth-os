@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Zoth Element Matrix Chat
+Exec=/opt/Element/element-desktop --no-sandbox %U
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/element-desktop.png
+StartupWMClass=Element
+Comment=Decentralized End-to-End Encrypted Matrix Chat
+MimeType=x-scheme-handler/io.element.desktop;x-scheme-handler/element;
+Categories=Network;Chat;InstantMessaging;

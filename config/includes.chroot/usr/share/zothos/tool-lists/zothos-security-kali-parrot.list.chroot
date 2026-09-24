@@ -1,0 +1,110 @@
+# ZOTHOS Security Arsenal — Kali Rolling & Parrot Security parity
+# Curated recommended tools, installed via Kali (rolling) / Parrot / Trixie repos.
+# Names verified against the pinning pref (Debian 900 / Parrot 800 / Kali 500).
+
+# ── Network scanning & recon ────────────────────────────────────────────────
+nmap
+masscan
+rustscan
+bind9-dnsutils
+dnsrecon
+whois
+whatweb
+wafw00f
+theharvester
+amass
+sublist3r
+recon-ng
+nikto
+nuclei
+ffuf
+feroxbuster
+gobuster
+dirb
+
+# ── Web app auditing & exploitation ─────────────────────────────────────────
+sqlmap
+commix
+wpscan
+impacket-scripts
+responder
+evil-winrm
+netexec
+crackmapexec
+burpsuite
+zaproxy
+caido
+beef-xss
+sqlitebrowser
+
+# ── Sniffing, MITM & proxies ────────────────────────────────────────────────
+wireshark
+tshark
+tcpdump
+ettercap-text-only
+dsniff
+bettercap
+mitmproxy
+macchanger
+proxychains4
+ligolo-ng
+chisel
+
+# ── Password & hash cracking ────────────────────────────────────────────────
+john
+hashcat
+hydra
+medusa
+fcrackzip
+crunch
+seclists
+wordlists
+hashid
+hash-identifier
+
+# ── Wireless / RF ───────────────────────────────────────────────────────────
+aircrack-ng
+kismet
+wifite
+reaver
+bully
+gqrx-sdr
+hackrf
+
+# ── Reverse engineering & binary analysis ───────────────────────────────────
+radare2
+rizin
+gdb
+binwalk
+socat
+netcat-traditional
+ncat
+checksec
+rizin-cutter
+ghidra
+
+# ── Forensics & incident response ───────────────────────────────────────────
+volatility3
+autopsy
+sleuthkit
+lynis
+chkrootkit
+rkhunter
+libimage-exiftool-perl
+mat2
+steghide
+libimage-exiftool-perl
+
+# ── Exploitation frameworks ─────────────────────────────────────────────────
+metasploit-framework
+searchsploit
+routersploit
+empire
+sliver
+beef-xss
+
+# ── Post-exploitation / C2 ──────────────────────────────────────────────────
+bloodhound
+neo4j
+nishang
+powershell-empire

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZothOS All-Seeing Eye AI Companion</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      outline: none !important;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent !important;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', 'Segoe UI', monospace;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 8px;
+      position: relative;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+    /* Keyboard-active: pause bobbing, eye stays alert */
+    .container.keyboard-active .mascot-wrapper {
+      animation-play-state: paused;
+    }
+    .container.keyboard-active .orb-core {
+      box-shadow: 0 0 35px rgba(0, 255, 157, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.9);
+    }
+
+    /* Speech Bubble Overlay */
+    .speech-bubble {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      background: rgba(6, 10, 18, 0.96);
+      border: 1.5px solid #00ff9d;
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #f1f5f9;
+      font-size: 10.5px;
+      line-height: 1.45;
+      box-shadow: 0 0 20px rgba(0, 255, 157, 0.4), 0 8px 24px rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+      z-index: 20;
+    }
+    .speech-bubble.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: rgba(6, 10, 18, 0.96) transparent;
+    }
+    .bubble-agent {
+      font-size: 9px;
+      font-weight: 800;
+      color: #00ff9d;
+      margin-bottom: 4px;
+      letter-spacing: 1.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bubble-agent::before {
+      content: '●';
+      color: #00ff9d;
+      font-size: 8px;
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    /* Particle Trail Container (positioned behind mascot) */
+    .particle-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 15;
+      overflow: hidden;
+    }
+
+    /* Mascot Floating Outer Wrapper */
+    .mascot-wrapper {
+      width: 170px;
+      height: 170px;
+      position: relative;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bobbing 4s ease-in-out infinite;
+      -webkit-app-region: drag;
+      box-shadow: none !important;
+      border: none !important;
+      background: transparent !important;
+    }
+    .mascot-wrapper:active { cursor: grabbing; }
+    @keyframes bobbing {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1.5deg); }
+    }
+
+    /* Outer Holographic & Planetary Glyphs Ring */
+    .holo-ring {
+      position: absolute;
+      inset: 0;
+      border: 2px dashed rgba(0, 255, 157, 0.45);
+      border-radius: 50%;
+      animation: spin 14s linear infinite;
+    }
+    .holo-ring-inner {
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      border-radius: 50%;
+      animation: spin-reverse 9s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+
+    /* Core Alchemical Eye Orb Container */
+    .orb-core {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #00ff9d 0%, #00e5ff 35%, #060c18 85%);
+      box-shadow: 0 0 25px rgba(0, 255, 157, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.7);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: grab;
+      -webkit-app-region: drag;
+    }
+    .orb-core:hover {
+      box-shadow: 0 0 40px rgba(0, 255, 157, 0.85), inset 0 0 25px rgba(255, 255, 255, 0.85);
+      transform: scale(1.04);
+    }
+    /* Focused state: pupil dilates on click */
+    .eye-pupil.focused {
+      scale: 1.8 !important;
+      box-shadow: 0 0 20px #00e5ff !important;
+      transition: scale 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    /* Laser Eye Socket & Iris */
+    .eye-socket {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #020408;
+      border: 2px solid #00ff9d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 12px rgba(0, 255, 157, 0.85);
+    }
+    .eye-iris {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, #00ff9d 45%, #00e5ff 80%, #020408 100%);
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.04s ease-out;
+      box-shadow: 0 0 15px #00ff9d;
+    }
+
+    .eye-pupil {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #000000;
+      box-shadow: inset 0 0 6px #00ff9d;
+      position: relative;
+      transition: scale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .eye-pupil::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 4px;
+      height: 4px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 4px #ffffff;
+    }
+    .eye-pupil.reading {
+      scale: 1.45 !important;
+      box-shadow: 0 0 12px #00e5ff;
+    }
+
+    .scan-beam {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.85), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .scan-beam.active {
+      opacity: 1;
+      animation: scan 1.2s ease-in-out infinite;
+    }
+    @keyframes scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Interactive AI Conversation Chat Input Drawer */
+    .chat-drawer {
+      width: 94%;
+      margin-top: 8px;
+      background: rgba(6, 10, 18, 0.94);
+      border: 1.5px solid rgba(0, 255, 157, 0.5);
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 0 20px rgba(0, 255, 157, 0.25);
+      -webkit-app-region: no-drag;
+    }
+    .chat-input {
+      flex: 1;
+      background: rgba(2, 5, 9, 0.85);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      border-radius: 6px;
+      padding: 7px 10px;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: #00ff9d;
+      box-shadow: 0 0 12px rgba(0, 255, 157, 0.4);
+    }
+    .chat-btn {
+      background: linear-gradient(135deg, #00ff9d, #00e5ff);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 12px;
+      color: #020509;
+      font-weight: 800;
+      font-size: 9.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chat-btn:hover {
+      background: #00ff9d;
+      box-shadow: 0 0 12px #00ff9d;
+      transform: scale(1.04);
+    }
+
+    /* Context Menu */
+    .pet-menu {
+      position: absolute;
+      bottom: 60px;
+      background: rgba(6, 10, 18, 0.96);
+      border: 1.5px solid #00e5ff;
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 229, 255, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 30;
+      -webkit-app-region: no-drag;
+    }
+    .pet-menu.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+    .menu-item {
+      padding: 6px 12px;
+      color: #00e5ff;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .menu-item:hover {
+      background: rgba(0, 229, 255, 0.2);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Speech Bubble Overlay -->
+    <div class="speech-bubble" id="speech-bubble">
+      <div class="bubble-agent" id="bubble-agent">👁️ ALL-SEEING EYE AI</div>
+      <div id="bubble-text">Initializing sovereign cursor vector & workspace observer...</div>
+    </div>
+
+    <!-- Right-Click Context Menu -->
+    <div class="pet-menu" id="pet-menu">
+      <div class="menu-item" onclick="launch('studio')">⚡ Zoth Studio Pro</div>
+      <div class="menu-item" onclick="launch('hexstrike')">⚔️ HexStrike Terminal</div>
+      <div class="menu-item" onclick="launch('agent')">👁️ Swarm Telemetry</div>
+      <div class="menu-item" onclick="launch('reality')">🌌 Reality Switcher</div>
+      <div class="menu-item" onclick="launch('ghost')">👻 NullAI Ghostmode</div>
+      <div class="menu-item" onclick="launch('nexus')">🛠️ Tool Nexus Hub</div>
+      <div class="menu-item" onclick="toggleMenu()">&#10005; Close Menu</div>
+    </div>
+
+    <!-- Mascot Floating Orb with Eye socket -->
+    <div class="mascot-wrapper" onclick="triggerPoke()">
+      <div class="holo-ring"></div>
+      <div class="holo-ring-inner"></div>
+      <div class="orb-core">
+        <div class="eye-socket">
+          <div class="scan-beam" id="scan-beam"></div>
+          <div class="eye-iris" id="eye-iris">
+            <div class="eye-pupil" id="eye-pupil"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fast Local Qwen Interactive Chat Drawer -->
+    <div class="chat-drawer">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Ask All-Seeing Eye Qwen... (tracking: cursor, keyboard, clipboard, processes, journal)" onkeydown="handleChatKey(event)">
+      <button class="chat-btn" onclick="sendChatQuery()">ASK</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

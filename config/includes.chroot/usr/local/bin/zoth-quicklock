@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth QuickLock — Instant Panic Lock & Screen Freeze
+# ==============================================================================
+loginctl lock-session 2>/dev/null || \
+qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock 2>/dev/null || \
+xset dpms force blank 2>/dev/null || true

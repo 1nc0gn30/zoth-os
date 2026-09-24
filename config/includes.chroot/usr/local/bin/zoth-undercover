@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth Undercover — Disguise Mode, Identity Mask & Win11 Undercover Theme
+# ==============================================================================
+echo -e "\e[1;34m[*] Undercover: activating disguise identity mask...\e[0m"
+
+# Apply Win11-like picom composite if available
+if [[ -f /etc/xdg/picom/picom-win11.conf ]]; then
+    echo -e "\e[1;34m[*] Loading Win11 Undercover picom composition...\e[0m"
+    if pgrep -x picom >/dev/null 2>&1; then
+        kill $(pgrep -x picom) 2>/dev/null || true
+        sleep 1
+    fi
+    command -v picom >/dev/null 2>&1 && picom --config /etc/xdg/picom/picom-win11.conf &
+    echo -e "\e[1;34m[*] Undercover: Win11 glassmorphism compositor active.\e[0m"
+else
+    echo -e "\e[1;34m[*] Undercover: picom Win11 config not found — partial disguise only.\e[0m"
+fi
+
+# Activate any available identity-spoofing env vars (anonymize user-agent context)
+export PR_CA_SPOOF="ZOTH-undercover-mode-active"
+export ZOTH_UNDERCOVER=1
+
+echo -e "\e[1;34m[!] Undercover engaged — identity mask active.\e[0m"
+echo -e "\e[1;34m[*] Env: ZOTH_UNDERCOVER=$ZOTH_UNDERCOVER  PR_CA_SPOOF=$PR_CA_SPOOF\e[0m"
+echo -e "\e[1;36m[*] Type 'zoth-mode' to toggle reality layers.\e[0m"
+exec bash

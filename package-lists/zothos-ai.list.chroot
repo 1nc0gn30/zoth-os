@@ -1,0 +1,44 @@
+# ZOTHOS Frontier AI Stack — Local inference, agents, MCP & model tooling
+# Curated recommended AI packages (Debian/Parrot/Kali repos + Python natives).
+
+# ── Local inference runtimes ────────────────────────────────────────────────
+ollama
+# llama.cpp via pip (llama-cpp-python) — see notes below
+python3-torch
+python3-transformers
+python3-huggingface-hub
+python3-sentencepiece
+python3-tokenizers
+python3-scipy
+python3-numpy
+python3-pandas
+python3-scikit-learn
+
+# ── Agent orchestrators, MCP & automation ───────────────────────────────────
+python3-fastapi
+python3-uvicorn
+python3-websockets
+python3-pydantic
+python3-cryptography
+python3-requests
+python3-rich
+python3-psutil
+python3-tqdm
+python3-yaml
+python3-dotenv
+python3-jinja2
+python3-aiohttp
+
+# ── AI red-teaming / security evaluation ────────────────────────────────────
+python3-scapy
+python3-opencv
+python3-fitz
+python3-pil
+python3-nltk
+
+# ── Model management / quantization (binary natives shipped in venv) ────────
+# vllm, exllamav2, llama-cpp-python, garak, pyrit, promptfoo, inspect-ai,
+# aider-chat, crewai, langgraph, autogen, browser-use are provisioned at
+# first-boot into /opt/zothos-ai-env by zoth-arsenal-sync (they are not apt
+# packages and cannot live in a .list.chroot). See tools/install_all_missing_tools.sh
+# and config/includes.chroot/usr/local/bin/zoth-arsenal-sync.

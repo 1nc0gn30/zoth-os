@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  :: Maya for Linux (Studio Pro) — Sovereign Creator Video & Device Mockup Studio
+#  Official Repository: https://github.com/1nc0gn30/maya-linux
+# ==============================================================================
+
+set -e
+
+MAYA_DIR="/opt/maya-linux"
+if [[ ! -d "$MAYA_DIR" ]] && [[ -d "/usr/share/maya-linux" ]]; then
+    MAYA_DIR="/usr/share/maya-linux"
+fi
+if [[ ! -d "$MAYA_DIR" ]] && [[ -d "$HOME/maya-linux" ]]; then
+    MAYA_DIR="$HOME/maya-linux"
+fi
+
+cd "$MAYA_DIR"
+
+export LD_LIBRARY_PATH="/opt/electron:${LD_LIBRARY_PATH:-}"
+
+# Launch native Electron desktop application window
+if [[ -x "/usr/local/bin/electron" ]]; then
+    exec /usr/local/bin/electron . --no-sandbox "$@"
+elif [[ -x "/opt/electron/electron" ]]; then
+    exec /opt/electron/electron . --no-sandbox "$@"
+elif [[ -x "node_modules/.bin/electron" ]]; then
+    exec ./node_modules/.bin/electron . --no-sandbox "$@"
+elif command -v electron &>/dev/null; then
+    exec electron . --no-sandbox "$@"
+else
+    exec npx electron . --no-sandbox "$@"
+fi

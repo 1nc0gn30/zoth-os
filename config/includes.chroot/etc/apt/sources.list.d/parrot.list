@@ -1,0 +1,1 @@
+deb [signed-by=/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg] http://deb.parrot.sh/parrot parrot main contrib non-free

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth PowerShell — Windows Terminal CLI & Azure Automation Shell
+# ==============================================================================
+if command -v powershell >/dev/null 2>&1; then
+    echo -e "\e[1;36m[*] Launching PowerShell (Windows cross-platform shell)...\e[0m"
+    exec powershell -NoLogo -NoExit -Command "Write-Host 'ZOTHOS PowerShell — Azure & Windows Automation' -ForegroundColor Cyan" "$@"
+elif command -v pwsh >/dev/null 2>&1; then
+    echo -e "\e[1;36m[*] Launching PowerShell Core (pwsh)...\e[0m"
+    exec pwsh -NoLogo -NoExit -Command "Write-Host 'ZOTHOS PowerShell — Azure & Windows Automation' -ForegroundColor Cyan" "$@"
+elif [[ -f /opt/zothos-ai-env/bin/powershell ]]; then
+    exec /opt/zothos-ai-env/bin/powershell "$@" 2>/dev/null || exec bash
+else
+    echo -e "\e[1;36m[*] PowerShell not installed — provisioning...\e[0m"
+    apt-get install -y powershell 2>/dev/null || true
+    if command -v pwsh >/dev/null 2>&1; then
+        exec pwsh -NoLogo "$@" 2>/dev/null || exec bash
+    else
+        echo -e "\e[1;31m[!] PowerShell unavailable — falling back to bash.\e[0m"
+        exec bash
+    fi
+fi

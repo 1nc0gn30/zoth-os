@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  🜂 ZOTHOS FASTFETCH HUD v4.0 — Sovereign Alchemical Telemetry Deck 🜄
+#  Living system dashboard with mode-reactive colors, live AI model status,
+#  security posture indicators, planetary hour, and authentic 2026 ASCII art.
+# ==============================================================================
+
+set -euo pipefail
+
+# ── Mode-aware Color Palette ────────────────────────────────────────────────
+get_mode() {
+    local mode="matrix"
+    if [[ -f "$HOME/.config/zothos/current_mode" ]]; then
+        mode=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "matrix")
+    fi
+    echo "$mode"
+}
+
+MODE_NAME=$(get_mode)
+
+case "$MODE_NAME" in
+    matrix)
+        C_PRIMARY="38;5;48"    # Emerald
+        C_ACCENT="38;5;214"   # Radiant Gold
+        C_CYAN="38;5;51"      # Cyan
+        C_DIM="38;5;29"       # Deep Emerald
+        C_MUTED="38;5;240"    # Obsidian Muted
+        C_TEXT="38;5;255"     # Crisp White
+        MODE_DISPLAY="\e[1;${C_PRIMARY}mHermetic Matrix \e[0;${C_CYAN}m[Emerald Phosphor Glass]\e[0m"
+        ;;
+    ghost)
+        C_PRIMARY="38;5;196"   # Neon Crimson
+        C_ACCENT="38;5;177"   # Mystic Violet
+        C_CYAN="38;5;135"     # Ghost Purple
+        C_DIM="38;5;160"      # Dim Crimson
+        C_MUTED="38;5;239"    # Dark Charcoal
+        C_TEXT="38;5;255"     # Crisp White
+        MODE_DISPLAY="\e[1;${C_PRIMARY}mGhostmode NullAI \e[0;${C_ACCENT}m[Tor Cloaked · Amnesic]\e[0m"
+        ;;
+    gold)
+        C_PRIMARY="38;5;220"   # Bright Gold
+        C_ACCENT="38;5;214"   # Amber Gold
+        C_CYAN="38;5;51"      # Cyan Glow
+        C_DIM="38;5;178"      # Deep Gold
+        C_MUTED="38;5;241"    # Warm Charcoal
+        C_TEXT="38;5;255"     # Crisp White
+        MODE_DISPLAY="\e[1;${C_PRIMARY}mAzoth Gold Sanctum \e[0;${C_ACCENT}m[Radiant Solar Alchemy]\e[0m"
+        ;;
+    incognito|win11)
+        C_PRIMARY="38;5;39"    # Windows 11 Fluent Blue
+        C_ACCENT="38;5;214"   # Gold
+        C_CYAN="38;5;51"      # Azure Cyan
+        C_DIM="38;5;25"       # Deep Navy
+        C_MUTED="38;5;242"    # Slate Gray
+        C_TEXT="38;5;255"     # Crisp White
+        MODE_DISPLAY="\e[1;${C_PRIMARY}mIncognito Chameleon \e[0;${C_MUTED}m[Windows 11 Corporate Disguise]\e[0m"
+        ;;
+    *)
+        C_PRIMARY="38;5;48"
+        C_ACCENT="38;5;214"
+        C_CYAN="38;5;51"
+        C_DIM="38;5;29"
+        C_MUTED="38;5;240"
+        C_TEXT="38;5;255"
+        MODE_DISPLAY="\e[1;${C_PRIMARY}mHermetic Matrix \e[0;${C_CYAN}m[Emerald Phosphor Glass]\e[0m"
+        ;;
+esac
+
+P="\e[${C_PRIMARY}m"
+A="\e[${C_ACCENT}m"
+C="\e[${C_CYAN}m"
+D="\e[${C_DIM}m"
+M="\e[${C_MUTED}m"
+W="\e[${C_TEXT}m"
+B="\e[1m"
+R="\e[0m"
+
+# ── Live Telemetry Data Collection ──────────────────────────────────────────
+KERNEL="$(uname -r) ($(uname -m))"
+SHELL_NAME="$(basename "${SHELL:-/bin/bash}")"
+UPTIME="$(uptime -p 2>/dev/null | sed 's/up //' || uptime | awk -F',' '{print $1}' | xargs)"
+
+# Planetary Hours & Elements
+PLANETS=("☉ Sol" "♀ Venus" "☿ Mercury" "☽ Luna" "♄ Saturn" "♃ Jupiter" "♂ Mars")
+ELEMENTS=("🜂 Fire" "🜁 Air" "🜄 Water" "🜃 Earth" "🜀 Quintessence")
+H=$(date +%H)
+P_IDX=$(( 10#$H % 7 ))
+E_IDX=$(( 10#$H % 5 ))
+PLANETARY_HOUR="${A}${PLANETS[$P_IDX]} ${D}· ${C}${ELEMENTS[$E_IDX]}${R}"
+
+# Memory Usage & Bar
+MEM_USED=$(free -m | awk '/Mem:/ {printf "%.0f", $3}')
+MEM_TOTAL=$(free -m | awk '/Mem:/ {printf "%.0f", $2}')
+MEM_PCT=$(( MEM_USED * 100 / (MEM_TOTAL > 0 ? MEM_TOTAL : 1) ))
+filled_mem=$(( MEM_PCT / 10 ))
+if [[ $filled_mem -gt 10 ]]; then filled_mem=10; fi
+empty_mem=$(( 10 - filled_mem ))
+MEM_BAR="${P}[$(printf '▓%.0s' $(seq 1 $filled_mem 2>/dev/null || true))${D}$(printf '░%.0s' $(seq 1 $empty_mem 2>/dev/null || true))${P}] ${W}${MEM_PCT}%${R} ${M}(${MEM_USED}MB / ${MEM_TOTAL}MB)${R}"
+
+# CPU Usage & Bar
+CPU_PCT=$(top -bn1 2>/dev/null | grep "Cpu(s)" | awk '{print int($2)}' || echo "0")
+filled_cpu=$(( CPU_PCT / 10 ))
+if [[ $filled_cpu -gt 10 ]]; then filled_cpu=10; fi
+empty_cpu=$(( 10 - filled_cpu ))
+CPU_CORES=$(nproc 2>/dev/null || echo "4")
+CPU_BAR="${A}[$(printf '▓%.0s' $(seq 1 $filled_cpu 2>/dev/null || true))${D}$(printf '░%.0s' $(seq 1 $empty_cpu 2>/dev/null || true))${A}] ${W}${CPU_PCT}%${R} ${M}(${CPU_CORES} Cores active)${R}"
+
+# Security & Network Posture
+SEC_POSTURE="${P}Kali + Parrot Arsenal [Active]${R}"
+if [[ -f "/etc/apt/sources.list.d/kali.list" ]] && [[ -f "/etc/apt/sources.list.d/parrot.list" ]]; then
+    SEC_POSTURE="${P}Dual Kali + Parrot Repos [750+ Tools Locked]${R}"
+fi
+
+TOR_STATUS="${M}Direct Clearnet Route${R}"
+if [[ -f "/run/zoth_ghostmode.state" ]] || systemctl is-active --quiet tor 2>/dev/null; then
+    TOR_STATUS="${P}● Torified & MAC Spoofed [Ghost Active]${R}"
+fi
+
+# Frontier AI Engine & Model Status
+AI_ENGINES=()
+if pgrep -x "ollama" >/dev/null 2>&1; then
+    AI_ENGINES+=("Ollama [Online]")
+fi
+if pgrep -x "vllm" >/dev/null 2>&1; then
+    AI_ENGINES+=("vLLM [Active]")
+fi
+if pgrep -f "litellm" >/dev/null 2>&1; then
+    AI_ENGINES+=("LiteLLM Proxy")
+fi
+if pgrep -f "comfyui" >/dev/null 2>&1; then
+    AI_ENGINES+=("ComfyUI")
+fi
+
+if [[ ${#AI_ENGINES[@]} -gt 0 ]]; then
+    AI_STATUS="${P}● $(IFS=" · "; echo "${AI_ENGINES[*]}") [Ready]${R}"
+else
+    AI_STATUS="${C}● Local Neural Stack Standby [Ollama/vLLM]${R}"
+fi
+
+# Agent Layer & Cockpit
+AGENT_STATUS="${P}● Sentinel Watchdog + Hermes Agent [Enforced]${R}"
+COCKPIT_STATUS="${A}● Sovereign Cockpit [Linked]${R} ${M}+ Maya Studio 2026${R}"
+
+# ── Render Master ASCII HUD ────────────────────────────────────────────────
+echo -e ""
+printf "%b\n" "${P}           🜂             ${B}${A}ZOTHOS Linux 1.0 [Codename: Azoth]${R}"
+printf "%b\n" "${P}         /───\\\\           ${D}───────────────────────────────────────────────────────────${R}"
+printf "%b\n" "${P}        /  ▲  \\\\          ${B}${W}OS Reality:        ${MODE_DISPLAY}"
+printf "%b\n" "${P}       /  ${A}/ \\\\${P}  \\\\         ${B}${W}Kernel & Arch:     ${C}${KERNEL}${R}"
+printf "%b\n" "${P}      /  ${A}/ ${W}🜀${A} \\\\${P}  \\\\        ${B}${W}Planetary Hour:    ${PLANETARY_HOUR}"
+printf "%b\n" "${P}     /  ${A}/_____\\\\${P}  \\\\       ${B}${W}Desktop Surface:   ${C}XFCE 4.18 + Picom (Glass Compositor)${R}"
+printf "%b\n" "${P}    /  ${C}/ \\\\   / \\\\${P}  \\\\      ${B}${W}Shell & Prompt:    ${C}${SHELL_NAME} (Living Reactive HUD)${R}"
+printf "%b\n" "${P}   /  ${C}/   \\\\ /   \\\\${P}  \\\\     ${B}${W}Memory Vitals:     ${MEM_BAR}"
+printf "%b\n" "${P}  /  ${C}/_____\\\\/____\\\\${P}  \\\\    ${B}${W}CPU & Load:        ${CPU_BAR}"
+printf "%b\n" "${P} /___________________\\\\   ${B}${W}Security Arsenal:  ${SEC_POSTURE}"
+printf "%b\n" "${P}  \\\\   ${D}\\\\   / \\\\   /${P}   /    ${B}${W}Network Cloak:     ${TOR_STATUS}"
+printf "%b\n" "${P}   \\\\   ${D}\\\\ / ${W}🜄${D} \\\\ /${P}   /     ${B}${W}Frontier AI:       ${AI_STATUS}"
+printf "%b\n" "${P}    \\\\   ${D}\\\\_____/${P}   /      ${B}${W}Agent Framework:   ${AGENT_STATUS}"
+printf "%b\n" "${P}     \\\\  ${D}\\\\     /${P}  /       ${B}${W}Zoth Studio:       ${COCKPIT_STATUS}"
+printf "%b\n" "${P}      \\\\  ${D}\\\\   /${P}  /        ${B}${W}System Uptime:     ${W}${UPTIME}${R}"
+printf "%b\n" "${P}       \\\\  ${D}\\\\ /${P}  /         ${B}${W}Hermetic Axiom:    ${D}\"As above, so below; as code, so mind.\"${R}"
+printf "%b\n" "${P}        \\\\  ▼  /          "
+printf "%b\n" "${P}         \\\\───/           "
+printf "%b\n" "${P}           🜄             "
+echo -e ""

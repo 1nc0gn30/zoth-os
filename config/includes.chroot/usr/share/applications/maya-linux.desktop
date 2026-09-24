@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Maya Video Studio
+GenericName=Device Mockup & Video Studio
+Comment=Wrap Screen Recording, Motion Timeline & Video Production
+Exec=maya
+Icon=/usr/share/pixmaps/maya-linux.png
+Terminal=false
+Categories=AudioVideo;Video;AudioVideoEditing;
+StartupNotify=true

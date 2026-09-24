@@ -1,0 +1,11 @@
+Package: *
+Pin: release o=Debian
+Pin-Priority: 900
+
+Package: *
+Pin: release o=Parrot
+Pin-Priority: 500
+
+Package: *
+Pin: release o=Kali
+Pin-Priority: 500

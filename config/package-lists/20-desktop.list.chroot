@@ -1,0 +1,31 @@
+# KDE Plasma 6 Desktop Environment
+plasma-desktop
+plasma-workspace
+sddm
+konsole
+dolphin
+libkf6config-bin
+
+# Utilities & System Integration
+pipewire
+pipewire-audio
+network-manager
+network-manager-gnome
+x11-xserver-utils
+firefox-esr
+xclip
+xdotool
+wmctrl
+libcanberra-gtk3-module
+libcanberra-gtk-module
+gtk2-engines-pixbuf
+plasma-pa
+plasma-nm
+powerdevil
+systemsettings
+plasma-widgets-addons
+kscreen
+nodejs
+npm
+libfuse2t64
+mesa-vulkan-drivers

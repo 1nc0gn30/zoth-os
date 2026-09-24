@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTH AI STACK ELECTRON LAUNCHER & COCKPIT
+# ==============================================================================
+set -euo pipefail
+
+ELECTRON_BIN=""
+for e_cand in \
+  /opt/electron/electron \
+  /tmp/electron/electron \
+  "$(which electron 2>/dev/null || true)"
+do
+  if [[ -n "$e_cand" && -x "$e_cand" ]]; then
+    ELECTRON_BIN="$e_cand"
+    break
+  fi
+done
+
+if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
+  if [[ -d "/opt/zoth-ai-stack-app" ]]; then
+    exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-ai-stack-app "$@"
+  elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ai-stack-app" ]]; then
+    exec "$ELECTRON_BIN" --no-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ai-stack-app "$@"
+  fi
+fi
+
+# Fallback CLI if headless or no display
+echo "=== ZOTH AI STACK COCKPIT ==="
+echo "Electron display unavailable. Installed AI Binaries:"
+which hermes grok codex claude opencode agy ollama aider goose fastmcp zoth-mcp garak pyrit 2>/dev/null || true

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth NetKill — Firewall Block & Network Neutralization
+# ==============================================================================
+echo -e "\e[1;31m[!] NetKill: deploying emergency firewall block rules...\e[0m"
+
+# Flush and install DROP rules for all non-loopback interfaces
+if command -v iptables >/dev/null 2>&1; then
+    echo -e "\e[1;31m[*] Flushing INPUT chain and installing DROP blanket...\e[0m"
+    iptables -F INPUT 2>/dev/null || true
+    iptables -P INPUT DROP 2>/dev/null || true
+    iptables -A INPUT -i lo -j ACCEPT 2>/dev/null || true
+    iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 2>/dev/null || true
+    echo -e "\e[1;31m[!] NetKill: INPUT chain DROP rule active — inbound traffic blocked.\e[0m"
+else
+    echo -e "\e[1;33m[*] iptables not available — using ufw fallback...\e[0m"
+    if command -v ufw >/dev/null 2>&1; then
+        ufw default deny incoming 2>/dev/null || true
+        ufw deny from any to any 2>/dev/null || true
+        echo -e "\e[1;31m[!] NetKill: ufw deny-all rule active.\e[0m"
+    else
+        echo -e "\e[1;31m[!] NetKill: WARNING — no firewall tool found. Rules not applied.\e[0m"
+    fi
+fi
+
+# Kill non-essential network listeners
+echo -e "\e[1;31m[*] Terminating exposed ports and listeners...\e[0m"
+for port in $(ss -tlnp 2>/dev/null | grep -oE ':[0-9]+' | tr -d ':' | sort -un); do
+    [[ "$port" == "22" ]] && continue  # preserve SSH for VM management
+    pid=$(ss -tlnp 2>/dev/null | grep ":$port" | grep -oP 'pid=\K[0-9]+' | head -1)
+    if [[ -n "$pid" ]]; then
+        kill "$pid" 2>/dev/null && echo -e "\e[1;31m[!] Killed listener on port $port (PID $pid)\e[0m"
+    fi
+done
+
+echo -e "\e[1;31m[!] NetKill blocking active. Run 'ufw enable' or 'iptables -F' to restore.\e[0m"
+echo -e "\e[1;32m[*] NetKill secured — isolated network posture. Type 'netkill --restore' to reverse.\e[0m"
+exec bash

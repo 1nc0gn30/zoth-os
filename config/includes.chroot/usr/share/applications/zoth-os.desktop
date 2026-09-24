@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ZothOS Sovereign Desk
+Comment=Live Real-Time Telemetry & Agent Management Console
+Exec=/usr/local/bin/zoth-os
+Icon=/usr/share/pixmaps/zoth-os.png
+Terminal=false
+Categories=System;
+Keywords=zoth;os;desk;metrics;ollama;studio;
+StartupNotify=true

@@ -1,0 +1,13 @@
+[Unit]
+Description=ZOTHOS Tailscale Mesh VPN — Persistent Zero-Trust Networking
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'command -v tailscale >/dev/null 2>&1 && tailscale up --accept-routes --accept-dns --hostname=zothos-$(cat /etc/machine-id 2>/dev/null | head -c 8) 2>/dev/null || true'
+ExecStop=/bin/sh -c 'tailscale down 2>/dev/null || true'
+TimeoutSec=10
+
+[Install]
+WantedBy=multi-user.target
