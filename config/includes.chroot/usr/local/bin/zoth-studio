@@ -31,12 +31,17 @@ CANDIDATE_ROOTS = [
 
 STUDIO_ROOT = "/opt/zoth-studio"
 for r in CANDIDATE_ROOTS:
-    if r and os.path.isdir(r) and (os.path.exists(os.path.join(r, "index.html")) or os.path.exists(os.path.join(r, "public/index.html"))):
+    if r and os.path.isdir(r) and (os.path.exists(os.path.join(r, "dist/index.html")) or os.path.exists(os.path.join(r, "index.html")) or os.path.exists(os.path.join(r, "public/index.html"))):
         STUDIO_ROOT = r
         break
 
-STUDIO_PUBLIC = os.path.join(STUDIO_ROOT, "public") if os.path.isdir(os.path.join(STUDIO_ROOT, "public")) else STUDIO_ROOT
-SERVE_ROOT = STUDIO_PUBLIC if os.path.exists(os.path.join(STUDIO_PUBLIC, "index.html")) else STUDIO_ROOT
+if os.path.exists(os.path.join(STUDIO_ROOT, "dist", "index.html")):
+    SERVE_ROOT = os.path.join(STUDIO_ROOT, "dist")
+elif os.path.exists(os.path.join(STUDIO_ROOT, "public", "index.html")):
+    SERVE_ROOT = os.path.join(STUDIO_ROOT, "public")
+else:
+    SERVE_ROOT = STUDIO_ROOT
+STUDIO_PUBLIC = SERVE_ROOT
 ICON_PATH = "/usr/share/pixmaps/zoth-studio.png"
 if not os.path.exists(ICON_PATH):
     appdir_icon = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "share/pixmaps/zoth-studio.png")
