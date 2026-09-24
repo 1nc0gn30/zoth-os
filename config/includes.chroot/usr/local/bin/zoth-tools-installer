@@ -10,7 +10,7 @@ APP_DIR="/opt/$APP"
 SRC_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/opt/$APP"
 
 find_electron() {
-    for e in /opt/electron/electron /tmp/electron/electron "$(command -v electron 2>/dev/null || true)"; do
+    for e in /opt/electron/electron /usr/local/bin/electron /usr/bin/electron /tmp/electron/electron "$(command -v electron 2>/dev/null || true)"; do
         if [[ -n "$e" && -x "$e" ]]; then echo "$e"; return 0; fi
     done
     return 1

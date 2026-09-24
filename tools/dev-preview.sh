@@ -19,7 +19,14 @@ echo "=================================================="
 if [[ -d "$BUILD_DIR/live_workspace" ]]; then
     echo "[1/5] Syncing chroot configuration overlay..."
     mkdir -p "$BUILD_DIR/live_workspace/config/includes.chroot"
-    cp -a "$PROJECT_DIR/config/includes.chroot/." "$BUILD_DIR/live_workspace/config/includes.chroot/" 2>/dev/null || true
+    sudo cp -a "$PROJECT_DIR/config/includes.chroot/." "$BUILD_DIR/live_workspace/config/includes.chroot/" 2>/dev/null || true
+    sudo cp -a "$PROJECT_DIR/config/includes.chroot/." "$BUILD_DIR/live_workspace/chroot/" 2>/dev/null || true
+    if [[ -d "$BUILD_DIR/live_workspace/chroot/home/neo" ]]; then
+        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/gtk-3.0/gtk.css" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/gtk-3.0/gtk.css" 2>/dev/null || true
+        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kdeglobals" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/kdeglobals" 2>/dev/null || true
+        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kwinrc" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/kwinrc" 2>/dev/null || true
+        sudo chown -R 1000:1000 "$BUILD_DIR/live_workspace/chroot/home/neo" 2>/dev/null || true
+    fi
 fi
 
 # 2. Rebuild ISO

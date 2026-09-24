@@ -124,7 +124,7 @@ def launch_gui(port):
     # Hardware acceleration & rendering tuning
     os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "0")
     os.environ.setdefault("GDK_BACKEND", "x11")
-    os.environ["LD_LIBRARY_PATH"] = f"/opt/electron:{os.environ.get('LD_LIBRARY_PATH', '')}"
+    os.environ["PORT"] = str(port)
 
     # 1. Try native Electron standalone app first
     electron_candidates = [
@@ -139,11 +139,18 @@ def launch_gui(port):
             electron_bin = el
             break
 
-    if electron_bin and os.path.exists(os.path.join(STUDIO_ROOT, "main.js")):
+    entry_found = any(os.path.exists(os.path.join(STUDIO_ROOT, f)) for f in ["main.cjs", "main.js"])
+    if electron_bin and entry_found:
         try:
-            proc = subprocess.Popen([electron_bin, "--no-sandbox", STUDIO_ROOT])
-            proc.wait()
-            return
+            proc = subprocess.Popen([electron_bin, "--no-sandbox", STUDIO_ROOT], env=os.environ.copy())
+            time.sleep(1.2)
+            if proc.poll() is None:
+                # Electron is running steadily
+                proc.wait()
+                return
+            elif proc.returncode == 0:
+                return
+            # Non-zero returncode means crash/exit early
         except Exception:
             pass
 
@@ -192,31 +199,20 @@ def launch_gui(port):
     except Exception:
         pass
 
-    # 3. Fallback to Chromium standalone app window mode
-    if subprocess.run(["which", "chromium"], capture_output=True).returncode == 0:
-        subprocess.run([
-            "chromium",
-            f"--app={studio_url}",
-            "--start-maximized",
-            "--class=zoth-studio",
-            "--disable-extensions",
-            "--disable-default-apps",
-            "--enable-gpu-rasterization",
-            "--enable-zero-copy"
-        ])
-    elif subprocess.run(["which", "google-chrome"], capture_output=True).returncode == 0:
-        subprocess.run([
-            "google-chrome",
-            f"--app={studio_url}",
-            "--start-maximized",
-            "--class=zoth-studio"
-        ])
-    elif subprocess.run(["which", "firefox-esr"], capture_output=True).returncode == 0:
-        subprocess.run(["firefox-esr", "--new-window", studio_url])
-    elif subprocess.run(["which", "firefox"], capture_output=True).returncode == 0:
-        subprocess.run(["firefox", "--new-window", studio_url])
-    else:
-        subprocess.run(["xdg-open", studio_url])
+    # 3. Dedicated application window mode fallback (Chrome / Chromium / Firefox)
+    browser_commands = [
+        ["google-chrome-stable", "--no-sandbox", f"--app={studio_url}", "--start-maximized", "--class=zoth-studio"],
+        ["google-chrome", "--no-sandbox", f"--app={studio_url}", "--start-maximized", "--class=zoth-studio"],
+        ["chromium", "--no-sandbox", f"--app={studio_url}", "--start-maximized", "--class=zoth-studio", "--disable-extensions", "--disable-default-apps"],
+        ["firefox-esr", "--new-window", studio_url],
+        ["firefox", "--new-window", studio_url],
+    ]
+    for b_cmd in browser_commands:
+        if subprocess.run(["which", b_cmd[0]], capture_output=True).returncode == 0:
+            subprocess.run(b_cmd)
+            return
+
+    subprocess.run(["xdg-open", studio_url])
 
 
 def main():
