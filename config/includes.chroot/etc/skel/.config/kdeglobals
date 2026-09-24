@@ -33,11 +33,23 @@ BackgroundAlternate=218,165,32
 ForegroundNormal=5,7,10
 ForegroundActive=255,255,255
 DecorationFocus=255,215,0
-DecorationHover=255,215,0
-
 [Colors:Tooltip]
-BackgroundNormal=6,9,14
+BackgroundNormal=6,8,12
 ForegroundNormal=255,215,0
+
+[Colors:Complementary]
+BackgroundNormal=8,10,14
+BackgroundAlternate=16,20,28
+ForegroundNormal=241,245,249
+ForegroundInactive=136,153,170
+ForegroundActive=255,215,0
+ForegroundLink=255,215,0
+ForegroundNegative=239,68,68
+ForegroundNeutral=245,158,11
+ForegroundPositive=16,185,129
+ForegroundVisited=255,200,50
+DecorationFocus=255,215,0
+DecorationHover=255,225,80
 
 [WM]
 activeBackground=255,215,0

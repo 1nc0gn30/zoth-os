@@ -46,3 +46,6 @@ TitlebarFont=JetBrains Mono,10,-1,5,75,0,0,0,0,0
 [WM]
 activeBackground=255,215,0
 activeBlend=218,165,32
+activeForeground=8,10,14
+inactiveBackground=14,18,26
+inactiveForeground=136,153,170

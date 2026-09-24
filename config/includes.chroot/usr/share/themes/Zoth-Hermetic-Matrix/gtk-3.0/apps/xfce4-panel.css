@@ -28,42 +28,52 @@ PanelWidget,
 
 .xfce4-panel .wnck-pager button:hover,
 .xfce4-panel .pager-button:hover {
-    background:   rgba(0, 255, 157, 0.12);
-    border-color: rgba(0, 255, 157, 0.55);
-    color:        #00ff9d;
-    box-shadow:   0 0 10px rgba(0, 255, 157, 0.3);
+    background:   rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.65);
+    color:        #ffd700;
+    box-shadow:   0 0 12px rgba(255, 215, 0, 0.35);
 }
 
 .xfce4-panel .wnck-pager button:checked,
 .xfce4-panel .pager-button:checked,
 .xfce4-panel .wnck-pager button.active {
-    background:   linear-gradient(135deg, rgba(0,255,157,0.25), rgba(0,229,255,0.12));
-    border-color: #00ff9d;
-    color:        #00ff9d;
-    box-shadow:   0 0 16px rgba(0, 255, 157, 0.4), inset 0 1px 0 rgba(0,255,157,0.2);
+    background:   linear-gradient(135deg, rgba(255, 215, 0, 0.30), rgba(245, 158, 11, 0.15));
+    border-color: #ffd700;
+    color:        #ffd700;
+    box-shadow:   0 0 18px rgba(255, 215, 0, 0.5), inset 0 1px 0 rgba(255, 215, 0, 0.3);
 }
 
 /* ── Whisker Menu / App launcher button ───────────────────────────────────── */
 .xfce4-panel #whiskermenu-button,
 .xfce4-panel .whiskermenu-button,
 .xfce4-panel button#applications-menu {
-    background:   rgba(0, 255, 157, 0.08);
-    border:       1px solid rgba(0, 255, 157, 0.25);
+    background:   linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(245, 158, 11, 0.05));
+    border:       1px solid rgba(255, 215, 0, 0.35);
     border-radius: 8px;
-    color:        #00ff9d;
+    color:        #ffd700;
     font-family:  "JetBrains Mono", monospace;
     font-weight:  800;
     font-size:    10pt;
     padding:      4px 12px;
     letter-spacing: 0.08em;
     margin:       3px 4px;
-    transition:   all 140ms ease;
+    transition:   all 150ms ease;
+    box-shadow:   0 0 10px rgba(255, 215, 0, 0.15);
 }
 
 .xfce4-panel #whiskermenu-button:hover {
-    background:  rgba(0, 255, 157, 0.18);
-    border-color: #00ff9d;
-    box-shadow:  0 0 18px rgba(0, 255, 157, 0.4);
+    background:  linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(245, 158, 11, 0.15));
+    border-color: #ffd700;
+    color:       #ffffff;
+    box-shadow:  0 0 20px rgba(255, 215, 0, 0.65), inset 0 0 8px rgba(255, 215, 0, 0.2);
+    transform:   scale(1.03);
+}
+
+.xfce4-panel #whiskermenu-button:active {
+    background:  rgba(255, 215, 0, 0.50);
+    border:      2px solid #ffffff;
+    box-shadow:  0 0 30px rgba(255, 215, 0, 0.95), inset 0 0 15px rgba(255, 215, 0, 0.5);
+    transform:   scale(0.95);
 }
 
 /* ── Panel clock ──────────────────────────────────────────────────────────── */
@@ -90,17 +100,19 @@ PanelWidget,
 }
 
 .xfce4-panel .tasklist-widget button:hover {
-    background:  rgba(0, 255, 157, 0.10);
-    border-color: rgba(0, 255, 157, 0.35);
-    color:       #f1f5f9;
+    background:  rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.45);
+    color:       #ffffff;
+    box-shadow:  0 0 12px rgba(255, 215, 0, 0.35);
 }
 
 .xfce4-panel .tasklist-widget button:checked,
 .xfce4-panel .tasklist-widget button.active {
-    background:  linear-gradient(180deg, rgba(0,255,157,0.15), rgba(0,255,157,0.05));
-    border-color: rgba(0, 255, 157, 0.5);
-    border-bottom-color: #00ff9d;
-    color:       #00ff9d;
+    background:  linear-gradient(180deg, rgba(255, 215, 0, 0.22), rgba(245, 158, 11, 0.08));
+    border-color: rgba(255, 215, 0, 0.6);
+    border-bottom-color: #ffd700;
+    color:       #ffd700;
+    box-shadow:  0 0 15px rgba(255, 215, 0, 0.4);
 }
 
 /* ── System tray icons ────────────────────────────────────────────────────── */
