@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Netlify CLI
+GenericName=Serverless & Edge Deployment
+Comment=Develop, build, test, and deploy projects to Netlify
+Exec=konsole -p tabtitle='Netlify CLI' -e 'bash -c "netlify --help; echo; exec bash"'
+Icon=/usr/share/pixmaps/zoth-web3.png
+Terminal=false
+Categories=Development;Cloud;
+Keywords=netlify;deploy;serverless;functions;cli;
+StartupNotify=true
