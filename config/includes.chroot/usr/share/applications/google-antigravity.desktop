@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Google Antigravity Agent
+Comment=Google Antigravity SDK & Autonomous Agent Harness
+Exec=konsole -p tabtitle='Google Antigravity CLI' -e 'antigravity'
+Icon=/usr/share/pixmaps/zoth-ai.png
+Terminal=false
+Categories=Development;AI;
+Keywords=google;antigravity;agy;agent;sdk;ai;
+MimeType=application/x-antigravity;
+StartupNotify=true

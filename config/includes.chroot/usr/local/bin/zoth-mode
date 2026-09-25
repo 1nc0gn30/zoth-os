@@ -1,19 +1,12 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  🜂 ZOTHOS REALITY SWITCHER v6.0 — SOVEREIGN MULTI-REALITY ENGINE 🜄
+#  🜂 ZOTHOS REALITY SWITCHER v6.5 — SOVEREIGN MULTI-REALITY ENGINE 🜄
 # ==============================================================================
 #  Shifts the complete operating system sensory environment across 4 Realities:
 #    1. Azoth Gold Sanctum (24K Solar Gold · Radiant Alchemical Glass)
 #    2. Hermetic Matrix    (Phosphor Emerald · Digital Rain · Hacker Monospace)
 #    3. NullAI Ghostmode   (Spectral Cyan & Violet · Tor Cloaked · Amnesic Stealth)
 #    4. Incognito Win11    (Corporate Chameleon · Windows 11 Fluent Disguise)
-#
-#  Features:
-#    - Native KDE Plasma 6 & 5 live wallpaper, color scheme, desktop theme & font sync
-#    - Multi-monitor DBus wallpaper broadcast & persistent config write
-#    - Live font switching (JetBrains Mono for Matrix, Inter for Gold/Ghost, Noto Sans for Win11)
-#    - Synthesized audio transmutations & desktop notification badges
-#    - GTK3/4, XFCE & Picom compositor multi-backend synchronization
 # ==============================================================================
 
 set -euo pipefail
@@ -53,6 +46,9 @@ set_wallpaper() {
             d.wallpaperPlugin = 'org.kde.image';
             d.currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];
             d.writeConfig('Image', 'file://${wp}');
+            if (typeof d.reloadConfig === 'function') {
+                d.reloadConfig();
+            }
         }
         " 2>/dev/null || true
     fi
@@ -86,17 +82,32 @@ set_theme() {
     local color_scheme="$1"
     local desktop_theme="$2"
     local icon_theme="$3"
-    local font_family="$4"
+    local cursor_theme="$4"
+    local font_family="$5"
+    local konsole_scheme="$6"
 
     # 1. KDE Color Scheme
     if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
         plasma-apply-colorscheme "$color_scheme" 2>/dev/null || true
     fi
+
+    # 2. KDE Plasma Desktop Theme (Plasma Style)
+    if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
+        plasma-apply-desktoptheme "$desktop_theme" 2>/dev/null || true
+    fi
+
+    # 3. Cursor Theme
+    if command -v plasma-apply-cursortheme >/dev/null 2>&1; then
+        plasma-apply-cursortheme "$cursor_theme" 2>/dev/null || true
+    fi
+
+    # 4. Direct KDE Configuration Writes
     for kwrite in kwriteconfig6 kwriteconfig5; do
         if command -v "$kwrite" >/dev/null 2>&1; then
             "$kwrite" --file kdeglobals --group General --key ColorScheme "$color_scheme" 2>/dev/null || true
             "$kwrite" --file plasmarc --group Theme --key name "$desktop_theme" 2>/dev/null || true
             "$kwrite" --file kdeglobals --group Icons --key Theme "$icon_theme" 2>/dev/null || true
+            "$kwrite" --file kcminputrc --group Mouse --key cursorTheme "$cursor_theme" 2>/dev/null || true
             
             # Font switching
             "$kwrite" --file kdeglobals --group General --key font "$font_family,10,-1,5,50,0,0,0,0,0" 2>/dev/null || true
@@ -106,24 +117,39 @@ set_theme() {
         fi
     done
 
-    # 2. KDE Plasma Desktop Theme (Plasma Style)
-    if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
-        plasma-apply-desktoptheme "$desktop_theme" 2>/dev/null || true
-    fi
+    # 5. Konsole Terminal Profile Synchronization
+    mkdir -p "$HOME/.local/share/konsole"
+    local konsole_profile="$HOME/.local/share/konsole/ZothProfile.profile"
+    cat << KCONF > "$konsole_profile"
+[Appearance]
+ColorScheme=${konsole_scheme}
+Font=${font_family},11,-1,5,50,0,0,0,0,0
 
-    # 3. KWin window decoration refresh
+[General]
+Name=ZothProfile
+Parent=FALLBACK/
+KCONF
+
+    for kwrite in kwriteconfig6 kwriteconfig5; do
+        if command -v "$kwrite" >/dev/null 2>&1; then
+            "$kwrite" --file konsolerc --group "Desktop Entry" --key DefaultProfile "ZothProfile.profile" 2>/dev/null || true
+        fi
+    done
+
+    # 6. KWin & Plasma Live Refresh
     if command -v qdbus >/dev/null 2>&1; then
         qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
         qdbus org.kde.plasmashell /PlasmaShell evaluateScript "reloadConfig();" 2>/dev/null || true
     fi
 
-    # 4. GTK & GSettings synchronization
+    # 7. GTK & GSettings synchronization
     if command -v gsettings >/dev/null 2>&1; then
         gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface cursor-theme "$cursor_theme" 2>/dev/null || true
         gsettings set org.gnome.desktop.interface font-name "$font_family 10" 2>/dev/null || true
     fi
 
-    # 5. XFCE desktop synchronization
+    # 8. XFCE desktop synchronization
     if command -v xfconf-query >/dev/null 2>&1; then
         xfconf-query -c xsettings -p /Net/IconThemeName -s "$icon_theme" 2>/dev/null || true
         xfconf-query -c xsettings -p /Gtk/FontName -s "$font_family 10" 2>/dev/null || true
@@ -155,16 +181,16 @@ notify_transition() {
 }
 
 # ── Reality Manifest Database ────────────────────────────────────────────────
-# Format: Name | Description | Icon | Wallpaper | ColorScheme | DesktopTheme | IconTheme | Font | Sound
+# Format: Name | Description | Icon | Wallpaper | ColorScheme | DesktopTheme | IconTheme | CursorTheme | Font | KonsoleScheme | Sound
 declare -A MODES
 MODES=(
-    ["gold"]="Azoth Gold Sanctum|24K solar gold alchemical reality active with radiant glassmorphism|/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-studio.png|/usr/share/backgrounds/zothos/zoth-gold-master.png|ZothAzothGold|Zoth-Gold|Zoth-Hermetic|Inter|gold-sanctum.wav"
+    ["gold"]="Azoth Gold Sanctum|24K solar gold alchemical reality active with radiant glassmorphism|/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-studio.png|/usr/share/backgrounds/zothos/zoth-gold-master.png|ZothHermeticGold|Zoth-Gold|Zoth-Hermetic|Zoth-Gold-Cursors|Inter|Zoth-Gold|gold-sanctum.wav"
 
-    ["matrix"]="Hermetic Matrix Reality|Phosphor emerald matrix engaged: digital rain & monospace cyber grid|/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-tool-nexus.png|/usr/share/backgrounds/zothos/hermetic-matrix.png|ZothHermeticMatrix|Zoth-Matrix|Zoth-Hermetic|JetBrains Mono|matrix-chirp.wav"
+    ["matrix"]="Hermetic Matrix Reality|Phosphor emerald matrix engaged: digital rain & monospace cyber grid|/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-tool-nexus.png|/usr/share/backgrounds/zothos/hermetic-matrix.png|ZothHermeticMatrix|Zoth-Matrix|Zoth-Hermetic-Matrix|Zoth-Hermetic-Matrix|JetBrains Mono|Zoth-Matrix|matrix-chirp.wav"
 
-    ["ghost"]="NullAI Ghostmode Stealth|Tor routed, MAC spoofed, amnesic RAM, and spectral cyber mist|/usr/share/icons/Zoth-Hermetic/256x256/apps/nullai-ghostmode.png|/usr/share/backgrounds/zothos/ghostmode-nullai.png|ZothGhostNullAI|Zoth-Ghost|Zoth-Hermetic|Inter|ghost-vapor.wav"
+    ["ghost"]="NullAI Ghostmode Stealth|Tor routed, MAC spoofed, amnesic RAM, and spectral cyber mist|/usr/share/icons/Zoth-Hermetic/256x256/apps/nullai-ghostmode.png|/usr/share/backgrounds/zothos/ghostmode-nullai.png|ZothGhostNullAI|Zoth-Ghost|Zoth-Ghost-NullAI|Zoth-Ghost-NullAI|Inter|Zoth-Ghost|ghost-vapor.wav"
 
-    ["win11"]="Incognito Windows 11|Corporate disguise engaged: Windows 11 Fluent dark mica & blue bloom|/usr/share/icons/breeze-dark/places/32/distributor-logo.svg|/usr/share/backgrounds/zothos/win11-bloom.jpg|ZothIncognitoWin11|Zoth-Win11|breeze-dark|Noto Sans|win11-fluent.wav"
+    ["win11"]="Incognito Windows 11|Corporate disguise engaged: Windows 11 Fluent dark mica & blue bloom|/usr/share/icons/breeze-dark/places/32/distributor-logo.svg|/usr/share/backgrounds/zothos/win11-bloom.jpg|ZothIncognitoWin11|Zoth-Win11|breeze-dark|breeze_cursors|Noto Sans|Zoth-Win11|win11-fluent.wav"
 )
 
 get_current_mode() {
@@ -193,15 +219,15 @@ apply_mode() {
         return 1
     fi
 
-    IFS='|' read -r mode_name notify_msg icon wallpaper color_scheme desktop_theme icon_theme font_family sound_file <<< "$mode_data"
+    IFS='|' read -r mode_name notify_msg icon wallpaper color_scheme desktop_theme icon_theme cursor_theme font_family konsole_scheme sound_file <<< "$mode_data"
 
     echo -e "${BOLD}${GOLD}[🜂] Transmuting Reality to ${mode_name}...${RESET}"
 
     # 1. Update Wallpaper
     set_wallpaper "$wallpaper"
 
-    # 2. Update Color Scheme, Desktop Theme, Icons, and Fonts
-    set_theme "$color_scheme" "$desktop_theme" "$icon_theme" "$font_family"
+    # 2. Update Color Scheme, Desktop Theme, Icons, Cursors, Fonts, and Konsole
+    set_theme "$color_scheme" "$desktop_theme" "$icon_theme" "$cursor_theme" "$font_family" "$konsole_scheme"
 
     # 3. Audio & Notification Feedback
     play_transition_sound "$sound_file"
@@ -226,7 +252,7 @@ interactive_menu() {
         local cur_name="${cur_data%%|*}"
 
         echo -e "${GOLD}${BOLD}═══════════════════════════════════════════════════════════════════════════════════${RESET}"
-        echo -e "${GOLD}${BOLD}                       🜂 ZOTHOS REALITY SWITCHER v6.0 🜄${RESET}"
+        echo -e "${GOLD}${BOLD}                       🜂 ZOTHOS REALITY SWITCHER v6.5 🜄${RESET}"
         echo -e "${CYAN}               Active Reality Surface: ${BOLD}${GOLD}${cur_name^^}${RESET}"
         echo -e "${GOLD}${BOLD}═══════════════════════════════════════════════════════════════════════════════════${RESET}"
         echo ""
@@ -251,8 +277,29 @@ interactive_menu() {
     done
 }
 
-if [[ $# -eq 0 ]]; then
-    interactive_menu
-else
-    apply_mode "$1"
-fi
+main() {
+    if [[ $# -eq 0 ]]; then
+        interactive_menu
+    else
+        case "$1" in
+            current|status)
+                local cur=$(get_current_mode)
+                local cur_data="${MODES[$cur]:-${MODES[gold]}}"
+                local cur_name="${cur_data%%|*}"
+                echo "$cur_name ($cur)"
+                ;;
+            menu|gui|ui)
+                if [[ -x /usr/local/bin/zoth-reality ]]; then
+                    exec /usr/local/bin/zoth-reality
+                else
+                    interactive_menu
+                fi
+                ;;
+            *)
+                apply_mode "$1"
+                ;;
+        esac
+    fi
+}
+
+main "$@"
