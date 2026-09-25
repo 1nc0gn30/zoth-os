@@ -14,7 +14,7 @@ wallpaperplugin=org.kde.image
 url=desktop:/
 
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/backgrounds/zothos/hermetic-matrix.png
+Image=file:///usr/share/backgrounds/zothos/zothos-celtic-dark.png
 
 [Containments][2]
 activityId=

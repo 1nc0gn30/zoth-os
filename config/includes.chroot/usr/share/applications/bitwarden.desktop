@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Bitwarden CLI & Vault
+Name=Bitwarden Vault
 GenericName=Password & Secrets Manager
-Comment=Access and manage your Bitwarden vault from the terminal
-Exec=konsole -p tabtitle= 'Bitwarden Vault' -e 'bash -c "bw --help; echo; exec bash"'
-Icon=bitwarden
+Comment=Access and manage your Bitwarden vault
+Exec=konsole -p tabtitle='Bitwarden Vault' -e 'bash -c "bw --help; echo; exec bash"'
+Icon=/usr/share/pixmaps/bitwarden.png
 Terminal=false
 Categories=Utility;Security;
 StartupNotify=true

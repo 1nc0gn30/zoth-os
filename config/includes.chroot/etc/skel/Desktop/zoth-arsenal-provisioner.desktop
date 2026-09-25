@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Arsenal Provisioner
-GenericName=Kali, Parrot & Extras Installer
+Name=Install Kali, Parrot Name=Zoth Arsenal Provisioner Zoth Hub
+GenericName=Kali, Parrot GenericName=Kali, Parrot & Extras Installer Zoth Extra Tools Hub
 Comment=One-click installation and configuration of Kali Cyber Arsenal, Parrot Privacy, and Zoth Dev Extras
 Exec=/usr/local/bin/zoth-tools-installer
 Icon=/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-tool-nexus.png

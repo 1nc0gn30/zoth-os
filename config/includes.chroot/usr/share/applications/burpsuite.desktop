@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Burp Suite Community
+GenericName=Web Security Assessment
+Comment=Interactive HTTP/HTTPS penetration testing proxy and scanner
+Exec=/usr/bin/burpsuite
+Icon=/usr/share/icons/hicolor/256x256/apps/burpsuite.png
+Terminal=false
+Categories=Network;Security;
+StartupNotify=true

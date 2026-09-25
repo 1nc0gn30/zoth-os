@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Streamlit Studio
+GenericName=Data & ML App Framework
+Comment=Build and turn data scripts into shareable web apps
+Exec=konsole -p tabtitle='Streamlit CLI' -e 'bash -c "streamlit hello; exec bash"'
+Icon=/usr/share/pixmaps/zoth-ai.png
+Terminal=false
+Categories=Development;Education;
+StartupNotify=true
