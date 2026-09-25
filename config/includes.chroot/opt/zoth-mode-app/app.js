@@ -68,10 +68,10 @@ ipcRenderer.on('live-wallpaper-status', (event, isActive) => {
   btn.textContent = isActive ? 'STOP 3D WALLPAPER' : 'START 3D WALLPAPER';
 });
 
-// Keyboard shortcuts (1, 2, 3, 4)
+// Keyboard shortcuts (1: Gold, 2: Matrix, 3: Ghost, 4: Win11)
 window.addEventListener('keydown', (e) => {
-  if (e.key === '1') window.triggerSwitch('matrix');
-  if (e.key === '2') window.triggerSwitch('ghost');
-  if (e.key === '3') window.triggerSwitch('gold');
+  if (e.key === '1') window.triggerSwitch('gold');
+  if (e.key === '2') window.triggerSwitch('matrix');
+  if (e.key === '3') window.triggerSwitch('ghost');
   if (e.key === '4') window.triggerSwitch('win11');
 });

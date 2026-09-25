@@ -33,26 +33,29 @@
 
 ---
 
-## ✦ The Three Realities (Desktop Modes)
+## ✦ The Four Operating Realities (Sub-Second Reality Switcher)
 
-ZOTHOS allows instant switching between three distinct operating realities with no logout or reboot required:
+ZOTHOS allows instant switching between four distinct operating realities with no logout or reboot required:
 
 ```mermaid
-flowchart LR
-    A["ZOTHOS Reality Engine"] -->|zoth-mode matrix| B("Hermetic Gold / Matrix")
-    A -->|zoth-mode ghost| C("Ghostmode nullai.tech")
-    A -->|zoth-mode incognito| D("Windows 11 Chameleon")
+flowchart TD
+    A["ZOTHOS Reality Engine (zoth-mode / zoth-reality)"] -->|zoth-mode gold| B["1. 🜂 Gold Reality (Alchemical Sanctum)"]
+    A -->|zoth-mode matrix| C["2. 🜄 Matrix Reality (Phosphor Rain)"]
+    A -->|zoth-mode ghost| D["3. 🜁 Ghost Reality (nullai.tech Amnesic)"]
+    A -->|zoth-mode win11| E["4. 🜃 Windows Reality (Fluent Chameleon)"]
     
-    B --> E["24K Gold Medallions, Obsidian Glass, Digital Rain, Cyberpunk Konsole"]
-    C --> F["Torified Traffic, MAC-Cloaked, Amnesic RAM, Pure Obsidian Stealth"]
-    D --> G["Fluent Taskbar, Windows 11 Bloom, Decoy PowerShell, Enterprise Guise"]
+    B --> F["Master Seal Wallpaper, Inter/Celtic Garamond, 24K Solar Gold #FFD700, Sanctum Chime"]
+    C --> G["Digital Rain & Perspective Grid, JetBrains Mono, Emerald Neon #00FF9D, Cyber Chirp"]
+    D --> H["Midnight Radar HUD Mist, Tactical Monospace, Spectral Cyan #00F0FF & Violet #A855F7, Torified"]
+    E --> I["Fluent Dark Mica Bloom, Noto Sans/Segoe UI, Enterprise Blue #0078D4, Windows Decoy"]
 ```
 
-| Reality | CLI Command | Visual Aesthetic | Operational State |
-| :--- | :--- | :--- | :--- |
-| **Hermetic Gold / Matrix** | `zoth-mode matrix` | 24K Gold `#ffd700` on Obsidian `#0b0f10`, Glass borders | Default sovereign workspace, full tool access, fastfetch status |
-| **Ghostmode** | `zoth-mode ghost` | Pitch Black `#000000`, dimmed slate `#94a3b8`, crimson accents | Transparent Tor routing, MAC scrambling, hostname rotation, memory drop caches |
-| **Incognito** | `zoth-mode incognito` | Windows 11 Fluent dark/light, `#0078d4` blue, Bloom backdrop | Windows 11 taskbar, fake PowerShell profile, corporate enterprise disguise |
+| Reality | CLI Command | Wallpaper Asset | Font & Color Accents | Operational Invariants |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Gold (Alchemical Sanctum)** | `zoth-mode gold` | `zoth-gold-master.png` | Inter / Celtic Garamond<br/>Solar Gold `#FFD700`, Dark Obsidian `#080A0E` | Default sovereign workspace, full tool access, Fastfetch hermetic seal status, `gold-sanctum.wav` audio cue |
+| **2. Matrix (Phosphor Rain)** | `zoth-mode matrix` | `hermetic-matrix.png` | JetBrains Mono (Hacker Mono)<br/>Phosphor Emerald `#00FF9D`, Void Panels `#020603` | Cyberpunk terminal workstation, active digital rain, low-latency development, `matrix-chirp.wav` audio cue |
+| **3. Ghost (Amnesic Stealth)** | `zoth-mode ghost` | `ghostmode-nullai.png` | JetBrains Mono / Slate<br/>Spectral Cyan `#00F0FF` & Violet `#A855F7` | Transparent Tor network routing, MAC randomization, machine hostname cloaking, RAM cache drop, `ghost-vapor.wav` audio cue |
+| **4. Windows (Fluent Chameleon)** | `zoth-mode win11` | `win11-bloom.jpg` | Noto Sans / Segoe UI<br/>Windows Blue `#0078D4`, Dark Mica `#202020` | Windows 11 Fluent layout, decoy PowerShell profile, enterprise corporate disguise for physical OPSEC, `win11-fluent.wav` audio cue |
 
 ---
 
@@ -87,6 +90,7 @@ flowchart LR
 - **`macchanger` & `firejail`**: Hardware identity cloaking and application sandboxing.
 
 ### 4. Frontier AI & Autonomous Agent Forge
+- **[Zoth Studio v2](https://github.com/NullAITech/zoth-studio-v2)** (`/opt/zoth-studio`): Zero-egress sovereign agent development studio featuring 37 native workstations, 25 in-browser WebGPU developer utilities, Lucy Netrunner Oracle with biomorphic STDP synaptic memory, tri-agent Byzantine consensus arena, and responsive WindowCarousel interfaces.
 - **[NullAI HexStrike AI Terminal](https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal)**: Sovereign cybersecurity workstation with neural MITRE ATT&CK mapping, async FastAPI core, and retro CRT shader UI.
 - **`hermes`**: [Nous Research Hermes Agent](https://github.com/NousResearch/Hermes-Agent) autonomous agent and skill ecosystem.
 - **`ollama` & `vllm`**: High-throughput local LLM execution on CPU and NVIDIA/AMD GPUs.

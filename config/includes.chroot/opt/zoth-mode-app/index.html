@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zoth Reality Switcher</title>
+  <title>ZOTH REALITY SWITCHER // MULTI-SURFACE COMPOSITOR</title>
   <style>
     :root {
-      --bg: #06090e;
-      --card-bg: rgba(15, 23, 36, 0.7);
-      --border: rgba(255, 255, 255, 0.1);
-      --text: #f1f5f9;
+      --bg: #04070c;
+      --card-bg: rgba(11, 16, 26, 0.88);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f0f6fc;
       --text-dim: #94a3b8;
       --green: #00ff9d;
-      --cyan: #00e5ff;
+      --cyan: #00f0ff;
+      --purple: #a855f7;
       --gold: #ffd700;
-      --win: #3b82f6;
+      --win: #0078d4;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'JetBrains Mono', 'Segoe UI', monospace;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Segoe UI', monospace;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -29,20 +30,20 @@
     }
     header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
     h1 {
-      font-size: 20px;
-      font-weight: 800;
+      font-size: 19px;
+      font-weight: 900;
       letter-spacing: 3px;
       color: var(--gold);
-      text-shadow: 0 0 14px rgba(255, 215, 0, 0.4);
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.45);
     }
     p {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-dim);
-      margin-top: 4px;
-      letter-spacing: 1px;
+      margin-top: 5px;
+      letter-spacing: 1.2px;
     }
     .grid {
       flex: 1;
@@ -53,51 +54,94 @@
     .reality-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: 10px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     }
     .reality-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      opacity: 0.1;
+      opacity: 0.12;
       pointer-events: none;
       transition: opacity 0.3s;
     }
-    .reality-card.matrix::before { background: radial-gradient(circle at top right, var(--green), transparent 70%); }
-    .reality-card.ghost::before { background: radial-gradient(circle at top right, #ff4757, transparent 70%); }
     .reality-card.gold::before { background: radial-gradient(circle at top right, var(--gold), transparent 70%); }
+    .reality-card.matrix::before { background: radial-gradient(circle at top right, var(--green), transparent 70%); }
+    .reality-card.ghost::before { background: radial-gradient(circle at top right, var(--cyan), var(--purple) 70%, transparent); }
     .reality-card.win11::before { background: radial-gradient(circle at top right, var(--win), transparent 70%); }
 
     .reality-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
     }
     .reality-card.active {
       border-width: 2px;
     }
-    .reality-card.matrix.active { border-color: var(--green); box-shadow: 0 0 20px rgba(0, 255, 157, 0.3); }
-    .reality-card.ghost.active { border-color: #ff4757; box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); }
-    .reality-card.gold.active { border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-    .reality-card.win11.active { border-color: var(--win); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    .reality-card.gold.active { border-color: var(--gold); box-shadow: 0 0 24px rgba(255, 215, 0, 0.35); }
+    .reality-card.matrix.active { border-color: var(--green); box-shadow: 0 0 24px rgba(0, 255, 157, 0.35); }
+    .reality-card.ghost.active { border-color: var(--cyan); box-shadow: 0 0 24px rgba(0, 240, 255, 0.35); }
+    .reality-card.win11.active { border-color: var(--win); box-shadow: 0 0 24px rgba(0, 120, 212, 0.35); }
 
-    .card-icon { font-size: 32px; margin-bottom: 8px; }
-    .card-title { font-size: 15px; font-weight: 800; letter-spacing: 1.5px; }
-    .card-desc { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.4; }
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .card-icon {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid currentColor;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+    .card-subtitle {
+      font-size: 9.5px;
+      letter-spacing: 0.8px;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+    .card-desc {
+      font-size: 10.5px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .preview-pill {
+      font-size: 9px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      display: inline-block;
+      margin-bottom: 12px;
+    }
     .card-status {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 10px;
       font-size: 9.5px;
-      font-weight: 700;
+      font-weight: 800;
     }
     .btn-apply {
       background: rgba(255, 255, 255, 0.08);
@@ -106,83 +150,104 @@
       border-radius: 4px;
       color: inherit;
       font-family: inherit;
-      font-size: 10px;
-      font-weight: 700;
+      font-size: 9.5px;
+      font-weight: 800;
       cursor: pointer;
       transition: all 0.2s;
     }
     .btn-apply:hover {
       background: currentColor;
       color: #000;
+      box-shadow: 0 0 12px currentColor;
     }
     footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 18px;
-      padding-top: 14px;
+      margin-top: 16px;
+      padding-top: 12px;
       border-top: 1px solid var(--border);
-    }
-    .toggle-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 11px;
+      font-size: 10px;
+      color: var(--text-dim);
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>REALITY TRANSMUTATION CHAMBER</h1>
-    <p>TRANSMUTE DESKTOP ENVIRONMENT // WALLPAPERS, COMPOSITOR SHADERS & GTK SUITE</p>
+    <h1>🜂 ZOTHOS REALITY SWITCHER 🜄</h1>
+    <p>MULTI-SURFACE COMPOSITOR // WALLPAPERS, ICONS, FONTS, SENSORY AUDIO & RUNTIME PROFILES</p>
   </header>
 
   <div class="grid">
-    <!-- Matrix -->
-    <div id="card-matrix" class="reality-card matrix" style="color:var(--green);" onclick="triggerSwitch('matrix')">
+    <!-- Gold Sanctum -->
+    <div id="card-gold" class="reality-card gold" style="color:var(--gold);" onclick="triggerSwitch('gold')">
       <div>
-        <div class="card-icon">🌿</div>
-        <div class="card-title">HERMETIC MATRIX</div>
-        <div class="card-desc">Phosphor emerald digital rain, alchemical glyphs, high-contrast matrix monospace typography and scanline compositor glass.</div>
+        <div class="card-top">
+          <div class="card-icon">🜂</div>
+          <div>
+            <div class="card-title">AZOTH GOLD SANCTUM</div>
+            <div class="card-subtitle">24K SOLAR GOLD // ALCHEMICAL GLASS</div>
+          </div>
+        </div>
+        <div class="card-desc">Living tactile gold UI with embossed seal wallpaper, Inter typography, 3D golden icons, and harmonic solar bell acoustics.</div>
+        <div class="preview-pill">WALLPAPER: zoth-gold-master.png | FONT: Inter</div>
       </div>
       <div class="card-status">
-        <span id="badge-matrix">STANDBY</span>
+        <span id="badge-gold">● ACTIVE REALITY</span>
         <button class="btn-apply">TRANSMUTE [1]</button>
       </div>
     </div>
 
-    <!-- Ghostmode -->
-    <div id="card-ghost" class="reality-card ghost" style="color:#ff4757;" onclick="triggerSwitch('ghost')">
+    <!-- Hermetic Matrix -->
+    <div id="card-matrix" class="reality-card matrix" style="color:var(--green);" onclick="triggerSwitch('matrix')">
       <div>
-        <div class="card-icon">👻</div>
-        <div class="card-title">NULLAI GHOSTMODE</div>
-        <div class="card-desc">Deep obsidian void, stealth purple-crimson highlights, anti-forensics RAM flushing and transparent Tor network routing.</div>
+        <div class="card-top">
+          <div class="card-icon">☿</div>
+          <div>
+            <div class="card-title">HERMETIC MATRIX</div>
+            <div class="card-subtitle">EMERALD PHOSPHOR // DIGITAL RAIN</div>
+          </div>
+        </div>
+        <div class="card-desc">Phosphor green digital rain with Metatron cyber grid wallpaper, full JetBrains Mono hacker monospace OS font, and high-frequency data chirps.</div>
+        <div class="preview-pill">WALLPAPER: hermetic-matrix.png | FONT: JetBrains Mono</div>
       </div>
       <div class="card-status">
-        <span id="badge-ghost">STANDBY</span>
+        <span id="badge-matrix">STANDBY</span>
         <button class="btn-apply">TRANSMUTE [2]</button>
       </div>
     </div>
 
-    <!-- Gold -->
-    <div id="card-gold" class="reality-card gold" style="color:var(--gold);" onclick="triggerSwitch('gold')">
+    <!-- NullAI Ghostmode -->
+    <div id="card-ghost" class="reality-card ghost" style="color:var(--cyan);" onclick="triggerSwitch('ghost')">
       <div>
-        <div class="card-icon">👑</div>
-        <div class="card-title">AZOTH 24K GOLD</div>
-        <div class="card-desc">Sacred alchemical geometry, 24-karat gold specular reflections, regal sovereign styling and glowing gold compositor aura.</div>
+        <div class="card-top">
+          <div class="card-icon">👻</div>
+          <div>
+            <div class="card-title">NULLAI GHOSTMODE</div>
+            <div class="card-subtitle">SPECTRAL MIST // AMNESIC STEALTH</div>
+          </div>
+        </div>
+        <div class="card-desc">Obsidian dark glass with volumetric spectral cyan & violet mist, Tor-routed stealth telemetry, tactical viewfinder HUD, and vapor sub-bass.</div>
+        <div class="preview-pill">WALLPAPER: ghostmode-nullai.png | FONT: Inter</div>
       </div>
       <div class="card-status">
-        <span id="badge-gold">STANDBY</span>
+        <span id="badge-ghost">STANDBY</span>
         <button class="btn-apply">TRANSMUTE [3]</button>
       </div>
     </div>
 
-    <!-- Win11 -->
+    <!-- Incognito Win11 -->
     <div id="card-win11" class="reality-card win11" style="color:var(--win);" onclick="triggerSwitch('win11')">
       <div>
-        <div class="card-icon">🪟</div>
-        <div class="card-title">WINDOWS 11 INCOGNITO</div>
-        <div class="card-desc">Complete enterprise camouflage: Windows 11 bloom backdrop, disguised whisker start menu, and clean corporate theme for covert physical opsec.</div>
+        <div class="card-top">
+          <div class="card-icon">🪟</div>
+          <div>
+            <div class="card-title">INCOGNITO WINDOWS 11</div>
+            <div class="card-subtitle">CORPORATE CHAMELEON // FLUENT MICA</div>
+          </div>
+        </div>
+        <div class="card-desc">Windows 11 dark mica disguise with organic blue silk bloom wallpaper, fluent slate panels, standard system font, and subtle corporate chime.</div>
+        <div class="preview-pill">WALLPAPER: win11-bloom.jpg | FONT: Noto Sans</div>
       </div>
       <div class="card-status">
         <span id="badge-win11">STANDBY</span>
@@ -192,11 +257,8 @@
   </div>
 
   <footer>
-    <div class="toggle-bar">
-      <span>3D Interactive Live Wallpaper:</span>
-      <button id="btn-live-wp" class="btn-apply" style="color:var(--cyan); border-color:var(--cyan);" onclick="toggleLiveWallpaper()">TOGGLE 3D MATRIX RAIN</button>
-    </div>
-    <div style="font-size:10px; color:var(--text-dim);">SYSTEM: X11 / PICOM COMPOSITOR // ZERO REBOOT REQUIRED</div>
+    <span>ZothOS v1.0 • Reality Transmutation Engine</span>
+    <span>Shortcuts: Press [1] Gold, [2] Matrix, [3] Ghost, [4] Windows</span>
   </footer>
 
   <script src="app.js"></script>
