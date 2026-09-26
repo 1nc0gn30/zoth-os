@@ -13,7 +13,7 @@ This guide provides operational workflows, CLI syntax, key bindings, and system 
 | **Cadre I** | **Frontier AI & Autonomous Synthesis** | 1. Zoth Studio v2 & Updater<br/>2. Nous Research Hermes Agent<br/>3. NullAI HexStrike AI Terminal<br/>4. Claude Code CLI<br/>5. OpenCode & Codex CLI<br/>6. Ollama Local LLM Engine<br/>7. ComfyUI Diffusion Forge | `zoth-studio` / `zoth-update-studio`<br/>`hermes`<br/>`hexstrike`<br/>`claude`<br/>`opencode` / `codex`<br/>`ollama`<br/>`comfyui` |
 | **Cadre II** | **Active Directory & Enterprise Red Team** | 8. Certipy (AD CS Enumeration & Abuse)<br/>9. Kerbrute (Kerberos Pre-Auth Spraying)<br/>10. Coercer (RPC Authentication Coercion)<br/>11. PEASS-ng (linPEAS & winPEAS)<br/>12. BloodHound & Neo4j (Domain Graph)<br/>13. Impacket Protocol Suite | `certipy`<br/>`kerbrute`<br/>`coercer`<br/>`linpeas` / `winpeas`<br/>`bloodhound` / `neo4j`<br/>`impacket-*` |
 | **Cadre III** | **Attack Surface & Next-Gen Web Recon** | 14. Subfinder (OSINT Subdomain Discovery)<br/>15. HTTPX (Multi-Purpose Probe & Tech Detect)<br/>16. Katana (Next-Gen Headless Crawler)<br/>17. Nuclei (Rule-Based Vulnerability Scanner)<br/>18. TruffleHog (Verified Secret Auditor)<br/>19. GoWitness (Headless Web Screenshotting)<br/>20. Caido (Fast Rust Intercepting Web Proxy) | `subfinder`<br/>`httpx`<br/>`katana`<br/>`nuclei`<br/>`trufflehog`<br/>`gowitness`<br/>`caido` |
-| **Cadre IV** | **Sovereign OPSEC & Cryptographic Defense** | 21. Zoth Ghostmode (Tor + MAC + RAM Flush)<br/>22. Zoth NetKill (Panic Blackhole Switch)<br/>23. KeePassXC (Offline Encrypted Vault)<br/>24. VeraCrypt (Plausibly Deniable Volumes)<br/>25. OnionShare (Ephemeral Tor File/Chat) | `zoth-ghost` / `zoth-mode ghost`<br/>`zoth-netkill`<br/>`keepassxc`<br/>`veracrypt`<br/>`onionshare` |
+| **Cadre IV** | **Sovereign OPSEC & Cryptographic Defense** | 21. Zoth Ghostmode (Tor + MAC + RAM Flush)<br/>22. Zoth NetKill (Panic Blackhole Switch)<br/>23. KeePassXC (Offline Encrypted Vault)<br/>24. VeraCrypt (Plausibly Deniable Volumes)<br/>25. OnionShare (Ephemeral Tor File/Chat) | `zoth-ghost`<br/>`zoth-netkill`<br/>`keepassxc`<br/>`veracrypt`<br/>`onionshare` |
 | **Cadre V** | **Media, Audio & Terminal Mastery** | *Core:* Zoth Hermetic Audio Studio<br/>*Video:* Maya Linux Video Studio Pro<br/>*DevOps:* LazyGit & LazyDocker<br/>*Explorer:* Yazi Async File Manager<br/>*Network:* Doggo DNS & Trippy Diagnostic | `zoth-music`<br/>`maya`<br/>`lazygit` / `lazydocker`<br/>`yazi`<br/>`doggo` / `trip` |
 
 ---
@@ -234,7 +234,6 @@ zoth-ghost on
 zoth-ghost off
 
 # Or switch full desktop reality:
-zoth-mode ghost
 ```
 
 ### 22. Zoth NetKill Panic Switch
@@ -330,10 +329,6 @@ zoth-update-studio          # One-command upstream Git sync & Vite rebuild
 zoth-cockpit                # Headless system diagnostics & agent telemetry
 
 # 3. Reality Switcher
-zoth-mode gold              # 24K Alchemical Gold reality
-zoth-mode matrix            # Phosphor Emerald digital rain reality
-zoth-mode ghost             # Amnesic Tor stealth reality
-zoth-mode win11             # Windows 11 Fluent decoy reality
 
 # 4. Sovereign Package Provisioner
 zoth-pkg verify             # Audit 213+ Kali/Parrot tool availability

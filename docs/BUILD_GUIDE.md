@@ -55,7 +55,7 @@ sudo bash build/pack-iso.sh
 2. **Squashfs Compression**: Runs `lb binary_rootfs` to compress the chroot into `live/filesystem.squashfs` using high-ratio XZ compression.
 3. **Binary ISO Assembly**: Runs `lb binary_iso` to generate the UEFI and legacy BIOS hybrid ISO using `xorriso`.
 4. **Permissions Normalization**: Automatically changes ISO permissions to `0644` so regular users can mount or attach the ISO to QEMU/KVM.
-5. **Loopback Sanity Audit**: Temporarily mounts `filesystem.squashfs` on a loopback device to verify that critical binaries (e.g., `zoth-update-studio`, `zoth-studio`, `zoth-mode`, `zoth-pkg`) are present, executable, and free of corruption.
+5. **Loopback Sanity Audit**: Temporarily mounts `filesystem.squashfs` on a loopback device to verify that critical binaries (e.g., `zoth-update-studio`, `zoth-studio`, `zoth-pkg`) are present, executable, and free of corruption.
 
 Output image location:
 [`build/zothos-1.0-amd64.iso`](file://${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso) (~12 GB).
@@ -135,6 +135,5 @@ Once booted into the live environment:
 - [ ] Double-click `Zoth Studio v2` to verify local server startup and browser/container display.
 - [ ] Double-click `Zoth Update Studio` (or run `zoth-update-studio --check`) to verify Git sync functionality.
 - [ ] Launch `zoth-music` to verify Web Audio API spectrum analyzer and preloaded classical focus audio.
-- [ ] Test `zoth-mode ghost` and `zoth-mode win11` to verify reality switching and audio cues.
 - [ ] Run `zoth-pkg verify` to audit installed tools.
 - [ ] Launch Calamares installer (`install-zothos`) to verify disk partitioning and offline installation flow.

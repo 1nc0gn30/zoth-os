@@ -174,16 +174,7 @@ zoth-studio --update
 zoth-pkg update studio
 ```
 
-### 2. Reality Switcher (`zoth-mode`)
-Instantly switch the operational reality of the desktop without closing running tools or restarting the session:
-```bash
-zoth-mode gold     # 24K Alchemical Gold, Celtic wallpaper, sanctum chime
-zoth-mode matrix   # Phosphor Emerald, digital rain, hacker mono font
-zoth-mode ghost    # Amnesic Tor routing, MAC cloak, ephemeral memory scrub
-zoth-mode win11    # Windows 11 Fluent decoy, enterprise corporate camouflage
-```
-
-### 3. The 25 Sovereign Tools & 5 Cadres
+### 2. The 25 Sovereign Tools & 5 Cadres
 Rather than cluttering the desktop with non-functional shortcuts or superficial toys, ZOTHOS curates a battle-tested core of **25 Sovereign Tools across 5 strategic Cadres** (backed by the full 213+ Kali/Parrot package repository):
 
 | Cadre | Domain | Sovereign Tools | Key Commands |
@@ -228,7 +219,6 @@ Rather than cluttering the desktop with non-functional shortcuts or superficial 
 │   │       │   ├── zoth-cockpit            # Curses-based headless operational bridge
 │   │       │   ├── zoth-pkg                # Sovereign package provisioner (213+ tools)
 │   │       │   ├── zoth-tool-nexus         # Interactive 213+ tool manager
-│   │       │   ├── zoth-mode               # Plasma 6 Reality Switcher (gold|matrix|ghost|win11)
 │   │       │   ├── zoth-music              # Audio Studio launcher
 │   │       │   ├── zoth-ghost              # Anti-forensics & Tor transparent routing
 │   │       │   └── zoth-netkill            # Emergency network killswitch

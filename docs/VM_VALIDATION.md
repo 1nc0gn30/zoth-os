@@ -53,7 +53,7 @@ The validation suite provides 4 verification phases:
    - Verifies host-to-guest ICMP ping with zero packet loss.
 4. **Live VM Runtime Smoke Testing (SSH & Console)**:
    - Authenticates directly into the running guest.
-   - Confirms kernel version and core ZOTHOS commands (`zoth-studio`, `zoth-update-studio`, `zoth-cockpit`, `zoth-mode`, `zoth-pkg`, `zoth-music`, `zoth-ghost`).
+   - Confirms kernel version and core ZOTHOS commands (`zoth-studio`, `zoth-update-studio`, `zoth-cockpit`, `zoth-pkg`, `zoth-music`, `zoth-ghost`).
    - Checks active GUI processes (`sddm`, `kwin_wayland` or `kwin_x11`, `plasmashell`).
    - Verifies Zoth Studio installation in `/opt/zoth-studio` and local service on port 3000.
 
