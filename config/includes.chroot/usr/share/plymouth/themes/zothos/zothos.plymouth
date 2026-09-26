@@ -1,6 +1,6 @@
 [Plymouth Theme]
-Name=ZOTHOS Matrix Boot Splash
-Description=Hermetic Emerald Matrix & Golden Alchemical Seal Boot Splash for ZOTHOS
+Name=ZOTHOS Boot Splash
+Description=Golden Alchemical Seal Boot Splash for ZOTHOS
 ModuleName=script
 
 [script]
