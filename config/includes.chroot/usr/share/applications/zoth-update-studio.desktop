@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Update Zoth Studio
+Comment=Fetch latest updates and recompile Zoth Studio v2 static distribution
+Exec=konsole -p tabtitle="Updating Zoth Studio" -e "zoth-update-studio"
+Icon=/usr/share/pixmaps/zoth-studio.png
+Terminal=false
+Categories=Development;System;Settings;
+Keywords=zoth;studio;update;upgrade;git;build;npm;
+StartupNotify=true

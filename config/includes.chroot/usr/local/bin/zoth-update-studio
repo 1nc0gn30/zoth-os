@@ -1,0 +1,319 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  🜂 ZOTH STUDIO UPDATER // SOVEREIGN ENGINE SYNCHRONIZER 🜄
+# ==============================================================================
+#  One-command automated updater for Zoth Studio v2.
+#  Features:
+#    - Automatic studio installation discovery (/opt/zoth-studio, chroot, or custom)
+#    - Non-destructive git synchronization against origin/main
+#    - Offline-preferring npm dependency resolution & validation
+#    - Full static prerender build pipeline ('npm run build')
+#    - Verification of production assets (dist/index.html)
+#    - Desktop notification broadcast via DBus / notify-send
+#    - Flags: --check, --rebuild, --force, --branch <name>, --target <dir>
+# ==============================================================================
+
+set -euo pipefail
+
+# ANSI Palette
+GOLD="\033[38;2;255;215;0m"
+CYAN="\033[38;2;0;229;255m"
+GREEN="\033[38;2;0;255;157m"
+YELLOW="\033[38;2;255;204;0m"
+RED="\033[38;2;255;51;85m"
+GRAY="\033[38;2;120;140;160m"
+BOLD="\033[1m"
+DIM="\033[2m"
+RESET="\033[0m"
+
+REPO_REMOTE="https://github.com/NullAITech/zoth-studio-v2.git"
+DEFAULT_BRANCH="main"
+
+banner() {
+    echo -e "${GOLD}${BOLD}"
+    echo "  ███████╗ ██████╗ ████████╗██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ "
+    echo "  ╚══███╔╝██╔═══██╗╚══██╔══╝██║  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗"
+    echo "    ███╔╝ ██║   ██║   ██║   ███████║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║"
+    echo "   ███╔╝  ██║   ██║   ██║   ██╔══██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║"
+    echo "  ███████╗╚██████╔╝   ██║   ██║  ██║██╗ ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝"
+    echo "  ╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝ "
+    echo -e "       ${CYAN}[+] ZOTH STUDIO v2 SOVEREIGN UPDATER & BUILD PIPELINE [+]${RESET}\n"
+}
+
+usage() {
+    banner
+    echo -e "${BOLD}USAGE:${RESET}"
+    echo -e "  zoth-update-studio [OPTIONS]"
+    echo ""
+    echo -e "${BOLD}OPTIONS:${RESET}"
+    echo -e "  ${GOLD}--check${RESET}          Check for remote updates on GitHub without pulling or building"
+    echo -e "  ${GOLD}--rebuild${RESET}        Skip git pull; only reinstall dependencies and recompile dist/"
+    echo -e "  ${GOLD}--force${RESET}          Reset any local uncommitted changes and force pull latest origin/main"
+    echo -e "  ${GOLD}--branch <name>${RESET} Target a specific branch (defaults to 'main')"
+    echo -e "  ${GOLD}--target <path>${RESET} Specify explicit path to Zoth Studio installation directory"
+    echo -e "  ${GOLD}-h, --help${RESET}       Display this help manual"
+    echo ""
+    echo -e "${BOLD}EXAMPLES:${RESET}"
+    echo -e "  zoth-update-studio                ${GRAY}# Standard pull + rebuild${RESET}"
+    echo -e "  zoth-update-studio --check        ${GRAY}# Inspect upstream commits${RESET}"
+    echo -e "  zoth-update-studio --rebuild      ${GRAY}# Rebuild current local tree${RESET}"
+    echo ""
+}
+
+# ── Argument Parsing ─────────────────────────────────────────────────────────
+MODE="update"
+TARGET_BRANCH="$DEFAULT_BRANCH"
+CUSTOM_TARGET=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --check)
+            MODE="check"
+            shift
+            ;;
+        --rebuild)
+            MODE="rebuild"
+            shift
+            ;;
+        --force)
+            MODE="force"
+            shift
+            ;;
+        --branch)
+            TARGET_BRANCH="$2"
+            shift 2
+            ;;
+        --target)
+            CUSTOM_TARGET="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            if [[ -d "$1" ]]; then
+                CUSTOM_TARGET="$1"
+                shift
+            else
+                echo -e "${RED}[!] Unknown argument: $1${RESET}" >&2
+                usage
+                exit 1
+            fi
+            ;;
+    esac
+done
+
+banner
+
+# ── 1. Locate Zoth Studio Installation ───────────────────────────────────────
+find_studio_root() {
+    if [[ -n "$CUSTOM_TARGET" && -d "$CUSTOM_TARGET" ]]; then
+        echo "$CUSTOM_TARGET"
+        return 0
+    fi
+
+    if [[ -n "${STUDIO_PATH:-}" && -d "$STUDIO_PATH" ]]; then
+        echo "$STUDIO_PATH"
+        return 0
+    fi
+
+    local CANDIDATES=(
+        "/opt/zoth-studio"
+        "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio"
+        "/usr/share/zoth-studio"
+        "$HOME/zoth-studio"
+        "$HOME/zoth-studio-v2"
+    )
+
+    for cand in "${CANDIDATES[@]}"; do
+        if [[ -d "$cand" && ( -f "$cand/package.json" || -d "$cand/.git" ) ]]; then
+            echo "$cand"
+            return 0
+        fi
+    done
+
+    # Fallback to current working directory if it's zoth-studio
+    if [[ -f "./package.json" ]] && grep -q '"zoth-studio' "./package.json" 2>/dev/null; then
+        pwd
+        return 0
+    fi
+
+    return 1
+}
+
+STUDIO_ROOT=$(find_studio_root || true)
+
+if [[ -z "$STUDIO_ROOT" || ! -d "$STUDIO_ROOT" ]]; then
+    echo -e "${RED}[✗] Zoth Studio directory not found!${RESET}"
+    echo -e "    Checked: /opt/zoth-studio, ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio"
+    echo -e "    Pass target explicitly: ${CYAN}zoth-update-studio --target /path/to/zoth-studio${RESET}"
+    exit 1
+fi
+
+echo -e "${CYAN}[*] Target Studio Directory:${RESET} ${BOLD}$STUDIO_ROOT${RESET}"
+
+# Verify permissions
+if [[ ! -w "$STUDIO_ROOT" ]]; then
+    echo -e "${YELLOW}[!] Target directory is read-only for current user ($(whoami)).${RESET}"
+    echo -e "    Rerunning with elevated permissions may be required:${RESET} ${CYAN}sudo zoth-update-studio${RESET}\n"
+fi
+
+cd "$STUDIO_ROOT"
+
+# ── 2. Git Synchronization & Update Check ────────────────────────────────────
+if [[ -d ".git" ]]; then
+    echo -e "\n${CYAN}[1/4] Inspecting Git repository & remotes...${RESET}"
+    
+    CURRENT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+    
+    echo -e "    Current Commit: ${GOLD}$CURRENT_COMMIT${RESET} (branch: ${CYAN}$CURRENT_BRANCH${RESET})"
+
+    # Verify origin remote
+    if ! git remote get-url origin >/dev/null 2>&1; then
+        echo -e "    ${YELLOW}[*] Configuring git origin remote -> $REPO_REMOTE${RESET}"
+        git remote add origin "$REPO_REMOTE"
+    fi
+
+    # Network fetch
+    echo -e "    ${GRAY}[*] Fetching updates from origin/$TARGET_BRANCH...${RESET}"
+    if ! git fetch origin "$TARGET_BRANCH" --quiet 2>/dev/null; then
+        echo -e "${YELLOW}[!] Warning: Unable to fetch remote from GitHub. Network may be offline.${RESET}"
+        if [[ "$MODE" == "check" ]]; then
+            echo -e "${RED}[✗] Cannot check for updates offline.${RESET}"
+            exit 1
+        elif [[ "$MODE" != "rebuild" ]]; then
+            echo -e "${YELLOW}[*] Proceeding with local rebuild mode instead...${RESET}"
+            MODE="rebuild"
+        fi
+    fi
+
+    if [[ "$MODE" != "rebuild" ]]; then
+        LOCAL_HASH=$(git rev-parse HEAD 2>/dev/null)
+        REMOTE_HASH=$(git rev-parse "origin/$TARGET_BRANCH" 2>/dev/null || echo "$LOCAL_HASH")
+        
+        BEHIND_COUNT=$(git rev-list --count "HEAD..origin/$TARGET_BRANCH" 2>/dev/null || echo "0")
+        AHEAD_COUNT=$(git rev-list --count "origin/$TARGET_BRANCH..HEAD" 2>/dev/null || echo "0")
+
+        if [[ "$MODE" == "check" ]]; then
+            echo -e "\n${BOLD}=== UPDATE STATUS REPORT ===${RESET}"
+            if [[ "$BEHIND_COUNT" -eq 0 ]]; then
+                echo -e "  ${GREEN}[✓ UP TO DATE]${RESET} Zoth Studio is at latest commit: ${GOLD}$CURRENT_COMMIT${RESET}"
+            else
+                echo -e "  ${YELLOW}[⚡ UPDATE AVAILABLE]${RESET} Local is ${YELLOW}$BEHIND_COUNT commit(s)${RESET} behind origin/$TARGET_BRANCH."
+                echo -e "\n  Incoming commits:"
+                git log --oneline --no-merges -n 5 "HEAD..origin/$TARGET_BRANCH" | while read -r line; do
+                    echo -e "    ${CYAN}•${RESET} $line"
+                done
+                echo -e "\n  Run ${CYAN}zoth-update-studio${RESET} to apply."
+            fi
+            exit 0
+        fi
+
+        if [[ "$BEHIND_COUNT" -gt 0 || "$MODE" == "force" ]]; then
+            echo -e "    ${GREEN}[+] Applying $BEHIND_COUNT incoming commit(s)...${RESET}"
+            git log --oneline --no-merges -n 3 "HEAD..origin/$TARGET_BRANCH" | while read -r line; do
+                echo -e "      ${CYAN}•${RESET} $line"
+            done
+
+            if [[ "$MODE" == "force" ]]; then
+                echo -e "    ${YELLOW}[*] Force mode: resetting working tree to origin/$TARGET_BRANCH...${RESET}"
+                git reset --hard "origin/$TARGET_BRANCH"
+            else
+                # Stash untracked/modified if any to avoid merge conflicts
+                STASH_NEEDED=false
+                if ! git diff --quiet || ! git diff --staged --quiet; then
+                    echo -e "    ${YELLOW}[*] Stashing local changes before pull...${RESET}"
+                    git stash push -m "zoth-update-auto-stash-$(date +%s)" --quiet
+                    STASH_NEEDED=true
+                fi
+
+                git pull --ff-only origin "$TARGET_BRANCH" || {
+                    echo -e "${RED}[!] Fast-forward pull failed. Clean local changes or use --force.${RESET}"
+                    exit 1
+                }
+
+                if [[ "$STASH_NEEDED" == "true" ]]; then
+                    echo -e "    ${YELLOW}[*] Re-applying stashed changes...${RESET}"
+                    git stash pop --quiet 2>/dev/null || true
+                fi
+            fi
+
+            NEW_COMMIT=$(git rev-parse --short HEAD)
+            echo -e "    ${GREEN}[✓] Synchronized to commit:${RESET} ${GOLD}$NEW_COMMIT${RESET}"
+        else
+            echo -e "    ${GREEN}[✓] Local tree is already synchronized with origin/$TARGET_BRANCH.${RESET}"
+        fi
+    fi
+else
+    echo -e "\n${YELLOW}[1/4] Directory is not a git repository. Skipping git pull.${RESET}"
+fi
+
+# ── 3. Check Node.js and NPM Environment ─────────────────────────────────────
+echo -e "\n${CYAN}[2/4] Verifying Node.js and NPM toolchain...${RESET}"
+if ! command -v node >/dev/null 2>&1; then
+    echo -e "${RED}[✗] Node.js is not installed or not in PATH!${RESET}"
+    exit 1
+fi
+
+if ! command -v npm >/dev/null 2>&1; then
+    echo -e "${RED}[✗] npm is not installed or not in PATH!${RESET}"
+    exit 1
+fi
+
+NODE_VER=$(node -v)
+NPM_VER=$(npm -v)
+echo -e "    Node: ${GREEN}$NODE_VER${RESET} | NPM: ${GREEN}v$NPM_VER${RESET}"
+
+# ── 4. Install / Validate Dependencies ───────────────────────────────────────
+echo -e "\n${CYAN}[3/4] Resolving and validating package dependencies...${RESET}"
+
+# Ensure framer-motion or package.json requirements are installed
+if [[ -f "package.json" ]]; then
+    echo -e "    Running: ${GRAY}npm install --prefer-offline --no-audit --no-fund${RESET}"
+    npm install --prefer-offline --no-audit --no-fund --loglevel=error
+    echo -e "    ${GREEN}[✓] Dependencies resolved.${RESET}"
+else
+    echo -e "${RED}[✗] package.json missing in $STUDIO_ROOT!${RESET}"
+    exit 1
+fi
+
+# Clean up any legacy pruned subdirectories from public/
+rm -rf "$STUDIO_ROOT/public/open-source-library" "$STUDIO_ROOT/public/templates-source" 2>/dev/null || true
+
+# ── 5. Production Static Build (Vite) ─────────────────────────────────────────
+echo -e "\n${CYAN}[4/4] Building production static distribution (npm run build)...${RESET}"
+npm run build --silent || {
+    echo -e "${RED}[✗] Build failed during 'npm run build'!${RESET}"
+    exit 1
+}
+
+# Verify distribution artifacts
+if [[ -f "dist/index.html" && -s "dist/index.html" ]]; then
+    INDEX_SIZE=$(du -h "dist/index.html" | cut -f1)
+    TOTAL_SIZE=$(du -sh "dist" | cut -f1)
+    echo -e "    ${GREEN}[✓] Production build verified:${RESET} dist/index.html (${INDEX_SIZE}), Total bundle: ${TOTAL_SIZE}"
+else
+    echo -e "${RED}[✗] Build finished but dist/index.html was not found or is empty!${RESET}"
+    exit 1
+fi
+
+# ── 6. Desktop Notification & Completion ─────────────────────────────────────
+FINAL_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "v2.0")
+SUMMARY="Zoth Studio v2 successfully updated & built ($FINAL_COMMIT)."
+
+if command -v notify-send >/dev/null 2>&1 && [[ -n "${DISPLAY:-}" ]]; then
+    ICON_ARG=""
+    if [[ -f "/usr/share/pixmaps/zoth-studio.png" ]]; then
+        ICON_ARG="-i /usr/share/pixmaps/zoth-studio.png"
+    fi
+    notify-send $ICON_ARG "Zoth Studio Updated" "$SUMMARY" 2>/dev/null || true
+fi
+
+echo -e "\n${GREEN}${BOLD}════════════════════════════════════════════════════════════════════${RESET}"
+echo -e "${GREEN}${BOLD}  [✓] ZOTH STUDIO v2 HAS BEEN SUCCESSFULLY UPDATED & BUILT!${RESET}"
+echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════════════════${RESET}"
+echo -e "  Location: ${BOLD}$STUDIO_ROOT${RESET}"
+echo -e "  Commit:   ${GOLD}$FINAL_COMMIT${RESET}"
+echo -e "  Launch:   ${CYAN}zoth-studio${RESET} or click desktop shortcut\n"

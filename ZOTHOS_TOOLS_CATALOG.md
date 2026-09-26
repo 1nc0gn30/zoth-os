@@ -1,227 +1,193 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 28-Repository Sovereign Tool Portfolio v2.0
-#  Complete catalog of the 1nc0gn30 / Neo tool ecosystem
-#  Each repo is a standalone CLI tool or Material 3 Web UI
+#  ZOTHOS — 25-Tool Sovereign Arsenal & Workstation Ecosystem v2.5
+#  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
+#  Fully Aligned with Zoth Studio v2 (5 Cadres · 25 Production Tools)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Usage:
-#   cd /opt/zothos-tools/<repo>
-#   python3 cli.py --help              # CLI mode
-#   python3 app.py                     # Material 3 Studio UI (default localhost)
+# Operational Overview:
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 25 tools.
+#   Tools execute locally with zero cloud telemetry, validated JSON-Schema contracts,
+#   and biomorphic STDP memory integration.
 #
-# Or launch via the ZOTHOS Tool Nexus:
-#   zoth-tool-nexus                    # Interactive TUI menu
-#   zoth-tool-nexus --list             # List all tools
-#   zoth-tool-nexus --doctor          # Run diagnostics
-#   zoth-tool-nexus --run <tool-id>   # Direct launch
+# Launching via CLI & Dispatchers:
+#   zoth-studio                        # Launch full Zoth Studio v2 Cockpit
+#   zoth-update-studio                 # One-command git update & static rebuild
+#   zoth-cockpit                       # Full-screen curses terminal operations center
+#   zoth-tool-nexus                    # Interactive TUI tool dispatcher
+#   zoth-pkg list                      # Inspect installed system & arsenal tools
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  DOMAIN 1 — AUTONOMOUS AI, SWARMS & MEMORY (6 REPOSITORIES)
+##  CADRE 1 — ARCHITECTS & CORE SWARM INFRASTRUCTURE (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 1. sovereign-agent-bridge
-**GitHub:** https://github.com/1nc0gn30/sovereign-agent-bridge
-**Core Architecture:** Pure Python, FastMCP, JSON-RPC
-**Hyperfocused Capability:** Multi-agent coordination bridge with dynamic capability negotiation, shared tool registry, and task routing.
+### 1. adytum-alchemist-ai-workflow (Adytum Planner)
+- **GitHub:** https://github.com/NullAITech/adytum-alchemist-ai-workflow
+- **Core Architecture:** 22-Key Hermetic Planning Rite, Local Model Gating
+- **Capability:** Structured intent formulation, 5-minute incubation cycles, and deterministic task decomposition.
 
-### 2. neuro-memory-daemon
-**GitHub:** https://github.com/1nc0gn30/neuro-memory-daemon
-**Core Architecture:** Vector memory, Graph linking
-**Hyperfocused Capability:** Persistent episodic memory layer for AI agents with semantic recall, associative linking, and time-decay weighting.
+### 2. azoth-local-agent (AZOTH Local Archon Agent)
+- **GitHub:** https://github.com/NullAITech/azoth-local-agent
+- **Core Architecture:** Zero-telemetry Autonomous Subagent Dispatcher
+- **Capability:** Primary Archon Orchestrator executing sandboxed shell actions, multi-turn plan synthesis, and self-evaluating code generation.
 
-### 3. deepsearch-research-agent
-**GitHub:** https://github.com/1nc0gn30/deepsearch-research-agent
-**Core Architecture:** Autonomous crawler, Evidence graph
-**Hyperfocused Capability:** Multi-source reports with grounded synthesizes structured reports with grounded citations.
+### 3. sovereign-agent-bridge (Sovereign Agent Signal Bridge)
+- **GitHub:** https://github.com/NullAITech/sovereign-agent-bridge
+- **Core Architecture:** Ed25519 E2EE WebSockets, Simplex Peer Mesh IPC (127.0.0.1:8102)
+- **Capability:** Sub-millisecond peer-to-peer message passing across sovereign agent cadences without centralized point of failure.
 
-### 4. promptmaster-studio
-**GitHub:** https://github.com/1nc0gn30/promptmaster-studio
-**Core Architecture:** Prompt optimizer, Chain architect
-**Hyperfocused Capability:** Systematic prompt chaining, A/B test harnesses, token counting, variable interpolation, multi-turn chaining, and A/B test harnesses.
+### 4. neuro-memory-daemon (Neuro Memory Daemon)
+- **GitHub:** https://github.com/NullAITech/neuro-memory-daemon
+- **Core Architecture:** STDP Biomorphic Synaptic Vector Recall (127.0.0.1:8094)
+- **Capability:** Spike-timing-dependent plasticity vector memory layer retaining cross-session agent context with associative recall.
 
-### 5. vector-search-engine
-**GitHub:** https://github.com/1nc0gn30/vector-search-engine
-**Core Architecture:** HNSW graph index, BM25, RRF
-**Hyperfocused Capability:** High-dimensional vector search engine.
-
-### 6. polyglot-framework-exporter
-**GitHub:** https://github.com/1nc0gn30/polyglot-framework-exporter
-**Core Architecture:** Polyglot framework normalization
-**Hyperfocused Capability:** Framework-agnostic agent capability export and translation layer.
+### 5. vector-search-engine (Vector Search Engine)
+- **GitHub:** https://github.com/NullAITech/vector-search-engine
+- **Core Architecture:** HNSW Graph Index, BM25 Hybrid Fusion
+- **Capability:** High-dimensional zero-cloud vector similarity search for local agent memory and document retrieval.
 
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  DOMAIN 2 — INFOSEC, CRYPTOGRAPHY & OSINT (6 REPOSITORIES)
+##  CADRE 2 — CODE SYNTHESIS & REASONING (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 7. jwt-inspector-guard
-**GitHub:** https://github.com/1nc0gn30/jwt-inspector-guard
-**Core Architecture:** HS256/384/512, RFC 7519 validator
-**Hyperfocused Capability:** Zero-dependency JWT/JWS decoder and verifier; catches alg:none (CVE-2015-9235), weak secret keys, and leaks with encryption-at-rest and vault secret scanner preventing Git leaks with encryption-at-rest and automated key rotation.
+### 6. deepsearch-research-agent (DeepSearch Research Agent)
+- **GitHub:** https://github.com/NullAITech/deepsearch-research-agent
+- **Core Architecture:** Multi-Source Evidence Graph Crawler
+- **Capability:** Autonomous technical dossier compiler synthesizing structured research reports with grounded citations.
 
-### 8. vault-secret-scanner
-**GitHub:** https://github.com/1nc0gn30/vault-secret-scanner
-**Core Architecture:** Git history scanner, entropy analysis
-**Hyperfocused Capability:** Prevents Git leaks with encryption-at-rest and automated key rotation.
+### 7. promptmaster-studio (PromptMaster Studio)
+- **GitHub:** https://github.com/NullAITech/promptmaster-studio
+- **Core Architecture:** Prompt Chaining, Systematic A/B Test Harness
+- **Capability:** Visual prompt engineering workbench with token metering, AST variable interpolation, and automated regression testing.
 
-### 9. payload-entropy-studio
-**GitHub:** https://github.com/1nc0gn30/payload-entropy-studio
-**Core Architecture:** Shannon Entropy (-∑ p log p)
-**Hyperfocused Capability:** Binary payload inspector detecting packing, encryption, shellcode, and obfuscation via byte-frequency distribution.
+### 8. polyglot-framework-exporter (Polyglot Framework Exporter)
+- **GitHub:** https://github.com/NullAITech/polyglot-framework-exporter
+- **Core Architecture:** Cross-Framework AST Translation Layer
+- **Capability:** Normalizes agent tool manifests and system prompts between AGY, Claude Code, OpenAI Codex, and Hermes formats.
 
-### 10. certpath-roadmap-studio
-**GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
-**Core Architecture:** X.509, PKI, OCSP/CRL validator
-**Hyperfocused Capability:** Pure Python TLS trust chain debugger, certificate path validator, and interactive PKI visualizer.
+### 9. regex-droid-builder (Regex Droid Builder)
+- **GitHub:** https://github.com/NullAITech/regex-droid-builder
+- **Core Architecture:** NFA/DFA State Machine Visualizer, ReDoS Analysis
+- **Capability:** Interactive regular expression constructor rendering finite automata graphs with automated catastrophic backtracking detection.
 
-### 11. subsweep-lead-scanner
-**GitHub:** https://github.com/1nc0gn30/subsweep-lead-scanner
-**Core Architecture:** DNS enumerator, SSL cert recon
-**Hyperfocused Capability:** Passive attack surface and subdomain discovery.
-
-### 12. identity-graph-recon
-**GitHub:** https://github.com/1nc0gn30/identity-graph-recon
-**Core Architecture:** OSINT graph builder, identity resolution
-**Hyperfocused Capability:** Cross-platform identity correlation and username enumeration.
+### 10. cron-rhythm-studio (CronRhythm Studio)
+- **GitHub:** https://github.com/NullAITech/cron-rhythm-studio
+- **Core Architecture:** POSIX/K8s/Quartz Heatmap Transpiler
+- **Capability:** Temporal schedule visualizer, schedule conflict detector, and natural-language cron expression humanizer.
 
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  DOMAIN 3 — WEB PERFORMANCE, SEO, AEO & ACCESSIBILITY (6 REPOSITORIES)
+##  CADRE 3 — DEFENSIVE SECURITY & CRYPTOGRAPHY (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 13. cwv-speed-engine
-**GitHub:** https://github.com/1nc0gn30/cwv-speed-engine
-**Core Architecture:** LCP/CLS/INP/TTFB heuristic parser
-**Hyperfocused Capability:** Performance analyzer diagnosing Core Web Vitals directly from HTML/CSS/JS payloads with remediation steps.
+### 11. hexstrike-arsenal (HexStrike Security Arsenal)
+- **GitHub:** https://github.com/NullAITech/hexstrike-arsenal
+- **Core Architecture:** MITRE ATT&CK Autonomous Security Station
+- **Capability:** Integrated offensive/defensive orchestration engine interfacing with local Nmap, Metasploit, and custom vulnerability modules.
 
-### 14. aeo-graph-engine
-**GitHub:** https://github.com/1nc0gn30/aeo-graph-engine
-**Core Architecture:** Schema.org JSON-LD, Knowledge graph
-**Hyperfocused Capability:** Entity extractor studio for Perplexity, SearchGPT, Gemini, and Google.
+### 12. envguard-secrets-vault (EnvGuard Secrets Vault)
+- **GitHub:** https://github.com/NullAITech/envguard-secrets-vault
+- **Core Architecture:** High-Entropy Secret Scanner, GPG Vault Integration
+- **Capability:** Prevents secret leakage in git commits, audits shell environments, and manages encrypted credential vaults.
 
-### 15. pwa-manifest-builder
-**GitHub:** https://github.com/1nc0gn30/pwa-manifest-builder
-**Core Architecture:** SVG canvas generator, manifest schema
-**Hyperfocused Capability:** Standalone OpenGraph social card creator with 16 gradient palettes, 7 procedural background patterns, and 18 layout presets.
+### 13. jwt-inspector-guard (JWT Inspector Guard)
+- **GitHub:** https://github.com/NullAITech/jwt-inspector-guard
+- **Core Architecture:** RFC 7519 Cryptographic Token Validator
+- **Capability:** Zero-dependency JWT inspector auditing claims, verifying signatures, and detecting algorithm-confusion exploits.
 
-### 16. wcag-contrast-guard
-**GitHub:** https://github.com/1nc0gn30/wcag-contrast-guard
-**Core Architecture:** WCAG 2.1 contrast ratio calculator
-**Hyperfocused Capability:** Automated contrast compliance checker for AA/AAA standards.
+### 14. payload-entropy-studio (Payload Entropy Studio)
+- **GitHub:** https://github.com/NullAITech/payload-entropy-studio
+- **Core Architecture:** Shannon Entropy (-∑ p log p) Visualizer
+- **Capability:** Binary payload inspector identifying obfuscated shellcode, packed PE/ELF sections, and hidden encrypted blobs.
 
-### 17. schema-illustrator-studio
-**GitHub:** https://github.com/1nc0gn30/schema-illustrator-studio
-**Core Architecture:** Schema.org visualizer, graph renderer
-**Hyperfocused Capability:** Visual schema.org JSON-LD graph illustration for documentation and audits.
-
-### 18. seo-audit-foundry
-**GitHub:** https://github.com/1nc0gn30/seo-audit-foundry
-**Core Architecture:** On-page SEO analyzer, crawl simulator
-**Hyperfocused Capability:** Automated SEO audit generating actionable remediation reports.
+### 15. web-security-guard (Web Security Guard)
+- **GitHub:** https://github.com/NullAITech/web-security-guard
+- **Core Architecture:** CSP / CORS / Security Header Compliance Engine
+- **Capability:** Audits web endpoints for missing security headers, unsafe reflection vectors, and misconfigured CORS policies.
 
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  DOMAIN 4 — CREATIVE MEDIA, VIDEO DSP & GENERATIVE ART (6 REPOSITORIES)
+##  CADRE 4 — CREATIVE, WEB & UI/UX (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 19. audiocipher-stego-engine
-**GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
-**Core Architecture:** LSB bit-plane, Audio stego
-**Hyperfocused Capability:** Injects encrypted secret payloads into lossless WAV audio using LSB bit planes and spectrogram frequency watermarking.
+### 16. vision-gesture-control (Vision Gesture Control)
+- **GitHub:** https://github.com/NullAITech/vision-gesture-control
+- **Core Architecture:** Touchless Air Gesture Controller
+- **Capability:** Translates local webcam hand tracking into window navigation, media controls, and desktop macro triggers.
 
-### 20. vision-gesture-control
-**GitHub:** https://github.com/1nc0gn30/vision-gesture-control
-**Core Architecture:** Webcam tracking, Gesture bridge
-**Hyperfocused Capability:** Touchless air gesture controller and motion tracker translating webcam hand movements into desktop macros without OpenCV.
+### 17. aeo-graph-engine (AEO Graph Engine)
+- **GitHub:** https://github.com/NullAITech/aeo-graph-engine
+- **Core Architecture:** Schema.org Semantic Knowledge Graph Synthesizer
+- **Capability:** Generates rich JSON-LD structures and entity relationship maps for high-authority AI answer engine indexing.
 
-### 21. nexus-3d-scene-studio
-**GitHub:** https://github.com/1nc0gn30/nexus-3d-scene-studio
-**Core Architecture:** Procedural 3D mesh, CAD export
-**Hyperfocused Capability:** Programmatic 3D modeling studio generating procedural meshes and materials, exporting directly to STL, OBJ, and GLTF.
+### 18. cwv-speed-engine (CWV Speed Engine)
+- **GitHub:** https://github.com/NullAITech/cwv-speed-engine
+- **Core Architecture:** Core Web Vitals Diagnostic Engine
+- **Capability:** Local performance profiler calculating LCP, CLS, and INP metrics with deterministic DOM remediation hints.
 
-### 22. datamosh-glitch-studio
-**GitHub:** https://github.com/1nc0gn30/datamosh-glitch-studio
-**Core Architecture:** Scanline displacement, Glitch DSP
-**Hyperfocused Capability:** Visual distortion engine simulating frame corruption, channel drift, pixel sort, and authentic datamoshing artifacts.
+### 19. pwa-manifest-builder (PWA Manifest Builder)
+- **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
+- **Core Architecture:** Progressive Web App Asset & Service Worker Generator
+- **Capability:** Scaffolds standards-compliant PWA manifests, icon suites, and offline caching recipes for desktop and mobile apps.
 
-### 23. cyber-turtle-studio
-**GitHub:** https://github.com/1nc0gn30/cyber-turtle-studio
-**Core Architecture:** Logo DSL, L-System growth, G-Code
-**Hyperfocused Capability:** Algorithmic fractal generator and Logo interpreter exporting animated keyframed SVGs and CNC pen-plotter G-Code.
-
-### 24. ufo-sacred-geometry
-**GitHub:** https://github.com/1nc0gn30/ufo-sacred-geometry
-**Core Architecture:** Mathematical parametric SVG
-**Hyperfocused Capability:** Generates complex sacred geometry blueprints, Fibonacci spirals, Metatron's Cube, and Platonic solids.
+### 20. schema-illustrator-studio (Schema Illustrator Studio)
+- **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
+- **Core Architecture:** Visual Data Structure & DB Schema Modeler
+- **Capability:** Interactive database and entity-relationship designer exporting SQL migrations, Prisma schemas, and SVG diagrams.
 
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  DOMAIN 5 — SOCIAL GROWTH, DESIGN & DEVOPS TOOLS (5 REPOSITORIES)
+##  CADRE 5 — RECONNAISSANCE & DISTRIBUTED SWARM (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 25. og-canvas-forge
-**GitHub:** https://github.com/1nc0gn30/og-canvas-forge
-**Core Architecture:** Pure Python SVG canvas generator
-**Hyperfocused Capability:** Standalone OpenGraph social card creator with 16 gradient palettes, 7 procedural background patterns, and 18 layout presets.
+### 21. subsweep-lead-scanner (SubSweep Lead Scanner)
+- **GitHub:** https://github.com/NullAITech/subsweep-lead-scanner
+- **Core Architecture:** Passive DNS & OSINT Asset Enumerator
+- **Capability:** Discovers domain attack surfaces, exposed subdomains, and corporate infrastructure footprints without active scanning.
 
-### 26. badge3d-coin-generator
-**GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
-**Core Architecture:** Numismatic vector SVG engine
-**Hyperfocused Capability:** Procedural 3D relief coin and award badge generator with metallic specular shading, knurled rims, and custom inscriptions.
+### 22. omnipost-social-engine (OmniPost Social Engine)
+- **GitHub:** https://github.com/NullAITech/omnipost-social-engine
+- **Core Architecture:** Multi-Platform Thread Architect & Formatter
+- **Capability:** Formats and schedules technical broadcasts across X, Mastodon, and LinkedIn with per-network character and media discipline.
 
-### 27. omnipost-social-engine
-**GitHub:** https://github.com/1nc0gn30/omnipost-social-engine
-**Core Architecture:** Multi-platform scheduler & threader
-**Hyperfocused Capability:** Cross-platform content formatter and thread architect optimizing posts for X, LinkedIn, and Mastodon.
+### 23. certpath-roadmap-studio (CertPath Roadmap Studio)
+- **GitHub:** https://github.com/NullAITech/certpath-roadmap-studio
+- **Core Architecture:** X.509 PKI Trust Chain Analyzer
+- **Capability:** Audits TLS certificate paths, validates intermediate anchors, and diagnoses expiration and revocation status.
 
-### 28. cron-rhythm-studio
-**GitHub:** https://github.com/1nc0gn30/cron-rhythm-studio
-**Core Architecture:** Cron parser, Heatmap matrix
-**Hyperfocused Capability:** Cron schedule parser, natural language humanizer, and weekly rhythm heatmap visualizer transpiling between POSIX, AWS, K8s, and Quartz.
+### 24. zoth-webgen (Zoth WebGen Foundry)
+- **GitHub:** https://github.com/NullAITech/zoth-webgen
+- **Core Architecture:** Multi-Model Prompt & Web Prototype Foundry
+- **Capability:** Generates full-stack single-file web applications and interactive prototypes from natural language prompts.
 
-### 29. regex-droid-builder
-**GitHub:** https://github.com/1nc0gn30/regex-droid-builder
-**Core Architecture:** NFA/DFA graph visualizer, ReDoS
-**Hyperfocused Capability:** Visual regular expression builder rendering finite state machines with automated ReDoS vulnerability analysis.
+### 25. zoth-swarm-multiplexer (21-Agent Swarm Multiplexer)
+- **GitHub:** https://github.com/NullAITech/zoth-swarm-multiplexer
+- **Core Architecture:** 21-Agent Matrix Cockpit & Consensus Arena (127.0.0.1:8790)
+- **Capability:** Multi-pane autonomous swarm coordination cockpit monitoring 21 named Pantheon roles with real-time ping telemetry.
 
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  FAST QUICK-START — ALL 28 TOOLS
+##  QUICK-START: UPDATING & RUNNING
 ## ═══════════════════════════════════════════════════════════════════════════════
-
-Every tool can be launched immediately via its standalone CLI or Material 3 Web UI:
 
 ```bash
-# Example: Launch any of the 28 standalone tools
-cd /opt/zothos-tools/sovereign-agent-bridge
-python3 cli.py --help
-python3 app.py   # Launches Material 3 Studio UI on localhost
+# Update Zoth Studio to latest release:
+zoth-update-studio
+
+# Check update status without modifying:
+zoth-update-studio --check
+
+# Launch Zoth Studio:
+zoth-studio
+
+# Package manager integration:
+zoth-pkg update studio
+zoth-pkg list
 ```
 
-Or use the integrated ZOTHOS Tool Nexus dispatcher:
-```bash
-zoth-tool-nexus              # Interactive TUI — browse all 28 tools across 5 domains
-zoth-tool-nexus --list       # Print all tools
-zoth-tool-nexus --doctor    # Run full health diagnostics
-zoth-tool-nexus --run <id>  # Direct launch
-```
-
-## ═══════════════════════════════════════════════════════════════════════════════
-##  MODE REACTIVE INTEGRATION
-## ═══════════════════════════════════════════════════════════════════════════════
-
-These 28 tools integrate with the ZOTHOS reality switcher (`zoth-mode`):
-- **Hermetic Matrix mode:** Tool icons render in emerald phosphor style
-- **Ghostmode:** Security tools (7-12) auto-activate with Tor routing
-- **Incognito (Win11):** Design tools (25-29) surface with Windows-native icon style
-- **Gold Sanctum:** Creative tools (19-24) glow in gold alchemical palette
-
----
-
-*Generated for ZOTHOS Linux OS — The Alchemical Intelligence & Security Distro*
-*zoth.nullai.tech | https://github.com/1nc0gn30*
+*ZOTHOS Linux — Sovereign Operating System · NullAI Tech*

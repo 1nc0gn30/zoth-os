@@ -5,9 +5,9 @@
 set -euo pipefail
 
 if [[ -n "${DISPLAY:-}" ]] && command -v electron >/dev/null 2>&1 && [[ -f "/opt/zoth-ghost-app/main.js" ]]; then
-    exec electron /opt/zoth-ghost-app
+    exec electron --no-sandbox /opt/zoth-ghost-app "$@"
 elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ghost-app" ]]; then
-    exec electron ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ghost-app
+    exec electron --no-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ghost-app "$@"
 else
     exec konsole -qwindowtitle 'Ghostmode Operations' -e /usr/local/bin/zoth-ghost
 fi

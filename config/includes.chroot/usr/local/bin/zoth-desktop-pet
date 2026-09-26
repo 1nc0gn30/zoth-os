@@ -5,9 +5,9 @@
 set -euo pipefail
 
 if [[ -n "${DISPLAY:-}" ]] && command -v electron >/dev/null 2>&1 && [[ -f "/opt/zoth-desktop-pet/main.js" ]]; then
-    exec electron /opt/zoth-desktop-pet
+    exec electron --no-sandbox /opt/zoth-desktop-pet "$@"
 elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-desktop-pet" ]]; then
-    exec electron ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-desktop-pet
+    exec electron --no-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-desktop-pet "$@"
 else
     echo "[-] Electron desktop pet runtime not available."
 fi

@@ -291,6 +291,7 @@ def main():
         print("Commands:")
         print("  list [query]       List all 186+ verified tools and installation status")
         print("  install <target>   Install a tool, category (kali, parrot, nexus_ai, etc.), or 'all'")
+        print("  update [studio]    Update Zoth Studio v2 or system components")
         print("  verify             Verify installation and candidate status for all tools")
         print()
         sys.exit(0)
@@ -305,6 +306,14 @@ def main():
             print(f"{RED}[!] Installation requires root privileges. Please re-run with sudo.{RESET}")
             sys.exit(1)
         cmd_install(sys.argv[2:])
+    elif cmd in ["update", "upgrade"]:
+        banner()
+        updater = shutil.which("zoth-update-studio") or "/usr/local/bin/zoth-update-studio"
+        if os.path.exists(updater):
+            os.execv(updater, [updater] + sys.argv[2:])
+        else:
+            print(f"{RED}[!] zoth-update-studio updater binary not found.{RESET}")
+            sys.exit(1)
     elif cmd == "verify":
         banner()
         cmd_verify()

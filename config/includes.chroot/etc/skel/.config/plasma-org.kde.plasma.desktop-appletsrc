@@ -14,7 +14,7 @@ wallpaperplugin=org.kde.image
 url=desktop:/
 
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/backgrounds/zothos/zothos-celtic-dark.png
+Image=file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg
 
 [Containments][2]
 activityId=

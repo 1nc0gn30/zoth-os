@@ -9,6 +9,7 @@
 
 import sys
 import os
+import shutil
 import time
 import signal
 import socket
@@ -142,7 +143,15 @@ def launch_gui(port):
     entry_found = any(os.path.exists(os.path.join(STUDIO_ROOT, f)) for f in ["main.cjs", "main.js"])
     if electron_bin and entry_found:
         try:
-            proc = subprocess.Popen([electron_bin, "--no-sandbox", STUDIO_ROOT], env=os.environ.copy())
+            electron_flags = [
+                electron_bin,
+                "--no-sandbox",
+                "--disable-gpu-sandbox",
+                "--enable-features=UseOzonePlatform",
+                "--ozone-platform=x11",
+                STUDIO_ROOT
+            ]
+            proc = subprocess.Popen(electron_flags, env=os.environ.copy())
             time.sleep(1.2)
             if proc.poll() is None:
                 # Electron is running steadily
@@ -216,6 +225,14 @@ def launch_gui(port):
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ["--update", "-u", "update"]:
+        updater = shutil.which("zoth-update-studio") or "/usr/local/bin/zoth-update-studio"
+        if os.path.exists(updater):
+            os.execv(updater, [updater] + sys.argv[2:])
+        else:
+            print("[!] zoth-update-studio not found in PATH.")
+            sys.exit(1)
+
     signal.signal(signal.SIGINT, lambda *a: sys.exit(0))
     signal.signal(signal.SIGTERM, lambda *a: sys.exit(0))
 

@@ -13,10 +13,10 @@ for e in /usr/local/bin/electron /opt/electron/electron /tmp/electron/electron "
 done
 
 if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-}" ]]; then
-    if [[ -d "/opt/zoth-hud" && -f "/opt/zoth-hud/main.js" ]]; then
-        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-hud "$@"
-    elif [[ -d "/opt/zoth-desktop-pet" && -f "/opt/zoth-desktop-pet/main.js" ]]; then
+    if [[ -d "/opt/zoth-desktop-pet" && -f "/opt/zoth-desktop-pet/main.js" ]]; then
         exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-desktop-pet "$@"
+    elif [[ -d "/opt/zoth-hud" && -f "/opt/zoth-hud/main.js" ]]; then
+        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-hud "$@"
     fi
 fi
 
