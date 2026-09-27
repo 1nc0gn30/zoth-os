@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Zoth Hermes Swarm Agent
 Comment=Nous Research Autonomous Multi-Agent Swarm Orchestrator
-Exec=konsole -p tabtitle='Hermes Agent' -e 'hermes'
+Exec=konsole -p tabtitle='Hermes Agent' -e hermes
 Icon=/usr/share/pixmaps/hermes-agent.png
 Terminal=false
 Categories=Development;AI;

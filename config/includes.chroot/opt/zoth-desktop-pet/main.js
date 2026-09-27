@@ -103,18 +103,31 @@ async function startCursorTracking() {
   const pollInterval = async () => {
     if (!petWindow || petWindow.isDestroyed()) return;
     try {
-      // Try X11 XQueryPointer via xdotool for sub-millisecond accuracy
-      const xdotoolPos = await getXdotoolMouseLocation();
       let cursorX, cursorY;
       
-      if (xdotoolPos) {
-        cursorX = xdotoolPos.x;
-        cursorY = xdotoolPos.y;
-      } else {
-        // Fallback to Electron's screen.getCursorScreenPoint()
-        const point = screen.getCursorScreenPoint();
-        cursorX = point.x;
-        cursorY = point.y;
+      // 1. Try dedicated Zoth Cursor Tracker daemon first
+      if (fs.existsSync('/tmp/zoth_cursor.json')) {
+        try {
+          const raw = JSON.parse(fs.readFileSync('/tmp/zoth_cursor.json', 'utf8'));
+          if (raw && typeof raw.x === 'number' && typeof raw.y === 'number') {
+            cursorX = raw.x;
+            cursorY = raw.y;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Try X11 XQueryPointer via xdotool for sub-millisecond accuracy
+      if (cursorX === undefined || cursorY === undefined) {
+        const xdotoolPos = await getXdotoolMouseLocation();
+        if (xdotoolPos) {
+          cursorX = xdotoolPos.x;
+          cursorY = xdotoolPos.y;
+        } else {
+          // Fallback to Electron's screen.getCursorScreenPoint()
+          const point = screen.getCursorScreenPoint();
+          cursorX = point.x;
+          cursorY = point.y;
+        }
       }
 
       const now = Date.now();

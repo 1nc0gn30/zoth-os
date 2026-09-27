@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
@@ -96,11 +96,24 @@ function createWindow() {
   const distIconPath = path.join(__dirname, 'dist/app/icon_512.png');
   const iconFile = fs.existsSync(iconPath) ? iconPath : (fs.existsSync(distIconPath) ? distIconPath : undefined);
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1240, Math.floor(workArea.width * 0.92));
+  const targetHeight = Math.min(780, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1360,
-    height: 900,
-    minWidth: 960,
-    minHeight: 640,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
+    frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     title: 'Maya Pro Studio - Video Editor',
     backgroundColor: '#090a0f',
     icon: iconFile,

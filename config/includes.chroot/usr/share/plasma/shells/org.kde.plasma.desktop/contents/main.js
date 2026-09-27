@@ -4,5 +4,5 @@ var desktopsArray = desktopsForActivity(currentActivity());
 for( var j = 0; j < desktopsArray.length; j++) {
     desktopsArray[j].wallpaperPlugin = "org.kde.image";
     desktopsArray[j].currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
-    desktopsArray[j].writeConfig("Image", "file:///usr/share/backgrounds/zothos/hermetic-matrix.png");
+    desktopsArray[j].writeConfig("Image", "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg");
 }

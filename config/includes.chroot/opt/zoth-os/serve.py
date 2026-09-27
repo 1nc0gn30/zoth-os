@@ -85,7 +85,7 @@ RAW = [
     ("codex", "Codex", "mind", "OpenAI Codex coding agent.", ["codex"], ["codex"], True, "1liner", "curl -fsSL https://raw.githubusercontent.com/openai/codex/main/install.sh | bash || (mkdir -p ~/.local && npm install -g --prefix ~/.local @openai/codex)"),
     ("claude", "Claude Code", "mind", "Anthropic coding agent.", ["claude"], ["claude"], True, "1liner", "curl -fsSL https://claude.ai/install.sh | bash"),
     ("opencode", "OpenCode", "mind", "Open-source coding agent.", ["opencode"], ["opencode"], True, "1liner", "curl -fsSL https://opencode.ai/install.sh | bash || (mkdir -p ~/.local && npm install -g --prefix ~/.local opencode-ai)"),
-    ("agy", "AGY CLI", "mind", "Google Antigravity SDK harness.", ["agy"], ["agy"], True, "1liner", "curl -fsSL https://antigravity.google/install.sh | bash || (mkdir -p ~/.local && npm install -g --prefix ~/.local @google/antigravity-sdk)"),
+    ("agy", "AGY CLI", "mind", "Google Antigravity SDK harness.", ["agy"], ["agy"], True, "1liner", "curl -fsSL https://antigravity.google/cli/install.sh | bash || (mkdir -p ~/.local && npm install -g --prefix ~/.local @google/antigravity-sdk)"),
     ("gemini", "Gemini CLI", "mind", "Google Gemini terminal agent.", ["gemini"], ["gemini"], True, "npm", "@google/gemini-cli"),
     ("aider", "Aider", "mind", "Git-aware pair programmer.", ["aider"], ["aider"], True, "pip", "aider-chat"),
     ("goose", "Goose", "mind", "Block open-source agent.", ["goose"], ["goose"], True, "hint", "Install Goose from block.github.io/goose, then reopen this row."),
@@ -102,10 +102,10 @@ RAW = [
     ("zoth-bridge", "Zoth bridge", "mind", "Local model gateway.", ["zoth-bridge"], ["zoth-bridge"], True, "none", ""),
     ("zoth-agent-os", "Agent OS", "mind", "L0–L4 supervisor that ships with the OS.", ["zoth-agent-os"], ["zoth-agent-os"], True, "none", ""),
     ("ollama", "Ollama", "silicon", "Local model runtime. Already the silicon backend.", ["ollama"], ["ollama", "list"], True, "hint", "curl -fsSL https://ollama.com/install.sh | sh"),
-    ("zoth-mode-matrix", "Matrix reality", "reality", "Emerald hermetic desktop profile.", ["zoth-mode"], ["zoth-mode", "matrix"], True, "none", ""),
-    ("zoth-mode-ghost", "Ghost reality", "reality", "Tor-cloaked, amnesic desktop profile.", ["zoth-mode"], ["zoth-mode", "ghost"], True, "none", ""),
-    ("zoth-mode-gold", "Gold reality", "reality", "Azoth gold desktop profile.", ["zoth-mode"], ["zoth-mode", "gold"], True, "none", ""),
-    ("zoth-mode-incognito", "Incognito reality", "reality", "Windows 11 chameleon profile.", ["zoth-mode"], ["zoth-mode", "incognito"], True, "none", ""),
+    ("zoth-mode-gold", "Default Sovereign Gold", "profile", "Azoth gold master desktop profile.", ["zoth-mode"], ["zoth-mode", "gold"], True, "none", ""),
+    ("zoth-mode-ghost", "Ghostmode (Stealth)", "profile", "Tor-cloaked, amnesic desktop profile.", ["zoth-mode"], ["zoth-mode", "ghost"], True, "none", ""),
+    ("zoth-mode-matrix", "Hermetic Matrix", "profile", "Emerald hermetic desktop profile.", ["zoth-mode"], ["zoth-mode", "matrix"], True, "none", ""),
+    ("zoth-mode-incognito", "Incognito Chameleon", "profile", "Windows 11 chameleon disguise profile.", ["zoth-mode"], ["zoth-mode", "incognito"], True, "none", ""),
 ]
 
 GROUPS = {
@@ -121,7 +121,7 @@ GROUPS = {
     "privacy": "Privacy",
     "mind": "Harnesses",
     "silicon": "Silicon",
-    "reality": "Reality",
+    "profile": "Environment Profiles",
 }
 
 ARMS = ["recon", "web", "exploit", "wireless", "passwords", "packets", "reverse", "forensics", "privacy"]

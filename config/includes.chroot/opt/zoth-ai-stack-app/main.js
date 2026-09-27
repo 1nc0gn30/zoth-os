@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
@@ -43,13 +43,25 @@ const AI_TOOLS_DATABASE = [
 ];
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1240, Math.floor(workArea.width * 0.92));
+  const targetHeight = Math.min(780, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1040,
-    minHeight: 680,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
     backgroundColor: '#04060c',
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     titleBarStyle: 'default',
     title: 'ZOTH AI STACK // NEURAL COMPUTE & AGENT HARNESS COCKPIT',
     webPreferences: {

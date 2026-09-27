@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  Tor Browser Launcher Wrapper
+#  Tor Browser Sovereign Launcher - ZothOS Privacy Core
 # ==============================================================================
 set -euo pipefail
 
+# 1. System-wide pre-installed Tor Browser bundle in /opt/tor-browser
+if [[ -x "/opt/tor-browser/Browser/start-tor-browser" ]]; then
+    exec /opt/tor-browser/Browser/start-tor-browser "$@"
+fi
+
+# 2. User-specific Tor Browser bundle
+if [[ -x "$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/start-tor-browser" ]]; then
+    exec "$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/start-tor-browser" "$@"
+fi
+
+# 3. torbrowser-launcher utility
 if command -v torbrowser-launcher >/dev/null 2>&1; then
     exec torbrowser-launcher "$@"
-elif command -v tor-browser >/dev/null 2>&1; then
-    exec tor-browser "$@"
-else
-    konsole --noclose -e bash -c "echo '[*] Tor Browser Launcher not present. Installing torbrowser-launcher...'; sudo apt-get update && sudo apt-get install -y torbrowser-launcher && exec torbrowser-launcher"
 fi
+
+# 4. Standard Debian /usr/bin/tor-browser (avoid self-reference)
+if [[ -x "/usr/bin/tor-browser" ]]; then
+    exec /usr/bin/tor-browser "$@"
+fi
+
+echo -e "\e[1;33m[*] Tor Browser bundle not found in /opt or ~/.local/share.\e[0m"
+echo -e "\e[1;36m[*] Launching installation via torbrowser-launcher...\e[0m"
+sudo apt-get update && sudo apt-get install -y torbrowser-launcher && exec torbrowser-launcher "$@"

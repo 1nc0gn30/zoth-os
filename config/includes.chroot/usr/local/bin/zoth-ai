@@ -18,9 +18,9 @@ done
 
 if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
   if [[ -d "/opt/zoth-ai-stack-app" ]]; then
-    exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-ai-stack-app "$@"
+    exec "$ELECTRON_BIN" --no-sandbox --disable-gpu /opt/zoth-ai-stack-app "$@"
   elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ai-stack-app" ]]; then
-    exec "$ELECTRON_BIN" --no-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ai-stack-app "$@"
+    exec "$ELECTRON_BIN" --no-sandbox --disable-gpu ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-ai-stack-app "$@"
   fi
 fi
 

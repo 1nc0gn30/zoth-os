@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS 3.0 INSTALLER LAUNCHER (CALAMARES)
+# ==============================================================================
+set -e
+
+# Grant local root access to X server
+if command -v xhost >/dev/null 2>&1; then
+    xhost +local:root 2>/dev/null || true
+    xhost +SI:localuser:root 2>/dev/null || true
+    xhost + 2>/dev/null || true
+fi
+
+# Set Display
+export DISPLAY="${DISPLAY:-:0}"
+
+# Detect Wayland & use XCB via XWayland for root Qt compatibility
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
+fi
+
+# Locate XAUTHORITY file
+if [ -z "${XAUTHORITY:-}" ] || [ ! -r "$XAUTHORITY" ]; then
+    for f in "$HOME/.Xauthority" /run/user/"$(id -u)"/xauth* /run/user/1000/xauth* /tmp/xauth*; do
+        if [ -r "$f" ]; then
+            export XAUTHORITY="$f"
+            break
+        fi
+    done
+fi
+
+LOG_DIR="/var/log/calamares"
+sudo mkdir -p "$LOG_DIR" 2>/dev/null || mkdir -p "/tmp/calamares-log"
+LOG_FILE="$LOG_DIR/calamares.log"
+
+# Copy auth cookie for root
+if [ -n "${XAUTHORITY:-}" ] && [ -r "$XAUTHORITY" ]; then
+    sudo cp "$XAUTHORITY" /root/.Xauthority 2>/dev/null || true
+fi
+
+if [ "$(id -u)" -eq 0 ]; then
+    exec /usr/bin/calamares "$@"
+else
+    exec sudo -E env DISPLAY="$DISPLAY" XAUTHORITY="${XAUTHORITY:-/root/.Xauthority}" QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}" /usr/bin/calamares "$@"
+fi

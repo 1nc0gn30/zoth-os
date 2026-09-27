@@ -1,0 +1,8 @@
+bochs
+virtio-gpu
+snd-hda-intel
+snd-intel8x0
+snd-ac97-codec
+snd-pcm
+snd-seq
+snd-timer

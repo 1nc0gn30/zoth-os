@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -55,15 +55,27 @@ const BUNDLES = {
 };
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1140, Math.floor(workArea.width * 0.90));
+  const targetHeight = Math.min(760, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1140,
-    height: 780,
-    minWidth: 920,
-    minHeight: 640,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
     backgroundColor: '#04070c',
     title: 'ZOTH ARSENAL // CYBER-GOLD PROVISIONER',
     autoHideMenuBar: true,
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

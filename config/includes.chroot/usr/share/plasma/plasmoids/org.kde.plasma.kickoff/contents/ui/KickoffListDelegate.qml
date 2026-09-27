@@ -32,8 +32,8 @@ AbstractKickoffItemDelegate {
     topPadding: compact ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
     bottomPadding: compact ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
 
-    icon.width: compact || root.isCategoryListItem ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium
-    icon.height: compact || root.isCategoryListItem ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium
+    icon.width: root.isCategoryListItem ? 28 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
+    icon.height: root.isCategoryListItem ? 28 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
 
     labelTruncated: label.truncated
     descriptionTruncated: descriptionLabel.truncated
@@ -88,15 +88,52 @@ AbstractKickoffItemDelegate {
         id: row
         spacing: KickoffSingleton.listItemMetrics.margins.left * 2
 
-        Kirigami.Icon {
-            id: icon
+        Item {
+            id: iconWrapper
             implicitWidth: root.icon.width
             implicitHeight: root.icon.height
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-            animated: false
-            selected: root.iconAndLabelsShouldlookSelected
-            source: root.decoration || root.icon.name || root.icon.source
+            Image {
+                id: goldCatImg
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                asynchronous: true
+                mipmap: true
+                smooth: true
+                source: {
+                    if (root.isCategoryListItem) {
+                        var t = (root.text || "").toLowerCase().trim();
+                        var dec = String(root.decoration || "").toLowerCase();
+                        var iname = String(root.icon?.name || "").toLowerCase();
+                        if (t.indexOf("favor") !== -1 || dec.indexOf("favor") !== -1 || dec.indexOf("bookmark") !== -1 || iname.indexOf("favor") !== -1 || iname.indexOf("bookmark") !== -1) return "/usr/share/pixmaps/menu-gold-favorites.png";
+                        if (t.indexOf("all") !== -1 || dec.indexOf("all") !== -1 || dec.indexOf("grid") !== -1 || iname.indexOf("all") !== -1 || iname.indexOf("grid") !== -1) return "/usr/share/pixmaps/menu-gold-all-apps.png";
+                        if (t === "development" || dec.indexOf("devel") !== -1) return "/usr/share/pixmaps/menu-gold-development.png";
+                        if (t === "education" || dec.indexOf("edu") !== -1) return "/usr/share/pixmaps/menu-gold-education.png";
+                        if (t === "graphics" || dec.indexOf("graph") !== -1) return "/usr/share/pixmaps/menu-gold-graphics.png";
+                        if (t === "help" || dec.indexOf("help") !== -1) return "/usr/share/pixmaps/menu-gold-help.png";
+                        if (t === "internet" || dec.indexOf("net") !== -1) return "/usr/share/pixmaps/menu-gold-internet.png";
+                        if (t === "miscellaneous" || t === "more" || dec.indexOf("misc") !== -1) return "/usr/share/pixmaps/menu-gold-misc.png";
+                        if (t === "multimedia" || dec.indexOf("media") !== -1) return "/usr/share/pixmaps/menu-gold-multimedia.png";
+                        if (t.indexOf("pentest") !== -1 || t.indexOf("red team") !== -1 || dec.indexOf("sec") !== -1) return "/usr/share/pixmaps/menu-gold-pentesting.png";
+                        if (t === "system" || dec.indexOf("system") !== -1) return "/usr/share/pixmaps/menu-gold-system.png";
+                        if (t === "utilities" || dec.indexOf("util") !== -1) return "/usr/share/pixmaps/menu-gold-utilities.png";
+                        if (t === "settings" || dec.indexOf("setting") !== -1) return "/usr/share/pixmaps/menu-gold-settings.png";
+                        if (t === "office" || dec.indexOf("office") !== -1) return "/usr/share/pixmaps/menu-gold-all-apps.png";
+                    }
+                    return "";
+                }
+                visible: source != ""
+            }
+
+            Kirigami.Icon {
+                id: fallbackIcon
+                anchors.fill: parent
+                visible: !goldCatImg.visible
+                animated: false
+                selected: root.iconAndLabelsShouldlookSelected
+                source: root.decoration || root.icon.name || root.icon.source
+            }
         }
 
         GridLayout {

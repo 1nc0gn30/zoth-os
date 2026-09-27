@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -7,11 +7,24 @@ const { exec } = require('child_process');
 let mainWindow = null;
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(900, Math.floor(workArea.width * 0.85));
+  const targetHeight = Math.min(680, Math.floor(workArea.height * 0.85));
+
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 720,
-    minWidth: 700,
-    minHeight: 600,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 500,
+    minHeight: 400,
+    center: true,
+    frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     title: 'ZOTHOS // ANONYMOUS SOVEREIGN FEEDBACK',
     backgroundColor: '#05070a',
     show: false,

@@ -1,17 +1,29 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
 let mainWindow = null;
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(840, Math.floor(workArea.width * 0.8));
+  const targetHeight = Math.min(580, Math.floor(workArea.height * 0.8));
+
   mainWindow = new BrowserWindow({
-    width: 820,
-    height: 560,
-    minWidth: 640,
-    minHeight: 460,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 500,
+    minHeight: 400,
+    center: true,
     backgroundColor: '#05070c',
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     titleBarStyle: 'default',
     title: 'ZOTH MUSIC // HERMETIC AUDIO STUDIO',
     icon: '/usr/share/pixmaps/zoth-soundtrack.png',

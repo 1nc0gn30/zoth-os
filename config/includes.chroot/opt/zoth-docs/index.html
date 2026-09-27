@@ -7,15 +7,20 @@
   <style>
     :root {
       --bg: #05070a;
-      --card-bg: rgba(13, 17, 23, 0.82);
+      --sidebar-bg: rgba(8, 11, 16, 0.96);
+      --card-bg: rgba(13, 17, 23, 0.85);
+      --card-hover: rgba(22, 29, 39, 0.95);
       --border: rgba(212, 175, 55, 0.22);
+      --border-bright: rgba(212, 175, 55, 0.55);
       --gold: #d4af37;
+      --gold-bright: #ffd700;
       --gold-glow: rgba(212, 175, 55, 0.45);
       --emerald: #00ff9d;
       --cyan: #00e5ff;
+      --red: #ff3355;
       --text: #e6edf3;
       --text-muted: #8b949e;
-      --code-bg: #0a0e14;
+      --code-bg: #090d13;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -28,8 +33,8 @@
     }
     /* Sidebar */
     .sidebar {
-      width: 290px;
-      background: rgba(8, 11, 16, 0.95);
+      width: 320px;
+      background: var(--sidebar-bg);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -40,25 +45,26 @@
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
     .brand-mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background: radial-gradient(circle, var(--gold) 0%, #1a1505 100%);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: radial-gradient(circle, var(--gold-bright) 0%, #1a1505 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
       color: #000;
-      font-size: 20px;
-      box-shadow: 0 0 16px var(--gold-glow);
+      font-size: 22px;
+      box-shadow: 0 0 18px var(--gold-glow);
+      border: 1px solid var(--gold);
     }
     .brand-text h1 {
-      font-size: 15px;
+      font-size: 16px;
       letter-spacing: 2px;
-      color: var(--gold);
+      color: var(--gold-bright);
       text-transform: uppercase;
       font-weight: 800;
     }
@@ -68,7 +74,7 @@
       letter-spacing: 0.5px;
     }
     .search-box {
-      padding: 16px 20px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border);
     }
     .search-box input {
@@ -76,15 +82,15 @@
       background: #0d1219;
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 8px 12px;
+      padding: 10px 14px;
       color: var(--text);
       font-size: 13px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
     .search-box input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 8px var(--gold-glow);
+      box-shadow: 0 0 10px var(--gold-glow);
     }
     .nav-list {
       flex: 1;
@@ -102,7 +108,7 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       transition: all 0.2s;
     }
     .nav-item:hover {
@@ -111,12 +117,12 @@
     }
     .nav-item.active {
       background: rgba(212, 175, 55, 0.15);
-      color: var(--gold);
-      border-left: 3px solid var(--gold);
+      color: var(--gold-bright);
+      border-left: 3px solid var(--gold-bright);
       font-weight: 600;
     }
     .nav-icon {
-      font-size: 15px;
+      font-size: 16px;
     }
     .sidebar-footer {
       padding: 14px 20px;
@@ -125,6 +131,7 @@
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
+      background: rgba(4, 6, 9, 0.8);
     }
     /* Main Content */
     .content-area {
@@ -136,7 +143,7 @@
     .doc-section {
       display: none;
       animation: fadeIn 0.3s ease;
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
     }
     .doc-section.active {
@@ -148,7 +155,7 @@
     }
     h2 {
       font-size: 28px;
-      color: var(--gold);
+      color: var(--gold-bright);
       letter-spacing: 1px;
       margin-bottom: 8px;
       font-weight: 700;
@@ -161,10 +168,13 @@
       border-bottom: 1px solid var(--border);
     }
     h3 {
-      font-size: 18px;
+      font-size: 19px;
       color: var(--cyan);
-      margin: 24px 0 12px 0;
+      margin: 28px 0 12px 0;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     p {
       font-size: 14px;
@@ -178,21 +188,32 @@
       gap: 16px;
       margin: 20px 0;
     }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 20px;
-      transition: border-color 0.2s, transform 0.2s;
+      transition: all 0.2s;
     }
     .card:hover {
+      background: var(--card-hover);
       border-color: var(--gold);
       transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
     .card h4 {
       font-size: 15px;
-      color: var(--gold);
+      color: var(--gold-bright);
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .card p {
       font-size: 13px;
@@ -216,7 +237,7 @@
       background: rgba(212, 175, 55, 0.15);
       border: 1px solid var(--border);
       color: var(--gold);
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 4px;
       cursor: pointer;
       font-size: 11px;
@@ -232,16 +253,18 @@
       padding: 14px 18px;
       border-radius: 4px;
       margin-bottom: 12px;
+      font-size: 13px;
     }
     .alert-dont {
-      border-left: 4px solid #ff3355;
+      border-left: 4px solid var(--red);
       background: rgba(255, 51, 85, 0.06);
       padding: 14px 18px;
       border-radius: 4px;
       margin-bottom: 12px;
+      font-size: 13px;
     }
     .alert-do strong { color: var(--emerald); }
-    .alert-dont strong { color: #ff3355; }
+    .alert-dont strong { color: var(--red); }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -249,14 +272,14 @@
       font-size: 13px;
     }
     th, td {
-      padding: 10px 14px;
+      padding: 12px 16px;
       text-align: left;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
     th {
-      color: var(--gold);
+      color: var(--gold-bright);
       font-weight: 600;
-      background: rgba(212, 175, 55, 0.05);
+      background: rgba(212, 175, 55, 0.06);
     }
     td code {
       background: rgba(255, 255, 255, 0.06);
@@ -264,7 +287,21 @@
       border-radius: 4px;
       color: var(--cyan);
       font-family: monospace;
+      font-size: 12px;
     }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--gold-bright); border: 1px solid var(--gold); }
+    .badge-emerald { background: rgba(0, 255, 157, 0.15); color: var(--emerald); border: 1px solid var(--emerald); }
+    .badge-cyan { background: rgba(0, 229, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
+    .badge-red { background: rgba(255, 51, 85, 0.15); color: var(--red); border: 1px solid var(--red); }
   </style>
 </head>
 <body>
@@ -272,28 +309,31 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">Z</div>
+      <div class="brand-mark">🜂</div>
       <div class="brand-text">
         <h1>ZothOS Codex</h1>
-        <p>Operational Documentation v1.0</p>
+        <p>Sovereign Operations Manual v3.0</p>
       </div>
     </div>
     <div class="search-box">
-      <input type="text" id="filterInput" placeholder="Filter topics or tools...">
+      <input type="text" id="filterInput" placeholder="Search codex or commands...">
     </div>
     <ul class="nav-list" id="navList">
       <li class="nav-item active" data-target="manifesto"><span class="nav-icon">📜</span> The Sovereign Manifesto</li>
-      <li class="nav-item" data-target="hows"><span class="nav-icon">⚙️</span> Architecture & The Hows</li>
-      <li class="nav-item" data-target="whys"><span class="nav-icon">🧠</span> Philosophy & The Whys</li>
-      <li class="nav-item" data-target="dos-donts"><span class="nav-icon">⚖️</span> The Do's & Don'ts</li>
-      <li class="nav-item" data-target="swarms"><span class="nav-icon">🤖</span> AI Swarms & MCP Matrix</li>
-      <li class="nav-item" data-target="realities"><span class="nav-icon">🔮</span> Realities & Compositor</li>
-      <li class="nav-item" data-target="audio"><span class="nav-icon">🎵</span> Hermetic Sound Matrix</li>
-      <li class="nav-item" data-target="shortcuts"><span class="nav-icon">⌨️</span> Hotkeys & Shortcuts</li>
+      <li class="nav-item" data-target="vault"><span class="nav-icon">🔐</span> Sovereign Vault & Secrets</li>
+      <li class="nav-item" data-target="agents"><span class="nav-icon">🤖</span> AI Coding Agents & Swarms</li>
+      <li class="nav-item" data-target="cloud-web"><span class="nav-icon">🌐</span> Cloud & Web Engineering</li>
+      <li class="nav-item" data-target="pentesting"><span class="nav-icon">🛡️</span> Penetration Testing Arsenal</li>
+      <li class="nav-item" data-target="privacy"><span class="nav-icon">🧅</span> Privacy, Ghostmode & Tor</li>
+      <li class="nav-item" data-target="modes"><span class="nav-icon">🔮</span> Environment & Stealth Modes</li>
+      <li class="nav-item" data-target="architecture"><span class="nav-icon">⚙️</span> Architecture & The Hows</li>
+      <li class="nav-item" data-target="dos-donts"><span class="nav-icon">⚖️</span> Operational Do's & Don'ts</li>
+      <li class="nav-item" data-target="audio"><span class="nav-icon">🎵</span> Focus Audio & Soundtrack</li>
+      <li class="nav-item" data-target="cheatsheet"><span class="nav-icon">⌨️</span> Hotkeys & CLI Cheatsheet</li>
     </ul>
     <div class="sidebar-footer">
-      <span>ZOTH v1.0 // 2026</span>
-      <span>Debian 13 Core</span>
+      <span>ZOTHOS v3.0 // 2026</span>
+      <span>Debian 13 + KDE Plasma 6.3</span>
     </div>
   </aside>
 
@@ -303,150 +343,270 @@
     <!-- 1. The Sovereign Manifesto -->
     <section class="doc-section active" id="manifesto">
       <h2>The Sovereign Manifesto</h2>
-      <p class="section-subtitle">Core tenets of alchemical computing and local intelligence sovereignty.</p>
-      <p><strong>ZothOS</strong> is built upon the premise that true digital sovereignty requires autonomy over three fundamental pillars: <strong>Execution</strong>, <strong>Intelligence</strong>, and <strong>Communication</strong>.</p>
+      <p class="section-subtitle">Core tenets of alchemical computing, cryptographic sovereignty, and zero-telemetry operations.</p>
+      <p><strong>ZothOS</strong> is built upon the premise that true digital sovereignty requires absolute autonomy over four fundamental pillars: <strong>Execution</strong>, <strong>Cryptographic Secrets</strong>, <strong>Intelligence</strong>, and <strong>Communication</strong>.</p>
       
       <div class="grid">
         <div class="card">
-          <h4>1. Zero Telemetry</h4>
-          <p>No phone-home beacons, no corporate diagnostics, no silent data collection. What executes on your silicon stays on your silicon.</p>
+          <h4>🜂 1. Zero Cloud Telemetry</h4>
+          <p>No phone-home telemetry, no telemetry daemons, no tracking beacons. Every byte and token stays exclusively on your silicon.</p>
         </div>
         <div class="card">
-          <h4>2. Sovereign AI Runtimes</h4>
-          <p>Resident local micro-models (Hermes 3, Llama 3.2, Qwen) provide offline coding, evaluation, and intelligence without relying on cloud API leases.</p>
+          <h4>🔐 2. Cryptographic Secret Isolation</h4>
+          <p>Native Rust Argon2id + ChaCha20-Poly1305 daemon with memory-only environment injection. Decrypted keys never touch disk.</p>
         </div>
         <div class="card">
-          <h4>3. Unified Red Teaming</h4>
-          <p>195+ verified offensive and defensive security tools from Kali Rolling and Parrot OS pinned securely against Debian stable.</p>
+          <h4>🤖 3. Sovereign AI Runtimes</h4>
+          <p>Resident offline Ollama models paired with frontier coding agents (Aider, Claude Code, Cline, Grok, Hermes, Antigravity).</p>
         </div>
         <div class="card">
-          <h4>4. Ephemeral & Amnesic Privacy</h4>
-          <p>Live session persistence, transparent Tor routing, and NullAI Ghostmode anti-forensics RAM cleansing on demand.</p>
+          <h4>🧅 4. Amnesic OPSEC & Privacy</h4>
+          <p>Pre-bundled Tor Browser, transparent AnonSurf routing, MAC address spoofing, and NullAI Ghostmode anti-forensics RAM cleansing.</p>
         </div>
       </div>
     </section>
 
-    <!-- 2. Architecture & The Hows -->
-    <section class="doc-section" id="hows">
-      <h2>Architecture & The Hows</h2>
-      <p class="section-subtitle">How ZothOS is structured under the hood and how key systems interact.</p>
-      
-      <h3>Root Filesystem & Hybrid Squashfs</h3>
-      <p>ZothOS is delivered as a hybrid ISO using a high-density XZ compressed SquashFS root image. When booted live, an overlayfs layer mounts an in-memory copy-on-write workspace that leaves host disks untouched unless explicitly mounted.</p>
-      <div class="code-block">
-        <span>zoth-doctor</span>
-        <button onclick="copy('zoth-doctor')">Copy</button>
+    <!-- 2. Sovereign Vault & Secrets -->
+    <section class="doc-section" id="vault">
+      <h2>Sovereign Vault & Secret Injection</h2>
+      <p class="section-subtitle">Zero-leak cryptographic secrets engine powered by Rust, Argon2id, and memory-only process injection.</p>
+
+      <h3>Cryptographic Daemon Architecture</h3>
+      <p>The Zoth Vault daemon runs locally on <code>127.0.0.1:8787</code>. Master passphrases are derived using memory-hard <strong>Argon2id</strong> (m_cost=64MB, t_cost=3, p_cost=4) and secrets are encrypted with authenticated <strong>ChaCha20-Poly1305</strong> AEAD.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h4>Rust Vault Daemon (:8787)</h4>
+          <p>Local REST daemon managing master encryption, cryptographic entropy scoring, access audit logs, and authenticated sessions.</p>
+        </div>
+        <div class="card">
+          <h4>Zero-Leak Process Injector</h4>
+          <p>Command <code>zoth-vault run -- &lt;cmd&gt;</code> fetches decrypted environment variables directly into child process RAM without writing to <code>.env</code>.</p>
+        </div>
       </div>
 
-      <h3>The Tool Nexus Dispatcher</h3>
-      <p>Tool Nexus orchestrates 10 distinct domains (Core, AI Runtimes, Agents, Compilers, Media, Sec, Web3, Vision, Net, PKM). Rather than broken wrappers, it resolves authentic vendor packages, user binaries, and environment variables dynamically.</p>
-      <div class="code-block">
-        <span>zoth-tool-nexus</span>
-        <button onclick="copy('zoth-tool-nexus')">Copy</button>
-      </div>
-
-      <h3>Zoth Desk & Telemetry Bus</h3>
-      <p>Zoth Desk combines an Electron native frontend with an asynchronous Python backend and direct Node.js system metric fallbacks. It monitors CPU loads, RAM usage, storage, network traffic, listening ports, and resident LLMs with zero cloud dependencies.</p>
-    </section>
-
-    <!-- 3. Philosophy & The Whys -->
-    <section class="doc-section" id="whys">
-      <h2>Philosophy & The Whys</h2>
-      <p class="section-subtitle">The deliberate architectural decisions behind ZothOS.</p>
-
-      <h3>Why Debian Stable as the Foundation?</h3>
-      <p>Rolling distributions (Kali, Arch) suffer from kernel breakage, library deprecations, and compositing crashes during live operations. ZothOS pins Debian 13 Bookworm/Trixie for bulletproof kernel stability, then surgically imports Kali and Parrot repositories through pinned apt policies.</p>
-
-      <h3>Why Local Agents over Cloud Monoliths?</h3>
-      <p>Cloud AI is metered, surveilled, and subject to arbitrary alignment changes. By pairing Nous Research Hermes, OpenAI Codex CLI, and local Ollama daemons directly with native Linux tooling, the developer retains full ownership over reasoning and output.</p>
-    </section>
-
-    <!-- 4. The Do's & Don'ts -->
-    <section class="doc-section" id="dos-donts">
-      <h2>The Do's & Don'ts</h2>
-      <p class="section-subtitle">Operational security guidelines for working in high-stakes environments.</p>
-
-      <div class="alert-do">
-        <strong>DO:</strong> Use <code>Reality Switcher</code> to toggle <strong>NullAI Ghostmode</strong> before running network reconnaissance on untrusted targets.
-      </div>
-      <div class="alert-do">
-        <strong>DO:</strong> Verify your PATH and compiler status using <code>zoth-tool-nexus</code> before attempting complex Web3 or Rust smart contract builds.
-      </div>
-      <div class="alert-do">
-        <strong>DO:</strong> Use <code>zoth-netkill</code> instantly if suspicious outbound telemetry or unexpected socket traffic is observed.
-      </div>
-
-      <div class="alert-dont">
-        <strong>DON'T:</strong> Run arbitrary pipe-to-bash (<code>curl | bash</code>) scripts without inspecting their sources and checksums.
-      </div>
-      <div class="alert-dont">
-        <strong>DON'T:</strong> Store unencrypted private keys, seed phrases, or sensitive API secrets in live root without persistence configured.
-      </div>
-      <div class="alert-dont">
-        <strong>DON'T:</strong> Commit git repositories from live workspaces with sensitive tokens in command history.
-      </div>
-    </section>
-
-    <!-- 5. AI Swarms & MCP Matrix -->
-    <section class="doc-section" id="swarms">
-      <h2>AI Swarms & MCP Matrix</h2>
-      <p class="section-subtitle">Autonomous agent harnesses, Model Context Protocol servers, and local inference.</p>
-
-      <h3>Supported Frontier & Underground Agents</h3>
+      <h3>Multi-Vault Support</h3>
+      <p>ZothOS supports multiple secrets providers side-by-side with interactive terminal and GUI workflows:</p>
       <table>
         <thead>
-          <tr><th>Agent / Harness</th><th>Command</th><th>Purpose</th></tr>
+          <tr><th>Vault Provider</th><th>CLI Command</th><th>Storage Mechanism</th><th>Status</th></tr>
         </thead>
         <tbody>
-          <tr><td>Zoth Studio v2</td><td><code>zoth-studio</code></td><td>Flagship visual agent workbench & consensus swarm (http://localhost:3000)</td></tr>
-          <tr><td>Zoth Studio Updater</td><td><code>zoth-update-studio</code></td><td>One-command Git sync & Vite production rebuild utility</td></tr>
-          <tr><td>Nous Research Hermes</td><td><code>hermes</code></td><td>Autonomous agent runner & skill ecosystem</td></tr>
-          <tr><td>Anthropic Claude Code</td><td><code>claude</code></td><td>Terminal agentic coding environment</td></tr>
-          <tr><td>OpenAI Codex CLI</td><td><code>codex</code></td><td>Terminal coding & diff assistant</td></tr>
-          <tr><td>OpenCode AI</td><td><code>opencode</code></td><td>Open-source terminal autonomous developer</td></tr>
-          <tr><td>NullAI HexStrike AI</td><td><code>hexstrike</code></td><td>Autonomous red team attack orchestration</td></tr>
-          <tr><td>Aider</td><td><code>aider</code></td><td>Git-aware pair programmer</td></tr>
+          <tr><td><strong>Zoth Sovereign Vault</strong></td><td><code>zoth-vault</code></td><td>Argon2id + Rust ChaCha20-Poly1305</td><td><span class="badge badge-gold">Native Primary</span></td></tr>
+          <tr><td><strong>Bitwarden CLI</strong></td><td><code>bw</code> / <code>bitwarden</code></td><td>Bitwarden Cloud / Self-hosted Vault API</td><td><span class="badge badge-emerald">Integrated</span></td></tr>
+          <tr><td><strong>KeePassXC</strong></td><td><code>keepassxc-cli</code></td><td>Local Encrypted KDBX Database</td><td><span class="badge badge-cyan">Supported</span></td></tr>
+          <tr><td><strong>UNIX Pass</strong></td><td><code>pass</code></td><td>GnuPG Encrypted Tree</td><td><span class="badge badge-cyan">Supported</span></td></tr>
         </tbody>
       </table>
 
-      <h3>Model Context Protocol (MCP) Bridge</h3>
-      <p>ZothOS includes a built-in FastMCP bridge registry enabling local agents to query Kali tools, filesystem states, and system metrics through standard JSON-RPC contracts.</p>
+      <h3>Essential Vault Commands</h3>
       <div class="code-block">
-        <span>zoth-mcp</span>
-        <button onclick="copy('zoth-mcp')">Copy</button>
+        <span>zoth-vault status</span>
+        <button onclick="copy('zoth-vault status')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-vault set OPENAI_API_KEY sk-... --provider openai</span>
+        <button onclick="copy('zoth-vault set OPENAI_API_KEY sk-... --provider openai')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-vault run -- aider</span>
+        <button onclick="copy('zoth-vault run -- aider')">Copy</button>
       </div>
     </section>
 
-    <!-- 6. Realities & Compositor -->
-    <section class="doc-section" id="realities">
-      <h2>Realities & Compositor</h2>
-      <p class="section-subtitle">Transmuting the desktop environment across four operational states with zero session restart.</p>
+    <!-- 3. AI Coding Agents & Swarms -->
+    <section class="doc-section" id="agents">
+      <h2>AI Coding Agents & Swarms</h2>
+      <p class="section-subtitle">Frontier and underground autonomous developer workstations pre-configured for instant use.</p>
+
+      <h3>Autonomous Coding Workstations</h3>
+      <table>
+        <thead>
+          <tr><th>Agent / Tool</th><th>Launcher Command</th><th>Desktop Icon</th><th>Capabilities</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Aider AI Coding Agent</strong></td><td><code>aider</code></td><td>Aider AI Coding Agent</td><td>Interactive pair programming, offline Ollama runner, Architect dual-agent mode, auto git commits.</td></tr>
+          <tr><td><strong>Google Antigravity Agent</strong></td><td><code>antigravity</code> / <code>agy</code></td><td>Google Antigravity Agent</td><td>Full agentic IDE with skills, subagents, and browser automation.</td></tr>
+          <tr><td><strong>Claude Code Agent</strong></td><td><code>claude</code></td><td>Zoth Claude Code Agent</td><td>Anthropic agentic CLI coding tool with full codebase refactoring.</td></tr>
+          <tr><td><strong>Cline Autonomous Agent</strong></td><td><code>cline</code></td><td>Cline Autonomous AI</td><td>Interactive terminal agent with MCP integration and task planning.</td></tr>
+          <tr><td><strong>Nous Hermes Agent</strong></td><td><code>hermes</code></td><td>Zoth Studio Pro</td><td>Local-first autonomous agent runner with 70+ built-in tool skills.</td></tr>
+          <tr><td><strong>OpenAI Codex CLI</strong></td><td><code>codex</code></td><td>Zoth Terminal</td><td>OpenAI terminal code generator and terminal diff editor.</td></tr>
+          <tr><td><strong>x.ai Grok CLI</strong></td><td><code>grok</code></td><td>Zoth Terminal</td><td>Real-time X.ai intelligence search and research CLI.</td></tr>
+          <tr><td><strong>Ollama Inference Engine</strong></td><td><code>ollama serve</code></td><td>Terminal Background</td><td>High-performance local LLM execution on 127.0.0.1:11434 (Qwen, Llama, DeepSeek).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Offline Local Ollama Operation</h3>
+      <p>All coding agents can be pointed directly at the local Ollama instance for 100% offline, private air-gapped programming:</p>
+      <div class="code-block">
+        <span>aider --model ollama_chat/qwen2.5-coder</span>
+        <button onclick="copy('aider --model ollama_chat/qwen2.5-coder')">Copy</button>
+      </div>
+    </section>
+
+    <!-- 4. Cloud & Web Engineering -->
+    <section class="doc-section" id="cloud-web">
+      <h2>Cloud & Web Engineering</h2>
+      <p class="section-subtitle">Instant developer environments for fullstack, data apps, and cloud deployment.</p>
 
       <div class="grid">
         <div class="card">
-          <h4>1. 🜂 Azoth 24K Gold (<code>zoth-mode gold</code>)</h4>
-          <p>Sacred Celtic geometry, 24-karat gold specular reflections, glowing active window titlebars, and regal styling with sanctum chime audio cue.</p>
+          <h4>Netlify CLI Workstation</h4>
+          <p>Command <code>zoth-netlify</code> loads a dedicated terminal workstation with live status, login guides, site linkers, edge functions, and deployment pipelines.</p>
         </div>
         <div class="card">
-          <h4>2. 🜄 Hermetic Matrix (<code>zoth-mode matrix</code>)</h4>
-          <p>Phosphor emerald rain, alchemical glyphs, high-contrast matrix monospace typography and cyber chirp audio cue.</p>
+          <h4>Streamlit Studio</h4>
+          <p>Command <code>zoth-streamlit</code> launches a cyber dashboard station with automated virtualenv management, sample data apps, and live port forwarding on :8501.</p>
         </div>
-        <div class="card">
-          <h4>3. 🜁 NullAI Ghostmode (<code>zoth-mode ghost</code>)</h4>
-          <p>Deep obsidian void, Tor-cloaked outbound routing, anti-forensics RAM scrubbing, MAC address cloak, and ghost vapor audio cue.</p>
-        </div>
-        <div class="card">
-          <h4>4. 🜃 Windows 11 Incognito (<code>zoth-mode win11</code>)</h4>
-          <p>Complete enterprise disguise with corporate taskbar layout, Fluent GTK theme, decoy PowerShell shell, and corporate camouflage.</p>
-        </div>
+      </div>
+
+      <h3>Quick Launch Commands</h3>
+      <div class="code-block">
+        <span>zoth-netlify</span>
+        <button onclick="copy('zoth-netlify')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-streamlit</span>
+        <button onclick="copy('zoth-streamlit')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-chrome</span>
+        <button onclick="copy('zoth-chrome')">Copy</button>
       </div>
     </section>
 
-    <!-- 7. Hermetic Sound Matrix -->
+    <!-- 5. Penetration Testing Arsenal -->
+    <section class="doc-section" id="pentesting">
+      <h2>Penetration Testing Arsenal</h2>
+      <p class="section-subtitle">195+ offensive security tools pinned cleanly from Kali Rolling & Parrot OS.</p>
+
+      <table>
+        <thead>
+          <tr><th>Security Tool</th><th>Command</th><th>Category</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Burp Suite Community</strong></td><td><code>burpsuite</code></td><td>Web Security</td><td>Web application security assessment and HTTP proxy interceptor.</td></tr>
+          <tr><td><strong>Caido Proxy</strong></td><td><code>caido</code></td><td>Web Security</td><td>Modern, high-speed lightweight Rust security proxy with web UI.</td></tr>
+          <tr><td><strong>Nmap</strong></td><td><code>nmap</code></td><td>Network Recon</td><td>Industry-standard network scanning and port enumeration engine.</td></tr>
+          <tr><td><strong>Wireshark</strong></td><td><code>wireshark</code></td><td>Traffic Analysis</td><td>Deep packet inspection and protocol analysis with GUI.</td></tr>
+          <tr><td><strong>Metasploit Framework</strong></td><td><code>msfconsole</code></td><td>Exploitation</td><td>Automated payload generation and penetration testing framework.</td></tr>
+          <tr><td><strong>NetExec (nxc)</strong></td><td><code>nxc</code></td><td>Active Directory</td><td>Modern network execution tool for Windows/AD assessments.</td></tr>
+          <tr><td><strong>Aircrack-ng</strong></td><td><code>aircrack-ng</code></td><td>Wireless</td><td>802.11 wireless security auditing and WEP/WPA key recovery suite.</td></tr>
+          <tr><td><strong>HexStrike AI</strong></td><td><code>hexstrike</code></td><td>Autonomous Red Team</td><td>Autonomous red team attack orchestration powered by AI agents.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 6. Privacy, Ghostmode & Tor -->
+    <section class="doc-section" id="privacy">
+      <h2>Privacy, Ghostmode & Tor Browser</h2>
+      <p class="section-subtitle">Anti-surveillance, anonymous routing, and anti-forensics defenses.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h4>Tor Browser (:9050 / :9150)</h4>
+          <p>Pre-bundled standalone Tor Browser located in <code>/opt/tor-browser/</code>. Multi-hop onion routing with zero third-party telemetry.</p>
+        </div>
+        <div class="card">
+          <h4>NullAI Ghostmode Protocol</h4>
+          <p>Full-system transparent Tor proxy (AnonSurf), hardware MAC address randomization, ephemeral hostname cloaking, and RAM history shredding.</p>
+        </div>
+      </div>
+
+      <h3>Quick Privacy Commands</h3>
+      <div class="code-block">
+        <span>tor-browser</span>
+        <button onclick="copy('tor-browser')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-ghost start</span>
+        <button onclick="copy('zoth-ghost start')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-netkill</span>
+        <button onclick="copy('zoth-netkill')">Copy</button>
+      </div>
+    </section>
+
+    <!-- 7. Environment & Stealth Modes -->
+    <section class="doc-section" id="modes">
+      <h2>Environment & Stealth Modes</h2>
+      <p class="section-subtitle">Seamlessly toggle between Sovereign Default and Ghostmode Stealth with zero session logout.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h4>1. Sovereign Gold (Default Master)</h4>
+          <p><code>zoth-mode gold</code> &bull; 24K Celtic Gold specular styling, Azoth alchemical desktop artwork, and sanctum focus chimes.</p>
+        </div>
+        <div class="card">
+          <h4>2. NullAI Ghostmode (Stealth)</h4>
+          <p><code>zoth-mode ghost</code> &bull; Spectral obsidian stealth theme, transparent Tor proxy armed, MAC cloaked, and RAM scrubbed.</p>
+        </div>
+        <div class="card">
+          <h4>3. Hermetic Matrix Profile</h4>
+          <p><code>zoth-mode matrix</code> &bull; Phosphor emerald terminal rain, high-contrast monospace glyphs, and cyber audio cue.</p>
+        </div>
+        <div class="card">
+          <h4>4. Incognito Chameleon Guise</h4>
+          <p><code>zoth-mode win11</code> &bull; Covert Fluent disguise with decoy corporate styling for public environment operations.</p>
+        </div>
+      </div>
+
+      <h3>Instant Mode Toggle</h3>
+      <p>Run <code>zoth-mode toggle</code> to instantly flip between your Sovereign Gold master environment and Ghostmode Stealth:</p>
+      <div class="code-block">
+        <span>zoth-mode toggle</span>
+        <button onclick="copy('zoth-mode toggle')">Copy</button>
+      </div>
+    </section>
+
+    <!-- 8. Architecture & Under the Hood -->
+    <section class="doc-section" id="architecture">
+      <h2>Architecture & Under the Hood</h2>
+      <p class="section-subtitle">System components, squashfs layout, and package management policies.</p>
+
+      <h3>Debian Stable + Pinned Repositories</h3>
+      <p>ZothOS utilizes Debian 13 as a rock-solid kernel foundation. Kali Rolling and Parrot OS packages are imported selectively via pinned apt policies in <code>/etc/apt/preferences.d/</code> to prevent breaking core system libraries.</p>
+
+      <h3>Calamares Native Installer</h3>
+      <p>Equipped with an alchemical Calamares installation suite featuring automated LUKS disk encryption, Btrfs subvolumes, and UEFI/GRUB configuration.</p>
+      <div class="code-block">
+        <span>launch-calamares</span>
+        <button onclick="copy('launch-calamares')">Copy</button>
+      </div>
+    </section>
+
+    <!-- 9. Operational Do's & Don'ts -->
+    <section class="doc-section" id="dos-donts">
+      <h2>Operational Do's & Don'ts</h2>
+      <p class="section-subtitle">Guidelines for maintaining OPSEC, system integrity, and key safety.</p>
+
+      <div class="alert-do">
+        <strong>DO:</strong> Use <code>zoth-vault run -- &lt;cmd&gt;</code> to execute tools requiring API keys so secrets remain exclusively in process memory.
+      </div>
+      <div class="alert-do">
+        <strong>DO:</strong> Use <code>zoth-mode ghost</code> or <code>zoth-ghost start</code> before initiating audits on public networks.
+      </div>
+      <div class="alert-do">
+        <strong>DO:</strong> Use <code>zoth-netkill</code> instantly if unverified outbound sockets are detected.
+      </div>
+
+      <div class="alert-dont">
+        <strong>DON'T:</strong> Write raw plain-text secret keys or tokens to <code>.env</code> files on unencrypted media.
+      </div>
+      <div class="alert-dont">
+        <strong>DON'T:</strong> Run arbitrary pipe-to-bash (<code>curl | bash</code>) scripts without inspecting their cryptographic signatures.
+      </div>
+      <div class="alert-dont">
+        <strong>DON'T:</strong> Disable the root partition overlay or write credentials to the live ISO filesystem.
+      </div>
+    </section>
+
+    <!-- 10. Focus Audio & Soundtrack -->
     <section class="doc-section" id="audio">
-      <h2>Hermetic Sound Matrix</h2>
-      <p class="section-subtitle">Local ambient classical focus soundtrack to maximize flow state.</p>
-      <p>ZothOS ships with offline classical piano and contemplative hermetic audio tracks curated to enhance focus during programming and security audits:</p>
+      <h2>Focus Audio & Soundtrack</h2>
+      <p class="section-subtitle">Local ambient classical focus soundtrack to maximize coding flow state.</p>
+      <p>ZothOS includes curated offline classical piano and contemplative hermetic audio tracks:</p>
 
       <table>
         <thead>
@@ -464,25 +624,32 @@
         <span>zoth-soundtrack</span>
         <button onclick="copy('zoth-soundtrack')">Copy</button>
       </div>
-      <p><small>Running <code>zoth-soundtrack</code> toggles playback on and off with desktop notifications.</small></p>
     </section>
 
-    <!-- 8. Hotkeys & Shortcuts -->
-    <section class="doc-section" id="shortcuts">
-      <h2>Hotkeys & Shortcuts</h2>
-      <p class="section-subtitle">Global keyboard controls in KDE Plasma 6.</p>
+    <!-- 11. Hotkeys & CLI Cheatsheet -->
+    <section class="doc-section" id="cheatsheet">
+      <h2>Hotkeys & CLI Cheatsheet</h2>
+      <p class="section-subtitle">Global shortcuts and sovereign CLI commands in ZothOS.</p>
 
       <table>
         <thead>
-          <tr><th>Shortcut</th><th>Action</th></tr>
+          <tr><th>Shortcut / Command</th><th>Context</th><th>Action</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>Ctrl + Alt + T</code></td><td>Open Konsole terminal</td></tr>
-          <tr><td><code>Super</code></td><td>Application launcher menu</td></tr>
-          <tr><td><code>Alt + F4</code></td><td>Close active window</td></tr>
-          <tr><td><code>Alt + F2</code></td><td>KRunner global command prompt</td></tr>
-          <tr><td><code>Super + D</code></td><td>Toggle show desktop</td></tr>
-          <tr><td><code>Super + L</code></td><td>Lock session (QuickLock)</td></tr>
+          <tr><td><code>Ctrl + Alt + T</code></td><td>Global Desktop</td><td>Launch Zoth Konsole terminal</td></tr>
+          <tr><td><code>Super</code></td><td>Global Desktop</td><td>Open Applications Kickoff menu</td></tr>
+          <tr><td><code>Alt + F2</code></td><td>Global Desktop</td><td>KRunner universal command search</td></tr>
+          <tr><td><code>Super + D</code></td><td>Global Desktop</td><td>Toggle show/minimize desktop</td></tr>
+          <tr><td><code>Super + L</code></td><td>Global Desktop</td><td>QuickLock session lock</td></tr>
+          <tr><td><code>zoth-mode toggle</code></td><td>Terminal</td><td>Instant switch between Default Gold & Ghostmode Stealth</td></tr>
+          <tr><td><code>zoth-vault</code></td><td>Terminal</td><td>Sovereign Vault interactive terminal manager</td></tr>
+          <tr><td><code>zoth-cockpit</code></td><td>Terminal</td><td>Full-screen terminal operations center</td></tr>
+          <tr><td><code>zoth-fastfetch</code></td><td>Terminal</td><td>Display alchemical system banner and telemetry</td></tr>
+          <tr><td><code>zoth-netlify</code></td><td>Terminal</td><td>Netlify CLI interactive operations deck</td></tr>
+          <tr><td><code>zoth-streamlit</code></td><td>Terminal</td><td>Streamlit Studio dashboard runner</td></tr>
+          <tr><td><code>aider</code></td><td>Terminal</td><td>Aider AI coding agent workstation</td></tr>
+          <tr><td><code>tor-browser</code></td><td>Terminal / GUI</td><td>Launch pre-bundled Tor Privacy Browser</td></tr>
+          <tr><td><code>launch-calamares</code></td><td>Terminal / GUI</td><td>Launch Calamares system installer</td></tr>
         </tbody>
       </table>
     </section>

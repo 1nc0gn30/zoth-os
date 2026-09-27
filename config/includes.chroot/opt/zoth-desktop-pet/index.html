@@ -331,6 +331,8 @@
 </head>
 <body>
   <div class="container">
+    <button type="button" class="dismiss-btn" onclick="window.close()" title="Dismiss Companion" style="position:absolute;top:6px;right:6px;width:22px;height:22px;background:rgba(255,60,60,0.4);border:1px solid #ff5555;color:#ffffff;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;z-index:999;transition:0.2s;" onmouseover="this.style.background='rgba(255,60,60,0.8)'" onmouseout="this.style.background='rgba(255,60,60,0.4)'">&times;</button>
+
     <!-- Speech Bubble Overlay -->
     <div class="speech-bubble" id="speech-bubble">
       <div class="bubble-agent" id="bubble-agent">👁️ ALL-SEEING EYE AI</div>
@@ -345,7 +347,8 @@
       <div class="menu-item" onclick="launch('reality')">🌌 Reality Switcher</div>
       <div class="menu-item" onclick="launch('ghost')">👻 NullAI Ghostmode</div>
       <div class="menu-item" onclick="launch('nexus')">🛠️ Tool Nexus Hub</div>
-      <div class="menu-item" onclick="toggleMenu()">&#10005; Close Menu</div>
+      <div class="menu-item" onclick="window.close()" style="color:#ff6b6b;">&#10005; Dismiss Companion</div>
+      <div class="menu-item" onclick="toggleMenu()">Cancel</div>
     </div>
 
     <!-- Mascot Floating Orb with Eye socket -->

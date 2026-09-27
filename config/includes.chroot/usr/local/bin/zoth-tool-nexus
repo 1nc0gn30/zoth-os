@@ -41,7 +41,6 @@ DOMAINS = {
             ("zoth-ghost", "NullAI Ghostmode & Anti-forensics router", "zoth-ghost", "apt:tor,apt:macchanger"),
             ("zoth-undercover", "Windows 11 undercover chameleon mode", "zoth-undercover", "none"),
             ("zoth-sec", "Offensive security & penetration testing arsenal", "zoth-sec", "none"),
-            ("zoth-matrix", "Hermetic Matrix digital rain screensaver", "zoth-matrix-rain", "none"),
             ("zoth-mcp", "Model Context Protocol bridge & server registry", "zoth-mcp", "pip:fastmcp"),
             ("zoth-bridge", "Multi-model streaming API gateway & proxy", "zoth-bridge", "pip:fastapi,pip:uvicorn"),
             ("zoth-session", "Wayland Apex / XFCE4 desktop session switcher", "zoth-session-switch", "none"),

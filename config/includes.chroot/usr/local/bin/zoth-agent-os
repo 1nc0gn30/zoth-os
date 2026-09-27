@@ -454,7 +454,6 @@ def execute_natural_command(instruction: str, engine: str = "ollama") -> str:
             "files": "dolphin",
             "ai": "konsole -e zoth-ai",
             "hexstrike": "konsole -e hexstrike",
-            "matrix": "konsole -e zoth-matrix-rain",
             "sec": "konsole -e zoth-sec",
             "mcp": "konsole -e zoth-mcp",
         }

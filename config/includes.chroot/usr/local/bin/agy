@@ -21,8 +21,8 @@ TOOL_NAME = "Google Antigravity SDK"
 BIN_CANDIDATES = ['~/.local/bin/agy', '~/.local/bin/antigravity', '~/.npm-global/bin/agy', '/usr/local/bin/agy-cli', '/usr/bin/agy']
 CHECK_NAMES = ['agy-cli', 'antigravity', 'agy']
 NODE_PKG = ""
-INSTALL_CMD = "mkdir -p ~/.local/bin && (npm install -g --prefix ~/.local @google/antigravity-sdk || pip install --user --upgrade google-antigravity)"
-INSTALL_DESC = "npm install -g @google/antigravity-sdk / pip install google-antigravity"
+INSTALL_CMD = "curl -fsSL https://antigravity.google/cli/install.sh | bash"
+INSTALL_DESC = "curl -fsSL https://antigravity.google/cli/install.sh | bash"
 
 def find_real_binary():
     self_path = os.path.realpath(sys.argv[0])

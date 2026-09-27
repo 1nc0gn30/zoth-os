@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const { spawn, exec } = require('child_process');
 const fs = require('fs');
@@ -12,14 +12,26 @@ function createWindow() {
     ? '/opt/zoth-studio/public/assets/mascot/hexstrike_logo.png'
     : '/usr/share/icons/hicolor/512x512/apps/hexstrike.png';
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1240, Math.floor(workArea.width * 0.92));
+  const targetHeight = Math.min(780, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1380,
-    height: 880,
-    minWidth: 1000,
-    minHeight: 650,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
     backgroundColor: '#070a0f',
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     titleBarStyle: 'default',
     title: 'HEXSTRIKE AI // OFFENSIVE CYBER WARFARE COCKPIT',
     webPreferences: {

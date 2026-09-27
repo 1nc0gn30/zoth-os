@@ -300,30 +300,31 @@ function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width: screenW, height: screenH } = primaryDisplay.workAreaSize;
 
-  const hudW = 420;
-  const hudH = 710;
-  const posX = Math.max(10, screenW - hudW - 16);
-  const posY = 36;
+  const hudW = Math.min(440, Math.floor(screenW * 0.4));
+  const hudH = Math.min(680, Math.floor(screenH * 0.88));
+  const posX = Math.max(10, screenW - hudW - 20);
+  const posY = 20;
 
   mainWindow = new BrowserWindow({
     width: hudW,
     height: hudH,
     x: posX,
     y: posY,
-    transparent: true,
-    frame: false,
-    resizable: false,
-    skipTaskbar: true,
-    hasShadow: false,
-    type: 'utility',
+    title: 'ZothOS Telemetry HUD',
+    backgroundColor: '#0a0d14',
+    frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: false,
+    closable: true,
+    skipTaskbar: false,
     show: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   });
-
-  mainWindow.setSkipTaskbar(true);
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 

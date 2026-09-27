@@ -1,6 +1,6 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
@@ -11,14 +11,26 @@ function createWindow() {
     ? '/opt/zoth-studio/public/assets/mascot/ghostbyte-nullai-icon.png'
     : '/usr/share/icons/hicolor/512x512/apps/zoth-ghost.png';
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1120, Math.floor(workArea.width * 0.90));
+  const targetHeight = Math.min(760, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1120,
-    height: 780,
-    minWidth: 860,
-    minHeight: 600,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
     backgroundColor: '#05070a',
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     titleBarStyle: 'default',
     title: 'NULLAI GHOSTMODE // SOVEREIGN TOR & ANTI-FORENSICS FORTRESS',
     webPreferences: {

@@ -115,7 +115,30 @@ RowLayout {
                 required property var model
 
                 text: model.display
-                icon.name: model.decoration
+                contentItem: RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 4
+                    Image {
+                        source: {
+                            var d = (model.display || "").toLowerCase();
+                            if (d.indexOf("sleep") !== -1 || d.indexOf("suspend") !== -1) return "/usr/share/pixmaps/menu-gold-sleep.png";
+                            if (d.indexOf("restart") !== -1 || d.indexOf("reboot") !== -1) return "/usr/share/pixmaps/menu-gold-restart.png";
+                            if (d.indexOf("shut") !== -1 || d.indexOf("power") !== -1) return "/usr/share/pixmaps/menu-gold-power.png";
+                            if (d.indexOf("leave") !== -1 || d.indexOf("logout") !== -1) return "/usr/share/pixmaps/menu-gold-leave.png";
+                            return "/usr/share/pixmaps/menu-gold-power.png";
+                        }
+                        Layout.preferredWidth: 18
+                        Layout.preferredHeight: 18
+                        fillMode: Image.PreserveAspectFit
+                        mipmap: true
+                        smooth: true
+                    }
+                    PC3.Label {
+                        text: model.display
+                        visible: Plasmoid.configuration.showActionButtonCaptions
+                        color: parent.parent.hovered ? "#ffd700" : Kirigami.Theme.textColor
+                    }
+                }
 
                 background: Rectangle {
                     implicitWidth: Kirigami.Units.gridUnit * 2
@@ -176,12 +199,26 @@ RowLayout {
     // without binding loops.
     component OverflowMenuButton : PC3.ToolButton {
         Accessible.role: Accessible.ButtonMenu
-        icon.width: Kirigami.Units.iconSizes.smallMedium
-        icon.height: Kirigami.Units.iconSizes.smallMedium
-        icon.name: ["system-log-out", "system-shutdown", "view-more-symbolic", "view-more-symbolic"][Plasmoid.configuration.primaryActions]
         text: [i18n("Leave"), i18n("Power"), i18n("More"), i18n("More")][Plasmoid.configuration.primaryActions]
         // Make it look pressed while the menu is open
         down: contextMenu.status === PlasmaExtras.Menu.Open || pressed
+
+        contentItem: RowLayout {
+                    anchors.centerIn: parent
+            spacing: 4
+            Image {
+                source: "/usr/share/pixmaps/menu-gold-leave.png"
+                Layout.preferredWidth: 18
+                        Layout.preferredHeight: 18
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                smooth: true
+            }
+            PC3.Label {
+                text: [i18n("Leave"), i18n("Power"), i18n("More"), i18n("More")][Plasmoid.configuration.primaryActions]
+                color: parent.parent.hovered ? "#ffd700" : Kirigami.Theme.textColor
+            }
+        }
 
         background: Rectangle {
             implicitWidth: Kirigami.Units.gridUnit * 2
@@ -236,7 +273,14 @@ RowLayout {
             required property var model
 
             text: model.display
-            icon: model.decoration
+            icon: {
+                var d = (model.display || "").toLowerCase();
+                if (d.indexOf("sleep") !== -1 || d.indexOf("suspend") !== -1) return "/usr/share/pixmaps/menu-gold-sleep.png";
+                if (d.indexOf("restart") !== -1 || d.indexOf("reboot") !== -1) return "/usr/share/pixmaps/menu-gold-restart.png";
+                if (d.indexOf("shut") !== -1 || d.indexOf("power") !== -1) return "/usr/share/pixmaps/menu-gold-power.png";
+                if (d.indexOf("leave") !== -1 || d.indexOf("logout") !== -1) return "/usr/share/pixmaps/menu-gold-leave.png";
+                return model.decoration;
+            }
             onClicked: filteredMenuItemsModel.trigger(index)
         }
         onObjectAdded: (index, object) => contextMenu.addMenuItem(object)

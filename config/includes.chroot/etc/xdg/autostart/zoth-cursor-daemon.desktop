@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/zoth-cursor-daemon
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Zoth Cursor Tracker Daemon
+Comment=Tracks cursor for Pet HUD

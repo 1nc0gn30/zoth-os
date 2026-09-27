@@ -1,22 +1,100 @@
 # 🜂 ZOTHOS Linux 🜄
-### *The Sovereign Alchemical Intelligence & Offensive Security Operating System*
+### *The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System*
 > *"As above, so below; as code, so mind."*
 
 ```text
-       ▲             ZOTHOS Linux 1.0 (Azoth Sovereign Transmutation)
+       ▲             ZOTHOS Linux 3.0 (Azoth Sovereign Master)
       ▲ ▲            -------------------------------------------------
-     ▲   ▲           Desktop Core:     KDE Plasma 6 (24K Hermetic Gold & Obsidian)
-    ▲  ☉  ▲          Base Runtime:     Debian 13 (Trixie) + Kali Rolling + Parrot OS Dual APT Pinning
+     ▲   ▲           Desktop Core:     KDE Plasma 6.3 Wayland (24K Celtic Gold & Obsidian Glass)
+    ▲  ☉  ▲          Base Runtime:     Debian 13 (Trixie) + Kali Rolling + Parrot OS Triple APT Pinning
    ▲   |   ▲         Kernel:           Linux 6.12+ Hardened AMD64
-  ▲ 🜂  ☿  🜄 ▲        Offensive Stack:  213+ Verified Security, AD & Cloud Pentesting Tools
- ▲             ▲       Frontier AI:      Nous Hermes + NullAI HexStrike + Ollama + ComfyUI + AGY SDK
-▲═══════🜁═══════▲      Stealth Engine:   nullai.tech Ghostmode [Amnesic Tor & Ephemeral RAM Wipe]
-  \   🜃     /        Undercover Guise: Windows 11 Fluent Chameleon [Sub-Second Switch]
-   \   |   /         Audio Engine:     Zoth Hermetic Audio Studio (Preloaded Lossless Classical Deck)
-    \  🝘  /          Installer:        Calamares 24K Gold Sovereign Graphical Installer
-     \   /           Architecture:     x86_64 Hybrid UEFI / BIOS Live ISO
+  ▲ 🜂  ☿  🜄 ▲        Sovereign Vault:  Rust ChaCha20-Poly1305 + Argon2id Memory Process Injector (:8787)
+ ▲             ▲       Frontier AI:      Aider AI + Google Antigravity + Claude Code + Cline + Ollama
+▲═══════🜁═══════▲      Cloud Dev:        Netlify CLI Workstation + Streamlit Studio + Node v26 + Python 3.12
+  \   🜃     /        Stealth & Privacy:Preloaded Tor Browser + NullAI Ghostmode [Amnesic Tor & MAC Wipe]
+   \   |   /         Security Stack:   215+ Verified Tools (Burp Suite Gold, Caido, Metasploit, Nmap)
+    \  🝘  /          Installer:        Calamares 24K Gold Sovereign Graphical System Installer
+     \   /           Architecture:     x86_64 Hybrid UEFI / BIOS Live Bootable ISO
       ▼
 ```
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](https://opensource.org/licenses/MIT)
+[![Base: Debian 13](https://img.shields.io/badge/Base-Debian%2013%20Trixie-red.svg)](https://www.debian.org)
+[![Desktop: KDE Plasma 6.3](https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3%20Wayland-blue.svg)](https://kde.org/plasma-desktop/)
+[![Crypto: Argon2id + ChaCha20](https://img.shields.io/badge/Crypto-Argon2id%20%2B%20ChaCha20--Poly1305-emerald.svg)](https://nullai.tech)
+[![Zero Telemetry](https://img.shields.io/badge/Telemetry-Zero%20Egress-brightgreen.svg)](https://nullai.tech)
+
+---
+
+## ✦ Visual Gallery & System Tour
+
+### 1. Sovereign 24K Celtic Gold Master Desktop
+The flagship KDE Plasma 6.3 Wayland experience: 24K Celtic Gold icons, alchemical typography, translucent frosted obsidian taskbar, and responsive desktop shortcuts for the complete sovereign workstation suite.
+
+![ZothOS 3.0 Sovereign Desktop](docs/screenshots/zothos-desktop.png)
+
+---
+
+### 2. Applications Kickoff Menu (Celtic Gold Suite)
+Every application category in the Kickoff menu features high-fidelity, hand-crafted 24K gold insignia (Development, Education, Graphics, Pentesting, System, Multimedia, Internet, Power actions).
+
+![KDE Plasma Kickoff Gold Menu](docs/screenshots/kickoff-menu.png)
+
+---
+
+### 3. Zoth Sovereign Vault (`zoth-vault`)
+Zero-leak cryptographic secrets engine powered by Rust, Argon2id, and authenticated ChaCha20-Poly1305. Features multi-vault management supporting **Zoth Sovereign Vault**, **Bitwarden CLI (`bw`)**, **KeePassXC**, and **UNIX Pass (GPG)** with memory-only child process injection.
+
+![Zoth Sovereign Vault](docs/screenshots/zoth-vault.png)
+
+---
+
+### 4. Aider AI Coding Agent Workstation (`aider`)
+Dedicated pair programming terminal environment with telemetry, offline Ollama integration (100% private coding without external internet), Architect dual-reasoning mode, and automated git commits.
+
+![Aider AI Coding Agent Workstation](docs/screenshots/aider-workstation.png)
+
+---
+
+### 5. Netlify CLI Serverless & Edge Workstation (`zoth-netlify`)
+Dedicated interactive terminal operations deck for Netlify: site linking, local server emulation (`netlify dev`), edge functions, environment variable synchronization, and one-command production deployments.
+
+![Netlify CLI Workstation](docs/screenshots/zoth-netlify.png)
+
+---
+
+### 6. Streamlit Studio & ML Dashboard Station (`zoth-streamlit`)
+Isolated Python 3.12 environment with pre-bundled data science, machine learning, and cyber intelligence dashboards with live local server management on `http://localhost:8501`.
+
+![Streamlit Studio](docs/screenshots/zoth-streamlit.png)
+
+---
+
+### 7. Zoth Tor Privacy Browser (`tor-browser`)
+Pre-bundled standalone Tor Browser located in `/opt/tor-browser/` with multi-hop onion routing, automated circuit isolation, and zero third-party tracking.
+
+![Tor Privacy Browser](docs/screenshots/tor-browser.png)
+
+---
+
+### 8. Burp Suite Community Edition & Offensive Security
+Preloaded industry-standard web intercepting proxy with custom Celtic Gold icon branding, alongside Caido, Nmap, Wireshark, Metasploit Framework, and Aircrack-ng.
+
+![Burp Suite Community Edition](docs/screenshots/burpsuite.png)
+
+---
+
+### 9. ZothOS Cockpit Operations Center (`zoth-cockpit`)
+Full-screen curses-based system operations dashboard featuring live CPU/RAM/Disk telemetry, active environment/stealth switcher, AI daemon status, and instant tool launcher.
+
+![ZothOS Cockpit Operations Center](docs/screenshots/zoth-cockpit.png)
+
+---
+
+### 10. In-House Codex Manual & Documentation (`zoth-docs`)
+Comprehensive offline documentation codex preloaded directly inside the operating system, detailing architectural invariants, tool guides, security best practices, and CLI cheatsheets.
+
+![ZothOS Codex Documentation](docs/screenshots/zoth-codex-docs.png)
 
 ---
 
@@ -24,46 +102,110 @@
 
 **ZOTHOS** is a sovereign Linux distribution engineered at the nexus of esoteric aesthetics, military-grade operational security, frontier agentic artificial intelligence, and offensive security parity.
 
-1. **24K Hermetic Gold on Obsidian Glass**: Tailored KDE Plasma 6 desktop featuring pure circular gold medallions (`Zoth-Hermetic`), custom golden cursor trails, translucent gold drag-selection boxes, and a minimalist Celtic typography wallpaper.
-2. **Offensive Security Parity (Kali + Parrot)**: Tri-repository architecture leveraging Debian Trixie stability with pinned Kali Rolling and Parrot Security repositories. Over **213+ verified tools** pre-configured for Active Directory exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction.
-3. **Ghostmode (nullai.tech influence)**: Military-grade amnesic operational security, automatic MAC address randomization, transparent Tor traffic routing, randomized machine hostname, and ephemeral RAM cache scrubbing on lock/shutdown.
-4. **Incognito Chameleon (Windows 11 Cloak)**: Sub-second desktop transformation into a Windows 11 Enterprise environment (taskbar layout, Fluent GTK theme, Segoe typography, decoy PowerShell shell, decoy enterprise icons) for physical operational security in hostile or corporate environments.
-5. **Frontier & Autonomous AI Forge**: Sovereign local inference engines (Ollama, vLLM, llama.cpp, ComfyUI) fused with underground AI red-teaming harnesses (Garak, PyRIT, Promptfoo, inspect_ai), multi-agent orchestrators (Nous Hermes, Google AGY SDK), and autonomous terminals ([NullAI HexStrike](https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal)).
+1. **24K Hermetic Gold on Obsidian Glass**: Tailored KDE Plasma 6.3 desktop featuring pure circular gold medallions (`Zoth-Hermetic`), custom golden cursor trails, translucent gold drag-selection boxes, and a minimalist Celtic typography wallpaper.
+2. **Cryptographic Sovereignty (Zoth Vault)**: Native local Rust daemon on `127.0.0.1:8787` using Argon2id key derivation and ChaCha20-Poly1305 encryption. Command `zoth-vault run -- <cmd>` injects decrypted secrets directly into child process execution memory without ever writing them to disk.
+3. **Offensive Security Parity (Kali + Parrot)**: Tri-repository architecture leveraging Debian Trixie stability with pinned Kali Rolling and Parrot Security repositories. Over **215+ verified tools** pre-configured for Active Directory exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction.
+4. **Environment Modes & Stealth Profiles**: Seamlessly switch between **Sovereign Gold Master (Default)**, **NullAI Ghostmode (Stealth / Torified / Amnesic)**, **Hermetic Matrix (Emerald Phosphor)**, and **Incognito Chameleon (Windows 11 Guise)** with sub-second response and zero session restart.
+5. **Frontier & Autonomous AI Forge**: Sovereign local inference engines (Ollama, vLLM, llama.cpp, ComfyUI) fused with underground AI red-teaming harnesses (Garak, PyRIT, Promptfoo, inspect_ai), multi-agent orchestrators (Nous Hermes, Google AGY SDK), autonomous coding agents (Aider, Claude Code, Cline, OpenCode), and autonomous terminals ([NullAI HexStrike](https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal)).
 6. **Zoth Hermetic Audio Studio**: Dedicated desktop audio deck preloaded with classical focus and alchemical compositions (Satie, Chopin, Debussy, Bach) with a real-time Web Audio API spectrum visualizer.
 
 ---
 
-## ✦ The Four Operating Realities (Sub-Second Reality Switcher)
+## ✦ Environment & Stealth Profiles
 
-ZOTHOS allows instant switching between four distinct operating realities with no logout or reboot required:
+ZOTHOS allows instant switching between operational states with zero logout or reboot required:
 
 ```mermaid
 flowchart TD
-    A["ZOTHOS Reality Engine (zoth-mode / zoth-reality)"] -->|zoth-mode gold| B["1. 🜂 Gold Reality (Alchemical Sanctum)"]
-    A -->|zoth-mode matrix| C["2. 🜄 Matrix Reality (Phosphor Rain)"]
-    A -->|zoth-mode ghost| D["3. 🜁 Ghost Reality (nullai.tech Amnesic)"]
-    A -->|zoth-mode win11| E["4. 🜃 Windows Reality (Fluent Chameleon)"]
+    A["ZOTHOS Environment Controller (zoth-mode)"] -->|zoth-mode gold| B["1. 🜂 Sovereign Gold (Default Master)"]
+    A -->|zoth-mode ghost| C["2. 🜁 NullAI Ghostmode (Stealth / Tor)"]
+    A -->|zoth-mode matrix| D["3. 🜄 Hermetic Matrix (Phosphor Rain)"]
+    A -->|zoth-mode win11| E["4. 🜃 Incognito Chameleon (Fluent Guise)"]
+    A -->|zoth-mode toggle| F["Instant Toggle: Gold Default ⇄ Ghostmode Stealth"]
     
-    B --> F["Master Seal Wallpaper, Inter/Celtic Garamond, 24K Solar Gold #FFD700, Sanctum Chime"]
-    C --> G["Digital Rain & Perspective Grid, JetBrains Mono, Emerald Neon #00FF9D, Cyber Chirp"]
-    D --> H["Midnight Radar HUD Mist, Tactical Monospace, Spectral Cyan #00F0FF & Violet #A855F7, Torified"]
-    E --> I["Fluent Dark Mica Bloom, Noto Sans/Segoe UI, Enterprise Blue #0078D4, Windows Decoy"]
+    B --> G["24K Solar Gold #FFD700, Master Seal, Sanctum Audio Cue, Direct Clearnet"]
+    C --> H["Spectral Cyan #00E5FF, Transparent Tor Proxy, MAC Spoofed, RAM Scrubbed"]
+    D --> I["Emerald Neon #00FF9D, Matrix Rain, JetBrains Mono, Cyber Audio Cue"]
+    E --> J["Enterprise Blue #0078D4, Windows 11 Decoy Taskbar & PowerShell Cover"]
 ```
 
-| Reality | CLI Command | Wallpaper Asset | Font & Color Accents | Operational Invariants |
+| Mode / Profile | CLI Command | Audio Cue | Network State | Operational Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| **1. Gold (Alchemical Sanctum)** | `zoth-mode gold` | `zoth-gold-master.jpg` | Inter / Celtic Garamond<br/>Solar Gold `#FFD700`, Dark Obsidian `#080A0E` | Default sovereign workspace, full tool access, Fastfetch hermetic seal status, `gold-sanctum.wav` audio cue |
-| **2. Matrix (Phosphor Rain)** | `zoth-mode matrix` | `hermetic-matrix.png` | JetBrains Mono (Hacker Mono)<br/>Phosphor Emerald `#00FF9D`, Void Panels `#020603` | Cyberpunk terminal workstation, active digital rain, low-latency development, `matrix-chirp.wav` audio cue |
-| **3. Ghost (Amnesic Stealth)** | `zoth-mode ghost` | `ghostmode-nullai.png` | JetBrains Mono / Slate<br/>Spectral Cyan `#00F0FF` & Violet `#A855F7` | Transparent Tor network routing, MAC randomization, machine hostname cloaking, RAM cache drop, `ghost-vapor.wav` audio cue |
-| **4. Windows (Fluent Chameleon)** | `zoth-mode win11` | `win11-bloom.jpg` | Noto Sans / Segoe UI<br/>Windows Blue `#0078D4`, Dark Mica `#202020` | Windows 11 Fluent layout, decoy PowerShell profile, enterprise corporate disguise for physical OPSEC, `win11-fluent.wav` audio cue |
+| **Sovereign Gold (Default)** | `zoth-mode gold` | `gold-sanctum.wav` | Direct Clearnet | Master sovereign workstation, 24K gold aesthetic, full hardware performance. |
+| **NullAI Ghostmode (Stealth)** | `zoth-mode ghost` | `ghost-vapor.wav` | Transparent Tor Proxy | Full anti-surveillance cloak, MAC address randomization, ephemeral hostname, RAM cache wipe. |
+| **Hermetic Matrix** | `zoth-mode matrix` | `matrix-chirp.wav` | Direct Clearnet | Emerald phosphor monospace terminal environment for low-latency coding and audits. |
+| **Incognito Chameleon** | `zoth-mode win11` | `win11-fluent.wav` | Direct Clearnet | Windows 11 Fluent decoy desktop for physical OPSEC in hostile corporate environments. |
+| **Instant Toggle** | `zoth-mode toggle` | Contextual | Contextual | Flip back and forth between Default Gold and Ghostmode Stealth with a single keystroke. |
+
+---
+
+## ✦ Sovereign Cryptographic Vault Engine
+
+The **Zoth Sovereign Vault** protects sensitive API keys, SSH credentials, private keys, and blockchain seeds.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as Developer / Agent
+    participant CLI as zoth-vault CLI
+    participant Daemon as Rust Daemon (:8787)
+    participant Disk as Encrypted Vault File
+    participant Proc as Target Process (e.g. Aider)
+
+    Dev->>CLI: zoth-vault run -- aider
+    CLI->>Daemon: GET /v1/export/env (Bearer Token)
+    Daemon->>Disk: Read & Decrypt with ChaCha20-Poly1305 Key
+    Daemon-->>CLI: Decrypted Key-Value Map in RAM
+    CLI->>Proc: Inject Environment Variables into Child Process Memory
+    Note over Disk,Proc: Keys never touch the disk in decrypted state!
+    Proc->>Dev: Interactive Process Runs with Valid API Keys
+```
+
+### Multi-Vault Commands
+```bash
+# Check daemon health, status, and unlock state
+zoth-vault status
+
+# Store a secret key under encrypted storage
+zoth-vault set OPENAI_API_KEY "sk-..." --provider openai --tags "ai,prod"
+
+# List all stored secrets (masked by default)
+zoth-vault list
+
+# Reveal a single secret with auto-scrubbing terminal buffer
+zoth-vault get OPENAI_API_KEY
+
+# Zero-disk secret execution (injects keys directly into process RAM)
+zoth-vault run -- aider
+
+# Multi-Vault Switcher (Zoth Vault, Bitwarden, KeePassXC, UNIX Pass)
+zoth-vault
+```
+
+---
+
+## ✦ Frontier AI & Coding Agent Workstations
+
+ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
+
+| Coding Agent | Launcher Command | Offline Local Support | Key Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Aider AI Coding Agent** | `aider` | Yes (Local Ollama) | Terminal pair programming, git auto-commit, Architect mode, multi-file edits. |
+| **Google Antigravity Agent** | `antigravity` / `agy` | Yes (Ollama / Local APIs) | Agentic IDE with autonomous subagent spawning, skills, and browser control. |
+| **Claude Code Agent** | `claude` | No (Cloud API) | Anthropic agentic coding CLI with full codebase refactoring capabilities. |
+| **Cline Autonomous Agent** | `cline` | Yes (Local Ollama / OpenRouter) | Interactive agent with step-by-step task breakdown and MCP tool integration. |
+| **Nous Hermes Agent** | `hermes` | Yes (Local Models) | Autonomous agent runner with 70+ built-in developer skills. |
+| **OpenAI Codex CLI** | `codex` | No (Cloud API) | Fast terminal code generation and interactive diff patch assistant. |
+| **x.ai Grok CLI** | `grok` | No (Cloud API) | Real-time terminal search, news verification, and OSINT analysis. |
+| **Ollama Model Runtime** | `ollama serve` | 100% Offline | Resident local LLM engine running Qwen 2.5 Coder, Llama 3.2, and DeepSeek. |
 
 ---
 
 ## ✦ Built-in Tools & Applications
 
-### 1. Active Directory & Enterprise Red Team (Bake-in Default)
+### 1. Active Directory & Enterprise Red Team
 - **`certipy` / `certipy-ad`**: Active Directory Certificate Services (AD CS) enumeration and abuse tool (ESC1–ESC13).
-- **`kerbrute`**: Fast Kerberos pre-auth brute-forcing, user enumeration, and TGT harvesting written in Go.
+- **`kerbrute`**: Fast Kerberos pre-auth brute-forcing, user enumeration, and TGT harvesting.
 - **`coercer`**: Automatic Windows RPC authentication coercer (MS-RPRN, MS-EFSR, MS-DFSNM).
 - **`peass` (`linPEAS` & `winPEAS`)**: Privilege Escalation Awesome Scripts Suite preloaded in `/usr/bin/linpeas` and `/usr/share/peass/`.
 - **`bloodhound` & `neo4j`**: Visual Active Directory domain attack path analysis.
@@ -77,218 +219,80 @@ flowchart TD
 - **`gowitness`**: Automated web screenshotting utility via headless Chromium for rapid visual triage.
 - **`trufflehog`**: High-entropy secret and private key scanner with live key verification across repos and filesystems.
 - **`caido`**: Modern, fast Rust-based intercepting proxy and web security suite.
-- **`burpsuite` & `zaproxy`**: Industry standard web vulnerability inspection suites.
+- **`burpsuite` & `zaproxy`**: Industry-standard web vulnerability inspection suites.
 - **`sqlmap`, `ffuf`, `feroxbuster`, `nikto`, `commix`**: High-speed fuzzers and injection audit tools.
 
 ### 3. Sovereign Privacy, Encryption & OPSEC
-- **`keepassxc`**: Secure offline password and credential vault with YubiKey / hardware key support. Desktop entry: `Zoth KeePassXC Vault`.
-- **`veracrypt`**: Plausibly deniable multi-platform disk and file container encryption with hidden volumes. Desktop entry: `Zoth VeraCrypt Vault`.
-- **`onionshare`**: Anonymous peer-to-peer file sharing, private chat, and ephemeral site hosting over Tor. Desktop entry: `Zoth OnionShare Privacy`.
+- **Tor Browser**: Official standalone bundle preloaded in `/opt/tor-browser/` with multi-hop onion routing.
+- **NullAI Ghostmode (`zoth-ghost`)**: Transparent Tor routing (AnonSurf), MAC address randomization, and memory scrubbing.
+- **`keepassxc`**: Secure offline password and credential vault with YubiKey / hardware key support.
+- **`veracrypt`**: Plausibly deniable multi-platform disk and file container encryption with hidden volumes.
+- **`onionshare`**: Anonymous peer-to-peer file sharing, private chat, and ephemeral site hosting over Tor.
 - **`age`**: Modern, simple file encryption tool with UNIX philosophy.
 - **`bleachbit`**: Deep system cache, memory, and browser artifact scrubber.
-- **`tor` & `torsocks`**: Sovereign onion network routing for all terminal applications.
-- **`macchanger` & `firejail`**: Hardware identity cloaking and application sandboxing.
-
-### 4. Frontier AI & Autonomous Agent Forge
-- **[Zoth Studio v2](https://github.com/NullAITech/zoth-studio-v2)** (`/opt/zoth-studio`): Zero-egress sovereign agent development studio and visual command suite. Built with Vite + React + Tailwind + Framer Motion, serving locally on `http://localhost:3000` (or launched in an Electron / Chromium app container). Features Lucy Netrunner Oracle with biomorphic STDP synaptic memory, 21-agent Byzantine consensus swarm orchestration, autonomous coding harnesses, and the 24K Hermetic UI.
-- **One-Command Studio Updater (`zoth-update-studio`)**: Sovereign utility to keep Zoth Studio synchronized with upstream main in real-time. Automatically cleans dangling symlinks, pulls updates from Git, installs dependencies, and rebuilds with Vite in one seamless execution. Can also be invoked directly from the desktop launcher, Kickoff menu, or via `zoth-studio --update`.
-- **[NullAI HexStrike AI Terminal](https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal)**: Sovereign cybersecurity workstation with neural MITRE ATT&CK mapping, async FastAPI core, and retro CRT shader UI.
-- **`hermes`**: [Nous Research Hermes Agent](https://github.com/NousResearch/Hermes-Agent) autonomous agent and skill ecosystem.
-- **`ollama` & `vllm`**: High-throughput local LLM execution on CPU and NVIDIA/AMD GPUs.
-- **`comfyui`**: Visual node-based workflow for Stable Diffusion, FLUX, and latent image generation.
-- **`garak` & `pyrit`**: Generative AI red-teaming, prompt injection, and jailbreak security auditing.
-- **`promptfoo` & `inspect_ai`**: Automated LLM evaluation and safety compliance suites.
-- **`claude`, `codex`, `grok`, `opencode`**: Unified terminal interfaces to frontier coding and reasoning models.
-
-### 5. Media Creation, Audio & Modern TUIs
-- **`zoth-music`**: Zoth Hermetic Audio Studio with real-time spectrum visualizer, rotating 24K gold medallion, and preloaded classical focus compositions.
-- **`maya`**: Maya Linux Video Studio Pro with 3D device mockups (iPhone 17 Pro, MacBooks), screen recording, and kinetic subtitles.
-- **`lazydocker` & `lazygit`**: Interactive terminal dashboards for container and Git management.
-- **`yazi`**: Blazing fast async terminal file manager written in Rust with inline image preview support.
-- **`glow`**: Terminal markdown reader and documentation browser by Charm.
-- **`doggo`**: Interactive, modern DNS client with JSON output and DoH/DoT support.
-- **`trippy` (`trip`)**: Real-time network diagnostic combining traceroute and ping in a reactive TUI.
+- **`zoth-netkill`**: Instant emergency hardware network killswitch.
 
 ---
 
-## ✦ Applications Menu Architecture
+## ✦ Installation & Live Boot
 
-The Kickoff application launcher is cleanly structured into operational categories:
+ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIOS systems.
 
-* **Pentesting & Red Team**:
-  * `01 - Reconnaissance & OSINT` (Nmap, Amass, Subfinder, HTTPX, theHarvester, GoWitness)
-  * `02 - Vulnerability Analysis` (Nuclei, Nikto, TruffleHog, Garak, PyRIT)
-  * `03 - Web Application Auditing` (Caido, Burp Suite, ZAP, FFUF, SQLMap, Katana)
-  * `04 - Exploitation & Red Team` (Certipy, Kerbrute, Coercer, PEASS, Metasploit, Sliver)
-  * `05 - Sniffing & Traffic Interception` (Wireshark, Tshark, Bettercap, Responder, Mitmproxy)
-  * `06 - Reverse Engineering & Forensics` (Ghidra, Radare2, Rizin, GDB, Binwalk)
-* **Beta / Experimental**:
-  * In-flight tools and bleeding-edge autonomous frameworks.
-* **Miscellaneous**:
-  * Visual effects, Matrix digital rain screensavers, audio decks, and sovereign pets.
-
----
-
-## ✦ Operational Command Hierarchy
-
-ZOTHOS enforces a three-tier command architecture designed for graphical workstations, headless servers, and rapid terminal execution:
-
-```mermaid
-flowchart TD
-    subgraph Tier1["Tier 1: Graphical Flagship Workstation"]
-        A["zoth-studio<br/>(Web / Electron / Chromium)"] -->|Served locally on| B["http://localhost:3000"]
-        C["zoth-update-studio<br/>(Desktop & CLI Updater)"] -->|One-Command Git Sync & Build| A
-    end
-
-    subgraph Tier2["Tier 2: Curses TUI Operations Bridge"]
-        D["zoth-cockpit<br/>(Headless Curses TUI)"] -->|System Telemetry & Swarm| E["RAM/CPU Stats, Agent Swarm & Process Monitor"]
-    end
-
-    subgraph Tier3["Tier 3: CLI Nexus & Sovereign Control Engines"]
-        F["zoth-mode &lt;reality&gt;"] -->|Sub-second reality switch| G["gold | matrix | ghost | win11"]
-        H["zoth-pkg &lt;cmd&gt;"] -->|Manages 213+ tools| I["verify | install | list | update"]
-        J["zoth-ghost / zoth-netkill"] -->|Amnesic OPSEC| K["Tor routing & blackhole panic switch"]
-    end
-```
-
-### 1. Zoth Studio v2 & One-Command Updater
-The flagship visual environment for autonomous agents, WebGPU utilities, and multi-agent coordination:
+### 1. Booting the Live ISO
+Flash the ISO to a USB flash drive (minimum 16 GB recommended):
 ```bash
-# Launch Zoth Studio (automatically opens browser or app container at http://localhost:3000)
-zoth-studio
-
-# Launch headless daemon mode
-zoth-studio --daemon
-
-# Check for upstream updates from Git repository
-zoth-update-studio --check
-
-# Synchronize upstream, install dependencies, and run Vite production build
-zoth-update-studio
-
-# Force clean re-clone and full rebuild
-zoth-update-studio --force
-
-# Or via zoth-studio / zoth-pkg directly:
-zoth-studio --update
-zoth-pkg update studio
+sudo dd if=zothos-3.0-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
-### 2. The 25 Sovereign Tools & 5 Cadres
-Rather than cluttering the desktop with non-functional shortcuts or superficial toys, ZOTHOS curates a battle-tested core of **25 Sovereign Tools across 5 strategic Cadres** (backed by the full 213+ Kali/Parrot package repository):
+### 2. Live Credentials
+- **Username:** `neo`
+- **Password:** `zoth`
+- **Root Password:** `zoth`
+- **Sudo:** Full passwordless privileges for user `neo`
 
-| Cadre | Domain | Sovereign Tools | Key Commands |
-| :--- | :--- | :--- | :--- |
-| **Cadre I** | **Frontier AI & Autonomous Synthesis** | Nous Hermes, NullAI HexStrike, Claude Code, OpenCode, Codex CLI, Ollama, ComfyUI | `hermes`, `hexstrike`, `claude`, `opencode`, `codex`, `ollama` |
-| **Cadre II** | **Active Directory & Enterprise Red Team** | Certipy, Kerbrute, Coercer, PEASS (linPEAS/winPEAS), BloodHound, Impacket | `certipy`, `kerbrute`, `coercer`, `linpeas`, `bloodhound` |
-| **Cadre III** | **Attack Surface & Web Recon** | Subfinder, HTTPX, Katana, Nuclei, TruffleHog, GoWitness, Caido | `subfinder`, `httpx`, `katana`, `nuclei`, `trufflehog`, `gowitness`, `caido` |
-| **Cadre IV** | **Sovereign OPSEC & Cryptographic Defense** | Ghostmode Tor, KeePassXC, VeraCrypt, OnionShare, age, NetKill Panic | `zoth-ghost`, `keepassxc`, `veracrypt`, `onionshare`, `age`, `zoth-netkill` |
-| **Cadre V** | **Media, Audio & Terminal Mastery** | Zoth Studio v2, Zoth Hermetic Audio Studio, Maya Video Studio, LazyGit / LazyDocker, Yazi, Doggo, Trippy | `zoth-studio`, `zoth-music`, `maya`, `lazygit`, `lazydocker`, `yazi`, `trip` |
-
-*For complete usage references, see [`ZOTHOS_TOOLS_CATALOG.md`](file://${ZOTH_HOME}/zothos/ZOTHOS_TOOLS_CATALOG.md) and [`docs/TOOLS_GUIDE.md`](file://${ZOTH_HOME}/zothos/docs/TOOLS_GUIDE.md).*
-
----
-
-## ✦ System Architecture & Repository Layout
-
-```text
-/
-├── config/
-│   ├── includes.chroot/                    # Root filesystem overlay for live image
-│   │   ├── etc/
-│   │   │   ├── apt/
-│   │   │   │   ├── preferences.d/
-│   │   │   │   │   └── zothos-pinning.pref # Smart Debian 13 + Kali + Parrot dual APT pinning
-│   │   │   │   └── sources.list.d/
-│   │   │   │       ├── kali.list           # Kali Rolling tool repository
-│   │   │   │       ├── parrot.list         # Parrot Security repository
-│   │   │   │       └── zothos.list         # Debian Trixie base
-│   │   │   ├── skel/                       # Default skeleton user profile (neo)
-│   │   │   │   ├── .config/kdeglobals      # KDE Plasma 6 24K gold theme & selection accents
-│   │   │   │   └── Desktop/                # Clean 24K gold medallion desktop shortcuts
-│   │   │   └── xdg/menus/                  # Custom Kickoff application menus
-│   │   ├── opt/                            # Standalone desktop apps & agent frameworks
-│   │   │   ├── hexstrike-app/              # NullAI HexStrike AI Terminal
-│   │   │   ├── zoth-studio/                # Zoth Studio v2 flagship agent workstation
-│   │   │   ├── zoth-music-app/             # Zoth Hermetic Audio Studio
-│   │   │   └── zoth-docs/                  # Sovereign Documentation Hub
-│   │   └── usr/
-│   │       ├── local/bin/                  # Master Zoth CLI tools & wrappers
-│   │       │   ├── zoth-studio             # Flagship visual development suite launcher
-│   │       │   ├── zoth-update-studio      # Studio one-command Git sync & Vite rebuilder
-│   │       │   ├── zoth-cockpit            # Curses-based headless operational bridge
-│   │       │   ├── zoth-pkg                # Sovereign package provisioner (213+ tools)
-│   │       │   ├── zoth-tool-nexus         # Interactive 213+ tool manager
-│   │       │   ├── zoth-music              # Audio Studio launcher
-│   │       │   ├── zoth-ghost              # Anti-forensics & Tor transparent routing
-│   │       │   └── zoth-netkill            # Emergency network killswitch
-│   │       └── share/icons/Zoth-Hermetic/  # Custom 24K Gold Medallion Icon Theme
-│   └── package-lists/                      # Manifests for Debian live-build
-│       ├── 00-core.list.chroot             # Base Linux 6.x kernel & systemd
-│       ├── 10-dev.list.chroot              # Compilers (Rust, Go, Clang, Python, Node)
-│       ├── 20-desktop.list.chroot          # KDE Plasma 6 environment
-│       ├── 30-opsec.list.chroot            # Privacy, encryption & anonymity tools
-│       └── 40-security.list.chroot         # Offensive security & red team arsenal
-├── build/
-│   ├── pack-iso.sh                         # Fast hybrid ISO packaging script (squashfs + xorriso)
-│   └── build-iso.sh                        # Full clean chroot live-build pipeline
-└── docs/                                   # Architectural specifications & guides
-```
-
----
-
-## ✦ How to Build the ISO
-
-### Prerequisites
-- Host running Debian 12/13, Parrot OS, Ubuntu 24+, or Kali Linux.
-- Minimum 35 GB free disk space and root (`sudo`) access.
-- Build tools: `live-build`, `squashfs-tools`, `xorriso`, `qemu-system-x86`, `libvirt-clients`, `libvirt-daemon-system`.
-
-### Fast Incremental Build (`pack-iso.sh`)
-When iterating on desktop configurations, icons, CLI wrappers, or preloaded applications in `config/includes.chroot/`:
+### 3. Permanent System Installation
+Launch the 24K Gold Calamares graphical installer from the desktop icon or terminal:
 ```bash
-cd /path/to/zothos
-# Synchronizes config/includes.chroot into workspace, rebuilds squashfs, and packages hybrid ISO
-sudo bash build/pack-iso.sh
+launch-calamares
 ```
-This generates the bootable hybrid UEFI/BIOS image at:
-[`build/zothos-1.0-amd64.iso`](file://${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso) (~12 GB).
-
-### Full Clean Rebuild from Scratch (`build-iso.sh`)
-To perform a complete clean build bootstrapping Debian Trixie with APT pinning:
-```bash
-cd /path/to/zothos
-sudo bash build/build-iso.sh
-```
-
-### Running and Testing in KVM / QEMU
-Launch the verified test VM attached to the hypervisor:
-```bash
-# Attach graphical console via virt-manager:
-virt-manager --connect qemu:///system --show-domain-console zothos-iso-live
-
-# Or boot directly with raw QEMU:
-qemu-system-x86_64 -enable-kvm -m 8G -smp 4 \
-    -cdrom build/zothos-1.0-amd64.iso -boot d \
-    -vga virtio -display gtk,gl=on
-```
+Features automated Btrfs subvolume layout, optional full-disk LUKS encryption, and systemd-boot / GRUB integration.
 
 ---
 
-## ✦ Default Credentials & Live Session
+## ✦ Global Hotkeys & Cheatsheet
 
-* **Live User**: `neo`
-* **Password**: `zoth` (or passwordless `sudo` in live session)
-* **Root Password**: `toor`
-* **Default Shell**: `bash` with Zoth Hermetic theme & Starship prompt
-* **Emergency Panic Keys**:
-  * `zoth-quicklock`: Instant session lock, RAM cache flush, and history shred
-  * `zoth-netkill`: Emergency drop of all network interfaces and iptables BLACKHOLE
+| Shortcut / Command | Context | Action |
+| :--- | :--- | :--- |
+| `Ctrl + Alt + T` | Global Desktop | Open Zoth Konsole terminal |
+| `Super` | Global Desktop | Open Applications Kickoff menu |
+| `Alt + F2` | Global Desktop | KRunner universal command prompt |
+| `Super + D` | Global Desktop | Minimize / show desktop |
+| `Super + L` | Global Desktop | QuickLock screen session lock |
+| `zoth-mode toggle` | Terminal | Instant toggle between Sovereign Gold & Ghostmode Stealth |
+| `zoth-vault` | Terminal | Sovereign Vault interactive manager |
+| `zoth-cockpit` | Terminal | Full-screen curses operations dashboard |
+| `zoth-fastfetch` | Terminal | Display alchemical system banner and telemetry |
+| `zoth-netlify` | Terminal | Netlify CLI serverless operations workstation |
+| `zoth-streamlit` | Terminal | Streamlit Studio data & ML application runner |
+| `aider` | Terminal | Aider AI coding agent workstation |
+| `tor-browser` | Terminal / GUI | Launch pre-bundled Tor Privacy Browser |
+| `zoth-docs` | Terminal / GUI | Open in-house ZothOS Codex Manual |
 
 ---
 
-## ✦ License & Credits
+## ✦ Architecture & Build System
 
-* Engineered and curated by **[NullAI Tech](https://github.com/NullAITech)** and contributors.
-* Powered by Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security.
-* All trademarks and open-source tool copyrights belong to their respective creators.
+ZOTHOS is built using a customized Debian Live Build framework with surgical repository overlay:
+- `config/includes.chroot/`: In-tree root filesystem overlay for custom binaries, icon themes, Plasma configs, and systemd units.
+- `config/package-lists/`: Layered package configurations across desktop, opsec, offensive security, and AI stacks.
+- `build/pack-iso.sh`: High-density XZ SquashFS compressor and xorriso ISO packager.
+
+---
+
+## ✦ License & Attributions
+
+- **ZOTHOS Linux**: Released under the [MIT License](LICENSE).
+- **Core Engine & Architecture**: Engineered by **NullAI Tech** ([nullai.tech](https://nullai.tech)).
+- **Upstream Foundations**: Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security OS.
+
+*✦ Sovereign Mind. Sovereign Code. Sovereign Silicon. ✦*

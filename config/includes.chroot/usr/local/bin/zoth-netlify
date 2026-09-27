@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS SOVEREIGN NETLIFY CLI HUB & CONTROL CONSOLE
+# ==============================================================================
+
+CYAN='\033[38;2;0;229;255m'
+GOLD='\033[38;2;212;175;55m'
+AMBER='\033[38;2;245;158;11m'
+GREEN='\033[38;2;74;222;128m'
+RED='\033[38;2;248;113;113m'
+PURPLE='\033[38;2;168;85;247m'
+DIM='\033[38;2;140;150;170m'
+NC='\033[0m'
+BOLD='\033[1m'
+
+# Direct passthrough if arguments provided
+if [[ $# -gt 0 ]]; then
+    exec netlify "$@"
+fi
+
+print_header() {
+    clear
+    echo -e "${GOLD}${BOLD}"
+    cat << "BANNER"
+  ███╗   ██╗███████╗████████╗██╗     ██╗███████╗██╗   ██╗     ██████╗██╗     ██╗
+  ████╗  ██║██╔════╝╚══██╔══╝██║     ██║██╔════╝╚██╗ ██╔╝    ██╔════╝██║     ██║
+  ██╔██╗ ██║█████╗     ██║   ██║     ██║█████╗   ╚████╔╝     ██║     ██║     ██║
+  ██║╚██╗██║██╔══╝     ██║   ██║     ██║██╔══╝    ╚██╔╝      ██║     ██║     ██║
+  ██║ ╚████║███████╗   ██║   ███████╗██║██║        ██║       ╚██████╗███████╗██║
+  ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚══════╝╚═╝╚═╝        ╚═╝        ╚═════╝╚══════╝╚═╝
+BANNER
+    echo -e "         ${CYAN}• SOVEREIGN SERVERLESS & EDGE DEPLOYMENT ENGINE •${NC}\n"
+    
+    # Telemetry
+    local ver
+    ver=$(netlify --version 2>/dev/null || echo "v27.10.0")
+    local node_v
+    node_v=$(node -v 2>/dev/null || echo "N/A")
+    local cur_dir
+    cur_dir=$(pwd)
+    local git_stat
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        local branch
+        branch=$(git branch --show-current 2>/dev/null || echo "active")
+        git_stat="${GREEN}Git: [${branch}]${NC}"
+    else
+        git_stat="${DIM}Git: [None]${NC}"
+    fi
+
+    echo -e "  ${GOLD}┌─ SYSTEM STATUS ──────────────────────────────────────────────────────────┐${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}CLI Version:${NC}  ${CYAN}${ver}${NC}    ${BOLD}Node:${NC} ${AMBER}${node_v}${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Working Dir:${NC}  ${DIM}${cur_dir}${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Repository:${NC}   ${git_stat}"
+    echo -e "  ${GOLD}└──────────────────────────────────────────────────────────────────────────┘${NC}\n"
+}
+
+pause_menu() {
+    echo ""
+    echo -e "${GOLD}${BOLD}Press [ENTER] to return to the Netlify Menu...${NC}"
+    read -r
+}
+
+show_cheatsheet() {
+    clear
+    echo -e "${GOLD}${BOLD}══════════════════════════════════════════════════════════════════════════${NC}"
+    echo -e "                 ${CYAN}${BOLD}NETLIFY CLI • COMPLETE SOVEREIGN GUIDE${NC}"
+    echo -e "${GOLD}${BOLD}══════════════════════════════════════════════════════════════════════════${NC}\n"
+    
+    echo -e "${BOLD}${AMBER}1. WHAT IS NETLIFY CLI?${NC}"
+    echo -e "   Netlify CLI lets you configure, test, develop, and deploy serverless web"
+    echo -e "   applications, static sites, and edge functions straight from your terminal."
+    echo -e "   You can preview changes in real time and push to global CDN in seconds.\n"
+
+    echo -e "${BOLD}${AMBER}2. ESSENTIAL COMMANDS:${NC}"
+    echo -e "   ${CYAN}netlify login${NC}           Authenticate with your Netlify account via browser"
+    echo -e "   ${CYAN}netlify status${NC}          View current login state, active site, and team"
+    echo -e "   ${CYAN}netlify init${NC}            Configure continuous deployment for current directory"
+    echo -e "   ${CYAN}netlify link${NC}            Link current directory to an existing Netlify site"
+    echo -e "   ${CYAN}netlify dev${NC}             Start full local emulation server (ports, functions, env)"
+    echo -e "   ${CYAN}netlify deploy${NC}          Deploy a preview build (gives unique draft URL)"
+    echo -e "   ${CYAN}netlify deploy --prod${NC}   Deploy directly to live production URL"
+    echo -e "   ${CYAN}netlify env:list${NC}        Inspect environment variables for current project"
+    echo -e "   ${CYAN}netlify env:set KEY VAL${NC} Set an environment variable remotely on Netlify"
+    echo -e "   ${CYAN}netlify open${NC}            Open Netlify admin panel in default browser"
+    echo -e "   ${CYAN}netlify open:site${NC}       Open live public website in default browser\n"
+
+    echo -e "${BOLD}${AMBER}3. NETLIFY CONFIGURATION (netlify.toml):${NC}"
+    echo -e "   Place a ${CYAN}netlify.toml${NC} in the root of your project:"
+    echo -e "   ${DIM}----------------------------------------------------------------------${NC}"
+    echo -e "   ${GREEN}[build]${NC}"
+    echo -e "     publish = \"dist\"         # Output directory from Vite/React/Astro"
+    echo -e "     command = \"npm run build\" # Build command"
+    echo -e "   ${GREEN}[functions]${NC}"
+    echo -e "     directory = \"netlify/functions\" # Serverless endpoints"
+    echo -e "   ${GREEN}[[redirects]]${NC}"
+    echo -e "     from = \"/*\""
+    echo -e "     to = \"/index.html\""
+    echo -e "     status = 200             # Single Page App routing rule"
+    echo -e "   ${DIM}----------------------------------------------------------------------${NC}\n"
+
+    echo -e "${BOLD}${AMBER}4. SERVERLESS FUNCTIONS WORKFLOW:${NC}"
+    echo -e "   Any JavaScript/TypeScript file in ${CYAN}netlify/functions/<name>.ts${NC} becomes"
+    echo -e "   an active API endpoint reachable at ${CYAN}/.netlify/functions/<name>${NC}."
+    echo -e "   Test them locally instantly with ${CYAN}netlify dev${NC}.\n"
+    pause_menu
+}
+
+scaffold_starter() {
+    clear
+    echo -e "${GOLD}${BOLD}═ SCAFFOLD NEW NETLIFY SERVERLESS PROJECT ═${NC}\n"
+    read -p "Enter project directory name [my-netlify-app]: " proj_name
+    proj_name=${proj_name:-my-netlify-app}
+
+    if [[ -d "$proj_name" ]]; then
+        echo -e "${RED}Error: Directory '$proj_name' already exists.${NC}"
+        pause_menu
+        return
+    fi
+
+    echo -e "${CYAN}[+] Creating project directory: $proj_name...${NC}"
+    mkdir -p "$proj_name"/{src,public,netlify/functions}
+    
+    # Create netlify.toml
+    cat << 'TOML' > "$proj_name/netlify.toml"
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+TOML
+
+    # Create serverless function
+    cat << 'FN' > "$proj_name/netlify/functions/hello.js"
+exports.handler = async function (event, context) {
+  return {
+    statusCode: 200,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      status: "online",
+      message: "Hello from ZothOS Netlify Serverless Function!",
+      timestamp: new Date().toISOString()
+    })
+  };
+};
+FN
+
+    # Create sample index.html
+    cat << 'HTML' > "$proj_name/index.html"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZothOS • Netlify Serverless App</title>
+  <style>
+    body { background: #0b0d12; color: #ffd700; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .card { background: #121620; border: 1px solid #ffd700; border-radius: 10px; padding: 2rem; max-width: 500px; text-align: center; box-shadow: 0 0 25px rgba(255, 215, 0, 0.2); }
+    button { background: #ffd700; color: #000; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+    pre { background: #000; padding: 10px; border-radius: 5px; color: #00e5ff; text-align: left; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>⚡ ZothOS Netlify Edge App</h2>
+    <p>Serverless architecture ready for global deployment.</p>
+    <button onclick="testFunction()">Test Serverless Function</button>
+    <pre id="output">Click button to test function...</pre>
+  </div>
+  <script>
+    async function testFunction() {
+      document.getElementById('output').textContent = "Fetching...";
+      try {
+        const res = await fetch('/.netlify/functions/hello');
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
+HTML
+
+    echo -e "${GREEN}✓ Project created successfully in './$proj_name'!${NC}"
+    echo -e "  To start testing:"
+    echo -e "    ${CYAN}cd $proj_name && netlify dev${NC}\n"
+    pause_menu
+}
+
+while true; do
+    print_header
+    echo -e "  ${BOLD}${GOLD}AVAILABLE OPERATIONS:${NC}"
+    echo -e "    ${CYAN}[1]${NC}  ${BOLD}Netlify Status & Linked Site Info${NC}     ${DIM}(Check account & connection)${NC}"
+    echo -e "    ${CYAN}[2]${NC}  ${BOLD}Netlify Login / Re-authenticate${NC}       ${DIM}(Login via browser / token)${NC}"
+    echo -e "    ${CYAN}[3]${NC}  ${BOLD}Start Local Dev Server (netlify dev)${NC}  ${DIM}(Emulate site, functions, edge)${NC}"
+    echo -e "    ${CYAN}[4]${NC}  ${BOLD}Deploy Preview (Draft Build)${NC}          ${DIM}(Upload draft URL to CDN)${NC}"
+    echo -e "    ${CYAN}[5]${NC}  ${BOLD}Deploy to Production (--prod)${NC}        ${DIM}(Deploy live to production)${NC}"
+    echo -e "    ${CYAN}[6]${NC}  ${BOLD}Link / Init Project with Netlify${NC}      ${DIM}(Connect git repo or folder)${NC}"
+    echo -e "    ${CYAN}[7]${NC}  ${BOLD}Manage Environment Variables${NC}          ${DIM}(Inspect/edit remote secrets)${NC}"
+    echo -e "    ${CYAN}[8]${NC}  ${BOLD}Open Netlify Admin or Live Site${NC}       ${DIM}(Launch browser dashboard)${NC}"
+    echo -e "    ${CYAN}[9]${NC}  ${BOLD}Scaffold New Serverless App${NC}           ${DIM}(Vite/HTML + Netlify Functions)${NC}"
+    echo -e "    ${CYAN}[10]${NC} ${BOLD}Comprehensive Netlify Cheatsheet${NC}      ${DIM}(Workflow & toml guide)${NC}"
+    echo -e "    ${CYAN}[11]${NC} ${BOLD}Drop to Netlify Interactive Shell${NC}     ${DIM}(Bash with netlify environment)${NC}"
+    echo -e "    ${RED}[0]${NC}  ${BOLD}Exit${NC}\n"
+    
+    read -p "  Enter selection [0-11]: " choice
+    case "$choice" in
+        1)
+            echo -e "\n${CYAN}Running 'netlify status'...${NC}\n"
+            netlify status
+            pause_menu
+            ;;
+        2)
+            echo -e "\n${CYAN}Running 'netlify login'...${NC}\n"
+            netlify login
+            pause_menu
+            ;;
+        3)
+            echo -e "\n${CYAN}Starting Netlify Local Dev Server... (Press Ctrl+C to stop)${NC}\n"
+            netlify dev
+            pause_menu
+            ;;
+        4)
+            echo -e "\n${CYAN}Starting Preview Deployment...${NC}\n"
+            netlify deploy
+            pause_menu
+            ;;
+        5)
+            echo -e "\n${CYAN}Deploying directly to PRODUCTION (--prod)...${NC}\n"
+            netlify deploy --prod
+            pause_menu
+            ;;
+        6)
+            echo -e "\n${CYAN}[1] Link existing site | [2] Initialize new site${NC}"
+            read -p "Choose: " lchoice
+            if [[ "$lchoice" == "1" ]]; then
+                netlify link
+            else
+                netlify init
+            fi
+            pause_menu
+            ;;
+        7)
+            echo -e "\n${CYAN}Listing environment variables...${NC}\n"
+            netlify env:list
+            pause_menu
+            ;;
+        8)
+            echo -e "\n${CYAN}[1] Open Admin Dashboard | [2] Open Live Site${NC}"
+            read -p "Choose: " ochoice
+            if [[ "$ochoice" == "2" ]]; then
+                netlify open:site
+            else
+                netlify open
+            fi
+            pause_menu
+            ;;
+        9)
+            scaffold_starter
+            ;;
+        10)
+            show_cheatsheet
+            ;;
+        11)
+            clear
+            echo -e "${GOLD}${BOLD}Entering ZothOS Netlify interactive shell. Type 'exit' to return to menu.${NC}\n"
+            bash
+            ;;
+        0)
+            clear
+            echo -e "${GOLD}Exiting Netlify Console. Sovereign operational.${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select from 0-11.${NC}"
+            sleep 1
+            ;;
+    esac
+done

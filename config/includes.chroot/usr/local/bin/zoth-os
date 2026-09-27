@@ -38,7 +38,7 @@ do
 done
 
 if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-  exec "$ELECTRON_BIN" --no-sandbox "$ROOT" "$@"
+  exec "$ELECTRON_BIN" --no-sandbox --disable-gpu "$ROOT" "$@"
 else
   exec python3 "$ROOT/serve.py" "$@"
 fi

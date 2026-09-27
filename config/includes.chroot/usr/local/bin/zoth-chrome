@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTH CHROME WEB ENGINE LAUNCHER
+#  Resilient enterprise launcher with sandbox detection & fallbacks
+# ==============================================================================
+
+FLAGS=(
+    "--no-sandbox"
+    "--test-type"
+    "--disable-dev-shm-usage"
+    "--password-store=basic"
+    "--enable-features=UseOzonePlatform"
+    "--ozone-platform=wayland"
+)
+
+# Detect if under X11 or Wayland
+if [[ -z "${WAYLAND_DISPLAY:-}" && -n "${DISPLAY:-}" ]]; then
+    FLAGS=(
+        "--no-sandbox"
+        "--test-type"
+        "--disable-dev-shm-usage"
+        "--password-store=basic"
+    )
+fi
+
+CHROME_BINS=(
+    "/usr/bin/google-chrome-stable"
+    "/usr/bin/google-chrome"
+    "/opt/google/chrome/google-chrome"
+    "/opt/google/chrome/chrome"
+    "/usr/bin/chromium"
+    "/usr/bin/chromium-browser"
+)
+
+SELF_REAL="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+for b in "${CHROME_BINS[@]}"; do
+    if [[ -x "$b" ]]; then
+        B_REAL="$(readlink -f "$b" 2>/dev/null || echo "$b")"
+        if [[ "$B_REAL" != "$SELF_REAL" ]]; then
+            exec "$b" "${FLAGS[@]}" "$@"
+        fi
+    fi
+done
+
+# Fallback to Firefox if Chrome is unavailable
+if command -v firefox &>/dev/null; then
+    exec firefox "$@"
+elif command -v firefox-esr &>/dev/null; then
+    exec firefox-esr "$@"
+else
+    notify-send -u critical "Zoth Chrome" "No suitable browser engine found." 2>/dev/null || true
+    exit 1
+fi

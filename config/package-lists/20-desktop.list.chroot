@@ -1,6 +1,7 @@
 # KDE Plasma 6 Desktop Environment
 plasma-desktop
 plasma-workspace
+kwin-x11
 sddm
 konsole
 dolphin
@@ -9,6 +10,12 @@ libkf6config-bin
 # Utilities & System Integration
 pipewire
 pipewire-audio
+pipewire-pulse
+wireplumber
+dbus-user-session
+plasma-firewall
+plasma-systemmonitor
+plasma-vault
 network-manager
 network-manager-gnome
 x11-xserver-utils
@@ -29,3 +36,5 @@ nodejs
 npm
 libfuse2t64
 mesa-vulkan-drivers
+kde-config-flatpak
+kde-spectacle

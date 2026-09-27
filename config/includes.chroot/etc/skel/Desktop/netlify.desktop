@@ -4,7 +4,7 @@ Type=Application
 Name=Netlify CLI
 GenericName=Serverless & Edge Deployment
 Comment=Develop, build, test, and deploy projects to Netlify
-Exec=konsole -p tabtitle='Netlify CLI' -e 'bash -c "netlify --help; echo; exec bash"'
+Exec=konsole -p tabtitle='Netlify CLI' -e /usr/local/bin/zoth-netlify
 Icon=/usr/share/pixmaps/zoth-web3.png
 Terminal=false
 Categories=Development;Cloud;

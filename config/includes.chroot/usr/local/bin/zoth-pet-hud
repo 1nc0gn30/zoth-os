@@ -14,9 +14,9 @@ done
 
 if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-}" ]]; then
     if [[ -d "/opt/zoth-desktop-pet" && -f "/opt/zoth-desktop-pet/main.js" ]]; then
-        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-desktop-pet "$@"
+        exec "$ELECTRON_BIN" --no-sandbox --disable-gpu /opt/zoth-desktop-pet "$@"
     elif [[ -d "/opt/zoth-hud" && -f "/opt/zoth-hud/main.js" ]]; then
-        exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-hud "$@"
+        exec "$ELECTRON_BIN" --no-sandbox --disable-gpu /opt/zoth-hud "$@"
     fi
 fi
 

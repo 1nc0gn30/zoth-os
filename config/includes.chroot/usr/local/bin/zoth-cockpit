@@ -483,7 +483,7 @@ def render_headless_status() -> None:
     print("  ╚══════════════════════════════════════════════════════════════════════╝")
     print(f"{ANSI_RESET}")
 
-    print(f"  {ANSI_BOLD}REALITY MODE:{ANSI_RESET}  [{ANSI_GREEN}{active_mode}{ANSI_RESET}]   │  {ANSI_BOLD}UPTIME:{ANSI_RESET} {uptime}   │  {ANSI_BOLD}VERSION:{ANSI_RESET} {VERSION}")
+    print(f"  {ANSI_BOLD}ACTIVE PROFILE:{ANSI_RESET} [{ANSI_GREEN}{active_mode.upper()}{ANSI_RESET}]   │  {ANSI_BOLD}UPTIME:{ANSI_RESET} {uptime}   │  {ANSI_BOLD}VERSION:{ANSI_RESET} {VERSION}")
     print(f"  {ANSI_BOLD}TOR CLOAKING:{ANSI_RESET}  {ANSI_GREEN if is_cloaked else ANSI_RED}{tor_status}{ANSI_RESET}\n")
 
     print(f"  {ANSI_CYAN}{ANSI_BOLD}--- [ LIVE HARDWARE TELEMETRY ] ---{ANSI_RESET}")
@@ -525,7 +525,7 @@ class CockpitTUI:
     def __init__(self, stdscr: curses.window) -> None:
         self.stdscr = stdscr
         self.metrics = SystemMetrics()
-        self.status_msg = "Sovereign Cockpit active. Press keys [1-3, O, C, V, H, G, P, N, M, W, B, A, Z] or [Q] to quit."
+        self.status_msg = "Sovereign Cockpit active. Press keys [1-4, O, C, V, H, G, P, N, M, W, B, A, Z] or [Q] to quit."
         self.status_time = time.time()
         self.selected_index = 0
         self.running = True
@@ -533,9 +533,10 @@ class CockpitTUI:
         # Build list of selectable actions for arrow navigation
         self.menu_items: List[Dict[str, Any]] = [
             # Modes
-            {"cat": "mode", "key": "1", "label": "Switch to Hermetic Matrix Reality", "action": lambda: self.set_mode("matrix")},
-            {"cat": "mode", "key": "2", "label": "Switch to Ghostmode (nullai.tech)", "action": lambda: self.set_mode("ghost")},
-            {"cat": "mode", "key": "3", "label": "Switch to Incognito Windows 11 Guise", "action": lambda: self.set_mode("incognito")},
+            {"cat": "mode", "key": "1", "label": "Switch to Sovereign Gold (Default)", "action": lambda: self.set_mode("gold")},
+            {"cat": "mode", "key": "2", "label": "Switch to Ghostmode (Stealth & Tor)", "action": lambda: self.set_mode("ghost")},
+            {"cat": "mode", "key": "3", "label": "Switch to Hermetic Matrix Profile", "action": lambda: self.set_mode("matrix")},
+            {"cat": "mode", "key": "4", "label": "Switch to Incognito Chameleon Profile", "action": lambda: self.set_mode("incognito")},
             # AI Engines
             {"cat": "ai", "key": "o", "label": "Launch Ollama Neural Model Runner", "action": lambda: self.launch_ai("o")},
             {"cat": "ai", "key": "c", "label": "Launch ComfyUI Generative Visuals", "action": lambda: self.launch_ai("c")},
@@ -616,13 +617,13 @@ class CockpitTUI:
             self.notify(f"[!] Failed to launch {title}: {e}")
 
     def set_mode(self, mode: str) -> None:
-        """Switches active reality mode."""
-        self.notify(f"Engaging {mode.upper()} mode...")
+        """Switches active environment/stealth profile."""
+        self.notify(f"Engaging {mode.upper()} profile...")
         # Check if zoth-mode exists
         if tool_available("zoth-mode"):
             try:
                 res = subprocess.run(["zoth-mode", mode], capture_output=True, text=True, timeout=5.0)
-                self.notify(f"[✓] Reality shifted to {mode.upper()}")
+                self.notify(f"[✓] Profile switched to {mode.upper()}")
             except Exception as e:
                 self.notify(f"[!] Mode switch error: {e}")
         else:
@@ -760,7 +761,7 @@ class CockpitTUI:
         c_bold = curses.A_BOLD
 
         # ── 1. Top Header Banner ────────────────────────────────────────────────
-        title_text = f" * ZOTHOS LINUX COCKPIT *  v{VERSION}  [Reality: {active_mode}] "
+        title_text = f" * ZOTHOS LINUX COCKPIT *  v{VERSION}  [Profile: {active_mode.upper()}] "
         self.safe_addstr(0, max(0, (w - len(title_text)) // 2), title_text, curses.color_pair(7) | curses.A_BOLD)
 
         clock_str = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -806,24 +807,25 @@ class CockpitTUI:
         self.safe_addstr(cur_y, 2, "└" + ("─" * (w - 6)) + "┘", c_cyan)
         cur_y += 1
 
-        # ── 3. Box 2: Quick Reality Switcher ───────────────────────────────────
-        self.safe_addstr(cur_y, 2, "┌── [ 2. QUICK REALITY SWITCHER ] " + ("─" * max(0, w - 36)) + "┐", c_gold)
+        # ── 3. Box 2: Quick Environment & Stealth Switcher ────────────────────
+        self.safe_addstr(cur_y, 2, "┌── [ 2. ENVIRONMENT & STEALTH PROFILES ] " + ("─" * max(0, w - 44)) + "┐", c_gold)
         cur_y += 1
         
         modes = [
-            ("1", "Hermetic Matrix", "matrix", "Emerald Phosphor · Azoth Glyphs · Glassmorphic", c_green),
-            ("2", "Ghostmode (nullai)", "ghost", "Amnesic Stealth · Torified · MAC Cloaked", c_red),
-            ("3", "Incognito Win 11", "incognito", "Windows 11 Fluent Guise · Decoy Desktop", c_cyan),
+            ("1", "Sovereign Gold (Default)", "gold", "24K Celtic Gold Master · Sovereign Desktop", c_gold),
+            ("2", "Ghostmode (Stealth)", "ghost", "Amnesic Stealth · Torified · MAC Cloaked", c_red),
+            ("3", "Hermetic Matrix", "matrix", "Emerald Phosphor · Cyber Terminal · High Contrast", c_green),
+            ("4", "Incognito Chameleon", "incognito", "Windows 11 Fluent Disguise · Covert Guise", c_cyan),
         ]
         for key, name, mode_id, desc, col in modes:
             is_active = (active_mode.lower() == mode_id)
             badge = " [ACTIVE] " if is_active else " [IDLE]   "
             badge_attr = curses.color_pair(7) | curses.A_BOLD if is_active else c_dim
             self.safe_addstr(cur_y, 4, f"[{key}]", c_gold)
-            self.safe_addstr(cur_y, 8, f"{name:<20}", col | c_bold)
-            self.safe_addstr(cur_y, 30, badge, badge_attr)
+            self.safe_addstr(cur_y, 8, f"{name:<26}", col | c_bold)
+            self.safe_addstr(cur_y, 36, badge, badge_attr)
             if w >= 80:
-                self.safe_addstr(cur_y, 42, f"↳ {desc}", c_dim)
+                self.safe_addstr(cur_y, 48, f"↳ {desc}", c_dim)
             cur_y += 1
 
         self.safe_addstr(cur_y, 2, "└" + ("─" * (w - 6)) + "┘", c_gold)

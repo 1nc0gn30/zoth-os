@@ -108,6 +108,13 @@ config/includes.chroot/opt/simplex-desktop/
 config/includes.chroot/opt/zoth-studio/
 opt/zoth-studio/
 config/includes.chroot/usr/local/bin/simplex-chat
-
+config/includes.chroot/usr/local/bin/node
+config/includes.chroot/opt/google/
+config/includes.chroot/opt/tor-browser/
+config/includes.chroot/usr/share/ollama/
+config/includes.chroot/boot/vmlinuz*
+config/includes.chroot/boot/initrd*
+config/includes.chroot/usr/lib/modules/
+config/includes.chroot/usr/local/lib/
 
 config/includes.chroot/usr/share/doc/

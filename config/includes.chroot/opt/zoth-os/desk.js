@@ -34,7 +34,7 @@ const titles = {
   mind: "Agent harnesses on the path, or one install away.",
   chip: "Local models, the resident watcher, and this window's WebGPU adapter.",
   hub: "Zoth Studio's real hub, served from the copy on disk.",
-  ops: "Reality profiles, the install journal, and the doctor.",
+  ops: "Environment profiles, the install journal, and the doctor.",
 };
 
 function esc(value) {
@@ -182,12 +182,12 @@ function renderHub() {
 }
 
 function renderOps() {
-  const modes = (board.items || []).filter((i) => i.group === "reality").map(row).join("");
+  const modes = (board.items || []).filter((i) => i.group === "profile" || i.group === "reality").map(row).join("");
   const lines = journal.slice(-40).map((l) => `<li><time>${esc(l.t)}</time>${esc(l.line)}</li>`).join("") || "<li>Journal is empty.</li>";
   const doctor = (board.items || []).filter((i) => i.id === "zoth-doctor");
   return `<div class="split">
     <div>
-      <section class="group"><h2>Reality</h2>${modes}</section>
+      <section class="group"><h2>Environment Profiles</h2>${modes}</section>
       <section class="group"><h2>Journal</h2><ul class="journal">${lines}</ul></section>
     </div>
     <aside class="panel">

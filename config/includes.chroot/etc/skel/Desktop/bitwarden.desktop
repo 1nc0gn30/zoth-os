@@ -3,8 +3,8 @@ Version=1.0
 Type=Application
 Name=Bitwarden Vault
 GenericName=Password & Secrets Manager
-Comment=Access and manage your Bitwarden vault
-Exec=konsole -p tabtitle='Bitwarden Vault' -e 'bash -c "bw --help; echo; exec bash"'
+Comment=Access and manage your Bitwarden vault CLI
+Exec=konsole -p tabtitle='Bitwarden Vault' -e /usr/local/bin/zoth-vault bw
 Icon=/usr/share/pixmaps/bitwarden.png
 Terminal=false
 Categories=Utility;Security;

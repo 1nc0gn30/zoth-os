@@ -4,19 +4,20 @@
 # ==============================================================================
 set -u
 
-WALLPAPER="/usr/share/backgrounds/zothos/hermetic-matrix.png"
+WALLPAPER="/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
+QDBUS=$(command -v qdbus6 2>/dev/null || command -v qdbus 2>/dev/null || echo "qdbus6")
 
 # Wait for plasma shell to be available on DBus
 for i in {1..40}; do
-    if qdbus org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
+    if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
         break
     fi
     sleep 0.5
 done
 
 # Ensure KDE Plasma panel exists
-if qdbus org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
-    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
+    "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
         var p = panels();
         if (p.length === 0) {
             loadTemplate("org.kde.plasma.desktop.defaultPanel");
@@ -24,9 +25,21 @@ if qdbus org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
     ' >/dev/null 2>&1 || true
 fi
 
-# Apply ZOTHOS Hermetic Matrix Cyber-Gold Wallpaper
+# Apply ZOTHOS Celtic Gold Master Wallpaper directly via plasma-apply-wallpaperimage
 if [ -f "$WALLPAPER" ] && command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
     plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 || true
+fi
+
+# Also set via Plasma JavaScript evaluateScript on all containment desktops
+if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
+    "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+        var desktops = desktops();
+        for (var i = 0; i < desktops.length; i++) {
+            desktops[i].wallpaperPlugin = "org.kde.image";
+            desktops[i].currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
+            desktops[i].writeConfig("Image", "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg");
+        }
+    ' >/dev/null 2>&1 || true
 fi
 
 # Ensure KDE dark colorscheme is applied
@@ -34,12 +47,12 @@ if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
     plasma-apply-colorscheme BreezeDark >/dev/null 2>&1 || true
 fi
 
-# Ensure screen lock is disabled on live session & lockscreen uses hermetic-matrix
+# Ensure screen lock is disabled on live session & lockscreen uses zoth-gold-master.jpg
 if command -v kwriteconfig6 >/dev/null 2>&1; then
     kwriteconfig6 --file kscreenlockerrc --group Daemon --key Autolock false 2>/dev/null || true
     kwriteconfig6 --file kscreenlockerrc --group Daemon --key Timeout 0 2>/dev/null || true
     kwriteconfig6 --file kscreenlockerrc --group Daemon --key LockOnResume false 2>/dev/null || true
-    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:///usr/share/backgrounds/zothos/hermetic-matrix.png" 2>/dev/null || true
+    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg" 2>/dev/null || true
 fi
 
 exit 0

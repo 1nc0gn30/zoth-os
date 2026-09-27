@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS ENVIRONMENT & STEALTH MODE SWITCHER v3.0
+# ==============================================================================
+#  Instantly switch between Sovereign Default and Ghostmode Stealth,
+#  or select specialized desktop profiles:
+#    1. gold      - Sovereign Gold Master (Default, 24K Alchemical Gold)
+#    2. ghost     - NullAI Ghostmode (Amnesic Stealth, Tor-Cloaked)
+#    3. matrix    - Hermetic Matrix (Digital Rain, Phosphor Emerald)
+#    4. incognito - Chameleon Disguise (Covert Fluent Guise)
+# ==============================================================================
+
+set -euo pipefail
+
+STATE_FILE="$HOME/.config/zothos/profile.state"
+LEGACY_STATE="$HOME/.config/zothos/reality.state"
+mkdir -p "$HOME/.config/zothos"
+
+GOLD="\033[38;2;255;215;0m"
+CYAN="\033[38;2;0;229;255m"
+GREEN="\033[38;2;0;255;157m"
+YELLOW="\033[38;2;255;204m"
+RED="\033[38;2;255;51;85m"
+GRAY="\033[38;2;120;140;160m"
+BOLD="\033[1m"
+RESET="\033[0m"
+
+get_current_mode() {
+    if [[ -f "$STATE_FILE" ]]; then
+        cat "$STATE_FILE"
+    elif [[ -f "$LEGACY_STATE" ]]; then
+        cat "$LEGACY_STATE"
+    else
+        echo "gold"
+    fi
+}
+
+WP_DIR="/usr/share/backgrounds/zothos"
+if [[ ! -d "$WP_DIR" && -d "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos" ]]; then
+    WP_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos"
+fi
+
+SOUND_DIR="/usr/share/sounds/zothos"
+if [[ ! -d "$SOUND_DIR" && -d "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/sounds/zothos" ]]; then
+    SOUND_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/sounds/zothos"
+fi
+
+apply_wallpaper() {
+    local wp="$1"
+    if [[ ! -f "$wp" ]]; then
+        return 0
+    fi
+
+    # KDE Plasma CLI
+    if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+        plasma-apply-wallpaperimage "$wp" 2>/dev/null || true
+    fi
+
+    # KDE Plasma Live DBus Script
+    if command -v qdbus >/dev/null 2>&1; then
+        qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+        var allDesktops = desktops();
+        for (var i = 0; i < allDesktops.length; i++) {
+            var d = allDesktops[i];
+            d.wallpaperPlugin = 'org.kde.image';
+            d.currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];
+            d.writeConfig('Image', 'file://${wp}');
+            if (typeof d.reloadConfig === 'function') {
+                d.reloadConfig();
+            }
+        }
+        " 2>/dev/null || true
+    fi
+
+    # XFCE4
+    if command -v xfconf-query >/dev/null 2>&1; then
+        for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep "last-image" || true); do
+            xfconf-query -c xfce4-desktop -p "$prop" -s "$wp" 2>/dev/null || true
+        done
+    fi
+
+    # Feh / X11 fallback
+    if command -v feh >/dev/null 2>&1 && [[ -n "${DISPLAY:-}" ]]; then
+        feh --bg-fill "$wp" 2>/dev/null || true
+    fi
+}
+
+play_cue() {
+    local cue="$1"
+    if [[ -f "$cue" ]] && command -v paplay >/dev/null 2>&1; then
+        paplay "$cue" 2>/dev/null &
+    elif [[ -f "$cue" ]] && command -v aplay >/dev/null 2>&1; then
+        aplay -q "$cue" 2>/dev/null &
+    fi
+}
+
+save_mode() {
+    local m="$1"
+    echo "$m" > "$STATE_FILE"
+    echo "$m" > "$LEGACY_STATE" 2>/dev/null || true
+}
+
+MODE="${1:-}"
+
+# If no argument given or 'toggle', toggle between default (gold) and ghostmode
+if [[ -z "$MODE" ]]; then
+    CUR=$(get_current_mode)
+    echo -e "${GOLD}${BOLD}ZOTHOS ENVIRONMENT & STEALTH CONTROLLER${RESET}"
+    echo -e "Active Profile: ${CYAN}${CUR}${RESET}\n"
+    echo -e "  ${GOLD}[1] gold / default${RESET}  - Return to Sovereign Gold Master (Default)"
+    echo -e "  ${RED}[2] ghost / stealth${RESET} - Engage NullAI Ghostmode & Amnesic Tor"
+    echo -e "  ${GREEN}[3] matrix${RESET}          - Hermetic Matrix & Emerald Phosphor"
+    echo -e "  ${YELLOW}[4] incognito / win11${RESET}   - Covert Chameleon Disguise"
+    echo -e "  ${CYAN}[t] toggle${RESET}          - Instant Toggle (Default <-> Ghostmode)\n"
+    read -rp "Select mode [1-4, t]: " choice
+    case "$choice" in
+        1|gold|default) MODE="gold" ;;
+        2|ghost|stealth) MODE="ghost" ;;
+        3|matrix) MODE="matrix" ;;
+        4|incognito|win11) MODE="incognito" ;;
+        t|toggle|"")
+            if [[ "$CUR" == "ghost" ]]; then
+                MODE="gold"
+            else
+                MODE="ghost"
+            fi
+            ;;
+        *) echo -e "${RED}[!] Invalid choice.${RESET}"; exit 1 ;;
+    esac
+fi
+
+if [[ "$MODE" == "toggle" ]]; then
+    CUR=$(get_current_mode)
+    if [[ "$CUR" == "ghost" ]]; then
+        MODE="gold"
+    else
+        MODE="ghost"
+    fi
+fi
+
+case "$MODE" in
+    gold|default|sanctum)
+        echo -e "${GOLD}[+] Restoring Sovereign Gold Master Profile (Default)...${RESET}"
+        apply_wallpaper "$WP_DIR/zoth-gold-master.png"
+        play_cue "$SOUND_DIR/gold-sanctum.wav"
+        save_mode "gold"
+        # Disengage ghostmode transparent proxy if running
+        if [[ -f "/run/zoth_ghostmode.state" ]] && command -v zoth-ghost >/dev/null 2>&1; then
+            zoth-ghost stop 2>/dev/null || true
+        fi
+        echo -e "${GOLD}[✓] Active Profile: Sovereign Gold Master (Default Engaged).${RESET}"
+        ;;
+    ghost|stealth|amnesic)
+        echo -e "${RED}[+] Engaging NullAI Ghostmode Stealth Profile...${RESET}"
+        apply_wallpaper "$WP_DIR/ghostmode-nullai.png"
+        play_cue "$SOUND_DIR/ghost-vapor.wav"
+        save_mode "ghost"
+        # Trigger transparent Tor & MAC cloaking if available
+        if command -v zoth-ghost >/dev/null 2>&1; then
+            zoth-ghost start 2>/dev/null || true
+        fi
+        echo -e "${RED}[✓] Active Profile: NullAI Ghostmode Stealth Engaged.${RESET}"
+        ;;
+    matrix|hacker|green)
+        echo -e "${GREEN}[+] Switching to Hermetic Matrix Emerald Profile...${RESET}"
+        apply_wallpaper "$WP_DIR/hermetic-matrix.png"
+        play_cue "$SOUND_DIR/matrix-chirp.wav"
+        save_mode "matrix"
+        echo -e "${GREEN}[✓] Active Profile: Hermetic Matrix Engaged.${RESET}"
+        ;;
+    incognito|win11|windows|undercover)
+        echo -e "${YELLOW}[+] Switching to Covert Chameleon Profile...${RESET}"
+        apply_wallpaper "$WP_DIR/win11-bloom.jpg"
+        play_cue "$SOUND_DIR/win11-fluent.wav"
+        save_mode "win11"
+        echo -e "${YELLOW}[✓] Active Profile: Covert Chameleon Engaged.${RESET}"
+        ;;
+    status)
+        echo "$(get_current_mode)"
+        ;;
+    *)
+        echo -e "${RED}[!] Unknown mode: $MODE${RESET}"
+        echo -e "Supported modes: gold (default), ghost (stealth), matrix, incognito, toggle"
+        exit 1
+        ;;
+esac

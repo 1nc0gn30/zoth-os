@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Zoth Vault Daemon
+Comment=Sovereign zero-leak secrets manager daemon
+Exec=/usr/local/bin/zoth-vault-daemon --port 8787
+Terminal=false
+Categories=Utility;Security;
+X-GNOME-Autostart-enabled=true
+StartupNotify=false

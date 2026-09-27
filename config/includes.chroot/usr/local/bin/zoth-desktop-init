@@ -56,9 +56,10 @@ xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>y" -n -t st
 
 # ── 5. Wallpaper across all monitors ──────────────────────────────────────
 log "Setting wallpaper..."
-WALLPAPER="/usr/share/backgrounds/zothos/zothos-field.png"
+WALLPAPER="/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
 
 if [[ -f "$WALLPAPER" ]]; then
+    command -v plasma-apply-wallpaperimage &>/dev/null && plasma-apply-wallpaperimage "$WALLPAPER" 2>/dev/null || true
     for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep "last-image"); do
         xfconf-query -c xfce4-desktop -p "$prop" -s "$WALLPAPER" 2>/dev/null || true
     done
@@ -103,23 +104,23 @@ WATCHDOG_PID=$!
 echo $WATCHDOG_PID > /tmp/zoth-picom-watchdog.pid
 log "Picom watchdog started (PID: $WATCHDOG_PID)"
 
-# ── 7. Launch animated background (if installed) ─────────────────────────
-log "Checking for animated background engine..."
-
-ANIMATED_BG="/usr/local/bin/zoth-animated-bg"
-if [[ -x "$ANIMATED_BG" ]]; then
-    log "Starting animated matrix rain background..."
-    DISPLAY="${DISPLAY:-:0}" "$ANIMATED_BG" start >>/tmp/zoth-animated-bg-async.log 2>&1 &
-    log "Animated background launched"
-else
-    log "zoth-animated-bg not found or not executable — skipping"
-fi
+# ── 7. Animated background disabled ───────────────────────────────────────
+# matrix rain background removed per system spec
 
 # ── 8. Launch Telemetry HUD & All-Seeing Eye AI Pet ───────────────────────
 log "Starting Desktop Telemetry HUD..."
 if ! pgrep -f "opt/zoth-hud" &>/dev/null; then
     DISPLAY="${DISPLAY:-:0}" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" /usr/local/bin/zoth-desktop-hud >/tmp/hud_init.log 2>&1 &
     disown
+fi
+
+# ── 8b. Launch Sovereign Zoth Vault Daemon ──────────────────────────────────
+log "Ensuring Zoth Sovereign Vault Daemon is running..."
+if ! pgrep -f "zoth-vault-daemon" &>/dev/null; then
+    if [[ -x /usr/local/bin/zoth-vault-daemon ]]; then
+        /usr/local/bin/zoth-vault-daemon --port 8787 >/tmp/zoth-vault-daemon.log 2>&1 &
+        disown
+    fi
 fi
 
 log "Desktop pet stays off unless Electron is installed."

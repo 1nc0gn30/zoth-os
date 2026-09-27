@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS STREAMLIT STUDIO & DATA APP RUNNER
+# ==============================================================================
+
+CYAN='\033[38;2;0;229;255m'
+GOLD='\033[38;2;212;175;55m'
+AMBER='\033[38;2;245;158;11m'
+GREEN='\033[38;2;74;222;128m'
+RED='\033[38;2;248;113;113m'
+PURPLE='\033[38;2;168;85;247m'
+DIM='\033[38;2;140;150;170m'
+NC='\033[0m'
+BOLD='\033[1m'
+
+# Ensure browser is set properly for python webbrowser module
+if command -v google-chrome &>/dev/null; then
+    export BROWSER=google-chrome
+elif command -v google-chrome-stable &>/dev/null; then
+    export BROWSER=google-chrome-stable
+elif command -v firefox &>/dev/null; then
+    export BROWSER=firefox
+elif command -v xdg-open &>/dev/null; then
+    export BROWSER=xdg-open
+fi
+
+# Ensure streamlit credentials and config exist so it never prompts for email
+mkdir -p "$HOME/.streamlit"
+if [[ ! -f "$HOME/.streamlit/credentials.toml" ]]; then
+    cat << 'EOF' > "$HOME/.streamlit/credentials.toml"
+[general]
+email = ""
+EOF
+fi
+
+if [[ ! -f "$HOME/.streamlit/config.toml" ]]; then
+    cat << 'EOF' > "$HOME/.streamlit/config.toml"
+[browser]
+gatherUsageStats = false
+
+[server]
+headless = false
+enableCORS = false
+enableXsrfProtection = false
+EOF
+fi
+
+# Helper to open browser asynchronously
+open_browser_url() {
+    local url="$1"
+    (
+        sleep 2
+        if command -v google-chrome &>/dev/null; then
+            google-chrome "$url" &>/dev/null &
+        elif command -v google-chrome-stable &>/dev/null; then
+            google-chrome-stable "$url" &>/dev/null &
+        elif command -v firefox &>/dev/null; then
+            firefox "$url" &>/dev/null &
+        elif command -v xdg-open &>/dev/null; then
+            xdg-open "$url" &>/dev/null &
+        fi
+    ) &
+}
+
+# Direct passthrough if arguments provided
+if [[ $# -gt 0 ]]; then
+    exec streamlit "$@"
+fi
+
+print_header() {
+    clear
+    echo -e "${GOLD}${BOLD}"
+    cat << "BANNER"
+  ███████╗████████╗██████╗ ███████╗ █████╗ ███╗   ███╗██╗     ██╗████████╗
+  ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗████╗ ████║██║     ██║╚══██╔══╝
+  ███████╗   ██║   ██████╔╝█████╗  ███████║██╔████╔██║██║     ██║   ██║   
+  ╚════██║   ██║   ██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║██║     ██║   ██║   
+  ███████║   ██║   ██║  ██║███████╗██║  ██║██║ ╚═╝ ██║███████╗██║   ██║   
+  ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝   ╚═╝   
+BANNER
+    echo -e "       ${AMBER}• DATA, MACHINE LEARNING & AI APPLICATION STUDIO •${NC}\n"
+    
+    local s_ver
+    s_ver=$(streamlit version 2>/dev/null || echo "1.64.0")
+    local py_ver
+    py_ver=$(python3 -V 2>/dev/null || echo "Python 3.13")
+    local running_count
+    running_count=$(pgrep -f "streamlit run" | wc -l)
+
+    echo -e "  ${GOLD}┌─ STUDIO TELEMETRY ───────────────────────────────────────────────────────┐${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Streamlit:${NC}    ${CYAN}${s_ver}${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Environment:${NC}  ${GREEN}${py_ver}${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Default Port:${NC} ${AMBER}http://localhost:8501${NC}"
+    echo -e "  ${GOLD}│${NC}  ${BOLD}Active Apps:${NC}  ${CYAN}${running_count} running${NC}"
+    echo -e "  ${GOLD}└──────────────────────────────────────────────────────────────────────────┘${NC}\n"
+}
+
+pause_menu() {
+    echo ""
+    echo -e "${GOLD}${BOLD}Press [ENTER] to return to the Streamlit Studio Menu...${NC}"
+    read -r
+}
+
+show_cheatsheet() {
+    clear
+    echo -e "${GOLD}${BOLD}══════════════════════════════════════════════════════════════════════════${NC}"
+    echo -e "              ${AMBER}${BOLD}STREAMLIT STUDIO • SOVEREIGN PYTHON CHEATSHEET${NC}"
+    echo -e "${GOLD}${BOLD}══════════════════════════════════════════════════════════════════════════${NC}\n"
+    
+    echo -e "${BOLD}${GOLD}1. WHAT IS STREAMLIT?${NC}"
+    echo -e "   Streamlit turns pure Python scripts into interactive, web-based UI dashboards"
+    echo -e "   in minutes. No HTML, CSS, or JavaScript required. Updates reactively on run.\n"
+
+    echo -e "${BOLD}${GOLD}2. CORE API BUILDING BLOCKS:${NC}"
+    echo -e "   ${CYAN}import streamlit as st${NC}"
+    echo -e "   ${GREEN}st.title(\"Hello World\")${NC}               # Header display"
+    echo -e "   ${GREEN}st.write(\"Text or object\", data)${NC}      # Magic auto-rendering"
+    echo -e "   ${GREEN}st.sidebar.selectbox(\"Choose\", opts)${NC}  # Sidebar control panel"
+    echo -e "   ${GREEN}st.line_chart(dataframe)${NC}               # Reactive chart visualization"
+    echo -e "   ${GREEN}user_in = st.text_input(\"Query\")${NC}     # Text entry widget"
+    echo -e "   ${GREEN}if st.button(\"Execute\"): ...${NC}           # Trigger buttons"
+    echo -e "   ${GREEN}st.dataframe(df, use_container_width=True)${NC} # Interactive sortable table\n"
+
+    echo -e "${BOLD}${GOLD}3. RUNNING & PORT BINDING:${NC}"
+    echo -e "   ${CYAN}streamlit run app.py${NC}                      # Default (localhost:8501)"
+    echo -e "   ${CYAN}streamlit run app.py --server.port 8080${NC}   # Custom port"
+    echo -e "   ${CYAN}streamlit run app.py --server.headless true${NC} # Server daemon mode\n"
+
+    echo -e "${BOLD}${GOLD}4. LOCAL AI / LLM INTEGRATION:${NC}"
+    echo -e "   Connect directly to local Ollama on ${CYAN}http://127.0.0.1:11434/api/generate${NC}"
+    echo -e "   or Zoth Sovereign Vault at ${CYAN}http://127.0.0.1:8787/v1/keys${NC}.\n"
+    pause_menu
+}
+
+scaffold_app() {
+    clear
+    echo -e "${GOLD}${BOLD}═ CREATE NEW STREAMLIT APP TEMPLATE ═${NC}\n"
+    read -p "Enter app script name [app.py]: " app_name
+    app_name=${app_name:-app.py}
+
+    if [[ -f "$app_name" ]]; then
+        echo -e "${RED}Error: File '$app_name' already exists.${NC}"
+        pause_menu
+        return
+    fi
+
+    cat << 'PYAPP' > "$app_name"
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+st.set_page_config(page_title="My Sovereign App", page_icon="⚡", layout="wide")
+st.title("⚡ My Sovereign Streamlit App")
+st.write("Welcome to your custom interactive dashboard built with Python!")
+
+st.sidebar.header("Controls & Parameters")
+num_points = st.sidebar.slider("Number of Data Points", 10, 500, 50)
+chart_type = st.sidebar.selectbox("Chart Type", ["Line Chart", "Area Chart", "Bar Chart"])
+
+data = pd.DataFrame(
+    np.random.randn(num_points, 3),
+    columns=['Alpha', 'Beta', 'Gamma']
+)
+
+st.subheader("Interactive Visualization")
+if chart_type == "Line Chart":
+    st.line_chart(data)
+elif chart_type == "Area Chart":
+    st.area_chart(data)
+else:
+    st.bar_chart(data)
+
+st.subheader("Raw Data Table")
+st.dataframe(data)
+
+if st.button("Generate New Random Seed"):
+    st.rerun()
+PYAPP
+
+    echo -e "${GREEN}✓ Created '$app_name' successfully!${NC}"
+    echo -e "  To launch immediately: ${CYAN}streamlit run $app_name${NC}\n"
+    read -p "Launch it now? [y/N]: " launch_now
+    if [[ "$launch_now" =~ ^[Yy]$ ]]; then
+        streamlit run "$app_name"
+    fi
+    pause_menu
+}
+
+while true; do
+    print_header
+    echo -e "  ${BOLD}${GOLD}AVAILABLE OPERATIONS:${NC}"
+    echo -e "    ${CYAN}[1]${NC}  ${BOLD}🛡️  Launch ZothOS Cyber Intelligence Studio${NC}  ${DIM}(Hardware, Network, Entropy & AI)${NC}"
+    echo -e "    ${CYAN}[2]${NC}  ${BOLD}🌟 Launch Streamlit Official Hello Demo Hub${NC}  ${DIM}(Official demo suite on :8501)${NC}"
+    echo -e "    ${CYAN}[3]${NC}  ${BOLD}📂 Run Custom Python Streamlit Script${NC}        ${DIM}(Select or enter .py path)${NC}"
+    echo -e "    ${CYAN}[4]${NC}  ${BOLD}⚡ Scaffold New Streamlit App Template${NC}       ${DIM}(Generate interactive app.py)${NC}"
+    echo -e "    ${CYAN}[5]${NC}  ${BOLD}📖 Streamlit API Cheatsheet & Guide${NC}          ${DIM}(Learn core widgets & patterns)${NC}"
+    echo -e "    ${CYAN}[6]${NC}  ${BOLD}🛑 Kill Running Streamlit Servers${NC}            ${DIM}(Free port 8501 / background tasks)${NC}"
+    echo -e "    ${CYAN}[7]${NC}  ${BOLD}💻 Streamlit Python Terminal Shell${NC}            ${DIM}(Interactive bash with streamlit)${NC}"
+    echo -e "    ${RED}[0]${NC}  ${BOLD}🚪 Exit${NC}\n"
+    
+    read -p "  Enter selection [0-7]: " choice
+    case "$choice" in
+        1)
+            echo -e "\n${CYAN}[+] Launching ZothOS Cyber Intelligence Studio...${NC}"
+            echo -e "    ${DIM}Press Ctrl+C in this terminal to stop the server.${NC}\n"
+            open_browser_url "http://localhost:8501"
+            streamlit run /usr/share/zothos/streamlit/cyber_dashboard.py
+            pause_menu
+            ;;
+        2)
+            echo -e "\n${CYAN}[+] Launching Streamlit Official Hello Suite...${NC}"
+            echo -e "    ${DIM}Press Ctrl+C in this terminal to stop the server.${NC}\n"
+            open_browser_url "http://localhost:8501"
+            streamlit hello
+            pause_menu
+            ;;
+        3)
+            echo ""
+            read -e -p "Enter path to Python script (.py): " py_path
+            if [[ -f "$py_path" ]]; then
+                echo -e "\n${CYAN}[+] Launching '$py_path'...${NC}\n"
+                open_browser_url "http://localhost:8501"
+                streamlit run "$py_path"
+            else
+                echo -e "${RED}Error: File '$py_path' not found.${NC}"
+            fi
+            pause_menu
+            ;;
+        4)
+            scaffold_app
+            ;;
+        5)
+            show_cheatsheet
+            ;;
+        6)
+            echo -e "\n${AMBER}[+] Terminating all running Streamlit server instances...${NC}"
+            pkill -f "streamlit run" || pkill -f "streamlit hello" || echo "No active Streamlit servers found."
+            echo -e "${GREEN}✓ Done.${NC}"
+            sleep 1
+            ;;
+        7)
+            clear
+            echo -e "${GOLD}${BOLD}Entering Streamlit Python environment shell. Type 'exit' to return.${NC}\n"
+            bash
+            ;;
+        0)
+            clear
+            echo -e "${GOLD}Exiting Streamlit Studio. Sovereign operational.${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select from 0-7.${NC}"
+            sleep 1
+            ;;
+    esac
+done

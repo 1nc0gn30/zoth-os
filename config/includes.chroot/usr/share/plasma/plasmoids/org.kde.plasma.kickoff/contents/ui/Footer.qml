@@ -8,6 +8,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import org.kde.ksvg as KSvg
 import org.kde.plasma.components as PC3
 import org.kde.plasma.extras as PlasmaExtras
@@ -95,10 +96,25 @@ PlasmaExtras.PlasmoidHeading {
             anchors.bottom: tabBarListView.contentItem.bottom
             anchors.topMargin: -root.topPadding
             anchors.bottomMargin: -root.bottomPadding
-            icon.width: Kirigami.Units.iconSizes.smallMedium
-            icon.height: Kirigami.Units.iconSizes.smallMedium
-            icon.name: "applications-all-symbolic"
             text: i18n("Applications")
+
+            contentItem: RowLayout {
+                anchors.centerIn: parent
+                spacing: Kirigami.Units.smallSpacing
+                Image {
+                    source: "/usr/share/pixmaps/menu-gold-all-apps.png"
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap: true
+                    smooth: true
+                }
+                PC3.Label {
+                    text: applicationsTab.text
+                    color: applicationsTab.checked ? "#ffd700" : (applicationsTab.hovered ? "#fff48f" : Kirigami.Theme.textColor)
+                    font.bold: applicationsTab.checked
+                }
+            }
 
             background: Rectangle {
                 color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.12) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.06) : "transparent")
@@ -125,10 +141,25 @@ PlasmaExtras.PlasmoidHeading {
             anchors.bottom: tabBarListView.contentItem.bottom
             anchors.topMargin: -root.topPadding
             anchors.bottomMargin: -root.bottomPadding
-            icon.width: Kirigami.Units.iconSizes.smallMedium
-            icon.height: Kirigami.Units.iconSizes.smallMedium
-            icon.name: "compass"
             text: i18n("Places") //Explore?
+
+            contentItem: RowLayout {
+                anchors.centerIn: parent
+                spacing: Kirigami.Units.smallSpacing
+                Image {
+                    source: "/usr/share/pixmaps/menu-gold-places.png"
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap: true
+                    smooth: true
+                }
+                PC3.Label {
+                    text: placesTab.text
+                    color: placesTab.checked ? "#ffd700" : (placesTab.hovered ? "#fff48f" : Kirigami.Theme.textColor)
+                    font.bold: placesTab.checked
+                }
+            }
 
             background: Rectangle {
                 color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.12) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.06) : "transparent")

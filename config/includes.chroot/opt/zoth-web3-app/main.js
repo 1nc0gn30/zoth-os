@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
@@ -40,14 +40,26 @@ function createWindow() {
   ];
   let iconPath = possibleIcons.find(p => fs.existsSync(p));
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
+  const targetWidth = Math.min(1240, Math.floor(workArea.width * 0.92));
+  const targetHeight = Math.min(780, Math.floor(workArea.height * 0.88));
+
   mainWindow = new BrowserWindow({
-    width: 1440,
-    height: 920,
-    minWidth: 1080,
-    minHeight: 700,
+    width: targetWidth,
+    height: targetHeight,
+    minWidth: 640,
+    minHeight: 480,
+    center: true,
     backgroundColor: '#03050a',
     icon: iconPath,
     frame: true,
+    resizable: true,
+    movable: true,
+    minimizable: true,
+    maximizable: true,
+    closable: true,
+    fullscreenable: true,
     titleBarStyle: 'default',
     title: 'ZOTH WEB3 CORE // SOVEREIGN BLOCKCHAIN STUDIO & SWARM ENCLAVE',
     webPreferences: {

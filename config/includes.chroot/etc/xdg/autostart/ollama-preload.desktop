@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=sh -c 'sleep 5 && curl -s http://localhost:11434/api/generate -d "{\"model\": \"zoth-model\", \"keep_alive\": -1}"'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Zoth Model Preloader
+Comment=Preloads Zoth Model into VRAM

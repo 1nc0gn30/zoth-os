@@ -8,7 +8,7 @@ for e_cand in /opt/electron/electron /tmp/electron/electron "$(which electron 2>
 done
 
 if [[ -n "$ELECTRON_BIN" && -d "/opt/zoth-music-app" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-    exec "$ELECTRON_BIN" --no-sandbox /opt/zoth-music-app "$@"
+    exec "$ELECTRON_BIN" --no-sandbox --disable-gpu /opt/zoth-music-app "$@"
 elif [[ -d "/usr/share/zothos/audio" ]]; then
     nohup mpv --no-video --loop-playlist=inf --shuffle "/usr/share/zothos/audio" >/dev/null 2>&1 &
 fi

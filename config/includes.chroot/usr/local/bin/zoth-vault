@@ -1,0 +1,1661 @@
+#!/usr/bin/env python3
+"""
+[+] ZOTHOS SOVEREIGN SECRETS & MULTI-VAULT MANAGER v3.5
+Zero-leak cryptographic secrets engine & process secret injector:
+- Zoth Sovereign Vault (Rust Argon2id + XChaCha20-Poly1305 + BLAKE3 + zeroize)
+- Bitwarden Official CLI (bw)
+- KeePassXC (Encrypted offline database)
+- UNIX Pass (GPG-encrypted secret tree)
+"""
+
+import os
+import sys
+import shutil
+import subprocess
+import time
+import json
+import stat
+import signal
+import datetime
+import getpass
+import argparse
+import urllib.request
+import urllib.error
+
+# Color Constants
+GOLD = "\033[38;2;255;215;0m"
+GREEN = "\033[38;2;0;255;157m"
+CYAN = "\033[38;2;0;229;255m"
+RED = "\033[38;2;255;51;85m"
+YELLOW = "\033[38;2;255;204;0m"
+GRAY = "\033[38;2;120;140;160m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+
+DAEMON_PORT = int(os.environ.get("ZOTH_VAULT_PORT", 8787))
+API_BASE = f"http://127.0.0.1:{DAEMON_PORT}"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATHS & SESSION MANAGEMENT (0600 ENFORCED)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_session_dir():
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    if runtime_dir and os.path.isdir(runtime_dir):
+        d = os.path.join(runtime_dir, "zoth-vault")
+    else:
+        d = os.path.expanduser("~/.cache/zoth-vault")
+    os.makedirs(d, mode=0o700, exist_ok=True)
+    return d
+
+def get_session_file():
+    return os.path.join(get_session_dir(), "session")
+
+def get_pid_file():
+    return os.path.join(get_session_dir(), "daemon.pid")
+
+def get_log_file():
+    return os.path.expanduser("~/.cache/zoth-vault-daemon.log")
+
+def save_session_token(token, expires_at=None):
+    s_file = get_session_file()
+    fd = os.open(s_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as f:
+        data = {
+            "token": token,
+            "expires_at": expires_at,
+            "saved_at": time.time()
+        }
+        json.dump(data, f)
+    os.chmod(s_file, 0o600)
+
+def load_session_token():
+    s_file = get_session_file()
+    if not os.path.isfile(s_file):
+        return None
+    try:
+        with open(s_file, "r") as f:
+            content = f.read().strip()
+            if content.startswith("{"):
+                data = json.loads(content)
+                return data.get("token")
+            return content
+    except Exception:
+        return None
+
+def clear_session():
+    s_file = get_session_file()
+    if os.path.isfile(s_file):
+        try:
+            with open(s_file, "wb") as f:
+                f.write(b"\x00" * 128)
+            os.remove(s_file)
+        except Exception:
+            pass
+
+def is_session_valid(token):
+    if not token:
+        return False
+    status, res = api_request("GET", "/v1/session", token=token)
+    return status == 200 and res.get("ok") is True
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DAEMON DISCOVERY & PROCESS CONTROL
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_daemon_bin():
+    candidates = [
+        shutil.which("zoth-vault-daemon"),
+        "/usr/local/bin/zoth-vault-daemon",
+        "${ZOTH_HOME}/zothos/config/includes.chroot/usr/local/bin/zoth-vault-daemon",
+        "${ZOTH_HOME}/zothos/build/live_workspace/chroot/usr/local/bin/zoth-vault-daemon",
+        "${ZOTH_HOME}/zothos/build/live_workspace/chroot/opt/zoth-studio/backend/vault-daemon/target/release/zoth-vault-daemon",
+        "/opt/zoth-studio/backend/vault-daemon/target/release/zoth-vault-daemon",
+    ]
+    for c in candidates:
+        if c and os.path.isfile(c) and os.access(c, os.X_OK):
+            return c
+    return None
+
+def is_daemon_running():
+    try:
+        req = urllib.request.Request(f"{API_BASE}/health", headers={"User-Agent": "ZothVaultCLI/3.5"})
+        with urllib.request.urlopen(req, timeout=1.0) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+def get_daemon_pid():
+    pid_file = get_pid_file()
+    if os.path.isfile(pid_file):
+        try:
+            with open(pid_file, "r") as f:
+                pid = int(f.read().strip())
+                os.kill(pid, 0)
+                return pid
+        except (ValueError, OSError):
+            pass
+    try:
+        res = subprocess.run(["pgrep", "-f", "zoth-vault-daemon"], capture_output=True, text=True)
+        lines = res.stdout.strip().split()
+        if lines:
+            return int(lines[0])
+    except Exception:
+        pass
+    return None
+
+def save_daemon_pid(pid):
+    pid_file = get_pid_file()
+    try:
+        with open(pid_file, "w") as f:
+            f.write(str(pid))
+        os.chmod(pid_file, 0o600)
+    except Exception:
+        pass
+
+def clear_daemon_pid():
+    pid_file = get_pid_file()
+    if os.path.isfile(pid_file):
+        try:
+            os.remove(pid_file)
+        except Exception:
+            pass
+
+def ensure_daemon(silent=False):
+    if is_daemon_running():
+        return True
+    return daemon_start(silent=silent)
+
+def daemon_start(silent=False):
+    if is_daemon_running():
+        if not silent:
+            pid = get_daemon_pid()
+            pid_str = f" (PID: {pid})" if pid else ""
+            print(f"{GREEN}[✓] Zoth Vault daemon is already active on port {DAEMON_PORT}{pid_str}{RESET}")
+        return True
+
+    daemon_bin = get_daemon_bin()
+    if not daemon_bin:
+        print(f"{RED}[!] zoth-vault-daemon binary not found.{RESET}", file=sys.stderr)
+        return False
+
+    if not silent:
+        print(f"{GRAY}[*] Starting sovereign Argon2id Zoth Vault daemon...{RESET}")
+
+    log_path = get_log_file()
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    logfile = open(log_path, "a")
+    proc = subprocess.Popen(
+        [daemon_bin, "--port", str(DAEMON_PORT)],
+        stdout=logfile,
+        stderr=logfile,
+        start_new_session=True
+    )
+    save_daemon_pid(proc.pid)
+
+    for _ in range(25):
+        time.sleep(0.2)
+        if is_daemon_running():
+            if not silent:
+                print(f"{GREEN}[✓] Zoth Vault daemon active on port {DAEMON_PORT} (PID: {proc.pid}){RESET}")
+            return True
+
+    print(f"{RED}[!] Timed out waiting for Zoth Vault daemon.{RESET}", file=sys.stderr)
+    return False
+
+def daemon_stop(silent=False):
+    if not is_daemon_running():
+        if not silent:
+            print(f"{YELLOW}[*] Zoth Vault daemon is not running.{RESET}")
+        clear_daemon_pid()
+        clear_session()
+        return True
+
+    pid = get_daemon_pid()
+    if pid:
+        try:
+            os.kill(pid, signal.SIGTERM)
+            for _ in range(15):
+                time.sleep(0.2)
+                try:
+                    os.kill(pid, 0)
+                except OSError:
+                    break
+        except Exception:
+            pass
+
+    if is_daemon_running():
+        subprocess.run(["pkill", "-f", "zoth-vault-daemon"], capture_output=True)
+        time.sleep(0.5)
+
+    clear_daemon_pid()
+    clear_session()
+
+    stopped = not is_daemon_running()
+    if stopped:
+        if not silent:
+            print(f"{GREEN}[✓] Zoth Vault daemon stopped. Session cleared.{RESET}")
+        return True
+    else:
+        if not silent:
+            print(f"{RED}[!] Failed to stop Zoth Vault daemon.{RESET}", file=sys.stderr)
+        return False
+
+def daemon_restart():
+    print(f"{GRAY}[*] Restarting Zoth Vault daemon...{RESET}")
+    daemon_stop(silent=True)
+    time.sleep(0.5)
+    return daemon_start()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# REST CLIENT API HELPER
+# ─────────────────────────────────────────────────────────────────────────────
+
+def api_request(method, endpoint, data=None, token=None, timeout=5.0):
+    url = f"{API_BASE}{endpoint}"
+    headers = {"User-Agent": "ZothVaultCLI/3.5"}
+    body = None
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+        body = json.dumps(data).encode("utf-8")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            status = resp.status
+            res_body = resp.read().decode("utf-8")
+            if res_body:
+                try:
+                    return status, json.loads(res_body)
+                except Exception:
+                    return status, {"raw": res_body}
+            return status, {}
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode("utf-8")
+        try:
+            err_json = json.loads(err_body)
+        except Exception:
+            err_json = {"error": err_body or str(e)}
+        return e.code, err_json
+    except Exception as e:
+        return 0, {"error": str(e)}
+
+def guess_provider(name, secret):
+    s = secret or ""
+    n = (name or "").upper()
+    if s.startswith("sk-ant-"):
+        return "anthropic"
+    if s.startswith("sk-or-"):
+        return "openrouter"
+    if s.startswith("gsk_"):
+        return "groq"
+    if s.startswith("sk_live_") or s.startswith("sk_test_"):
+        return "stripe"
+    if s.startswith("hf_"):
+        return "huggingface"
+    if s.startswith("tvly-"):
+        return "tavily"
+    if "OPENAI" in n:
+        return "openai"
+    if "ANTHROPIC" in n:
+        return "anthropic"
+    if "XAI" in n or "GROK" in n:
+        return "xai"
+    if "GITHUB" in n:
+        return "github"
+    if "COHERE" in n:
+        return "cohere"
+    if "MISTRAL" in n:
+        return "mistral"
+    if "DEEPSEEK" in n:
+        return "deepseek"
+    if "GEMINI" in n or "GOOGLE" in n:
+        return "google"
+    return "custom"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TOKEN & AUTH RESOLUTION
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_valid_token(prompt_if_needed=True):
+    if not ensure_daemon(silent=True):
+        print(f"{RED}[!] Cannot connect to Zoth Vault daemon.{RESET}", file=sys.stderr)
+        return None
+
+    token = load_session_token()
+    if token and is_session_valid(token):
+        return token
+
+    status, status_data = api_request("GET", "/v1/status")
+    if not status_data.get("exists", False):
+        print(f"{YELLOW}[!] Sovereign vault has not been initialized. Please run 'zoth-vault init' first.{RESET}", file=sys.stderr)
+        return None
+
+    if not prompt_if_needed:
+        return None
+
+    passphrase = os.environ.get("ZOTH_VAULT_PASSPHRASE")
+    if not passphrase:
+        if not sys.stdin.isatty():
+            print(f"{RED}[!] Vault is locked. Run 'zoth-vault unlock' or set ZOTH_VAULT_PASSPHRASE.{RESET}", file=sys.stderr)
+            return None
+        try:
+            passphrase = getpass.getpass(f"{GOLD}[?] Enter vault master passphrase to unlock: {RESET}")
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted.", file=sys.stderr)
+            return None
+
+    if not passphrase:
+        print(f"{RED}[!] Passphrase cannot be empty.{RESET}", file=sys.stderr)
+        return None
+
+    status_code, res = api_request("POST", "/v1/vault/unlock", data={"passphrase": passphrase.strip()})
+    if status_code == 200 and res.get("ok"):
+        token = res["session_token"]
+        save_session_token(token, res.get("expires_at"))
+        return token
+    else:
+        err = res.get("error", "Unlock failed")
+        print(f"{RED}[!] Unlock error: {err}{RESET}", file=sys.stderr)
+        return None
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLI SUBCOMMAND IMPLEMENTATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def cmd_status(as_json=False):
+    running = is_daemon_running()
+    pid = get_daemon_pid() if running else None
+
+    daemon_status = {}
+    security_status = {}
+    if running:
+        _, daemon_status = api_request("GET", "/v1/status")
+        _, security_status = api_request("GET", "/v1/security")
+
+    daemon_bin = get_daemon_bin()
+    offline_data = {}
+    if daemon_bin:
+        try:
+            res = subprocess.run([daemon_bin, "status"], capture_output=True, text=True)
+            if res.returncode == 0:
+                offline_data = json.loads(res.stdout)
+        except Exception:
+            pass
+
+    session_file = get_session_file()
+    token = load_session_token()
+    session_active = is_session_valid(token) if running else False
+
+    if as_json:
+        combined = {
+            "daemon": {
+                "running": running,
+                "port": DAEMON_PORT,
+                "pid": pid,
+                "status": daemon_status,
+                "security": security_status,
+            },
+            "disk": offline_data,
+            "session": {
+                "file": session_file,
+                "active": session_active,
+            }
+        }
+        print(json.dumps(combined, indent=2))
+        return 0
+
+    print(f"\n{BOLD}{GOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+    print(f"  {BOLD}ZOTH SOVEREIGN VAULT & SECRETS ENGINE STATUS{RESET}")
+    print(f"{BOLD}{GOLD}══════════════════════════════════════════════════════════════════════════{RESET}\n")
+
+    print(f"  {BOLD}DAEMON RUNTIME:{RESET}")
+    if running:
+        print(f"    Status:         {GREEN}ONLINE{RESET} (Listening on 127.0.0.1:{DAEMON_PORT})")
+        print(f"    PID:            {CYAN}{pid or 'active'}{RESET}")
+        backend = daemon_status.get("backend", "rust-argon2id-xchacha20poly1305")
+        print(f"    Backend:        {GREEN}{backend}{RESET}")
+        unlocked = daemon_status.get("unlocked", False)
+        lock_str = f"{GREEN}UNLOCKED{RESET}" if unlocked else f"{YELLOW}LOCKED{RESET}"
+        print(f"    Vault State:    {lock_str}")
+        if unlocked:
+            keys = daemon_status.get("key_count", 0)
+            rem = daemon_status.get("remaining_secs", 0)
+            exp = daemon_status.get("expires_at", "N/A")
+            print(f"    Active Keys:    {CYAN}{keys}{RESET}")
+            print(f"    Remaining TTL:  {CYAN}{rem}s{RESET} (Expires: {exp})")
+        grade = security_status.get("grade")
+        score = security_status.get("score")
+        if grade:
+            grade_color = GREEN if grade in ("A", "A+") else YELLOW
+            print(f"    Security Grade: {grade_color}{grade} ({score}% checks passed){RESET}")
+    else:
+        print(f"    Status:         {RED}OFFLINE{RESET}")
+        print(f"    Target:         127.0.0.1:{DAEMON_PORT} (Loopback Enforced, Zero-Leak)")
+        print(f"    Start with:     {BOLD}zoth-vault daemon start{RESET}")
+
+    print(f"\n  {BOLD}ON-DISK VAULT STORAGE:{RESET}")
+    exists = offline_data.get("exists") if "exists" in offline_data else daemon_status.get("exists", False)
+    v_path = offline_data.get("vault_path") or daemon_status.get("vault_path", "N/A")
+    d_path = offline_data.get("data_dir", os.path.dirname(v_path) if v_path != "N/A" else "N/A")
+    v_mode = offline_data.get("vault_mode") or daemon_status.get("vault_mode", "N/A")
+    v_bytes = offline_data.get("vault_bytes") or daemon_status.get("vault_bytes", 0)
+    audit_path = offline_data.get("audit_path", "N/A")
+
+    exists_str = f"{GREEN}YES{RESET}" if exists else f"{YELLOW}NO (run 'zoth-vault init'){RESET}"
+    print(f"    Vault Exists:   {exists_str}")
+    print(f"    Vault Path:     {v_path}")
+    mode_str = f"{GREEN}{v_mode}{RESET}" if v_mode == "600" else f"{RED}{v_mode} (Expected 0600!){RESET}"
+    print(f"    Vault Mode:     {mode_str}")
+    print(f"    Vault Size:     {v_bytes} bytes")
+    print(f"    Data Directory: {d_path}")
+    print(f"    Audit Log:      {audit_path}")
+
+    print(f"\n  {BOLD}SESSION CACHE:{RESET}")
+    print(f"    Session File:   {session_file}")
+    if os.path.isfile(session_file):
+        try:
+            mode_octal = oct(stat.S_IMODE(os.stat(session_file).st_mode))[2:]
+            mode_ok = mode_octal == "600"
+            m_str = f"{GREEN}{mode_octal} (0600 ENFORCED){RESET}" if mode_ok else f"{RED}{mode_octal} (INSECURE!){RESET}"
+            print(f"    File Mode:      {m_str}")
+        except Exception:
+            pass
+        print(f"    Session State:  {GREEN}ACTIVE & VALID{RESET}" if session_active else f"{YELLOW}EXPIRED / INACTIVE{RESET}")
+    else:
+        print(f"    Session State:  {GRAY}None (No cached token){RESET}")
+
+    print(f"\n{BOLD}{GOLD}══════════════════════════════════════════════════════════════════════════{RESET}\n")
+    return 0
+
+def cmd_init(passphrase=None):
+    if not ensure_daemon():
+        return 1
+
+    code, status_data = api_request("GET", "/v1/status")
+    if code == 200 and status_data.get("exists", False):
+        print(f"{YELLOW}[!] Sovereign vault already exists at {status_data.get('vault_path')}.{RESET}")
+        print(f"    To reinitialize, wipe or remove the existing vault file.")
+        return 1
+
+    if not passphrase:
+        if not sys.stdin.isatty():
+            print(f"{RED}[!] Passphrase required for non-interactive init. Pass as argument.{RESET}", file=sys.stderr)
+            return 1
+        try:
+            print(f"{CYAN}{BOLD}Initialize Zoth Sovereign Vault{RESET}")
+            print(f"{GRAY}Argon2id (m=64MiB, t=3, p=1) + XChaCha20-Poly1305 AEAD{RESET}\n")
+            p1 = getpass.getpass(f"{GOLD}[?] Enter master passphrase (min 12 chars): {RESET}")
+            if len(p1.strip()) < 12:
+                print(f"{RED}[!] Passphrase must be at least 12 characters.{RESET}")
+                return 1
+            p2 = getpass.getpass(f"{GOLD}[?] Confirm master passphrase: {RESET}")
+            if p1 != p2:
+                print(f"{RED}[!] Passphrases do not match.{RESET}")
+                return 1
+            passphrase = p1.strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted.")
+            return 1
+
+    if len(passphrase.strip()) < 12:
+        print(f"{RED}[!] Passphrase must be at least 12 characters.{RESET}", file=sys.stderr)
+        return 1
+
+    code, res = api_request("POST", "/v1/vault/init", data={"passphrase": passphrase.strip()})
+    if code == 200 and res.get("ok"):
+        print(f"{GREEN}{BOLD}[✓] Sovereign vault initialized successfully!{RESET}")
+        u_code, u_res = api_request("POST", "/v1/vault/unlock", data={"passphrase": passphrase.strip()})
+        if u_code == 200 and u_res.get("ok"):
+            token = u_res["session_token"]
+            save_session_token(token, u_res.get("expires_at"))
+            print(f"{GREEN}[✓] Vault unlocked and session cached at {get_session_file()} (mode 0600).{RESET}")
+        return 0
+    else:
+        err = res.get("error", "Init failed")
+        print(f"{RED}[!] Initialization failed: {err}{RESET}", file=sys.stderr)
+        return 1
+
+def cmd_daemon(action="status"):
+    act = (action or "status").lower()
+    if act == "start":
+        return 0 if daemon_start() else 1
+    elif act == "stop":
+        return 0 if daemon_stop() else 1
+    elif act == "restart":
+        return 0 if daemon_restart() else 1
+    elif act == "status":
+        running = is_daemon_running()
+        pid = get_daemon_pid() if running else None
+        if running:
+            print(f"{GREEN}[✓] Zoth Vault daemon is RUNNING on 127.0.0.1:{DAEMON_PORT} (PID: {pid or 'unknown'}){RESET}")
+            return 0
+        else:
+            print(f"{RED}[✗] Zoth Vault daemon is STOPPED.{RESET}")
+            return 1
+    else:
+        print(f"{RED}[!] Unknown daemon action '{action}'. Choose: start, stop, restart, status.{RESET}")
+        return 1
+
+def cmd_unlock(passphrase=None):
+    if not ensure_daemon():
+        return 1
+
+    token = load_session_token()
+    if token and is_session_valid(token):
+        _, sess = api_request("GET", "/v1/session", token=token)
+        rem = sess.get("remaining_secs", "unknown")
+        print(f"{GREEN}[✓] Vault is already unlocked.{RESET} (Active session cached, {rem}s remaining)")
+        return 0
+
+    if not passphrase:
+        passphrase = os.environ.get("ZOTH_VAULT_PASSPHRASE")
+    if not passphrase:
+        try:
+            passphrase = getpass.getpass(f"{GOLD}[?] Enter master vault passphrase: {RESET}")
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted.")
+            return 1
+
+    if not passphrase:
+        print(f"{RED}[!] Passphrase cannot be empty.{RESET}")
+        return 1
+
+    code, res = api_request("POST", "/v1/vault/unlock", data={"passphrase": passphrase.strip()})
+    if code == 200 and res.get("ok"):
+        token = res["session_token"]
+        save_session_token(token, res.get("expires_at"))
+        s_file = get_session_file()
+        count = res.get("key_count", 0)
+        exp = res.get("expires_at", "N/A")
+        print(f"{GREEN}{BOLD}[✓] Vault unlocked successfully!{RESET}")
+        print(f"    {GRAY}Session Token:{RESET} Cached in {s_file} (mode 0600)")
+        print(f"    {GRAY}Active Keys:{RESET}   {count} secret(s) loaded into memory")
+        print(f"    {GRAY}Expires At:{RESET}    {exp}")
+        return 0
+    else:
+        err = res.get("error", "Authentication failed")
+        lockout = res.get("lockout_secs")
+        if lockout:
+            print(f"{RED}[!] Rate limit lockout: {err} ({lockout}s){RESET}")
+        else:
+            print(f"{RED}[!] Unlock failed: {err}{RESET}")
+        return 1
+
+def cmd_lock():
+    token = load_session_token()
+    if token and is_daemon_running():
+        api_request("POST", "/v1/vault/lock", token=token)
+    clear_session()
+    print(f"{GREEN}[✓] Sovereign vault locked.{RESET}")
+    print(f"    {GRAY}Session token cleared and secret memory purged.{RESET}")
+    return 0
+
+def print_table(headers, rows):
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for i, val in enumerate(row):
+            widths[i] = max(widths[i], len(str(val)))
+
+    def border(char_left, char_mid, char_right, char_line):
+        return char_left + char_mid.join([char_line * (w + 2) for w in widths]) + char_right
+
+    def format_row(row, is_header=False):
+        cells = []
+        for i, val in enumerate(row):
+            s = str(val)
+            pad = widths[i] - len(s)
+            if is_header:
+                cell = f" {BOLD}{GOLD}{s}{RESET}{' ' * pad} "
+            else:
+                if i == 1:
+                    cell = f" {GREEN}{s}{RESET}{' ' * pad} "
+                elif i == 4:
+                    cell = f" {YELLOW}{s}{RESET}{' ' * pad} "
+                elif i == 3:
+                    cell = f" {CYAN}{s}{RESET}{' ' * pad} "
+                else:
+                    cell = f" {s}{' ' * pad} "
+            cells.append(cell)
+        return "│" + "│".join(cells) + "│"
+
+    top = border("┌", "┬", "┐", "─")
+    mid = border("├", "┼", "┤", "─")
+    bot = border("└", "┴", "┘", "─")
+
+    print(f"{GRAY}{top}{RESET}")
+    print(format_row(headers, is_header=True))
+    print(f"{GRAY}{mid}{RESET}")
+    for row in rows:
+        print(format_row(row))
+    print(f"{GRAY}{bot}{RESET}")
+
+def cmd_list(as_json=False, filter_tag=None, filter_provider=None):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    code, keys = api_request("GET", "/v1/keys", token=token)
+    if code != 200:
+        print(f"{RED}[!] Failed to list secrets: {keys.get('error', 'unknown error')}{RESET}", file=sys.stderr)
+        return 1
+
+    if filter_tag:
+        keys = [k for k in keys if filter_tag in k.get("tags", [])]
+    if filter_provider:
+        keys = [k for k in keys if k.get("provider", "").lower() == filter_provider.lower()]
+
+    if as_json:
+        print(json.dumps(keys, indent=2))
+        return 0
+
+    if not keys:
+        print(f"\n{YELLOW}[*] No secrets found in sovereign vault.{RESET}")
+        print(f"    Use {BOLD}zoth-vault set <NAME> <VALUE>{RESET} or {BOLD}zoth-vault import <file.env>{RESET} to add keys.\n")
+        return 0
+
+    headers = ["ID", "LABEL", "ENV VAR", "PROVIDER", "SECRET (MASKED)", "TAGS", "UPDATED"]
+    rows = []
+    for k in keys:
+        kid = k.get("id", "")
+        label = k.get("label", "")
+        env = k.get("env") or f"{label.upper().replace('-', '_')}_API_KEY"
+        provider = k.get("provider", "custom")
+        preview = k.get("secret_preview", "••••••••")
+        tags = ", ".join(k.get("tags", [])) or "-"
+        last_used = k.get("last_used") or k.get("created", 0)
+        if last_used:
+            try:
+                date_str = datetime.datetime.fromtimestamp(last_used / 1000.0).strftime("%Y-%m-%d %H:%M")
+            except Exception:
+                date_str = "-"
+        else:
+            date_str = "-"
+        rows.append([kid, label, env, provider, preview, tags, date_str])
+
+    print_table(headers, rows)
+    print(f"\n{CYAN}Total:{RESET} {len(keys)} secret(s) in sovereign vault. (Secrets masked at rest and list)\n")
+    return 0
+
+def resolve_key_id(key_target, token):
+    code, keys = api_request("GET", "/v1/keys", token=token)
+    if code != 200 or not isinstance(keys, list):
+        return None, None
+    # 1. Exact matches
+    for k in keys:
+        if k.get("id") == key_target:
+            return k["id"], k
+        if k.get("label", "").lower() == key_target.lower():
+            return k["id"], k
+        if (k.get("env") or "").lower() == key_target.lower():
+            return k["id"], k
+    # 2. Prefix matches on ID
+    for k in keys:
+        if k.get("id", "").lower().startswith(key_target.lower()):
+            return k["id"], k
+    return None, None
+
+def cmd_get(key_target, as_json=False):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    matched_id, _ = resolve_key_id(key_target, token)
+    if not matched_id:
+        print(f"{RED}[!] Secret '{key_target}' not found in vault.{RESET}", file=sys.stderr)
+        return 1
+
+    code, secret_obj = api_request("GET", f"/v1/keys/{matched_id}", token=token)
+    if code != 200:
+        print(f"{RED}[!] Failed to reveal secret: {secret_obj.get('error')}{RESET}", file=sys.stderr)
+        return 1
+
+    if as_json:
+        print(json.dumps(secret_obj, indent=2))
+    else:
+        raw_secret = secret_obj.get("secret", "")
+        if sys.stdout.isatty():
+            sys.stdout.write(raw_secret + "\n")
+        else:
+            sys.stdout.write(raw_secret)
+        sys.stdout.flush()
+    return 0
+
+def cmd_set(name, value=None, provider=None, tags=None, env=None):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    if value is None or value == "":
+        if not sys.stdin.isatty():
+            value = sys.stdin.read().strip()
+        else:
+            try:
+                value = getpass.getpass(f"{GOLD}[?] Enter secret value for '{name}': {RESET}")
+            except (KeyboardInterrupt, EOFError):
+                print("\nAborted.")
+                return 1
+    elif value == "-":
+        value = sys.stdin.read().strip()
+
+    if not value:
+        print(f"{RED}[!] Secret value cannot be empty.{RESET}", file=sys.stderr)
+        return 1
+
+    existing_id, existing_meta = resolve_key_id(name, token)
+    if existing_meta:
+        if not provider and existing_meta.get("provider"):
+            provider = existing_meta["provider"]
+        if tags is None and existing_meta.get("tags"):
+            tags = existing_meta["tags"]
+        if not env and existing_meta.get("env"):
+            env = existing_meta["env"]
+
+    if not provider:
+        provider = guess_provider(name, value)
+
+    tag_list = []
+    if isinstance(tags, list):
+        tag_list = tags
+    elif isinstance(tags, str):
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    if not tag_list:
+        tag_list = ["cli"]
+
+    if not env:
+        env = name.upper().replace("-", "_")
+
+    payload = {
+        "provider": provider,
+        "label": name,
+        "secret": value,
+        "tags": tag_list,
+        "favorite": False,
+        "env": env,
+    }
+    if existing_id:
+        payload["id"] = existing_id
+
+    code, res = api_request("POST", "/v1/keys", data=payload, token=token)
+    if code in (200, 201):
+        action = "Updated" if existing_id else "Stored"
+        kid = res.get("id", existing_id or "")
+        print(f"{GREEN}[✓] {action} secret '{name}' in sovereign vault.{RESET}")
+        print(f"    {GRAY}ID:{RESET}       {kid}")
+        print(f"    {GRAY}Provider:{RESET} {provider}")
+        print(f"    {GRAY}Env Var:{RESET}  {env}")
+        print(f"    {GRAY}Tags:{RESET}     {', '.join(tag_list)}")
+        return 0
+    else:
+        err = res.get("error", "Failed to store secret")
+        print(f"{RED}[!] Error storing secret: {err}{RESET}", file=sys.stderr)
+        return 1
+
+def cmd_delete(key_target, force=False):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    matched_id, target_key = resolve_key_id(key_target, token)
+    if not matched_id:
+        print(f"{RED}[!] Secret '{key_target}' not found in vault.{RESET}", file=sys.stderr)
+        return 1
+
+    klabel = target_key.get("label", matched_id)
+
+    if not force and sys.stdin.isatty():
+        try:
+            confirm = input(f"{YELLOW}[?] Delete secret '{klabel}' ({matched_id})? [y/N]: {RESET}").strip().lower()
+            if confirm not in ("y", "yes"):
+                print("Cancelled.")
+                return 0
+        except (KeyboardInterrupt, EOFError):
+            print("\nCancelled.")
+            return 0
+
+    code, res = api_request("DELETE", f"/v1/keys/{matched_id}", token=token)
+    if code == 200:
+        print(f"{GREEN}[✓] Secret '{klabel}' (ID: {matched_id}) deleted successfully.{RESET}")
+        return 0
+    else:
+        print(f"{RED}[!] Failed to delete secret: {res.get('error')}{RESET}", file=sys.stderr)
+        return 1
+
+def cmd_export(fmt="env", passphrase=None, decrypted=False, out_file=None):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    fmt = (fmt or "env").lower()
+    if fmt == "env":
+        code, res = api_request("POST", "/v1/export/env", token=token)
+        if code != 200:
+            print(f"{RED}[!] Export failed: {res.get('error')}{RESET}", file=sys.stderr)
+            return 1
+        output = res.get("env", "")
+    elif fmt == "json":
+        if decrypted:
+            code, keys = api_request("GET", "/v1/keys", token=token)
+            if code != 200:
+                print(f"{RED}[!] Export failed: {keys.get('error')}{RESET}", file=sys.stderr)
+                return 1
+            decrypted_list = []
+            for k in keys:
+                c2, reveal = api_request("GET", f"/v1/keys/{k['id']}", token=token)
+                if c2 == 200:
+                    decrypted_list.append(reveal)
+                else:
+                    decrypted_list.append(k)
+            output = json.dumps({"keys": decrypted_list}, indent=2)
+        else:
+            if not passphrase:
+                passphrase = os.environ.get("ZOTH_EXPORT_PASSPHRASE")
+            if not passphrase and sys.stdin.isatty():
+                try:
+                    passphrase = getpass.getpass(f"{GOLD}[?] Enter export encryption passphrase (min 12 chars): {RESET}")
+                except (KeyboardInterrupt, EOFError):
+                    print("\nAborted.")
+                    return 1
+            if not passphrase or len(passphrase.strip()) < 12:
+                print(f"{RED}[!] Export passphrase must be at least 12 characters.{RESET}", file=sys.stderr)
+                return 1
+            code, res = api_request("POST", "/v1/export/json", data={"export_passphrase": passphrase.strip()}, token=token)
+            if code != 200:
+                print(f"{RED}[!] Export failed: {res.get('error')}{RESET}", file=sys.stderr)
+                return 1
+            output = json.dumps(res, indent=2)
+    else:
+        print(f"{RED}[!] Unknown export format '{fmt}'. Choose 'env' or 'json'.{RESET}", file=sys.stderr)
+        return 1
+
+    if out_file:
+        try:
+            fd = os.open(out_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+            with os.fdopen(fd, "w") as f:
+                f.write(output)
+            print(f"{GREEN}[✓] Exported secrets ({fmt}) to {out_file} (mode 0600){RESET}")
+        except Exception as e:
+            print(f"{RED}[!] Failed to write export file: {e}{RESET}", file=sys.stderr)
+            return 1
+    else:
+        sys.stdout.write(output + ("\n" if not output.endswith("\n") else ""))
+        sys.stdout.flush()
+    return 0
+
+def cmd_import(file_path):
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    if file_path == "-":
+        content = sys.stdin.read()
+    else:
+        if not os.path.isfile(file_path):
+            print(f"{RED}[!] Import file not found: {file_path}{RESET}", file=sys.stderr)
+            return 1
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+    if not content.strip():
+        print(f"{YELLOW}[!] Import file is empty.{RESET}")
+        return 0
+
+    code, res = api_request("POST", "/v1/import/env", data={"text": content}, token=token)
+    if code == 200:
+        added = res.get("added", 0)
+        print(f"{GREEN}[✓] Successfully imported {added} secret(s) into sovereign vault.{RESET}")
+        return 0
+    else:
+        print(f"{RED}[!] Import failed: {res.get('error')}{RESET}", file=sys.stderr)
+        return 1
+
+def cmd_run(cmd_args):
+    if not cmd_args:
+        print(f"{RED}[!] No command specified to run.{RESET}\nUsage: zoth-vault run -- <command> [args...]", file=sys.stderr)
+        return 1
+
+    token = get_valid_token()
+    if not token:
+        return 1
+
+    code, keys = api_request("GET", "/v1/keys", token=token)
+    if code != 200:
+        print(f"{RED}[!] Failed to fetch secrets from vault: {keys.get('error')}{RESET}", file=sys.stderr)
+        return 1
+
+    child_env = os.environ.copy()
+    injected_count = 0
+
+    for k in keys:
+        kid = k["id"]
+        c, reveal = api_request("GET", f"/v1/keys/{kid}", token=token)
+        if c == 200 and "secret" in reveal:
+            secret = reveal["secret"]
+            env_name = reveal.get("env") or f"{reveal.get('label', '').upper().replace('-', '_')}_API_KEY"
+            child_env[env_name] = secret
+            injected_count += 1
+
+            raw_label_var = reveal.get("label", "").upper().replace("-", "_")
+            if raw_label_var and raw_label_var != env_name:
+                child_env[raw_label_var] = secret
+
+            if reveal.get("endpoint"):
+                base_env = env_name.removesuffix("_API_KEY").removesuffix("_TOKEN").removesuffix("_SECRET")
+                child_env[f"{base_env}_BASE_URL"] = reveal["endpoint"]
+
+    c_env, res_env = api_request("POST", "/v1/export/env", token=token)
+    if c_env == 200 and "env" in res_env:
+        for line in res_env["env"].splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            ek, ev = line.split("=", 1)
+            ek = ek.strip().removeprefix("export ")
+            ev = ev.strip().strip("'\"")
+            if ek and ev and ek not in child_env:
+                child_env[ek] = ev
+
+    child_env["ZOTH_VAULT_INJECTED"] = "1"
+
+    # In-memory execution: zero secrets written to disk
+    try:
+        os.execvpe(cmd_args[0], cmd_args, child_env)
+    except FileNotFoundError:
+        print(f"{RED}[!] Command not found: {cmd_args[0]}{RESET}", file=sys.stderr)
+        sys.exit(127)
+    except Exception as e:
+        print(f"{RED}[!] Execution failed: {e}{RESET}", file=sys.stderr)
+        sys.exit(1)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EXTERNAL MULTI-VAULT INTEGRATIONS (BW, KEEPASS, PASS)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def bw_banner():
+    os.system("clear" if os.name == "posix" else "cls")
+    print(f"{CYAN}{BOLD}")
+    print(r"""    ██████╗ ██╗████████╗██╗    ██╗ █████╗ ██████╗ ██████╗ ███████╗███╗   ██╗
+    ██╔══██╗██║╚══██╔══╝██║    ██║██╔══██╗██╔══██╗██╔══██╗██╔════╝████╗  ██║
+    ██████╔╝██║   ██║   ██║ █╗ ██║███████║██████╔╝██║  ██║█████╗  ██╔██╗ ██║
+    ██╔══██╗██║   ██║   ██║███╗██║██╔══██║██╔══██╗██║  ██║██╔══╝  ██║╚██╗██║
+    ██████╔╝██║   ██║   ╚███╔███╔╝██║  ██║██║  ██║██████╔╝███████╗██║ ╚████║
+    ╚═════╝ ╚═╝   ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝""")
+    print(f"         {GOLD}[+] BITWARDEN CLI SECRETS ENGINE & CONSOLE v2026 [+]{RESET}\n")
+
+def get_bw_info(bw_bin):
+    try:
+        res = subprocess.run([bw_bin, "status"], capture_output=True, text=True, timeout=2.0)
+        if res.returncode == 0 and res.stdout.strip():
+            return json.loads(res.stdout.strip())
+    except Exception:
+        pass
+    return {}
+
+def run_bw(args=None):
+    bw_bin = shutil.which("bw") or "/usr/local/bin/bw"
+    if not bw_bin or not os.path.exists(bw_bin):
+        print(f"{RED}[!] Bitwarden CLI (bw) is not installed.{RESET}")
+        input(f"\n{GRAY}Press Enter to return...{RESET}")
+        return
+    if args:
+        subprocess.run([bw_bin] + args)
+        return
+
+    while True:
+        bw_banner()
+        info = get_bw_info(bw_bin)
+        status_val = info.get("status", "unauthenticated").upper()
+        server_url = info.get("serverUrl") or "https://vault.bitwarden.com (Default Cloud)"
+        last_sync = info.get("lastSync") or "Never"
+        user_email = info.get("userEmail") or "None"
+        session_active = "BW_SESSION" in os.environ and bool(os.environ["BW_SESSION"])
+
+        status_color = GREEN if status_val == "UNLOCKED" else (YELLOW if status_val == "LOCKED" else RED)
+        session_badge = f"{GREEN}ACTIVE IN RAM{RESET}" if session_active else f"{GRAY}NOT EXPORTED{RESET}"
+
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"  {BOLD}BITWARDEN STATUS:{RESET}   {status_color}{status_val}{RESET}   |   {BOLD}SESSION:{RESET} {session_badge}")
+        print(f"  {GRAY}User Email:{RESET}       {CYAN}{user_email}{RESET}")
+        print(f"  {GRAY}Vault Server:{RESET}     {server_url}")
+        print(f"  {GRAY}Last Synced:{RESET}      {last_sync}")
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+
+        print(f"""
+  {BOLD}{GOLD}┌── HOW TO USE BITWARDEN CLI (bw) ──────────────────────────────────────┐{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}1. AUTHENTICATE:{RESET} Log in with your account or self-hosted server:       {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw login <email>{RESET}                                               {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw config server <https://your-vaultwarden.com>{RESET}                  {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}2. UNLOCK VAULT:{RESET} Decrypt secrets into session memory:                  {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}export BW_SESSION=$(bw unlock --raw){RESET}                           {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}3. RETRIEVE SECRETS:{RESET} Query items, passwords, and 2FA tokens:          {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw list items --pretty{RESET}                                          {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw get password <item_name_or_id>{RESET}                                {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw get totp <item_name_or_id>{RESET} (generates 2FA code)              {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}4. SYNC & LOCK:{RESET} Pull latest changes or purge memory:                  {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}bw sync{RESET}  |  $ {CYAN}bw lock{RESET}                                           {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}└───┴───────────────────────────────────────────────────────────────────┘{RESET}
+""")
+
+        print(f"  {BOLD}{GOLD}[1]{RESET}  {BOLD}Vault Status & Diagnostics{RESET}      {GRAY}(Inspect bw status JSON){RESET}")
+        print(f"  {BOLD}{GREEN}[2]{RESET}  {BOLD}Log In to Account{RESET}               {GRAY}(Interactive bw login){RESET}")
+        print(f"  {BOLD}{CYAN}[3]{RESET}  {BOLD}Unlock Vault & Export Session{RESET}   {GRAY}(Decrypts vault into BW_SESSION){RESET}")
+        print(f"  {BOLD}{YELLOW}[4]{RESET}  {BOLD}List Vault Items (Pretty){RESET}       {GRAY}(bw list items --pretty){RESET}")
+        print(f"  {BOLD}{GOLD}[5]{RESET}  {BOLD}Get Password / Secret{RESET}           {GRAY}(bw get password <id/name>){RESET}")
+        print(f"  {BOLD}{GOLD}[6]{RESET}  {BOLD}Get Username{RESET}                    {GRAY}(bw get username <id/name>){RESET}")
+        print(f"  {BOLD}{CYAN}[7]{RESET}  {BOLD}Get 2FA TOTP Verification Code{RESET}  {GRAY}(bw get totp <id/name>){RESET}")
+        print(f"  {BOLD}{YELLOW}[8]{RESET}  {BOLD}Get Full Item JSON Record{RESET}       {GRAY}(bw get item <id/name>){RESET}")
+        print(f"  {BOLD}{GREEN}[9]{RESET}  {BOLD}Sync Vault with Server{RESET}          {GRAY}(bw sync){RESET}")
+        print(f"  {BOLD}{CYAN}[10]{RESET} {BOLD}Generate Cryptographic Password{RESET} {GRAY}(bw generate -u -p -s --length 24){RESET}")
+        print(f"  {BOLD}{GRAY}[11]{RESET} {BOLD}Configure Server URL{RESET}            {GRAY}(Bitwarden Cloud vs Vaultwarden){RESET}")
+        print(f"  {BOLD}{RED}[12]{RESET} {BOLD}Lock Vault & Purge Session{RESET}      {GRAY}(bw lock){RESET}")
+        print(f"  {BOLD}{RED}[13]{RESET} {BOLD}Log Out of Bitwarden{RESET}            {GRAY}(bw logout){RESET}")
+        print(f"  {BOLD}{GOLD}[14]{RESET} {BOLD}Launch Bitwarden Shell{RESET}          {GRAY}(Subshell with BW_SESSION pre-loaded){RESET}")
+        print(f"  {BOLD}{GRAY}[0]{RESET}  {BOLD}Return to Master Menu{RESET}\n")
+
+        try:
+            choice = input(f"{GOLD}Select Action [1-14, 0]: {RESET}").strip()
+            if choice == "1":
+                print(f"\n{GRAY}[*] Running 'bw status'...{RESET}")
+                subprocess.run([bw_bin, "status"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "2":
+                print(f"\n{GRAY}[*] Starting interactive Bitwarden login...{RESET}")
+                subprocess.run([bw_bin, "login"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "3":
+                print(f"\n{GRAY}[*] Unlocking vault...{RESET}")
+                res = subprocess.run([bw_bin, "unlock", "--raw"], capture_output=True, text=True)
+                token = res.stdout.strip()
+                if res.returncode == 0 and token:
+                    os.environ["BW_SESSION"] = token
+                    print(f"\n{GREEN}{BOLD}[✓] Vault unlocked! BW_SESSION cached in memory.{RESET}")
+                    print(f"    Export for your current shell: {CYAN}export BW_SESSION=\"{token}\"{RESET}")
+                else:
+                    print(f"\n{RED}[!] Failed to unlock: {res.stderr.strip()}{RESET}")
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "4":
+                print(f"\n{GRAY}[*] Listing vault items...{RESET}")
+                subprocess.run([bw_bin, "list", "items", "--pretty"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "5":
+                target = input(f"{GOLD}[?] Enter item name or ID: {RESET}").strip()
+                if target:
+                    subprocess.run([bw_bin, "get", "password", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "6":
+                target = input(f"{GOLD}[?] Enter item name or ID: {RESET}").strip()
+                if target:
+                    subprocess.run([bw_bin, "get", "username", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "7":
+                target = input(f"{GOLD}[?] Enter item name or ID: {RESET}").strip()
+                if target:
+                    subprocess.run([bw_bin, "get", "totp", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "8":
+                target = input(f"{GOLD}[?] Enter item name or ID: {RESET}").strip()
+                if target:
+                    subprocess.run([bw_bin, "get", "item", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "9":
+                print(f"\n{GRAY}[*] Syncing vault...{RESET}")
+                subprocess.run([bw_bin, "sync"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "10":
+                print(f"\n{GRAY}[*] Generating secure password...{RESET}")
+                subprocess.run([bw_bin, "generate", "-u", "-p", "-s", "--length", "24"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "11":
+                s_url = input(f"{GOLD}[?] Enter server URL (leave empty for default cloud): {RESET}").strip()
+                if s_url:
+                    subprocess.run([bw_bin, "config", "server", s_url])
+                else:
+                    subprocess.run([bw_bin, "config", "server", "https://vault.bitwarden.com"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "12":
+                print(f"\n{GRAY}[*] Locking vault...{RESET}")
+                subprocess.run([bw_bin, "lock"])
+                if "BW_SESSION" in os.environ:
+                    del os.environ["BW_SESSION"]
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "13":
+                print(f"\n{GRAY}[*] Logging out of Bitwarden...{RESET}")
+                subprocess.run([bw_bin, "logout"])
+                if "BW_SESSION" in os.environ:
+                    del os.environ["BW_SESSION"]
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "14":
+                print(f"\n{GREEN}[*] Spawning Bitwarden interactive shell with environment...{RESET}")
+                print(f"    {GRAY}Type 'exit' to return to menu.{RESET}\n")
+                subprocess.run(["bash", "-l"])
+            elif choice in ["0", "q", "exit", "back"]:
+                break
+        except (KeyboardInterrupt, EOFError):
+            break
+
+def keepass_banner():
+    os.system("clear" if os.name == "posix" else "cls")
+    print(f"{GREEN}{BOLD}")
+    print(r"""    ██╗  ██╗███████╗███████╗██████╗  █████╗ ███████╗███████╗██╗  ██╗ ██████╗
+    ██║ ██╔╝██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝╚██╗██╔╝██╔════╝
+    █████╔╝ █████╗  █████╗  ██████╔╝███████║███████╗███████╗ ╚███╔╝ ██║     
+    ██╔═██╗ ██╔══╝  ██╔══╝  ██╔═══╝ ██╔══██║╚════██║╚════██║ ██╔██╗ ██║     
+    ██║  ██╗███████╗███████╗██║     ██║  ██║███████║███████║██╔╝ ██╗╚██████╗
+    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝""")
+    print(f"       {GOLD}[+] KEEPASSXC OFFLINE ENCRYPTED DATABASE (.KDBX) [+]{RESET}\n")
+
+def run_keepassxc(args=None):
+    k_bin = shutil.which("keepassxc") or "/usr/bin/keepassxc"
+    kcli_bin = shutil.which("keepassxc-cli") or "/usr/bin/keepassxc-cli"
+    if not k_bin and not kcli_bin:
+        print(f"{RED}[!] KeePassXC is not installed.{RESET}")
+        input(f"\n{GRAY}Press Enter to return...{RESET}")
+        return
+    if args and kcli_bin:
+        subprocess.run([kcli_bin] + args)
+        return
+
+    while True:
+        keepass_banner()
+        gui_status = f"{GREEN}Installed{RESET}" if k_bin and os.path.exists(k_bin) else f"{RED}Missing{RESET}"
+        cli_status = f"{GREEN}Installed{RESET}" if kcli_bin and os.path.exists(kcli_bin) else f"{RED}Missing{RESET}"
+
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"  {BOLD}KEEPASSXC STATUS:{RESET}   GUI: {gui_status}   |   CLI: {cli_status}")
+        print(f"  {GRAY}Storage Engine:{RESET}     Offline Local .kdbx Container (AES-256 / ChaCha20)")
+        print(f"  {GRAY}Cloud Telemetry:{RESET}    Zero (100% Sovereign Offline)")
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+
+        print(f"""
+  {BOLD}{GOLD}┌── HOW TO USE KEEPASSXC (.KDBX) ───────────────────────────────────────┐{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}1. LOCAL OFFLINE STORAGE:{RESET} Passwords are encrypted inside a portable   {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     local database file (.kdbx) protected by Argon2id + master key.    {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}2. COMMON COMMANDS (keepassxc-cli):{RESET}                                     {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}keepassxc-cli db-create <database.kdbx>{RESET}                        {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}keepassxc-cli ls <database.kdbx>{RESET}                               {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}keepassxc-cli show -s <database.kdbx> <entry_name>{RESET}             {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}keepassxc-cli add -u <user> -p <database.kdbx> <entry_name>{RESET}    {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}keepassxc-cli clip <database.kdbx> <entry_name>{RESET} (copy to clip) {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}3. GRAPHICAL INTERFACE:{RESET} Launch full desktop GUI with auto-type.        {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}└───┴───────────────────────────────────────────────────────────────────┘{RESET}
+""")
+
+        print(f"  {BOLD}{GREEN}[1]{RESET}  {BOLD}Launch KeePassXC Graphical Application (GUI){RESET}")
+        print(f"  {BOLD}{CYAN}[2]{RESET}  {BOLD}Create New Offline Database (.kdbx){RESET}      {GRAY}(keepassxc-cli db-create){RESET}")
+        print(f"  {BOLD}{YELLOW}[3]{RESET}  {BOLD}List Entries in Database{RESET}                 {GRAY}(keepassxc-cli ls){RESET}")
+        print(f"  {BOLD}{GOLD}[4]{RESET}  {BOLD}Show & Reveal Entry Password{RESET}             {GRAY}(keepassxc-cli show -s){RESET}")
+        print(f"  {BOLD}{GREEN}[5]{RESET}  {BOLD}Add New Credential Entry{RESET}                 {GRAY}(keepassxc-cli add){RESET}")
+        print(f"  {BOLD}{CYAN}[6]{RESET}  {BOLD}Generate High-Entropy Password{RESET}           {GRAY}(keepassxc-cli generate){RESET}")
+        print(f"  {BOLD}{GOLD}[7]{RESET}  {BOLD}Launch KeePassXC CLI Shell{RESET}               {GRAY}(Interactive terminal shell){RESET}")
+        print(f"  {BOLD}{GRAY}[0]{RESET}  {BOLD}Return to Master Menu{RESET}\n")
+
+        try:
+            choice = input(f"{GOLD}Select Action [1-7, 0]: {RESET}").strip()
+            if choice == "1":
+                if k_bin and os.path.exists(k_bin):
+                    print(f"\n{GREEN}[*] Launching KeePassXC GUI window...{RESET}")
+                    subprocess.Popen([k_bin])
+                    time.sleep(1)
+                else:
+                    print(f"\n{RED}[!] KeePassXC GUI binary not found.{RESET}")
+                    input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "2":
+                db_path = input(f"{GOLD}[?] Enter new database path (e.g. ~/vault.kdbx): {RESET}").strip()
+                if db_path:
+                    db_path = os.path.expanduser(db_path)
+                    subprocess.run([kcli_bin, "db-create", db_path])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "3":
+                db_path = input(f"{GOLD}[?] Enter database path: {RESET}").strip()
+                if db_path:
+                    subprocess.run([kcli_bin, "ls", os.path.expanduser(db_path)])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "4":
+                db_path = input(f"{GOLD}[?] Enter database path: {RESET}").strip()
+                entry = input(f"{GOLD}[?] Enter entry name: {RESET}").strip()
+                if db_path and entry:
+                    subprocess.run([kcli_bin, "show", "-s", os.path.expanduser(db_path), entry])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "5":
+                db_path = input(f"{GOLD}[?] Enter database path: {RESET}").strip()
+                entry = input(f"{GOLD}[?] Enter entry name: {RESET}").strip()
+                user = input(f"{GOLD}[?] Enter username: {RESET}").strip()
+                if db_path and entry:
+                    args_add = [kcli_bin, "add", "-p"]
+                    if user: args_add.extend(["-u", user])
+                    args_add.extend([os.path.expanduser(db_path), entry])
+                    subprocess.run(args_add)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "6":
+                print(f"\n{GRAY}[*] Generating password...{RESET}")
+                subprocess.run([kcli_bin, "generate", "-l", "24", "-U", "-l", "-d", "-s"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "7":
+                print(f"\n{GREEN}[*] Spawning shell with keepassxc-cli available...{RESET}")
+                print(f"    {GRAY}Type 'exit' to return to menu.{RESET}\n")
+                subprocess.run(["bash", "-l"])
+            elif choice in ["0", "q", "exit", "back"]:
+                break
+        except (KeyboardInterrupt, EOFError):
+            break
+
+def pass_banner():
+    os.system("clear" if os.name == "posix" else "cls")
+    print(f"{GOLD}{BOLD}")
+    print(r"""    ██████╗  █████╗ ███████╗███████╗
+    ██╔══██╗██╔══██╗██╔════╝██╔════╝
+    ██████╔╝███████║███████╗███████╗
+    ██╔═══╝ ██╔══██║╚════██║╚════██║
+    ██║     ██║  ██║███████║███████║
+    ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝""")
+    print(f"      {CYAN}[+] UNIX PASS (GPG-ENCRYPTED SECRETS TREE) [+]{RESET}\n")
+
+def run_pass(args=None):
+    p_bin = shutil.which("pass") or "/usr/bin/pass"
+    if not p_bin:
+        print(f"{RED}[!] UNIX Pass is not installed.{RESET}")
+        input(f"\n{GRAY}Press Enter to return...{RESET}")
+        return
+    if args:
+        subprocess.run([p_bin] + args)
+        return
+
+    while True:
+        pass_banner()
+        store_dir = os.path.expanduser("~/.password-store")
+        store_exists = os.path.isdir(store_dir)
+        count = 0
+        if store_exists:
+            for root, _, files in os.walk(store_dir):
+                count += sum(1 for f in files if f.endswith(".gpg"))
+
+        status_str = f"{GREEN}Initialized ({count} entries){RESET}" if store_exists else f"{YELLOW}Not Initialized{RESET}"
+
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"  {BOLD}PASSWORD STORE:{RESET}     {status_str}")
+        print(f"  {GRAY}Storage Path:{RESET}       {store_dir}")
+        print(f"  {GRAY}Encryption Engine:{RESET}  GNU Privacy Guard (GPG Asymmetric / Public Key)")
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+
+        print(f"""
+  {BOLD}{GOLD}┌── HOW TO USE UNIX PASS (PASSWORD STORE) ──────────────────────────────┐{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}1. INITIALIZE STORE:{RESET} Bind ~/.password-store to your GPG key ID:        {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass init <gpg-id-or-email>{RESET}                                     {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}  {BOLD}2. COMMON COMMANDS:{RESET}                                                     {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass{RESET}                    (view entire password tree)              {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass show <path/account>{RESET} (decrypt and view secret)               {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass insert <path>{RESET}       (add new secret)                         {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass generate <path> 24{RESET}  (generate and store new password)        {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}│{RESET}     $ {CYAN}pass git init / push{RESET}     (track vault changes in git)             {BOLD}{GOLD}│{RESET}
+  {BOLD}{GOLD}└───┴───────────────────────────────────────────────────────────────────┘{RESET}
+""")
+
+        print(f"  {BOLD}{GREEN}[1]{RESET}  {BOLD}View Password Tree / Hierarchy{RESET}      {GRAY}(pass ls){RESET}")
+        print(f"  {BOLD}{GOLD}[2]{RESET}  {BOLD}Show & Decrypt Secret{RESET}               {GRAY}(pass show <path>){RESET}")
+        print(f"  {BOLD}{CYAN}[3]{RESET}  {BOLD}Insert New Secret{RESET}                   {GRAY}(pass insert <path>){RESET}")
+        print(f"  {BOLD}{YELLOW}[4]{RESET}  {BOLD}Generate Secure Password{RESET}            {GRAY}(pass generate <path> 24){RESET}")
+        print(f"  {BOLD}{GREEN}[5]{RESET}  {BOLD}Initialize Store with GPG Key{RESET}       {GRAY}(pass init <gpg-id>){RESET}")
+        print(f"  {BOLD}{GRAY}[6]{RESET}  {BOLD}View GPG Keys on System{RESET}             {GRAY}(gpg --list-secret-keys){RESET}")
+        print(f"  {BOLD}{GOLD}[7]{RESET}  {BOLD}Launch Pass Interactive Shell{RESET}       {GRAY}(Subshell with pass ready){RESET}")
+        print(f"  {BOLD}{GRAY}[0]{RESET}  {BOLD}Return to Master Menu{RESET}\n")
+
+        try:
+            choice = input(f"{GOLD}Select Action [1-7, 0]: {RESET}").strip()
+            if choice == "1":
+                print(f"\n{GRAY}[*] Listing password store...{RESET}")
+                subprocess.run([p_bin])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "2":
+                target = input(f"{GOLD}[?] Enter password path (e.g. email/neo): {RESET}").strip()
+                if target:
+                    subprocess.run([p_bin, "show", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "3":
+                target = input(f"{GOLD}[?] Enter password path: {RESET}").strip()
+                if target:
+                    subprocess.run([p_bin, "insert", target])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "4":
+                target = input(f"{GOLD}[?] Enter password path: {RESET}").strip()
+                length = input(f"{GOLD}[?] Length [24]: {RESET}").strip() or "24"
+                if target:
+                    subprocess.run([p_bin, "generate", target, length])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "5":
+                gpg_id = input(f"{GOLD}[?] Enter GPG key ID or email: {RESET}").strip()
+                if gpg_id:
+                    subprocess.run([p_bin, "init", gpg_id])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "6":
+                print(f"\n{GRAY}[*] GPG Secret Keys:{RESET}")
+                subprocess.run(["gpg", "--list-secret-keys", "--keyid-format", "LONG"])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "7":
+                print(f"\n{GREEN}[*] Spawning shell with pass environment...{RESET}")
+                print(f"    {GRAY}Type 'exit' to return to menu.{RESET}\n")
+                subprocess.run(["bash", "-l"])
+            elif choice in ["0", "q", "exit", "back"]:
+                break
+        except (KeyboardInterrupt, EOFError):
+            break
+
+# ─────────────────────────────────────────────────────────────────────────────
+# INTERACTIVE CYBER TERMINAL MENU
+# ─────────────────────────────────────────────────────────────────────────────
+
+def banner():
+    os.system("clear" if os.name == "posix" else "cls")
+    print(f"{GOLD}{BOLD}")
+    print(r"""    ███████╗ ██████╗ ████████╗██╗  ██╗    ██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+    ╚══███╔╝██╔═══██╗╚══██╔══╝██║  ██║    ██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+      ███╔╝ ██║   ██║   ██║   ███████║    ██║   ██║███████║██║   ██║██║     ██║   
+     ███╔╝  ██║   ██║   ██║   ██╔══██║    ╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║   
+    ███████╗╚██████╔╝   ██║   ██║  ██║     ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
+    ╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝      ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   """)
+    print(f"        {CYAN}[+] SOVEREIGN HARDENED MULTI-VAULT & KEY MANAGEMENT [+]{RESET}\n")
+
+def zoth_vault_sub_menu():
+    while True:
+        banner()
+        running = is_daemon_running()
+        pid = get_daemon_pid() if running else None
+        token = load_session_token()
+        unlocked = is_session_valid(token) if running else False
+
+        status_str = f"{GREEN}ONLINE{RESET} [PID: {pid}]" if running else f"{RED}OFFLINE{RESET}"
+        lock_str = f"{GREEN}UNLOCKED (Session Active){RESET}" if unlocked else f"{YELLOW}LOCKED{RESET}"
+
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"  {BOLD}ZOTH SOVEREIGN VAULT (RUST + ARGON2ID + CHACHA20-POLY1305 + BLAKE3){RESET}")
+        print(f"  {GRAY}Daemon:{RESET}    {status_str} (127.0.0.1:{DAEMON_PORT})")
+        print(f"  {GRAY}State:{RESET}     {lock_str}")
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}\n")
+
+        print(f"  {BOLD}{GOLD}[1]{RESET}  {BOLD}Vault Status & Security Posture{RESET}   {GRAY}(Inspect storage, modes, health){RESET}")
+        if unlocked:
+            print(f"  {BOLD}{RED}[2]{RESET}  {BOLD}Lock Vault Immediately{RESET}            {GRAY}(Zeroize memory & purge session){RESET}")
+        else:
+            print(f"  {BOLD}{GREEN}[2]{RESET}  {BOLD}Unlock Vault{RESET}                      {GRAY}(Authenticate master passphrase){RESET}")
+        print(f"  {BOLD}{CYAN}[3]{RESET}  {BOLD}List Secrets (Masked){RESET}             {GRAY}(Formatted ASCII table){RESET}")
+        print(f"  {BOLD}{GOLD}[4]{RESET}  {BOLD}Reveal / Get Secret{RESET}               {GRAY}(Output plain secret value){RESET}")
+        print(f"  {BOLD}{GREEN}[5]{RESET}  {BOLD}Add / Update Secret{RESET}               {GRAY}(Store key with tags & env){RESET}")
+        print(f"  {BOLD}{RED}[6]{RESET}  {BOLD}Delete Secret{RESET}                     {GRAY}(Remove key from vault){RESET}")
+        print(f"  {BOLD}{CYAN}[7]{RESET}  {BOLD}Export Secrets{RESET}                    {GRAY}(.env format or encrypted JSON){RESET}")
+        print(f"  {BOLD}{GOLD}[8]{RESET}  {BOLD}Import Secrets (.env){RESET}             {GRAY}(Batch import key-value pairs){RESET}")
+        print(f"  {BOLD}{GREEN}[9]{RESET}  {BOLD}Run Process with Injected Secrets{RESET} {GRAY}(Zero disk leaks, in-memory){RESET}")
+        print(f"  {BOLD}{CYAN}[10]{RESET} {BOLD}Daemon Process Control{RESET}            {GRAY}(Start / Stop / Restart){RESET}")
+        print(f"  {BOLD}{GRAY}[11]{RESET} {BOLD}Zoth Studio Web Vault UI{RESET}          {GRAY}(Open Browser :8088/vault){RESET}")
+        print(f"  {BOLD}{GRAY}[0]{RESET}  {BOLD}Return to Master Menu{RESET}\n")
+
+        try:
+            choice = input(f"{GOLD}Select Option [1-11, 0]: {RESET}").strip()
+            if choice == "1":
+                cmd_status()
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "2":
+                if unlocked:
+                    cmd_lock()
+                else:
+                    cmd_unlock()
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "3":
+                cmd_list()
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "4":
+                key_name = input(f"{GOLD}[?] Enter secret name, label, or ID: {RESET}").strip()
+                if key_name:
+                    print(f"\n{BOLD}Secret value:{RESET}")
+                    cmd_get(key_name)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "5":
+                name = input(f"{GOLD}[?] Secret Label / Name: {RESET}").strip()
+                if name:
+                    val = getpass.getpass(f"{GOLD}[?] Secret Value: {RESET}").strip()
+                    prov = input(f"{GOLD}[?] Provider (e.g. openai, anthropic, stripe) [auto]: {RESET}").strip() or None
+                    tags = input(f"{GOLD}[?] Tags (comma separated) [cli]: {RESET}").strip() or None
+                    cmd_set(name, val, provider=prov, tags=tags)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "6":
+                name = input(f"{GOLD}[?] Secret Name or ID to delete: {RESET}").strip()
+                if name:
+                    cmd_delete(name)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "7":
+                fmt = input(f"{GOLD}[?] Export format (env/json) [env]: {RESET}").strip() or "env"
+                cmd_export(fmt)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "8":
+                fpath = input(f"{GOLD}[?] Path to .env file to import: {RESET}").strip()
+                if fpath:
+                    cmd_import(fpath)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "9":
+                run_cmd = input(f"{GOLD}[?] Command to execute (e.g. bash -c 'echo $OPENAI_API_KEY'): {RESET}").strip()
+                if run_cmd:
+                    print(f"{GRAY}[*] Executing in subshell with injected vault secrets...{RESET}\n")
+                    subprocess.run(["python3", sys.argv[0], "run", "--", "bash", "-c", run_cmd])
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "10":
+                d_action = input(f"{GOLD}[?] Daemon action (start/stop/restart/status): {RESET}").strip().lower()
+                cmd_daemon(d_action)
+                input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            elif choice == "11":
+                ensure_daemon()
+                target_port = 3000
+                for p in (3000, 8088, 8080):
+                    try:
+                        with urllib.request.urlopen(f"http://127.0.0.1:{p}/", timeout=0.3):
+                            target_port = p
+                            break
+                    except Exception:
+                        pass
+                subprocess.Popen(["xdg-open", f"http://127.0.0.1:{target_port}/vault"])
+                print(f"{GREEN}[✓] Opening Zoth Studio Web Vault (:{target_port}/vault)...{RESET}")
+                time.sleep(1)
+            elif choice in ["0", "q", "exit", "back"]:
+                break
+        except (KeyboardInterrupt, EOFError):
+            break
+
+def main_menu():
+    while True:
+        banner()
+        bw_status = f"{GREEN}Installed{RESET}" if shutil.which("bw") else f"{RED}Missing{RESET}"
+        keepass_status = f"{GREEN}Installed{RESET}" if shutil.which("keepassxc") else f"{RED}Missing{RESET}"
+        pass_status = f"{GREEN}Installed{RESET}" if shutil.which("pass") else f"{RED}Missing{RESET}"
+        zoth_status = f"{GREEN}Rust Argon2id Verified{RESET}" if get_daemon_bin() else f"{RED}Missing{RESET}"
+        running = is_daemon_running()
+        d_badge = f"{GREEN}127.0.0.1:{DAEMON_PORT} ONLINE{RESET}" if running else f"{RED}127.0.0.1:{DAEMON_PORT} OFFLINE{RESET}"
+
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}")
+        print(f"  {BOLD}AVAILABLE ENCRYPTED SECRETS ENGINES{RESET}   [{d_badge}]")
+        print(f"  {GRAY}1. Zoth Sovereign Vault:{RESET}   {zoth_status}")
+        print(f"  {GRAY}2. Bitwarden CLI (bw):{RESET}     {bw_status}")
+        print(f"  {GRAY}3. KeePassXC GUI/CLI:{RESET}      {keepass_status}")
+        print(f"  {GRAY}4. UNIX Pass (GPG):{RESET}        {pass_status}")
+        print(f"{BOLD}══════════════════════════════════════════════════════════════════════════{RESET}\n")
+
+        print(f"  {BOLD}{GOLD}[1]{RESET}  {BOLD}Zoth Sovereign Vault{RESET}    {GRAY}(Argon2id + Rust ChaCha20-Poly1305){RESET}")
+        print(f"  {BOLD}{CYAN}[2]{RESET}  {BOLD}Bitwarden CLI (bw){RESET}      {GRAY}(Interactive official Bitwarden shell){RESET}")
+        print(f"  {BOLD}{GREEN}[3]{RESET}  {BOLD}KeePassXC{RESET}               {GRAY}(Offline encrypted .kdbx password manager){RESET}")
+        print(f"  {BOLD}{GOLD}[4]{RESET}  {BOLD}UNIX Pass (GPG){RESET}         {GRAY}(Standard UNIX password tree){RESET}")
+        print(f"  {BOLD}{GRAY}[0]{RESET}  {BOLD}Exit{RESET}\n")
+
+        try:
+            choice = input(f"{GOLD}Select Secrets Manager [1-4, 0]: {RESET}").strip()
+            if choice == "1":
+                zoth_vault_sub_menu()
+            elif choice == "2":
+                run_bw()
+            elif choice == "3":
+                run_keepassxc()
+            elif choice == "4":
+                run_pass()
+            elif choice in ["0", "q", "exit"]:
+                break
+        except (KeyboardInterrupt, EOFError):
+            print("\n")
+            break
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLI DISPATCHER
+# ─────────────────────────────────────────────────────────────────────────────
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        prog="zoth-vault",
+        description="Zoth Sovereign Vault CLI & Process Secret Injector v3.5",
+        add_help=True
+    )
+    subparsers = parser.add_subparsers(dest="subcommand", help="Vault subcommands")
+
+    # status
+    p_status = subparsers.add_parser("status", help="Check daemon status and vault file on-disk status")
+    p_status.add_argument("--json", action="store_true", help="Output status as JSON")
+
+    # init
+    p_init = subparsers.add_parser("init", help="Initialize new vault with master passphrase")
+    p_init.add_argument("passphrase", nargs="?", default=None, help="Master passphrase (min 12 chars)")
+
+    # daemon
+    p_daemon = subparsers.add_parser("daemon", help="Manage background zoth-vault-daemon process")
+    p_daemon.add_argument("action", nargs="?", default="status", choices=["start", "stop", "restart", "status"])
+
+    # unlock
+    p_unlock = subparsers.add_parser("unlock", help="Unlock vault and cache session token (mode 0600)")
+    p_unlock.add_argument("passphrase", nargs="?", default=None, help="Master passphrase")
+
+    # lock
+    subparsers.add_parser("lock", help="Explicitly lock vault and clear session token")
+
+    # list
+    p_list = subparsers.add_parser("list", help="Display formatted ASCII table of all secrets")
+    p_list.add_argument("--json", action="store_true", help="Output secrets as JSON")
+    p_list.add_argument("--tag", "-t", default=None, help="Filter by tag")
+    p_list.add_argument("--provider", "-p", default=None, help="Filter by provider")
+
+    # get
+    p_get = subparsers.add_parser("get", help="Reveal and output raw secret value")
+    p_get.add_argument("key", help="Key name, label, or UUID ID")
+    p_get.add_argument("--json", action="store_true", help="Output full JSON key object")
+
+    # set
+    p_set = subparsers.add_parser("set", help="Store or update a secret in the vault")
+    p_set.add_argument("key", help="Key name / label")
+    p_set.add_argument("value", nargs="?", default=None, help="Secret value (reads stdin if '-' or omitted)")
+    p_set.add_argument("--provider", "-p", default=None, help="Provider name")
+    p_set.add_argument("--tags", "-t", default=None, help="Comma-separated tags")
+    p_set.add_argument("--env", "-e", default=None, help="Environment variable binding")
+
+    # delete
+    p_del = subparsers.add_parser("delete", help="Delete a secret from the vault")
+    p_del.add_argument("key", help="Key name, label, or UUID ID")
+    p_del.add_argument("-y", "--yes", action="store_true", help="Skip confirmation prompt")
+
+    # export
+    p_exp = subparsers.add_parser("export", help="Export decrypted keys (.env) or encrypted JSON")
+    p_exp.add_argument("format", nargs="?", default="env", choices=["env", "json"])
+    p_exp.add_argument("--passphrase", "-p", default=None, help="Passphrase for encrypted JSON export")
+    p_exp.add_argument("--decrypted", action="store_true", help="Export decrypted JSON")
+    p_exp.add_argument("--out", "-o", default=None, help="Output file path (mode 0600)")
+
+    # import
+    p_imp = subparsers.add_parser("import", help="Import key-value pairs into the vault")
+    p_imp.add_argument("file", help="Path to .env file (or '-' for stdin)")
+
+    # run (Process Injector)
+    p_run = subparsers.add_parser("run", help="Inject vault secrets into command execution environment")
+    p_run.add_argument("command", nargs=argparse.REMAINDER, help="Command to execute with secrets")
+
+    # menu
+    subparsers.add_parser("menu", help="Launch interactive Cyber Terminal Menu")
+
+    # External vault passthroughs
+    p_bw = subparsers.add_parser("bw", help="Run Bitwarden CLI")
+    p_bw.add_argument("bw_args", nargs=argparse.REMAINDER)
+
+    subparsers.add_parser("keepass", help="Launch KeePassXC")
+    subparsers.add_parser("keepassxc", help="Launch KeePassXC")
+
+    p_pass = subparsers.add_parser("pass", help="Run UNIX Pass (GPG)")
+    p_pass.add_argument("pass_args", nargs=argparse.REMAINDER)
+
+    # Legacy alias
+    p_zoth = subparsers.add_parser("zoth", help="Manage Zoth Vault Daemon")
+    p_zoth.add_argument("zoth_args", nargs=argparse.REMAINDER)
+
+    return parser
+
+def main():
+    raw_args = sys.argv[1:]
+
+    # Interactive menu if no arguments or explicit --menu / menu
+    if not raw_args or raw_args == ["--menu"] or raw_args == ["menu"]:
+        main_menu()
+        return 0
+
+    # Special handling for 'run' command to preserve flags for child process
+    if raw_args and raw_args[0] == "run":
+        cmd_args = raw_args[1:]
+        if cmd_args and cmd_args[0] == "--":
+            cmd_args = cmd_args[1:]
+        return cmd_run(cmd_args)
+
+    parser = build_parser()
+    try:
+        args = parser.parse_args(raw_args)
+    except SystemExit as e:
+        return e.code
+
+    sub = args.subcommand
+    if sub == "status":
+        return cmd_status(as_json=args.json)
+    elif sub == "init":
+        return cmd_init(passphrase=args.passphrase)
+    elif sub == "daemon":
+        return cmd_daemon(action=args.action)
+    elif sub == "unlock":
+        return cmd_unlock(passphrase=args.passphrase)
+    elif sub == "lock":
+        return cmd_lock()
+    elif sub == "list":
+        return cmd_list(as_json=args.json, filter_tag=args.tag, filter_provider=args.provider)
+    elif sub == "get":
+        return cmd_get(args.key, as_json=args.json)
+    elif sub == "set":
+        return cmd_set(args.key, value=args.value, provider=args.provider, tags=args.tags, env=args.env)
+    elif sub == "delete":
+        return cmd_delete(args.key, force=args.yes)
+    elif sub == "export":
+        return cmd_export(fmt=args.format, passphrase=args.passphrase, decrypted=args.decrypted, out_file=args.out)
+    elif sub == "import":
+        return cmd_import(args.file)
+    elif sub == "menu":
+        main_menu()
+        return 0
+    elif sub == "bw":
+        run_bw(args.bw_args if args.bw_args else None)
+        return 0
+    elif sub in ["keepass", "keepassxc"]:
+        run_keepassxc()
+        return 0
+    elif sub == "pass":
+        run_pass(args.pass_args if args.pass_args else None)
+        return 0
+    elif sub == "zoth":
+        if args.zoth_args and args.zoth_args[0] == "status":
+            return cmd_status()
+        elif args.zoth_args and args.zoth_args[0] in ["start", "stop", "restart"]:
+            return cmd_daemon(args.zoth_args[0])
+        else:
+            return 0 if ensure_daemon() else 1
+    else:
+        parser.print_help()
+        return 0
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (KeyboardInterrupt, BrokenPipeError):
+        sys.exit(0)
