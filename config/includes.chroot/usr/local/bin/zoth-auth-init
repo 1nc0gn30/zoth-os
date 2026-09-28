@@ -88,8 +88,9 @@ for u in zoth azoth; do
     fi
 done
 
-# Ensure stray Debian installer desktop icons are purged
-rm -f /home/*/Desktop/calamares-install-debian.desktop 2>/dev/null || true
-rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+# Ensure stray Debian installer desktop icons and loose images are purged
+rm -f /home/*/Desktop/calamares-install-debian.desktop /home/*/Desktop/*debian* 2>/dev/null || true
+rm -f /etc/skel/Desktop/calamares-install-debian.desktop /etc/skel/Desktop/*debian* 2>/dev/null || true
+rm -f /home/*/Desktop/burpsuite.png /etc/skel/Desktop/burpsuite.png 2>/dev/null || true
 
 exit 0

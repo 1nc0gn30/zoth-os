@@ -18,7 +18,8 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-# Autostart XFCE Graphical Environment on tty1 login
+# Autostart KDE Plasma Graphical Environment on tty1 login
 if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-    exec startplasma-x11 2>/dev/null || exec startplasma-wayland 2>/dev/null || exec startxfce4 2>/dev/null || exec startx
+    exec startx /usr/bin/startplasma-x11
 fi
+

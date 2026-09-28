@@ -15,26 +15,26 @@ ActionButton {
     id: buttonRoot
     Layout.alignment: Qt.AlignTop
 
-    // Grand 88x88 insignia sizing for majestic presence
-    icon.width: 88
-    icon.height: 88
+    // Grand 96x96 insignia sizing for majestic presence
+    icon.width: 96
+    icon.height: 96
 
     property string customIconSource: ""
 
     font.underline: false
-    opacity: activeFocus || hovered ? 1.0 : 0.88
+    opacity: activeFocus || hovered ? 1.0 : 0.90
 
-    implicitWidth: 172
-    implicitHeight: 220
-    Layout.preferredWidth: 172
-    Layout.preferredHeight: 220
+    implicitWidth: 184
+    implicitHeight: 240
+    Layout.preferredWidth: 184
+    Layout.preferredHeight: 240
 
-    // Master 24K Alchemical Gold Circular Medallion (154x154)
+    // Master 24K Alchemical Gold Circular Medallion (168x168)
     background: Item {
-        implicitWidth: 154
-        implicitHeight: 154
-        width: 154
-        height: 154
+        implicitWidth: 168
+        implicitHeight: 168
+        width: 168
+        height: 168
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
 
@@ -43,9 +43,9 @@ ActionButton {
             anchors.fill: parent
             radius: width / 2
             color: "transparent"
-            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? "#ffd700" : Qt.rgba(0.83, 0.69, 0.22, 0.35)
-            border.width: (buttonRoot.hovered || buttonRoot.activeFocus) ? 4.5 : 2.0
-            opacity: (buttonRoot.hovered || buttonRoot.activeFocus) ? 0.95 : 0.5
+            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? "#ffd700" : Qt.rgba(0.83, 0.69, 0.22, 0.40)
+            border.width: (buttonRoot.hovered || buttonRoot.activeFocus) ? 5.0 : 2.5
+            opacity: (buttonRoot.hovered || buttonRoot.activeFocus) ? 1.0 : 0.6
             scale: (buttonRoot.hovered || buttonRoot.activeFocus) ? 1.10 : 1.0
 
             Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
@@ -57,11 +57,11 @@ ActionButton {
         // Secondary concentric engraved filigree ring
         Rectangle {
             anchors.centerIn: parent
-            width: parent.width - 12
-            height: parent.height - 12
+            width: parent.width - 14
+            height: parent.height - 14
             radius: width / 2
             color: "transparent"
-            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? "#ffd700" : Qt.rgba(0.83, 0.69, 0.22, 0.45)
+            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? "#ffd700" : Qt.rgba(0.83, 0.69, 0.22, 0.50)
             border.width: 1.5
             scale: (buttonRoot.hovered || buttonRoot.activeFocus) ? 1.07 : 1.0
             Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
@@ -71,11 +71,11 @@ ActionButton {
         // Tertiary inner fine etched ring
         Rectangle {
             anchors.centerIn: parent
-            width: parent.width - 24
-            height: parent.height - 24
+            width: parent.width - 26
+            height: parent.height - 26
             radius: width / 2
             color: "transparent"
-            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? Qt.rgba(1, 0.92, 0.5, 0.8) : Qt.rgba(0.83, 0.69, 0.22, 0.25)
+            border.color: (buttonRoot.hovered || buttonRoot.activeFocus) ? Qt.rgba(1, 0.92, 0.5, 0.85) : Qt.rgba(0.83, 0.69, 0.22, 0.30)
             border.width: 1.0
             scale: (buttonRoot.hovered || buttonRoot.activeFocus) ? 1.05 : 1.0
             Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
@@ -85,22 +85,22 @@ ActionButton {
         // Inner solid obsidian disc with rich metallic gold gradient aura
         Rectangle {
             anchors.centerIn: parent
-            width: parent.width - 8
-            height: parent.height - 8
+            width: parent.width - 10
+            height: parent.height - 10
             radius: width / 2
 
             color: buttonRoot.down
                    ? Qt.rgba(1, 0.84, 0, 0.5)
                    : ((buttonRoot.hovered || buttonRoot.activeFocus)
-                      ? Qt.rgba(0.20, 0.16, 0.07, 0.96)
-                      : Qt.rgba(0.06, 0.08, 0.13, 0.92))
+                      ? Qt.rgba(0.24, 0.19, 0.08, 0.98)
+                      : Qt.rgba(0.08, 0.10, 0.15, 0.94))
 
             border.color: buttonRoot.down
                           ? "#ffec80"
                           : ((buttonRoot.hovered || buttonRoot.activeFocus)
                              ? "#ffd700"
-                             : Qt.rgba(0.83, 0.69, 0.22, 0.6))
-            border.width: (buttonRoot.hovered || buttonRoot.activeFocus) ? 2.5 : 1.5
+                             : Qt.rgba(0.83, 0.69, 0.22, 0.65))
+            border.width: (buttonRoot.hovered || buttonRoot.activeFocus) ? 3.0 : 2.0
 
             scale: buttonRoot.down ? 0.95 : ((buttonRoot.hovered || buttonRoot.activeFocus) ? 1.06 : 1.0)
             Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutQuad } }
@@ -117,12 +117,17 @@ ActionButton {
             width: buttonRoot.icon.width
             height: buttonRoot.icon.height
             anchors.horizontalCenter: parent.horizontalCenter
-            y: 33
+            y: 36
 
             // 24K Gold insignia emblem
             Image {
+                id: customImg
                 anchors.fill: parent
-                source: buttonRoot.customIconSource
+                source: {
+                    if (!buttonRoot.customIconSource) return "";
+                    if (buttonRoot.customIconSource.indexOf("://") !== -1) return buttonRoot.customIconSource;
+                    return "file://" + buttonRoot.customIconSource;
+                }
                 fillMode: Image.PreserveAspectFit
                 mipmap: true
                 smooth: true
@@ -136,7 +141,7 @@ ActionButton {
                 source: buttonRoot.icon.name
                 color: (buttonRoot.hovered || buttonRoot.activeFocus) ? "#ffd700" : "#d4af37"
                 active: buttonRoot.hovered || buttonRoot.activeFocus
-                visible: buttonRoot.customIconSource === "" || parent.children[0].status !== Image.Ready
+                visible: !customImg.visible
                 scale: (buttonRoot.hovered || buttonRoot.activeFocus) ? 1.14 : 1.0
                 Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutBack } }
             }
