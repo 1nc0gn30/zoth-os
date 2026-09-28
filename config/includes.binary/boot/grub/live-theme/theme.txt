@@ -1,0 +1,55 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  ✦ ZOTHOS 3.0 — Sovereign Alchemical Intelligence GRUB Theme ✦
+# ═══════════════════════════════════════════════════════════════════════════════
+
+desktop-image: "../splash.png"
+title-color: "#d4af37"
+title-font: "Unifont Regular 16"
+title-text: "✦ ZOTHOS v3.0 — Sovereign Alchemical Intelligence (KDE Plasma 6) ✦"
+message-font: "Unifont Regular 16"
+terminal-font: "Unifont Regular 16"
+
+# Help bar at the bottom
++ label {
+    top = 100%-50
+    left = 0
+    width = 100%
+    height = 20
+    text = "✦ Use [↑] and [↓] keys to select, [Enter] to boot, [e] to edit, [c] for CLI ✦"
+    align = "center"
+    color = "#e2e8f0"
+    font = "Unifont Regular 14"
+}
+
+# Boot menu
++ boot_menu {
+    left = 15%
+    width = 70%
+    top = 46%
+    height = 42%
+    item_color = "#94a3b8"
+    item_font = "Unifont Regular 16"
+    selected_item_color= "#ffd700"
+    selected_item_font = "Unifont Regular 16"
+    item_height = 28
+    item_padding = 4
+    item_spacing = 8
+    icon_width = 0
+    icon_height = 0
+    item_icon_space = 0
+}
+
+# Progress bar
++ progress_bar {
+    id = "__timeout__"
+    left = 15%
+    top = 100%-80
+    height = 14
+    width = 70%
+    font = "Unifont Regular 14"
+    text_color = "#000000"
+    fg_color = "#d4af37"
+    bg_color = "#0f172a"
+    border_color = "#ffd700"
+    text = "✦ Booting ZOTHOS in %d seconds..."
+}
