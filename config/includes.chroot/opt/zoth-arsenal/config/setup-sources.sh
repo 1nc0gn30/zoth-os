@@ -42,16 +42,16 @@ EOF
 mkdir -p /etc/apt/preferences.d
 cat > /etc/apt/preferences.d/zoth-arsenal.pref << 'EOF'
 Package: *
-Pin: release o=Debian,a=trixie
+Pin: release o=Debian
 Pin-Priority: 900
 
 Package: *
-Pin: release o=Kali
-Pin-Priority: 100
+Pin: release o=Parrot
+Pin-Priority: 500
 
 Package: *
-Pin: release o=Parrot
-Pin-Priority: 100
+Pin: release o=Kali
+Pin-Priority: 500
 EOF
 
 echo -e "${GREEN}[✓] Zoth Arsenal repositories & pinning configured successfully.${RESET}"

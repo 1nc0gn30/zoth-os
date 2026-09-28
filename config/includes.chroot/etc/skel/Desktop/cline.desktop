@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Cline Autonomous Agent
 Comment=Cline.bot Open-Source Autonomous Coding Agent & CLI
-Exec=konsole -p tabtitle='Cline AI' -e cline
+Exec=konsole --hold -p tabtitle='Cline AI' -e cline
 Icon=/usr/share/pixmaps/opencode.png
 Terminal=false
 Categories=Development;AI;

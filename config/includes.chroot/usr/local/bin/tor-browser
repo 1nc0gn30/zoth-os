@@ -6,12 +6,14 @@ set -euo pipefail
 
 # 1. System-wide pre-installed Tor Browser bundle in /opt/tor-browser
 if [[ -x "/opt/tor-browser/Browser/start-tor-browser" ]]; then
-    exec /opt/tor-browser/Browser/start-tor-browser "$@"
+    cd /opt/tor-browser/Browser
+    exec ./start-tor-browser "$@"
 fi
 
 # 2. User-specific Tor Browser bundle
 if [[ -x "$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/start-tor-browser" ]]; then
-    exec "$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/start-tor-browser" "$@"
+    cd "$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser"
+    exec ./start-tor-browser "$@"
 fi
 
 # 3. torbrowser-launcher utility
@@ -20,7 +22,7 @@ if command -v torbrowser-launcher >/dev/null 2>&1; then
 fi
 
 # 4. Standard Debian /usr/bin/tor-browser (avoid self-reference)
-if [[ -x "/usr/bin/tor-browser" ]]; then
+if [[ -x "/usr/bin/tor-browser" && "$(readlink -f /usr/bin/tor-browser 2>/dev/null || true)" != "$(readlink -f "$0" 2>/dev/null || true)" ]]; then
     exec /usr/bin/tor-browser "$@"
 fi
 

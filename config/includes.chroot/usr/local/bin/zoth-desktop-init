@@ -69,40 +69,42 @@ if [[ -f "$WALLPAPER" ]]; then
     feh --bg-fill "$WALLPAPER" 2>/dev/null || true
 fi
 
-# ── 6. Start picom compositor with auto-restart watchdog ─────────────────
-log "Starting compositor with watchdog..."
+# ── 6. Start picom compositor with auto-restart watchdog (non-KDE only) ──
+if [[ "${XDG_CURRENT_DESKTOP:-}" != *"KDE"* ]] && ! pgrep -x kwin_x11 &>/dev/null && ! pgrep -x kwin_wayland &>/dev/null; then
+    log "Starting compositor with watchdog..."
 
-PICOM_CONF="/etc/xdg/picom/picom-matrix.conf"
-COMPOSITOR_LOG="/tmp/zoth-compositor.log"
+    PICOM_CONF="/etc/xdg/picom/picom-matrix.conf"
+    COMPOSITOR_LOG="/tmp/zoth-compositor.log"
 
-# Picom auto-restart watchdog (5s backoff)
-(
-    while true; do
-        if command -v picom &>/dev/null && [[ -f "$PICOM_CONF" ]]; then
-            picom --config "$PICOM_CONF" --daemon 2>>"$COMPOSITOR_LOG" &
-            echo "$(date): picom started with matrix config (PID: $!)" >> "$COMPOSITOR_LOG"
-        elif command -v picom &>/dev/null; then
-            picom --backend glx --shadow --fading --blur-background --daemon 2>>"$COMPOSITOR_LOG" &
-            echo "$(date): picom started with fallback config (PID: $!)" >> "$COMPOSITOR_LOG"
-        elif command -v compton &>/dev/null; then
-            compton --backend glx --shadow --fading --daemon 2>>"$COMPOSITOR_LOG" &
-            echo "$(date): compton started (PID: $!)" >> "$COMPOSITOR_LOG"
-        else
-            echo "$(date): WARNING - No compositor found" >> "$COMPOSITOR_LOG"
-        fi
+    # Picom auto-restart watchdog (5s backoff)
+    (
+        while true; do
+            if command -v picom &>/dev/null && [[ -f "$PICOM_CONF" ]]; then
+                picom --config "$PICOM_CONF" --daemon 2>>"$COMPOSITOR_LOG" &
+                echo "$(date): picom started with matrix config (PID: $!)" >> "$COMPOSITOR_LOG"
+            elif command -v picom &>/dev/null; then
+                picom --backend glx --shadow --fading --blur-background --daemon 2>>"$COMPOSITOR_LOG" &
+                echo "$(date): picom started with fallback config (PID: $!)" >> "$COMPOSITOR_LOG"
+            elif command -v compton &>/dev/null; then
+                compton --backend glx --shadow --fading --daemon 2>>"$COMPOSITOR_LOG" &
+                echo "$(date): compton started (PID: $!)" >> "$COMPOSITOR_LOG"
+            else
+                echo "$(date): WARNING - No compositor found" >> "$COMPOSITOR_LOG"
+            fi
 
-        # Wait for compositor to exit
-        while pgrep -x picom &>/dev/null || pgrep -x compton &>/dev/null; do
+            # Wait for compositor to exit
+            while pgrep -x picom &>/dev/null || pgrep -x compton &>/dev/null; do
+                sleep 5
+            done
+
+            echo "$(date): compositor exited, restarting in 5s..." >> "$COMPOSITOR_LOG"
             sleep 5
         done
-
-        echo "$(date): compositor exited, restarting in 5s..." >> "$COMPOSITOR_LOG"
-        sleep 5
-    done
-) >>"$COMPOSITOR_LOG" 2>&1 &
-WATCHDOG_PID=$!
-echo $WATCHDOG_PID > /tmp/zoth-picom-watchdog.pid
-log "Picom watchdog started (PID: $WATCHDOG_PID)"
+    ) >>"$COMPOSITOR_LOG" 2>&1 &
+    WATCHDOG_PID=$!
+    echo $WATCHDOG_PID > /tmp/zoth-picom-watchdog.pid
+    log "Picom watchdog started (PID: $WATCHDOG_PID)"
+fi
 
 # ── 7. Animated background disabled ───────────────────────────────────────
 # matrix rain background removed per system spec

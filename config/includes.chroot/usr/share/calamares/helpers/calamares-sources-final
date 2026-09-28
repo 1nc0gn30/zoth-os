@@ -1,0 +1,68 @@
+#!/bin/sh
+# ==============================================================================
+#  ZOTHOS CALAMARES SOURCES-FINAL HELPER
+#  Writes sovereign repositories: Debian Trixie + Kali Rolling + Parrot Security
+# ==============================================================================
+
+CHROOT=$(mount | grep proc | grep calamares | awk '{print $3}' | sed -e "s#/proc##g")
+RELEASE="trixie"
+
+if [ -z "$CHROOT" ]; then
+    exit 0
+fi
+
+# 1. Write official Debian Trixie sources with full components
+cat << EOF > "$CHROOT/etc/apt/sources.list"
+# ZOTHOS Core APT Repositories (Debian Trixie)
+deb http://deb.debian.org/debian/ $RELEASE main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ $RELEASE main contrib non-free non-free-firmware
+
+deb http://security.debian.org/debian-security/ $RELEASE-security main contrib non-free non-free-firmware
+deb-src http://security.debian.org/debian-security/ $RELEASE-security main contrib non-free non-free-firmware
+
+deb http://deb.debian.org/debian/ $RELEASE-updates main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ $RELEASE-updates main contrib non-free non-free-firmware
+
+deb http://deb.debian.org/debian/ $RELEASE-backports main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ $RELEASE-backports main contrib non-free non-free-firmware
+EOF
+
+# 2. Ensure Kali & Parrot repositories are present in sources.list.d
+mkdir -p "$CHROOT/etc/apt/sources.list.d" "$CHROOT/etc/apt/trusted.gpg.d"
+
+if [ -f "/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg" ] && [ ! -f "$CHROOT/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg" ]; then
+    cp -f "/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg" "$CHROOT/etc/apt/trusted.gpg.d/" 2>/dev/null || true
+fi
+
+if [ -f "/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg" ] && [ ! -f "$CHROOT/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg" ]; then
+    cp -f "/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg" "$CHROOT/etc/apt/trusted.gpg.d/" 2>/dev/null || true
+fi
+
+cat << 'EOF' > "$CHROOT/etc/apt/sources.list.d/kali.list"
+deb [signed-by=/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg] http://http.kali.org/kali kali-rolling main non-free contrib non-free-firmware
+EOF
+
+cat << 'EOF' > "$CHROOT/etc/apt/sources.list.d/parrot.list"
+deb [signed-by=/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg] http://deb.parrot.sh/parrot parrot main contrib non-free
+EOF
+
+# 3. Ensure APT Pinning is preserved so Debian remains master and tools are installed safely
+mkdir -p "$CHROOT/etc/apt/preferences.d"
+cat << 'EOF' > "$CHROOT/etc/apt/preferences.d/zothos-pinning.pref"
+Package: *
+Pin: release o=Debian
+Pin-Priority: 900
+
+Package: *
+Pin: release o=Parrot
+Pin-Priority: 500
+
+Package: *
+Pin: release o=Kali
+Pin-Priority: 500
+EOF
+
+# Make sure live media artifact list is removed
+rm -f "$CHROOT/etc/apt/sources.list.d/debian-live-media.list" 2>/dev/null || true
+
+exit 0

@@ -2,6 +2,7 @@
 ColorScheme=ZothHermeticGold
 widgetStyle=Breeze
 LookAndFeelPackage=org.kde.breezedark.desktop
+SingleClick=false
 
 [Colors:Window]
 BackgroundNormal=5,7,10

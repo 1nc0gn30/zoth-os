@@ -1,2 +1,11 @@
 #!/usr/bin/env bash
-exec /opt/simplex-desktop/simplex-desktop.AppImage --no-sandbox "$@"
+set -euo pipefail
+
+if [[ -x "/opt/simplex-desktop/app/AppRun" ]]; then
+    exec /opt/simplex-desktop/app/AppRun --no-sandbox "$@"
+elif [[ -f "/opt/simplex-desktop/simplex-desktop.AppImage" ]]; then
+    exec /opt/simplex-desktop/simplex-desktop.AppImage --appimage-extract-and-run --no-sandbox "$@"
+fi
+
+echo "[-] SimpleX Desktop binary not found." >&2
+exit 1

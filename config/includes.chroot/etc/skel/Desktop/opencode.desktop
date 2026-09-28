@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Zoth OpenCode AI Pair
 Comment=Open-Source AI Pair Programmer & Codebase Inspector
-Exec=konsole -p tabtitle='OpenCode AI' -e opencode
+Exec=konsole --hold -p tabtitle='OpenCode AI' -e opencode
 Icon=/usr/share/pixmaps/opencode.png
 Terminal=false
 Categories=Development;AI;

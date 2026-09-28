@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Aider AI Coding Agent
 Comment=Aider AI Pair Programming in the Terminal
-Exec=konsole -p tabtitle='Aider AI' -e /usr/local/bin/aider
+Exec=konsole --hold -p tabtitle='Aider AI' -e /usr/local/bin/aider
 Icon=/usr/share/pixmaps/zoth-agent.png
 Terminal=false
 Categories=Development;AI;

@@ -13,11 +13,29 @@ echo "✦ Synchronizing config/includes.chroot..."
 sudo rsync -aHAX --delete ../../config/includes.chroot/ config/includes.chroot/
 sudo rsync -aHAX ../../config/includes.chroot/ chroot/
 
+echo "✦ Enforcing strict root security permissions (sudoers, SUID sandboxes)..."
+sudo chown -R root:root chroot/etc/sudoers.d chroot/etc/sudoers
+sudo chmod 0755 chroot/etc/sudoers.d
+sudo chmod 0440 chroot/etc/sudoers.d/* chroot/etc/sudoers 2>/dev/null || true
+
+# Enforce SUID bit on Chromium & Electron sandbox helpers
+for sb in chroot/opt/google/chrome/chrome-sandbox chroot/opt/Element/chrome-sandbox chroot/opt/Signal/chrome-sandbox chroot/opt/electron/chrome-sandbox; do
+    if [ -f "$sb" ]; then
+        sudo chown root:root "$sb"
+        sudo chmod 4755 "$sb"
+    fi
+done
+
+# Ensure tor-browser and simplex binaries are user-executable
+sudo chmod -R u+rwX,go+rX chroot/opt/tor-browser 2>/dev/null || true
+sudo chmod -R u+rwX,go+rX chroot/opt/simplex-desktop 2>/dev/null || true
+
 echo "✦ Enforcing default user accounts (zoth & azoth)..."
 sudo rm -rf chroot/home/neo 2>/dev/null || true
 sudo mkdir -p chroot${ZOTH_HOME} chroot/home/azoth
 sudo cp -a chroot/etc/skel/. chroot${ZOTH_HOME}/ 2>/dev/null || true
 sudo cp -a chroot/etc/skel/. chroot/home/azoth/ 2>/dev/null || true
+sudo chmod +x chroot/home/*/Desktop/*.desktop chroot/etc/skel/Desktop/*.desktop 2>/dev/null || true
 sudo chroot chroot chown -R zoth:zoth ${ZOTH_HOME} 2>/dev/null || sudo chown -R 1000:1000 chroot${ZOTH_HOME}
 sudo chroot chroot chown -R azoth:azoth /home/azoth 2>/dev/null || sudo chown -R 1001:1005 chroot/home/azoth
 sudo chmod 750 chroot${ZOTH_HOME} chroot/home/azoth
@@ -37,8 +55,6 @@ if [ ! -L chroot/lib ]; then
 fi
 sudo ln -sfn /usr/lib/systemd/system/graphical.target chroot/etc/systemd/system/default.target
 sudo ln -sfn /usr/lib/systemd/system/sddm.service chroot/etc/systemd/system/display-manager.service
-
-
 
 echo "✦ Synchronizing config/includes.binary, bootloaders, and hooks..."
 sudo mkdir -p config/includes.binary config/bootloaders config/hooks/binary

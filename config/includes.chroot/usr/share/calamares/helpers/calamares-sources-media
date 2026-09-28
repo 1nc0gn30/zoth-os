@@ -1,0 +1,44 @@
+#!/bin/sh
+# ==============================================================================
+#  ZOTHOS CALAMARES SOURCES-MEDIA HELPER
+#  Safe medium mount that never fails on pure live squashfs ISOs
+# ==============================================================================
+
+CHROOT=$(mount | grep proc | grep calamares | awk '{print $3}' | sed -e "s#/proc##g")
+KNOWN_MEDIUM_PATHS="/run/live/medium /run/initramfs/live"
+RELEASE="trixie"
+
+for path in $KNOWN_MEDIUM_PATHS; do
+    if [ "$(mount | grep "$path" | cut -f3 -d" ")" = "$path" ]; then
+        MEDIUM_PATH="$path"
+    fi
+done
+
+if [ "$1" = "-u" ]; then
+    if [ -n "$CHROOT" ] && [ -n "$MEDIUM_PATH" ]; then
+        umount "$CHROOT/$MEDIUM_PATH" 2>/dev/null || true
+        rm -f "$CHROOT/etc/apt/sources.list.d/debian-live-media.list"
+    fi
+    exit 0
+fi
+
+if [ -z "$CHROOT" ]; then
+    exit 0
+fi
+
+# Clean up temporary base list
+rm -f "$CHROOT/etc/apt/sources.list.d/base.list"
+
+# Only mount and add apt source if a valid debian pool exists on the medium
+if [ -n "$MEDIUM_PATH" ] && [ -d "$MEDIUM_PATH/dists/$RELEASE" ]; then
+    mkdir -p "$CHROOT/$MEDIUM_PATH"
+    mount --bind "$MEDIUM_PATH" "$CHROOT/$MEDIUM_PATH" 2>/dev/null || true
+    echo "deb [trusted=yes] file:$MEDIUM_PATH $RELEASE main" > "$CHROOT/etc/apt/sources.list.d/debian-live-media.list"
+    chroot "$CHROOT" apt-get update 2>/dev/null || true
+fi
+
+# Clean up mountpoint artifacts
+rmdir "$CHROOT/run/live/medium" 2>/dev/null || true
+rmdir "$CHROOT/run/live" 2>/dev/null || true
+
+exit 0
