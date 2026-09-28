@@ -4,6 +4,18 @@ const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const http = require('http');
 
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+app.commandLine.appendSwitch('ozone-platform', 'x11');
+
+app.on('child-process-gone', (event, details) => {
+  if (details.type === 'GPU') {
+    console.log('[HexStrike] GPU process recovered in software compatibility mode');
+  }
+});
+
 let mainWindow = null;
 let activeProcess = null;
 

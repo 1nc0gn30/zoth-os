@@ -1,6 +1,18 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+app.commandLine.appendSwitch('ozone-platform', 'x11');
+
+app.on('child-process-gone', (event, details) => {
+  if (details.type === 'GPU') {
+    console.log('[Zoth Glow] GPU process recovered in software compatibility mode');
+  }
+});
+
 // ── Zoth Gold Aura — OS-layer magical gold glow that follows the cursor ─────
 // Transparent, always-on-top, click-through overlay. The RENDERER polls the
 // true X11 cursor itself (via xdotool + nodeIntegration) because the main

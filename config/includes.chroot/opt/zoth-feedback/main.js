@@ -4,6 +4,18 @@ const fs = require('fs');
 const os = require('os');
 const { exec } = require('child_process');
 
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+app.commandLine.appendSwitch('ozone-platform', 'x11');
+
+app.on('child-process-gone', (event, details) => {
+  if (details.type === 'GPU') {
+    console.log('[Zoth Feedback] GPU process recovered in software compatibility mode');
+  }
+});
+
 let mainWindow = null;
 
 function createWindow() {
@@ -27,7 +39,7 @@ function createWindow() {
     fullscreenable: true,
     title: 'ZOTHOS // ANONYMOUS SOVEREIGN FEEDBACK',
     backgroundColor: '#05070a',
-    show: false,
+    show: true,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
@@ -36,11 +48,8 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-    mainWindow.focus();
-  });
+  mainWindow.show();
+  mainWindow.focus();
 
   mainWindow.on('closed', () => {
     mainWindow = null;

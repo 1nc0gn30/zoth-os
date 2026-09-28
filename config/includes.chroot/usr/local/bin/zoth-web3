@@ -5,9 +5,9 @@
 set -euo pipefail
 
 if [[ -n "${DISPLAY:-}" ]] && command -v electron >/dev/null 2>&1 && [[ -f "/opt/zoth-web3-app/main.js" ]]; then
-    exec electron --no-sandbox /opt/zoth-web3-app "$@"
+    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox /opt/zoth-web3-app "$@"
 elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-web3-app" ]]; then
-    exec electron --no-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-web3-app "$@"
+    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-web3-app "$@"
 else
     exec konsole -qwindowtitle "Web3 Sovereign Engineering" -e zoth-tool-nexus --domain 7
 fi

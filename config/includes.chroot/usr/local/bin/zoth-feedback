@@ -7,9 +7,9 @@ set -euo pipefail
 FEEDBACK_DIR="/opt/zoth-feedback"
 
 if command -v electron >/dev/null 2>&1; then
-    exec electron --no-sandbox "$FEEDBACK_DIR" "$@"
+    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$FEEDBACK_DIR" "$@"
 elif [[ -x "/usr/local/bin/electron" ]]; then
-    exec /usr/local/bin/electron --no-sandbox "$FEEDBACK_DIR" "$@"
+    exec /usr/local/bin/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$FEEDBACK_DIR" "$@"
 elif command -v google-chrome >/dev/null 2>&1; then
     exec google-chrome --no-sandbox --app="file://$FEEDBACK_DIR/index.html" "$@"
 elif command -v firefox >/dev/null 2>&1; then

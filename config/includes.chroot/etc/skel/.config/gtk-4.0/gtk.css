@@ -31,7 +31,6 @@ window.csd headerbar button:active {
     background: rgba(255, 215, 0, 0.45);
     border: 1.5px solid #ffffff;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
-    transform: scale(0.94);
 }
 
 /* ── Rubberband Selection Box (Desktop & File Manager) ────────────────────── */
@@ -76,7 +75,6 @@ button:checked {
     background-color: rgba(255, 215, 0, 0.35);
     border-color: #ffd700;
     box-shadow: 0 0 22px rgba(255, 215, 0, 0.8), inset 0 0 12px rgba(255, 215, 0, 0.3);
-    transform: scale(0.96);
 }
 
 /* ── Context Menus & Popovers ─────────────────────────────────────────────── */
@@ -111,7 +109,6 @@ menuitem:active,
     background: linear-gradient(90deg, rgba(255, 215, 0, 0.42) 0%, rgba(245, 158, 11, 0.22) 100%);
     color: #ffffff;
     box-shadow: 0 0 22px rgba(255, 215, 0, 0.7);
-    transform: scale(0.98);
 }
 
 /* ── Input Fields & Search Bars ──────────────────────────────────────────── */
@@ -159,7 +156,6 @@ scrollbar slider:active {
     background-color: rgba(255, 215, 0, 0.22);
     border: 1px solid #ffd700;
     box-shadow: 0 0 22px rgba(255, 215, 0, 0.7), inset 0 0 8px rgba(255, 215, 0, 0.2);
-    transform: scale(1.04);
 }
 
 .xfce4-panel button:active,
@@ -168,5 +164,4 @@ scrollbar slider:active {
     background-color: rgba(255, 215, 0, 0.50);
     border: 2px solid #ffffff;
     box-shadow: 0 0 32px rgba(255, 215, 0, 0.95), inset 0 0 14px rgba(255, 215, 0, 0.5);
-    transform: scale(0.95);
 }

@@ -3,6 +3,18 @@ const path = require('path');
 const http = require('http');
 const { spawn, exec, execSync } = require('child_process');
 
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+app.commandLine.appendSwitch('ozone-platform', 'x11');
+
+app.on('child-process-gone', (event, details) => {
+  if (details.type === 'GPU') {
+    console.log('[Zoth OS] GPU process recovered in software compatibility mode');
+  }
+});
+
 let mainWindow = null;
 let pyProcess = null;
 const PORT = 8770;
@@ -47,7 +59,7 @@ function createWindow() {
     fullscreenable: true,
     title: 'ZOTH OS DESK',
     backgroundColor: '#05070a',
-    show: false,
+    show: true,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
@@ -58,11 +70,8 @@ function createWindow() {
 
   // Load index.html directly as a native Electron app
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-    mainWindow.focus();
-  });
+  mainWindow.show();
+  mainWindow.focus();
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);

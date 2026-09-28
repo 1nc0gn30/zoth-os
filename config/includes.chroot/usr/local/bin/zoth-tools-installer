@@ -31,4 +31,4 @@ fi
 eb=$(find_electron) || { echo "[-] Electron binary not found." >&2; exit 1; }
 dir=$(resolve_app_dir) || { echo "[-] $APP not found." >&2; exit 1; }
 
-exec "$eb" --no-sandbox "$dir" "$@"
+exec "$eb" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$dir" "$@"

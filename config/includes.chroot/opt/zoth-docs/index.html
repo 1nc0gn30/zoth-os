@@ -320,6 +320,8 @@
     </div>
     <ul class="nav-list" id="navList">
       <li class="nav-item active" data-target="manifesto"><span class="nav-icon">📜</span> The Sovereign Manifesto</li>
+      <li class="nav-item" data-target="os-identity"><span class="nav-icon">👑</span> ZothOS Core & Architecture</li>
+      <li class="nav-item" data-target="studio"><span class="nav-icon">⚡</span> Zoth Studio Pro & Workstations</li>
       <li class="nav-item" data-target="vault"><span class="nav-icon">🔐</span> Sovereign Vault & Secrets</li>
       <li class="nav-item" data-target="agents"><span class="nav-icon">🤖</span> AI Coding Agents & Swarms</li>
       <li class="nav-item" data-target="cloud-web"><span class="nav-icon">🌐</span> Cloud & Web Engineering</li>
@@ -366,7 +368,134 @@
       </div>
     </section>
 
-    <!-- 2. Sovereign Vault & Secrets -->
+    <!-- 2. ZothOS Core & Architecture -->
+    <section class="doc-section" id="os-identity">
+      <h2>ZothOS Linux Core & System Identity</h2>
+      <p class="section-subtitle">Deep dive into the Debian 13 base, dual sovereign accounts, package pinning, and installer architecture.</p>
+
+      <h3>Sovereign User Hierarchy</h3>
+      <p>ZothOS enforces a dual-operator security architecture designed for segregated execution, security auditing, and continuous workflow testing:</p>
+      
+      <div class="grid">
+        <div class="card">
+          <h4>👑 Primary Operator: <code>zoth</code></h4>
+          <p><strong>UID:</strong> 1000 &nbsp;|&nbsp; <strong>Default Password:</strong> <code>zoth</code></p>
+          <p>The default live session user. Pre-provisioned with full KDE Plasma 6.3 desktop configurations, gold theme assets, verified tool shortcuts, and passwordless sudo access.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Secondary Operator: <code>azoth</code></h4>
+          <p><strong>UID:</strong> 1001 &nbsp;|&nbsp; <strong>Default Password:</strong> <code>zoth</code></p>
+          <p>Secondary administrative user reserved for sandboxed agent executions, build isolation, and root-level testing without polluting the primary desktop profile.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-gold">
+        <strong>Root Sudo Access:</strong> Both <code>zoth</code> and <code>azoth</code> have passwordless administrative privileges via <code>/etc/sudoers.d/010_zoth-nopasswd</code>. Legacy installer accounts (such as <code>neo</code>) have been completely removed from system manifests.
+      </div>
+
+      <h3>Dual Repositories & Pinning Architecture</h3>
+      <p>ZothOS integrates three world-class package repositories unified under intelligent Debian APT pinning:</p>
+      <ul>
+        <li><strong>Debian Trixie (Debian 13) [Priority 900]:</strong> Core operating system, systemd, libc6, display server, and KDE Plasma 6 environment.</li>
+        <li><strong>Kali Linux Rolling [Priority 500]:</strong> Full offensive security, wireless penetration, and exploitation tool catalog.</li>
+        <li><strong>Parrot Security [Priority 500]:</strong> Privacy, digital forensics, reverse engineering, and cryptography tool suites.</li>
+      </ul>
+      <p>This pinning strategy guarantees that running <code>sudo apt install &lt;tool&gt;</code> immediately installs any package from Kali or Parrot without risking core system library collisions or breaking Debian desktop stability.</p>
+
+      <h3>Calamares Sovereign Installer</h3>
+      <p>The system installer (launched via <strong>Install ZothOS 3.0</strong> desktop icon or <code>launch-calamares</code>) is tailored for seamless bare-metal or VM deployments:</p>
+      <ul>
+        <li><strong>Alchemical Styling:</strong> Custom dark obsidian and 24K alchemical gold interface stylesheet.</li>
+        <li><strong>Flexible Password Policy:</strong> Password dictionary checks are explicitly disabled (<code>allowWeakPasswords: true</code>) to ensure user-defined passphrases are never rejected during install.</li>
+        <li><strong>Offline Safe Media Handling:</strong> Patched media handlers skip non-existent USB package pools and preserve Debian Trixie + Kali/Parrot pinning in the installed target OS.</li>
+      </ul>
+
+      <h3>Desktop Application Launchers</h3>
+      <p>All desktop shortcuts in <code>~/Desktop</code> have been hardened for live session reliability:</p>
+      <table>
+        <thead>
+          <tr><th>Application</th><th>Shortcut / Command</th><th>Runtime & Safety Features</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Zoth Studio Pro</strong></td><td><code>zoth-studio</code></td><td>Multi-tier Electron + WebKit2GTK standalone cockpit with auto local server</td></tr>
+          <tr><td><strong>Maya Video Studio</strong></td><td><code>maya</code></td><td>Electron desktop video mockup studio with device frames & CapCut export</td></tr>
+          <tr><td><strong>HexStrike AI Terminal</strong></td><td><code>hexstrike</code></td><td>FastAPI neural red-teaming backend with 3D glass interface</td></tr>
+          <tr><td><strong>Zoth Sovereign Vault</strong></td><td><code>zoth-vault</code></td><td>Argon2id + ChaCha20-Poly1305 CLI & TUI with memory process injector</td></tr>
+          <tr><td><strong>ZothOS Cockpit</strong></td><td><code>zoth-cockpit</code></td><td>Curses terminal operations center for hardware, network, and agent metrics</td></tr>
+          <tr><td><strong>Zoth Tool Nexus</strong></td><td><code>zoth-tool-nexus</code></td><td>Interactive orchestrator for 175+ sovereign penetration & AI tools</td></tr>
+          <tr><td><strong>Zoth Codex Manual</strong></td><td><code>zoth-docs</code></td><td>Standalone sovereign documentation codex with zero external calls</td></tr>
+          <tr><td><strong>Signal Guard</strong></td><td><code>signal-desktop</code></td><td>End-to-end encrypted messaging with SUID sandbox fixes & wrapper</td></tr>
+          <tr><td><strong>Element Matrix</strong></td><td><code>element-desktop</code></td><td>Decentralized Matrix chat client with hardened Electron runtime</td></tr>
+          <tr><td><strong>SimpleX Chat</strong></td><td><code>simplex-desktop</code></td><td>Metadata-free chat with native unpacked runtime (no FUSE dependency)</td></tr>
+          <tr><td><strong>Tor Privacy Browser</strong></td><td><code>tor-browser</code></td><td>Pre-bundled onion browser with isolated home directory profile</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 3. Zoth Studio Pro & Workstations -->
+    <section class="doc-section" id="studio">
+      <h2>Zoth Studio Pro & 3D Alchemical Cockpit</h2>
+      <p class="section-subtitle">Complete operational manual for the 37 workstations, multi-agent swarm, local asset server, and Vault integration.</p>
+
+      <h3>Architecture & Multi-Tier Runtime</h3>
+      <p><strong>Zoth Studio Pro</strong> operates on a resilient multi-tier standalone architecture. When launched via <code>zoth-studio</code>, the system executes the following boot sequence:</p>
+      <ol>
+        <li><strong>Local Asset Server Daemon:</strong> Spawns an internal HTTP server bound to <code>127.0.0.1</code> on the first available port (preferred: <code>3000</code>, <code>8088</code>, <code>8080</code>) serving pre-rendered static assets.</li>
+        <li><strong>Multi-Tier Window Display:</strong>
+          <ul>
+            <li><strong>Tier 1 (Preferred):</strong> Native Electron standalone application window with GPU sandbox fallbacks.</li>
+            <li><strong>Tier 2 (Fallback):</strong> Native WebKit2GTK standalone window with hardware-accelerated WebGL.</li>
+            <li><strong>Tier 3 (Browser Window):</strong> Dedicated standalone application window via Google Chrome, Chromium, or Firefox.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="code-block">
+        <span class="code-badge">BASH</span>
+        <code># Launch Zoth Studio Pro from any terminal:
+zoth-studio
+
+# Launch directly in browser mode:
+zoth-studio --browser
+
+# Trigger instant Studio update / rebuild:
+zoth-studio --update</code>
+        <button class="copy-btn" onclick="copy('zoth-studio')">Copy</button>
+      </div>
+
+      <h3>Key Workstations & Capabilities</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>🤖 Autonomous Swarm Cockpit</h4>
+          <p>Coordinated multi-agent pipeline featuring <strong>Proponent</strong>, <strong>Skeptic</strong>, and <strong>Arbitrator</strong> roles. Synthesizes architectural plans and verifies code changes before execution.</p>
+        </div>
+        <div class="card">
+          <h4>🎨 WebGen Generative Studio</h4>
+          <p>Instant visual web generator powered by Tailwind and modular UI components. Live side-by-side preview with one-click export.</p>
+        </div>
+        <div class="card">
+          <h4>🔐 Integrated Vault Console</h4>
+          <p>Direct GUI bridge to the local Rust Vault daemon (<code>:8787</code>). Manage API keys, inspect Shannon entropy, test leak security, and export to <code>.env</code> with 15-second clipboard auto-clear.</p>
+        </div>
+        <div class="card">
+          <h4>🎬 Maya Video Studio Integration</h4>
+          <p>Native integration with Maya Video Editor (<code>/opt/maya-linux</code>) for device frame wraps, typing overlays, speed ramping, and CapCut project export.</p>
+        </div>
+      </div>
+
+      <h3>Updating & Maintaining Zoth Studio</h3>
+      <p>To pull latest upstream improvements, rebuild routes, or re-render sitemaps without rebuilding the entire OS:</p>
+      <div class="code-block">
+        <span class="code-badge">BASH</span>
+        <code># Rebuild and test Zoth Studio routes locally:
+cd /opt/zoth-studio
+npm run build
+npm run test:routes</code>
+        <button class="copy-btn" onclick="copy('cd /opt/zoth-studio && npm run build')">Copy</button>
+      </div>
+    </section>
+
+    <!-- 4. Sovereign Vault & Secrets -->
     <section class="doc-section" id="vault">
       <h2>Sovereign Vault & Secret Injection</h2>
       <p class="section-subtitle">Zero-leak cryptographic secrets engine powered by Rust, Argon2id, and memory-only process injection.</p>
