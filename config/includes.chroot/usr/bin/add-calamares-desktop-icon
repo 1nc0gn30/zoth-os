@@ -1,0 +1,3 @@
+#!/bin/sh
+# Neutralized: ZothOS ships install-zothos.desktop directly from /etc/skel/Desktop
+exit 0

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Add Calamares Desktop Icon
+Exec=/bin/true
+StartupNotify=false
+NoDisplay=true
+Hidden=true
+X-GNOME-Autostart-enabled=false
+X-KDE-autostart-phase=0

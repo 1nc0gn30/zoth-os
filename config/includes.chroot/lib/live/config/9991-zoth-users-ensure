@@ -1,0 +1,53 @@
+#!/bin/sh
+# ZothOS 3.0 Live-Config User & Desktop Enforcement
+
+# Remove neo if created by any legacy script
+if id neo >/dev/null 2>&1; then
+    userdel -r -f neo 2>/dev/null || true
+    groupdel neo 2>/dev/null || true
+fi
+
+# Ensure groups
+groupadd -g 1000 zoth 2>/dev/null || true
+groupadd -g 1005 azoth 2>/dev/null || true
+groupadd -g 1002 nopasswdlogin 2>/dev/null || true
+groupadd -g 1003 autologin 2>/dev/null || true
+groupadd bluetooth 2>/dev/null || true
+groupadd scanner 2>/dev/null || true
+
+# Ensure zoth user
+if ! id zoth >/dev/null 2>&1; then
+    useradd -u 1000 -g zoth -m -s /bin/bash -c "Zoth Sovereign" zoth
+fi
+usermod -aG sudo,audio,video,netdev,plugdev,dialout,cdrom,dip,lpadmin,scanner,bluetooth,autologin,nopasswdlogin,docker,render,input,kvm zoth 2>/dev/null || true
+echo "zoth:zoth" | chpasswd
+
+# Ensure azoth user
+if ! id azoth >/dev/null 2>&1; then
+    useradd -u 1001 -g azoth -m -s /bin/bash -c "Azoth Master" azoth
+fi
+usermod -aG sudo,audio,video,netdev,plugdev,dialout,cdrom,dip,lpadmin,scanner,bluetooth,autologin,nopasswdlogin,docker,render,input,kvm azoth 2>/dev/null || true
+echo "azoth:zoth" | chpasswd
+
+# Populate homes from /etc/skel if needed
+if [ -d /etc/skel ]; then
+    cp -a /etc/skel/. ${ZOTH_HOME}/ 2>/dev/null || true
+    cp -a /etc/skel/. /home/azoth/ 2>/dev/null || true
+fi
+chown -R zoth:zoth ${ZOTH_HOME} 2>/dev/null || true
+chown -R azoth:azoth /home/azoth 2>/dev/null || true
+
+# Remove any stray Debian installer desktop icon
+rm -f ${ZOTH_HOME}/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /home/azoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+
+# Ensure sudoers
+cat << 'SUDEOF' > /etc/sudoers.d/99-zoth-users
+zoth ALL=(ALL:ALL) NOPASSWD: ALL
+azoth ALL=(ALL:ALL) NOPASSWD: ALL
+SUDEOF
+chmod 0440 /etc/sudoers.d/99-zoth-users
+rm -f /etc/sudoers.d/neo 2>/dev/null || true
+
+exit 0

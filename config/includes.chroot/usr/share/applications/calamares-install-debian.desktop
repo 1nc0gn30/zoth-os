@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Debian (Disabled)
+Exec=/bin/true
+Icon=install-debian
+Terminal=false
+Categories=System;
+NoDisplay=true
+Hidden=true

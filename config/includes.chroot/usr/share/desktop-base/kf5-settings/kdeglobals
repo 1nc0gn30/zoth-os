@@ -5,4 +5,4 @@ XftSubPixel=rgb
 BrowserApplication=firefox-esr.desktop
 
 [KDE]
-LookAndFeelPackage=org.debian.desktop
+LookAndFeelPackage=org.kde.breezedark.desktop

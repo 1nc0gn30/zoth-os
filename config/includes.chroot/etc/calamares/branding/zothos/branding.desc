@@ -3,7 +3,7 @@ componentName:   zothos
 welcomeStyleCalamares: true
 welcomeExpandingLogo: true
 windowExpanding: normal
-windowSize: 850px,600px
+windowSize: 920px,640px
 windowPlacement: center
 
 strings:
@@ -29,11 +29,12 @@ images:
     productWelcome:      "welcome.png"
 
 slideshow:               "show.qml"
+stylesheet:              "stylesheet.qss"
 
 style:
-   SidebarBackground:    "#06090e"
-   SidebarText:          "#f1f5f9"
-   SidebarTextCurrent:   "#ffd700"
+   SidebarBackground:        "#06090e"
+   SidebarText:              "#94a3b8"
+   SidebarTextCurrent:       "#ffd700"
    SidebarBackgroundCurrent: "#151e2e"
 
 slideshowAPI: 2

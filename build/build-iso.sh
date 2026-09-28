@@ -67,7 +67,7 @@ lb config \
     --initramfs live-boot \
     --linux-flavours amd64 \
     --linux-packages linux-image-amd64 \
-    --bootappend-live "boot=live components username=neo hostname=zothos quiet splash systemd.unit=graphical.target" \
+    --bootappend-live "boot=live components username=zoth hostname=zothos quiet splash systemd.unit=graphical.target" \
     --apt-secure false \
     --apt-options "--yes --ignore-missing"
 
@@ -112,10 +112,10 @@ cat <<'EOF' > config/hooks/normal/099-zothos-setup.hook.chroot
 #!/bin/sh
 set -e
 
-if ! id "neo" >/dev/null 2>&1; then
+if ! id "zoth" >/dev/null 2>&1; then
     groupadd -f docker || true
-    useradd -m -s /bin/bash -G sudo,audio,video neo 2>/dev/null || true
-    echo "neo:zoth" | chpasswd
+    useradd -m -s /bin/bash -G sudo,audio,video zoth; useradd -m -s /bin/bash -G sudo,audio,video azoth 2>/dev/null || true
+    echo "zoth:zoth"; echo "azoth:zoth" | chpasswd
 fi
 
 # Enable NetworkManager and LightDM
@@ -131,7 +131,7 @@ fi
 
 # Setup Fastfetch / Bash defaults
 cp -rf /etc/skel/. ${ZOTH_HOME}/
-chown -R neo:neo ${ZOTH_HOME}
+chown -R zoth:zoth ${ZOTH_HOME}
 
 echo "[ZOTHOS HOOK] Complete."
 EOF
