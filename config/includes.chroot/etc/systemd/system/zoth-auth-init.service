@@ -2,12 +2,15 @@
 Description=ZOTHOS Sovereign Authentication & Credential Enforcer
 DefaultDependencies=no
 After=systemd-remount-fs.service
-Before=sysinit.target sddm.service systemd-user-sessions.service
+Before=sddm.service lightdm.service systemd-user-sessions.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/zoth-auth-init
 RemainAfterExit=yes
+TimeoutSec=15
+StandardOutput=journal+console
+StandardError=journal+console
 
 [Install]
-WantedBy=sysinit.target
+WantedBy=basic.target

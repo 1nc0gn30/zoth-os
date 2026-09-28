@@ -41,7 +41,7 @@ fi
     if command -v ipfs >/dev/null 2>&1; then
         if [[ ! -d "${ZOTH_HOME}/.ipfs" ]]; then
             log "Initializing IPFS node..."
-            su - neo -c "ipfs init" >> "$LOG" 2>&1 || true
+            su - zoth -c "ipfs init" >> "$LOG" 2>&1 || true
         fi
     fi
 
@@ -57,7 +57,7 @@ fi
 
     # Mark firstboot as complete
     touch "$FLAG"
-    chown neo:neo "$FLAG" 2>/dev/null || true
+    chown zoth:zoth "$FLAG" 2>/dev/null || true
     log "First-boot provisioning completed successfully."
 
     # Final completion notification

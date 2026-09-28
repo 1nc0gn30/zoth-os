@@ -43,13 +43,15 @@ fi
 # ── 1. Grant passwordless sudo to the autologin user ───────────────────────
 # Needed so the GUI tools-installer and scripted installs can run apt without
 # a TTY/password prompt on the live boot.
-echo "[SUDO] Granting passwordless sudo to 'neo'..."
+echo "[SUDO] Granting passwordless sudo to 'zoth' and 'azoth'..."
 mkdir -p /etc/sudoers.d
-cat > /etc/sudoers.d/90-zothos-neo << 'SUDOEOF'
-neo ALL=(ALL) NOPASSWD:ALL
+cat > /etc/sudoers.d/99-zoth-users << 'SUDOEOF'
+zoth ALL=(ALL) NOPASSWD:ALL
+azoth ALL=(ALL) NOPASSWD:ALL
 SUDOEOF
-chmod 440 /etc/sudoers.d/90-zothos-neo
-echo "[SUDO] Passwordless sudo configured for neo"
+chmod 440 /etc/sudoers.d/99-zoth-users
+rm -f /etc/sudoers.d/90-zothos-neo /etc/sudoers.d/neo 2>/dev/null || true
+echo "[SUDO] Passwordless sudo configured for zoth and azoth"
 
 # ── 2. Check Network Connectivity ──────────────────────────────────────────
 export DEBIAN_FRONTEND=noninteractive
@@ -167,7 +169,7 @@ gtk-update-icon-cache -f -q /usr/share/icons/hicolor 2>/dev/null || true
 gtk-update-icon-cache -f -q /usr/share/icons/Zoth-Hermetic 2>/dev/null || true
 
 # Set GTK theme via gsettings for all users
-for home_dir in /root ${ZOTH_HOME} /etc/skel; do
+for home_dir in /root ${ZOTH_HOME} /home/azoth /etc/skel; do
     if [[ -d "$home_dir" ]]; then
         mkdir -p "$home_dir/.config/xfce4/xfconf/xfce-perchannel-xml" 2>/dev/null || true
     fi

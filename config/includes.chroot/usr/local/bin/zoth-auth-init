@@ -1,49 +1,95 @@
 #!/bin/bash
-set -e
+# ==============================================================================
+#  ZOTHOS Sovereign Authentication & Credential Enforcer
+# ==============================================================================
 
-# Ensure neo user exists
-if ! id -u neo >/dev/null 2>&1; then
-    useradd -m -s /bin/bash -u 1000 -U neo
+# Ensure neo user is removed if present
+if id neo >/dev/null 2>&1; then
+    userdel -r -f neo 2>/dev/null || true
+    groupdel neo 2>/dev/null || true
 fi
 
-# Set unambiguous password zoth for neo and root
-echo "neo:zoth" | chpasswd
-echo "root:zoth" | chpasswd
+# Ensure essential groups exist
+groupadd -g 1000 zoth 2>/dev/null || true
+groupadd -g 1005 azoth 2>/dev/null || true
+groupadd -g 1002 nopasswdlogin 2>/dev/null || true
+groupadd -g 1003 autologin 2>/dev/null || true
+groupadd bluetooth 2>/dev/null || true
+groupadd scanner 2>/dev/null || true
 
-# Crucial: Fix permissions so unix_chkpwd can authenticate
-chown root:shadow /etc/shadow /etc/gshadow
-chmod 640 /etc/shadow /etc/gshadow
-chmod 644 /etc/passwd /etc/group
+# Ensure primary user 'zoth' exists
+if ! id -u zoth >/dev/null 2>&1; then
+    useradd -m -s /bin/bash -u 1000 -g 1000 -c "Zoth Sovereign" zoth 2>/dev/null || useradd -m -s /bin/bash zoth 2>/dev/null || true
+fi
 
-# Ensure neo is in all essential groups
-usermod -aG sudo,audio,video,netdev,plugdev,dialout neo 2>/dev/null || true
+# Ensure secondary user 'azoth' exists
+if ! id -u azoth >/dev/null 2>&1; then
+    useradd -m -s /bin/bash -u 1001 -g 1005 -c "Azoth Master" azoth 2>/dev/null || useradd -m -s /bin/bash azoth 2>/dev/null || true
+fi
 
-# Passwordless sudo for neo with strict root permissions
+# Set unambiguous passwords for zoth, azoth, and root
+echo "zoth:zoth" | chpasswd 2>/dev/null || true
+echo "azoth:zoth" | chpasswd 2>/dev/null || true
+echo "root:zoth" | chpasswd 2>/dev/null || true
+
+# Crucial: Fix permissions so unix_chkpwd and PAM can authenticate cleanly
+chown root:shadow /etc/shadow /etc/gshadow 2>/dev/null || true
+chmod 640 /etc/shadow /etc/gshadow 2>/dev/null || true
+chmod 644 /etc/passwd /etc/group 2>/dev/null || true
+
+# Ensure zoth and azoth are in all essential groups
+for grp in sudo audio video netdev plugdev dialout cdrom dip lpadmin scanner bluetooth autologin nopasswdlogin docker render input kvm; do
+    usermod -aG "$grp" zoth 2>/dev/null || true
+    usermod -aG "$grp" azoth 2>/dev/null || true
+done
+
+# Passwordless sudo for zoth and azoth with strict root permissions
 mkdir -p /etc/sudoers.d
-cat << "SUDOEOF" > /etc/sudoers.d/zothos
-neo ALL=(ALL:ALL) NOPASSWD: ALL
+cat << "SUDOEOF" > /etc/sudoers.d/99-zoth-users
+zoth ALL=(ALL:ALL) NOPASSWD: ALL
+azoth ALL=(ALL:ALL) NOPASSWD: ALL
 SUDOEOF
+rm -f /etc/sudoers.d/zothos /etc/sudoers.d/neo /etc/sudoers.d/90-zothos-neo 2>/dev/null || true
 chown -R root:root /etc/sudoers /etc/sudoers.d 2>/dev/null || true
-chmod 755 /etc/sudoers.d
+chmod 755 /etc/sudoers.d 2>/dev/null || true
 chmod 0440 /etc/sudoers.d/* 2>/dev/null || true
 
-
-# Ensure AccountsService icon and neo profile
+# Ensure AccountsService icons and user profiles for zoth & azoth
 mkdir -p /var/lib/AccountsService/{icons,users}
 if [ -f /usr/share/icons/hicolor/512x512/apps/zoth-studio.png ]; then
-    cp -f /usr/share/icons/hicolor/512x512/apps/zoth-studio.png /var/lib/AccountsService/icons/neo
-    chmod 644 /var/lib/AccountsService/icons/neo
+    cp -f /usr/share/icons/hicolor/512x512/apps/zoth-studio.png /var/lib/AccountsService/icons/zoth 2>/dev/null || true
+    cp -f /usr/share/icons/hicolor/512x512/apps/zoth-studio.png /var/lib/AccountsService/icons/azoth 2>/dev/null || true
+    chmod 644 /var/lib/AccountsService/icons/* 2>/dev/null || true
 fi
 
-cat << "ACCEO" > /var/lib/AccountsService/users/neo
+cat << "ACCEO" > /var/lib/AccountsService/users/zoth
 [User]
-Session=plasma
-Icon=/var/lib/AccountsService/icons/neo
+Session=plasmax11
+Icon=/var/lib/AccountsService/icons/zoth
 SystemAccount=false
 ACCEO
-chmod 644 /var/lib/AccountsService/users/neo
 
-# Ensure home directory ownership
-if [ -d ${ZOTH_HOME} ]; then
-    chown -R 1000:1000 ${ZOTH_HOME}
-fi
+cat << "ACCEO2" > /var/lib/AccountsService/users/azoth
+[User]
+Session=plasmax11
+Icon=/var/lib/AccountsService/icons/azoth
+SystemAccount=false
+ACCEO2
+chmod 644 /var/lib/AccountsService/users/* 2>/dev/null || true
+
+# Ensure home directory ownership and populate from skel if needed
+for u in zoth azoth; do
+    if [ -d "/home/$u" ]; then
+        if [ ! -f "/home/$u/.profile" ] && [ -d /etc/skel ]; then
+            cp -a /etc/skel/. "/home/$u/" 2>/dev/null || true
+        fi
+        chown -R "$u:$u" "/home/$u" 2>/dev/null || true
+        chmod 750 "/home/$u" 2>/dev/null || true
+    fi
+done
+
+# Ensure stray Debian installer desktop icons are purged
+rm -f /home/*/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+
+exit 0
