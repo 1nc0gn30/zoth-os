@@ -1,0 +1,14 @@
+[Unit]
+Description=ZothOS Live Boot Journal Persister
+DefaultDependencies=no
+After=basic.target
+Before=shutdown.target reboot.target poweroff.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c 'mkdir -p /var/log/zoth; journalctl -b > /var/log/zoth/startup-journal.log 2>&1 || true'
+ExecStop=/bin/sh -c 'mkdir -p /var/log/zoth; journalctl -b > /var/log/zoth/shutdown-journal.log 2>&1; for d in /mnt/* /media/* /run/media/*; do if [ -w "$d" ]; then cp -f /var/log/zoth/*.log "$d/" 2>/dev/null || true; fi; done'
+
+[Install]
+WantedBy=graphical.target multi-user.target

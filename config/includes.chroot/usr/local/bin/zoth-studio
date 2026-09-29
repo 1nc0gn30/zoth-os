@@ -124,7 +124,7 @@ def launch_gui(port):
 
     # Hardware acceleration & rendering tuning
     os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "0")
-    os.environ.setdefault("GDK_BACKEND", "x11")
+    os.environ.setdefault("GDK_BACKEND", "wayland,x11")
     os.environ["PORT"] = str(port)
 
     # 1. Try native Electron standalone app first
@@ -146,7 +146,9 @@ def launch_gui(port):
             electron_flags = [
                 electron_bin,
                 "--no-sandbox",
+                "--disable-dev-shm-usage",
                 "--disable-gpu-sandbox",
+                "--ozone-platform-hint=auto",
                 STUDIO_ROOT
             ]
             proc = subprocess.Popen(electron_flags, env=os.environ.copy())

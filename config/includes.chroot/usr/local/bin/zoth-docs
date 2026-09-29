@@ -5,10 +5,19 @@
 set -euo pipefail
 
 DOCS_DIR="/opt/zoth-docs"
-if command -v electron >/dev/null 2>&1; then
-    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$DOCS_DIR" "$@"
-elif [[ -x "/usr/local/bin/electron" ]]; then
-    exec /usr/local/bin/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$DOCS_DIR" "$@"
+ELECTRON_FLAGS=(
+    --no-sandbox
+    --disable-dev-shm-usage
+    --disable-gpu-sandbox
+    --ozone-platform-hint=auto
+)
+
+if [[ -x "/usr/local/bin/electron" ]]; then
+    exec /usr/local/bin/electron "${ELECTRON_FLAGS[@]}" "$DOCS_DIR" "$@"
+elif [[ -x "/opt/electron/electron" ]]; then
+    exec /opt/electron/electron "${ELECTRON_FLAGS[@]}" "$DOCS_DIR" "$@"
+elif command -v electron >/dev/null 2>&1; then
+    exec electron "${ELECTRON_FLAGS[@]}" "$DOCS_DIR" "$@"
 elif command -v google-chrome >/dev/null 2>&1; then
     exec google-chrome --no-sandbox --app="file://$DOCS_DIR/index.html" "$@"
 elif command -v firefox >/dev/null 2>&1; then

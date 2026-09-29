@@ -1,0 +1,13 @@
+[Unit]
+Description=Ensure X11 and ICE Unix domain socket directories exist
+DefaultDependencies=no
+After=systemd-tmpfiles-setup.service tmp.mount
+Before=display-manager.service sddm.service x11-common.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c 'mkdir -p /tmp/.X11-unix /tmp/.ICE-unix && chmod 1777 /tmp /tmp/.X11-unix /tmp/.ICE-unix && chown root:root /tmp /tmp/.X11-unix /tmp/.ICE-unix'
+
+[Install]
+WantedBy=graphical.target multi-user.target

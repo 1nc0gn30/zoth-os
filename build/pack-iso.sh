@@ -13,6 +13,27 @@ echo "✦ Synchronizing config/includes.chroot..."
 sudo rsync -aHAX --delete ../../config/includes.chroot/ config/includes.chroot/
 sudo rsync -aHAX ../../config/includes.chroot/ chroot/
 
+echo "✦ Scrubbing sensitive data, histories, and build caches..."
+sudo find chroot -name "*aider*" -exec rm -rf {} + 2>/dev/null || true
+sudo find chroot -name ".bash_history" -exec rm -f {} + 2>/dev/null || true
+sudo find chroot -name ".zsh_history" -exec rm -f {} + 2>/dev/null || true
+sudo find chroot -name ".lesshst" -exec rm -f {} + 2>/dev/null || true
+sudo find chroot -name ".viminfo" -exec rm -f {} + 2>/dev/null || true
+sudo rm -rf chroot/root/.cache chroot/root/.local chroot/root/.aider 2>/dev/null || true
+sudo rm -rf chroot/var/cache/apt/archives/*.deb 2>/dev/null || true
+sudo rm -rf chroot/tmp/appimage_extracted_* chroot/tmp/testenv chroot/tmp/node-compile-cache chroot/tmp/scoped_dir* chroot/tmp/hsperfdata_* 2>/dev/null || true
+sudo find chroot/tmp -mindepth 1 ! -name ".X11-unix" ! -name ".ICE-unix" -delete 2>/dev/null || true
+sudo mkdir -p chroot/tmp/.X11-unix chroot/tmp/.ICE-unix
+sudo chmod 1777 chroot/tmp chroot/tmp/.X11-unix chroot/tmp/.ICE-unix
+sudo find chroot/var/log -type f -exec truncate -s 0 {} + 2>/dev/null || true
+sudo rm -rf chroot/var/log/journal/* 2>/dev/null || true
+
+echo "✦ Enforcing strict root:root ownership on all system directories..."
+sudo chown root:root chroot
+sudo chown -R root:root chroot/etc chroot/usr chroot/var chroot/opt chroot/boot chroot/root
+sudo chown -R 997:988 chroot/usr/share/ollama 2>/dev/null || true
+
+
 echo "✦ Enforcing strict root security permissions (sudoers, SUID sandboxes)..."
 sudo chown -R root:root chroot/etc/sudoers.d chroot/etc/sudoers
 sudo chmod 0755 chroot/etc/sudoers.d

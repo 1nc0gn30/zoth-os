@@ -1,8 +1,62 @@
-#!/bin/bash
-# One Electron runtime for Maya and the Zoth desktop apps.
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS BULLETPROOF ELECTRON APPLICATION RUNTIME
+# ==============================================================================
+set -e
+
 export LD_LIBRARY_PATH="/opt/electron:${LD_LIBRARY_PATH:-}"
-if [[ -x /opt/electron/electron ]]; then
-  exec /opt/electron/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$@"
+
+# Ensure socket directory exists
+if [[ ! -d /tmp/.X11-unix ]]; then
+    mkdir -p /tmp/.X11-unix 2>/dev/null || true
+    chmod 1777 /tmp/.X11-unix 2>/dev/null || true
 fi
-echo "Electron is not installed under /opt/electron." >&2
-exit 1
+
+ELECTRON_BIN="/opt/electron/electron"
+if [[ ! -x "$ELECTRON_BIN" ]]; then
+    if [[ -x "${ZOTH_HOME}/zothos/config/includes.chroot/opt/electron/electron" ]]; then
+        ELECTRON_BIN="${ZOTH_HOME}/zothos/config/includes.chroot/opt/electron/electron"
+    elif [[ -x "/usr/bin/electron" ]]; then
+        ELECTRON_BIN="/usr/bin/electron"
+    elif [[ -x "/usr/local/lib/node_modules/electron/dist/electron" ]]; then
+        ELECTRON_BIN="/usr/local/lib/node_modules/electron/dist/electron"
+    else
+        echo "Electron is not installed under /opt/electron." >&2
+        exit 1
+    fi
+fi
+
+FLAGS=(
+    --no-sandbox
+    --disable-dev-shm-usage
+    --disable-gpu-sandbox
+)
+
+# Ozone / Display Server Handling
+if [[ -n "${WAYLAND_DISPLAY:-}" ]] && [[ -z "${DISPLAY:-}" ]]; then
+    FLAGS+=(
+        --ozone-platform=wayland
+        --enable-features=UseOzonePlatform,WaylandWindowDecorations
+    )
+elif [[ -n "${DISPLAY:-}" ]]; then
+    FLAGS+=(
+        --ozone-platform=x11
+    )
+else
+    FLAGS+=(
+        --ozone-platform-hint=auto
+        --enable-features=UseOzonePlatform,WaylandWindowDecorations
+    )
+fi
+
+# Dual-GPU / Nouveau / Software rendering safeguard:
+# If Nouveau is loaded or software rendering requested or Intel/Nvidia hybrid detected:
+# disable hardware compositing black screen by disabling GPU rasterization cleanly
+if grep -qs "nouveau" /proc/modules 2>/dev/null || [[ "${ZOTH_SOFTWARE_RENDER:-0}" == "1" ]] || [[ "${LIBGL_ALWAYS_SOFTWARE:-0}" == "1" ]]; then
+    FLAGS+=(
+        --disable-gpu
+        --disable-software-rasterizer=false
+    )
+fi
+
+exec "$ELECTRON_BIN" "${FLAGS[@]}" "$@"

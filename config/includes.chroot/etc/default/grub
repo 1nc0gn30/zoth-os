@@ -1,0 +1,14 @@
+# ZOTHOS Custom GRUB Configuration
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="ZothOS"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+GRUB_CMDLINE_LINUX=""
+
+# Full HD Matrix Boot Theme & Splash
+GRUB_GFXMODE="1920x1080,1280x720,auto"
+GRUB_GFXPAYLOAD_LINUX="keep"
+GRUB_THEME="/boot/grub/themes/zoth-hermetic/theme.txt"
+
+# OS Prober
+GRUB_DISABLE_OS_PROBER=false

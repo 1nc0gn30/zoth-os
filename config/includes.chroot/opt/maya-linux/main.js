@@ -48,7 +48,8 @@ if (process.platform === 'linux') {
   app.commandLine.appendSwitch('no-sandbox');
   app.commandLine.appendSwitch('disable-gpu-sandbox');
   app.commandLine.appendSwitch('disable-dev-shm-usage');
-  app.commandLine.appendSwitch('enable-transparent-visuals');
+  app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+  app.disableHardwareAcceleration();
 }
 
 function resolveLocalFile(win, paths) {
