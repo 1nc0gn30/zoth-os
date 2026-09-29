@@ -54,34 +54,56 @@ mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
 echo -e "${CYAN}[3/6] Initializing live-build configuration...${RESET}"
-export LIVE_BUILD=/usr/lib/live
+# ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
+# setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
+unset LIVE_BUILD
 lb config \
     --distribution trixie \
     --architecture amd64 \
     --archive-areas "main contrib non-free non-free-firmware" \
-    --bootloader syslinux \
+    --bootloaders "syslinux grub-efi" \
     --binary-images iso-hybrid \
     --iso-application "ZOTHOS Linux 1.0 (Azoth)" \
     --iso-publisher "Zoth Studio & NullAI <https://zoth.nullai.tech>" \
     --iso-volume "ZOTHOS_1.0" \
     --initramfs live-boot \
     --linux-flavours amd64 \
-    --linux-packages linux-image-amd64 \
+    --linux-packages linux-image \
     --bootappend-live "boot=live components username=zoth hostname=zothos quiet splash systemd.unit=graphical.target" \
     --apt-secure false \
     --apt-options "--yes --ignore-missing"
 
-# Add Kali and Parrot repositories for security/AI packages
-mkdir -p "$WORK_DIR/config/apt/sources.list.d"
-cat > "$WORK_DIR/config/apt/sources.list.d/kali.list" << 'KALEOF'
-deb [trusted=yes] http://http.kali.org/kali kali-rolling main non-free non-free-firmware
+# ZOTHOS-LOCALFIX: live-build reads repos from config/archives/*.list.chroot,
+# NOT config/apt/sources.list.d (that dir was silently ignored, so Kali/Parrot
+# packages were never available in the previous builds).
+mkdir -p "$WORK_DIR/config/archives"
+cat > "$WORK_DIR/config/archives/kali.list.chroot" << 'KALEOF'
+deb [trusted=yes] http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
 KALEOF
-cat > "$WORK_DIR/config/apt/sources.list.d/parrot.list" << 'PAROTEOF'
-deb [trusted=yes] http://deb.parrot.sh/parrot parrot main non-free non-free-firmware
+# ZOTHOS-LOCALFIX: apt pinning must be active DURING the build (config/archives/*.pref.chroot).
+# Without it, Kali rolling (same priority 500, newer versions) dist-upgrades libc6/perl/python
+# of the trixie base and the package install stage collapses into unmet dependencies.
+cat > "$WORK_DIR/config/archives/zothos.pref.chroot" << 'PREFEOF'
+Package: *
+Pin: release o=Debian
+Pin-Priority: 700
+
+Package: *
+Pin: release o=Kali
+Pin-Priority: 100
+
+Package: *
+Pin: release o=Parrot
+Pin-Priority: 100
+PREFEOF
+# ZOTHOS-LOCALFIX: deb.parrot.sh is unreachable from this build host (TLS EOF);
+# using an official Parrot mirror instead. Set to true to enable.
+ENABLE_PARROT="${ENABLE_PARROT:-false}"
+if [ "$ENABLE_PARROT" = "true" ]; then
+cat > "$WORK_DIR/config/archives/parrot.list.chroot" << 'PAROTEOF'
+deb [trusted=yes] https://parrot.mirror.garr.it/mirrors/parrot parrot main contrib non-free
 PAROTEOF
-cat > "$WORK_DIR/config/apt/sources.list.d/zothos.list" << 'ZOTHOEOF'
-deb [trusted=yes] file:///opt/zothos/repo /
-ZOTHOEOF
+fi
 
 echo -e "${CYAN}[4/6] Staging package lists and chroot inclusions...${RESET}"
 mkdir -p config/package-lists
@@ -154,7 +176,9 @@ cp -a "$PROJECT_DIR/config/includes.chroot/usr/share/plymouth/themes/." config/i
 
 echo -e "${GREEN}[6/6] Starting Live-Build execution (lb build)...${RESET}"
 echo -e "${YELLOW}[*] This will bootstrap the Debian base, fetch security & AI packages, and compile the ISO.${RESET}"
-export LIVE_BUILD=/usr/lib/live
+# ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
+# setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
+unset LIVE_BUILD
 lb build 2>&1 | tee /tmp/lb-build.log
 
 if [[ -f live-image-amd64.hybrid.iso ]]; then

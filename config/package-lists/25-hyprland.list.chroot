@@ -1,20 +1,26 @@
 # ZOTHOS Apex Wayland Stack (Hyprland + Waybar + Kitty + Wofi)
-hyprland
-xdg-desktop-portal-hyprland
+# ZOTHOS-LOCALFIX: 'hyprland' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#hyprland
+# ZOTHOS-LOCALFIX: 'xdg-desktop-portal-hyprland' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#xdg-desktop-portal-hyprland
 waybar
 kitty
 wofi
 sway-notification-center
-hyprlock
-hypridle
-hyprpaper
-hyprpicker
+# ZOTHOS-LOCALFIX: 'hyprlock' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#hyprlock
+# ZOTHOS-LOCALFIX: 'hypridle' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#hypridle
+# ZOTHOS-LOCALFIX: 'hyprpaper' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#hyprpaper
+# ZOTHOS-LOCALFIX: 'hyprpicker' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#hyprpicker
 grim
 slurp
 wl-clipboard
 pavucontrol
 brightnessctl
-polkit-gnome
+polkit-kde-agent-1
 libnotify-bin
 foot
 alacritty

@@ -33,5 +33,6 @@ libarchive-tools
 zoxide
 eza
 starship
-zellij
+# ZOTHOS-LOCALFIX: 'zellij' not in Debian trixie or Kali rolling
+#zellij
 lazygit

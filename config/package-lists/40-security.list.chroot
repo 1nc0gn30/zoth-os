@@ -2,22 +2,26 @@
 nmap
 masscan
 rustscan
-dnsutils
+bind9-dnsutils
 dnsrecon
 whois
 whatweb
 wafw00f
-theharvester
+# ZOTHOS-LOCALFIX: 'theharvester' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#theharvester
 amass
 ffuf
 feroxbuster
 nikto
 sqlmap
-commix
+# ZOTHOS-LOCALFIX: 'commix' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#commix
 impacket-scripts
 responder
-evil-winrm
-netexec
+# ZOTHOS-LOCALFIX: 'evil-winrm' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#evil-winrm
+# ZOTHOS-LOCALFIX: 'netexec' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#netexec
 wireshark
 tshark
 tcpdump
@@ -31,10 +35,12 @@ medusa
 fcrackzip
 crunch
 aircrack-ng
-kismet
+# ZOTHOS-LOCALFIX: 'kismet' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#kismet
 wifite
 radare2
-rizin
+# ZOTHOS-LOCALFIX: 'rizin' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#rizin
 gdb
 binwalk
 socat
