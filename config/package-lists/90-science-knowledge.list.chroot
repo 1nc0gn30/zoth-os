@@ -10,7 +10,8 @@ python3-pil
 poppler-utils
 imagemagick
 graphviz
-typst
+# ZOTHOS-LOCALFIX: 'typst' not in Debian trixie or Kali rolling
+#typst
 zathura
 zathura-pdf-poppler
 feh

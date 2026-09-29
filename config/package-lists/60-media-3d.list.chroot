@@ -9,11 +9,12 @@ gimp
 inkscape
 kdenlive
 obs-studio
-p5
+# ZOTHOS-LOCALFIX: 'p5' not in Debian trixie or Kali rolling
+#p5
 graphviz
 libcairo2-dev
 libgl1-mesa-dri
-libgl1-mesa-glx
+libgl1
 libglvnd-dev
 libvulkan1
 vulkan-tools

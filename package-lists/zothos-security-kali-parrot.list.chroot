@@ -11,7 +11,8 @@ dnsrecon
 whois
 whatweb
 wafw00f
-theharvester
+# ZOTHOS-LOCALFIX: 'theharvester' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#theharvester
 amass
 sublist3r
 recon-ng
@@ -24,13 +25,18 @@ dirb
 
 # ── Web app auditing & exploitation ─────────────────────────────────────────
 sqlmap
-commix
-wpscan
+# ZOTHOS-LOCALFIX: 'commix' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#commix
+# ZOTHOS-LOCALFIX: 'wpscan' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#wpscan
 impacket-scripts
 responder
-evil-winrm
-netexec
-crackmapexec
+# ZOTHOS-LOCALFIX: 'evil-winrm' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#evil-winrm
+# ZOTHOS-LOCALFIX: 'netexec' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#netexec
+# ZOTHOS-LOCALFIX: 'crackmapexec' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#crackmapexec
 burpsuite
 zaproxy
 caido
@@ -44,7 +50,8 @@ tcpdump
 ettercap-text-only
 dsniff
 bettercap
-mitmproxy
+# ZOTHOS-LOCALFIX: 'mitmproxy' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#mitmproxy
 macchanger
 proxychains4
 ligolo-ng
@@ -64,7 +71,8 @@ hash-identifier
 
 # ── Wireless / RF ───────────────────────────────────────────────────────────
 aircrack-ng
-kismet
+# ZOTHOS-LOCALFIX: 'kismet' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#kismet
 wifite
 reaver
 bully
@@ -73,18 +81,21 @@ hackrf
 
 # ── Reverse engineering & binary analysis ───────────────────────────────────
 radare2
-rizin
+# ZOTHOS-LOCALFIX: 'rizin' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#rizin
 gdb
 binwalk
 socat
 netcat-traditional
 ncat
 checksec
-rizin-cutter
+# ZOTHOS-LOCALFIX: 'rizin-cutter' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#rizin-cutter
 ghidra
 
 # ── Forensics & incident response ───────────────────────────────────────────
-volatility3
+# ZOTHOS-LOCALFIX: 'volatility3' not in Debian trixie or Kali rolling
+#volatility3
 autopsy
 sleuthkit
 lynis
@@ -96,8 +107,9 @@ steghide
 libimage-exiftool-perl
 
 # ── Exploitation frameworks ─────────────────────────────────────────────────
-metasploit-framework
-searchsploit
+# ZOTHOS-LOCALFIX: 'metasploit-framework' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#metasploit-framework
+exploitdb
 routersploit
 empire
 sliver
@@ -107,4 +119,5 @@ beef-xss
 bloodhound
 neo4j
 nishang
-powershell-empire
+# ZOTHOS-LOCALFIX: 'powershell-empire' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#powershell-empire

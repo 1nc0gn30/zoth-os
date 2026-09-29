@@ -8,7 +8,8 @@ virt-manager
 libvirt-daemon-system
 caddy
 nginx
-cloudflared
+# ZOTHOS-LOCALFIX: 'cloudflared' not in Debian trixie or Kali rolling
+#cloudflared
 postgresql
 postgresql-client
 sqlite3
@@ -16,7 +17,7 @@ rclone
 rsync
 iptables
 nftables
-dnsutils
+bind9-dnsutils
 net-tools
 nfs-common
 sshfs

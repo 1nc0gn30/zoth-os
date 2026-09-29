@@ -1,9 +1,14 @@
 # Web3 & Blockchain Security / Smart Contract Toolchain
-solana-cli
-foundry
-ipfs
-slither
-mythril
+# ZOTHOS-LOCALFIX: 'solana-cli' not in Debian trixie or Kali rolling
+#solana-cli
+# ZOTHOS-LOCALFIX: 'foundry' (Kali rolling) needs newer libc/libstdc++/python3.14/Qt than Debian trixie - unsatisfiable
+#foundry
+# ZOTHOS-LOCALFIX: 'ipfs' not in Debian trixie or Kali rolling
+#ipfs
+# ZOTHOS-LOCALFIX: 'slither' not in Debian trixie or Kali rolling
+#slither
+# ZOTHOS-LOCALFIX: 'mythril' not in Debian trixie or Kali rolling
+#mythril
 libsecp256k1-dev
 nodejs
 npm

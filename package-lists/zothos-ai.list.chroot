@@ -2,7 +2,8 @@
 # Curated recommended AI packages (Debian/Parrot/Kali repos + Python natives).
 
 # ── Local inference runtimes ────────────────────────────────────────────────
-ollama
+# ZOTHOS-LOCALFIX: 'ollama' not in Debian trixie or Kali rolling
+#ollama
 # llama.cpp via pip (llama-cpp-python) — see notes below
 python3-torch
 python3-transformers
@@ -12,7 +13,7 @@ python3-tokenizers
 python3-scipy
 python3-numpy
 python3-pandas
-python3-scikit-learn
+python3-sklearn
 
 # ── Agent orchestrators, MCP & automation ───────────────────────────────────
 python3-fastapi
