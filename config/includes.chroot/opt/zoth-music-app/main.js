@@ -5,7 +5,6 @@ const fs = require('fs');
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
 app.commandLine.appendSwitch('disable-dev-shm-usage');
-app.commandLine.appendSwitch('enable-transparent-visuals');
 
 app.on('child-process-gone', (event, details) => {
   if (details.type === 'GPU') {

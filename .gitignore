@@ -26,6 +26,8 @@ chroot/
 !.env.example
 *.pem
 *.key
+# public apt signing keys of vendor repos (Chrome/Element/Signal) for live-build
+!config/archives/*.key
 *.pkcs12
 *.pfx
 *.asc

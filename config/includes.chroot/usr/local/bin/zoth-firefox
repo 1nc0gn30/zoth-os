@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTH FIREFOX NAVIGATOR LAUNCHER (firefox-esr from Debian)
+#  - VMs / no GPU render node: force Mesa software GL (llvmpipe) so Firefox's
+#    GPU probe/compositor doesn't crash on virtual GL drivers (VirtualBox/VMware
+#    SVGA, virgl). Real hardware keeps GPU acceleration. Override: ZOTH_GFX=...
+#  - Removes a stale profile lock left behind by a killed live session, which
+#    otherwise makes Firefox abort with "Firefox is already running".
+# ==============================================================================
+FF=""
+for b in /usr/bin/firefox-esr /usr/lib/firefox-esr/firefox-esr /usr/bin/firefox; do
+    if [[ -x "$b" ]]; then FF="$b"; break; fi
+done
+if [[ -z "$FF" ]]; then
+    notify-send -u critical "Zoth Firefox Navigator" "firefox-esr is not installed (sudo apt install firefox-esr)" 2>/dev/null || true
+    exit 1
+fi
+
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    . /usr/lib/zothos/gfx-compat.sh
+    zoth_export_sw_gl_env
+fi
+
+# Stale lock cleanup: only when no Firefox of this user is running.
+if ! pgrep -u "$(id -u)" -f '(^|/)firefox(-esr)?( |$)' >/dev/null 2>&1; then
+    for lock in "$HOME"/.mozilla/firefox/*/lock; do
+        [[ -L "$lock" ]] && rm -f "$lock" "$(dirname "$lock")/.parentlock" 2>/dev/null
+    done
+fi
+
+exec "$FF" "$@"

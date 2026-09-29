@@ -80,6 +80,13 @@ mkdir -p "$WORK_DIR/config/archives"
 cat > "$WORK_DIR/config/archives/kali.list.chroot" << 'KALEOF'
 deb [trusted=yes] http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
 KALEOF
+# Vendor apt repos for desktop apps not in Debian/Kali (Google Chrome, Element,
+# Signal), installed by build/hooks/normal/0500-zothos-desktop-apps.hook.chroot.
+# *.list/*.key are used during the build AND kept in the image for updates;
+# *.list.chroot/*.key.chroot are build-only (Chrome ships its own apt source).
+if [ -d "$PROJECT_DIR/config/archives" ]; then
+    cp -a "$PROJECT_DIR/config/archives/." "$WORK_DIR/config/archives/"
+fi
 # ZOTHOS-LOCALFIX: apt pinning must be active DURING the build (config/archives/*.pref.chroot).
 # Without it, Kali rolling (same priority 500, newer versions) dist-upgrades libc6/perl/python
 # of the trixie base and the package install stage collapses into unmet dependencies.
@@ -158,6 +165,12 @@ chown -R zoth:zoth ${ZOTH_HOME}
 echo "[ZOTHOS HOOK] Complete."
 EOF
 chmod +x config/hooks/normal/099-zothos-setup.hook.chroot
+
+# Stage repository chroot hooks (build/hooks/normal/*.hook.chroot)
+if compgen -G "$PROJECT_DIR/build/hooks/normal/*.hook.chroot" >/dev/null; then
+    cp -a "$PROJECT_DIR"/build/hooks/normal/*.hook.chroot config/hooks/normal/
+    chmod +x config/hooks/normal/*.hook.chroot
+fi
 
 echo -e "${CYAN}[5/6] Generating 4K wallpapers & 3D visual assets...${RESET}"
 # Execute master wallpaper, 3D glassmorphic icon, and Plymouth theme synthesizers

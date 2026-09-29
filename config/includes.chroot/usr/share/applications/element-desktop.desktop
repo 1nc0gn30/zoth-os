@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Zoth Element Matrix Chat
-Exec=/opt/Element/element-desktop --no-sandbox %U
+Exec=/usr/local/bin/element-desktop %U
 Terminal=false
 Type=Application
 Icon=/usr/share/pixmaps/element-desktop.png

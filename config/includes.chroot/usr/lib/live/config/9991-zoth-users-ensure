@@ -50,4 +50,12 @@ SUDEOF
 chmod 0440 /etc/sudoers.d/99-zoth-users
 rm -f /etc/sudoers.d/neo 2>/dev/null || true
 
+# live-config's 0085-sddm rewrites /etc/sddm.conf with "Session=${LIVE_SESSION}",
+# which ends up EMPTY on ZOTHOS (x-session-manager -> startxfce4 is not a session
+# it knows). /etc/sddm.conf overrides /etc/sddm.conf.d/autologin.conf, so the
+# empty Session= broke autologin into the desktop. Force the Plasma X11 session.
+if [ -f /etc/sddm.conf ] && grep -q '^Session=[[:space:]]*$' /etc/sddm.conf; then
+    sed -i 's/^Session=[[:space:]]*$/Session=plasmax11.desktop/' /etc/sddm.conf
+fi
+
 exit 0

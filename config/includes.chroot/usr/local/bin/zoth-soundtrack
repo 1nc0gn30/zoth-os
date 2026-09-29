@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-ELECTRON_BIN=""
-for e_cand in /opt/electron/electron /tmp/electron/electron "$(which electron 2>/dev/null || true)"; do
-    if [[ -n "$e_cand" && -x "$e_cand" ]]; then
-        ELECTRON_BIN="$e_cand"
-        break
-    fi
-done
+# Zoth Hermetic Audio Studio — Electron player (/opt/zoth-music-app),
+# falls back to a headless mpv playlist when no GUI/Electron is available.
+APP_DIR="/opt/zoth-music-app"
+AUDIO_DIR="/usr/share/zothos/audio"
 
-if [[ -n "$ELECTRON_BIN" && -d "/opt/zoth-music-app" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-    exec "$ELECTRON_BIN" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox --disable-gpu /opt/zoth-music-app "$@"
-elif [[ -d "/usr/share/zothos/audio" ]]; then
-    nohup mpv --no-video --loop-playlist=inf --shuffle "/usr/share/zothos/audio" >/dev/null 2>&1 &
+if [[ -x /opt/electron/electron && -d "$APP_DIR" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
+    # /usr/local/bin/electron adds sandbox + GPU-compatibility flags
+    exec /usr/local/bin/electron "$APP_DIR" "$@"
+elif [[ -d "$AUDIO_DIR" ]] && command -v mpv >/dev/null 2>&1; then
+    notify-send "Zoth Hermetic Audio Studio" "Electron UI unavailable — playing the focus playlist with mpv." 2>/dev/null || true
+    nohup mpv --no-video --loop-playlist=inf --shuffle "$AUDIO_DIR" >/dev/null 2>&1 &
+else
+    echo "[-] Zoth Hermetic Audio Studio: no Electron runtime and no mpv/audio library found." >&2
+    exit 1
 fi

@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# ==============================================================================
-#  ZOTHOS BULLETPROOF ELECTRON APPLICATION RUNTIME
-# ==============================================================================
+# One Electron runtime (/opt/electron, installed by the 0500-zothos-desktop-apps
+# build hook) for Maya and the Zoth desktop apps.
+# Adds software-rendering flags on VMs / systems without a GPU render node so
+# Electron windows don't come up black (see /usr/lib/zothos/gfx-compat.sh).
 set -e
-
-export LD_LIBRARY_PATH="/opt/electron:${LD_LIBRARY_PATH:-}"
 
 # Ensure socket directory exists
 if [[ ! -d /tmp/.X11-unix ]]; then
@@ -22,9 +21,11 @@ if [[ ! -x "$ELECTRON_BIN" ]]; then
         ELECTRON_BIN="/usr/local/lib/node_modules/electron/dist/electron"
     else
         echo "Electron is not installed under /opt/electron." >&2
+        notify-send -u critical "ZothOS" "Electron runtime missing (/opt/electron). Reinstall it with: sudo zoth-electron-install" 2>/dev/null || true
         exit 1
     fi
 fi
+export LD_LIBRARY_PATH="/opt/electron${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 FLAGS=(
     --no-sandbox
@@ -49,9 +50,14 @@ else
     )
 fi
 
-# Dual-GPU / Nouveau / Software rendering safeguard:
-# If Nouveau is loaded or software rendering requested or Intel/Nvidia hybrid detected:
-# disable hardware compositing black screen by disabling GPU rasterization cleanly
+# GFX Compatibility: VMs or Nouveau or requested software mode
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    # shellcheck source=/usr/lib/zothos/gfx-compat.sh
+    . /usr/lib/zothos/gfx-compat.sh
+    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
+    FLAGS+=("${GFX_FLAGS[@]}")
+fi
+
 if grep -qs "nouveau" /proc/modules 2>/dev/null || [[ "${ZOTH_SOFTWARE_RENDER:-0}" == "1" ]] || [[ "${LIBGL_ALWAYS_SOFTWARE:-0}" == "1" ]]; then
     FLAGS+=(
         --disable-gpu

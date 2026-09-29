@@ -9,16 +9,16 @@ FLAGS=(
     "--test-type"
     "--disable-dev-shm-usage"
     "--password-store=basic"
+    "--no-first-run"
+    "--no-default-browser-check"
 )
 
-# Detect if under X11 or Wayland
-if [[ -z "${WAYLAND_DISPLAY:-}" && -n "${DISPLAY:-}" ]]; then
-    FLAGS=(
-        "--no-sandbox"
-        "--test-type"
-        "--disable-dev-shm-usage"
-        "--password-store=basic"
-    )
+# Software rendering on VMs / systems without a GPU render node, otherwise
+# Chrome/Chromium can show blank/black pages ("doesn't load") on virtual GL.
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    . /usr/lib/zothos/gfx-compat.sh
+    mapfile -t _GFX < <(zoth_chromium_gfx_flags)
+    FLAGS+=("${_GFX[@]}")
 fi
 
 CHROME_BINS=(

@@ -1,0 +1,2 @@
+# Signal Desktop — official upstream repo, installs to /opt/Signal
+deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main
