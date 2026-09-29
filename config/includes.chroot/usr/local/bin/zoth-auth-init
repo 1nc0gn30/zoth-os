@@ -93,4 +93,9 @@ rm -f /home/*/Desktop/calamares-install-debian.desktop /home/*/Desktop/*debian* 
 rm -f /etc/skel/Desktop/calamares-install-debian.desktop /etc/skel/Desktop/*debian* 2>/dev/null || true
 rm -f /home/*/Desktop/burpsuite.png /etc/skel/Desktop/burpsuite.png 2>/dev/null || true
 
+# Ensure rfkill does not soft-block WiFi or Bluetooth
+if command -v rfkill >/dev/null 2>&1; then
+    rfkill unblock all 2>/dev/null || true
+fi
+
 exit 0

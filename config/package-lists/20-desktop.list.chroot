@@ -37,6 +37,29 @@ npm
 libfuse2t64
 mesa-vulkan-drivers
 kde-config-flatpak
-kde-spectacle
 cracklib-runtime
 wamerican
+
+# Wireless & Networking Stack
+wpasupplicant
+wireless-regdb
+iw
+wireless-tools
+rfkill
+
+# Bluetooth & KDE Integration
+bluez
+bluez-firmware
+bluez-tools
+bluedevil
+
+# Hardware Firmwares
+firmware-linux-free
+firmware-misc-nonfree
+firmware-iwlwifi
+firmware-realtek
+firmware-atheros
+firmware-brcm80211
+firmware-libertas
+firmware-zd1211
+firmware-sof-signed
