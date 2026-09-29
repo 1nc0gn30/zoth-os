@@ -147,8 +147,6 @@ def launch_gui(port):
                 electron_bin,
                 "--no-sandbox",
                 "--disable-gpu-sandbox",
-                "--enable-features=UseOzonePlatform",
-                "--ozone-platform=x11",
                 STUDIO_ROOT
             ]
             proc = subprocess.Popen(electron_flags, env=os.environ.copy())

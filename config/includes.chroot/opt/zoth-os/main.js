@@ -6,8 +6,7 @@ const { spawn, exec, execSync } = require('child_process');
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
 app.commandLine.appendSwitch('disable-dev-shm-usage');
-app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
-app.commandLine.appendSwitch('ozone-platform', 'x11');
+app.commandLine.appendSwitch('enable-transparent-visuals');
 
 app.on('child-process-gone', (event, details) => {
   if (details.type === 'GPU') {

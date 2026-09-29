@@ -9,8 +9,6 @@ FLAGS=(
     "--test-type"
     "--disable-dev-shm-usage"
     "--password-store=basic"
-    "--enable-features=UseOzonePlatform"
-    "--ozone-platform=wayland"
 )
 
 # Detect if under X11 or Wayland

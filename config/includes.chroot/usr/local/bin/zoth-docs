@@ -5,16 +5,10 @@
 set -euo pipefail
 
 DOCS_DIR="/opt/zoth-docs"
-OZONE_FLAGS=""
-
-if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
-    OZONE_FLAGS="--ozone-platform=wayland --enable-features=WaylandWindowDecorations"
-fi
-
 if command -v electron >/dev/null 2>&1; then
-    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox $OZONE_FLAGS "$DOCS_DIR" "$@"
+    exec electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$DOCS_DIR" "$@"
 elif [[ -x "/usr/local/bin/electron" ]]; then
-    exec /usr/local/bin/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox $OZONE_FLAGS "$DOCS_DIR" "$@"
+    exec /usr/local/bin/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$DOCS_DIR" "$@"
 elif command -v google-chrome >/dev/null 2>&1; then
     exec google-chrome --no-sandbox --app="file://$DOCS_DIR/index.html" "$@"
 elif command -v firefox >/dev/null 2>&1; then
