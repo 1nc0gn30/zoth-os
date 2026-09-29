@@ -1,0 +1,2 @@
+# Element (Matrix) desktop — official upstream repo, installs to /opt/Element
+deb [arch=amd64] https://packages.element.io/debian/ default main

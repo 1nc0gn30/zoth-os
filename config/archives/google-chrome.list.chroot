@@ -1,0 +1,7 @@
+# Google Chrome stable — official upstream repo, used at BUILD time only
+# (installs to /opt/google/chrome). dl-ssl.google.com serves the same repo as
+# dl.google.com and is reachable from build hosts where dl.google.com is
+# filtered. The installed image uses the source Chrome's own postinst writes:
+# /etc/apt/sources.list.d/google-chrome.sources (dl.google.com, signed-by
+# /usr/share/keyrings/google-chrome.gpg), so this file is chroot-only.
+deb [arch=amd64] https://dl-ssl.google.com/linux/chrome/deb/ stable main

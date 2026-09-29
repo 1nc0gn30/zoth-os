@@ -1,0 +1,62 @@
+#!/bin/sh
+# ==============================================================================
+#  ZOTHOS HOOK: desktop applications that are NOT in Debian/Kali
+#
+#  - Google Chrome, Element and Signal come from their official vendor apt repos
+#    (config/archives/: element/signal *.list+*.key are kept in the image for
+#    updates; google-chrome.*.chroot is build-only because Chrome installs its
+#    own apt source). Installed one by one so an
+#    unreachable vendor repo only drops that app instead of failing the build.
+#  - Electron runtime -> /opt/electron (Zoth Arsenal Provisioner, Hermetic Audio
+#    Studio, Desktop Pet, Maya, ...) via /usr/local/bin/zoth-electron-install.
+# ==============================================================================
+set -e
+export DEBIAN_FRONTEND=noninteractive
+
+# Vendor packages must not clobber ZOTHOS files shipped via config/includes.chroot
+# (branded .desktop launchers, themed hicolor icons): every file of the vendor
+# .deb that already exists and is not owned by a package gets a local
+# dpkg-divert (vendor copy -> <file>.vendor). Chrome's extra
+# com.google.Chrome.desktop is diverted too so the menu has one Chrome entry
+# (the branded one, which goes through /usr/local/bin/zoth-chrome).
+divert_existing() {
+    deb="$1"
+    dpkg-deb -c "$deb" | awk '{print $6}' | sed -n 's#^\./#/#p' | while read -r f; do
+        if [ -f "$f" ] && ! dpkg -S "$f" >/dev/null 2>&1; then
+            dpkg-divert --quiet --local --no-rename --divert "$f.vendor" --add "$f" || true
+        fi
+    done
+}
+dpkg-divert --quiet --local --no-rename \
+    --divert /usr/share/applications/com.google.Chrome.desktop.vendor \
+    --add /usr/share/applications/com.google.Chrome.desktop || true
+
+echo "[ZOTHOS HOOK] Installing vendor desktop apps (Chrome, Element, Signal)..."
+apt-get update || true
+work="$(mktemp -d)"
+chmod 755 "$work"
+for pkg in google-chrome-stable element-desktop signal-desktop; do
+    rm -f "$work"/*.deb
+    if (cd "$work" && apt-get download "$pkg") && deb="$(ls "$work"/*.deb 2>/dev/null | head -n1)" && [ -n "$deb" ]; then
+        divert_existing "$deb"
+        if apt-get install -y --no-install-recommends "$deb"; then
+            echo "[ZOTHOS HOOK] installed $pkg"
+            continue
+        fi
+    fi
+    echo "[ZOTHOS HOOK] WARNING: could not install $pkg (vendor repo unreachable?)"
+done
+rm -rf "$work"
+
+# Setuid sandbox helpers of the vendor apps (Chrome's postinst also writes
+# /etc/apt/sources.list.d/google-chrome.sources, which the image keeps for updates).
+for s in /opt/google/chrome/chrome-sandbox /opt/Element/chrome-sandbox /opt/Signal/chrome-sandbox; do
+    if [ -f "$s" ]; then chmod 4755 "$s"; fi
+done
+
+echo "[ZOTHOS HOOK] Installing Electron runtime to /opt/electron..."
+if [ ! -x /opt/electron/electron ]; then
+    /usr/local/bin/zoth-electron-install || echo "[ZOTHOS HOOK] WARNING: Electron install failed; Zoth Electron apps will be unavailable"
+fi
+
+echo "[ZOTHOS HOOK] Desktop apps hook complete."

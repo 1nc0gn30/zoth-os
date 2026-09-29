@@ -63,3 +63,11 @@ firmware-brcm80211
 firmware-libertas
 firmware-zd1211
 firmware-sof-signed
+
+# Graphical installer behind the "Install ZothOS" icon (/usr/local/bin/launch-calamares).
+# calamares-settings-debian provides the shellprocess modules/helpers that
+# /etc/calamares/settings.conf references (dpkg-unsafe-io, sources-media, bootloader-config, ...).
+calamares
+calamares-settings-debian
+# Browser engine fallback for zoth-chrome when Google Chrome is unavailable
+chromium

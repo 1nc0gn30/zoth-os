@@ -1,2 +1,14 @@
 #!/usr/bin/env bash
-exec /opt/Element/element-desktop --no-sandbox "$@"
+# Element (Matrix) — official package from packages.element.io -> /opt/Element
+BIN="/opt/Element/element-desktop"
+if [[ ! -x "$BIN" ]]; then
+    msg="Element is not installed. Install it with: sudo apt install element-desktop"
+    echo "$msg" >&2; notify-send -u critical "Zoth Element Matrix Chat" "$msg" 2>/dev/null || true
+    exit 1
+fi
+GFX_FLAGS=()
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    . /usr/lib/zothos/gfx-compat.sh
+    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
+fi
+exec "$BIN" --no-sandbox "${GFX_FLAGS[@]}" "$@"

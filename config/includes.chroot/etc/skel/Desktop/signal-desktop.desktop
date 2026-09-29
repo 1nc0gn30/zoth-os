@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Zoth Signal Guard
-Exec=/opt/Signal/signal-desktop --no-sandbox %U
+Exec=/usr/local/bin/signal-desktop %U
 Terminal=false
 Type=Application
 Icon=/usr/share/pixmaps/signal-desktop.png

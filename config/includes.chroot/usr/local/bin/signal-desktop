@@ -1,2 +1,14 @@
 #!/usr/bin/env bash
-exec /opt/Signal/signal-desktop --no-sandbox "$@"
+# Signal Desktop — official package from updates.signal.org -> /opt/Signal
+BIN="/opt/Signal/signal-desktop"
+if [[ ! -x "$BIN" ]]; then
+    msg="Signal is not installed. Install it with: sudo apt install signal-desktop"
+    echo "$msg" >&2; notify-send -u critical "Zoth Signal Guard" "$msg" 2>/dev/null || true
+    exit 1
+fi
+GFX_FLAGS=()
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    . /usr/lib/zothos/gfx-compat.sh
+    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
+fi
+exec "$BIN" --no-sandbox "${GFX_FLAGS[@]}" "$@"

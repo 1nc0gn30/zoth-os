@@ -1,8 +1,21 @@
-#!/bin/bash
-# One Electron runtime for Maya and the Zoth desktop apps.
-export LD_LIBRARY_PATH="/opt/electron:${LD_LIBRARY_PATH:-}"
-if [[ -x /opt/electron/electron ]]; then
-  exec /opt/electron/electron --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "$@"
+#!/usr/bin/env bash
+# One Electron runtime (/opt/electron, installed by the 0500-zothos-desktop-apps
+# build hook) for Maya and the Zoth desktop apps.
+# Adds software-rendering flags on VMs / systems without a GPU render node so
+# Electron windows don't come up black (see /usr/lib/zothos/gfx-compat.sh).
+ELECTRON_BIN="/opt/electron/electron"
+if [[ ! -x "$ELECTRON_BIN" ]]; then
+    echo "Electron is not installed under /opt/electron." >&2
+    notify-send -u critical "ZothOS" "Electron runtime missing (/opt/electron). Reinstall it with: sudo zoth-electron-install" 2>/dev/null || true
+    exit 1
 fi
-echo "Electron is not installed under /opt/electron." >&2
-exit 1
+export LD_LIBRARY_PATH="/opt/electron${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+GFX_FLAGS=()
+if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
+    # shellcheck source=/usr/lib/zothos/gfx-compat.sh
+    . /usr/lib/zothos/gfx-compat.sh
+    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
+fi
+
+exec "$ELECTRON_BIN" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox "${GFX_FLAGS[@]}" "$@"
