@@ -47,6 +47,21 @@ for sb in chroot/opt/google/chrome/chrome-sandbox chroot/opt/Element/chrome-sand
     fi
 done
 
+# Enforce SUID bit on standard system binaries (sudo, su, pkexec, mount, umount, passwd, etc.)
+for suid_bin in chroot/usr/bin/sudo chroot/usr/bin/su chroot/usr/bin/pkexec chroot/usr/bin/mount \
+                chroot/usr/bin/umount chroot/usr/bin/passwd chroot/usr/bin/chfn chroot/usr/bin/chsh \
+                chroot/usr/bin/newgrp chroot/usr/bin/gpasswd chroot/usr/bin/newuidmap chroot/usr/bin/newgidmap \
+                chroot/usr/bin/fusermount3 chroot/usr/bin/ntfs-3g \
+                chroot/usr/lib/dbus-1.0/dbus-daemon-launch-helper \
+                chroot/usr/lib/polkit-1/polkit-agent-helper-1 \
+                chroot/usr/libexec/polkit-agent-helper-1; do
+    if [ -f "$suid_bin" ]; then
+        sudo chown root:root "$suid_bin"
+        sudo chmod 4755 "$suid_bin"
+    fi
+done
+
+
 # Ensure tor-browser and simplex binaries are user-executable
 sudo chmod -R u+rwX,go+rX chroot/opt/tor-browser 2>/dev/null || true
 sudo chmod -R u+rwX,go+rX chroot/opt/simplex-desktop 2>/dev/null || true

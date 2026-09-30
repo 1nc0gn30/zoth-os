@@ -9,3 +9,4 @@ Icon=zoth-os
 Terminal=false
 Categories=System;
 StartupNotify=true
+StartupWMClass=calamares

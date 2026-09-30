@@ -2,22 +2,9 @@
 # ==============================================================================
 #  ZOTHOS 3.0 INSTALLER LAUNCHER (CALAMARES)
 # ==============================================================================
-set -e
 
-# Grant local root access to X server
-if command -v xhost >/dev/null 2>&1; then
-    xhost +local:root 2>/dev/null || true
-    xhost +SI:localuser:root 2>/dev/null || true
-    xhost + 2>/dev/null || true
-fi
-
-# Set Display
+# Ensure DISPLAY is exported first
 export DISPLAY="${DISPLAY:-:0}"
-
-# Detect Wayland & use XCB via XWayland for root Qt compatibility
-if [ -n "$WAYLAND_DISPLAY" ]; then
-    export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
-fi
 
 # Locate XAUTHORITY file
 if [ -z "${XAUTHORITY:-}" ] || [ ! -r "$XAUTHORITY" ]; then
@@ -27,6 +14,29 @@ if [ -z "${XAUTHORITY:-}" ] || [ ! -r "$XAUTHORITY" ]; then
             break
         fi
     done
+fi
+
+# Grant local root access to X server
+if command -v xhost >/dev/null 2>&1; then
+    xhost +SI:localuser:root 2>/dev/null || true
+    xhost +local:root 2>/dev/null || true
+    xhost + 2>/dev/null || true
+fi
+
+# Merge X11 cookie into root's keyring
+if command -v xauth >/dev/null 2>&1; then
+    xauth extract - "$DISPLAY" 2>/dev/null | sudo xauth merge - 2>/dev/null || true
+fi
+
+# Copy auth cookie for root as fallback
+if [ -n "${XAUTHORITY:-}" ] && [ -r "$XAUTHORITY" ]; then
+    sudo cp -f "$XAUTHORITY" /root/.Xauthority 2>/dev/null || true
+    sudo chmod 600 /root/.Xauthority 2>/dev/null || true
+fi
+
+# Detect Wayland & use XCB via XWayland for root Qt compatibility
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
 fi
 
 # Force software rendering and XCB to prevent Qt 6 DRI3/OpenGL initialization hangs on hybrid GPUs / nouveau
@@ -45,21 +55,14 @@ if [ -f /etc/fstab ] && grep -qi "UNCONFIGURED" /etc/fstab; then
     RESTORE_FSTAB=1
 fi
 
-LOG_DIR="/var/log/calamares"
-sudo mkdir -p "$LOG_DIR" 2>/dev/null || mkdir -p "/tmp/calamares-log"
-LOG_FILE="$LOG_DIR/calamares.log"
-
-# Copy auth cookie for root
-if [ -n "${XAUTHORITY:-}" ] && [ -r "$XAUTHORITY" ]; then
-    sudo cp "$XAUTHORITY" /root/.Xauthority 2>/dev/null || true
-fi
-
+# Execute Calamares with elevated privileges
 STATUS=0
 if [ "$(id -u)" -eq 0 ]; then
-    /usr/bin/calamares -d "$@" >> "$LOG_FILE" 2>&1 || STATUS=$?
-else
+    /usr/bin/calamares -d "$@" || STATUS=$?
+elif command -v sudo >/dev/null 2>&1; then
     sudo -E env DISPLAY="$DISPLAY" \
         XAUTHORITY="${XAUTHORITY:-/root/.Xauthority}" \
+        DESKTOP_STARTUP_ID="${DESKTOP_STARTUP_ID:-}" \
         QT_QPA_PLATFORM=xcb \
         LIBGL_ALWAYS_SOFTWARE=1 \
         QT_XCB_GL_INTEGRATION=none \
@@ -67,7 +70,19 @@ else
         QT_AUTO_SCREEN_SCALE_FACTOR=1 \
         LANG="${LANG:-C.UTF-8}" \
         LC_ALL="${LC_ALL:-C.UTF-8}" \
-        /usr/bin/calamares -d "$@" >> "$LOG_FILE" 2>&1 || STATUS=$?
+        /usr/bin/calamares -d "$@" || STATUS=$?
+elif command -v pkexec >/dev/null 2>&1; then
+    pkexec env DISPLAY="$DISPLAY" \
+        XAUTHORITY="${XAUTHORITY:-/root/.Xauthority}" \
+        DESKTOP_STARTUP_ID="${DESKTOP_STARTUP_ID:-}" \
+        QT_QPA_PLATFORM=xcb \
+        LIBGL_ALWAYS_SOFTWARE=1 \
+        QT_XCB_GL_INTEGRATION=none \
+        QT_QUICK_BACKEND=software \
+        QT_AUTO_SCREEN_SCALE_FACTOR=1 \
+        LANG="${LANG:-C.UTF-8}" \
+        LC_ALL="${LC_ALL:-C.UTF-8}" \
+        /usr/bin/calamares -d "$@" || STATUS=$?
 fi
 
 # Restore dummy fstab if we moved it
@@ -75,5 +90,10 @@ if [ "$RESTORE_FSTAB" -eq 1 ] && [ -f /etc/fstab.orig.calamares ]; then
     sudo mv /etc/fstab.orig.calamares /etc/fstab 2>/dev/null || true
 fi
 
-exit $STATUS
+if [ "$STATUS" -ne 0 ] && [ "$STATUS" -ne 130 ]; then
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -u critical "ZothOS Installer" "Calamares exited with code $STATUS. See ~/.cache/calamares/session.log." 2>/dev/null || true
+    fi
+fi
 
+exit $STATUS
