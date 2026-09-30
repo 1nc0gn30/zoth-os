@@ -95,7 +95,8 @@ fi
 sudo ln -sfn /usr/lib/systemd/system/graphical.target chroot/etc/systemd/system/default.target
 sudo ln -sfn /usr/lib/systemd/system/sddm.service chroot/etc/systemd/system/display-manager.service
 
-echo "✦ Synchronizing config/includes.binary, bootloaders, and hooks..."
+echo "✦ Synchronizing config/binary, config/includes.binary, bootloaders, and hooks..."
+sudo cp -f ../../config/binary config/binary
 sudo mkdir -p config/includes.binary config/bootloaders config/hooks/binary
 sudo rsync -aHAX --delete ../../config/includes.binary/ config/includes.binary/
 sudo rsync -aHAX --delete ../../config/bootloaders/ config/bootloaders/
