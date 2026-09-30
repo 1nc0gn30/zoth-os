@@ -19,6 +19,8 @@ sudo find chroot -name ".bash_history" -exec rm -f {} + 2>/dev/null || true
 sudo find chroot -name ".zsh_history" -exec rm -f {} + 2>/dev/null || true
 sudo find chroot -name ".lesshst" -exec rm -f {} + 2>/dev/null || true
 sudo find chroot -name ".viminfo" -exec rm -f {} + 2>/dev/null || true
+sudo umount -l chroot/home/*/.cache/doc 2>/dev/null || true
+sudo rm -rf chroot/home/*/.cache/* 2>/dev/null || true
 sudo rm -rf chroot/root/.cache chroot/root/.local chroot/root/.aider 2>/dev/null || true
 sudo rm -rf chroot/var/cache/apt/archives/*.deb 2>/dev/null || true
 sudo rm -rf chroot/tmp/appimage_extracted_* chroot/tmp/testenv chroot/tmp/node-compile-cache chroot/tmp/scoped_dir* chroot/tmp/hsperfdata_* 2>/dev/null || true
