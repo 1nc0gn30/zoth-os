@@ -22,7 +22,8 @@ sudo find chroot -name ".viminfo" -exec rm -f {} + 2>/dev/null || true
 sudo umount -l chroot/home/*/.cache/doc 2>/dev/null || true
 sudo rm -rf chroot/home/*/.cache/* 2>/dev/null || true
 sudo rm -rf chroot/root/.cache chroot/root/.local chroot/root/.aider 2>/dev/null || true
-sudo rm -rf chroot/var/cache/apt/archives/*.deb 2>/dev/null || true
+# Clean non-bootloader apt archives, preserving grub/bootloader packages for offline installation
+sudo find chroot/var/cache/apt/archives -name "*.deb" ! -name "grub*" ! -name "cryptsetup*" ! -name "efibootmgr*" ! -name "shim*" ! -name "console-setup*" ! -name "kbd*" -delete 2>/dev/null || true
 sudo rm -rf chroot/tmp/appimage_extracted_* chroot/tmp/testenv chroot/tmp/node-compile-cache chroot/tmp/scoped_dir* chroot/tmp/hsperfdata_* 2>/dev/null || true
 sudo find chroot/tmp -mindepth 1 ! -name ".X11-unix" ! -name ".ICE-unix" -delete 2>/dev/null || true
 sudo mkdir -p chroot/tmp/.X11-unix chroot/tmp/.ICE-unix
