@@ -27,8 +27,9 @@ PlasmaExtras.PlasmoidHeading {
     // We use an increased vertical padding to improve touch usability
     leftPadding: kickoff.backgroundMetrics.leftPadding
     rightPadding: kickoff.backgroundMetrics.rightPadding
-    topPadding: Kirigami.Units.smallSpacing * 2
-    bottomPadding: Kirigami.Units.smallSpacing * 2
+    topPadding: 10
+    bottomPadding: 10
+
 
     topInset: 0
     leftInset: 0
@@ -100,11 +101,11 @@ PlasmaExtras.PlasmoidHeading {
 
             contentItem: RowLayout {
                 anchors.centerIn: parent
-                spacing: Kirigami.Units.smallSpacing
+                spacing: Kirigami.Units.smallSpacing + 4
                 Image {
                     source: "/usr/share/pixmaps/menu-gold-all-apps.png"
-                    Layout.preferredWidth: 20
-                    Layout.preferredHeight: 20
+                    Layout.preferredWidth: 22
+                    Layout.preferredHeight: 22
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     smooth: true
@@ -117,15 +118,17 @@ PlasmaExtras.PlasmoidHeading {
             }
 
             background: Rectangle {
-                color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.12) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.06) : "transparent")
-                radius: 4
+                color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.14) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
+                radius: 6
+                Behavior on color { ColorAnimation { duration: 150 } }
                 Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: applicationsTab.checked ? 2.5 : (applicationsTab.hovered ? 1.5 : 0)
+                    height: applicationsTab.checked ? 3 : (applicationsTab.hovered ? 1.5 : 0)
                     color: "#ffd700"
                     visible: height > 0
+                    Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                 }
             }
 
@@ -145,11 +148,11 @@ PlasmaExtras.PlasmoidHeading {
 
             contentItem: RowLayout {
                 anchors.centerIn: parent
-                spacing: Kirigami.Units.smallSpacing
+                spacing: Kirigami.Units.smallSpacing + 4
                 Image {
                     source: "/usr/share/pixmaps/menu-gold-places.png"
-                    Layout.preferredWidth: 20
-                    Layout.preferredHeight: 20
+                    Layout.preferredWidth: 22
+                    Layout.preferredHeight: 22
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     smooth: true
@@ -162,18 +165,21 @@ PlasmaExtras.PlasmoidHeading {
             }
 
             background: Rectangle {
-                color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.12) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.06) : "transparent")
-                radius: 4
+                color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.14) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
+                radius: 6
+                Behavior on color { ColorAnimation { duration: 150 } }
                 Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: placesTab.checked ? 2.5 : (placesTab.hovered ? 1.5 : 0)
+                    height: placesTab.checked ? 3 : (placesTab.hovered ? 1.5 : 0)
                     color: "#ffd700"
                     visible: height > 0
+                    Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                 }
             }
         }
+
 
         Connections {
             target: kickoff

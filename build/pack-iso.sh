@@ -14,7 +14,7 @@ sudo rsync -aHAX --delete ../../config/includes.chroot/ config/includes.chroot/
 sudo rsync -aHAX ../../config/includes.chroot/ chroot/
 
 echo "✦ Scrubbing sensitive data, histories, and build caches..."
-sudo find chroot -name "*aider*" -exec rm -rf {} + 2>/dev/null || true
+sudo find chroot -name ".aider*" -exec rm -rf {} + 2>/dev/null || true
 sudo find chroot -name ".bash_history" -exec rm -f {} + 2>/dev/null || true
 sudo find chroot -name ".zsh_history" -exec rm -f {} + 2>/dev/null || true
 sudo find chroot -name ".lesshst" -exec rm -f {} + 2>/dev/null || true

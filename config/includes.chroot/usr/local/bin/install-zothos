@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo -E calamares "$@"
+exec /usr/local/bin/launch-calamares "$@"

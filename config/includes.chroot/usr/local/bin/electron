@@ -54,9 +54,11 @@ fi
 if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
     # shellcheck source=/usr/lib/zothos/gfx-compat.sh
     . /usr/lib/zothos/gfx-compat.sh
-    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
-    FLAGS+=("${GFX_FLAGS[@]}")
+    while IFS= read -r flag; do
+        [[ -n "$flag" ]] && FLAGS+=("$flag")
+    done <<< "$(zoth_chromium_gfx_flags)"
 fi
+
 
 if grep -qs "nouveau" /proc/modules 2>/dev/null || [[ "${ZOTH_SOFTWARE_RENDER:-0}" == "1" ]] || [[ "${LIBGL_ALWAYS_SOFTWARE:-0}" == "1" ]]; then
     FLAGS+=(

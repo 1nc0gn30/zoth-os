@@ -21,10 +21,11 @@ import org.kde.plasma.plasmoid
 AbstractKickoffItemDelegate {
     id: root
 
-    leftPadding: KickoffSingleton.listItemMetrics.margins.left
-    rightPadding: KickoffSingleton.listItemMetrics.margins.right
-    topPadding: Kirigami.Units.smallSpacing * 2
-    bottomPadding: Kirigami.Units.smallSpacing * 2
+    leftPadding: KickoffSingleton.listItemMetrics.margins.left + 6
+    rightPadding: KickoffSingleton.listItemMetrics.margins.right + 6
+    topPadding: Kirigami.Units.smallSpacing * 3
+    bottomPadding: Kirigami.Units.smallSpacing * 3
+
 
     icon.width: Kirigami.Units.iconSizes.large
     icon.height: Kirigami.Units.iconSizes.large

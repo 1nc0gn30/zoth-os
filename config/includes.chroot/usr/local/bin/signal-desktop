@@ -6,9 +6,14 @@ if [[ ! -x "$BIN" ]]; then
     echo "$msg" >&2; notify-send -u critical "Zoth Signal Guard" "$msg" 2>/dev/null || true
     exit 1
 fi
+export LD_LIBRARY_PATH="/opt/Signal:${LD_LIBRARY_PATH:-}"
+
 GFX_FLAGS=()
 if [[ -r /usr/lib/zothos/gfx-compat.sh ]]; then
     . /usr/lib/zothos/gfx-compat.sh
-    mapfile -t GFX_FLAGS < <(zoth_chromium_gfx_flags)
+    while IFS= read -r flag; do
+        [[ -n "$flag" ]] && GFX_FLAGS+=("$flag")
+    done <<< "$(zoth_chromium_gfx_flags)"
 fi
 exec "$BIN" --no-sandbox "${GFX_FLAGS[@]}" "$@"
+

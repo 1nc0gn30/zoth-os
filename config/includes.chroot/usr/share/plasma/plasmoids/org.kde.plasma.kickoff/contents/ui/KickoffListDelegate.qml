@@ -24,16 +24,16 @@ AbstractKickoffItemDelegate {
 
     property bool compact: Kirigami.Settings.tabletMode ? false : Plasmoid.configuration.compactMode
 
-    leftPadding: KickoffSingleton.listItemMetrics.margins.left
+    leftPadding: (KickoffSingleton.listItemMetrics.margins.left + 8)
     + (mirrored ? KickoffSingleton.fontMetrics.descent : 0)
-    rightPadding: KickoffSingleton.listItemMetrics.margins.right
+    rightPadding: (KickoffSingleton.listItemMetrics.margins.right + 8)
     + (!mirrored ? KickoffSingleton.fontMetrics.descent : 0)
-    // Otherwise it's *too* compact :)
-    topPadding: compact ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
-    bottomPadding: compact ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
+    // Generous breathing room for category and item rows
+    topPadding: root.isCategoryListItem ? 9 : (compact ? 6 : 8)
+    bottomPadding: root.isCategoryListItem ? 9 : (compact ? 6 : 8)
 
-    icon.width: root.isCategoryListItem ? 28 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
-    icon.height: root.isCategoryListItem ? 28 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
+    icon.width: root.isCategoryListItem ? 32 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
+    icon.height: root.isCategoryListItem ? 32 : (compact ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.medium)
 
     labelTruncated: label.truncated
     descriptionTruncated: descriptionLabel.truncated
@@ -47,52 +47,60 @@ AbstractKickoffItemDelegate {
         Rectangle {
             id: goldListBg
             anchors.fill: parent
-            anchors.margins: 1
-            radius: 6
+            anchors.margins: 2
+            radius: 8
             color: root.down ? Qt.rgba(1, 0.84, 0, 0.28) : 
-                   (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.12) : 
-                   (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.16) : "transparent"))
+                   (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.14) : 
+                   (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.18) : "transparent"))
             border.color: root.down ? "#ffd700" : 
-                         (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.45) : 
+                         (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.50) : 
                          (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.35) : "transparent"))
             border.width: 1
+            scale: root.down ? 0.98 : (root.mouseArea.containsMouse ? 1.015 : 1.0)
 
+            Behavior on scale {
+                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+            }
             Behavior on color {
-                ColorAnimation { duration: 140 }
+                ColorAnimation { duration: 150 }
             }
             Behavior on border.color {
-                ColorAnimation { duration: 140 }
+                ColorAnimation { duration: 150 }
             }
         }
 
         // Gold indicator bar for category navigation & item selection
         Rectangle {
             id: goldActiveBar
-            width: (root.iconAndLabelsShouldlookSelected || root.down) ? 3.5 : (root.mouseArea.containsMouse ? 2 : 0)
+            width: (root.iconAndLabelsShouldlookSelected || root.down) ? 4 : (root.mouseArea.containsMouse ? 2.5 : 0)
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.topMargin: 3
-            anchors.bottomMargin: 3
+            anchors.topMargin: 4
+            anchors.bottomMargin: 4
             radius: 2
             color: root.down ? "#ffffff" : "#ffd700"
             visible: width > 0
 
             Behavior on width {
-                NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
             }
         }
     }
 
     contentItem: RowLayout {
         id: row
-        spacing: KickoffSingleton.listItemMetrics.margins.left * 2
+        spacing: Math.max(14, Math.round(KickoffSingleton.listItemMetrics.margins.left * 1.5))
 
         Item {
             id: iconWrapper
             implicitWidth: root.icon.width
             implicitHeight: root.icon.height
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            scale: root.mouseArea.containsMouse ? 1.10 : 1.0
+            Behavior on scale {
+                NumberAnimation { duration: 180; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+            }
 
             Image {
                 id: goldCatImg
@@ -143,6 +151,13 @@ AbstractKickoffItemDelegate {
 
             Layout.fillWidth: true
 
+            transform: Translate {
+                x: root.mouseArea.containsMouse ? (root.mirrored ? -3 : 3) : 0
+                Behavior on x {
+                    NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+                }
+            }
+
             rows: root.compact ? 1 : 2
             columns: root.compact ? 2 : 1
             rowSpacing: 0
@@ -154,10 +169,10 @@ AbstractKickoffItemDelegate {
                 Layout.maximumWidth: root.width - root.leftPadding - root.rightPadding - icon.width - row.spacing
                 Layout.preferredHeight: {
                     if (root.isCategoryListItem) {
-                        return root.compact ? implicitHeight : Math.round(implicitHeight * 1.5);
+                        return root.compact ? implicitHeight : Math.round(implicitHeight * 1.6);
                     }
                     if (!root.compact && !descriptionLabel.visible) {
-                        return implicitHeight + descriptionLabel.implicitHeight
+                        return implicitHeight + descriptionLabel.implicitHeight + 4;
                     }
                     return implicitHeight;
                 }
@@ -169,6 +184,7 @@ AbstractKickoffItemDelegate {
                 maximumLineCount: root.isMultilineText ? Infinity : 1
                 color: gridLayout.textColor
             }
+
 
             PC3.Label {
                 id: descriptionLabel

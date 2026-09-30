@@ -29,10 +29,10 @@ EmptyPage {
     bottomPadding: -kickoff.backgroundMetrics.bottomPadding
     readonly property var appletInterface: kickoff
 
-    Layout.minimumWidth: implicitWidth
-    Layout.minimumHeight: implicitHeight
-    Layout.preferredWidth: Math.max(implicitWidth, width)
-    Layout.preferredHeight: Math.max(implicitHeight, height)
+    Layout.minimumWidth: Math.max(680, implicitWidth)
+    Layout.minimumHeight: Math.max(560, implicitHeight)
+    Layout.preferredWidth: Math.max(720, implicitWidth, width)
+    Layout.preferredHeight: Math.max(580, implicitHeight, height)
 
     property alias normalPage: normalPage
     property bool blockingHoverFocus: false

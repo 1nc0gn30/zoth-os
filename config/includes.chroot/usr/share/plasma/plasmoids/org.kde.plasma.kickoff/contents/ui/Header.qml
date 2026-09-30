@@ -58,7 +58,7 @@ PlasmaExtras.PlasmoidHeading {
         Item {
             id: layoutContainer
 
-            height: Math.max(searchField.implicitHeight, configureButton.implicitHeight)
+            height: Math.max(searchField.implicitHeight + 8, configureButton.implicitHeight + 8, 42)
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
@@ -197,18 +197,22 @@ PlasmaExtras.PlasmoidHeading {
                     id: searchField
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 38
                     Layout.leftMargin: kickoff.backgroundMetrics.leftPadding
                     placeholderText: i18n("Search apps, tools, AI agents...")
                     focus: true
 
                     background: Rectangle {
                         radius: 8
-                        color: Qt.rgba(0.05, 0.07, 0.10, 0.90)
+                        color: searchField.activeFocus ? Qt.rgba(0.08, 0.10, 0.14, 0.95) : Qt.rgba(0.05, 0.07, 0.10, 0.90)
                         border.color: searchField.activeFocus ? "#ffd700" : Qt.rgba(1, 0.84, 0, 0.32)
                         border.width: searchField.activeFocus ? 2 : 1
 
                         Behavior on border.color {
-                            ColorAnimation { duration: 150 }
+                            ColorAnimation { duration: 160 }
+                        }
+                        Behavior on color {
+                            ColorAnimation { duration: 160 }
                         }
                     }
 

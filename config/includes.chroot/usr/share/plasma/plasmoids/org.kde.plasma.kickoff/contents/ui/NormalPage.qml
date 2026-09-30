@@ -10,7 +10,7 @@ import QtQuick.Templates as T
 
 EmptyPage {
     id: root
-    property real preferredSideBarWidth: Math.max(footer.tabBar.implicitWidth, applicationsPage.implicitSideBarWidth)
+    property real preferredSideBarWidth: Math.max(220, footer.tabBar.implicitWidth, applicationsPage.implicitSideBarWidth)
 
     contentItem: HorizontalStackView {
         id: stackView

@@ -29,6 +29,22 @@ if [ -z "${XAUTHORITY:-}" ] || [ ! -r "$XAUTHORITY" ]; then
     done
 fi
 
+# Force software rendering and XCB to prevent Qt 6 DRI3/OpenGL initialization hangs on hybrid GPUs / nouveau
+export LIBGL_ALWAYS_SOFTWARE=1
+export QT_XCB_GL_INTEGRATION=none
+export QT_QUICK_BACKEND=software
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export QT_QPA_PLATFORM=xcb
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+
+# Temporarily move unconfigured live-build dummy fstab so Calamares disk partitioning isn't blocked
+RESTORE_FSTAB=0
+if [ -f /etc/fstab ] && grep -qi "UNCONFIGURED" /etc/fstab; then
+    sudo mv /etc/fstab /etc/fstab.orig.calamares 2>/dev/null || true
+    RESTORE_FSTAB=1
+fi
+
 LOG_DIR="/var/log/calamares"
 sudo mkdir -p "$LOG_DIR" 2>/dev/null || mkdir -p "/tmp/calamares-log"
 LOG_FILE="$LOG_DIR/calamares.log"
@@ -38,8 +54,26 @@ if [ -n "${XAUTHORITY:-}" ] && [ -r "$XAUTHORITY" ]; then
     sudo cp "$XAUTHORITY" /root/.Xauthority 2>/dev/null || true
 fi
 
+STATUS=0
 if [ "$(id -u)" -eq 0 ]; then
-    exec /usr/bin/calamares "$@"
+    /usr/bin/calamares -d "$@" >> "$LOG_FILE" 2>&1 || STATUS=$?
 else
-    exec sudo -E env DISPLAY="$DISPLAY" XAUTHORITY="${XAUTHORITY:-/root/.Xauthority}" QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}" /usr/bin/calamares "$@"
+    sudo -E env DISPLAY="$DISPLAY" \
+        XAUTHORITY="${XAUTHORITY:-/root/.Xauthority}" \
+        QT_QPA_PLATFORM=xcb \
+        LIBGL_ALWAYS_SOFTWARE=1 \
+        QT_XCB_GL_INTEGRATION=none \
+        QT_QUICK_BACKEND=software \
+        QT_AUTO_SCREEN_SCALE_FACTOR=1 \
+        LANG="${LANG:-C.UTF-8}" \
+        LC_ALL="${LC_ALL:-C.UTF-8}" \
+        /usr/bin/calamares -d "$@" >> "$LOG_FILE" 2>&1 || STATUS=$?
 fi
+
+# Restore dummy fstab if we moved it
+if [ "$RESTORE_FSTAB" -eq 1 ] && [ -f /etc/fstab.orig.calamares ]; then
+    sudo mv /etc/fstab.orig.calamares /etc/fstab 2>/dev/null || true
+fi
+
+exit $STATUS
+
