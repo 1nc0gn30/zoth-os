@@ -51,7 +51,7 @@ RowLayout {
         };
     }
 
-    spacing: kickoff.backgroundMetrics.spacing
+    spacing: Math.max(kickoff.backgroundMetrics.spacing, 8)
 
     Kicker.SystemModel {
         id: systemModel
@@ -105,19 +105,31 @@ RowLayout {
         // be used to set collapseActionButtons.
         enabled: !root.__layout.collapseActionButtons
         opacity: !root.__layout.collapseActionButtons ? 1 : 0
-        spacing: parent.spacing
+        spacing: 8
         Repeater {
             id: buttonRepeater
 
             model: filteredButtonsModel
             delegate: PC3.ToolButton {
+                id: actionButton
                 required property int index
                 required property var model
 
                 text: model.display
+                leftPadding: Plasmoid.configuration.showActionButtonCaptions ? 14 : 10
+                rightPadding: Plasmoid.configuration.showActionButtonCaptions ? 14 : 10
+                topPadding: 8
+                bottomPadding: 8
+
+                implicitHeight: 38
+                implicitWidth: Plasmoid.configuration.showActionButtonCaptions 
+                    ? (actionRow.implicitWidth + leftPadding + rightPadding) 
+                    : (Kirigami.Units.gridUnit * 2.2)
+
                 contentItem: RowLayout {
+                    id: actionRow
                     anchors.centerIn: parent
-                    spacing: 4
+                    spacing: 8
                     Image {
                         source: {
                             var d = (model.display || "").toLowerCase();
@@ -136,20 +148,19 @@ RowLayout {
                     PC3.Label {
                         text: model.display
                         visible: Plasmoid.configuration.showActionButtonCaptions
-                        color: parent.parent.hovered ? "#ffd700" : Kirigami.Theme.textColor
+                        color: actionButton.hovered ? "#ffd700" : Kirigami.Theme.textColor
                     }
                 }
 
                 background: Rectangle {
-                    implicitWidth: Kirigami.Units.gridUnit * 2
-                    implicitHeight: Kirigami.Units.gridUnit * 2
-                    radius: 6
-                    color: parent.down ? Qt.rgba(1, 0.84, 0, 0.32) : (parent.hovered ? Qt.rgba(1, 0.84, 0, 0.15) : "transparent")
-                    border.color: parent.down ? "#ffd700" : (parent.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : "transparent")
-                    border.width: parent.down ? 1.5 : 1
-                    scale: parent.down ? 0.94 : (parent.hovered ? 1.05 : 1.0)
+                    radius: 8
+                    color: actionButton.down ? Qt.rgba(1, 0.84, 0, 0.28) : (actionButton.hovered ? Qt.rgba(1, 0.84, 0, 0.14) : "transparent")
+                    border.color: actionButton.down ? "#ffd700" : (actionButton.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : Qt.rgba(1, 1, 1, 0.08))
+                    border.width: actionButton.down ? 1.5 : 1
+                    scale: actionButton.down ? 0.95 : (actionButton.hovered ? 1.02 : 1.0)
                     Behavior on scale { NumberAnimation { duration: 120 } }
                     Behavior on color { ColorAnimation { duration: 130 } }
+                    Behavior on border.color { ColorAnimation { duration: 130 } }
                 }
 
                 onClicked: {
@@ -198,38 +209,49 @@ RowLayout {
     // button with different display modes to calculate the layout properly
     // without binding loops.
     component OverflowMenuButton : PC3.ToolButton {
+        id: overflowBtn
         Accessible.role: Accessible.ButtonMenu
         text: [i18n("Leave"), i18n("Power"), i18n("More"), i18n("More")][Plasmoid.configuration.primaryActions]
         // Make it look pressed while the menu is open
         down: contextMenu.status === PlasmaExtras.Menu.Open || pressed
 
+        leftPadding: display === PC3.AbstractButton.TextBesideIcon ? 14 : 10
+        rightPadding: display === PC3.AbstractButton.TextBesideIcon ? 14 : 10
+        topPadding: 8
+        bottomPadding: 8
+
+        implicitHeight: 38
+        implicitWidth: display === PC3.AbstractButton.TextBesideIcon 
+            ? (overflowRow.implicitWidth + leftPadding + rightPadding) 
+            : (Kirigami.Units.gridUnit * 2.2)
+
         contentItem: RowLayout {
-                    anchors.centerIn: parent
-            spacing: 4
+            id: overflowRow
+            anchors.centerIn: parent
+            spacing: 8
             Image {
                 source: "/usr/share/pixmaps/menu-gold-leave.png"
                 Layout.preferredWidth: 18
-                        Layout.preferredHeight: 18
+                Layout.preferredHeight: 18
                 fillMode: Image.PreserveAspectFit
                 mipmap: true
                 smooth: true
             }
             PC3.Label {
                 text: [i18n("Leave"), i18n("Power"), i18n("More"), i18n("More")][Plasmoid.configuration.primaryActions]
-                color: parent.parent.hovered ? "#ffd700" : Kirigami.Theme.textColor
+                color: overflowBtn.hovered ? "#ffd700" : Kirigami.Theme.textColor
             }
         }
 
         background: Rectangle {
-            implicitWidth: Kirigami.Units.gridUnit * 2
-            implicitHeight: Kirigami.Units.gridUnit * 2
-            radius: 6
-            color: parent.down ? Qt.rgba(1, 0.84, 0, 0.32) : (parent.hovered ? Qt.rgba(1, 0.84, 0, 0.15) : "transparent")
-            border.color: parent.down ? "#ffd700" : (parent.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : "transparent")
-            border.width: parent.down ? 1.5 : 1
-            scale: parent.down ? 0.94 : (parent.hovered ? 1.05 : 1.0)
+            radius: 8
+            color: overflowBtn.down ? Qt.rgba(1, 0.84, 0, 0.28) : (overflowBtn.hovered ? Qt.rgba(1, 0.84, 0, 0.14) : "transparent")
+            border.color: overflowBtn.down ? "#ffd700" : (overflowBtn.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : Qt.rgba(1, 1, 1, 0.08))
+            border.width: overflowBtn.down ? 1.5 : 1
+            scale: overflowBtn.down ? 0.95 : (overflowBtn.hovered ? 1.02 : 1.0)
             Behavior on scale { NumberAnimation { duration: 120 } }
             Behavior on color { ColorAnimation { duration: 130 } }
+            Behavior on border.color { ColorAnimation { duration: 130 } }
         }
 
         PC3.ToolTip.text: text

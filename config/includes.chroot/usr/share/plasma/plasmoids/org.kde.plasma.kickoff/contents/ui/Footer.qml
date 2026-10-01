@@ -22,35 +22,38 @@ PlasmaExtras.PlasmoidHeading {
     readonly property alias leaveButtons: leaveButtons
 
     contentWidth: tabBar.implicitWidth + spacing
-    contentHeight: leaveButtons.implicitHeight
+    contentHeight: Math.max(tabBar.implicitHeight, leaveButtons.implicitHeight, 44)
 
-    // We use an increased vertical padding to improve touch usability
-    leftPadding: kickoff.backgroundMetrics.leftPadding
-    rightPadding: kickoff.backgroundMetrics.rightPadding
-    topPadding: 10
-    bottomPadding: 10
-
+    // Generous outer margins so footer items don't touch the window border
+    leftPadding: Math.max(kickoff.backgroundMetrics.leftPadding, 16)
+    rightPadding: Math.max(kickoff.backgroundMetrics.rightPadding, 16)
+    topPadding: 12
+    bottomPadding: 12
 
     topInset: 0
     leftInset: 0
     rightInset: 0
     bottomInset: 0
 
-    spacing: kickoff.backgroundMetrics.spacing
+    spacing: Math.max(kickoff.backgroundMetrics.spacing, 14)
     position: PC3.ToolBar.Footer
 
     PC3.TabBar {
         id: tabBar
 
-        property real tabWidth: Math.max(applicationsTab.implicitWidth, placesTab.implicitWidth)
+        // Calculate tab width with generous internal padding so text and icons have plenty of room
+        property real minTabWidth: Math.max(applicationsTab.contentItem.implicitWidth + 40, placesTab.contentItem.implicitWidth + 40)
+        property real tabWidth: root.preferredTabBarWidth > 0 
+            ? Math.max(minTabWidth, (root.preferredTabBarWidth / 2) - 6) 
+            : minTabWidth
 
         focus: true
 
-        width: root.preferredTabBarWidth > 0 ? root.preferredTabBarWidth : undefined
-        implicitWidth: contentWidth + leftPadding + rightPadding
-        implicitHeight: contentHeight + topPadding + bottomPadding
+        width: (tabWidth * 2) + tabBarListView.spacing
+        implicitWidth: width + leftPadding + rightPadding
+        implicitHeight: 42
 
-        // This is needed to keep the sparators horizontally aligned
+        // This is needed to keep the separators horizontally aligned
         leftPadding: mirrored ? root.spacing : 0
         rightPadding: !mirrored ? root.spacing : 0
 
@@ -68,7 +71,7 @@ PlasmaExtras.PlasmoidHeading {
             model: tabBar.contentModel
             currentIndex: tabBar.currentIndex
 
-            spacing: tabBar.spacing
+            spacing: 8
             orientation: ListView.Horizontal
             boundsBehavior: Flickable.StopAtBounds
             flickableDirection: Flickable.AutoFlickIfNeeded
@@ -78,14 +81,7 @@ PlasmaExtras.PlasmoidHeading {
             highlightRangeMode: ListView.ApplyRange
             preferredHighlightBegin: tabBar.tabWidth
             preferredHighlightEnd: width - tabBar.tabWidth
-            highlight: KSvg.FrameSvgItem {
-                anchors.top: tabBarListView.contentItem.top
-                anchors.bottom: tabBarListView.contentItem.bottom
-                anchors.topMargin: -root.topPadding
-                anchors.bottomMargin: -root.bottomPadding
-                imagePath: "widgets/tabbar"
-                prefix: tabBar.position === PC3.TabBar.Header ? "north-active-tab" : "south-active-tab"
-            }
+            highlight: Item { visible: false }
             keyNavigationEnabled: false
         }
 
@@ -95,17 +91,22 @@ PlasmaExtras.PlasmoidHeading {
             width: tabBar.tabWidth
             anchors.top: tabBarListView.contentItem.top
             anchors.bottom: tabBarListView.contentItem.bottom
-            anchors.topMargin: -root.topPadding
-            anchors.bottomMargin: -root.bottomPadding
+            anchors.topMargin: 2
+            anchors.bottomMargin: 2
             text: i18n("Applications")
+
+            leftPadding: 16
+            rightPadding: 16
+            topPadding: 6
+            bottomPadding: 6
 
             contentItem: RowLayout {
                 anchors.centerIn: parent
-                spacing: Kirigami.Units.smallSpacing + 4
+                spacing: 8
                 Image {
                     source: "/usr/share/pixmaps/menu-gold-all-apps.png"
-                    Layout.preferredWidth: 22
-                    Layout.preferredHeight: 22
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     smooth: true
@@ -118,14 +119,19 @@ PlasmaExtras.PlasmoidHeading {
             }
 
             background: Rectangle {
-                color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.14) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
-                radius: 6
+                color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.16) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
+                border.color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.45) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.25) : "transparent")
+                border.width: 1
+                radius: 8
                 Behavior on color { ColorAnimation { duration: 150 } }
+                Behavior on border.color { ColorAnimation { duration: 150 } }
                 Rectangle {
                     anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: applicationsTab.checked ? 3 : (applicationsTab.hovered ? 1.5 : 0)
+                    anchors.bottomMargin: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: Math.max(parent.width - 24, 20)
+                    height: applicationsTab.checked ? 2.5 : (applicationsTab.hovered ? 1.5 : 0)
+                    radius: 2
                     color: "#ffd700"
                     visible: height > 0
                     Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -142,17 +148,22 @@ PlasmaExtras.PlasmoidHeading {
             width: tabBar.tabWidth
             anchors.top: tabBarListView.contentItem.top
             anchors.bottom: tabBarListView.contentItem.bottom
-            anchors.topMargin: -root.topPadding
-            anchors.bottomMargin: -root.bottomPadding
+            anchors.topMargin: 2
+            anchors.bottomMargin: 2
             text: i18n("Places") //Explore?
+
+            leftPadding: 16
+            rightPadding: 16
+            topPadding: 6
+            bottomPadding: 6
 
             contentItem: RowLayout {
                 anchors.centerIn: parent
-                spacing: Kirigami.Units.smallSpacing + 4
+                spacing: 8
                 Image {
                     source: "/usr/share/pixmaps/menu-gold-places.png"
-                    Layout.preferredWidth: 22
-                    Layout.preferredHeight: 22
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     smooth: true
@@ -165,14 +176,19 @@ PlasmaExtras.PlasmoidHeading {
             }
 
             background: Rectangle {
-                color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.14) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
-                radius: 6
+                color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.16) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
+                border.color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.45) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.25) : "transparent")
+                border.width: 1
+                radius: 8
                 Behavior on color { ColorAnimation { duration: 150 } }
+                Behavior on border.color { ColorAnimation { duration: 150 } }
                 Rectangle {
                     anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: placesTab.checked ? 3 : (placesTab.hovered ? 1.5 : 0)
+                    anchors.bottomMargin: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: Math.max(parent.width - 24, 20)
+                    height: placesTab.checked ? 2.5 : (placesTab.hovered ? 1.5 : 0)
+                    radius: 2
                     color: "#ffd700"
                     visible: height > 0
                     Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
