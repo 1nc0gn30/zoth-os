@@ -1,28 +1,182 @@
 #!/usr/bin/env python3
+# ==============================================================================
+#  ZOTHOS COMPOSITOR CURSOR DAEMON
+#  Provides real-time (60 FPS) global cursor tracking across KDE Plasma 6 Wayland
+#  and X11. Broadcasts via /dev/shm/zoth_cursor.json, /tmp/zoth_cursor.json, and UDP 127.0.0.1:9988.
+# ==============================================================================
+
+import os
+import sys
 import time
 import json
-import tkinter
+import socket
+import signal
+import subprocess
 
-root = tkinter.Tk()
-root.withdraw()
+UDP_PORT = 9988
+SHARED_MEM_PATH = "/dev/shm/zoth_cursor.json"
+TMP_PATH = "/tmp/zoth_cursor.json"
+KWIN_SCRIPT_NAME = "zoth_cursor_tracker"
 
-sw = root.winfo_screenwidth()
-sh = root.winfo_screenheight()
+# Setup UDP broadcast socket to localhost
+udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try:
+    udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+except Exception:
+    pass
 
-while True:
+def write_cursor(x, y):
+    payload = f'{{"x":{x},"y":{y},"timestamp":{time.time()}}}'
+    # Write to /dev/shm (RAM)
     try:
-        x, y = root.winfo_pointerxy()
-        data = {
-            "x": x,
-            "y": y,
-            "screen_w": sw,
-            "screen_h": sh,
-            "timestamp": time.time()
-        }
-        with open("/tmp/zoth_cursor.json.tmp", "w") as f:
-            json.dump(data, f)
-        import os
-        os.replace("/tmp/zoth_cursor.json.tmp", "/tmp/zoth_cursor.json")
+        tmp_shm = f"{SHARED_MEM_PATH}.tmp"
+        with open(tmp_shm, "w") as f:
+            f.write(payload)
+        os.replace(tmp_shm, SHARED_MEM_PATH)
     except Exception:
         pass
-    time.sleep(0.05)
+    
+    # Write to /tmp
+    try:
+        tmp_tmp = f"{TMP_PATH}.tmp"
+        with open(tmp_tmp, "w") as f:
+            f.write(payload)
+        os.replace(tmp_tmp, TMP_PATH)
+    except Exception:
+        pass
+
+    # Send UDP datagram to local listeners (Pet HUD, Sentinel HUD)
+    try:
+        udp_sock.sendto(f"{x},{y}".encode(), ("127.0.0.1", UDP_PORT))
+    except Exception:
+        pass
+
+def unload_kwin_script():
+    try:
+        subprocess.run(
+            ["qdbus", "org.kde.KWin", "/Scripting", "unloadScript", KWIN_SCRIPT_NAME],
+            capture_output=True,
+            timeout=1
+        )
+    except Exception:
+        pass
+
+def setup_kwin_tracking():
+    script_content = """
+    var lastX = -1;
+    var lastY = -1;
+    var timer = new QTimer();
+    timer.interval = 16;
+    timer.timeout.connect(function() {
+        var p = workspace.cursorPos;
+        if (p.x !== lastX || p.y !== lastY) {
+            lastX = p.x;
+            lastY = p.y;
+            callDBus('org.zothos.CursorService', '/Cursor', 'org.zothos.CursorService', 'SetPosition', p.x, p.y);
+        }
+    });
+    timer.start();
+    """
+    tmp_script = "/tmp/zoth_kwin_cursor_script.js"
+    try:
+        with open(tmp_script, "w") as f:
+            f.write(script_content)
+
+        unload_kwin_script()
+        subprocess.run(
+            ["qdbus", "org.kde.KWin", "/Scripting", "loadScript", tmp_script, KWIN_SCRIPT_NAME],
+            capture_output=True,
+            timeout=2
+        )
+        subprocess.run(
+            ["qdbus", "org.kde.KWin", "/Scripting", "start"],
+            capture_output=True,
+            timeout=2
+        )
+    except Exception as e:
+        sys.stderr.write(f"[zoth-cursor-daemon] Error setting up KWin script: {e}\n")
+
+def run_kwin_mode():
+    import dbus
+    import dbus.service
+    from dbus.mainloop.glib import DBusGMainLoop
+    from gi.repository import GLib
+
+    DBusGMainLoop(set_as_default=True)
+
+    class CursorReceiver(dbus.service.Object):
+        def __init__(self, bus):
+            bus_name = dbus.service.BusName('org.zothos.CursorService', bus=bus)
+            super().__init__(bus_name, '/Cursor')
+        
+        @dbus.service.method('org.zothos.CursorService', in_signature='ii', out_signature='')
+        def SetPosition(self, x, y):
+            write_cursor(x, y)
+
+    bus = dbus.SessionBus()
+    receiver = CursorReceiver(bus)
+
+    setup_kwin_tracking()
+
+    def check_watchdog():
+        try:
+            res = subprocess.run(
+                ["qdbus", "org.kde.KWin", "/Scripting", "isScriptLoaded", KWIN_SCRIPT_NAME],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if "true" not in res.stdout.lower():
+                setup_kwin_tracking()
+        except Exception:
+            pass
+        return True
+
+    GLib.timeout_add_seconds(5, check_watchdog)
+
+    def on_exit(signum, frame):
+        unload_kwin_script()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, on_exit)
+    signal.signal(signal.SIGTERM, on_exit)
+
+    loop = GLib.MainLoop()
+    loop.run()
+
+def run_fallback_mode():
+    import tkinter
+    root = tkinter.Tk()
+    root.withdraw()
+
+    last_x, last_y = -1, -1
+    while True:
+        try:
+            root.update()
+            x, y = root.winfo_pointerxy()
+            if x != last_x or y != last_y:
+                write_cursor(x, y)
+                last_x, last_y = x, y
+        except Exception:
+            pass
+        time.sleep(0.016)
+
+def main():
+    # Check if KWin DBus is active
+    try:
+        res = subprocess.run(["qdbus", "org.kde.KWin"], capture_output=True, timeout=2)
+        kwin_available = (res.returncode == 0)
+    except Exception:
+        kwin_available = False
+
+    if kwin_available:
+        try:
+            run_kwin_mode()
+            return
+        except Exception as e:
+            sys.stderr.write(f"[zoth-cursor-daemon] KWin mode failed: {e}. Falling back.\n")
+
+    run_fallback_mode()
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=Cursor AI
+GenericName=AI Code Editor
+Comment=Sovereign AI-Powered Code Editor & Pair Programmer
+Exec=cursor %F
+Icon=zoth-cursor
+Terminal=false
+Type=Application
+StartupNotify=true
+StartupWMClass=Cursor
+Categories=Development;IDE;TextEditor;ArtificialIntelligence;
+MimeType=application/x-cursor-workspace;text/plain;inode/directory;
+Keywords=cursor;ai;code;editor;developer;ide;
+Actions=new-window;
+
+[Desktop Action new-window]
+Name=New Window
+Exec=cursor --new-window %F
+Icon=zoth-cursor

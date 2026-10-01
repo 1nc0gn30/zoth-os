@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Grok Bot
+GenericName=Autonomous AI Desktop Agent
+Comment=Grok AI Autonomous Agent & Neural Research Companion
+Exec=grok-bot %U
+Icon=zoth-grok-bot
+Terminal=false
+Type=Application
+StartupNotify=true
+StartupWMClass=grok-bot
+Categories=Development;System;ArtificialIntelligence;Utility;
+MimeType=x-scheme-handler/grokbot;x-scheme-handler/sand;
+Keywords=grok;bot;ai;agent;research;neural;spacex;x;
