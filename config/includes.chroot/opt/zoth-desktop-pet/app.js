@@ -946,19 +946,32 @@ ipcRenderer.on('global-cursor-pos', (event, pos) => {
   const angle = Math.atan2(deltaY, deltaX);
 
   if (activePet.type === 'procedural' && eyeIris) {
-    const maxRadius = 16;
-    const distance = Math.min(maxRadius, dist / 22);
-    const pupilX = Math.cos(angle) * distance;
-    const pupilY = Math.sin(angle) * distance;
-    eyeIris.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+    const maxRadius = 22;
+    const distance = Math.min(maxRadius, dist / 16);
+    const irisX = Math.cos(angle) * distance;
+    const irisY = Math.sin(angle) * distance;
+    eyeIris.style.transform = `translate(${irisX}px, ${irisY}px)`;
+
+    if (eyePupil) {
+      const pupilX = irisX * 0.4;
+      const pupilY = irisY * 0.4;
+      const dilation = dist < 120 ? 1.35 : dist < 300 ? 1.15 : 1.0;
+      eyePupil.style.transform = `translate(${pupilX}px, ${pupilY}px) scale(${dilation})`;
+    }
   } else if (petAvatar) {
-    const tiltMax = 14;
-    const tiltX = Math.max(-tiltMax, Math.min(tiltMax, -(deltaY / 30)));
-    const tiltY = Math.max(-tiltMax, Math.min(tiltMax, deltaX / 30));
-    petAvatar.style.transform = `perspective(500px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+    const tiltMax = 18;
+    const tiltX = Math.max(-tiltMax, Math.min(tiltMax, -(deltaY / 35)));
+    const tiltY = Math.max(-tiltMax, Math.min(tiltMax, deltaX / 35));
+    const scale = dist < 150 ? 1.06 : 1.02;
+    petAvatar.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scale})`;
   }
 
-  if (pos.velocity > 450) {
+  // Wake up sleeping pet if cursor approaches
+  if (isSleeping && dist < 160) {
+    wakeUp();
+  }
+
+  if (pos.velocity > 400) {
     const relX = pos.cursorX - pos.windowX;
     const relY = pos.cursorY - pos.windowY;
     spawnParticleTrail(relX, relY, pos.velocity);

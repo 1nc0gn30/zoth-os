@@ -4,6 +4,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const http = require('http');
+const dgram = require('dgram');
 
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
@@ -56,47 +57,106 @@ function saveConfig(cfg) {
   } catch (e) {}
 }
 
-function startCursorTracking() {
-  const pollInterval = () => {
-    if (!petWindow || petWindow.isDestroyed()) return;
-    try {
-      const point = screen.getCursorScreenPoint();
-      const cursorX = point.x;
-      const cursorY = point.y;
+let udpSocket = null;
+let lastUdpTime = 0;
 
-      const now = Date.now();
-      const dt = now - lastCursorTime;
-      const dx = cursorX - lastCursorPos.x;
-      const dy = cursorY - lastCursorPos.y;
-      const dist = Math.hypot(dx, dy);
-
-      if (dt > 0) {
-        cursorVelocity = (dist / dt) * 1000;
-      }
-
-      const bounds = petWindow.getBounds();
-      petWindow.webContents.send('global-cursor-pos', {
-        cursorX,
-        cursorY,
-        windowX: bounds.x,
-        windowY: bounds.y,
-        width: bounds.width,
-        height: bounds.height,
-        velocity: Math.round(cursorVelocity),
-        deltaX: dx,
-        deltaY: dy
-      });
-
-      lastCursorPos = { x: cursorX, y: cursorY };
-      lastCursorTime = now;
-
-      const interval = cursorVelocity > 400 ? 16 : cursorVelocity > 100 ? 33 : 50;
-      cursorPoller = setTimeout(pollInterval, interval);
-    } catch (e) {
-      cursorPoller = setTimeout(pollInterval, 100);
+function ensureCursorDaemon() {
+  exec('pgrep -f zoth-cursor-daemon', (err, stdout) => {
+    if (err || !stdout.trim()) {
+      console.log('[Zoth Pet] Spawning zoth-cursor-daemon...');
+      exec('systemctl --user start zoth-cursor-daemon.service || nohup /usr/bin/python3 /usr/local/bin/zoth-cursor-daemon >/dev/null 2>&1 &');
     }
+  });
+}
+
+function dispatchCursorPos(cursorX, cursorY) {
+  if (!petWindow || petWindow.isDestroyed()) return;
+
+  const now = Date.now();
+  const dt = now - lastCursorTime;
+  const dx = cursorX - lastCursorPos.x;
+  const dy = cursorY - lastCursorPos.y;
+  const dist = Math.hypot(dx, dy);
+
+  if (dt > 0) {
+    cursorVelocity = (dist / dt) * 1000;
+  }
+
+  const bounds = petWindow.getBounds();
+  petWindow.webContents.send('global-cursor-pos', {
+    cursorX,
+    cursorY,
+    windowX: bounds.x,
+    windowY: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+    velocity: Math.round(cursorVelocity),
+    deltaX: dx,
+    deltaY: dy
+  });
+
+  lastCursorPos = { x: cursorX, y: cursorY };
+  lastCursorTime = now;
+}
+
+function startCursorTracking() {
+  ensureCursorDaemon();
+
+  // Setup UDP real-time broadcast receiver from zoth-cursor-daemon
+  try {
+    if (udpSocket) {
+      try { udpSocket.close(); } catch (e) {}
+    }
+    udpSocket = dgram.createSocket({ type: 'udp4', reuseAddr: true });
+    udpSocket.on('message', (msg) => {
+      const parts = msg.toString().trim().split(',');
+      if (parts.length === 2) {
+        const cx = parseFloat(parts[0]);
+        const cy = parseFloat(parts[1]);
+        if (!isNaN(cx) && !isNaN(cy)) {
+          lastUdpTime = Date.now();
+          dispatchCursorPos(cx, cy);
+        }
+      }
+    });
+    udpSocket.on('error', (err) => {
+      console.log('[Zoth Pet] UDP socket notice:', err.message);
+    });
+    udpSocket.bind(9988, '127.0.0.1');
+  } catch (e) {
+    console.log('[Zoth Pet] UDP bind exception:', e.message);
+  }
+
+  // Fallback Poller for RAM file /dev/shm/zoth_cursor.json or screen.getCursorScreenPoint
+  const pollFallback = () => {
+    if (!petWindow || petWindow.isDestroyed()) return;
+    const now = Date.now();
+    // If no UDP update in last 100ms, read shared memory file or screen
+    if (now - lastUdpTime > 100) {
+      let handled = false;
+      for (const p of ['/dev/shm/zoth_cursor.json', '/tmp/zoth_cursor.json']) {
+        try {
+          if (fs.existsSync(p)) {
+            const raw = fs.readFileSync(p, 'utf8');
+            const data = JSON.parse(raw);
+            if (typeof data.x === 'number' && typeof data.y === 'number') {
+              dispatchCursorPos(data.x, data.y);
+              handled = true;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+      if (!handled) {
+        try {
+          const pt = screen.getCursorScreenPoint();
+          dispatchCursorPos(pt.x, pt.y);
+        } catch (e) {}
+      }
+    }
+    cursorPoller = setTimeout(pollFallback, 33);
   };
-  pollInterval();
+  pollFallback();
 }
 
 function getSystemTelemetry(callback) {
