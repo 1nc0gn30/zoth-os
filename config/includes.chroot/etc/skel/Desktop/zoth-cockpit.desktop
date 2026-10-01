@@ -2,11 +2,37 @@
 Version=1.0
 Type=Application
 Name=ZothOS Cockpit
+GenericName=System Operations Deck & Telemetry
 Comment=Unified Alchemical System Telemetry & Control Panel
-Exec=konsole --hold -e /usr/local/bin/zoth-cockpit
+Exec=konsole --title "ZothOS Cockpit - Operations Deck" -e /usr/local/bin/zoth-cockpit
 Icon=/usr/share/pixmaps/zoth-cockpit.png
 Terminal=false
-Categories=System;Settings;
-Keywords=cockpit;dashboard;diagnostics;system;monitor;os;
+Categories=System;Settings;Monitor;
+Keywords=cockpit;dashboard;diagnostics;system;monitor;telemetry;zoth;os;
 MimeType=application/x-zoth-cockpit;
 StartupNotify=true
+Actions=Status;Doctor;ModeGold;ModeGhost;ModeMatrix;Studio;
+
+[Desktop Action Status]
+Name=Telemetry Snapshot (Headless)
+Exec=konsole --hold -e /usr/local/bin/zoth-cockpit --status
+
+[Desktop Action Doctor]
+Name=Run Zoth System Doctor (Auditor)
+Exec=konsole --hold -e /usr/local/bin/zoth-doctor
+
+[Desktop Action ModeGold]
+Name=Engage Sovereign Gold Master
+Exec=/usr/local/bin/zoth-mode gold
+
+[Desktop Action ModeGhost]
+Name=Engage Ghostmode Stealth
+Exec=/usr/local/bin/zoth-mode ghost
+
+[Desktop Action ModeMatrix]
+Name=Engage Hermetic Matrix
+Exec=/usr/local/bin/zoth-mode matrix
+
+[Desktop Action Studio]
+Name=Launch Zoth Studio Pro
+Exec=/usr/local/bin/zoth-studio
