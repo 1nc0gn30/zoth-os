@@ -1,119 +1,219 @@
-# 🜂 ZOTHOS Linux 🜄
-### *The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System*
-> *"As above, so below; as code, so mind."*
+<div align="center">
 
-```text
-       ▲             ZOTHOS Linux 3.0 (Azoth Sovereign Master)
-      ▲ ▲            -------------------------------------------------
-     ▲   ▲           Desktop Core:     KDE Plasma 6.3 Wayland (24K Celtic Gold & Obsidian Glass)
-    ▲  ☉  ▲          Base Runtime:     Debian 13 (Trixie) + Kali Rolling + Parrot OS Triple APT Pinning
-   ▲   |   ▲         Kernel:           Linux 6.12+ Hardened AMD64
-  ▲ 🜂  ☿  🜄 ▲        Sovereign Vault:  Rust ChaCha20-Poly1305 + Argon2id Memory Process Injector (:8787)
- ▲             ▲       Frontier AI:      Aider AI + Google Antigravity + Claude Code + Cline + Ollama
-▲═══════🜁═══════▲      Cloud Dev:        Netlify CLI Workstation + Streamlit Studio + Node v26 + Python 3.12
-  \   🜃     /        Stealth & Privacy:Preloaded Tor Browser + NullAI Ghostmode [Amnesic Tor & MAC Wipe]
-   \   |   /         Security Stack:   215+ Verified Tools (Burp Suite Gold, Caido, Metasploit, Nmap)
-    \  🝘  /          Installer:        Calamares 24K Gold Sovereign Graphical System Installer
-     \   /           Architecture:     x86_64 Hybrid UEFI / BIOS Live Bootable ISO
-      ▼
-```
+  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.0 Sovereign Master Banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](https://opensource.org/licenses/MIT)
-[![Base: Debian 13](https://img.shields.io/badge/Base-Debian%2013%20Trixie-red.svg)](https://www.debian.org)
-[![Desktop: KDE Plasma 6.3](https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3%20Wayland-blue.svg)](https://kde.org/plasma-desktop/)
-[![Crypto: Argon2id + ChaCha20](https://img.shields.io/badge/Crypto-Argon2id%20%2B%20ChaCha20--Poly1305-emerald.svg)](https://nullai.tech)
-[![Zero Telemetry](https://img.shields.io/badge/Telemetry-Zero%20Egress-brightgreen.svg)](https://nullai.tech)
+  <br />
+  <br />
+
+  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 0 &nbsp; 🜄</h1>
+  <h3><em>The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System</em></h3>
+
+  <p>
+    <strong>KDE Plasma 6.3 Wayland &bull; Debian 13 Trixie &bull; Kali Rolling &bull; Parrot OS &bull; Linux 6.12+ Hardened</strong>
+  </p>
+
+  <p>
+    <em>"As above, so below; as code, so mind."</em>
+  </p>
+
+  <p>
+    <a href="https://github.com/NullAITech/zoth-os/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
+    <a href="https://www.debian.org"><img src="https://img.shields.io/badge/Base-Debian%2013%20Trixie-d70a53.svg?style=for-the-badge&logo=debian&logoColor=white" alt="Base: Debian 13" /></a>
+    <a href="https://kde.org/plasma-desktop/"><img src="https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3-1d99f3.svg?style=for-the-badge&logo=kde&logoColor=white" alt="Desktop: KDE Plasma 6.3" /></a>
+    <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Vault-Argon2id%20%2B%20ChaCha20-00e5ff.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Crypto: Argon2id + ChaCha20" /></a>
+    <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Telemetry-Zero%20Egress-00ff9d.svg?style=for-the-badge&logo=shieldsdotio&logoColor=black" alt="Zero Telemetry" /></a>
+    <a href="https://github.com/NullAITech/zoth-os"><img src="https://img.shields.io/badge/Architecture-x86__64%20Hybrid%20UEFI-cca800.svg?style=for-the-badge" alt="x86_64 Hybrid UEFI" /></a>
+  </p>
+
+  <br />
+
+  <p>
+    <a href="#-system-specifications-at-a-glance"><b>Specification</b></a> &bull;
+    <a href="#-visual-gallery--system-tour"><b>Visual Tour</b></a> &bull;
+    <a href="#-system-architecture"><b>Architecture</b></a> &bull;
+    <a href="#-environment--stealth-profiles"><b>Stealth Profiles</b></a> &bull;
+    <a href="#-sovereign-cryptographic-vault-engine"><b>Vault Engine</b></a> &bull;
+    <a href="#-frontier-ai--coding-agent-workstations"><b>Frontier AI</b></a> &bull;
+    <a href="#-built-in-tools--applications"><b>Tool Arsenal</b></a> &bull;
+    <a href="#-installation--live-boot"><b>Installation</b></a>
+  </p>
+
+</div>
+
+---
+
+## ✦ System Specifications at a Glance
+
+| Pillar | Technology | Implementation Details |
+| :--- | :--- | :--- |
+| **Desktop Core** | **KDE Plasma 6.3 Wayland** | Translucent obsidian frosted glass, 24K Celtic Gold insignia, KWin compositor effects, and custom golden cursor trails. |
+| **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for 100% package cohesion. |
+| **Kernel Stack** | **Linux 6.12+ Hardened** | Low-latency desktop kernel with Intel UHD (`i915`) + NVIDIA Quadro hybrid graphics DRM auto-switching. |
+| **Sovereign Vault** | **Rust ChaCha20-Poly1305** | Native resident daemon on `127.0.0.1:8787` using Argon2id key derivation; injects secrets directly into process RAM. |
+| **Frontier AI Forge** | **Autonomous Agent Swarm** | Google Antigravity CLI, Aider AI, Cursor AI, Grok Bot, Claude Code, Cline, and Ollama offline LLM model runner. |
+| **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node v26, Python 3.12, Rust, Go, Foundry, and Solana. |
+| **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
+| **Security Arsenal** | **215+ Verified Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
+| **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
 
 ## ✦ Visual Gallery & System Tour
 
-### 1. Sovereign 24K Celtic Gold Master Desktop
+<details open>
+<summary><b>1. Sovereign 24K Celtic Gold Master Desktop</b></summary>
+<br />
+
 The flagship KDE Plasma 6.3 Wayland experience: 24K Celtic Gold icons, alchemical typography, translucent frosted obsidian taskbar, and responsive desktop shortcuts for the complete sovereign workstation suite.
 
 ![ZothOS 3.0 Sovereign Desktop](docs/screenshots/zothos-desktop.png)
 
----
+</details>
 
-### 2. Applications Kickoff Menu (Celtic Gold Suite)
-Every application category in the Kickoff menu features high-fidelity, hand-crafted 24K gold insignia (Development, Education, Graphics, Pentesting, System, Multimedia, Internet, Power actions).
+<details open>
+<summary><b>2. Applications Kickoff Menu (Celtic Gold Suite)</b></summary>
+<br />
+
+Every application category in the Kickoff menu features high-fidelity, hand-crafted 24K gold insignia. Fully customized with spacious navigation tabs, smooth hover scaling, and clean power/leave action buttons.
 
 ![KDE Plasma Kickoff Gold Menu](docs/screenshots/kickoff-menu.png)
 
----
+</details>
 
-### 3. Zoth Sovereign Vault (`zoth-vault`)
+<details>
+<summary><b>3. Zoth Sovereign Vault (<code>zoth-vault</code>)</b></summary>
+<br />
+
 Zero-leak cryptographic secrets engine powered by Rust, Argon2id, and authenticated ChaCha20-Poly1305. Features multi-vault management supporting **Zoth Sovereign Vault**, **Bitwarden CLI (`bw`)**, **KeePassXC**, and **UNIX Pass (GPG)** with memory-only child process injection.
 
 ![Zoth Sovereign Vault](docs/screenshots/zoth-vault.png)
 
----
+</details>
 
-### 4. Aider AI Coding Agent Workstation (`aider`)
+<details>
+<summary><b>4. Aider AI Coding Agent Workstation (<code>aider</code>)</b></summary>
+<br />
+
 Dedicated pair programming terminal environment with telemetry, offline Ollama integration (100% private coding without external internet), Architect dual-reasoning mode, and automated git commits.
 
 ![Aider AI Coding Agent Workstation](docs/screenshots/aider-workstation.png)
 
----
+</details>
 
-### 5. Netlify CLI Serverless & Edge Workstation (`zoth-netlify`)
+<details>
+<summary><b>5. Netlify CLI Serverless & Edge Workstation (<code>zoth-netlify</code>)</b></summary>
+<br />
+
 Dedicated interactive terminal operations deck for Netlify: site linking, local server emulation (`netlify dev`), edge functions, environment variable synchronization, and one-command production deployments.
 
 ![Netlify CLI Workstation](docs/screenshots/zoth-netlify.png)
 
----
+</details>
 
-### 6. Streamlit Studio & ML Dashboard Station (`zoth-streamlit`)
+<details>
+<summary><b>6. Streamlit Studio & ML Dashboard Station (<code>zoth-streamlit</code>)</b></summary>
+<br />
+
 Isolated Python 3.12 environment with pre-bundled data science, machine learning, and cyber intelligence dashboards with live local server management on `http://localhost:8501`.
 
 ![Streamlit Studio](docs/screenshots/zoth-streamlit.png)
 
----
+</details>
 
-### 7. Zoth Tor Privacy Browser (`tor-browser`)
+<details>
+<summary><b>7. Zoth Tor Privacy Browser (<code>tor-browser</code>)</b></summary>
+<br />
+
 Pre-bundled standalone Tor Browser located in `/opt/tor-browser/` with multi-hop onion routing, automated circuit isolation, and zero third-party tracking.
 
 ![Tor Privacy Browser](docs/screenshots/tor-browser.png)
 
----
+</details>
 
-### 8. Burp Suite Community Edition & Offensive Security
+<details>
+<summary><b>8. Burp Suite Community Edition & Offensive Security</b></summary>
+<br />
+
 Preloaded industry-standard web intercepting proxy with custom Celtic Gold icon branding, alongside Caido, Nmap, Wireshark, Metasploit Framework, and Aircrack-ng.
 
 ![Burp Suite Community Edition](docs/screenshots/burpsuite.png)
 
----
+</details>
 
-### 9. ZothOS Cockpit Operations Center (`zoth-cockpit`)
+<details>
+<summary><b>9. ZothOS Cockpit Operations Center (<code>zoth-cockpit</code>)</b></summary>
+<br />
+
 Full-screen curses-based system operations dashboard featuring live CPU/RAM/Disk telemetry, active environment/stealth switcher, AI daemon status, and instant tool launcher.
 
 ![ZothOS Cockpit Operations Center](docs/screenshots/zoth-cockpit.png)
 
----
+</details>
 
-### 10. In-House Codex Manual & Documentation (`zoth-docs`)
+<details>
+<summary><b>10. In-House Codex Manual & Documentation (<code>zoth-docs</code>)</b></summary>
+<br />
+
 Comprehensive offline documentation codex preloaded directly inside the operating system, detailing architectural invariants, tool guides, security best practices, and CLI cheatsheets.
 
 ![ZothOS Codex Documentation](docs/screenshots/zoth-codex-docs.png)
 
+</details>
+
 ---
 
-## ✦ System Manifesto & Vision
+## ✦ System Architecture
 
-**ZOTHOS** is a sovereign Linux distribution engineered at the nexus of esoteric aesthetics, military-grade operational security, frontier agentic artificial intelligence, and offensive security parity.
+```mermaid
+graph TB
+    subgraph Core ["Sovereign Kernel & System Foundations"]
+        K[Linux 6.12+ Hardened Kernel]
+        D[Debian 13 Trixie Base]
+        K --> D
+        D --> APT1[Debian Stable APT]
+        D --> APT2[Kali Rolling Pinned]
+        D --> APT3[Parrot Security Pinned]
+    end
 
-1. **24K Hermetic Gold on Obsidian Glass**: Tailored KDE Plasma 6.3 desktop featuring pure circular gold medallions (`Zoth-Hermetic`), custom golden cursor trails, translucent gold drag-selection boxes, and a minimalist Celtic typography wallpaper.
-2. **Cryptographic Sovereignty (Zoth Vault)**: Native local Rust daemon on `127.0.0.1:8787` using Argon2id key derivation and ChaCha20-Poly1305 encryption. Command `zoth-vault run -- <cmd>` injects decrypted secrets directly into child process execution memory without ever writing them to disk.
-3. **Offensive Security Parity (Kali + Parrot)**: Tri-repository architecture leveraging Debian Trixie stability with pinned Kali Rolling and Parrot Security repositories. Over **215+ verified tools** pre-configured for Active Directory exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction.
-4. **Environment Modes & Stealth Profiles**: Seamlessly switch between **Sovereign Gold Master (Default)**, **NullAI Ghostmode (Stealth / Torified / Amnesic)**, **Hermetic Matrix (Emerald Phosphor)**, and **Incognito Chameleon (Windows 11 Guise)** with sub-second response and zero session restart.
-5. **Frontier & Autonomous AI Forge**: Sovereign local inference engines (Ollama, vLLM, llama.cpp, ComfyUI) fused with underground AI red-teaming harnesses (Garak, PyRIT, Promptfoo, inspect_ai), multi-agent orchestrators (Nous Hermes, Google AGY SDK), autonomous coding agents (Aider, Claude Code, Cline, OpenCode), and autonomous terminals ([NullAI HexStrike](https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal)).
-6. **Zoth Hermetic Audio Studio**: Dedicated desktop audio deck preloaded with classical focus and alchemical compositions (Satie, Chopin, Debussy, Bach) with a real-time Web Audio API spectrum visualizer.
+    subgraph UI ["Glassmorphic Presentation Layer"]
+        W[KDE Plasma 6.3 Wayland]
+        TH[24K Celtic Gold Master Theme]
+        KO[Refined Kickoff Menu]
+        HUD[Apex Desktop Telemetry HUD]
+        W --- TH
+        W --- KO
+        W --- HUD
+    end
+
+    subgraph Security ["Cryptographic & Privacy Vaults"]
+        V[Rust Vault Daemon :8787]
+        A2[Argon2id Key Derivation]
+        C20[ChaCha20-Poly1305 Cipher]
+        GM[NullAI Ghostmode Tor Router]
+        V --> A2
+        V --> C20
+    end
+
+    subgraph AI ["Frontier AI & Autonomous Agents"]
+        AG[Google Antigravity CLI]
+        AD[Aider Coding Agent]
+        CR[Cursor AI Editor]
+        GK[Grok Bot Agent]
+        OL[Ollama Local Inference]
+    end
+
+    D --> W
+    D --> V
+    D --> GM
+    V -.->|RAM Secret Injection| AI
+    UI -.->|Direct Launch| AI
+```
 
 ---
 
 ## ✦ Environment & Stealth Profiles
 
-ZOTHOS allows instant switching between operational states with zero logout or reboot required:
+ZOTHOS allows instantaneous switching between operational states with zero logout or reboot required:
 
 ```mermaid
 flowchart TD
@@ -141,7 +241,7 @@ flowchart TD
 
 ## ✦ Sovereign Cryptographic Vault Engine
 
-The **Zoth Sovereign Vault** protects sensitive API keys, SSH credentials, private keys, and blockchain seeds.
+The **Zoth Sovereign Vault** protects sensitive API keys, SSH credentials, private keys, and blockchain seeds. Decrypted secrets are injected directly into child process memory via RAM, ensuring zero secrets ever touch persistent disk storage.
 
 ```mermaid
 sequenceDiagram
@@ -150,18 +250,18 @@ sequenceDiagram
     participant CLI as zoth-vault CLI
     participant Daemon as Rust Daemon (:8787)
     participant Disk as Encrypted Vault File
-    participant Proc as Target Process (e.g. Aider)
+    participant Proc as Target Process (e.g. Aider / Cursor)
 
     Dev->>CLI: zoth-vault run -- aider
     CLI->>Daemon: GET /v1/export/env (Bearer Token)
     Daemon->>Disk: Read & Decrypt with ChaCha20-Poly1305 Key
     Daemon-->>CLI: Decrypted Key-Value Map in RAM
     CLI->>Proc: Inject Environment Variables into Child Process Memory
-    Note over Disk,Proc: Keys never touch the disk in decrypted state!
+    Note over Disk,Proc: Keys never touch disk in decrypted state!
     Proc->>Dev: Interactive Process Runs with Valid API Keys
 ```
 
-### Multi-Vault Commands
+### Multi-Vault CLI Commands
 ```bash
 # Check daemon health, status, and unlock state
 zoth-vault status
@@ -188,15 +288,16 @@ zoth-vault
 
 ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
-| Coding Agent | Launcher Command | Offline Local Support | Key Capabilities |
+| Coding Agent / Tool | Launcher Command | Offline Local Support | Key Capabilities |
 | :--- | :--- | :--- | :--- |
+| **Cursor AI** | `cursor` | Hybrid (Cloud / Local) | Visual AI code editor with agentic codebase indexing and multi-file editing. |
+| **Grok Bot** | `grok-bot` | Hybrid (Cloud / Local) | Autonomous research agent and neural reasoning assistant. |
 | **Aider AI Coding Agent** | `aider` | Yes (Local Ollama) | Terminal pair programming, git auto-commit, Architect mode, multi-file edits. |
 | **Google Antigravity Agent** | `antigravity` / `agy` | Yes (Ollama / Local APIs) | Agentic IDE with autonomous subagent spawning, skills, and browser control. |
 | **Claude Code Agent** | `claude` | No (Cloud API) | Anthropic agentic coding CLI with full codebase refactoring capabilities. |
 | **Cline Autonomous Agent** | `cline` | Yes (Local Ollama / OpenRouter) | Interactive agent with step-by-step task breakdown and MCP tool integration. |
 | **Nous Hermes Agent** | `hermes` | Yes (Local Models) | Autonomous agent runner with 70+ built-in developer skills. |
 | **OpenAI Codex CLI** | `codex` | No (Cloud API) | Fast terminal code generation and interactive diff patch assistant. |
-| **x.ai Grok CLI** | `grok` | No (Cloud API) | Real-time terminal search, news verification, and OSINT analysis. |
 | **Ollama Model Runtime** | `ollama serve` | 100% Offline | Resident local LLM engine running Qwen 2.5 Coder, Llama 3.2, and DeepSeek. |
 
 ---
@@ -255,7 +356,7 @@ Launch the 24K Gold Calamares graphical installer from the desktop icon or termi
 ```bash
 launch-calamares
 ```
-Features automated Btrfs subvolume layout, optional full-disk LUKS encryption, and systemd-boot / GRUB integration.
+Features automated GPT partition initialization, dedicated 1GB FAT32 EFI System Partition (`/boot/efi`), Btrfs/ext4 root layout, optional full-disk LUKS encryption, and native UEFI NVRAM registration.
 
 ---
 
@@ -275,6 +376,8 @@ Features automated Btrfs subvolume layout, optional full-disk LUKS encryption, a
 | `zoth-netlify` | Terminal | Netlify CLI serverless operations workstation |
 | `zoth-streamlit` | Terminal | Streamlit Studio data & ML application runner |
 | `aider` | Terminal | Aider AI coding agent workstation |
+| `cursor` | Terminal / GUI | Cursor AI Code Editor |
+| `grok-bot` | Terminal / GUI | Grok Bot Autonomous Desktop Agent |
 | `tor-browser` | Terminal / GUI | Launch pre-bundled Tor Privacy Browser |
 | `zoth-docs` | Terminal / GUI | Open in-house ZothOS Codex Manual |
 
@@ -295,4 +398,9 @@ ZOTHOS is built using a customized Debian Live Build framework with surgical rep
 - **Core Engine & Architecture**: Engineered by **NullAI Tech** ([nullai.tech](https://nullai.tech)).
 - **Upstream Foundations**: Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security OS.
 
-*✦ Sovereign Mind. Sovereign Code. Sovereign Silicon. ✦*
+<br />
+
+<div align="center">
+  <p><em>✦ Sovereign Mind. Sovereign Code. Sovereign Silicon. ✦</em></p>
+  <img src="assets/brand/zoth-mark.png" alt="Zoth Sigil" width="48" height="48" />
+</div>
