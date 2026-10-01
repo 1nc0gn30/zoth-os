@@ -141,12 +141,17 @@ Preloaded industry-standard web intercepting proxy with custom Celtic Gold icon 
 </details>
 
 <details>
-<summary><b>9. ZothOS Cockpit Operations Center (<code>zoth-cockpit</code>)</b></summary>
+<summary><b>9. ZothOS Cockpit Pro Operations Center (<code>zoth-cockpit</code>)</b></summary>
 <br />
 
-Full-screen curses-based system operations dashboard featuring live CPU/RAM/Disk telemetry, active environment/stealth switcher, AI daemon status, and instant tool launcher.
+Premier flagship Electron operations dashboard & curses TUI fallback (`--tui`, `--status`, `--json`) featuring live animated circular dials, 60s rolling waveform sparklines, global cursor tracker sync, real-time network RX/TX throughput, top active process inspector, the full 21-Agent Sovereign Pantheon deck with zero-egress dispatch, daemon supervisor with live loopback log viewer, and instant 5-profile Reality Mode switching.
 
-![ZothOS Cockpit Operations Center](docs/screenshots/zoth-cockpit.png)
+![ZothOS Cockpit Pro Operations Center](assets/brand/zoth-cockpit-vitals.png)
+
+<div align="center">
+  <img src="assets/brand/zoth-cockpit-swarm.png" width="48%" alt="21-Agent Swarm Deck" />
+  <img src="assets/brand/zoth-cockpit-daemons.png" width="48%" alt="Daemon Supervisor" />
+</div>
 
 </details>
 

@@ -15,7 +15,8 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const net = require('net');
-const { exec } = require('child_process');
+const http = require('http');
+const { exec, execSync } = require('child_process');
 
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
@@ -25,6 +26,7 @@ app.commandLine.appendSwitch('enable-transparent-visuals');
 let mainWindow = null;
 let prevCpuIdle = 0;
 let prevCpuTotal = 0;
+let prevNetBytes = { rx: 0, tx: 0, time: Date.now() };
 
 // Initialize CPU tracking
 try {
@@ -51,6 +53,27 @@ function checkPort(port, host = '127.0.0.1', timeout = 120) {
     });
     sock.on('error', () => {
       resolve(false);
+    });
+  });
+}
+
+function fetchJson(url, timeout = 300) {
+  return new Promise((resolve) => {
+    const req = http.get(url, { timeout }, (res) => {
+      let raw = '';
+      res.on('data', (c) => (raw += c));
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(raw));
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(null);
     });
   });
 }
@@ -186,7 +209,7 @@ function getUptimeStr() {
 }
 
 function getNetInfo() {
-  const info = { ip: '127.0.0.1', iface: 'lo', gw: 'None' };
+  const info = { ip: '127.0.0.1', iface: 'lo', gw: 'None', rx_kb_s: 0, tx_kb_s: 0 };
   try {
     const routeLines = fs.readFileSync('/proc/net/route', 'utf8').split('\n');
     for (let i = 1; i < routeLines.length; i++) {
@@ -221,7 +244,53 @@ function getNetInfo() {
     }
   } catch (e) {}
 
+  // Calculate live RX and TX throughput
+  try {
+    const devLines = fs.readFileSync('/proc/net/dev', 'utf8').split('\n');
+    let currentRx = 0, currentTx = 0;
+    for (const line of devLines) {
+      if (line.includes(info.iface + ':')) {
+        const parts = line.split(':')[1].trim().split(/\s+/).map(Number);
+        currentRx = parts[0];
+        currentTx = parts[8];
+        break;
+      }
+    }
+
+    const now = Date.now();
+    const timeDelta = Math.max(0.2, (now - prevNetBytes.time) / 1000);
+    if (prevNetBytes.rx > 0 && currentRx >= prevNetBytes.rx) {
+      info.rx_kb_s = parseFloat(((currentRx - prevNetBytes.rx) / (1024 * timeDelta)).toFixed(1));
+      info.tx_kb_s = parseFloat(((currentTx - prevNetBytes.tx) / (1024 * timeDelta)).toFixed(1));
+    }
+    prevNetBytes = { rx: currentRx, tx: currentTx, time: now };
+  } catch (e) {}
+
+  info.rxSpeedStr = `${(info.rx_kb_s || 0).toFixed(1)} KB/s`;
+  info.txSpeedStr = `${(info.tx_kb_s || 0).toFixed(1)} KB/s`;
+
   return info;
+}
+
+function getTopProcesses() {
+  try {
+    const out = execSync('ps -eo pid,user,%cpu,%mem,comm --sort=-%cpu | head -n 7', { encoding: 'utf8', timeout: 300 });
+    const lines = out.trim().split('\n').slice(1);
+    return lines.map((l) => {
+      const parts = l.trim().split(/\s+/);
+      const cmdName = parts.slice(4).join(' ');
+      return {
+        pid: parts[0],
+        user: parts[1],
+        cpu: parseFloat(parts[2]) || 0,
+        mem: parseFloat(parts[3]) || 0,
+        cmd: cmdName,
+        comm: cmdName,
+      };
+    });
+  } catch (e) {
+    return [];
+  }
 }
 
 function getActiveMode() {
@@ -265,7 +334,7 @@ function getCursorState(runningProcesses) {
   return { x: 0, y: 0, daemonAlive, moving: false, age: 999 };
 }
 
-// Daemon definitions
+// 10 Core Daemons
 const DAEMONS = [
   {
     id: 'zoth-cursor-daemon',
@@ -372,38 +441,38 @@ const DAEMONS = [
   },
 ];
 
-// 21 Pantheon Agents
+// 21 Pantheon Agents Master Specs
 const AGENTS = [
   // Cadre: Architects (6)
-  { id: 'AZOTH', name: 'Azoth', role: 'Sovereign Alchemist & Prime Architect', cadre: 'Architects', img: 'azoth-neon.jpg', port: 8790, ring: 'Ring 0 (Root)' },
-  { id: 'NEXUS', name: 'Nexus', role: 'Lead Architect & Quantum Synthesis', cadre: 'Architects', img: 'nexus.jpg', port: 8790, ring: 'Ring 1 (Admin)' },
-  { id: 'VIGIL', name: 'Vigil', role: 'Cosmic Reasoner & AST Arbiter', cadre: 'Architects', img: 'vigil.jpg', port: 8790, ring: 'Ring 1 (Admin)' },
-  { id: 'MERCURY', name: 'Mercury', role: 'Tool-Calling Executor & Release Hardener', cadre: 'Architects', img: 'mercury.jpg', port: 8102, ring: 'Ring 2 (MCP)' },
-  { id: 'GHOSTBYTE', name: 'Ghostbyte', role: 'Zero-Knowledge Vault Sentinel', cadre: 'Architects', img: 'ghostbyte-neon.jpg', port: 8787, ring: 'Ring 0 (Vault)' },
-  { id: 'ATHENA', name: 'Athena', role: 'AEO Knowledge Architect', cadre: 'Architects', img: 'athena-neon.jpg', port: 8790, ring: 'Ring 2 (MCP)' },
+  { id: 'AZOTH', name: 'Azoth Prime', role: 'Sovereign Alchemist & Prime Architect', cadre: 'Architects', img: 'azoth-neon.jpg', port: 8790, ring: 'Ring 0 (Root)', harness: 'agy', model: 'claude-3-7-sonnet', memoriesCount: 3 },
+  { id: 'NEXUS', name: 'Nexus Quantum', role: 'Lead Architect & Quantum Synthesis', cadre: 'Architects', img: 'nexus.jpg', port: 8790, ring: 'Ring 1 (Admin)', harness: 'agy', model: 'gemini-2.5-pro', memoriesCount: 3 },
+  { id: 'VIGIL', name: 'Vigil Arbiter', role: 'Cosmic Reasoner & AST Arbiter', cadre: 'Architects', img: 'vigil.jpg', port: 8790, ring: 'Ring 1 (Admin)', harness: 'hermes-agent', model: 'deepseek-r1:70b', memoriesCount: 3 },
+  { id: 'MERCURY', name: 'Mercury Messenger', role: 'Tool-Calling Executor & Release Hardener', cadre: 'Architects', img: 'mercury.jpg', port: 8102, ring: 'Ring 2 (MCP)', harness: 'hermes-agent', model: 'hermes-3:70b', memoriesCount: 2 },
+  { id: 'GHOSTBYTE', name: 'Ghostbyte', role: 'Zero-Knowledge Vault Sentinel', cadre: 'Architects', img: 'ghostbyte-neon.jpg', port: 8787, ring: 'Ring 0 (Vault)', harness: 'codex', model: 'gpt-4.5', memoriesCount: 2 },
+  { id: 'ATHENA', name: 'Athena Scholar', role: 'AEO Knowledge Architect', cadre: 'Architects', img: 'athena-neon.jpg', port: 8790, ring: 'Ring 2 (MCP)', harness: 'claude-code', model: 'claude-3-5-sonnet', memoriesCount: 2 },
 
   // Cadre: Code (4)
-  { id: 'CHRONOS', name: 'Chronos', role: 'Temporal DAG Sequencer & Git Navigator', cadre: 'Code', img: 'chronos-neon.jpg', port: 8790, ring: 'Ring 2 (Git)' },
-  { id: 'DRACO', name: 'Draco', role: 'Multi-Model Consensus & Fusion Arbiter', cadre: 'Code', img: 'draco-neon.jpg', port: 8790, ring: 'Ring 2 (Consensus)' },
-  { id: 'IGNIS', name: 'Ignis', role: 'Refactor Engine & Pipeline Finisher', cadre: 'Code', img: 'ignis-neon.jpg', port: 8790, ring: 'Ring 2 (Build)' },
-  { id: 'KAI', name: 'Kai', role: 'Workspace Inspector & Static Analysis', cadre: 'Code', img: 'kai-neon.jpg', port: 8790, ring: 'Ring 2 (Linter)' },
+  { id: 'CHRONOS', name: 'Chronos Temporal', role: 'Temporal DAG Sequencer & Git Navigator', cadre: 'Code', img: 'chronos-neon.jpg', port: 8790, ring: 'Ring 2 (Git)', harness: 'opencode', model: 'qwen2.5-coder:32b', memoriesCount: 2 },
+  { id: 'DRACO', name: 'Draco Consensus', role: 'Multi-Model Consensus & Fusion Arbiter', cadre: 'Code', img: 'draco-neon.jpg', port: 8790, ring: 'Ring 2 (Consensus)', harness: 'hermes-agent', model: 'deepseek-r1:70b', memoriesCount: 2 },
+  { id: 'IGNIS', name: 'Ignis Refactor', role: 'Refactor Engine & Pipeline Finisher', cadre: 'Code', img: 'ignis-neon.jpg', port: 8790, ring: 'Ring 2 (Build)', harness: 'claude-code', model: 'claude-3-7-sonnet', memoriesCount: 2 },
+  { id: 'KAI', name: 'Kai Inspector', role: 'Workspace Inspector & Static Analysis', cadre: 'Code', img: 'kai-neon.jpg', port: 8790, ring: 'Ring 2 (Linter)', harness: 'agy', model: 'claude-3-5-sonnet', memoriesCount: 2 },
 
   // Cadre: Security (4)
-  { id: 'LYCAN', name: 'Lycan', role: 'OWASP Sentinel & Security Hardening', cadre: 'Security', img: 'lycan-neon.jpg', port: 8787, ring: 'Ring 1 (Sec)' },
-  { id: 'ONYX', name: 'Onyx', role: 'Red-Team Threat Auditor', cadre: 'Security', img: 'onyx-neon.jpg', port: 8787, ring: 'Ring 1 (PenTest)' },
-  { id: 'SCORPIUS', name: 'Scorpius', role: 'Zero-Day Gatekeeper', cadre: 'Security', img: 'scorpius-neon.jpg', port: 8787, ring: 'Ring 1 (Exploit)' },
-  { id: 'PIXEL-SHIBA', name: 'Pixel Shiba', role: 'Argon2id Hardware Key Guardian', cadre: 'Security', img: 'pixel-shiba-neon.jpg', port: 8787, ring: 'Ring 0 (Key)' },
+  { id: 'LYCAN', name: 'Lycan Sentinel', role: 'OWASP Sentinel & Security Hardening', cadre: 'Security', img: 'lycan-neon.jpg', port: 8787, ring: 'Ring 1 (Sec)', harness: 'agy', model: 'claude-3-7-sonnet', memoriesCount: 2 },
+  { id: 'ONYX', name: 'Onyx Auditor', role: 'Red-Team Threat Auditor', cadre: 'Security', img: 'onyx-neon.jpg', port: 8787, ring: 'Ring 1 (PenTest)', harness: 'codex', model: 'gpt-4.5', memoriesCount: 2 },
+  { id: 'SCORPIUS', name: 'Scorpius Gate', role: 'Zero-Day Gatekeeper', cadre: 'Security', img: 'scorpius-neon.jpg', port: 8787, ring: 'Ring 1 (Exploit)', harness: 'opencode', model: 'deepseek-r1:70b', memoriesCount: 2 },
+  { id: 'PIXEL-SHIBA', name: 'Pixel Shiba', role: 'Argon2id Hardware Key Guardian', cadre: 'Security', img: 'pixel-shiba-neon.jpg', port: 8787, ring: 'Ring 0 (Key)', harness: 'ollama', model: 'llama3.3:70b', memoriesCount: 2 },
 
   // Cadre: Creative (3)
-  { id: 'KITSUNE', name: 'Kitsune', role: 'Taste, Motion & Accessibility', cadre: 'Creative', img: 'kitsune-neon.jpg', port: 8790, ring: 'Ring 3 (UI/UX)' },
-  { id: 'LEVIATHAN', name: 'Leviathan', role: 'Deep Tensor & Vector Memory Recall', cadre: 'Creative', img: 'leviathan-neon.jpg', port: 8094, ring: 'Ring 2 (Memory)' },
-  { id: 'AQUILA', name: 'Aquila', role: 'Edge Dispatcher & Low-Latency Mesh', cadre: 'Creative', img: 'aquila-neon.jpg', port: 8102, ring: 'Ring 2 (Mesh)' },
+  { id: 'KITSUNE', name: 'Kitsune Motion', role: 'Taste, Motion & Accessibility', cadre: 'Creative', img: 'kitsune-neon.jpg', port: 8790, ring: 'Ring 3 (UI/UX)', harness: 'claude-code', model: 'claude-3-7-sonnet', memoriesCount: 2 },
+  { id: 'LEVIATHAN', name: 'Leviathan Memory', role: 'Deep Tensor & Vector Memory Recall', cadre: 'Creative', img: 'leviathan-neon.jpg', port: 8094, ring: 'Ring 2 (Memory)', harness: 'hermes-agent', model: 'deepseek-r1:70b', memoriesCount: 2 },
+  { id: 'AQUILA', name: 'Aquila Mesh', role: 'Edge Dispatcher & Low-Latency Mesh', cadre: 'Creative', img: 'aquila-neon.jpg', port: 8102, ring: 'Ring 2 (Mesh)', harness: 'agy', model: 'gemini-2.5-pro', memoriesCount: 2 },
 
   // Cadre: Swarm (4)
-  { id: 'KRAKEN', name: 'Kraken', role: 'ESP32 Serial Bridge & Packet Sniffer', cadre: 'Swarm', img: 'kraken-neon.jpg', port: 8102, ring: 'Ring 2 (Serial)' },
-  { id: 'AETHER', name: 'Aether', role: 'Swarm Overlord & Peer Bus Synchronizer', cadre: 'Swarm', img: 'aether-neon.jpg', port: 8790, ring: 'Ring 1 (Sync)' },
-  { id: 'PIXEL-NEKO', name: 'Pixel Neko', role: 'Tool Bench Librarian & Connector Bridge', cadre: 'Swarm', img: 'pixel-neko-neon.jpg', port: 8790, ring: 'Ring 2 (Tools)' },
-  { id: 'RADICAL-MINION', name: 'Radical Minion', role: 'Fast-Loop Subagent Runner', cadre: 'Swarm', img: 'radical-minion-neon.jpg', port: 8790, ring: 'Ring 3 (Fast)' },
+  { id: 'KRAKEN', name: 'Kraken Sniffer', role: 'ESP32 Serial Bridge & Packet Sniffer', cadre: 'Swarm', img: 'kraken-neon.jpg', port: 8102, ring: 'Ring 2 (Serial)', harness: 'opencode', model: 'qwen2.5-coder:32b', memoriesCount: 2 },
+  { id: 'AETHER', name: 'Aether Overlord', role: 'Swarm Overlord & Peer Bus Synchronizer', cadre: 'Swarm', img: 'aether-neon.jpg', port: 8790, ring: 'Ring 1 (Sync)', harness: 'hermes-agent', model: 'hermes-3:70b', memoriesCount: 2 },
+  { id: 'PIXEL-NEKO', name: 'Pixel Neko', role: 'Tool Bench Librarian & Connector Bridge', cadre: 'Swarm', img: 'pixel-neko-neon.jpg', port: 8790, ring: 'Ring 2 (Tools)', harness: 'ollama', model: 'llama3.3:70b', memoriesCount: 2 },
+  { id: 'RADICAL-MINION', name: 'Radical Minion', role: 'Fast-Loop Subagent Runner', cadre: 'Swarm', img: 'radical-minion-neon.jpg', port: 8790, ring: 'Ring 3 (Fast)', harness: 'agy', model: 'claude-3-5-sonnet', memoriesCount: 2 },
 ];
 
 async function sampleFullState() {
@@ -415,6 +484,7 @@ async function sampleFullState() {
   const activeMode = getActiveMode();
   const runningProcesses = getRunningProcesses();
   const cursor = getCursorState(runningProcesses);
+  const topProcesses = getTopProcesses();
 
   // Tor check
   const torPortUp = await checkPort(9050);
@@ -455,6 +525,23 @@ async function sampleFullState() {
   const memoryPortUp = await checkPort(8094);
   const vaultPortUp = await checkPort(8787);
 
+  // Fetch live swarm agent runtime data if available
+  let liveAgentsData = null;
+  if (swarmPortUp) {
+    liveAgentsData = await fetchJson('http://127.0.0.1:8790/api/swarm/agents', 250);
+  }
+
+  // Fetch live bridge & memory stats
+  let bridgeStats = null;
+  if (bridgePortUp) {
+    bridgeStats = await fetchJson('http://127.0.0.1:8102/api/stats', 250);
+  }
+
+  let memoryStats = null;
+  if (memoryPortUp) {
+    memoryStats = await fetchJson('http://127.0.0.1:8094/api/stats', 250);
+  }
+
   const agentsWithStatus = AGENTS.map((a) => {
     let online = false;
     if (a.port === 8790) online = swarmPortUp;
@@ -463,10 +550,21 @@ async function sampleFullState() {
     else if (a.port === 8787) online = vaultPortUp;
     else online = true;
 
-    return {
-      ...a,
-      isOnline: online,
-    };
+    // Merge live data if available
+    let agentDetails = { ...a, isOnline: online };
+    if (Array.isArray(liveAgentsData)) {
+      const match = liveAgentsData.find((la) => la.id === a.id);
+      if (match) {
+        agentDetails.model = match.model || a.model;
+        agentDetails.harness = match.harness || a.harness;
+        agentDetails.status = match.status || (online ? 'IDLE' : 'OFFLINE');
+        agentDetails.pid = match.pid || 0;
+        agentDetails.memories = match.memories || [];
+        agentDetails.memoriesCount = (match.memories || []).length;
+      }
+    }
+
+    return agentDetails;
   });
 
   return {
@@ -481,6 +579,7 @@ async function sampleFullState() {
       tor: { status: torStatus, isCloaked },
       cursor,
       activeMode,
+      topProcesses,
       system: {
         kernel: os.release(),
         arch: os.arch(),
@@ -492,6 +591,11 @@ async function sampleFullState() {
     },
     daemons: daemonStatuses,
     agents: agentsWithStatus,
+    meshKPIs: {
+      swarmActive: swarmPortUp,
+      bridgeStats: (bridgeStats && bridgeStats.telemetry) || null,
+      memoryStats: memoryStats || null,
+    },
   };
 }
 
@@ -521,6 +625,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
+  mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+    console.log(`[Renderer] ${message} (${sourceId}:${line})`);
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -541,7 +649,15 @@ function createWindow() {
     }
   }
 
-  mainWindow.webContents.once('did-finish-load', () => {
+  mainWindow.webContents.once('did-finish-load', async () => {
+    try {
+      const initial = await sampleFullState();
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('telemetry-update', initial);
+      }
+    } catch (e) {
+      console.error('Initial telemetry push error:', e);
+    }
     runTelemetryLoop();
   });
 }
@@ -613,6 +729,40 @@ ipcMain.handle('daemon-action', async (event, { daemonId, action }) => {
   });
 });
 
+// ── Daemon Logs IPC ───────────────────────────────────────────────────
+ipcMain.handle('get-daemon-logs', async (event, { daemonId }) => {
+  const daemon = DAEMONS.find((d) => d.id === daemonId);
+  if (!daemon) return { success: false, logs: 'Daemon not found.' };
+
+  let logCmd = '';
+  if (daemon.serviceName) {
+    logCmd = `journalctl -u ${daemon.serviceName} -n 60 --no-pager 2>&1`;
+  } else if (daemon.id === 'sovereign_agent_bridge') {
+    logCmd = `cat /tmp/bridge.log 2>/dev/null | tail -n 60 || ps -fp $(pgrep -f sovereign_agent_bridge)`;
+  } else if (daemon.id === 'neuro_memory') {
+    logCmd = `cat /tmp/neuro_mem.log 2>/dev/null | tail -n 60 || ps -fp $(pgrep -f neuro_memory_daemon)`;
+  } else if (daemon.id === 'swarm_mux') {
+    logCmd = `cat /tmp/swarm.log 2>/dev/null | tail -n 60 || ps -fp $(pgrep -f swarm_daemon.py)`;
+  } else if (daemon.id === 'zoth_vault') {
+    logCmd = `cat /tmp/vault.log 2>/dev/null | tail -n 60 || ps -fp $(pgrep -f zoth-vault-daemon)`;
+  } else if (daemon.id === 'zoth-cursor-daemon') {
+    logCmd = `cat /dev/shm/zoth_cursor.json 2>/dev/null ; echo ""; ps -fp $(pgrep -f zoth-cursor-daemon)`;
+  } else {
+    logCmd = `ps -fp $(pgrep -f "${daemon.processName || daemon.id}") 2>/dev/null || echo "No active log stream."`;
+  }
+
+  return new Promise((resolve) => {
+    exec(logCmd, { timeout: 2000 }, (err, stdout, stderr) => {
+      resolve({
+        success: true,
+        daemonId,
+        daemonName: daemon.name,
+        logs: stdout || stderr || 'No log output recorded yet.',
+      });
+    });
+  });
+});
+
 // ── Reality Mode Switcher IPC ─────────────────────────────────────────
 ipcMain.handle('switch-reality-mode', async (event, { mode }) => {
   return new Promise((resolve) => {
@@ -655,24 +805,24 @@ ipcMain.handle('launch-tool', async (event, { toolId }) => {
 
 // ── Agent Quick Dispatch IPC ──────────────────────────────────────────
 ipcMain.handle('dispatch-agent-prompt', async (event, { agentId, prompt }) => {
-  return new Promise((resolve) => {
-    const reqBody = JSON.stringify({
-      model: 'llama3.2:latest',
-      prompt: `[SOVEREIGN PANTHEON DISPATCH // AGENT ${agentId}]\nTask Directives: ${prompt}\n\nExecute sovereign response:`,
-      stream: false,
-    });
+  // First try Swarm Daemon at :8790
+  const swarmPayload = JSON.stringify({
+    agent_id: agentId,
+    command: prompt,
+  });
 
-    const req = require('http').request(
+  return new Promise((resolve) => {
+    const sReq = http.request(
       {
         hostname: '127.0.0.1',
-        port: 11434,
-        path: '/api/generate',
+        port: 8790,
+        path: '/api/swarm/command',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(reqBody),
+          'Content-Length': Buffer.byteLength(swarmPayload),
         },
-        timeout: 10000,
+        timeout: 4000,
       },
       (res) => {
         let raw = '';
@@ -680,19 +830,71 @@ ipcMain.handle('dispatch-agent-prompt', async (event, { agentId, prompt }) => {
         res.on('end', () => {
           try {
             const parsed = JSON.parse(raw);
-            resolve({ success: true, text: parsed.response || 'Task acknowledged.' });
-          } catch (e) {
-            resolve({ success: true, text: `Dispatched to ${agentId} bus.` });
-          }
+            if (parsed.success && Array.isArray(parsed.results) && parsed.results.length > 0) {
+              return resolve({ success: true, text: parsed.results[0].output });
+            }
+          } catch (e) {}
+          fallbackToOllama(agentId, prompt, resolve);
         });
       }
     );
 
-    req.on('error', () => {
-      resolve({ success: false, text: 'Local neural inference engine (:11434) currently offline.' });
+    sReq.on('error', () => {
+      fallbackToOllama(agentId, prompt, resolve);
     });
 
-    req.write(reqBody);
-    req.end();
+    sReq.write(swarmPayload);
+    sReq.end();
+  });
+});
+
+function fallbackToOllama(agentId, prompt, resolve) {
+  const reqBody = JSON.stringify({
+    model: 'llama3.2:latest',
+    prompt: `[SOVEREIGN PANTHEON DISPATCH // AGENT ${agentId}]\nTask Directives: ${prompt}\n\nExecute sovereign response:`,
+    stream: false,
+  });
+
+  const req = http.request(
+    {
+      hostname: '127.0.0.1',
+      port: 11434,
+      path: '/api/generate',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(reqBody),
+      },
+      timeout: 8000,
+    },
+    (res) => {
+      let raw = '';
+      res.on('data', (c) => (raw += c));
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          resolve({ success: true, text: parsed.response || 'Task acknowledged.' });
+        } catch (e) {
+          resolve({ success: true, text: `Dispatched to ${agentId} bus.` });
+        }
+      });
+    }
+  );
+
+  req.on('error', () => {
+    resolve({ success: false, text: 'Local neural inference engine (:11434) currently offline.' });
+  });
+
+  req.write(reqBody);
+  req.end();
+}
+
+// ── Process Terminate IPC ─────────────────────────────────────────────
+ipcMain.handle('kill-process', async (event, { pid }) => {
+  return new Promise((resolve) => {
+    if (!pid || pid <= 1) return resolve({ success: false, message: 'Invalid PID' });
+    exec(`kill -15 ${pid} 2>/dev/null || kill -9 ${pid} 2>/dev/null`, (err) => {
+      resolve({ success: !err });
+    });
   });
 });
