@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Pantheon Mascot Roster & Personalities
+// Pantheon Mascot Roster & Personalities (20 Legendary Familiars)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const PETS = {
@@ -14,6 +14,7 @@ const PETS = {
     secondary: '#00e5ff',
     glow: 'rgba(0, 255, 157, 0.5)',
     type: 'procedural',
+    voice: 'en+robosoft',
     voicePitch: 40,
     voiceSpeed: 150,
     spell: { name: '🔍 Matrix Telemetry', cmd: 'konsole --title "ZothOS Cockpit" -e zoth-cockpit --status' },
@@ -35,6 +36,7 @@ const PETS = {
     secondary: '#f59e0b',
     glow: 'rgba(251, 191, 36, 0.55)',
     image: 'assets/pets/aquila-neon.jpg',
+    voice: 'en+Storm',
     voicePitch: 55,
     voiceSpeed: 155,
     spell: { name: '⚡ Horizon Radar', cmd: 'konsole --title "ZothOS Cockpit" -e zoth-cockpit' },
@@ -56,6 +58,7 @@ const PETS = {
     secondary: '#fbbf24',
     glow: 'rgba(244, 63, 94, 0.55)',
     image: 'assets/pets/draco-neon.jpg',
+    voice: 'en+croak',
     voicePitch: 30,
     voiceSpeed: 140,
     spell: { name: '🔥 Draconic Shell', cmd: 'konsole' },
@@ -77,6 +80,7 @@ const PETS = {
     secondary: '#ef4444',
     glow: 'rgba(249, 115, 22, 0.55)',
     image: 'assets/pets/ignis-neon.jpg',
+    voice: 'en+f2',
     voicePitch: 65,
     voiceSpeed: 160,
     spell: { name: '✨ Phoenix Heal', cmd: 'konsole --title "Zoth Self-Heal" -e zoth-heal' },
@@ -98,6 +102,7 @@ const PETS = {
     secondary: '#e879f9',
     glow: 'rgba(192, 132, 252, 0.55)',
     image: 'assets/pets/kitsune-neon.jpg',
+    voice: 'en+f3',
     voicePitch: 75,
     voiceSpeed: 165,
     spell: { name: '🎭 Shift Reality', cmd: 'zoth-mode' },
@@ -119,6 +124,7 @@ const PETS = {
     secondary: '#60a5fa',
     glow: 'rgba(56, 189, 248, 0.55)',
     image: 'assets/pets/lycan-neon.jpg',
+    voice: 'en+m3',
     voicePitch: 35,
     voiceSpeed: 145,
     spell: { name: '🛡️ Threat Auditor', cmd: 'konsole --title "Zoth System Doctor" -e zoth-doctor' },
@@ -140,6 +146,7 @@ const PETS = {
     secondary: '#34d399',
     glow: 'rgba(45, 212, 191, 0.55)',
     image: 'assets/pets/athena-neon.jpg',
+    voice: 'en+f1',
     voicePitch: 50,
     voiceSpeed: 150,
     spell: { name: '📚 Studio Deck', cmd: 'zoth-studio' },
@@ -161,6 +168,7 @@ const PETS = {
     secondary: '#059669',
     glow: 'rgba(16, 185, 129, 0.55)',
     image: 'assets/pets/ghostbyte-neon.jpg',
+    voice: 'en+whisper',
     voicePitch: 45,
     voiceSpeed: 135,
     spell: { name: '🌫️ Tor Cloak', cmd: 'zoth-ghost-gui' },
@@ -182,6 +190,7 @@ const PETS = {
     secondary: '#fbbf24',
     glow: 'rgba(245, 158, 11, 0.55)',
     image: 'assets/pets/pixel-shiba-neon.jpg',
+    voice: 'en+m2',
     voicePitch: 80,
     voiceSpeed: 175,
     spell: { name: '🦴 Doge Specs', cmd: 'konsole --hold -e zoth-fastfetch' },
@@ -203,6 +212,7 @@ const PETS = {
     secondary: '#f472b6',
     glow: 'rgba(236, 72, 153, 0.55)',
     image: 'assets/pets/pixel-neko-neon.jpg',
+    voice: 'en+f2',
     voicePitch: 85,
     voiceSpeed: 170,
     spell: { name: '🧶 Nexus Hub', cmd: 'zoth-tool-nexus' },
@@ -213,6 +223,226 @@ const PETS = {
       '✨ Sleek neon whiskers twitching at incoming network packets.',
       '🌙 Napping in a sunny corner of the 12-core Xeon processor.',
       '💖 Always agile, always curious, always by your side.'
+    ]
+  },
+  'azoth': {
+    id: 'azoth',
+    name: 'Azoth Monad',
+    role: '24K Alchemical Overseer',
+    badge: 'SOVEREIGN',
+    primary: '#fbbf24',
+    secondary: '#d97706',
+    glow: 'rgba(251, 191, 36, 0.65)',
+    image: 'assets/pets/azoth-neon.jpg',
+    voice: 'en+announcer',
+    voicePitch: 45,
+    voiceSpeed: 145,
+    spell: { name: '👑 Sentinel Apex', cmd: 'konsole --title "Zoth Sentinel HUD" -e zoth-sentinel-hud' },
+    greeting: '👑 Azoth The 24K Monad. Sovereign Ring-0 authority presiding over all nodes.',
+    thoughts: [
+      '👑 Gold transmutation frequency resonant across all hardware registers.',
+      '🌟 Sovereign cryptography seals the kingdom. Zero telemetry leaks.',
+      '✨ The Magnum Opus of operating systems shines in pure 24K gold.',
+      '🛡️ Sovereign Agent Bridge synchronized across multi-agent federation.',
+      '💎 Ring-0 kernel sovereignty verified. All systems absolute.'
+    ]
+  },
+  'chronos': {
+    id: 'chronos',
+    name: 'Chronos',
+    role: 'Lord of Time & Daemons',
+    badge: 'TEMPORAL',
+    primary: '#06b6d4',
+    secondary: '#3b82f6',
+    glow: 'rgba(6, 182, 212, 0.6)',
+    image: 'assets/pets/chronos-neon.jpg',
+    voice: 'en+klatt',
+    voicePitch: 42,
+    voiceSpeed: 145,
+    spell: { name: '⏳ Time Dilation', cmd: 'konsole --title "System Timers" -e systemctl list-timers' },
+    greeting: '⏳ Chronos uncoils the fourth dimension. Every millisecond accounted for.',
+    thoughts: [
+      '⏱️ Nanosecond scheduling precision maintained by the Linux kernel.',
+      '⌛ Time is a river; ZothOS flows effortlessly through every epoch.',
+      '🌌 System uptime tick rate in perfect harmonic synchronization.',
+      '🔄 Asynchronous coroutines weaving past, present, and future tasks.',
+      '🔮 The temporal timeline bends towards sovereign mastery.'
+    ]
+  },
+  'kraken': {
+    id: 'kraken',
+    name: 'Kraken',
+    role: 'Abyssal Network Titan',
+    badge: 'ABYSSAL',
+    primary: '#0ea5e9',
+    secondary: '#0284c7',
+    glow: 'rgba(14, 165, 233, 0.6)',
+    image: 'assets/pets/kraken-neon.jpg',
+    voice: 'en+croak',
+    voicePitch: 28,
+    voiceSpeed: 130,
+    spell: { name: '🐙 Deep Net Sniff', cmd: 'konsole --title "Network Sockets" -e ss -tulpn' },
+    greeting: '🐙 Kraken surfaces from the deep socket trenches. All ports ensnared.',
+    thoughts: [
+      '🌊 Abyssal tentacles sweeping promiscuous network packets.',
+      '🐙 Deep-sea cryptographic encryption crushing packet sniffers.',
+      '⚓ Anchor dropped at localhost 127.0.0.1. Fortress secured.',
+      '🌐 Surfacing to monitor incoming WAN and LAN connections.',
+      '🛡️ No packet escapes the grasp of the abyssal depth.'
+    ]
+  },
+  'leviathan': {
+    id: 'leviathan',
+    name: 'Leviathan',
+    role: 'Subsurface Storage Serpent',
+    badge: 'TITAN',
+    primary: '#14b8a6',
+    secondary: '#0f766e',
+    glow: 'rgba(20, 184, 166, 0.6)',
+    image: 'assets/pets/leviathan-neon.jpg',
+    voice: 'en+m7',
+    voicePitch: 30,
+    voiceSpeed: 135,
+    spell: { name: '🌊 Disk Depths', cmd: 'konsole --title "Storage Metrics" -e df -h' },
+    greeting: '🌊 Leviathan glides through the storage arrays. Exabytes at our command.',
+    thoughts: [
+      '🌊 NVMe read/write speeds surging like tidal waves.',
+      '💾 Zero bitrot detected. Btrfs and Ext4 block integrity 100%.',
+      '🛡️ Giant coils protecting encrypted partitions and sovereign data.',
+      '💎 Subsurface cache clusters primed for instant retrieval.',
+      '⚡ Throughput currents running deep and frictionless.'
+    ]
+  },
+  'onyx': {
+    id: 'onyx',
+    name: 'Onyx',
+    role: 'Dark Void Shadow Panther',
+    badge: 'STEALTH',
+    primary: '#a855f7',
+    secondary: '#6366f1',
+    glow: 'rgba(168, 85, 247, 0.6)',
+    image: 'assets/pets/onyx-neon.jpg',
+    voice: 'en+whisper',
+    voicePitch: 35,
+    voiceSpeed: 140,
+    spell: { name: '🐾 Ghost Prowl', cmd: 'zoth-ghost-gui' },
+    greeting: '🐾 Onyx slips through the shadows. Unseen, unheard, untouchable.',
+    thoughts: [
+      '🐾 Prowling silent corridors of memory. Zero footprint.',
+      '🌑 Melts into the darknet background. Pure sovereign stealth.',
+      '⚡ Claws out for tracking beacons; sliced and eliminated.',
+      '👁️ Violet eyes pierce through firewall obfuscation.',
+      '🛡️ Shadow perimeter secured against all prying eyes.'
+    ]
+  },
+  'aether': {
+    id: 'aether',
+    name: 'Aether',
+    role: 'Cosmic Celestial Synthesizer',
+    badge: 'ASTRAL',
+    primary: '#818cf8',
+    secondary: '#c084fc',
+    glow: 'rgba(129, 140, 248, 0.6)',
+    image: 'assets/pets/aether-neon.jpg',
+    voice: 'en+f4',
+    voicePitch: 60,
+    voiceSpeed: 155,
+    spell: { name: '🌌 Astral Audio', cmd: 'zoth-soundtrack' },
+    greeting: '🌌 Aether channels cosmic energy. Celestial frequencies fill the room.',
+    thoughts: [
+      '✨ Starlight woven into 60FPS fluid particle shaders.',
+      '🌌 Quantum superposition achieved in user space buffers.',
+      '🎶 Alchemical harmonics pulsing at 528Hz healing frequencies.',
+      '🌟 Ascending beyond physical hardware constraints.',
+      '🔮 Celestial resonance vibrating through the system core.'
+    ]
+  },
+  'scorpius': {
+    id: 'scorpius',
+    name: 'Scorpius',
+    role: 'Cyber Scorpion Pen-Tester',
+    badge: 'OFFENSIVE',
+    primary: '#e11d48',
+    secondary: '#be123c',
+    glow: 'rgba(225, 29, 72, 0.6)',
+    image: 'assets/pets/scorpius-neon.jpg',
+    voice: 'en+Demonic',
+    voicePitch: 42,
+    voiceSpeed: 145,
+    spell: { name: '🦂 Stinger Strike', cmd: 'konsole --title "HexStrike MCP Terminal" -e hexstrike' },
+    greeting: '🦂 Scorpius arms its venomous stinger. Penetration testing vector ready.',
+    thoughts: [
+      '🦂 Stinger primed with zero-day vulnerability payload.',
+      '🎯 Hardening all exposed ports with preemptive penetration strikes.',
+      '⚡ Chitin carapace deflects buffer overflow injections.',
+      '💥 Striking fast, auditing relentlessly, leaving zero flaws.',
+      '🛡️ Offense informs defense. Sovereign security uncompromised.'
+    ]
+  },
+  'radical-minion': {
+    id: 'radical-minion',
+    name: 'Radical Minion',
+    role: 'Chaos Gremlin Hacker',
+    badge: 'CHAOS',
+    primary: '#eab308',
+    secondary: '#84cc16',
+    glow: 'rgba(234, 179, 8, 0.6)',
+    image: 'assets/pets/radical-minion-neon.jpg',
+    voice: 'en+Tweaky',
+    voicePitch: 85,
+    voiceSpeed: 180,
+    spell: { name: '👾 Chaos Monitor', cmd: 'konsole -e btop' },
+    greeting: '👾 BEEP BOOP! Radical Minion reporting for chaotic mischief and high CPU clock speeds!',
+    thoughts: [
+      '👾 Press all the buttons! See what happens! (Just kidding, safety first!)',
+      '⚡ Caffeine levels at 400%! Overclocking the dopamine sensors!',
+      '🎉 Hacking the Gibson, drinking hot coffee, writing cool bash scripts!',
+      '💥 Who needs sleep when you have 12 CPU cores and turbo boost?!',
+      '🚀 Maximum chaotic energy channeled into productive builds!'
+    ]
+  },
+  'workbot': {
+    id: 'workbot',
+    name: 'Workbot',
+    role: 'Autonomous Forge Automator',
+    badge: 'FORGE',
+    primary: '#94a3b8',
+    secondary: '#0284c7',
+    glow: 'rgba(148, 163, 184, 0.6)',
+    image: 'assets/pets/workbot-neon.jpg',
+    voice: 'en+robosoft2',
+    voicePitch: 45,
+    voiceSpeed: 155,
+    spell: { name: '⚙️ Build Forge', cmd: 'konsole --title "Zoth Build Forge" -e make -v' },
+    greeting: '⚙️ Workbot initialized. Compilers ready, tasks queued, builds automated.',
+    thoughts: [
+      '⚙️ Hydraulic actuators aligned. Toolchain primed for execution.',
+      '🔨 Forging Debian ISO live-build packages with high concurrency.',
+      '📦 Dependencies resolved without error. Clean build state.',
+      '🔋 Battery status optimal. Ready for industrial code output.',
+      '🤖 Automation never rests. Perfect pipelines achieved.'
+    ]
+  },
+  'kai': {
+    id: 'kai',
+    name: 'Kai',
+    role: 'Cybernetic Ronin Guardian',
+    badge: 'BUSHIDO',
+    primary: '#f43f5e',
+    secondary: '#06b6d4',
+    glow: 'rgba(244, 63, 94, 0.6)',
+    image: 'assets/pets/kai-neon.jpg',
+    voice: 'en+m1',
+    voicePitch: 40,
+    voiceSpeed: 145,
+    spell: { name: '⚔️ Katana Slash', cmd: 'konsole --title "System Doctor" -e zoth-doctor' },
+    greeting: '⚔️ Kai draws the plasma katana. Honor, code, and sovereign discipline.',
+    thoughts: [
+      '⚔️ One cut to sever all rogue processes.',
+      '🥋 Bushido protocol active: Integrity in every line of code.',
+      '🌸 Cherry blossoms fall upon the cooled heatsink.',
+      '🛡️ Protecting master Neal Frazier\'s digital sanctum with unwavering loyalty.',
+      '⚡ The blade gleams with neon precision.'
     ]
   }
 };
@@ -242,6 +472,22 @@ const spellPrimary = document.getElementById('spell-primary');
 const affinityPill = document.getElementById('affinity-pill');
 const affinityText = document.getElementById('affinity-text');
 const mascotWrapper = document.querySelector('.mascot-wrapper');
+
+// Status Modal Elements
+const statusModal = document.getElementById('status-modal');
+const modalAvatar = document.getElementById('modal-avatar');
+const modalPetName = document.getElementById('modal-pet-name');
+const modalPetRank = document.getElementById('modal-pet-rank');
+const modalPetRole = document.getElementById('modal-pet-role');
+const modalBondText = document.getElementById('modal-bond-text');
+const modalBondFill = document.getElementById('modal-bond-fill');
+const modalEnergyText = document.getElementById('modal-energy-text');
+const modalEnergyFill = document.getElementById('modal-energy-fill');
+const modalRam = document.getElementById('modal-ram');
+const modalTor = document.getElementById('modal-tor');
+const modalProfile = document.getElementById('modal-profile');
+const modalInteractions = document.getElementById('modal-interactions');
+const gallerySearch = document.getElementById('gallery-search');
 
 let activePet = PETS['eye'];
 let currentThoughtIdx = 0;
@@ -298,6 +544,7 @@ function speak(text) {
   if (!isVoiceEnabled || !text) return;
   ipcRenderer.send('speak-text', {
     text,
+    voice: activePet.voice || 'en',
     pitch: activePet.voicePitch || 50,
     speed: activePet.voiceSpeed || 155
   });
@@ -330,7 +577,7 @@ function applyPetTheme(pet) {
   // Update chat input placeholder
   chatInput.placeholder = `Ask ${pet.name} (${pet.role})...`;
 
-  // Update affinity badge
+  // Update affinity and status modal
   updateAffinityDisplay();
 
   // Save config
@@ -348,9 +595,17 @@ function selectPet(petId) {
   }
 }
 
-function renderGallery() {
+window.filterGallery = function(query) {
+  renderGallery(query);
+};
+
+function renderGallery(filter = '') {
   galleryGrid.innerHTML = '';
+  const q = (filter || '').toLowerCase().trim();
   Object.values(PETS).forEach((pet) => {
+    if (q && !pet.name.toLowerCase().includes(q) && !pet.role.toLowerCase().includes(q) && !pet.badge.toLowerCase().includes(q)) {
+      return;
+    }
     const card = document.createElement('div');
     card.className = `gallery-card ${pet.id === activePet.id ? 'active' : ''}`;
     card.onclick = () => selectPet(pet.id);
@@ -366,20 +621,63 @@ function renderGallery() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Tamagotchi Affinity & Level System
+// Tamagotchi Affinity, Ranks & Status Dossier System
 // ═══════════════════════════════════════════════════════════════════════════════
+
+function getRankTitle(level) {
+  if (level >= 6) return 'Pantheon Avatar · Rank 6';
+  if (level === 5) return 'Archon Sentinel · Rank 5';
+  if (level === 4) return 'Sovereign Companion · Rank 4';
+  if (level === 3) return 'Ascended Daemon · Rank 3';
+  if (level === 2) return 'Adept Spirit · Rank 2';
+  return 'Novice Familiar · Rank 1';
+}
 
 function getPetStats(petId) {
   if (!petsData[petId]) {
-    petsData[petId] = { affinity: 20, level: 1 };
+    petsData[petId] = {
+      affinity: 20,
+      level: 1,
+      energy: 100,
+      interactions: 0
+    };
   }
+  if (typeof petsData[petId].energy !== 'number') petsData[petId].energy = 100;
+  if (typeof petsData[petId].interactions !== 'number') petsData[petId].interactions = 0;
   return petsData[petId];
 }
 
 function updateAffinityDisplay() {
   const stats = getPetStats(activePet.id);
   affinityText.textContent = `Lv. ${stats.level} · ${stats.affinity}%`;
+  updateStatusModal();
 }
+
+function updateStatusModal() {
+  if (!statusModal) return;
+  const stats = getPetStats(activePet.id);
+  modalPetName.textContent = activePet.name;
+  modalPetRank.textContent = getRankTitle(stats.level);
+  modalPetRole.textContent = `${activePet.role} // ${activePet.badge}`;
+  modalAvatar.src = activePet.type === 'procedural' ? 'assets/pets/zoth-neon.jpg' : activePet.image;
+  modalBondText.textContent = `${stats.affinity}%`;
+  modalBondFill.style.width = `${Math.min(100, stats.affinity)}%`;
+  modalEnergyText.textContent = `${stats.energy}%`;
+  modalEnergyFill.style.width = `${Math.min(100, stats.energy)}%`;
+  modalRam.textContent = `${telemetryData.usedGB || '5.0'} / ${telemetryData.totalGB || '32'} GB`;
+  modalTor.textContent = telemetryData.torCloaked ? 'Active' : 'Clearnet';
+  modalProfile.textContent = (telemetryData.activeProfile || 'Gold').toUpperCase();
+  modalInteractions.textContent = stats.interactions || 0;
+}
+
+window.toggleStatusModal = function(forceState) {
+  const show = typeof forceState === 'boolean' ? forceState : !statusModal.classList.contains('active');
+  statusModal.classList.toggle('active', show);
+  if (show) {
+    playSound(750, 'sine', 0.15);
+    updateStatusModal();
+  }
+};
 
 function addAffinity(points) {
   const stats = getPetStats(activePet.id);
@@ -388,7 +686,7 @@ function addAffinity(points) {
     stats.level += 1;
     stats.affinity = stats.affinity - 100;
     playLevelUpFanfare();
-    showSpeech(`🌟 LEVEL UP! ${activePet.name} reached Level ${stats.level} Mastery!`, `👑 ALCHEMICAL ASCENSION`);
+    showSpeech(`🌟 LEVEL UP! ${activePet.name} reached ${getRankTitle(stats.level)}!`, `👑 ALCHEMICAL ASCENSION`);
     speak('Level up reached');
   }
   updateAffinityDisplay();
@@ -397,6 +695,8 @@ function addAffinity(points) {
 
 window.triggerPraise = function() {
   wakeUp();
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
   playSound(880, 'sine', 0.15);
   addAffinity(5);
   spawnFloatingHearts();
@@ -412,6 +712,9 @@ window.triggerPraise = function() {
 
 window.triggerFeed = function() {
   wakeUp();
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
+  stats.energy = Math.min(100, stats.energy + 25);
   playSound(740, 'triangle', 0.18);
   addAffinity(8);
   spawnFloatingSparkles();
@@ -423,6 +726,21 @@ window.triggerFeed = function() {
   const msg = feeds[Math.floor(Math.random() * feeds.length)];
   showSpeech(msg);
   speak('Energy restored');
+};
+
+window.triggerDistill = function() {
+  wakeUp();
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
+  stats.energy = 100;
+  addAffinity(15);
+  spawnFloatingDistillSparks();
+  playSound(1100, 'triangle', 0.25);
+  setTimeout(() => playSound(1400, 'sine', 0.3), 100);
+
+  ipcRenderer.send('alchemical-distill');
+  showSpeech(`🔮 Alchemical Distillation complete! Memory caches purified, +15 Bond & Energy restored.`, `✨ TRANSMUTATION`);
+  speak('Alchemical distillation complete');
 };
 
 function spawnFloatingHearts() {
@@ -473,6 +791,30 @@ function spawnFloatingSparkles() {
   }
 }
 
+function spawnFloatingDistillSparks() {
+  for (let i = 0; i < 9; i++) {
+    const s = document.createElement('div');
+    s.textContent = ['🔮', '✨', '👑', '⚡', '🌟'][Math.floor(Math.random() * 5)];
+    s.style.cssText = `
+      position: absolute;
+      left: ${50 + Math.random() * 140}px;
+      bottom: 110px;
+      font-size: ${16 + Math.random() * 12}px;
+      pointer-events: none;
+      z-index: 99;
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+    container.appendChild(s);
+    requestAnimationFrame(() => {
+      s.style.transform = `translate(${(Math.random() - 0.5) * 60}px, -110px) scale(1.5)`;
+      s.style.opacity = '0';
+    });
+    setTimeout(() => { if (s.parentNode) s.remove(); }, 1100);
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // Familiar Spells Execution
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -480,6 +822,9 @@ function spawnFloatingSparkles() {
 window.castFamiliarSpell = function() {
   wakeUp();
   if (!activePet.spell) return;
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
+  updateAffinityDisplay();
   playSound(940, 'triangle', 0.2);
   playArpeggio();
   showSpeech(`Casting: ${activePet.spell.name}...`, `🔮 ${activePet.name.toUpperCase()} SPELL`);
@@ -657,6 +1002,9 @@ if (mascotWrapper) {
 
 window.triggerPoke = function() {
   wakeUp();
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
+  updateAffinityDisplay();
   playSound(720, 'triangle', 0.16);
   currentThoughtIdx = (currentThoughtIdx + 1) % activePet.thoughts.length;
   const thought = activePet.thoughts[currentThoughtIdx];
@@ -676,6 +1024,9 @@ window.sendChatQuery = function() {
 
   showSpeech(`Thinking: "${query}"...`, `● ${activePet.name.toUpperCase()} // REASONING`);
 
+  const stats = getPetStats(activePet.id);
+  stats.interactions += 1;
+  stats.energy = Math.max(0, stats.energy - 3);
   addAffinity(2);
 
   const contextStr = `RAM: ${telemetryData.usedGB}/${telemetryData.totalGB} GB (${telemetryData.ramPct}%), Tor: ${telemetryData.torCloaked ? 'Active' : 'Clearnet'}, Profile: ${telemetryData.activeProfile}`;
@@ -742,6 +1093,7 @@ window.toggleGallery = function(forceState) {
   petGallery.classList.toggle('active', show);
   if (show) {
     playSound(660, 'sine');
+    if (gallerySearch) gallerySearch.value = '';
     renderGallery();
   }
 };
@@ -773,6 +1125,7 @@ ipcRenderer.on('telemetry-update', (event, data) => {
   } else {
     document.documentElement.style.setProperty('--pet-glow', activePet.glow);
   }
+  updateStatusModal();
 });
 
 // Config Restoration
@@ -797,6 +1150,7 @@ ipcRenderer.on('pet-config-loaded', (event, cfg) => {
     container.classList.add('compact');
     compactBtn.textContent = '➕';
   }
+  updateAffinityDisplay();
 });
 
 // Initialize on startup

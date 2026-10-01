@@ -336,7 +336,11 @@ ipcMain.on('launch-app', (event, appName) => {
     'nexus': 'zoth-tool-nexus',
     'reality': 'zoth-mode',
     'ghost': 'zoth-ghost-gui',
-    'vault': 'zoth-vault'
+    'vault': 'zoth-vault',
+    'sentinel': 'konsole --title "Zoth Sentinel HUD" -e zoth-sentinel-hud',
+    'doctor': 'konsole --title "Zoth System Doctor" -e zoth-doctor',
+    'soundtrack': 'zoth-soundtrack',
+    'fastfetch': 'konsole --hold -e zoth-fastfetch'
   };
   const cmd = apps[appName] || appName;
   exec(`nohup ${cmd} >/dev/null 2>&1 &`);
@@ -351,9 +355,15 @@ ipcMain.on('run-spell', (event, spellCommand) => {
   });
 });
 
-ipcMain.on('speak-text', (event, { text, pitch = 50, speed = 155 }) => {
+ipcMain.on('alchemical-distill', (event) => {
+  exec('rm -rf ~/.cache/thumbnails/* 2>/dev/null; sync', (err) => {
+    event.reply('distill-complete', { success: !err });
+  });
+});
+
+ipcMain.on('speak-text', (event, { text, pitch = 50, speed = 155, voice = 'en' }) => {
   const sanitized = text.replace(/["`$\\]/g, ' ').substring(0, 200);
-  exec(`espeak-ng -p ${pitch} -s ${speed} "${sanitized}" >/dev/null 2>&1 &`);
+  exec(`espeak-ng -v "${voice}" -p ${pitch} -s ${speed} "${sanitized}" >/dev/null 2>&1 &`);
 });
 
 ipcMain.on('query-pet-ai', (event, { prompt, petInfo, context }) => {
