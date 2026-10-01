@@ -235,21 +235,21 @@ def execute_single_package_install(pkg):
     if pkg.startswith("apt:"):
         actual_pkg = pkg[4:]
         print(f"{GRAY}Running Debian APT Package Manager:{RESET} apt-get install -y {actual_pkg}")
-        cmd = f"sudo apt-get update -qq && sudo apt-get install -y {actual_pkg}"
+        cmd = f"sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" {actual_pkg}"
         ret = subprocess.run(cmd, shell=True)
         return ret.returncode == 0
 
     elif pkg.startswith("npm:"):
         actual_pkg = pkg[4:]
         print(f"{GRAY}Running Node Package Manager:{RESET} npm install -g {actual_pkg}")
-        cmd = f"sudo npm install -g {actual_pkg} 2>/dev/null || npm install -g {actual_pkg}"
+        cmd = f"sudo npm install -g --unsafe-perm=true {actual_pkg} 2>/dev/null || npm install -g {actual_pkg}"
         ret = subprocess.run(cmd, shell=True)
         return ret.returncode == 0
 
     elif pkg.startswith("pip:"):
         actual_pkg = pkg[4:]
         print(f"{GRAY}Running Python PIP in ZOTHOS AI Environment:{RESET} {actual_pkg}")
-        cmd = f"/opt/zothos-ai-env/bin/pip install {actual_pkg} 2>/dev/null || pip3 install --break-system-packages {actual_pkg}"
+        cmd = f"/opt/zothos-ai-env/bin/pip install {actual_pkg} 2>/dev/null || sudo pip3 install --break-system-packages {actual_pkg}"
         ret = subprocess.run(cmd, shell=True)
         return ret.returncode == 0
 
@@ -343,10 +343,11 @@ def execute_single_package_install(pkg):
         ret = subprocess.run(cmd, shell=True)
         return ret.returncode == 0
 
-def install_module(pkg_def):
+def install_module(pkg_def, interactive=True):
     if not pkg_def or pkg_def == "none":
         print(f"\n{GREEN}[✓] Tool is a native built-in binary. No extra modules needed.{RESET}")
-        input(f"\n{GRAY}Press Enter to continue...{RESET}")
+        if interactive:
+            input(f"\n{GRAY}Press Enter to continue...{RESET}")
         return
 
     packages = [p.strip() for p in pkg_def.split(",") if p.strip()]
@@ -368,7 +369,8 @@ def install_module(pkg_def):
     else:
         print(f"\n{RED}[!] One or more package installations encountered warnings/errors.{RESET}")
 
-    input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
+    if interactive:
+        input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
 
 def run_doctor():
     print_header()
@@ -549,31 +551,77 @@ def interactive_tui():
 
 def main():
     parser = argparse.ArgumentParser(description="ZOTHOS Sovereign 175+ Tool Nexus Dispatcher")
+    parser.add_argument("--gui", action="store_true", help="Launch the sovereign Electron GUI application")
+    parser.add_argument("--tui", action="store_true", help="Launch the interactive terminal TUI")
     parser.add_argument("--list", action="store_true", help="List all registered tools across 10 domains")
     parser.add_argument("--doctor", action="store_true", help="Run full diagnostic scan on all tools & modules")
     parser.add_argument("--install-modules", type=str, help="Install modules for tool ID, domain (1-10), or 'all'")
+    parser.add_argument("--install-all", action="store_true", help="Batch install all missing tool recipes non-interactively")
+    parser.add_argument("--yes", "-y", action="store_true", help="Non-interactive mode (no confirm/pause prompts)")
     parser.add_argument("--domain", type=str, help="Display tools within domain (1-10)")
     parser.add_argument("--run", type=str, help="Directly run tool by ID")
     parser.add_argument("--search", type=str, help="Search tools by keyword")
     args = parser.parse_args()
 
+    # If called without arguments from a graphical environment, or explicitly requested --gui
+    has_display = bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+    electron_app = "/opt/zoth-nexus-app"
+    electron_bin = "/usr/local/bin/electron"
+    if (args.gui or (len(sys.argv) == 1 and has_display)) and not args.tui:
+        if os.path.isdir(electron_app) and os.path.exists(electron_bin):
+            os.execv(electron_bin, ["electron", electron_app])
+
     if args.doctor:
         run_doctor()
         return
 
+    if args.install_all or (args.install_modules and args.install_modules.strip() == "all"):
+        print(f"\n{GOLD}╔══════════════════════════════════════════════════════════════════════════════╗{RESET}")
+        print(f"{GOLD}║           [+] ZOTHOS UNATTENDED BATCH PROVISIONER: ALL TOOLS [+]             ║{RESET}")
+        print(f"{GOLD}╚══════════════════════════════════════════════════════════════════════════════╝{RESET}\n")
+        
+        # Ensure directories & permissions first
+        os.system("sudo chown -R $USER:$USER /opt/zothos-ai-env 2>/dev/null || true")
+        os.system("sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true")
+        os.system("sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true")
+        
+        seen_recipes = []
+        for d_id, data in DOMAINS.items():
+            for tool_id, desc, cmd, mod in data['tools']:
+                if mod != "none" and not check_tool_ready(cmd):
+                    for sub in mod.split(","):
+                        sub = sub.strip()
+                        if sub and sub not in seen_recipes:
+                            seen_recipes.append(sub)
+
+        if not seen_recipes:
+            print(f"{GREEN}[✓] All 175+ tools are already installed and fully operational!{RESET}\n")
+            return
+
+        print(f"{CYAN}Detected {len(seen_recipes)} missing package recipes across domains.{RESET}")
+        print(f"{GRAY}Synchronizing APT package lists once up front...{RESET}")
+        os.system("sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq")
+        
+        success_count = 0
+        for idx, recipe in enumerate(seen_recipes, 1):
+            print(f"\n{GOLD}[{idx}/{len(seen_recipes)}] Provisioning:{RESET} {CYAN}{recipe}{RESET}")
+            ok = execute_single_package_install(recipe)
+            if ok:
+                success_count += 1
+
+        print(f"\n{GREEN}{'═'*78}{RESET}")
+        print(f"{GREEN}[✓] Batch provisioning finished: {success_count}/{len(seen_recipes)} recipes installed.{RESET}")
+        print(f"{GREEN}{'═'*78}\n")
+        os.system("sudo update-desktop-database 2>/dev/null || true")
+        return
+
     if args.install_modules:
         target = args.install_modules.strip()
-        if target == "all":
-            for d_id, data in DOMAINS.items():
-                for tool_id, _, _, mod in data['tools']:
-                    if mod != "none":
-                        install_module(mod)
-        else:
-            for d_id, data in DOMAINS.items():
-                for tool_id, _, _, mod in data['tools']:
-                    if tool_id == target and mod != "none":
-                        install_module(mod)
-                        return
+        for d_id, data in DOMAINS.items():
+            for tool_id, _, _, mod in data['tools']:
+                if tool_id == target and mod != "none":
+                    install_module(mod, interactive=not args.yes)
+                    return
         return
 
     if args.list:

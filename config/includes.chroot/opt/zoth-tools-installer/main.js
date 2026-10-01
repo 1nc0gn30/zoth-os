@@ -128,28 +128,40 @@ ipcMain.on('get-bundles', (event) => {
   event.reply('bundles', snap);
 });
 
-// Install a bundle resiliently
+// Install a bundle resiliently (supports individual bundleId or 'all')
 ipcMain.on('install-bundle', (event, bundleId) => {
-  const bundle = BUNDLES[bundleId];
-  if (!bundle) {
-    event.reply('install-error', { msg: `Unknown bundle: ${bundleId}` });
-    return;
+  let aptList = [];
+  let pipList = [];
+  let bundleLabel = 'ALL ARSENAL BUNDLES';
+
+  if (bundleId === 'all') {
+    for (const b of Object.values(BUNDLES)) {
+      aptList.push(...b.apt);
+      if (b.pip) pipList.push(...b.pip);
+    }
+    aptList = Array.from(new Set(aptList));
+    pipList = Array.from(new Set(pipList));
+  } else {
+    const bundle = BUNDLES[bundleId];
+    if (!bundle) {
+      event.reply('install-error', { msg: `Unknown bundle: ${bundleId}` });
+      return;
+    }
+    aptList = bundle.apt;
+    pipList = bundle.pip || [];
+    bundleLabel = bundle.label;
   }
 
   event.reply('install-start', {
     bundle: bundleId,
-    label: bundle.label,
-    total: bundle.apt.length
+    label: bundleLabel,
+    total: aptList.length
   });
 
-  // Construct shell script for reliable installation:
-  // 1. Check network connectivity and locks
-  // 2. Synchronize package repository indices
-  // 3. Loop through tools individually with real-time progress streaming
   const scriptLines = [
     '#!/usr/bin/env bash',
     'set -u',
-    'echo -e "\\e[1;36m[+] Initializing ZOTH Arsenal Environment for ' + bundle.label + '...\\e[0m"',
+    'echo -e "\\e[1;36m[+] Initializing ZOTH Arsenal Environment for ' + bundleLabel + '...\\e[0m"',
     'echo -e "\\e[1;33m[*] Verifying network connectivity...\\e[0m"',
     'if ! ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1 && ! ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1; then',
     '    echo -e "\\e[1;33m[*] Direct ping limited, checking HTTP repository reachability...\\e[0m"',
@@ -166,7 +178,7 @@ ipcMain.on('install-bundle', (event, bundleId) => {
     'echo -e "\\e[1;36m[*] Synchronizing package lists (Debian + Kali + Parrot)...\\e[0m"',
     'sudo DEBIAN_FRONTEND=noninteractive apt-get update || true',
     'echo -e "\\e[1;32m[✓] Package index ready.\\e[0m\\n"',
-    `PKGS=(${bundle.apt.map(p => `"${p}"`).join(' ')})`,
+    `PKGS=(${aptList.map(p => `"${p}"`).join(' ')})`,
     'TOTAL=${#PKGS[@]}',
     'SUCCESS=0',
     'SKIPPED=0',
@@ -185,19 +197,21 @@ ipcMain.on('install-bundle', (event, bundleId) => {
     '    fi',
     'done',
     'echo -e "PROGRESS_FINAL:$SUCCESS:$SKIPPED:$TOTAL"',
+    'sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true',
+    'sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true',
     'sudo update-desktop-database 2>/dev/null || true'
   ];
 
   // If bundle has pip dependencies
-  if (bundle.pip && bundle.pip.length > 0) {
+  if (pipList && pipList.length > 0) {
     scriptLines.push(
-      'echo -e "\\e[1;36m[+] Installing Python extras: ' + bundle.pip.join(' ') + '...\\e[0m"',
-      `pip3 install --break-system-packages ${bundle.pip.join(' ')} 2>&1 || true`
+      'echo -e "\\e[1;36m[+] Installing Python extras: ' + pipList.join(' ') + '...\\e[0m"',
+      `/opt/zothos-ai-env/bin/pip install ${pipList.join(' ')} 2>&1 || sudo pip3 install --break-system-packages ${pipList.join(' ')} 2>&1 || true`
     );
   }
 
-  // If Zoth bundle, install Tailscale & Cloudflared if possible
-  if (bundleId === 'zoth') {
+  // If Zoth bundle or all, install Tailscale & Cloudflared if possible
+  if (bundleId === 'zoth' || bundleId === 'all') {
     scriptLines.push(
       'echo -e "\\e[1;36m[+] Verifying Tailscale & Cloudflare tunnels...\\e[0m"',
       'if ! command -v tailscale >/dev/null 2>&1; then',

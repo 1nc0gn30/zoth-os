@@ -3,8 +3,21 @@ Version=1.0
 Type=Application
 Name=Zoth Tool Nexus
 Comment=175+ Penetration Testing, AI & Sovereign Runtimes Orchestrator
-Exec=konsole -p tabtitle="ZOTHOS Tool Nexus" -e "zoth-tool-nexus"
+Exec=/usr/local/bin/zoth-tool-nexus --gui
 Icon=/usr/share/pixmaps/zoth-tool-nexus.png
 Terminal=false
 Categories=System;Development;Security;Pentesting;
 StartupNotify=true
+Actions=Terminal;Doctor;InstallAll;
+
+[Desktop Action Terminal]
+Name=Open in Terminal (TUI)
+Exec=konsole --hold -p tabtitle="ZOTHOS Tool Nexus" -e zoth-tool-nexus --tui
+
+[Desktop Action Doctor]
+Name=Run System Diagnostics
+Exec=konsole --hold -p tabtitle="ZOTHOS Doctor" -e zoth-tool-nexus --doctor
+
+[Desktop Action InstallAll]
+Name=Batch Install All Missing Arsenal
+Exec=konsole --hold -p tabtitle="ZOTHOS Provisioner" -e zoth-tool-nexus --install-all

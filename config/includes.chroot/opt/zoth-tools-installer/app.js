@@ -54,12 +54,22 @@ function install(id) {
   activeBundle = id;
   const btn = document.getElementById('btn-' + id);
   const st = document.getElementById('st-' + id);
-  btn.classList.add('installing');
-  btn.textContent = 'INSTALLING...';
-  st.textContent = 'PROVISIONING...';
-  showLog(`✦ INSTALLING ${bundles[id].label.toUpperCase()}...`);
+  if (btn) {
+    btn.classList.add('installing');
+    btn.textContent = 'INSTALLING...';
+  }
+  if (st) {
+    st.textContent = 'PROVISIONING...';
+  }
+  showLog(`✦ INSTALLING ${bundles[id] ? bundles[id].label.toUpperCase() : id.toUpperCase()}...`);
   ipcRenderer.send('install-bundle', id);
 }
+
+window.installAllBundles = function() {
+  activeBundle = 'all';
+  showLog('✦ INSTALLING ALL ARSENAL BUNDLES (UNATTENDED ONE-CLICK)...');
+  ipcRenderer.send('install-bundle', 'all');
+};
 
 // IPC Handlers
 ipcRenderer.on('bundles', (_e, data) => {

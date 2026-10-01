@@ -7,6 +7,7 @@
 # ==============================================================================
 
 set -uo pipefail
+HOME="${HOME:-/root}"
 
 # ANSI Cyber-Alchemical Palette
 EMERALD="\e[38;2;0;255;157m"
@@ -196,6 +197,18 @@ heal_packages() {
                 log_pass "APT repositories & CDN mirrors reachable"
             fi
         fi
+    fi
+
+    # 6. Ensure bat and fd Debian command symlinks exist
+    if [[ -x /usr/bin/batcat && ! -e /usr/local/bin/bat ]]; then
+        ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
+        log_fixed "Restored /usr/local/bin/bat -> /usr/bin/batcat symlink"
+        mod_healed=$((mod_healed + 1))
+    fi
+    if [[ -x /usr/bin/fdfind && ! -e /usr/local/bin/fd ]]; then
+        ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+        log_fixed "Restored /usr/local/bin/fd -> /usr/bin/fdfind symlink"
+        mod_healed=$((mod_healed + 1))
     fi
 
     HEALED_COUNT=$((HEALED_COUNT + mod_healed))
@@ -560,11 +573,17 @@ EOF
         fi
     fi
 
-    # 3. Python AI Environment check
+    # 3. Python AI Environment check & permissions
     local venv_path="/opt/zothos-ai-env"
     if [[ -d "$venv_path" ]]; then
         if [[ -x "$venv_path/bin/python3" ]]; then
             log_pass "Python AI Virtualenv active at $venv_path"
+            local target_user="${SUDO_USER:-zoth}"
+            if [[ -d "$venv_path/lib" && ! -w "$venv_path/lib" ]]; then
+                chown -R "${target_user}:${target_user}" "$venv_path" 2>/dev/null || true
+                log_fixed "Fixed ownership on $venv_path for ${target_user}"
+                mod_healed=$((mod_healed + 1))
+            fi
         else
             log_warn "Python venv binary missing or broken at $venv_path"
             WARN_COUNT=$((WARN_COUNT + 1))
