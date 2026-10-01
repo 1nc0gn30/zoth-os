@@ -1,10 +1,38 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth AI Desktop Companion
-Comment=Interactive Floating AI Mascot & Desktop Telemetry Pet
-Exec=/usr/local/bin/zoth-desktop-pet
-Icon=zoth-desktop-pet
+Name=ZothOS Desktop Pet HUD
+GenericName=Alchemical AI Companion & Mascot
+Comment=Interactive Celestial Griffin, Dragon, Phoenix & All-Seeing Eye Companion
+Exec=/usr/local/bin/zoth-pet-hud
+Icon=/usr/share/pixmaps/zoth-pet-hud.png
 Terminal=false
-Categories=System;Utility;ArtificialIntelligence;
+Categories=Utility;Amusement;ArtificialIntelligence;
+Keywords=pet;hud;companion;eye;mascot;aquila;draco;phoenix;ai;
+MimeType=application/x-zoth-pet-hud;
 StartupNotify=true
+Actions=Eye;Aquila;Draco;Ignis;Kitsune;Lycan;
+
+[Desktop Action Eye]
+Name=Summon All-Seeing Eye
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"eye\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'
+
+[Desktop Action Aquila]
+Name=Summon Celestial Griffin (Aquila)
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"aquila\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'
+
+[Desktop Action Draco]
+Name=Summon Alchemical Dragon (Draco)
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"draco\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'
+
+[Desktop Action Ignis]
+Name=Summon Fire Phoenix (Ignis)
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"ignis\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'
+
+[Desktop Action Kitsune]
+Name=Summon Cyber Fox (Kitsune)
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"kitsune\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'
+
+[Desktop Action Lycan]
+Name=Summon Cyber Wolf (Lycan)
+Exec=bash -c 'mkdir -p ~/.config/zothos && echo "{\"petId\":\"lycan\"}" > ~/.config/zothos/pet_config.json && /usr/local/bin/zoth-pet-hud'

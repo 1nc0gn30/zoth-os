@@ -1,23 +1,38 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  Zoth Pet HUD — All-Seeing Eye Companion Overlay
+#  ZOTHOS DESKTOP PET HUD & MASCOT COMPANION v2.0
 # ==============================================================================
 set -euo pipefail
 
+PET_DIR="/opt/zoth-desktop-pet"
+
+# Resolve Electron binary
 ELECTRON_BIN=""
-for e in /usr/local/bin/electron /opt/electron/electron /tmp/electron/electron "$(which electron 2>/dev/null || true)"; do
-    if [[ -x "$e" ]]; then
+for e in /usr/local/bin/electron /usr/bin/electron /opt/electron/electron "$(which electron 2>/dev/null || true)"; do
+    if [[ -n "$e" && -x "$e" ]]; then
         ELECTRON_BIN="$e"
         break
     fi
 done
 
-if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-}" ]]; then
-    if [[ -d "/opt/zoth-desktop-pet" && -f "/opt/zoth-desktop-pet/main.js" ]]; then
-        exec "$ELECTRON_BIN" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox --disable-gpu /opt/zoth-desktop-pet "$@"
-    elif [[ -d "/opt/zoth-hud" && -f "/opt/zoth-hud/main.js" ]]; then
-        exec "$ELECTRON_BIN" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox --disable-gpu /opt/zoth-hud "$@"
-    fi
+if [[ -z "$ELECTRON_BIN" ]]; then
+    echo "[!] Electron binary not found." >&2
+    exit 1
 fi
 
-konsole --noclose -e bash -c "echo -e '\e[1;33m[*] Zoth Pet HUD Active.\e[0m'; exec bash"
+if [[ -z "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
+    echo "[!] No graphical display environment found (DISPLAY or WAYLAND_DISPLAY)." >&2
+    exit 1
+fi
+
+if [[ ! -f "$PET_DIR/main.js" ]]; then
+    echo "[!] Desktop pet application files not found at $PET_DIR." >&2
+    exit 1
+fi
+
+exec "$ELECTRON_BIN" \
+    --no-sandbox \
+    --disable-dev-shm-usage \
+    --disable-gpu-sandbox \
+    --enable-transparent-visuals \
+    "$PET_DIR" "$@"

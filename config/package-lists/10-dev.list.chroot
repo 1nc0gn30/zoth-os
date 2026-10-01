@@ -34,3 +34,4 @@ skopeo
 buildah
 micro
 duf
+zstd
