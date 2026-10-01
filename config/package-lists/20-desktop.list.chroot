@@ -41,6 +41,8 @@ cracklib-runtime
 wamerican
 at-spi2-core
 gnome-disk-utility
+espeak-ng
+speech-dispatcher
 
 # Wireless & Networking Stack
 wpasupplicant

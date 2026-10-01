@@ -1,5 +1,225 @@
-# Python & bytecode
+# ==============================================================================
+#  ZOTHOS LINUX — SOVEREIGN GITIGNORE SPECIFICATION
+#  Guarantees zero leak of secrets, credentials, dotfiles, tokens & build outputs
+# ==============================================================================
+
+# ── 1. SECRETS, API KEYS & ENVIRONMENT CONFIGS ───────────────────────────────
+.env
+.env.*
+.envrc
+!.env.example
+*.env
+*.env.*
+*.secret
+*.secrets
+*.secrets.*
+*.key
+*.pem
+*.pkcs12
+*.pfx
+*.asc
+*.cer
+*.crt
+*.der
+*.p7b
+*.p7c
+*.ca-bundle
+
+# Whitelist public APT / vendor archive signing keys required for live-build:
+!config/archives/*.key*
+!config/includes.chroot/etc/apt/trusted.gpg.d/*.gpg
+!config/includes.chroot/etc/apt/trusted.gpg.d/*.asc
+
+# Tokens, Auth & Service Account Credentials
+*auth.json
+*credentials.json
+*credential*.json
+*client_secret*.json
+*service_account*.json
+*service-account*.json
+*.token
+*token*.txt
+*token*.json
+*.keyfile
+*.secretfile
+
+# Whitelist dummy template configuration
+!config/includes.chroot/etc/skel/.streamlit/credentials.toml
+
+# Password Managers & Vault Databases
+*.kdbx
+*.kdb
+*.vault
+.zoth-vault*
+bw_session*
+*.bw_session
+keepass*.key
+agent-layer.state
+
+# ── 2. SSH, GPG & CRYPTOGRAPHIC KEYS ─────────────────────────────────────────
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+known_hosts*
+authorized_keys*
+.ssh/
+**/.ssh/
+secring.*
+pubring.*
+.gnupg/
+**/.gnupg/
+*.gpg
+*.pgp
+
+# Re-allow public APT keyrings
+!config/includes.chroot/etc/apt/trusted.gpg.d/*.gpg
+
+# SSH host keys inside chroot
+config/includes.chroot/etc/ssh/ssh_host_*
+etc/ssh/ssh_host_*
+
+# ── 3. CLOUD, CLI & TOOL AUTHENTICATION CONFIGS ──────────────────────────────
+.netrc
+.git-credentials
+.gitconfig.local
+.gitconfig.personal
+.aws/
+**/.aws/
+.azure/
+**/.azure/
+.gcloud/
+**/.gcloud/
+.kube/
+**/.kube/
+.config/gh/
+**/.config/gh/
+.config/gcloud/
+**/.config/gcloud/
+.config/aws/
+**/.config/aws/
+.config/netlify/
+**/.config/netlify/
+.config/vercel/
+**/.config/vercel/
+.config/doctl/
+**/.config/doctl/
+.config/stripe/
+**/.config/stripe/
+.stripe/
+**/.stripe/
+.terraform/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.vault-token
+.vault-password*
+
+# AI & LLM Local Runtimes & Agent State
+.openai/
+**/.openai/
+.anthropic/
+**/.anthropic/
+.gemini/
+**/.gemini/
+.open-interpreter/
+**/.open-interpreter/
+.aider*
+**/.aider*
+*aider*.history
+*aider*.token
+.ollama/id_ed25519*
+
+# ── 4. SHELL HISTORY, USER SESSIONS & RUNTIME STATE ──────────────────────────
+.*_history
+*history*
+*.history
+.bash_history
+.zsh_history
+.python_history
+.node_repl_history
+.sqlite_history
+.lesshst
+.viminfo
+.wget-hsts
+.zcompdump*
+.bash_sessions/
+**/.bash_sessions/
+.xsession-errors*
+.ICEauthority
+.Xauthority
+
+# Browser data, cookies & session stores
+*places.sqlite*
+*cookies.sqlite*
+*formhistory.sqlite*
+*key4.db
+*logins.json
+*cert9.db
+.mozilla/
+**/.mozilla/
+.torproject/
+**/.torproject/
+.pki/
+**/.pki/
+.google-chrome/
+**/.google-chrome/
+.chromium/
+**/.chromium/
+.config/google-chrome/
+**/.config/google-chrome/
+.config/chromium/
+**/.config/chromium/
+.config/BraveSoftware/
+**/.config/BraveSoftware/
+.config/discord/
+**/.config/discord/
+.config/Signal/
+**/.config/Signal/
+.config/Element/
+**/.config/Element/
+.config/obsidian/
+**/.config/obsidian/
+
+# System Sensitive Identity & Passwd Files
+config/includes.chroot/etc/shadow*
+config/includes.chroot/etc/gshadow*
+config/includes.chroot/etc/passwd-
+config/includes.chroot/etc/group-
+config/includes.chroot/etc/subuid*
+config/includes.chroot/etc/subgid*
+config/includes.chroot/etc/machine-id
+config/includes.chroot/var/lib/dbus/machine-id
+config/includes.chroot/etc/crypttab
+etc/shadow*
+etc/gshadow*
+etc/passwd-
+etc/group-
+etc/machine-id
+crypttab
+*.luks
+
+# ── 5. CACHES, LOGS & TEMPORARY FILES ────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+/tmp/
+*.ppm
+tools/*.png
+tools/*.ppm
+tools/vm_desktop*.png
+tools/live_iso_screen.png
+failed_tools.json
+.cache/
+**/.cache/
+.local/share/Trash/
+**/.local/share/Trash/
+.local/share/recently-used.xbel
+**/.local/share/recently-used.xbel
+
+# ── 6. PYTHON, NODE & PROGRAMMING RUNTIMES ────────────────────────────────────
 __pycache__/
+**/*/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -8,62 +228,52 @@ env/
 venv/
 .venv/
 ENV/
-build/live_workspace/
-build/live-workspace/
-chroot/
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.yarn/
+.pnpm-store/
+.cargo/
+.rustup/
+target/
 
-# Disk Images & ISOs
+# ── 7. OS, IDE & EDITOR ARTIFACTS ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+*.rej
+.idea/
+**/.idea/
+.vscode/
+**/.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ── 8. LIVE-BUILD ARTIFACTS & DISK IMAGES ────────────────────────────────────
 *.iso
 *.img
 *.qcow2
 *.vmdk
 *.vdi
 *.raw
-
-# Secrets, Environment & API Keys
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-# public apt signing keys of vendor repos (Chrome/Element/Signal) for live-build
-!config/archives/*.key
-*.pkcs12
-*.pfx
-*.asc
-id_rsa*
-id_ed25519*
-*auth.json
-*credentials.json
-*.secret
-
-# Logs & Temporary Files
-*.log
-/tmp/
-*.tmp
-*.ppm
-tools/*.png
-tools/*.ppm
-tools/vm_desktop*.png
-tools/live_iso_screen.png
-
-# Node & Package Managers
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Build & Distributions
-build/
-dist/
-*.AppImage
+*.deb
+*.rpm
 *.tar.gz
-
-# OS Specific
-.DS_Store
-Thumbs.db
+*.AppImage
+build/
 .build/
+dist/
+chroot/
+build/live_workspace/
+build/live-workspace/
 config/apt/
 config/binary
 config/bootstrap
@@ -71,7 +281,10 @@ config/chroot
 config/common
 config/hooks/
 config/source
+config/includes.chroot/var/
+var/
 
+# ── 9. HEAVY PRE-PACKAGED RUNTIMES IN CHROOT ─────────────────────────────────
 # Large compiled binaries in usr/local/bin (installed via zoth-pkg/bootstrap)
 config/includes.chroot/usr/local/bin/anvil
 config/includes.chroot/usr/local/bin/cast
@@ -90,16 +303,8 @@ config/includes.chroot/usr/local/bin/lazydocker
 config/includes.chroot/usr/local/bin/trufflehog
 config/includes.chroot/usr/local/bin/yazi
 config/includes.chroot/usr/local/bin/doggo
-*.deb
-
-# System & sensitive runtime files
-config/includes.chroot/etc/shadow
-config/includes.chroot/etc/gshadow
-config/includes.chroot/etc/passwd
-config/includes.chroot/etc/group
-config/includes.chroot/var/
-var/
-failed_tools.json
+config/includes.chroot/usr/local/bin/simplex-chat
+config/includes.chroot/usr/local/bin/node
 
 # Pre-packaged runtime binaries
 config/includes.chroot/opt/electron/
@@ -109,8 +314,6 @@ config/includes.chroot/opt/Element/
 config/includes.chroot/opt/simplex-desktop/
 config/includes.chroot/opt/zoth-studio/
 opt/zoth-studio/
-config/includes.chroot/usr/local/bin/simplex-chat
-config/includes.chroot/usr/local/bin/node
 config/includes.chroot/opt/google/
 config/includes.chroot/opt/tor-browser/
 config/includes.chroot/usr/share/ollama/
@@ -118,5 +321,4 @@ config/includes.chroot/boot/vmlinuz*
 config/includes.chroot/boot/initrd*
 config/includes.chroot/usr/lib/modules/
 config/includes.chroot/usr/local/lib/
-
 config/includes.chroot/usr/share/doc/
