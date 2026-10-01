@@ -1,0 +1,11 @@
+{
+  "name": "zoth-cockpit-app",
+  "version": "2.5.0",
+  "description": "ZothOS Cockpit Pro — Flagship Sovereign Operations Deck & System Intelligence Dashboard",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Neal Frazier Tech <neal@nealfrazier.tech>",
+  "license": "MIT"
+}

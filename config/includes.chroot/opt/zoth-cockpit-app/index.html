@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZOTHOS COCKPIT PRO // Sovereign Operations Deck</title>
+  <style>
+    :root {
+      --bg: #04070c;
+      --bg-card: rgba(10, 16, 26, 0.75);
+      --bg-card-hover: rgba(16, 24, 38, 0.85);
+      --border: rgba(255, 215, 0, 0.2);
+      --border-dim: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(255, 215, 0, 0.5);
+      --gold: #ffd700;
+      --gold-dim: #c5a000;
+      --cyan: #00e5ff;
+      --emerald: #00ff9d;
+      --crimson: #f43f5e;
+      --purple: #a855f7;
+      --text: #f1f5f9;
+      --text-dim: #8ba1b7;
+      --text-muted: #566b7e;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(255, 215, 0, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(0, 229, 255, 0.03) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Draggable Titlebar ── */
+    #titlebar {
+      height: 48px;
+      background: rgba(6, 10, 18, 0.95);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      -webkit-app-region: drag;
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-icon {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+
+    .app-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .app-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    }
+
+    .app-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .hermetic-motto {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-style: italic;
+      letter-spacing: 0.5px;
+      display: none;
+    }
+    @media (min-width: 1100px) {
+      .hermetic-motto { display: inline-block; }
+    }
+
+    .titlebar-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      -webkit-app-region: no-drag;
+    }
+
+    .head-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      background: rgba(14, 22, 35, 0.8);
+      border: 1px solid var(--border-dim);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .head-pill.gold { border-color: rgba(255, 215, 0, 0.35); color: var(--gold); }
+    .head-pill.emerald { border-color: rgba(0, 255, 157, 0.35); color: var(--emerald); }
+    .head-pill.cyan { border-color: rgba(0, 229, 255, 0.35); color: var(--cyan); }
+    .head-pill.crimson { border-color: rgba(244, 63, 94, 0.35); color: var(--crimson); }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+      animation: pulseAnim 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .titlebar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      -webkit-app-region: no-drag;
+    }
+
+    .btn-tb-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-dim);
+      color: var(--text-dim);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-tb-action:hover {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .btn-tb-action.netkill:hover {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: var(--crimson);
+      color: var(--crimson);
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 4px;
+      margin-left: 8px;
+    }
+
+    .btn-win {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border-dim);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-dim);
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-win:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    .btn-win.close:hover {
+      background: var(--crimson);
+      border-color: var(--crimson);
+      color: white;
+    }
+
+    /* ── Navigation Tabs ── */
+    #nav-tabs {
+      background: rgba(8, 12, 20, 0.9);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      padding: 0 16px;
+      gap: 4px;
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 10px 18px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 215, 0, 0.04);
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+      background: rgba(255, 215, 0, 0.08);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    /* ── Main Viewport ── */
+    #viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tab-pane.active {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Section Headers & Panes ── */
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ── TAB 1: TELEMETRY & VITALS ── */
+    .dial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .dial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .dial-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-2px);
+    }
+
+    .dial-svg-box {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dial-svg {
+      width: 120px;
+      height: 120px;
+      transform: rotate(-90deg);
+    }
+
+    .dial-bg-circle {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 8;
+    }
+
+    .dial-fill-circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dial-center-text {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dial-pct {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .dial-unit {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .dial-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-top: 10px;
+      color: var(--gold);
+    }
+
+    .dial-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    /* Radar Dial for Cursor Tracker */
+    .radar-canvas-box {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.06) 0%, transparent 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .radar-crosshair-x {
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 229, 255, 0.2);
+    }
+
+    .radar-crosshair-y {
+      position: absolute;
+      height: 100%;
+      width: 1px;
+      background: rgba(0, 229, 255, 0.2);
+    }
+
+    .radar-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--cyan);
+      transform: translate(-50%, -50%);
+      transition: all 0.15s ease-out;
+    }
+
+    .telemetry-split-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .info-label {
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-val {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── TAB 2: 21-AGENT SWARM DECK ── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-dim);
+      color: var(--text-dim);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill:hover, .filter-pill.active {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .agent-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .agent-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.1);
+    }
+
+    .agent-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agent-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+
+    .agent-meta {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .agent-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .agent-cadre-tag {
+      font-size: 8px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+
+    .cadre-architects { background: rgba(255, 215, 0, 0.12); color: var(--gold); border-color: rgba(255, 215, 0, 0.3); }
+    .cadre-code { background: rgba(0, 229, 255, 0.12); color: var(--cyan); border-color: rgba(0, 229, 255, 0.3); }
+    .cadre-security { background: rgba(244, 63, 94, 0.12); color: var(--crimson); border-color: rgba(244, 63, 94, 0.3); }
+    .cadre-creative { background: rgba(168, 85, 247, 0.12); color: var(--purple); border-color: rgba(168, 85, 247, 0.3); }
+    .cadre-swarm { background: rgba(0, 255, 157, 0.12); color: var(--emerald); border-color: rgba(0, 255, 157, 0.3); }
+
+    .agent-role {
+      font-size: 10px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .agent-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-dim);
+      padding-top: 8px;
+      font-size: 9px;
+    }
+
+    .agent-ring {
+      color: var(--text-muted);
+    }
+
+    .agent-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .agent-status-badge.online { color: var(--emerald); }
+    .agent-status-badge.offline { color: var(--text-muted); }
+
+    /* ── TAB 3: DAEMON SUPERVISOR ── */
+    .daemon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 12px;
+    }
+
+    .daemon-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s ease;
+    }
+
+    .daemon-card:hover {
+      border-color: var(--border-glow);
+    }
+
+    .daemon-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .daemon-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .daemon-port {
+      font-size: 10px;
+      color: var(--gold);
+      background: rgba(255, 215, 0, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .daemon-desc {
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    .daemon-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-dim);
+      padding-top: 10px;
+    }
+
+    .daemon-status-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .daemon-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-daemon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-dim);
+      color: var(--text-dim);
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-daemon:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-daemon.start:hover {
+      background: rgba(0, 255, 157, 0.15);
+      border-color: var(--emerald);
+      color: var(--emerald);
+    }
+
+    .btn-daemon.stop:hover {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    .btn-daemon.restart:hover {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── TAB 4: REALITY MATRIX ── */
+    .reality-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .reality-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .reality-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .reality-card.gold-theme { border-color: rgba(255, 215, 0, 0.35); }
+    .reality-card.ghost-theme { border-color: rgba(244, 63, 94, 0.35); }
+    .reality-card.matrix-theme { border-color: rgba(0, 255, 157, 0.35); }
+    .reality-card.cyan-theme { border-color: rgba(0, 229, 255, 0.35); }
+    .reality-card.win-theme { border-color: rgba(251, 191, 36, 0.35); }
+
+    .reality-card.active-profile {
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+      border-width: 2px;
+    }
+
+    .reality-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .reality-icon {
+      font-size: 24px;
+    }
+
+    .reality-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .reality-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .reality-features {
+      list-style: none;
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .reality-features li::before {
+      content: '◆ ';
+      color: var(--gold);
+    }
+
+    .btn-engage-mode {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      margin-top: auto;
+    }
+
+    .btn-engage-mode:hover {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+
+    /* ── TAB 5: ARSENAL & LAUNCHER ── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .tool-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tool-tile:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+    }
+
+    .tool-icon {
+      font-size: 24px;
+    }
+
+    .tool-info {
+      flex: 1;
+    }
+
+    .tool-name {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .tool-desc {
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ── Modal / Overlay ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #090e18;
+      border: 1px solid var(--gold);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-dim);
+      padding-bottom: 10px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-close-modal:hover { color: var(--crimson); }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      padding: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 11px;
+      resize: vertical;
+    }
+
+    .modal-textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .modal-response {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 11px;
+      max-height: 160px;
+      overflow-y: auto;
+      color: var(--emerald);
+      white-space: pre-wrap;
+    }
+
+    /* Toast Notifications */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 3000;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: rgba(10, 16, 26, 0.95);
+      border: 1px solid var(--gold);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-size: 11px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      animation: slideInRight 0.25s ease;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Frameless Custom Header ── -->
+  <header id="titlebar">
+    <div class="titlebar-left">
+      <img src="assets/icon.png" alt="Zoth Cockpit" class="app-icon" />
+      <div class="app-title-group">
+        <span class="app-title">ZOTHOS COCKPIT PRO</span>
+        <span class="app-badge">v2.5.0-AZOTH</span>
+        <span class="hermetic-motto">— Like code, like mind.</span>
+      </div>
+    </div>
+
+    <div class="titlebar-center">
+      <div class="head-pill gold" id="pill-profile">
+        <span class="pulse-dot"></span>
+        <span id="txt-profile">PROFILE: GOLD</span>
+      </div>
+      <div class="head-pill emerald" id="pill-tor">
+        <span class="pulse-dot"></span>
+        <span id="txt-tor">TOR: ACTIVE</span>
+      </div>
+      <div class="head-pill cyan" id="pill-ip">
+        <span>🌐</span>
+        <span id="txt-ip">127.0.0.1</span>
+      </div>
+      <div class="head-pill" id="pill-cursor" style="border-color: rgba(0,229,255,0.3); color: var(--cyan);">
+        <span>🎯</span>
+        <span id="txt-cursor">CURSOR: --, --</span>
+      </div>
+    </div>
+
+    <div class="titlebar-right">
+      <button class="btn-tb-action" id="btn-launch-tui" title="Open classic Curses TUI terminal interface">
+        <span>📟</span> Curses TUI
+      </button>
+      <button class="btn-tb-action netkill" id="btn-netkill-header" title="Emergency Network Quarantine">
+        <span>🛑</span> Netkill
+      </button>
+      <div class="window-controls">
+        <button class="btn-win" id="btn-win-min" title="Minimize">─</button>
+        <button class="btn-win" id="btn-win-max" title="Maximize">□</button>
+        <button class="btn-win close" id="btn-win-close" title="Close">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Navigation Tabs ── -->
+  <nav id="nav-tabs">
+    <button class="tab-btn active" data-tab="tab-telemetry">
+      <span>⚡</span> TELEMETRY &amp; VITALS
+    </button>
+    <button class="tab-btn" data-tab="tab-swarm">
+      <span>🤖</span> 21-AGENT SWARM DECK
+    </button>
+    <button class="tab-btn" data-tab="tab-daemons">
+      <span>⚙️</span> DAEMON SUPERVISOR
+    </button>
+    <button class="tab-btn" data-tab="tab-reality">
+      <span>🔮</span> REALITY MATRIX
+    </button>
+    <button class="tab-btn" data-tab="tab-arsenal">
+      <span>🚀</span> ARSENAL &amp; TOOLS
+    </button>
+  </nav>
+
+  <!-- ── Main Viewport ── -->
+  <main id="viewport">
+
+    <!-- ── TAB 1: TELEMETRY & VITALS ── -->
+    <section class="tab-pane active" id="tab-telemetry">
+      <div class="section-title">System Hardware &amp; Real-Time Telemetry Dials</div>
+      
+      <div class="dial-grid">
+        <!-- CPU Dial -->
+        <div class="dial-card">
+          <div class="dial-svg-box">
+            <svg class="dial-svg" viewBox="0 0 120 120">
+              <circle class="dial-bg-circle" cx="60" cy="60" r="50"></circle>
+              <circle class="dial-fill-circle" id="circle-cpu" cx="60" cy="60" r="50" stroke="var(--emerald)"></circle>
+            </svg>
+            <div class="dial-center-text">
+              <span class="dial-pct" id="val-cpu-pct">0%</span>
+              <span class="dial-unit">UTILIZATION</span>
+            </div>
+          </div>
+          <div class="dial-title">CPU PROCESSOR</div>
+          <div class="dial-sub" id="val-cpu-sub">12 Cores · Load: 0.00, 0.00</div>
+          <div class="dial-sub" id="val-cpu-model" style="color: var(--text-muted); font-size: 8.5px; margin-top:2px;">Detecting...</div>
+        </div>
+
+        <!-- RAM Dial -->
+        <div class="dial-card">
+          <div class="dial-svg-box">
+            <svg class="dial-svg" viewBox="0 0 120 120">
+              <circle class="dial-bg-circle" cx="60" cy="60" r="50"></circle>
+              <circle class="dial-fill-circle" id="circle-ram" cx="60" cy="60" r="50" stroke="var(--gold)"></circle>
+            </svg>
+            <div class="dial-center-text">
+              <span class="dial-pct" id="val-ram-pct">0%</span>
+              <span class="dial-unit">PHYSICAL RAM</span>
+            </div>
+          </div>
+          <div class="dial-title">MEMORY ALLOCATION</div>
+          <div class="dial-sub" id="val-ram-sub">0.0 GB / 0.0 GB</div>
+          <div class="dial-sub" id="val-swap-sub" style="color: var(--text-muted); font-size: 8.5px; margin-top:2px;">Swap: 0.0 GB / 0.0 GB (0%)</div>
+        </div>
+
+        <!-- Disk Dial -->
+        <div class="dial-card">
+          <div class="dial-svg-box">
+            <svg class="dial-svg" viewBox="0 0 120 120">
+              <circle class="dial-bg-circle" cx="60" cy="60" r="50"></circle>
+              <circle class="dial-fill-circle" id="circle-disk" cx="60" cy="60" r="50" stroke="var(--cyan)"></circle>
+            </svg>
+            <div class="dial-center-text">
+              <span class="dial-pct" id="val-disk-pct">0%</span>
+              <span class="dial-unit">ROOT /</span>
+            </div>
+          </div>
+          <div class="dial-title">STORAGE ENCLAVE</div>
+          <div class="dial-sub" id="val-disk-sub">0.0 GB / 0.0 GB</div>
+          <div class="dial-sub" id="val-disk-free" style="color: var(--emerald); font-size: 8.5px; margin-top:2px;">0.0 GB Free</div>
+        </div>
+
+        <!-- Global Cursor Radar -->
+        <div class="dial-card">
+          <div class="radar-canvas-box">
+            <div class="radar-crosshair-x"></div>
+            <div class="radar-crosshair-y"></div>
+            <div class="radar-dot" id="radar-pointer" style="left: 50%; top: 50%;"></div>
+          </div>
+          <div class="dial-title">CURSOR TRACKER HUD</div>
+          <div class="dial-sub" id="val-cursor-coords">X: --, Y: --</div>
+          <div class="dial-sub" id="val-cursor-status" style="color: var(--cyan); font-size: 8.5px; margin-top:2px;">Shared Memory Active</div>
+        </div>
+      </div>
+
+      <!-- Telemetry Info Split Grid -->
+      <div class="telemetry-split-row">
+        <!-- Network & Cloaking Matrix -->
+        <div class="card">
+          <div class="section-title">Network &amp; Stealth Cloaking Topology</div>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-label"><span>🌐</span> Local Interface IP:</span>
+              <span class="info-val" id="txt-info-ip">127.0.0.1 (lo)</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>🚪</span> Default Gateway:</span>
+              <span class="info-val" id="txt-info-gw">None</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>🛡️</span> Tor SOCKS5 Stealth:</span>
+              <span class="info-val" id="txt-info-tor" style="color: var(--emerald);">ACTIVE (:9050)</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>👻</span> Ghostmode Amnesic RAM:</span>
+              <span class="info-val" id="txt-info-ghost">Disabled (Persistent)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Host System Specs -->
+        <div class="card">
+          <div class="section-title">Sovereign OS Specifications</div>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-label"><span>🐧</span> Linux Kernel:</span>
+              <span class="info-val" id="txt-info-kernel">--</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>⚙️</span> CPU Architecture:</span>
+              <span class="info-val" id="txt-info-arch">x86_64</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>🖥️</span> Desktop &amp; Session:</span>
+              <span class="info-val" id="txt-info-session">KDE / X11</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><span>⏱️</span> System Uptime:</span>
+              <span class="info-val" id="txt-info-uptime">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB 2: 21-AGENT SWARM DECK ── -->
+    <section class="tab-pane" id="tab-swarm">
+      <div class="section-title">The Sovereign 21-Agent Pantheon</div>
+      
+      <div class="filter-bar">
+        <button class="filter-pill active" data-filter="All">All Cadres (21)</button>
+        <button class="filter-pill" data-filter="Architects">Architects (6)</button>
+        <button class="filter-pill" data-filter="Code">Code Cadre (4)</button>
+        <button class="filter-pill" data-filter="Security">Security Cadre (4)</button>
+        <button class="filter-pill" data-filter="Creative">Creative Cadre (3)</button>
+        <button class="filter-pill" data-filter="Swarm">Swarm Cadre (4)</button>
+      </div>
+
+      <div class="agent-grid" id="agent-cards-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- ── TAB 3: DAEMON SUPERVISOR ── -->
+    <section class="tab-pane" id="tab-daemons">
+      <div class="section-title">Core Daemons &amp; Background Services</div>
+      <div class="daemon-grid" id="daemon-cards-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- ── TAB 4: REALITY MATRIX ── -->
+    <section class="tab-pane" id="tab-reality">
+      <div class="section-title">Instant Reality Mode &amp; Stealth Profile Switcher</div>
+      
+      <div class="reality-grid">
+        <!-- 1. Gold Master -->
+        <div class="reality-card gold-theme" id="rcard-gold">
+          <div class="reality-header">
+            <span class="reality-icon">🌟</span>
+            <div>
+              <div class="reality-name">Sovereign Gold Master</div>
+              <span class="app-badge" style="font-size: 8px;">DEFAULT 24K</span>
+            </div>
+          </div>
+          <div class="reality-desc">
+            The canonical 24K Alchemical Gold profile. Maximum performance, full sovereign tool arsenal, interactive HUDs, and sacred geometry desktop environment.
+          </div>
+          <ul class="reality-features">
+            <li>24K Gold Celtic &amp; Hermetic Accents</li>
+            <li>Full 158-Tool Arsenal Enabled</li>
+            <li>Alchemical Audio Cues &amp; Sanctum Soundscapes</li>
+          </ul>
+          <button class="btn-engage-mode" onclick="switchMode('gold')">Engage Gold Master</button>
+        </div>
+
+        <!-- 2. Ghostmode -->
+        <div class="reality-card ghost-theme" id="rcard-ghost">
+          <div class="reality-header">
+            <span class="reality-icon">👻</span>
+            <div>
+              <div class="reality-name">NullAI Ghostmode Stealth</div>
+              <span class="app-badge" style="border-color: var(--crimson); color: var(--crimson); font-size: 8px;">AMNESIC STEALTH</span>
+            </div>
+          </div>
+          <div class="reality-desc">
+            Amnesic RAM-only stealth mode. Tor-cloaked egress, randomized MAC addresses, iptables zero-leak policy, and amnesic volatile memory wiping on shutdown.
+          </div>
+          <ul class="reality-features">
+            <li>Strict Tor SOCKS5 Transparent Proxy</li>
+            <li>MAC Address Randomization &amp; Anti-Fingerprint</li>
+            <li>Crimson Stealth Visual &amp; Vapor Cues</li>
+          </ul>
+          <button class="btn-engage-mode" style="border-color: var(--crimson); color: var(--crimson);" onclick="switchMode('ghost')">Engage Ghostmode</button>
+        </div>
+
+        <!-- 3. Matrix -->
+        <div class="reality-card matrix-theme" id="rcard-matrix">
+          <div class="reality-header">
+            <span class="reality-icon">🟢</span>
+            <div>
+              <div class="reality-name">Hermetic Matrix Emerald</div>
+              <span class="app-badge" style="border-color: var(--emerald); color: var(--emerald); font-size: 8px;">DIGITAL RAIN</span>
+            </div>
+          </div>
+          <div class="reality-desc">
+            Phosphor emerald cyber terminal aesthetics. High-contrast digital rain matrix designed for deep offensive operations and uninterrupted code synthesis.
+          </div>
+          <ul class="reality-features">
+            <li>P39 Emerald Phosphor CRT Look</li>
+            <li>Digital Rain Live Wallpaper Sync</li>
+            <li>Low-Fatigue Darkroom Operations</li>
+          </ul>
+          <button class="btn-engage-mode" style="border-color: var(--emerald); color: var(--emerald);" onclick="switchMode('matrix')">Engage Matrix</button>
+        </div>
+
+        <!-- 4. Cyber Cyan -->
+        <div class="reality-card cyan-theme" id="rcard-cyan">
+          <div class="reality-header">
+            <span class="reality-icon">🔷</span>
+            <div>
+              <div class="reality-name">Cyber Cyan Alchemical</div>
+              <span class="app-badge" style="border-color: var(--cyan); color: var(--cyan); font-size: 8px;">HIGH FREQUENCY</span>
+            </div>
+          </div>
+          <div class="reality-desc">
+            High-frequency alchemical neon cyan styling. Calibrated for quantum simulation, neural vector memory navigation, and high-speed multi-model consensus.
+          </div>
+          <ul class="reality-features">
+            <li>Deep Blue &amp; Neon Cyan Palette</li>
+            <li>WebGL Quantum Shader Accelerators</li>
+            <li>Harmonic Synthesizer Sound Cues</li>
+          </ul>
+          <button class="btn-engage-mode" style="border-color: var(--cyan); color: var(--cyan);" onclick="switchMode('cyan')">Engage Cyan Matrix</button>
+        </div>
+
+        <!-- 5. Win11 Chameleon -->
+        <div class="reality-card win-theme" id="rcard-incognito">
+          <div class="reality-header">
+            <span class="reality-icon">🪟</span>
+            <div>
+              <div class="reality-name">Covert Chameleon Guise</div>
+              <span class="app-badge" style="border-color: var(--text-dim); color: var(--text-dim); font-size: 8px;">UNDERCOVER</span>
+            </div>
+          </div>
+          <div class="reality-desc">
+            Covert corporate disguise mimicking modern Windows 11 Fluent environment. Hides sovereign alchemical markings for covert operations in corporate facilities.
+          </div>
+          <ul class="reality-features">
+            <li>Fluent Bloom Wallpaper &amp; Subtle Icons</li>
+            <li>Corporate Deceptive Appearance</li>
+            <li>Silent Discreet Mode Switching</li>
+          </ul>
+          <button class="btn-engage-mode" style="border-color: var(--text-dim); color: var(--text-dim);" onclick="switchMode('incognito')">Engage Chameleon</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB 5: ARSENAL & LAUNCHER ── -->
+    <section class="tab-pane" id="tab-arsenal">
+      <div class="section-title">Sovereign Flagship Tools &amp; Launchers</div>
+      
+      <div class="tools-grid">
+        <div class="tool-tile" onclick="launchTool('zoth-studio')">
+          <span class="tool-icon">🏛️</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth Studio Pro</div>
+            <div class="tool-desc">3D WebGL Alchemical Cockpit (:3000)</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-tool-nexus')">
+          <span class="tool-icon">📦</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth Tool Nexus Pro</div>
+            <div class="tool-desc">158-Tool Cyber Arsenal App Store</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-pet-hud')">
+          <span class="tool-icon">🐾</span>
+          <div class="tool-info">
+            <div class="tool-name">Desktop Pet HUD</div>
+            <div class="tool-desc">Global Cursor Tracking Sovereign Companion</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-doctor')">
+          <span class="tool-icon">🩺</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth Doctor (53 Checks)</div>
+            <div class="tool-desc">Full System, AI Stack &amp; Arsenal Auditor</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-heal')">
+          <span class="tool-icon">🩹</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth Self-Heal</div>
+            <div class="tool-desc">Automated System &amp; Permission Restorer</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-fastfetch')">
+          <span class="tool-icon">⚡</span>
+          <div class="tool-info">
+            <div class="tool-name">FastFetch Hardware Specs</div>
+            <div class="tool-desc">Gold-Branded Terminal Specs Display</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('btop')">
+          <span class="tool-icon">📊</span>
+          <div class="tool-info">
+            <div class="tool-name">Btop Resource Monitor</div>
+            <div class="tool-desc">High-Density Real-Time Terminal Vitals</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-cockpit-tui')">
+          <span class="tool-icon">📟</span>
+          <div class="tool-info">
+            <div class="tool-name">Cockpit Curses TUI</div>
+            <div class="tool-desc">Terminal Interactive Fallback Cockpit</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-agent-hud')">
+          <span class="tool-icon">👁️</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth Agent HUD</div>
+            <div class="tool-desc">Autonomous OS Agent Controller</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-live-wallpaper')">
+          <span class="tool-icon">🌌</span>
+          <div class="tool-info">
+            <div class="tool-name">Live FX Wallpaper</div>
+            <div class="tool-desc">3D Sacred Geometry Background</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" onclick="launchTool('zoth-mcp')">
+          <span class="tool-icon">🔌</span>
+          <div class="tool-info">
+            <div class="tool-name">Zoth MCP Registry</div>
+            <div class="tool-desc">Model Context Protocol Server Bus</div>
+          </div>
+        </div>
+
+        <div class="tool-tile" style="border-color: rgba(244,63,94,0.4);" onclick="launchTool('zoth-netkill')">
+          <span class="tool-icon">🛑</span>
+          <div class="tool-info">
+            <div class="tool-name" style="color: var(--crimson);">Emergency Netkill</div>
+            <div class="tool-desc">Air-Gap Network Quarantine &amp; Lock</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Agent Dispatch Modal ── -->
+  <div class="modal-overlay" id="agent-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-agent-name">DISPATCH TO AGENT</div>
+        <button class="btn-close-modal" id="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img id="modal-agent-img" src="" style="width:50px; height:50px; border-radius:8px; object-fit:cover; border:1px solid var(--border);" />
+          <div>
+            <div id="modal-agent-role" style="font-size:11px; color:var(--text-dim);">Role description</div>
+            <div id="modal-agent-bus" style="font-size:10px; color:var(--gold); margin-top:2px;">Socket: ipc:///run/zoth/*.sock</div>
+          </div>
+        </div>
+
+        <label style="font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Task Directive / Prompt:</label>
+        <textarea class="modal-textarea" id="modal-prompt-input" placeholder="Enter task directive for agent..."></textarea>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button class="btn-tb-action" id="btn-submit-prompt" style="background:var(--gold); color:#000; font-weight:800;">
+            <span>⚡</span> DISPATCH TASK
+          </button>
+        </div>
+
+        <div id="modal-response-box" class="modal-response" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast Notifications ── -->
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

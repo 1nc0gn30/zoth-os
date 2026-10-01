@@ -1,17 +1,21 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=ZothOS Cockpit
+Name=ZothOS Cockpit Pro
 GenericName=System Operations Deck & Telemetry
-Comment=Unified Alchemical System Telemetry & Control Panel
-Exec=konsole --title "ZothOS Cockpit - Operations Deck" -e /usr/local/bin/zoth-cockpit
+Comment=Flagship Sovereign System Telemetry, 21-Agent Swarm Deck & Control Panel
+Exec=/usr/local/bin/zoth-cockpit
 Icon=/usr/share/pixmaps/zoth-cockpit.png
 Terminal=false
 Categories=System;Settings;Monitor;
-Keywords=cockpit;dashboard;diagnostics;system;monitor;telemetry;zoth;os;
+Keywords=cockpit;dashboard;diagnostics;system;monitor;telemetry;zoth;os;swarm;agents;
 MimeType=application/x-zoth-cockpit;
 StartupNotify=true
-Actions=Status;Doctor;ModeGold;ModeGhost;ModeMatrix;Studio;
+Actions=TUI;Status;Doctor;ModeGold;ModeGhost;ModeMatrix;Studio;
+
+[Desktop Action TUI]
+Name=Launch Classic Curses TUI
+Exec=konsole --title "ZothOS Cockpit TUI" -e /usr/local/bin/zoth-cockpit --tui
 
 [Desktop Action Status]
 Name=Telemetry Snapshot (Headless)

@@ -1458,7 +1458,7 @@ def curses_main(stdscr: curses.window, initial_tab: int = 0) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="ZOTHOS Cockpit - Sovereign Interactive Operations Dashboard v2.0"
+        description="ZOTHOS Cockpit - Sovereign Interactive Operations Dashboard v2.5"
     )
     parser.add_argument(
         "--status",
@@ -1479,6 +1479,16 @@ def main() -> int:
         help="Start directly in specific tab (1: Telemetry, 2: AI Stack, 3: Security, 4: Studio, 5: Profiles)",
     )
     parser.add_argument(
+        "--tui",
+        action="store_true",
+        help="Force classic terminal curses interface even when graphical display is active",
+    )
+    parser.add_argument(
+        "--gui",
+        action="store_true",
+        help="Launch the flagship ZothOS Cockpit Pro Electron dashboard",
+    )
+    parser.add_argument(
         "--version",
         "-v",
         action="version",
@@ -1490,7 +1500,22 @@ def main() -> int:
         dump_json_status()
         return 0
 
-    if args.status or not sys.stdin.isatty():
+    if args.status:
+        render_headless_status()
+        return 0
+
+    # Auto-launch Electron GUI if graphical display is detected and not forcing TUI/tab
+    has_display = bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+    electron_path = shutil.which("electron") or "/usr/local/bin/electron"
+    app_dir = "/opt/zoth-cockpit-app"
+
+    if (args.gui or (has_display and not args.tui and args.tab == 0)) and os.path.isdir(app_dir) and os.path.exists(electron_path):
+        try:
+            os.execv(electron_path, [electron_path, app_dir])
+        except Exception:
+            pass
+
+    if not sys.stdin.isatty():
         render_headless_status()
         return 0
 
