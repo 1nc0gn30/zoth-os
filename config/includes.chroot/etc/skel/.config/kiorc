@@ -1,2 +1,2 @@
 [Executable scripts]
-behaviourOnLaunch=alwaysExec
+behaviourOnLaunch=execute

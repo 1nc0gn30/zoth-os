@@ -2,10 +2,10 @@
 
 desktop-image: "splash.png"
 title-color: "#d4af37"
-title-font: "Unifont Regular 16"
+title-font: "GNU Unifont Regular 16"
 title-text: ""
-message-font: "Unifont Regular 16"
-terminal-font: "Unifont Regular 16"
+message-font: "GNU Unifont Regular 16"
+terminal-font: "GNU Unifont Regular 16"
 
 # Help bar at the bottom
 + label {
@@ -16,7 +16,7 @@ terminal-font: "Unifont Regular 16"
     text = "Use [Up] and [Down] keys to select, [Enter] to boot, [e] to edit, [c] for CLI"
     align = "center"
     color = "#e2e8f0"
-    font = "Unifont Regular 14"
+    font = "GNU Unifont Regular 16"
 }
 
 # Boot menu
@@ -26,9 +26,9 @@ terminal-font: "Unifont Regular 16"
     top = 46%
     height = 42%
     item_color = "#cbd5e1"
-    item_font = "Unifont Regular 16"
+    item_font = "GNU Unifont Regular 16"
     selected_item_color= "#ffd700"
-    selected_item_font = "Unifont Regular 16"
+    selected_item_font = "GNU Unifont Regular 16"
     item_height = 32
     item_padding = 6
     item_spacing = 8
@@ -45,7 +45,7 @@ terminal-font: "Unifont Regular 16"
     top = 100%-85
     height = 14
     width = 68%
-    font = "Unifont Regular 14"
+    font = "GNU Unifont Regular 16"
     text_color = "#000000"
     fg_color = "#d4af37"
     bg_color = "#0f172a"

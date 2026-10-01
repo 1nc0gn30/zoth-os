@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=balenaEtcher
+Comment=Flash OS images to SD cards & USB drives, safely and easily
+Exec=/usr/local/bin/balena-etcher %U
+Terminal=false
+Type=Application
+Icon=drive-removable-media
+StartupWMClass=balenaEtcher
+Categories=Utility;

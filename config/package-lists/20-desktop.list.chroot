@@ -39,6 +39,8 @@ mesa-vulkan-drivers
 kde-config-flatpak
 cracklib-runtime
 wamerican
+at-spi2-core
+gnome-disk-utility
 
 # Wireless & Networking Stack
 wpasupplicant
