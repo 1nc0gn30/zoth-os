@@ -12,7 +12,7 @@ app.commandLine.appendSwitch('enable-transparent-visuals');
 
 app.on('child-process-gone', (event, details) => {
   if (details.type === 'GPU') {
-    console.log('[Zoth Pet] GPU process recovered in software compatibility mode');
+    console.log('[Zoth Pet] GPU recovered in software compatibility mode');
   }
 });
 
@@ -24,7 +24,6 @@ let lastCursorTime = Date.now();
 let cursorVelocity = 0;
 
 const CONFIG_FILE = path.join(os.homedir(), '.config', 'zothos', 'pet_config.json');
-const HISTORY_FILE = path.join(os.homedir(), '.config', 'zothos', 'all_seeing_eye_history.json');
 
 function ensureConfigDir() {
   const dir = path.dirname(CONFIG_FILE);
@@ -44,7 +43,9 @@ function loadConfig() {
     petId: 'eye',
     alwaysOnTop: true,
     compact: false,
-    sound: true
+    voice: false,
+    sound: true,
+    petsData: {}
   };
 }
 
@@ -111,7 +112,7 @@ function getSystemTelemetry(callback) {
     const usedGB = (usedKb / (1024 * 1024)).toFixed(1);
     const totalGB = (totalKb / (1024 * 1024)).toFixed(1);
 
-    // Tor cloaking
+    // Tor cloaking status
     const torCloaked = fs.existsSync('/run/zoth_ghostmode.state');
 
     // Active profile
@@ -141,7 +142,7 @@ function startTelemetryPolling() {
         petWindow.webContents.send('telemetry-update', data);
       }
     });
-  }, 12000);
+  }, 10000);
 }
 
 // Dynamically probe available Ollama models
@@ -235,11 +236,17 @@ function createPetWindow() {
   const { width, height } = primaryDisplay.workAreaSize;
   const cfg = loadConfig();
 
+  // Position restoration with boundary clamping
+  let posX = typeof cfg.x === 'number' ? cfg.x : Math.max(20, width - 380);
+  let posY = typeof cfg.y === 'number' ? cfg.y : Math.max(40, height - 510);
+  posX = Math.max(0, Math.min(width - 340, posX));
+  posY = Math.max(0, Math.min(height - 480, posY));
+
   petWindow = new BrowserWindow({
     width: 340,
-    height: 450,
-    x: Math.max(20, width - 380),
-    y: Math.max(40, height - 480),
+    height: 480,
+    x: posX,
+    y: posY,
     transparent: true,
     frame: false,
     alwaysOnTop: cfg.alwaysOnTop !== false,
@@ -287,7 +294,14 @@ app.on('window-all-closed', () => {
 ipcMain.on('move-pet-window', (event, { deltaX, deltaY }) => {
   if (!petWindow || petWindow.isDestroyed()) return;
   const bounds = petWindow.getBounds();
-  petWindow.setPosition(bounds.x + deltaX, bounds.y + deltaY);
+  const newX = bounds.x + deltaX;
+  const newY = bounds.y + deltaY;
+  petWindow.setPosition(newX, newY);
+
+  const cfg = loadConfig();
+  cfg.x = newX;
+  cfg.y = newY;
+  saveConfig(cfg);
 });
 
 ipcMain.on('set-always-on-top', (event, state) => {
@@ -326,6 +340,20 @@ ipcMain.on('launch-app', (event, appName) => {
   };
   const cmd = apps[appName] || appName;
   exec(`nohup ${cmd} >/dev/null 2>&1 &`);
+});
+
+ipcMain.on('run-spell', (event, spellCommand) => {
+  exec(spellCommand, (err, stdout, stderr) => {
+    event.reply('spell-result', {
+      success: !err,
+      output: (stdout || stderr || '').trim().substring(0, 140)
+    });
+  });
+});
+
+ipcMain.on('speak-text', (event, { text, pitch = 50, speed = 155 }) => {
+  const sanitized = text.replace(/["`$\\]/g, ' ').substring(0, 200);
+  exec(`espeak-ng -p ${pitch} -s ${speed} "${sanitized}" >/dev/null 2>&1 &`);
 });
 
 ipcMain.on('query-pet-ai', (event, { prompt, petInfo, context }) => {
