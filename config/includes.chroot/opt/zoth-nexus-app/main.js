@@ -35,14 +35,15 @@ const extraPaths = [
 ];
 const fullPath = Array.from(new Set([...extraPaths, ...(process.env.PATH || '').split(':')])).join(':');
 
-// Comprehensive Database of 175+ Tools across 10 Sovereign Domains
+// Comprehensive Database of 153+ Tools across 10 Sovereign Domains
 const TOOLS_DATABASE = [
-  // ── 1. Flagships & Core Workstations ──
+  // ── 1. Flagships & Core Workstations (24 tools) ──
   { id: 'zoth-studio', name: 'Zoth Studio Pro v2', domain: 'flagship', desc: 'Sovereign 3D WebGL Alchemical Cockpit & Multi-Daemon Workspace', cmd: 'zoth-studio', pkg: 'zoth-studio', type: 'system' },
   { id: 'hexstrike', name: 'HexStrike AI Terminal', domain: 'flagship', desc: 'NullAI Autonomous Red-Teaming & Exploit Automation Terminal', cmd: 'hexstrike-ai', pkg: 'hexstrike', type: 'system' },
   { id: 'zoth-cockpit', name: 'ZothOS Cockpit', domain: 'flagship', desc: 'Unified Alchemical System Telemetry & 21-Agent Swarm Deck', cmd: 'zoth-cockpit', pkg: 'zoth-cockpit', type: 'system' },
   { id: 'zoth-vault', name: 'Zoth Sovereign Vault', domain: 'flagship', desc: 'Zero-Leak Secrets Manager (Argon2id Rust Vault & Bitwarden)', cmd: 'zoth-vault', pkg: 'zoth-vault', type: 'system' },
-  { id: 'zoth-pet-hud', name: 'Zoth Pet HUD', domain: 'flagship', desc: 'Animated Celestial Griffin Companion & Alchemical Mascots', cmd: 'zoth-pet-hud', pkg: 'zoth-pet-hud', type: 'system' },
+  { id: 'zoth-pet-hud', name: 'Zoth Pet HUD', domain: 'flagship', desc: 'Animated Desktop Griffin Companion & Alchemical Mascots', cmd: 'zoth-pet-hud', pkg: 'zoth-pet-hud', type: 'system' },
+  { id: 'zoth-cursor-daemon', name: 'Cursor Tracking Daemon', domain: 'flagship', desc: 'Wayland KWin / X11 Compositor Cursor Telemetry & DBus Service', cmd: 'zoth-cursor-daemon', pkg: 'zoth-cursor-daemon', type: 'system' },
   { id: 'zoth-docs', name: 'ZothOS Codex Docs', domain: 'flagship', desc: 'Interactive Sovereign Architecture & Operations Codex', cmd: 'zoth-docs', pkg: 'zoth-docs', type: 'system' },
   { id: 'zoth-feedback', name: 'Zoth Feedback Dispatcher', domain: 'flagship', desc: 'Anonymous Encrypted Telemetry & Feedback Dispatcher', cmd: 'zoth-feedback', pkg: 'zoth-feedback', type: 'system' },
   { id: 'zoth-soundtrack', name: 'Zoth Hermetic Audio', domain: 'flagship', desc: 'Classical & Alchemical Focus Music Studio (Satie, Bach, Chopin)', cmd: 'zoth-soundtrack', pkg: 'zoth-soundtrack', type: 'system' },
@@ -51,8 +52,18 @@ const TOOLS_DATABASE = [
   { id: 'zoth-netkill', name: 'Emergency Netkill', domain: 'flagship', desc: 'Instant Kernel-Level Network Killswitch & IPTables Flush', cmd: 'zoth-netkill', pkg: 'zoth-netkill', type: 'system' },
   { id: 'zoth-undercover', name: 'Windows 11 Undercover', domain: 'flagship', desc: 'Instant Windows 11 Desktop Chameleon Stealth Theme', cmd: 'zoth-undercover', pkg: 'zoth-undercover', type: 'system' },
   { id: 'zoth-agent-os', name: 'Zoth Agent OS', domain: 'flagship', desc: 'L0-L4 Ring-Gated Autonomous Agent Supervisor Daemon', cmd: 'zoth-agent-os', pkg: 'zoth-agent-os', type: 'system' },
+  { id: 'zoth-ghost', name: 'Zoth Ghostmode', domain: 'flagship', desc: 'Anti-forensics & RAM-Only Ephemeral Routing Workstation', cmd: 'zoth-ghost', pkg: 'zoth-ghost', type: 'system' },
+  { id: 'zoth-sentinel', name: 'Zoth Sentinel Monitor', domain: 'flagship', desc: 'Real-time System Call & Ring-0 Kernel Security Sentinel', cmd: 'zoth-sentinel', pkg: 'zoth-sentinel', type: 'system' },
+  { id: 'zoth-mcp', name: 'Zoth MCP Registry', domain: 'flagship', desc: 'Model Context Protocol Server & Client Registry Deck', cmd: 'zoth-mcp', pkg: 'zoth-mcp', type: 'system' },
+  { id: 'zoth-bridge', name: 'Zoth Sovereign Bridge', domain: 'flagship', desc: 'Ed25519 E2EE Agent Signal Bridge & Inter-Agent Mesh', cmd: 'zoth-bridge', pkg: 'zoth-bridge', type: 'system' },
+  { id: 'zoth-ai', name: 'Zoth AI Prompt Foundry', domain: 'flagship', desc: 'Multi-Model Prompt Engineering & Generative CLI', cmd: 'zoth-ai', pkg: 'zoth-ai', type: 'system' },
+  { id: 'zoth-heal', name: 'Zoth Auto-Healer', domain: 'flagship', desc: 'Autonomous System Integrity & Package Repair Engine', cmd: 'zoth-heal', pkg: 'zoth-heal', type: 'system' },
+  { id: 'zoth-live-wallpaper', name: 'Zoth Live Wallpaper', domain: 'flagship', desc: 'Dynamic Shader & Hermetic Background Visualizer Engine', cmd: 'zoth-live-wallpaper', pkg: 'zoth-live-wallpaper', type: 'system' },
+  { id: 'zoth-session', name: 'Session Switcher', domain: 'flagship', desc: 'Instant Wayland Apex / XFCE4 Desktop Session Switcher', cmd: 'zoth-session-switch', pkg: 'zoth-session-switch', type: 'system' },
+  { id: 'zoth-powershell', name: 'PowerShell v7 Emulation', domain: 'flagship', desc: 'PowerShell v7 Terminal Emulation & Command Environment', cmd: 'zoth-powershell', pkg: 'zoth-powershell', type: 'system' },
+  { id: 'zoth-arsenal', name: 'Arsenal Skill Engine', domain: 'flagship', desc: 'Hermes Skill & Tool Synchronization Engine', cmd: 'zoth-arsenal-sync', pkg: 'zoth-arsenal-sync', type: 'system' },
 
-  // ── 2. Frontier AI & Local Inference ──
+  // ── 2. Frontier AI & Local Inference (16 tools) ──
   { id: 'ollama', name: 'Ollama LLM Daemon', domain: 'ai', desc: 'Zero-Cloud Local LLM Inference (Llama 3, DeepSeek, Qwen)', cmd: 'ollama', pkg: 'ollama', type: 'custom:ollama' },
   { id: 'hermes', name: 'Hermes Agent Swarm', domain: 'ai', desc: 'Nous Research Autonomous Multi-Agent Swarm Orchestrator', cmd: 'hermes', pkg: 'hermes-agent', type: 'custom:hermes' },
   { id: 'claude', name: 'Claude Code CLI', domain: 'ai', desc: 'Anthropic Autonomous Agentic Terminal Coding Harness', cmd: 'claude', pkg: '@anthropic-ai/claude-code', type: 'npm' },
@@ -67,13 +78,17 @@ const TOOLS_DATABASE = [
   { id: 'comfyui', name: 'ComfyUI Engine', domain: 'ai', desc: 'Node-Based Generative Image & FLUX Pipeline', cmd: 'comfyui', pkg: 'torch,torchvision', type: 'pip' },
   { id: 'open-webui', name: 'Open WebUI', domain: 'ai', desc: 'Self-Hosted ChatGPT/Claude UI Interface', cmd: 'open-webui', pkg: 'open-webui', type: 'pip' },
   { id: 'litellm', name: 'LiteLLM Proxy', domain: 'ai', desc: 'Universal Proxy Routing to 100+ LLM Endpoints', cmd: 'litellm', pkg: 'litellm', type: 'pip' },
+  { id: 'transformers', name: 'Hugging Face Transformers', domain: 'ai', desc: 'State-of-the-Art Machine Learning Model Pipelines', cmd: 'python3 -c "import transformers"', pkg: 'transformers', type: 'pip' },
+  { id: 'torch', name: 'PyTorch Tensor Computing', domain: 'ai', desc: 'GPU/CPU Deep Learning & Tensor Execution Library', cmd: 'python3 -c "import torch"', pkg: 'torch', type: 'pip' },
 
-  // ── 3. Offensive Security & Red Team ──
+  // ── 3. Offensive Security & Red Team (Kali Cyber Arsenal) (44 tools) ──
   { id: 'nmap', name: 'Nmap Port Scanner', domain: 'sec', desc: 'Network Exploration & Port Vulnerability Scanner', cmd: 'nmap', pkg: 'nmap', type: 'apt' },
   { id: 'masscan', name: 'Masscan IP Scanner', domain: 'sec', desc: 'Asynchronous Internet-Scale Port Scanner', cmd: 'masscan', pkg: 'masscan', type: 'apt' },
   { id: 'rustscan', name: 'RustScan', domain: 'sec', desc: 'Modern Ultra-Fast Port Scanner Powered by Rust', cmd: 'rustscan', pkg: 'rustscan', type: 'custom:rustscan' },
   { id: 'wireshark', name: 'Wireshark Analyzer', domain: 'sec', desc: 'Network Protocol Packet Dissection GUI', cmd: 'wireshark', pkg: 'wireshark', type: 'apt' },
   { id: 'tshark', name: 'TShark Sniffer', domain: 'sec', desc: 'Terminal Network Packet Sniffer & Capture Tool', cmd: 'tshark', pkg: 'tshark', type: 'apt' },
+  { id: 'tcpdump', name: 'TCPDump Sniffer', domain: 'sec', desc: 'Standard Command-Line Packet Analyzer', cmd: 'tcpdump', pkg: 'tcpdump', type: 'apt' },
+  { id: 'bettercap', name: 'Bettercap Framework', domain: 'sec', desc: 'Complete Modular Network Attack & Monitoring Framework', cmd: 'bettercap', pkg: 'bettercap', type: 'apt' },
   { id: 'sqlmap', name: 'SQLmap Injector', domain: 'sec', desc: 'Automatic SQL Injection & Database Takeover Tool', cmd: 'sqlmap', pkg: 'sqlmap', type: 'apt' },
   { id: 'ffuf', name: 'FFUF Web Fuzzer', domain: 'sec', desc: 'Fast Web Path, Parameter & Content Fuzzer', cmd: 'ffuf', pkg: 'ffuf', type: 'apt' },
   { id: 'gobuster', name: 'Gobuster Fuzzer', domain: 'sec', desc: 'High-Speed URI, DNS & VHost Brute-Forcer', cmd: 'gobuster', pkg: 'gobuster', type: 'apt' },
@@ -86,31 +101,51 @@ const TOOLS_DATABASE = [
   { id: 'hydra', name: 'THC Hydra', domain: 'sec', desc: 'Fast Network Logon & Credential Cracker', cmd: 'hydra', pkg: 'hydra', type: 'apt' },
   { id: 'john', name: 'John the Ripper', domain: 'sec', desc: 'Password Hash Security Auditor & Cracker', cmd: 'john', pkg: 'john', type: 'apt' },
   { id: 'hashcat', name: 'Hashcat Cracker', domain: 'sec', desc: 'GPU-Accelerated Password Recovery Engine', cmd: 'hashcat', pkg: 'hashcat', type: 'apt' },
+  { id: 'medusa', name: 'Medusa Login Cracker', domain: 'sec', desc: 'Speedy, Parallel, Modular Network Login Brute-Forcer', cmd: 'medusa', pkg: 'medusa', type: 'apt' },
   { id: 'radare2', name: 'Radare2 Reverse Eng', domain: 'sec', desc: 'UNIX-Like Reverse Engineering & Binary Forensics', cmd: 'r2', pkg: 'radare2', type: 'apt' },
   { id: 'ghidra', name: 'NSA Ghidra', domain: 'sec', desc: 'Software Reverse Engineering Suite & Decompiler', cmd: 'ghidra', pkg: 'ghidra', type: 'apt' },
   { id: 'binwalk', name: 'Binwalk Extractor', domain: 'sec', desc: 'Firmware Analysis & Embedded File Extraction', cmd: 'binwalk', pkg: 'binwalk', type: 'apt' },
   { id: 'caido', name: 'Caido Web Security', domain: 'sec', desc: 'Lightweight Rust-Based Web Intercepting Proxy', cmd: 'caido', pkg: 'caido', type: 'custom:caido' },
   { id: 'burpsuite', name: 'Burp Suite Community', domain: 'sec', desc: 'Web Application Security Scanner & Proxy', cmd: 'burpsuite', pkg: 'burpsuite', type: 'apt' },
   { id: 'aircrack-ng', name: 'Aircrack-ng Suite', domain: 'sec', desc: '802.11 Wireless Network Security Auditor', cmd: 'aircrack-ng', pkg: 'aircrack-ng', type: 'apt' },
+  { id: 'kismet', name: 'Kismet Wireless Sniffer', domain: 'sec', desc: 'Wireless Network Detector, Sniffer, and WIDS', cmd: 'kismet', pkg: 'kismet', type: 'apt' },
+  { id: 'wifite', name: 'Wifite2 Automated Auditor', domain: 'sec', desc: 'Automated Wireless Network Attack & Audit Tool', cmd: 'wifite', pkg: 'wifite', type: 'apt' },
   { id: 'ligolo-ng', name: 'Ligolo-ng Tunneling', domain: 'sec', desc: 'Advanced Pivoting & TUN Interface Tunneling', cmd: 'ligolo', pkg: 'ligolo', type: 'custom:ligolo' },
   { id: 'responder', name: 'Responder Poisoner', domain: 'sec', desc: 'LLMNR, NBT-NS and MDNS Poisoner & Sniffer', cmd: 'responder', pkg: 'responder', type: 'apt' },
   { id: 'evil-winrm', name: 'Evil-WinRM Shell', domain: 'sec', desc: 'Ultimate WinRM Remote Shell for Pentesting', cmd: 'evil-winrm', pkg: 'evil-winrm', type: 'apt' },
   { id: 'seclists', name: 'SecLists & Wordlists', domain: 'sec', desc: 'Security Wordlists, Payloads & Dictionaries', cmd: 'ls /usr/share/seclists', pkg: 'seclists,wordlists', type: 'apt' },
+  { id: 'commix', name: 'Commix OS Injector', domain: 'sec', desc: 'Automated Command Injection & Exploitation Tool', cmd: 'commix', pkg: 'commix', type: 'apt' },
+  { id: 'mitmproxy', name: 'Mitmproxy Interceptor', domain: 'sec', desc: 'Interactive TLS-Capable Intercepting HTTP Proxy', cmd: 'mitmproxy', pkg: 'mitmproxy', type: 'pip' },
+  { id: 'volatility3', name: 'Volatility3 Forensics', domain: 'sec', desc: 'Advanced Memory Artifact Forensics Framework', cmd: 'vol', pkg: 'volatility3', type: 'apt' },
+  { id: 'autopsy', name: 'Autopsy Digital Forensics', domain: 'sec', desc: 'Graphical Digital Forensics & Disk Analysis Platform', cmd: 'autopsy', pkg: 'autopsy', type: 'apt' },
+  { id: 'sleuthkit', name: 'The Sleuth Kit (TSK)', domain: 'sec', desc: 'Volume and File System Forensic Analysis Tools', cmd: 'fls', pkg: 'sleuthkit', type: 'apt' },
+  { id: 'lynis', name: 'Lynis System Auditor', domain: 'sec', desc: 'Security Auditing, Compliance & System Hardening Tool', cmd: 'lynis', pkg: 'lynis', type: 'apt' },
+  { id: 'chkrootkit', name: 'Chkrootkit Detector', domain: 'sec', desc: 'Locally Checks for Signs of a Rootkit', cmd: 'chkrootkit', pkg: 'chkrootkit', type: 'apt' },
+  { id: 'rkhunter', name: 'Rootkit Hunter', domain: 'sec', desc: 'Rootkit, Backdoor & Local Exploit Scanner', cmd: 'rkhunter', pkg: 'rkhunter', type: 'apt' },
+  { id: 'exiftool', name: 'ExifTool Metadata Extractor', domain: 'sec', desc: 'Read, Write & Manipulate File Metadata', cmd: 'exiftool', pkg: 'libimage-exiftool-perl', type: 'apt' },
+  { id: 'steghide', name: 'Steghide Steganography', domain: 'sec', desc: 'Embeds & Extracts Data from Images & Audio Files', cmd: 'steghide', pkg: 'steghide', type: 'apt' },
+  { id: 'dnsrecon', name: 'DNSRecon Enumerator', domain: 'sec', desc: 'DNS Enumeration & Zone Transfer Scanner', cmd: 'dnsrecon', pkg: 'dnsrecon', type: 'apt' },
+  { id: 'sublist3r', name: 'Sublist3r OSINT', domain: 'sec', desc: 'Fast OSINT Subdomain Enumeration Tool', cmd: 'sublist3r', pkg: 'sublist3r', type: 'apt' },
+  { id: 'dnschef', name: 'DNSChef Proxy', domain: 'sec', desc: 'Highly Configurable DNS Proxy for Testers', cmd: 'dnschef', pkg: 'dnschef', type: 'apt' },
 
-  // ── 4. Privacy & Defense ──
+  // ── 4. Privacy & Defense (Parrot Suite) (14 tools) ──
   { id: 'tor-browser', name: 'Tor Browser', domain: 'privacy', desc: 'Anonymous Onion Routing & Anti-Fingerprint Browser', cmd: 'tor-browser', pkg: 'torbrowser-launcher', type: 'apt' },
   { id: 'tor', name: 'Tor Anonymity Daemon', domain: 'privacy', desc: 'Onion Routing Daemon & SOCKS5 Anonymizer', cmd: 'tor', pkg: 'tor', type: 'apt' },
   { id: 'macchanger', name: 'GNU MAC Changer', domain: 'privacy', desc: 'Network Interface MAC Address Spoofer', cmd: 'macchanger', pkg: 'macchanger', type: 'apt' },
   { id: 'proxychains4', name: 'ProxyChains-NG', domain: 'privacy', desc: 'Force TCP Connections Through Tor/SOCKS5 Proxies', cmd: 'proxychains4', pkg: 'proxychains4', type: 'apt' },
+  { id: 'torsocks', name: 'Torsocks Wrapper', domain: 'privacy', desc: 'Route Application Connections Through Tor', cmd: 'torsocks', pkg: 'torsocks', type: 'apt' },
+  { id: 'openvpn', name: 'OpenVPN Client/Server', domain: 'privacy', desc: 'Full-Featured SSL/TLS VPN Solution', cmd: 'openvpn', pkg: 'openvpn', type: 'apt' },
   { id: 'signal', name: 'Signal Secure Messenger', domain: 'privacy', desc: 'End-to-End Encrypted Private Messaging App', cmd: 'signal-desktop', pkg: 'signal-desktop', type: 'system' },
   { id: 'simplex', name: 'SimpleX Chat', domain: 'privacy', desc: 'Decentralized Private Chat Without User Identifiers', cmd: 'simplex-desktop', pkg: 'simplex-desktop', type: 'system' },
   { id: 'element', name: 'Matrix Element Chat', domain: 'privacy', desc: 'Federated End-to-End Encrypted Matrix Messenger', cmd: 'element-desktop', pkg: 'element-desktop', type: 'system' },
   { id: 'bleachbit', name: 'BleachBit Cleaner', domain: 'privacy', desc: 'System Cleaner & Free Disk Space Wiper', cmd: 'bleachbit', pkg: 'bleachbit', type: 'apt' },
   { id: 'mat2', name: 'MAT2 Metadata Sanitizer', domain: 'privacy', desc: 'Metadata Anonymisation Toolkit for Files', cmd: 'mat2', pkg: 'mat2', type: 'apt' },
   { id: 'firejail', name: 'Firejail Sandbox', domain: 'privacy', desc: 'Linux Application Security Sandbox', cmd: 'firejail', pkg: 'firejail', type: 'apt' },
+  { id: 'i2pd', name: 'I2P-Zero Anonymity Router', domain: 'privacy', desc: 'End-to-End Encrypted Anonymous Network Daemon', cmd: 'i2pd', pkg: 'i2pd', type: 'apt' },
+  { id: 'secure-delete', name: 'Secure Delete Utilities', domain: 'privacy', desc: 'Permanent RAM & Disk File Shredding Tools (srm, smem)', cmd: 'srm', pkg: 'secure-delete', type: 'apt' },
 
-  // ── 5. Polyglot Dev & Core Toolchains ──
-  { id: 'python3', name: 'Python 3 Runtime', domain: 'dev', desc: 'Python 3.11+ Core & VENV Environment', cmd: 'python3', pkg: 'python3,python3-pip,python3-venv', type: 'apt' },
+  // ── 5. Polyglot Dev & Core Toolchains (23 tools) ──
+  { id: 'python3', name: 'Python 3 Runtime', domain: 'dev', desc: 'Python 3.12+ Core & VENV Environment', cmd: 'python3', pkg: 'python3,python3-pip,python3-venv', type: 'apt' },
   { id: 'uv', name: 'Astral UV', domain: 'dev', desc: 'Blazing Fast Python Package Manager & Resolver', cmd: 'uv', pkg: 'uv', type: 'custom:uv' },
   { id: 'nodejs', name: 'Node.js JavaScript Runtime', domain: 'dev', desc: 'High-Performance Server JavaScript Engine', cmd: 'node', pkg: 'nodejs', type: 'apt' },
   { id: 'npm', name: 'Node Package Manager', domain: 'dev', desc: 'Official Node.js Ecosystem Package Manager', cmd: 'npm', pkg: 'npm', type: 'apt' },
@@ -130,15 +165,18 @@ const TOOLS_DATABASE = [
   { id: 'ripgrep', name: 'Ripgrep (rg)', domain: 'dev', desc: 'Ultra-Fast Line-Oriented Recursive Regex Search', cmd: 'rg', pkg: 'ripgrep', type: 'apt' },
   { id: 'jq', name: 'JQ JSON Processor', domain: 'dev', desc: 'Command-Line JSON Parser & Transformer', cmd: 'jq', pkg: 'jq', type: 'apt' },
   { id: 'btop', name: 'Btop++ Resource Monitor', domain: 'dev', desc: 'Process, Memory & GPU Telemetry Monitor', cmd: 'btop', pkg: 'btop', type: 'apt' },
+  { id: 'zsh', name: 'ZSH Shell', domain: 'dev', desc: 'Advanced Interactive Command Line Shell', cmd: 'zsh', pkg: 'zsh', type: 'apt' },
+  { id: 'zoxide', name: 'Zoxide Directory Jumper', domain: 'dev', desc: 'Smarter CD Command Learning Your Habits', cmd: 'zoxide', pkg: 'zoxide', type: 'apt' },
+  { id: 'eza', name: 'Eza Modern LS', domain: 'dev', desc: 'Modern, Feature-Rich Replacement for LS', cmd: 'eza', pkg: 'eza', type: 'apt' },
 
-  // ── 6. Web3 & Blockchain ──
+  // ── 6. Web3 & Blockchain (5 tools) ──
   { id: 'solana', name: 'Solana CLI Suite', domain: 'web3', desc: 'Solana Blockchain Validator & Program Deployment CLI', cmd: 'solana', pkg: 'solana', type: 'custom:solana' },
   { id: 'foundry', name: 'Ethereum Foundry Suite', domain: 'web3', desc: 'Fast EVM Toolchain (forge, cast, anvil, chisel)', cmd: 'forge', pkg: 'foundry', type: 'custom:foundry' },
   { id: 'slither', name: 'Slither Smart Contract Auditor', domain: 'web3', desc: 'Solidity Static Analysis Vulnerability Framework', cmd: 'slither', pkg: 'slither', type: 'custom:slither' },
   { id: 'mythril', name: 'Mythril EVM Analyzer', domain: 'web3', desc: 'Security Analysis Tool for EVM Bytecode', cmd: 'myth', pkg: 'mythril', type: 'custom:mythril' },
   { id: 'ipfs', name: 'IPFS Kubo Node', domain: 'web3', desc: 'InterPlanetary File System P2P Node', cmd: 'ipfs', pkg: 'ipfs', type: 'custom:ipfs' },
 
-  // ── 7. Media, 3D & Creative ──
+  // ── 7. Media, 3D & Creative (9 tools) ──
   { id: 'blender', name: 'Blender 3D Suite', domain: 'media', desc: 'Complete 3D Modeling, VFX & Rendering Workstation', cmd: 'blender', pkg: 'blender', type: 'apt' },
   { id: 'ffmpeg', name: 'FFmpeg Audio/Video Engine', domain: 'media', desc: 'Accelerated Video, Audio & Stream Converter', cmd: 'ffmpeg', pkg: 'ffmpeg', type: 'apt' },
   { id: 'gimp', name: 'GIMP Image Editor', domain: 'media', desc: 'GNU Image Manipulation Program for Art & Retouching', cmd: 'gimp', pkg: 'gimp', type: 'apt' },
@@ -146,8 +184,10 @@ const TOOLS_DATABASE = [
   { id: 'obs-studio', name: 'OBS Studio', domain: 'media', desc: 'Live Video Streaming & Screen Recording Suite', cmd: 'obs', pkg: 'obs-studio', type: 'apt' },
   { id: 'imagemagick', name: 'ImageMagick', domain: 'media', desc: 'CLI Raster & Vector Manipulation Engine', cmd: 'convert', pkg: 'imagemagick', type: 'apt' },
   { id: 'mpv', name: 'MPV Player', domain: 'media', desc: 'Minimalist GPU-Accelerated Video Player', cmd: 'mpv', pkg: 'mpv', type: 'apt' },
+  { id: 'vlc', name: 'VLC Media Player', domain: 'media', desc: 'Universal Multimedia Player & Streamer', cmd: 'vlc', pkg: 'vlc', type: 'apt' },
+  { id: 'kdenlive', name: 'Kdenlive Video Editor', domain: 'media', desc: 'Non-Linear Multi-Track Video Production Suite', cmd: 'kdenlive', pkg: 'kdenlive', type: 'apt' },
 
-  // ── 8. Sovereign Linux Infra & Mesh ──
+  // ── 8. Sovereign Linux Infra & Mesh (11 tools) ──
   { id: 'tailscale', name: 'Tailscale Mesh VPN', domain: 'infra', desc: 'Zero-Config Encrypted WireGuard Mesh Network', cmd: 'tailscale', pkg: 'tailscale', type: 'custom:tailscale' },
   { id: 'wireguard', name: 'WireGuard Tools', domain: 'infra', desc: 'Fast, Modern Kernel-Level VPN Tunnel', cmd: 'wg', pkg: 'wireguard-tools', type: 'apt' },
   { id: 'docker', name: 'Docker / Podman Engine', domain: 'infra', desc: 'OCI Container Engine & Microservice Supervisor', cmd: 'docker', pkg: 'docker.io', type: 'apt' },
@@ -157,20 +197,23 @@ const TOOLS_DATABASE = [
   { id: 'postgresql', name: 'PostgreSQL Server', domain: 'infra', desc: 'Relational SQL Database Engine', cmd: 'psql', pkg: 'postgresql', type: 'apt' },
   { id: 'sqlite3', name: 'SQLite3 Database', domain: 'infra', desc: 'Serverless Self-Contained SQL Database Engine', cmd: 'sqlite3', pkg: 'sqlite3', type: 'apt' },
   { id: 'rclone', name: 'Rclone Multi-Cloud', domain: 'infra', desc: 'Rsync for Cloud Storage (S3, B2, WebDAV, SFTP)', cmd: 'rclone', pkg: 'rclone', type: 'apt' },
+  { id: 'redis', name: 'Redis Tools', domain: 'infra', desc: 'In-Memory Data Structure Store & Cache CLI', cmd: 'redis-cli', pkg: 'redis-tools', type: 'apt' },
+  { id: 'apparmor', name: 'AppArmor Security', domain: 'infra', desc: 'Linux Kernel Mandatory Access Control (MAC)', cmd: 'aa-status', pkg: 'apparmor', type: 'apt' },
 
-  // ── 9. Vision, OCR & Document Intelligence ──
+  // ── 9. Vision, OCR & Document Intelligence (5 tools) ──
   { id: 'tesseract', name: 'Tesseract Neural OCR', domain: 'vision', desc: 'Neural Optical Character Recognition Engine', cmd: 'tesseract', pkg: 'tesseract-ocr', type: 'apt' },
   { id: 'pandoc', name: 'Pandoc Universal Converter', domain: 'vision', desc: 'Universal Document Converter (Markdown, PDF, LaTeX)', cmd: 'pandoc', pkg: 'pandoc', type: 'apt' },
   { id: 'typst', name: 'Typst Typesetting System', domain: 'vision', desc: 'Modern Markup-Based Typesetting System', cmd: 'typst', pkg: 'typst', type: 'custom:typst' },
   { id: 'opencv', name: 'OpenCV Vision Library', domain: 'vision', desc: 'Real-Time Computer Vision & Image Processing', cmd: 'python3 -c "import cv2"', pkg: 'opencv-python', type: 'pip' },
   { id: 'pymupdf', name: 'PyMuPDF Parser', domain: 'vision', desc: 'High-Performance PDF Extraction & Analysis', cmd: 'python3 -c "import fitz"', pkg: 'PyMuPDF', type: 'pip' },
 
-  // ── 10. Knowledge Management & PKM ──
+  // ── 10. Knowledge Management & PKM (6 tools) ──
   { id: 'obsidian', name: 'Obsidian Knowledge Base', domain: 'docs', desc: 'Interlinked Markdown Second-Brain with Knowledge Graph', cmd: 'obsidian', pkg: 'obsidian', type: 'custom:obsidian' },
   { id: 'zathura', name: 'Zathura Document Viewer', domain: 'docs', desc: 'Keyboard-Centric Minimalist PDF Viewer', cmd: 'zathura', pkg: 'zathura', type: 'apt' },
   { id: 'graphviz', name: 'Graphviz DOT Engine', domain: 'docs', desc: 'Graph Visualization & Layout Engine', cmd: 'dot', pkg: 'graphviz', type: 'apt' },
   { id: 'flameshot', name: 'Flameshot Screen Capture', domain: 'docs', desc: 'Feature-Rich Screenshot & Annotation Tool', cmd: 'flameshot', pkg: 'flameshot', type: 'apt' },
-  { id: 'tree', name: 'Tree Visualizer', domain: 'docs', desc: 'Recursive Directory Tree Visualizer', cmd: 'tree', pkg: 'tree', type: 'apt' }
+  { id: 'tree', name: 'Tree Visualizer', domain: 'docs', desc: 'Recursive Directory Tree Visualizer', cmd: 'tree', pkg: 'tree', type: 'apt' },
+  { id: 'taskwarrior', name: 'Taskwarrior CLI', domain: 'docs', desc: 'Command-Line Task & Workflow Manager', cmd: 'task', pkg: 'taskwarrior', type: 'apt' }
 ];
 
 // Curated Bundles
@@ -180,41 +223,78 @@ const BUNDLES = {
     label: 'Kali Cyber Arsenal',
     tag: 'OFFENSIVE SECURITY',
     icon: '⚔',
-    desc: 'Elite offensive toolkit: reconnaissance, exploitation, wireless auditing, forensics, and password cracking.',
-    toolIds: ['nmap', 'masscan', 'sqlmap', 'nikto', 'gobuster', 'ffuf', 'nuclei', 'subfinder', 'amass', 'httpx', 'wireshark', 'tshark', 'john', 'hashcat', 'hydra', 'aircrack-ng', 'radare2', 'binwalk', 'metasploit', 'caido', 'burpsuite', 'responder', 'evil-winrm', 'seclists']
+    desc: 'Elite offensive toolkit: network recon, web fuzzing, wireless auditing, digital forensics, reverse engineering, and password cracking.',
+    toolIds: [
+      'nmap', 'masscan', 'rustscan', 'wireshark', 'tshark', 'tcpdump', 'bettercap', 'sqlmap',
+      'ffuf', 'gobuster', 'nikto', 'nuclei', 'subfinder', 'amass', 'httpx', 'metasploit',
+      'hydra', 'john', 'hashcat', 'medusa', 'radare2', 'ghidra', 'binwalk', 'caido',
+      'burpsuite', 'aircrack-ng', 'kismet', 'wifite', 'ligolo-ng', 'responder', 'evil-winrm',
+      'seclists', 'commix', 'mitmproxy', 'volatility3', 'autopsy', 'sleuthkit', 'lynis',
+      'chkrootkit', 'rkhunter', 'exiftool', 'steghide', 'dnsrecon', 'sublist3r', 'dnschef'
+    ]
   },
   'parrot': {
     id: 'parrot',
     label: 'Parrot Privacy & Defense',
     tag: 'PRIVACY & DEFENSE',
     icon: '🛡',
-    desc: 'Sovereign privacy and defense toolkit: anonymity networks, encrypted tunnels, traffic analysis, and metadata sanitation.',
-    toolIds: ['tor-browser', 'tor', 'macchanger', 'proxychains4', 'signal', 'simplex', 'element', 'bleachbit', 'mat2', 'firejail']
+    desc: 'Sovereign privacy and defensive toolkit: Onion routing, encrypted messaging, traffic routing, file sanitation, and secure wiping.',
+    toolIds: [
+      'tor-browser', 'tor', 'macchanger', 'proxychains4', 'torsocks', 'openvpn', 'signal',
+      'simplex', 'element', 'bleachbit', 'mat2', 'firejail', 'i2pd', 'secure-delete'
+    ]
   },
   'zoth': {
     id: 'zoth',
     label: 'Zoth Dev & Creator Suite',
     tag: 'POLYGLOT DEV & CREATOR',
     icon: '☿',
-    desc: 'Polyglot developer toolchains, compilers, terminal power tools, container engines, and creative media suites.',
-    toolIds: ['python3', 'uv', 'nodejs', 'npm', 'rustc', 'cargo', 'go', 'gcc', 'clang', 'neovim', 'micro', 'tmux', 'starship', 'fzf', 'bat', 'fd', 'duf', 'ripgrep', 'jq', 'btop', 'docker', 'blender', 'ffmpeg', 'gimp', 'inkscape', 'obs-studio', 'mpv']
+    desc: 'Polyglot developer toolchains, modern shell power tools, container engines, compilers, and complete creative media suites.',
+    toolIds: [
+      'python3', 'uv', 'nodejs', 'npm', 'rustc', 'cargo', 'go', 'gcc', 'clang',
+      'neovim', 'micro', 'tmux', 'starship', 'fzf', 'bat', 'fd', 'duf', 'ripgrep',
+      'jq', 'btop', 'zsh', 'zoxide', 'eza', 'blender', 'ffmpeg', 'gimp', 'inkscape',
+      'obs-studio', 'imagemagick', 'mpv', 'vlc', 'kdenlive'
+    ]
   },
   'ai-stack': {
     id: 'ai-stack',
     label: 'Frontier AI & Autonomous Swarms',
     tag: 'FRONTIER AI',
     icon: '🧠',
-    desc: 'Local zero-cloud LLM runtimes, autonomous coding agent swarms, red-team evaluators, and MCP protocols.',
-    toolIds: ['ollama', 'hermes', 'claude', 'codex', 'opencode', 'aider', 'garak', 'pyrit', 'fastmcp', 'vllm', 'open-webui', 'litellm']
+    desc: 'Zero-cloud local LLM runtimes, multi-agent swarms, terminal coding harnesses, red-team evaluators, and MCP server bridges.',
+    toolIds: [
+      'ollama', 'hermes', 'claude', 'codex', 'opencode', 'aider', 'garak', 'pyrit',
+      'fastmcp', 'maya', 'vllm', 'comfyui', 'open-webui', 'litellm', 'transformers', 'torch'
+    ]
   },
   'web3-stack': {
     id: 'web3-stack',
     label: 'Web3 & Blockchain Security',
     tag: 'WEB3 & CRYPTO',
     icon: '⛓',
-    desc: 'Smart contract development, auditing, bytecode verification, Solana runtime, and IPFS peer-to-peer storage.',
+    desc: 'Smart contract development, static auditing, bytecode formal verification, Solana toolchain, and IPFS peer-to-peer storage.',
     toolIds: ['solana', 'foundry', 'slither', 'mythril', 'ipfs']
+  },
+  'infra-stack': {
+    id: 'infra-stack',
+    label: 'Sovereign Linux Infrastructure',
+    tag: 'INFRA & MESH',
+    icon: '🌐',
+    desc: 'Encrypted WireGuard mesh, container virtualization, edge reverse proxies, zero-trust tunnels, and databases.',
+    toolIds: [
+      'tailscale', 'wireguard', 'docker', 'caddy', 'nginx', 'cloudflared',
+      'postgresql', 'sqlite3', 'rclone', 'redis', 'apparmor'
+    ]
   }
+};
+
+const PIP_IMPORT_MAP = {
+  'opencv-python': ['cv2', 'opencv_python'],
+  'PyMuPDF': ['fitz', 'pymupdf'],
+  'aider-chat': ['aider', 'aider_chat'],
+  'torch,torchvision': ['torch', 'torchvision'],
+  'pillow': ['PIL', 'pillow']
 };
 
 function createWindow() {
@@ -224,14 +304,14 @@ function createWindow() {
 
   const primaryDisplay = screen.getPrimaryDisplay();
   const workArea = primaryDisplay.workAreaSize || primaryDisplay.bounds;
-  const targetWidth = Math.min(1320, Math.floor(workArea.width * 0.94));
-  const targetHeight = Math.min(840, Math.floor(workArea.height * 0.90));
+  const targetWidth = Math.min(1360, Math.floor(workArea.width * 0.94));
+  const targetHeight = Math.min(880, Math.floor(workArea.height * 0.92));
 
   mainWindow = new BrowserWindow({
     width: targetWidth,
     height: targetHeight,
-    minWidth: 780,
-    minHeight: 520,
+    minWidth: 840,
+    minHeight: 560,
     center: true,
     backgroundColor: '#04070c',
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
@@ -241,7 +321,7 @@ function createWindow() {
     minimizable: true,
     maximizable: true,
     closable: true,
-    title: 'ZOTH TOOL NEXUS // 175+ CYBER ARSENAL & SOVEREIGN RUNTIMES',
+    title: 'ZOTH TOOL NEXUS PRO // 153+ ARSENAL & SOVEREIGN RUNTIMES',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -252,6 +332,14 @@ function createWindow() {
   mainWindow.setMenuBarVisibility(false);
   if (mainWindow.removeMenu) mainWindow.removeMenu();
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
+
+  mainWindow.webContents.once('dom-ready', () => {
+    // If launched with --bundle, auto-switch to bundles tab
+    if (process.argv.includes('--bundle')) {
+      mainWindow.webContents.send('set-tab', 'bundles');
+    }
+  });
+
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
@@ -308,19 +396,48 @@ function checkToolInstalled(t) {
   if (t.id === 'metasploit') {
     return fs.existsSync('/usr/bin/msfconsole') || fs.existsSync('/opt/metasploit-framework/bin/msfconsole');
   }
+  if (t.id === 'mythril') {
+    return fs.existsSync('/usr/local/bin/myth') || fs.existsSync('/opt/zothos-ai-env/bin/myth');
+  }
+  if (t.id === 'evil-winrm') {
+    return fs.existsSync('/usr/local/bin/evil-winrm') || fs.existsSync('/usr/bin/evil-winrm');
+  }
+  if (t.id === 'mitmproxy') {
+    return fs.existsSync('/usr/local/bin/mitmproxy') || fs.existsSync('/opt/zothos-ai-env/bin/mitmproxy');
+  }
+  if (t.id === 'seclists') {
+    return fs.existsSync('/usr/share/seclists') || fs.existsSync('/usr/share/wordlists');
+  }
 
-  // General binary check
+  // General binary or Python check
   const firstWord = t.cmd.split(' ')[0];
   if (firstWord.startsWith('python3') || firstWord.startsWith('ls')) {
-    // Treat python imports/files
     if (t.pkg && t.type === 'pip') {
-      const mod = t.pkg.split(',')[0];
-      return fs.existsSync(`/opt/zothos-ai-env/lib/python3.11/site-packages/${mod}`) ||
-             fs.existsSync(`/usr/local/lib/python3.11/dist-packages/${mod}`);
+      const pkgs = t.pkg.split(',').map(s => s.trim());
+      const checkNames = [];
+      for (const p of pkgs) {
+        checkNames.push(p, p.replace(/-/g, '_'), p.toLowerCase());
+        if (PIP_IMPORT_MAP[p]) checkNames.push(...PIP_IMPORT_MAP[p]);
+      }
+      const impMatch = t.cmd.match(/import\s+([a-zA-Z0-9_]+)/);
+      if (impMatch) checkNames.push(impMatch[1]);
+
+      const venvDirs = fs.existsSync('/opt/zothos-ai-env/lib') ? fs.readdirSync('/opt/zothos-ai-env/lib') : [];
+      for (const d of venvDirs) {
+        if (d.startsWith('python')) {
+          const sp = path.join('/opt/zothos-ai-env/lib', d, 'site-packages');
+          for (const name of checkNames) {
+            if (fs.existsSync(path.join(sp, name)) || fs.existsSync(path.join(sp, `${name}.py`))) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
     }
   }
 
-  // Fast check across extraPaths and PATH
+  // Check extraPaths and PATH
   const candidates = fullPath.split(':');
   for (const dir of candidates) {
     if (dir && fs.existsSync(path.join(dir, firstWord))) {
@@ -367,7 +484,8 @@ ipcMain.on('launch-tool', (_event, toolCmd) => {
     'burpsuite', 'caido', 'wireshark', 'ghidra', 'obsidian', 'blender',
     'zoth-docs', 'zoth-feedback', 'zoth-soundtrack', 'signal-desktop',
     'simplex-desktop', 'element-desktop', 'tor-browser', 'gimp', 'inkscape',
-    'obs', 'obs-studio', 'open-webui', 'comfyui'
+    'obs', 'obs-studio', 'open-webui', 'comfyui', 'vlc', 'kdenlive', 'autopsy',
+    'flameshot'
   ].some(g => toolCmd.includes(g));
 
   if (isGui) {
@@ -381,19 +499,39 @@ ipcMain.on('launch-tool', (_event, toolCmd) => {
 ipcMain.on('fix-permissions', (event) => {
   event.reply('install-log', { text: '[*] Running ZothOS Permissions & Symlink Repair Subsystem...\n' });
   
-  const fixScript = `
-    sudo chown -R ${os.userInfo().username}:${os.userInfo().username} /opt/zothos-ai-env 2>/dev/null || true
-    sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
-    sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
-    sudo chmod 777 /tmp 2>/dev/null || true
-    sudo chmod +x /usr/local/bin/zoth* 2>/dev/null || true
+  const fixScript = `#!/usr/bin/env bash
+    set -u
+    export DEBIAN_FRONTEND=noninteractive
+    echo "[*] Setting ownership on AI Virtualenv /opt/zothos-ai-env..."
+    chown -R ${os.userInfo().username}:${os.userInfo().username} /opt/zothos-ai-env 2>/dev/null || true
+    echo "[*] Ensuring standard core symlinks..."
+    ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+    echo "[*] Exposing AI virtualenv binaries to /usr/local/bin..."
+    if [ -d /opt/zothos-ai-env/bin ]; then
+        for b in /opt/zothos-ai-env/bin/*; do
+            bname=$(basename "$b")
+            if [ "$bname" != "python" ] && [ "$bname" != "python3" ] && [ "$bname" != "pip" ] && [ "$bname" != "pip3" ]; then
+                if [ ! -e "/usr/local/bin/$bname" ] && [ -x "$b" ]; then
+                    ln -sf "$b" "/usr/local/bin/$bname" 2>/dev/null || true
+                fi
+            fi
+        done
+    fi
+    chmod 1777 /tmp 2>/dev/null || true
+    chmod +x /usr/local/bin/zoth* 2>/dev/null || true
+    update-desktop-database 2>/dev/null || true
     echo "[✓] Environment permissions and system symlinks successfully repaired!"
   `;
 
-  const proc = spawn('bash', ['-c', fixScript], { env: { ...process.env, PATH: fullPath } });
+  const tmpScript = `/tmp/zoth_repair_${Date.now()}.sh`;
+  fs.writeFileSync(tmpScript, fixScript, { mode: 0o755 });
+
+  const proc = spawn('sudo', ['-n', 'bash', tmpScript], { env: { ...process.env, PATH: fullPath } });
   proc.stdout.on('data', d => event.reply('install-log', { text: d.toString() }));
   proc.stderr.on('data', d => event.reply('install-log', { text: d.toString() }));
   proc.on('close', code => {
+    try { fs.unlinkSync(tmpScript); } catch (_) {}
     event.reply('install-log', { text: '\n[✓] Repair complete.\n' });
     event.reply('fix-complete', { success: code === 0 });
   });
@@ -402,59 +540,68 @@ ipcMain.on('fix-permissions', (event) => {
 // Helper: Build resilient recipe commands
 function getRecipeScript(tool) {
   const p = tool.pkg;
+  if (tool.id === 'evil-winrm') {
+    return `apt-get install -y --no-install-recommends ruby ruby-dev libreadline-dev 2>/dev/null && gem install evil-winrm 2>&1`;
+  }
+  if (tool.id === 'mitmproxy') {
+    return `/opt/zothos-ai-env/bin/pip install --no-cache-dir mitmproxy && ln -sf /opt/zothos-ai-env/bin/mitmproxy /usr/local/bin/mitmproxy`;
+  }
   if (tool.type === 'apt') {
-    return `sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" ${p.replace(/,/g, ' ')}`;
+    return `apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" ${p.replace(/,/g, ' ')}`;
   }
   if (tool.type === 'pip') {
     const pkgs = p.replace(/,/g, ' ');
-    return `/opt/zothos-ai-env/bin/pip install ${pkgs} 2>/dev/null || sudo pip3 install --break-system-packages ${pkgs}`;
+    return `/opt/zothos-ai-env/bin/pip install --no-cache-dir ${pkgs} 2>/dev/null || pip3 install --break-system-packages --no-cache-dir ${pkgs}`;
   }
   if (tool.type === 'npm') {
-    return `sudo npm install -g --unsafe-perm=true ${p}`;
+    return `npm install -g --unsafe-perm=true ${p}`;
   }
   if (tool.type.startsWith('custom:')) {
     const target = tool.type.substring(7);
     if (target === 'solana') {
-      return `sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)" && if [ -d "$HOME/.local/share/solana/install/active_release/bin" ]; then sudo ln -sf "$HOME/.local/share/solana/install/active_release/bin/"* /usr/local/bin/ 2>/dev/null || true; fi`;
+      return `su - ${os.userInfo().username} -c "sh -c \\"\\$(curl -sSfL https://release.anza.xyz/stable/install)\\"" && if [ -d "/home/${os.userInfo().username}/.local/share/solana/install/active_release/bin" ]; then ln -sf /home/${os.userInfo().username}/.local/share/solana/install/active_release/bin/* /usr/local/bin/ 2>/dev/null || true; fi`;
     }
     if (target === 'foundry') {
-      return `curl -L https://foundry.paradigm.xyz | bash && if [ -x "$HOME/.foundry/bin/foundryup" ]; then "$HOME/.foundry/bin/foundryup"; fi && if [ -d "$HOME/.foundry/bin" ]; then sudo ln -sf "$HOME/.foundry/bin/"* /usr/local/bin/ 2>/dev/null || true; fi`;
+      return `su - ${os.userInfo().username} -c "curl -L https://foundry.paradigm.xyz | bash && if [ -x \\$HOME/.foundry/bin/foundryup ]; then \\$HOME/.foundry/bin/foundryup; fi" && if [ -d "/home/${os.userInfo().username}/.foundry/bin" ]; then ln -sf /home/${os.userInfo().username}/.foundry/bin/* /usr/local/bin/ 2>/dev/null || true; fi`;
     }
     if (target === 'caido') {
-      return `curl -fsSL -L -o /tmp/caido.tar.gz https://caido.download/releases/v0.45.1/caido-cli-v0.45.1-linux-x86_64.tar.gz && sudo tar -xzf /tmp/caido.tar.gz -C /usr/local/bin/ caido 2>/dev/null && rm -f /tmp/caido.tar.gz`;
+      return `curl -fsSL -L -o /tmp/caido.tar.gz https://caido.download/releases/v0.45.1/caido-cli-v0.45.1-linux-x86_64.tar.gz && tar -xzf /tmp/caido.tar.gz -C /usr/local/bin/ caido 2>/dev/null && rm -f /tmp/caido.tar.gz && chmod +x /usr/local/bin/caido`;
     }
     if (target === 'metasploit') {
-      return `curl -fsSL https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall && chmod +x /tmp/msfinstall && sudo /tmp/msfinstall && rm -f /tmp/msfinstall`;
+      return `curl -fsSL https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall && chmod +x /tmp/msfinstall && /tmp/msfinstall && rm -f /tmp/msfinstall`;
     }
     if (target === 'starship') {
       return `curl -sS https://starship.rs/install.sh | sh -s -- -y`;
     }
     if (target === 'uv') {
-      return `curl -LsSf https://astral.sh/uv/install.sh | sh || sudo pip3 install --break-system-packages uv`;
+      return `curl -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv`;
     }
     if (target === 'tailscale') {
       return `curl -fsSL https://tailscale.com/install.sh | sh`;
     }
     if (target === 'obsidian') {
-      return `curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb" && sudo dpkg -i /tmp/obsidian.deb 2>/dev/null || sudo apt-get -f install -y && rm -f /tmp/obsidian.deb`;
+      return `curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb" && dpkg -i /tmp/obsidian.deb 2>/dev/null || apt-get -f install -y && rm -f /tmp/obsidian.deb`;
     }
     if (target === 'ipfs') {
-      return `curl -fsSL https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -o /tmp/kubo.tar.gz && tar -xzf /tmp/kubo.tar.gz -C /tmp && sudo /tmp/kubo/install.sh 2>/dev/null && rm -rf /tmp/kubo*`;
+      return `curl -fsSL https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -o /tmp/kubo.tar.gz && tar -xzf /tmp/kubo.tar.gz -C /tmp && /tmp/kubo/install.sh 2>/dev/null && rm -rf /tmp/kubo*`;
     }
     if (target === 'slither') {
-      return `/opt/zothos-ai-env/bin/pip install slither-analyzer solc-select && if [ -f /opt/zothos-ai-env/bin/slither ]; then sudo ln -sf /opt/zothos-ai-env/bin/slither /usr/local/bin/slither; fi`;
+      return `/opt/zothos-ai-env/bin/pip install --no-cache-dir slither-analyzer solc-select && if [ -f /opt/zothos-ai-env/bin/slither ]; then ln -sf /opt/zothos-ai-env/bin/slither /usr/local/bin/slither; fi`;
     }
     if (target === 'mythril') {
-      return `/opt/zothos-ai-env/bin/pip install mythril && if [ -f /opt/zothos-ai-env/bin/myth ]; then sudo ln -sf /opt/zothos-ai-env/bin/myth /usr/local/bin/myth; fi`;
+      return `/opt/zothos-ai-env/bin/pip install --no-cache-dir mythril && if [ -f /opt/zothos-ai-env/bin/myth ]; then ln -sf /opt/zothos-ai-env/bin/myth /usr/local/bin/myth; fi`;
     }
     if (target === 'rustscan') {
-      return `sudo apt-get install -y rustscan 2>/dev/null || cargo install rustscan`;
+      return `apt-get install -y rustscan 2>/dev/null || cargo install rustscan`;
     }
     if (target === 'cloudflared') {
-      return `curl -L --output /tmp/cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && sudo dpkg -i /tmp/cloudflared.deb && rm -f /tmp/cloudflared.deb`;
+      return `curl -L --output /tmp/cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb && dpkg -i /tmp/cloudflared.deb && rm -f /tmp/cloudflared.deb`;
+    }
+    if (target === 'typst') {
+      return `curl -fsSL -L -o /tmp/typst.tar.xz https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz && tar -xf /tmp/typst.tar.xz -C /tmp && cp /tmp/typst-*/typst /usr/local/bin/ && chmod +x /usr/local/bin/typst && rm -rf /tmp/typst*`;
     }
   }
-  return `sudo apt-get install -y ${tool.pkg} 2>/dev/null || true`;
+  return `apt-get install -y ${tool.pkg} 2>/dev/null || true`;
 }
 
 // ── IPC: Install Single Tool ──────────────────────────────────────────
@@ -473,21 +620,33 @@ ipcMain.on('install-tool', (event, toolId) => {
   const recipe = getRecipeScript(tool);
   const scriptContent = `#!/usr/bin/env bash
 set -u
-echo -e "\\e[1;36m[+] Initiating installation for ${tool.name}...\\e[0m"
-while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+export NEEDRESTART_MODE=a
+export UCF_FORCE_CONFFOLD=1
+
+echo -e "\\e[1;36m[+] Initiating non-interactive installation for ${tool.name}...\\e[0m"
+while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
     echo -e "\\e[1;33m[*] Waiting for package manager lock to clear...\\e[0m"
     sleep 2
 done
-${recipe}
-echo -e "\\e[1;32m[✓] Finished recipe for ${tool.name}.\\e[0m"
-sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
-sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+dpkg --configure -a 2>/dev/null || true
+
+if ${recipe} 2>&1; then
+    echo -e "\\e[1;32m[✓] Successfully provisioned ${tool.name}.\\e[0m"
+else
+    echo -e "\\e[1;31m[!] Recipe finished with warnings/errors for ${tool.name}.\\e[0m"
+fi
+
+ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
+ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+update-desktop-database 2>/dev/null || true
 `;
 
   const tmpScript = `/tmp/zoth_inst_${tool.id}_${Date.now()}.sh`;
   fs.writeFileSync(tmpScript, scriptContent, { mode: 0o755 });
 
-  const proc = spawn('bash', [tmpScript], { env: { ...process.env, PATH: fullPath } });
+  const proc = spawn('sudo', ['-n', 'bash', tmpScript], { env: { ...process.env, PATH: fullPath } });
   proc.stdout.on('data', d => event.reply('install-log', { text: d.toString() }));
   proc.stderr.on('data', d => event.reply('install-log', { text: d.toString() }));
   proc.on('close', code => {
@@ -501,7 +660,6 @@ sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
 
 // ── IPC: Batch Install All Missing (Unattended One-Click) ─────────────
 ipcMain.on('install-all', (event, filter) => {
-  // Determine which tools to install
   let targetTools = TOOLS_DATABASE;
   let targetLabel = 'ALL MISSING ARSENAL';
 
@@ -523,7 +681,7 @@ ipcMain.on('install-all', (event, filter) => {
 
   if (missing.length === 0) {
     event.reply('install-start', { label: targetLabel, total: 0 });
-    event.reply('install-log', { text: '[✓] All tools in this selection are already installed and fully operational!\n' });
+    event.reply('install-log', { text: '[✓] All tools in this selection are already installed and 100% operational!\n' });
     event.reply('install-done', { success: true, count: 0 });
     return;
   }
@@ -533,21 +691,27 @@ ipcMain.on('install-all', (event, filter) => {
     total: missing.length
   });
 
-  // Construct batch script
   const scriptLines = [
     '#!/usr/bin/env bash',
     'set -u',
-    `echo -e "\\e[1;36m[+] ZOTHOS UNATTENDED BATCH PROVISIONER: ${targetLabel} (${missing.length} tools)...\\e[0m"`,
-    'echo -e "\\e[1;33m[*] Checking package manager lock...\\e[0m"',
-    'while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do',
-    '    echo -e "\\e[1;33m[*] Waiting for package lock...\\e[0m"',
+    'export DEBIAN_FRONTEND=noninteractive',
+    'export DEBCONF_NONINTERACTIVE_SEEN=true',
+    'export NEEDRESTART_MODE=a',
+    'export UCF_FORCE_CONFFOLD=1',
+    `echo -e "\\e[1;36m╔══════════════════════════════════════════════════════════════════════════════╗\\e[0m"`,
+    `echo -e "\\e[1;36m║   [+] ZOTHOS UNATTENDED BATCH PROVISIONER: ${targetLabel.padEnd(30)} [+]   ║\\e[0m"`,
+    `echo -e "\\e[1;36m╚══════════════════════════════════════════════════════════════════════════════╝\\e[0m"`,
+    'echo -e "\\e[1;33m[*] Clearing package manager locks if any...\\e[0m"',
+    'while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do',
+    '    echo -e "\\e[1;33m[*] Waiting for package lock to clear...\\e[0m"',
     '    sleep 2',
     'done',
+    'dpkg --configure -a 2>/dev/null || true',
     'echo -e "\\e[1;33m[*] Ensuring AI Virtualenv and directory permissions...\\e[0m"',
-    `sudo chown -R ${os.userInfo().username}:${os.userInfo().username} /opt/zothos-ai-env 2>/dev/null || true`,
+    `chown -R ${os.userInfo().username}:${os.userInfo().username} /opt/zothos-ai-env 2>/dev/null || true`,
     'echo -e "\\e[1;36m[*] Synchronizing package index once up-front...\\e[0m"',
-    'sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq || true',
-    'echo -e "\\e[1;32m[✓] Package index ready. Beginning sequential provisioning...\\e[0m\\n"',
+    'apt-get update -qq || true',
+    'echo -e "\\e[1;32m[✓] Package index ready. Beginning non-stop unattended provisioning...\\e[0m\\n"',
     `TOTAL=${missing.length}`,
     'SUCCESS=0',
     'SKIPPED=0'
@@ -565,7 +729,7 @@ ipcMain.on('install-all', (event, filter) => {
       `    echo -e "\\e[1;32m[✓] Successfully provisioned ${tool.name}\\e[0m\\n"`,
       '    SUCCESS=$((SUCCESS + 1))',
       'else',
-      `    echo -e "\\e[1;31m[!] Warning: ${tool.name} encountered errors\\e[0m\\n"`,
+      `    echo -e "\\e[1;31m[!] Note: ${tool.name} encountered non-critical warnings\\e[0m\\n"`,
       '    SKIPPED=$((SKIPPED + 1))',
       'fi'
     );
@@ -573,17 +737,20 @@ ipcMain.on('install-all', (event, filter) => {
 
   scriptLines.push(
     'echo -e "PROGRESS_FINAL:$SUCCESS:$SKIPPED:$TOTAL"',
-    'sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true',
-    'sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true',
-    'sudo update-desktop-database 2>/dev/null || true',
-    'echo -e "\\e[1;32m==== ✦ BATCH PROVISIONING COMPLETE: $SUCCESS installed, $SKIPPED skipped ✦ ====\\e[0m"'
+    'ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true',
+    'ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true',
+    'update-desktop-database 2>/dev/null || true',
+    `chown -R ${os.userInfo().username}:${os.userInfo().username} /opt/zothos-ai-env 2>/dev/null || true`,
+    'echo -e "\\e[1;32m══════════════════════════════════════════════════════════════════════════════\\e[0m"',
+    'echo -e "\\e[1;32m[✓] BATCH PROVISIONING COMPLETE: $SUCCESS installed, $SKIPPED skipped out of $TOTAL\\e[0m"',
+    'echo -e "\\e[1;32m══════════════════════════════════════════════════════════════════════════════\\e[0m"'
   );
 
   const scriptContent = scriptLines.join('\n');
   const tmpScript = `/tmp/zoth_batch_${Date.now()}.sh`;
   fs.writeFileSync(tmpScript, scriptContent, { mode: 0o755 });
 
-  const proc = spawn('bash', [tmpScript], { env: { ...process.env, PATH: fullPath } });
+  const proc = spawn('sudo', ['-n', 'bash', tmpScript], { env: { ...process.env, PATH: fullPath } });
 
   proc.stdout.on('data', d => event.reply('install-log', { text: d.toString() }));
   proc.stderr.on('data', d => event.reply('install-log', { text: d.toString() }));

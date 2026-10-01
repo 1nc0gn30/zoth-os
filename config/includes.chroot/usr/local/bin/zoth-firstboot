@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS FIRST-BOOT TOOL PROVISIONER & HUD (ARSENAL + NEXUS 186+ TOOLS)
+#  ZOTHOS FIRST-BOOT TOOL PROVISIONER & HUD (ARSENAL + NEXUS 153+ TOOLS)
 # ==============================================================================
 set -u
 
@@ -14,7 +14,7 @@ if [[ -f "$FLAG" ]]; then
 fi
 
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [FIRSTBOOT] $*" >> "$LOG" 2>/dev/null || true
+    echo "[$(date "+%Y-%m-%d %H:%M:%S")] [FIRSTBOOT] $*" >> "$LOG" 2>/dev/null || true
 }
 
 log "Starting ZothOS First-Boot Provisioner..."
@@ -22,22 +22,42 @@ log "Starting ZothOS First-Boot Provisioner..."
 # Notify user on desktop immediately that Zoth Arsenal + Nexus are active
 if command -v notify-send >/dev/null 2>&1; then
     notify-send -i /usr/share/pixmaps/zoth-arsenal.png \
-        "ZOTH TOOL NEXUS // 186+ TOOLS" \
+        "ZOTH TOOL NEXUS PRO // 153+ TOOLS" \
         "All Kali, Parrot, Local AI Runtimes, Web3 & Infra tools pre-installed and ready."
 fi
 
 # Asynchronous background finalization
 (
-    sleep 3
+    sleep 2
     log "Initializing background daemons and service hooks..."
 
-    # 1. Start Ollama daemon if present
+    # 1. Enforce AI environment ownership and symlinks
+    log "Enforcing permissions on AI environment and core symlinks..."
+    chown -R zoth:zoth /opt/zothos-ai-env 2>/dev/null || true
+    chmod 1777 /tmp 2>/dev/null || true
+    ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+    chmod +x /usr/local/bin/zoth* 2>/dev/null || true
+
+    # Expose AI env binaries to /usr/local/bin
+    if [ -d /opt/zothos-ai-env/bin ]; then
+        for b in /opt/zothos-ai-env/bin/*; do
+            bname=$(basename "$b")
+            if [ "$bname" != "python" ] && [ "$bname" != "python3" ] && [ "$bname" != "pip" ] && [ "$bname" != "pip3" ]; then
+                if [ ! -e "/usr/local/bin/$bname" ] && [ -x "$b" ]; then
+                    ln -sf "$b" "/usr/local/bin/$bname" 2>/dev/null || true
+                fi
+            fi
+        done
+    fi
+
+    # 2. Start Ollama daemon if present
     if command -v ollama >/dev/null 2>&1; then
         log "Starting Ollama runtime daemon..."
         systemctl enable --now ollama 2>/dev/null || pgrep -x ollama >/dev/null || (ollama serve >/dev/null 2>&1 &)
     fi
 
-    # 2. Initialize IPFS repository if not present
+    # 3. Initialize IPFS repository if not present
     if command -v ipfs >/dev/null 2>&1; then
         if [[ ! -d "${ZOTH_HOME}/.ipfs" ]]; then
             log "Initializing IPFS node..."
@@ -45,11 +65,12 @@ fi
         fi
     fi
 
-    # 3. Verify environment variables and paths
-    log "Updating ldconfig and font caches..."
+    # 4. Verify environment variables and paths
+    log "Updating ldconfig, desktop database and font caches..."
     ldconfig 2>/dev/null || true
+    update-desktop-database 2>/dev/null || true
 
-    # 4. Final verification via zoth-pkg
+    # 5. Final verification via zoth-pkg
     if command -v zoth-pkg >/dev/null 2>&1; then
         log "Running zoth-pkg verification..."
         zoth-pkg verify >> "$LOG" 2>&1 || true
@@ -64,7 +85,7 @@ fi
     if command -v notify-send >/dev/null 2>&1; then
         notify-send -i /usr/share/pixmaps/zoth-mark.png \
             "ZOTH ARSENAL & NEXUS READY" \
-            "186+ Offensive, Defense, AI, and Sovereign tools are fully operational."
+            "153+ Offensive, Defense, AI, and Sovereign tools are fully operational."
     fi
 ) >> "$LOG" 2>&1 &
 

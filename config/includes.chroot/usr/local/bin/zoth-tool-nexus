@@ -26,6 +26,8 @@ EXTRA_PATHS = [
     "/usr/bin",
     "/bin"
 ]
+# Prepend ai-env
+os.environ["PATH"] = "/opt/zothos-ai-env/bin:" + os.environ.get("PATH", "")
 for p in reversed(EXTRA_PATHS):
     if os.path.exists(p) and p not in os.environ.get("PATH", "").split(os.pathsep):
         os.environ["PATH"] = p + os.pathsep + os.environ.get("PATH", "")
@@ -343,11 +345,20 @@ def execute_single_package_install(pkg):
         ret = subprocess.run(cmd, shell=True)
         return ret.returncode == 0
 
+
+def safe_input(prompt=""):
+    if sys.stdin.isatty():
+        try:
+            return input(prompt)
+        except (EOFError, KeyboardInterrupt):
+            return ""
+    return ""
+
 def install_module(pkg_def, interactive=True):
     if not pkg_def or pkg_def == "none":
         print(f"\n{GREEN}[✓] Tool is a native built-in binary. No extra modules needed.{RESET}")
         if interactive:
-            input(f"\n{GRAY}Press Enter to continue...{RESET}")
+            safe_input(f"\n{GRAY}Press Enter to continue...{RESET}")
         return
 
     packages = [p.strip() for p in pkg_def.split(",") if p.strip()]
@@ -370,9 +381,9 @@ def install_module(pkg_def, interactive=True):
         print(f"\n{RED}[!] One or more package installations encountered warnings/errors.{RESET}")
 
     if interactive:
-        input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
+        safe_input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
 
-def run_doctor():
+def run_doctor(interactive=False):
     print_header()
     print(f"{GOLD}{BOLD}>>> SYSTEM HEALTH & AUTHENTIC TOOL MODULE DIAGNOSTICS <<<{RESET}\n")
     total_tools = 0
@@ -394,8 +405,10 @@ def run_doctor():
                     if mod != "none" and not mod.startswith("npm:") and not mod.startswith("apt:") and not mod.startswith("custom:"):
                         mod_list = [m.replace("pip:", "").strip().replace("==", " ").split()[0] for m in mod.split(",") if m.strip()]
                         all_mods_ok = True
+                        pip_map = {"opencv-python": "cv2", "PyMuPDF": "fitz", "aider-chat": "aider"}
                         for m in mod_list:
-                            verify_ret = subprocess.run(f"/opt/zothos-ai-env/bin/python3 -c 'import {m}' 2>/dev/null || python3 -c 'import {m}' 2>/dev/null", shell=True)
+                            mod_name = pip_map.get(m, m.replace("-", "_"))
+                            verify_ret = subprocess.run(f"/opt/zothos-ai-env/bin/python3 -c \x27import {mod_name}\x27 2>/dev/null || python3 -c \x27import {mod_name}\x27 2>/dev/null", shell=True)
                             if verify_ret.returncode != 0:
                                 all_mods_ok = False
                                 break
@@ -449,8 +462,9 @@ def run_doctor():
     print(f"{BOLD}Summary:{RESET} {GREEN}{ready_tools}{RESET}/{total_tools} tools ready ({pct:.1f}% operational)")
     if missing_tools:
         print(f"\n{GOLD}To install missing modules with real recipes, run:{RESET} {CYAN}zoth-tool-nexus --install-modules all{RESET}")
-    print(f"\n{GRAY}Press Enter to return...{RESET}")
-    input()
+    if interactive and sys.stdin.isatty():
+        print(f"\n{GRAY}Press Enter to return...{RESET}")
+        safe_input()
 
 def list_all_domains():
     print_header()
@@ -482,7 +496,7 @@ def execute_tool(tool_id, desc, cmd, mod):
     is_ready = check_tool_ready(cmd)
     if not is_ready and mod != "none":
         print(f"\n{GOLD}[WARNING]{RESET} Executable for '{tool_id}' is not in PATH.")
-        choice = input(f"{CYAN}Would you like to install required recipe '{mod}' now? (y/n): {RESET}").strip().lower()
+        choice = safe_input(f"{CYAN}Would you like to install required recipe '{mod}' now? (y/n): {RESET}").strip().lower()
         if choice == 'y':
             install_module(mod)
             return
@@ -492,7 +506,7 @@ def execute_tool(tool_id, desc, cmd, mod):
         subprocess.run(cmd, shell=True)
     except Exception as e:
         print(f"{RED}Execution failed: {e}{RESET}")
-    input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
+    safe_input(f"\n{GRAY}Press Enter to return to Tool Nexus...{RESET}")
 
 def search_tools(query):
     print_header()
@@ -513,24 +527,24 @@ def search_tools(query):
 def interactive_tui():
     while True:
         list_all_domains()
-        choice = input(f"{GREEN}ZothNexus ❯ {RESET}").strip().lower()
+        choice = safe_input(f"{GREEN}ZothNexus ❯ {RESET}").strip().lower()
         if choice in ['q', 'exit']:
             print(f"\n{GOLD}Exiting ZOTHOS Tool Nexus. Reality remains sovereign.{RESET}\n")
             break
         elif choice == 'd':
-            run_doctor()
+            run_doctor(interactive=False)
         elif choice == 's':
-            q = input(f"{CYAN}Search query: {RESET}").strip()
+            q = safe_input(f"{CYAN}Search query: {RESET}").strip()
             if q:
                 search_tools(q)
         elif choice == 'i':
-            pkg = input(f"{CYAN}Enter package, tool recipe or name to install: {RESET}").strip()
+            pkg = safe_input(f"{CYAN}Enter package, tool recipe or name to install: {RESET}").strip()
             if pkg:
                 install_module(pkg)
         elif choice in DOMAINS:
             while True:
                 view_domain(choice)
-                sub_choice = input(f"{GREEN}{DOMAINS[choice]['title'].split()[0]} ❯ {RESET}").strip().lower()
+                sub_choice = safe_input(f"{GREEN}{DOMAINS[choice]['title'].split()[0]} ❯ {RESET}").strip().lower()
                 if sub_choice in ['b', 'back']:
                     break
                 elif sub_choice in ['q', 'exit']:
@@ -572,7 +586,7 @@ def main():
             os.execv(electron_bin, ["electron", electron_app])
 
     if args.doctor:
-        run_doctor()
+        run_doctor(interactive=False)
         return
 
     if args.install_all or (args.install_modules and args.install_modules.strip() == "all"):

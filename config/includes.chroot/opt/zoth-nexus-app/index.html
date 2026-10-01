@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZOTH TOOL NEXUS // 175+ CYBER ARSENAL & SOVEREIGN RUNTIMES</title>
+  <title>ZOTH TOOL NEXUS PRO // 153+ CYBER ARSENAL & SOVEREIGN RUNTIMES</title>
   <style>
     :root {
       --bg: #04070c;
       --bg-alt: #080d15;
-      --panel: rgba(10, 16, 26, 0.92);
-      --card: rgba(14, 22, 35, 0.75);
+      --panel: rgba(10, 16, 26, 0.94);
+      --card: rgba(14, 22, 35, 0.82);
       --card-hover: rgba(0, 229, 255, 0.08);
       --border: rgba(0, 229, 255, 0.18);
-      --border-gold: rgba(255, 215, 0, 0.35);
-      --border-bright: rgba(255, 215, 0, 0.7);
+      --border-gold: rgba(255, 215, 0, 0.38);
+      --border-bright: rgba(255, 215, 0, 0.75);
       --primary: #00e5ff;
       --secondary: #00ff9d;
       --gold: #ffd700;
@@ -23,7 +23,7 @@
       --yellow: #ffb800;
       --text: #f1f5f9;
       --text-dim: #7d90a0;
-      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace, 'Noto Color Emoji';
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -44,8 +44,8 @@
       position: fixed;
       inset: 0;
       background: 
-        radial-gradient(circle at 15% 15%, rgba(255, 215, 0, 0.04) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(0, 229, 255, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 12% 15%, rgba(255, 215, 0, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 88% 85%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
         linear-gradient(rgba(255, 215, 0, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 215, 0, 0.02) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
@@ -57,14 +57,14 @@
     header {
       position: relative;
       z-index: 10;
-      padding: 12px 20px;
+      padding: 10px 20px;
       background: var(--panel);
       border-bottom: 1px solid var(--border-gold);
       display: flex;
       align-items: center;
       justify-content: space-between;
       backdrop-filter: blur(16px);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
     }
 
     .brand-section {
@@ -74,7 +74,7 @@
     }
 
     .brand-icon {
-      font-size: 26px;
+      font-size: 28px;
       color: var(--gold);
       text-shadow: 0 0 16px rgba(255, 215, 0, 0.6);
       animation: pulse-glow 3s infinite alternate;
@@ -82,7 +82,7 @@
 
     @keyframes pulse-glow {
       0% { filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.3)); }
-      100% { filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8)); }
+      100% { filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.8)); }
     }
 
     .brand-title {
@@ -102,7 +102,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       padding: 7px 14px;
       border-radius: 6px;
       border: 1px solid var(--border);
@@ -112,7 +112,7 @@
 
     .search-bar:focus-within {
       border-color: var(--gold);
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.35);
       width: 380px;
     }
 
@@ -155,21 +155,21 @@
     .btn-action:hover {
       border-color: var(--primary);
       color: var(--primary);
-      box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
     }
 
     .btn-master {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 170, 0, 0.1));
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 170, 0, 0.12));
       border: 1px solid var(--gold);
       color: var(--gold);
-      padding: 7px 14px;
-      box-shadow: 0 0 14px rgba(255, 215, 0, 0.25);
+      padding: 7px 16px;
+      box-shadow: 0 0 16px rgba(255, 215, 0, 0.3);
     }
 
     .btn-master:hover {
       background: var(--gold);
       color: #000;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+      box-shadow: 0 0 24px rgba(255, 215, 0, 0.7);
       transform: translateY(-1px);
     }
 
@@ -177,8 +177,8 @@
     .tele-bar {
       position: relative;
       z-index: 5;
-      background: rgba(8, 12, 18, 0.85);
-      border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+      background: rgba(8, 12, 18, 0.90);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.18);
       padding: 8px 20px;
       display: flex;
       align-items: center;
@@ -204,9 +204,38 @@
       color: var(--text);
     }
 
-    .tele-val.green { color: var(--secondary); }
-    .tele-val.gold { color: var(--gold); }
+    .tele-val.green { color: var(--secondary); text-shadow: 0 0 8px rgba(0, 255, 157, 0.4); }
+    .tele-val.gold { color: var(--gold); text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
     .tele-val.red { color: var(--red); }
+
+    .status-filters {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .filter-chip.active {
+      background: rgba(0, 229, 255, 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
 
     /* Filter Tabs Bar */
     .tabs-bar {
@@ -323,6 +352,12 @@
     .domain-tag.ai { background: rgba(168, 85, 247, 0.1); color: var(--purple); border-color: var(--purple); }
     .domain-tag.sec { background: rgba(255, 51, 85, 0.1); color: var(--red); border-color: var(--red); }
     .domain-tag.privacy { background: rgba(0, 255, 157, 0.1); color: var(--secondary); border-color: var(--secondary); }
+    .domain-tag.dev { background: rgba(0, 229, 255, 0.1); color: var(--primary); border-color: var(--primary); }
+    .domain-tag.web3 { background: rgba(255, 184, 0, 0.1); color: var(--yellow); border-color: var(--yellow); }
+    .domain-tag.media { background: rgba(249, 115, 22, 0.1); color: #f97316; border-color: #f97316; }
+    .domain-tag.infra { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: #38bdf8; }
+    .domain-tag.vision { background: rgba(236, 72, 153, 0.1); color: #ec4899; border-color: #ec4899; }
+    .domain-tag.docs { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border-color: #94a3b8; }
 
     .tool-desc {
       font-size: 10px;
@@ -423,8 +458,8 @@
     /* Curated Bundle Cards */
     .bundle-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 18px;
       padding-bottom: 30px;
     }
 
@@ -432,7 +467,7 @@
       background: var(--card);
       border: 1px solid var(--border-gold);
       border-radius: 8px;
-      padding: 18px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -442,7 +477,7 @@
 
     .bundle-card:hover {
       border-color: var(--gold);
-      box-shadow: 0 0 16px rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
     }
 
     .b-header {
@@ -462,6 +497,7 @@
     .b-count {
       font-size: 9px;
       color: var(--primary);
+      font-weight: 700;
     }
 
     .b-title {
@@ -497,12 +533,27 @@
       color: #94a3b8;
     }
 
+    .b-progress-wrap {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .b-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--secondary));
+      transition: width 0.3s ease;
+    }
+
     .b-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 12px;
+      padding-top: 14px;
     }
 
     /* Terminal Log Drawer */
@@ -511,11 +562,11 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 280px;
+      height: 290px;
       background: rgba(4, 7, 12, 0.96);
       border-top: 2px solid var(--gold);
       backdrop-filter: blur(20px);
-      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.85);
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -530,7 +581,7 @@
     .log-header {
       padding: 10px 20px;
       background: rgba(10, 16, 26, 0.95);
-      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -548,7 +599,7 @@
 
     .progress-bar-wrap {
       flex: 1;
-      max-width: 400px;
+      max-width: 440px;
       margin: 0 20px;
       background: rgba(0, 0, 0, 0.6);
       border: 1px solid var(--border);
@@ -563,14 +614,14 @@
       width: 0%;
       background: linear-gradient(90deg, var(--gold), var(--primary));
       transition: width 0.2s ease;
-      box-shadow: 0 0 10px var(--gold);
+      box-shadow: 0 0 12px var(--gold);
     }
 
     .progress-pct {
       font-size: 9px;
       font-weight: 700;
       color: var(--text);
-      min-width: 90px;
+      min-width: 100px;
     }
 
     .log-controls {
@@ -615,14 +666,14 @@
     <div class="brand-section">
       <div class="brand-icon">☿</div>
       <div>
-        <div class="brand-title">ZOTH TOOL NEXUS</div>
-        <div class="brand-sub">175+ CYBER ARSENAL & SOVEREIGN RUNTIMES</div>
+        <div class="brand-title">ZOTH TOOL NEXUS PRO</div>
+        <div class="brand-sub">153+ CYBER ARSENAL & SOVEREIGN RUNTIMES</div>
       </div>
     </div>
 
     <div class="search-bar">
       <span style="color:var(--gold); font-size:12px;">🔍</span>
-      <input type="text" id="search-input" class="search-input" placeholder="Search 175+ tools by name, command, or domain...">
+      <input type="text" id="search-input" class="search-input" placeholder="Search 153+ tools by name, command, or domain...">
     </div>
 
     <div class="header-actions">
@@ -649,25 +700,33 @@
       <div class="tele-item">MISSING: <span class="tele-val gold" id="tele-missing">0</span></div>
       <div class="tele-item">HEALTH: <span class="tele-val" id="tele-health">0%</span></div>
     </div>
+
+    <div class="status-filters">
+      <span style="color:var(--text-dim); font-size:9px; margin-right:4px;">FILTER:</span>
+      <button class="filter-chip active" id="filter-all" onclick="setStatusFilter('all')">ALL</button>
+      <button class="filter-chip" id="filter-ready" onclick="setStatusFilter('ready')">READY ONLY</button>
+      <button class="filter-chip" id="filter-missing" onclick="setStatusFilter('missing')">MISSING ONLY</button>
+    </div>
+
     <div style="color:var(--text-dim); font-size:9px;">
-      SYSTEM: <span style="color:var(--secondary)">Debian Bookworm/Trixie Core</span> | KERNEL: <span style="color:var(--gold)">Ring-Gated Sovereign</span>
+      SYSTEM: <span style="color:var(--secondary)">Debian / ZothOS Ring-Gated</span> | HOST: <span style="color:var(--gold)">Sovereign Archon</span>
     </div>
   </div>
 
   <!-- Filter Tabs -->
   <div class="tabs-bar">
-    <button class="tab-btn active" onclick="switchTab('all')">ALL TOOLS</button>
-    <button class="tab-btn" onclick="switchTab('bundles')">⚡ CURATED BUNDLES</button>
-    <button class="tab-btn" onclick="switchTab('flagship')">🏛 FLAGSHIPS & CORE</button>
-    <button class="tab-btn" onclick="switchTab('ai')">🧠 FRONTIER AI</button>
-    <button class="tab-btn" onclick="switchTab('sec')">⚔ OFFENSIVE SEC</button>
-    <button class="tab-btn" onclick="switchTab('privacy')">🛡 PRIVACY & DEFENSE</button>
-    <button class="tab-btn" onclick="switchTab('dev')">💻 POLYGLOT DEV</button>
-    <button class="tab-btn" onclick="switchTab('web3')">⛓ WEB3 & BLOCKCHAIN</button>
-    <button class="tab-btn" onclick="switchTab('media')">🎨 MEDIA & 3D</button>
-    <button class="tab-btn" onclick="switchTab('infra')">🌐 MESH & INFRA</button>
-    <button class="tab-btn" onclick="switchTab('vision')">👁 VISION & OCR</button>
-    <button class="tab-btn" onclick="switchTab('docs')">📚 DOCS & PKM</button>
+    <button class="tab-btn active" id="tab-all" onclick="switchTab('all')">ALL TOOLS</button>
+    <button class="tab-btn" id="tab-bundles" onclick="switchTab('bundles')">⚡ CURATED BUNDLES</button>
+    <button class="tab-btn" id="tab-flagship" onclick="switchTab('flagship')">🏛 FLAGSHIPS & CORE</button>
+    <button class="tab-btn" id="tab-ai" onclick="switchTab('ai')">🧠 FRONTIER AI</button>
+    <button class="tab-btn" id="tab-sec" onclick="switchTab('sec')">⚔ OFFENSIVE SEC</button>
+    <button class="tab-btn" id="tab-privacy" onclick="switchTab('privacy')">🛡 PRIVACY & DEFENSE</button>
+    <button class="tab-btn" id="tab-dev" onclick="switchTab('dev')">💻 POLYGLOT DEV</button>
+    <button class="tab-btn" id="tab-web3" onclick="switchTab('web3')">⛓ WEB3 & BLOCKCHAIN</button>
+    <button class="tab-btn" id="tab-media" onclick="switchTab('media')">🎨 MEDIA & 3D</button>
+    <button class="tab-btn" id="tab-infra" onclick="switchTab('infra')">🌐 MESH & INFRA</button>
+    <button class="tab-btn" id="tab-vision" onclick="switchTab('vision')">👁 VISION & OCR</button>
+    <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">📚 DOCS & PKM</button>
   </div>
 
   <!-- Main View Grid -->

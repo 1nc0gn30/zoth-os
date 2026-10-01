@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTH RECOMMENDED TOOLS INSTALLER — Electron GUI
-#  One-click install of curated Kali / Parrot / Zoth extra tool bundles.
+#  ZOTH ARSENAL PROVISIONER & TOOL NEXUS — Electron GUI
+#  Unified Sovereign Tool Provisioner (Kali, Parrot, Dev, AI, Web3 Bundles)
 # ==============================================================================
 set -euo pipefail
 
-APP="zoth-tools-installer"
-APP_DIR="/opt/$APP"
+APP_DIR="/opt/zoth-nexus-app"
 
 fail() {
     echo "[-] $1" >&2
@@ -15,14 +14,12 @@ fail() {
 }
 
 if [[ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
-    echo "[-] No DISPLAY; the tools installer needs a desktop session." >&2
-    echo "    Run from the terminal instead: ape install <bundle|tool>  or  zoth install <pkg>" >&2
-    exit 1
+    echo "[-] No graphical display detected; redirecting to sovereign CLI..." >&2
+    exec /usr/local/bin/zoth-tool-nexus --install-all
 fi
 
 [[ -d "$APP_DIR" ]] || fail "$APP_DIR not found."
-# /usr/local/bin/electron wraps /opt/electron/electron and adds the
-# sandbox + GPU-compatibility flags (software rendering on VMs).
-[[ -x /opt/electron/electron ]] || fail "Electron runtime not installed (/opt/electron/electron)."
+[[ -x /usr/local/bin/electron ]] || fail "Electron runtime not installed (/usr/local/bin/electron)."
 
-exec /usr/local/bin/electron "$APP_DIR" "$@"
+# Launch into Curated Bundles view
+exec /usr/local/bin/electron "$APP_DIR" --bundle "$@"

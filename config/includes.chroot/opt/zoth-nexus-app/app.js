@@ -3,9 +3,9 @@ const { ipcRenderer } = require('electron');
 let tools = [];
 let bundles = {};
 let currentTab = 'all';
+let statusFilter = 'all'; // 'all' | 'ready' | 'missing'
 let searchQuery = '';
 
-const grid = document.getElementById('tools-grid');
 const mainContent = document.getElementById('main-content');
 const searchInput = document.getElementById('search-input');
 const logDrawer = document.getElementById('log-drawer');
@@ -17,7 +17,6 @@ const progressText = document.getElementById('progress-text');
 // Init
 window.addEventListener('DOMContentLoaded', () => {
   refreshTools();
-  ipcRenderer.send('get-bundles');
 
   searchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value.trim().toLowerCase();
@@ -31,6 +30,10 @@ function refreshTools() {
 }
 
 // ── IPC Handlers ─────────────────────────────────────────────────────────────
+ipcRenderer.on('set-tab', (_event, tabName) => {
+  switchTab(tabName);
+});
+
 ipcRenderer.on('tools-list', (_event, data) => {
   tools = data;
   updateTelemetry();
@@ -46,7 +49,7 @@ ipcRenderer.on('install-start', (_event, d) => {
   showDrawer(`✦ PROVISIONING: ${d.label.toUpperCase()} (${d.total} TOOLS)...`);
   progressFill.style.width = '0%';
   progressText.textContent = `0% (0/${d.total})`;
-  appendLog(`\n=======================================================\n[+] Initiating non-interactive unattended installation for: ${d.label}\n=======================================================\n`);
+  appendLog(`\n=======================================================\n[+] Initiating non-stop unattended provisioning for: ${d.label}\n=======================================================\n`);
 });
 
 ipcRenderer.on('install-log', (_event, d) => {
@@ -73,7 +76,7 @@ ipcRenderer.on('install-log', (_event, d) => {
 });
 
 ipcRenderer.on('install-done', (_event, _d) => {
-  appendLog(`\n[✓] Finished batch task. Refreshing tool status...\n`);
+  appendLog(`\n[✓] Provisioning task finished. Refreshing live tool status...\n`);
   refreshTools();
 });
 
@@ -97,19 +100,23 @@ function updateTelemetry() {
   const btnAll = document.getElementById('btn-install-all');
   if (btnAll) {
     btnAll.innerHTML = `<span>⚡ ONE-CLICK: INSTALL ALL (${missing} MISSING)</span>`;
-    btnAll.style.opacity = missing === 0 ? '0.6' : '1.0';
+    btnAll.style.opacity = missing === 0 ? '0.7' : '1.0';
   }
 }
 
-// ── Tab Navigation ───────────────────────────────────────────────────────────
+// ── Filters & Tabs ───────────────────────────────────────────────────────────
 window.switchTab = function(tabName) {
   currentTab = tabName;
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.toggle('active', 
-      (tabName === 'all' && btn.textContent === 'ALL TOOLS') ||
-      (tabName === 'bundles' && btn.textContent.includes('BUNDLES')) ||
-      btn.getAttribute('onclick')?.includes(`'${tabName}'`)
-    );
+    btn.classList.toggle('active', btn.id === `tab-${tabName}`);
+  });
+  render();
+};
+
+window.setStatusFilter = function(filter) {
+  statusFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.id === `filter-${filter}`);
   });
   render();
 };
@@ -126,12 +133,17 @@ function render() {
 function renderToolsView() {
   const filtered = tools.filter(t => {
     const matchesDomain = (currentTab === 'all') || (t.domain === currentTab);
+    const matchesStatus = 
+      (statusFilter === 'all') ||
+      (statusFilter === 'ready' && t.installed) ||
+      (statusFilter === 'missing' && !t.installed);
     const matchesSearch = !searchQuery || 
       t.name.toLowerCase().includes(searchQuery) ||
       t.desc.toLowerCase().includes(searchQuery) ||
       t.cmd.toLowerCase().includes(searchQuery) ||
+      (t.pkg && t.pkg.toLowerCase().includes(searchQuery)) ||
       t.domain.toLowerCase().includes(searchQuery);
-    return matchesDomain && matchesSearch;
+    return matchesDomain && matchesStatus && matchesSearch;
   });
 
   mainContent.innerHTML = `<div class="matrix-grid" id="tools-grid"></div>`;
@@ -139,9 +151,9 @@ function renderToolsView() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-dim);">
-        <div style="font-size: 24px; color: var(--gold); margin-bottom: 8px;">✦ NO MATCHING TOOLS FOUND ✦</div>
-        <div>No tools match your query: "<strong>${searchQuery}</strong>"</div>
+      <div style="grid-column: 1 / -1; padding: 48px; text-align: center; color: var(--text-dim);">
+        <div style="font-size: 26px; color: var(--gold); margin-bottom: 10px;">✦ NO MATCHING TOOLS FOUND ✦</div>
+        <div style="font-size: 12px;">No tools match your active filter criteria: "<strong>${searchQuery || statusFilter}</strong>"</div>
       </div>
     `;
     return;
@@ -180,20 +192,26 @@ function renderBundlesView() {
 
   container.innerHTML = bundleList.map(b => {
     const isReady = b.installed;
+    const pct = b.count > 0 ? Math.round((b.installedCount / b.count) * 100) : 0;
     return `
       <div class="bundle-card">
-        <div class="b-header">
-          <div class="b-tag">${b.tag}</div>
-          <div class="b-count">${b.installedCount} / ${b.count} READY</div>
-        </div>
-        <div class="b-title">
-          <span>${b.icon}</span>
-          <span>${b.label}</span>
-        </div>
-        <div class="b-desc">${b.desc}</div>
-        <div class="b-chips">
-          ${b.tools.slice(0, 10).map(name => `<span class="b-chip">${name}</span>`).join('')}
-          ${b.tools.length > 10 ? `<span class="b-chip" style="color:var(--gold)">+${b.tools.length - 10} more</span>` : ''}
+        <div>
+          <div class="b-header">
+            <div class="b-tag">${b.tag}</div>
+            <div class="b-count">${b.installedCount} / ${b.count} READY (${pct}%)</div>
+          </div>
+          <div class="b-title">
+            <span>${b.icon}</span>
+            <span>${b.label}</span>
+          </div>
+          <div class="b-desc">${b.desc}</div>
+          <div class="b-progress-wrap">
+            <div class="b-progress-fill" style="width: ${pct}%"></div>
+          </div>
+          <div class="b-chips">
+            ${b.tools.slice(0, 12).map(name => `<span class="b-chip">${name}</span>`).join('')}
+            ${b.tools.length > 12 ? `<span class="b-chip" style="color:var(--gold)">+${b.tools.length - 12} more</span>` : ''}
+          </div>
         </div>
         <div class="b-footer">
           <div class="status-badge ${isReady ? 'ready' : 'missing'}">
