@@ -94,7 +94,7 @@ def main():
     sub_canvas = Image.new("RGBA", (1000, 140), (0, 0, 0, 0))
     draw = ImageDraw.Draw(sub_canvas)
     try:
-        font_main = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", 26)
+        font_main = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 26)
         font_sub = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 14)
     except:
         font_main = ImageFont.load_default()
