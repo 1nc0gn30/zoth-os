@@ -12,11 +12,39 @@ import json
 import socket
 import signal
 import subprocess
+import threading
+import http.server
 
 UDP_PORT = 9988
+HTTP_PORT = 9989
 SHARED_MEM_PATH = "/dev/shm/zoth_cursor.json"
 TMP_PATH = "/tmp/zoth_cursor.json"
 KWIN_SCRIPT_NAME = "zoth_cursor_tracker"
+
+latest_payload = '{"x":960,"y":540,"timestamp":0}'
+
+class CursorHTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        global latest_payload
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.end_headers()
+        self.wfile.write(latest_payload.encode())
+
+    def log_message(self, format, *args):
+        pass
+
+def start_http_server():
+    try:
+        server = http.server.ThreadingHTTPServer(('127.0.0.1', HTTP_PORT), CursorHTTPHandler)
+        server.serve_forever()
+    except Exception as e:
+        sys.stderr.write(f"[zoth-cursor-daemon] HTTP server notice: {e}\n")
+
+# Start HTTP server thread
+threading.Thread(target=start_http_server, daemon=True).start()
 
 # Setup UDP broadcast socket to localhost
 udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -26,7 +54,9 @@ except Exception:
     pass
 
 def write_cursor(x, y):
+    global latest_payload
     payload = f'{{"x":{x},"y":{y},"timestamp":{time.time()}}}'
+    latest_payload = payload
     # Write to /dev/shm (RAM)
     try:
         tmp_shm = f"{SHARED_MEM_PATH}.tmp"

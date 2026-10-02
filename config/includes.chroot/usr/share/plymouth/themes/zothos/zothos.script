@@ -1,310 +1,410 @@
-# ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — Hermetic Matrix Plymouth Boot Splash v4.0 (Azoth Sovereign Edition)
-#  Multi-phase animated boot: 3D Golden Azoth Seal + Emerald Phosphor Matrix Rain
-#  + Orbital Celestial Ring + Radiant Progress Bar + LUKS Crypt Prompt Support
-# ═══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
+#  ZOTHOS Linux 3.0 - Sovereign Master Boot Splash (Cinematic Intro Edition)
+#  Features:
+#  - High-Fidelity 24K Celtic Gold & Platinum Letter Intro Sequence
+#  - Sequential Letter Staggered Fade-in (Z - O - T - H - O - S)
+#  - Luminous Specular Caustic Gleam Sweep
+#  - Sovereign Intelligence Golden Subtitle Plate
+#  - Minimalist Hairline Progress Bar & Live Kernel State Telemetry
+#  - LUKS Full-Disk Encryption & Crypt Password Prompt Support
+# ==============================================================================
+
+# Background gradient: deep obsidian to black
+Window.SetBackgroundTopColor(0.015, 0.024, 0.020);
+Window.SetBackgroundBottomColor(0.000, 0.000, 0.000);
 
 screen_width = Window.GetWidth();
 screen_height = Window.GetHeight();
+screen_x = Window.GetX();
+screen_y = Window.GetY();
+cx = screen_x + screen_width / 2;
+cy = screen_y + screen_height / 2;
 
-# ── Obsidian void background with emerald gradient ─────────────────────────
-Window.SetBackgroundTopColor(0.015, 0.024, 0.020);  # #040605 deep obsidian void
-Window.SetBackgroundBottomColor(0.000, 0.000, 0.000); # #000000 absolute black
-
-# ── Multi-tier Starfield / Particle Nebula Layer ────────────────────────────
-star_count = 160;
-stars = [];
-
-for (i = 0; i < star_count; i++) {
-    stars[i] = {
-        x:      Math.Random() * screen_width,
-        y:      Math.Random() * screen_height,
-        size:   Math.Random() * 1.8 + 0.6,
-        alpha:  Math.Random() * 0.4 + 0.1,
-        speed:  Math.Random() * 1.5 + 0.5
-    };
+# 1. Clean Obsidian Vignette Background
+bg.orig = Image("bg.png");
+if (bg.orig != null) {
+    bg.image = bg.orig.Scale(screen_width, screen_height);
+    bg.sprite = Sprite(bg.image);
+    bg.sprite.SetPosition(screen_x, screen_y, 0);
+    bg.sprite.SetOpacity(1.0);
 }
 
-# ── Emerald Phosphor Digital Matrix Rain Layer ─────────────────────────────
-MAX_DROPS = 90;
-drops = [];
-
-for (i = 0; i < MAX_DROPS; i++) {
-    drops[i] = {
-        x:          Math.Random() * screen_width,
-        y:          Math.Random() * screen_height * -1.2,
-        speed:      Math.Random() * 5.0 + 3.0,
-        len:        Math.Random() * 32.0 + 12.0,
-        brightness: Math.Random() * 0.7 + 0.3,
-        hue:        Math.Random() # subtle shift between emerald and cyan
-    };
+# 2. Floating Golden Stardust Embers (Pre-allocated)
+STAR_COUNT = 30;
+for (i = 0; i < STAR_COUNT; i++) {
+    star[i].x = Math.Random() * screen_width;
+    star[i].y = Math.Random() * screen_height;
+    star[i].speed = Math.Random() * 0.8 + 0.3;
+    star[i].phase = Math.Random() * 6.28;
+    star[i].image = Image.Point(2, 2);
+    star[i].sprite = Sprite(star[i].image);
+    star[i].sprite.SetPosition(star[i].x, star[i].y, 5);
+    star[i].sprite.SetColor(0.98, 0.84, 0.20, 0.40);
 }
 
-# ── Ambient Emerald Phosphor Bloom Backdrop ────────────────────────────────
-glow_image = Image("glow.png");
-if (glow_image != null) {
-    glow_scale = Math.Min(screen_width, screen_height) / 700.0;
-    glow_sprite = Sprite(glow_image);
-    glow_sprite.SetScale(glow_scale, glow_scale);
-    glow_sprite.SetX(screen_width / 2 - glow_image.GetWidth() * glow_scale / 2);
-    glow_sprite.SetY(screen_height / 2 - glow_image.GetHeight() * glow_scale / 2 - 40);
-    glow_sprite.SetOpacity(0.55);
-    glow_sprite.SetZ(10);
+# 3. Typography & Letter Geometry Layout
+# Master word bounding box: native aspect ratio = 2170 / 495 = 4.3838
+word_w = screen_width * 0.58;
+if (word_w > 1060) word_w = 1060;
+if (word_w < 460) word_w = 460;
+word_h = word_w / 4.3838;
+
+word_x = cx - word_w / 2;
+word_y = cy - word_h / 2 - 45;
+
+# Ambient Center Bloom
+glow.orig = Image("glow.png");
+if (glow.orig != null) {
+    glow.size = word_w * 0.75;
+    glow.image = glow.orig.Scale(glow.size, glow.size);
+    glow.sprite = Sprite(glow.image);
+    glow.sprite.SetPosition(cx - glow.size / 2, cy - glow.size / 2 - 45, 10);
+    glow.sprite.SetOpacity(0.0);
 }
 
-# ── Central Alchemical Seal (3D Golden Azoth Emblem) ───────────────────────
-seal_image = Image("seal.png");
-if (seal_image != null) {
-    seal_scale = Math.Min(screen_width, screen_height) / 460.0;
-    seal_sprite = Sprite(seal_image);
-    seal_sprite.SetScale(seal_scale, seal_scale);
-    seal_sprite.SetX(screen_width / 2 - seal_image.GetWidth() * seal_scale / 2);
-    seal_sprite.SetY(screen_height / 2 - seal_image.GetHeight() * seal_scale / 2 - 40);
-    seal_sprite.SetOpacity(0.92);
-    seal_sprite.SetZ(30);
+# Letter Z (24K Celtic Gold)
+letter_z.orig = Image("letter_z.png");
+letter_z.w = 0.1613 * word_w;
+letter_z.h = 0.9798 * word_h;
+letter_z.x = word_x + 0.0000 * word_w;
+letter_z.y = word_y + 0.0202 * word_h;
+letter_z.image = letter_z.orig.Scale(letter_z.w, letter_z.h);
+letter_z.sprite = Sprite(letter_z.image);
+letter_z.sprite.SetPosition(letter_z.x, letter_z.y, 30);
+letter_z.sprite.SetOpacity(0.0);
+
+# Letter O1 (24K Celtic Gold)
+letter_o1.orig = Image("letter_o1.png");
+letter_o1.w = 0.1797 * word_w;
+letter_o1.h = 1.0000 * word_h;
+letter_o1.x = word_x + 0.1613 * word_w;
+letter_o1.y = word_y;
+letter_o1.image = letter_o1.orig.Scale(letter_o1.w, letter_o1.h);
+letter_o1.sprite = Sprite(letter_o1.image);
+letter_o1.sprite.SetPosition(letter_o1.x, letter_o1.y, 30);
+letter_o1.sprite.SetOpacity(0.0);
+
+# Letter T (24K Celtic Gold)
+letter_t.orig = Image("letter_t.png");
+letter_t.w = 0.1521 * word_w;
+letter_t.h = 0.9798 * word_h;
+letter_t.x = word_x + 0.3410 * word_w;
+letter_t.y = word_y + 0.0202 * word_h;
+letter_t.image = letter_t.orig.Scale(letter_t.w, letter_t.h);
+letter_t.sprite = Sprite(letter_t.image);
+letter_t.sprite.SetPosition(letter_t.x, letter_t.y, 30);
+letter_t.sprite.SetOpacity(0.0);
+
+# Letter H (24K Celtic Gold)
+letter_h.orig = Image("letter_h.png");
+letter_h.w = 0.1797 * word_w;
+letter_h.h = 0.9798 * word_h;
+letter_h.x = word_x + 0.4931 * word_w;
+letter_h.y = word_y + 0.0202 * word_h;
+letter_h.image = letter_h.orig.Scale(letter_h.w, letter_h.h);
+letter_h.sprite = Sprite(letter_h.image);
+letter_h.sprite.SetPosition(letter_h.x, letter_h.y, 30);
+letter_h.sprite.SetOpacity(0.0);
+
+# Letter O2 (Platinum / Silver)
+letter_o2.orig = Image("letter_o2.png");
+letter_o2.w = 0.1843 * word_w;
+letter_o2.h = 1.0000 * word_h;
+letter_o2.x = word_x + 0.6728 * word_w;
+letter_o2.y = word_y;
+letter_o2.image = letter_o2.orig.Scale(letter_o2.w, letter_o2.h);
+letter_o2.sprite = Sprite(letter_o2.image);
+letter_o2.sprite.SetPosition(letter_o2.x, letter_o2.y, 30);
+letter_o2.sprite.SetOpacity(0.0);
+
+# Letter S (Platinum / Silver)
+letter_s.orig = Image("letter_s.png");
+letter_s.w = 0.1429 * word_w;
+letter_s.h = 1.0000 * word_h;
+letter_s.x = word_x + 0.8571 * word_w;
+letter_s.y = word_y;
+letter_s.image = letter_s.orig.Scale(letter_s.w, letter_s.h);
+letter_s.sprite = Sprite(letter_s.image);
+letter_s.sprite.SetPosition(letter_s.x, letter_s.y, 30);
+letter_s.sprite.SetOpacity(0.0);
+
+# 4. Specular Caustic Sheen Beam
+sheen.orig = Image("sheen.png");
+if (sheen.orig != null) {
+    sheen.w = word_h * 0.55;
+    sheen.h = word_h;
+    sheen.image = sheen.orig.Scale(sheen.w, sheen.h);
+    sheen.sprite = Sprite(sheen.image);
+    sheen.sprite.SetPosition(word_x - sheen.w, word_y, 40);
+    sheen.sprite.SetOpacity(0.0);
 }
 
-# ── 3D Golden Orbital Ring (Precession & Celestial Trajectory) ──────────────
-ring_image = Image("ring.png");
-ring_angle = 0.0;
-if (ring_image != null) {
-    ring_scale = Math.Min(screen_width, screen_height) / 580.0;
-    ring_sprite = Sprite(ring_image);
-    ring_sprite.SetScale(ring_scale, ring_scale);
-    ring_sprite.SetX(screen_width / 2 - ring_image.GetWidth() * ring_scale / 2);
-    ring_sprite.SetY(screen_height / 2 - ring_image.GetHeight() * ring_scale / 2 - 40);
-    ring_sprite.SetOpacity(0.70);
-    ring_sprite.SetZ(35);
+# 5. Golden Subtitle Plate
+subtitle.orig = Image("subtitle.png");
+if (subtitle.orig != null) {
+    subtitle.w = word_w * 0.80;
+    if (subtitle.w > 720) subtitle.w = 720;
+    subtitle.h = subtitle.w * 0.14;
+    subtitle.image = subtitle.orig.Scale(subtitle.w, subtitle.h);
+    subtitle.sprite = Sprite(subtitle.image);
+    subtitle.sprite.SetPosition(cx - subtitle.w / 2, word_y + word_h + 24, 35);
+    subtitle.sprite.SetOpacity(0.0);
 }
 
-# ── Brand Typography ────────────────────────────────────────────────────────
-title_layer = Image.Text("ZOTHOS", 0.0, 1.0, 0.62, 1.0, "JetBrains Mono Bold 44");
-title_sprite = Sprite(title_layer);
-title_sprite.SetPosition(screen_width / 2 - title_layer.GetWidth() / 2, screen_height / 2 + 100, 100);
+# 6. Minimalist Progress Bar
+bar_w = word_w * 0.44;
+if (bar_w > 420) bar_w = 420;
+bar_h = 4;
+bar_x = cx - bar_w / 2;
+bar_y = word_y + word_h + 95;
 
-subtitle_layer = Image.Text("The Sovereign AI & Offensive Security OS", 0.0, 0.95, 0.95, 0.85, "JetBrains Mono Medium 16");
-subtitle_sprite = Sprite(subtitle_layer);
-subtitle_sprite.SetPosition(screen_width / 2 - subtitle_layer.GetWidth() / 2, screen_height / 2 + 155, 100);
+bar_bg.image = Image.Rectangle(bar_w, bar_h);
+bar_bg.sprite = Sprite(bar_bg.image);
+bar_bg.sprite.SetPosition(bar_x, bar_y, 50);
+bar_bg.sprite.SetColor(0.08, 0.08, 0.08, 0.70);
 
-version_layer = Image.Text("v12.0.0 · Azoth Edition · Immutable Core", 0.98, 0.78, 0.14, 0.70, "JetBrains Mono Regular 12");
-version_sprite = Sprite(version_layer);
-version_sprite.SetPosition(screen_width / 2 - version_layer.GetWidth() / 2, screen_height / 2 + 185, 100);
+bar_fill.image = Image.Rectangle(1, bar_h);
+bar_fill.sprite = Sprite(bar_fill.image);
+bar_fill.sprite.SetPosition(bar_x, bar_y, 55);
+bar_fill.sprite.SetColor(0.98, 0.84, 0.14, 0.95);
 
-# ── Boot Progress Bar Engine ────────────────────────────────────────────────
-bar_width = Math.Min(screen_width * 0.55, 640);
-bar_height = 10;
-bar_x = (screen_width - bar_width) / 2;
-bar_y = screen_height / 2 + 225;
+status.sprite = Sprite();
+status.sprite.SetPosition(bar_x, bar_y + 16, 60);
 
-# Progress Trough / Box
-box_img = Image("progress_box.png");
-if (box_img != null) {
-    box_sprite = Sprite(box_img);
-    box_sprite.SetPosition(bar_x - 1, bar_y - 1, 150);
-} else {
-    bar_bg = Image.Rectangle(bar_width, bar_height);
-    bar_bg_sprite = Sprite(bar_bg);
-    bar_bg_sprite.SetPosition(bar_x, bar_y, 150);
-    bar_bg_sprite.SetColor(0.04, 0.07, 0.06, 0.95);
+# 7. Crypt / LUKS Dialog Setup
+lock.orig = Image("lock.png");
+if (lock.orig != null) {
+    lock.sprite = Sprite(lock.orig);
+    lock.sprite.SetPosition(cx - 32, cy - 120, 500);
+    lock.sprite.SetOpacity(0.0);
 }
 
-bar_fill = Image.Rectangle(0, bar_height);
-bar_fill_sprite = Sprite(bar_fill);
-bar_fill_sprite.SetPosition(bar_x, bar_y, 200);
+box.orig = Image("box.png");
+if (box.orig != null) {
+    box.sprite = Sprite(box.orig);
+    box.sprite.SetPosition(cx - 170, cy - 40, 500);
+    box.sprite.SetOpacity(0.0);
+}
 
-# Dynamic Progress Label
-progress_text_layer = Image.Text("✦ INITIALIZING ZOTHOS CORE", 0.0, 1.0, 0.62, 0.90, "JetBrains Mono Bold 13");
-progress_text_sprite = Sprite(progress_text_layer);
-progress_text_sprite.SetPosition(screen_width / 2 - progress_text_layer.GetWidth() / 2, bar_y + bar_height + 18, 100);
+prompt.sprite = Sprite();
+prompt.sprite.SetPosition(cx - 160, cy - 75, 510);
+prompt.sprite.SetOpacity(0.0);
 
-# Global boot state
+bullet.orig = Image("bullet.png");
+
+# Global Boot State
+global.time = 0.0;
 global.boot_progress = 0.0;
 global.smooth_progress = 0.0;
-global.status_message = "Initializing Kernel...";
+global.status_msg = "✦ INITIALIZING SOVEREIGN KERNEL";
+global.mode = "boot";
 
-# ── Interactive Prompts (Password / Question / LUKS) ───────────────────────
-lock_image = Image("lock.png");
-lock_sprite = Sprite(lock_image);
-lock_sprite.SetPosition(screen_width / 2 - 32, screen_height / 2 - 120, 500);
-lock_sprite.SetOpacity(0.0);
+# 8. Animation Refresh Callback (~50 FPS)
+fun refresh_callback () {
+    global.time += 0.02;
+    t = global.time;
 
-box_dialog_image = Image("box.png");
-box_dialog_sprite = Sprite(box_dialog_image);
-box_dialog_sprite.SetPosition(screen_width / 2 - 170, screen_height / 2 - 40, 500);
-box_dialog_sprite.SetOpacity(0.0);
-
-prompt_text_sprite = Sprite();
-prompt_text_sprite.SetPosition(screen_width / 2 - 160, screen_height / 2 - 75, 510);
-prompt_text_sprite.SetOpacity(0.0);
-
-bullet_image = Image("bullet.png");
-bullets = [];
-
-# ── Animation Callback (60 FPS Refresh) ─────────────────────────────────────
-fun refresh_callback() {
-    refresh_count = Plymouth.GetRefreshCount();
-
-    # 1. Twinkling Background Starfield
-    for (i = 0; i < star_count; i++) {
-        local.s = stars[i];
-        local.alpha = 0.10 + Math.Sin(refresh_count * 0.02 * local.s.speed + i) * 0.30;
-        star_pt = Image.Point(local.s.size, local.s.size);
-        star_sp = Sprite(star_pt);
-        star_sp.SetPosition(local.s.x, local.s.y, 5);
-        star_sp.SetColor(0.6, 0.9, 0.8, local.alpha);
+    # Embers Drift
+    for (i = 0; i < STAR_COUNT; i++) {
+        star[i].y -= star[i].speed;
+        if (star[i].y < 0) {
+            star[i].y = screen_height;
+            star[i].x = Math.Random() * screen_width;
+        }
+        star[i].sprite.SetPosition(star[i].x, star[i].y, 5);
+        star[i].sprite.SetOpacity(0.20 + Math.Sin(t * 2.5 + star[i].phase) * 0.25);
     }
 
-    # 2. Emerald Phosphor Matrix Digital Rain
-    for (i = 0; i < MAX_DROPS; i++) {
-        drops[i].y = drops[i].y + drops[i].speed;
-        if (drops[i].y > screen_height + drops[i].len) {
-            drops[i].y = -drops[i].len - (Math.Random() * 40.0);
-            drops[i].x = Math.Random() * screen_width;
-            drops[i].speed = Math.Random() * 5.0 + 3.0;
-            drops[i].len = Math.Random() * 32.0 + 12.0;
-            drops[i].brightness = Math.Random() * 0.7 + 0.3;
-            drops[i].hue = Math.Random();
-        }
-        drop_pt = Image.Line(0, 0, 0, drops[i].len);
-        drop_sp = Sprite(drop_pt);
-        drop_sp.SetPosition(drops[i].x, drops[i].y, 8);
-        if (drops[i].hue > 0.7) {
-            drop_sp.SetColor(0.0, 0.9, 1.0, drops[i].brightness); # cyan streak
+    # Center Bloom
+    if (glow.orig != null) {
+        if (t < 0.6) {
+            glow.sprite.SetOpacity(t * 0.6);
         } else {
-            drop_sp.SetColor(0.0, 1.0, 0.62, drops[i].brightness); # emerald streak
+            pulse = 0.38 + Math.Sin(t * 1.8) * 0.12;
+            glow.sprite.SetOpacity(pulse);
         }
     }
 
-    # 3. Ambient Glow Pulsing
-    if (glow_sprite != null) {
-        local.glow_pulse = 0.45 + Math.Sin(refresh_count * 0.04) * 0.15;
-        glow_sprite.SetOpacity(local.glow_pulse);
+    # Sequential Letter Entrance
+    # Z (0.35s - 0.75s)
+    if (t < 0.35) {
+        letter_z.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 0.35) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_z.sprite.SetOpacity(1.0 - inv * inv * inv);
     }
 
-    # 4. Central Seal Breathing
-    if (seal_sprite != null) {
-        local.seal_pulse = 0.88 + Math.Sin(refresh_count * 0.035) * 0.12;
-        seal_sprite.SetOpacity(local.seal_pulse);
+    # O1 (0.65s - 1.05s)
+    if (t < 0.65) {
+        letter_o1.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 0.65) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_o1.sprite.SetOpacity(1.0 - inv * inv * inv);
     }
 
-    # 5. Golden Orbital Ring Trajectory & Tilt
-    ring_angle = ring_angle + 0.018;
-    if (ring_sprite != null) {
-        local.orbit_x = Math.Sin(ring_angle) * screen_width * 0.08;
-        local.orbit_y = Math.Cos(ring_angle * 0.8) * 18.0;
-        ring_sprite.SetX(screen_width / 2 - ring_image.GetWidth() * ring_scale / 2 + local.orbit_x);
-        ring_sprite.SetY(screen_height / 2 - ring_image.GetHeight() * ring_scale / 2 - 40 + local.orbit_y);
-        local.ring_opacity = 0.60 + Math.Sin(ring_angle * 2.5) * 0.25;
-        ring_sprite.SetOpacity(local.ring_opacity);
+    # T (0.95s - 1.35s)
+    if (t < 0.95) {
+        letter_t.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 0.95) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_t.sprite.SetOpacity(1.0 - inv * inv * inv);
     }
 
-    # 6. Smooth Boot Progress Interpolation
-    global.smooth_progress = global.smooth_progress + (global.boot_progress - global.smooth_progress) * 0.12;
+    # H (1.25s - 1.65s)
+    if (t < 1.25) {
+        letter_h.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 1.25) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_h.sprite.SetOpacity(1.0 - inv * inv * inv);
+    }
+
+    # O2 (1.55s - 1.95s)
+    if (t < 1.55) {
+        letter_o2.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 1.55) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_o2.sprite.SetOpacity(1.0 - inv * inv * inv);
+    }
+
+    # S (1.85s - 2.25s)
+    if (t < 1.85) {
+        letter_s.sprite.SetOpacity(0.0);
+    } else {
+        p = (t - 1.85) / 0.40;
+        if (p > 1.0) p = 1.0;
+        inv = 1.0 - p;
+        letter_s.sprite.SetOpacity(1.0 - inv * inv * inv);
+    }
+
+    # Specular Sheen Beam (2.40s - 3.60s)
+    if (sheen.orig != null) {
+        if (t < 2.40) {
+            sheen.sprite.SetOpacity(0.0);
+        } else if (t <= 3.60) {
+            sp = (t - 2.40) / 1.20;
+            sp_eased = sp * sp * (3.0 - 2.0 * sp);
+            cur_x = word_x - sheen.w + sp_eased * (word_w + sheen.w * 2);
+            sheen.sprite.SetX(cur_x);
+            sheen.sprite.SetOpacity(Math.Sin(sp * 3.14159) * 0.85);
+        } else {
+            sheen.sprite.SetOpacity(0.0);
+        }
+    }
+
+    # Subtitle Materialization (3.10s - 4.00s)
+    if (subtitle.orig != null) {
+        if (t < 3.10) {
+            subtitle.sprite.SetOpacity(0.0);
+        } else {
+            sub_p = (t - 3.10) / 0.90;
+            if (sub_p > 1.0) sub_p = 1.0;
+            subtitle.sprite.SetOpacity(sub_p * sub_p * (3.0 - 2.0 * sub_p) * 0.95);
+        }
+    }
+
+    # Boot Progress
+    global.smooth_progress += (global.boot_progress - global.smooth_progress) * 0.12;
     if (global.smooth_progress > 1.0) global.smooth_progress = 1.0;
     if (global.smooth_progress < 0.0) global.smooth_progress = 0.0;
 
-    local.fill_w = Math.Floor(bar_width * global.smooth_progress);
-    if (local.fill_w < 1) local.fill_w = 1;
+    fill_w = bar_w * global.smooth_progress;
+    if (fill_w < 1) fill_w = 1;
 
-    fill_rect = Image.Rectangle(local.fill_w, bar_height);
-    bar_fill_sprite.SetImage(fill_rect);
-    bar_fill_sprite.SetPosition(bar_x, bar_y, 200);
+    bar_fill.image = Image.Rectangle(fill_w, bar_h);
+    bar_fill.sprite.SetImage(bar_fill.image);
+    bar_fill.sprite.SetPosition(bar_x, bar_y, 55);
 
-    # Radiant color blend: Emerald (0.0, 1.0, 0.62) -> Gold (0.98, 0.84, 0.14)
-    local.r = 0.0 + global.smooth_progress * 0.98;
-    local.g = 1.0 - global.smooth_progress * 0.16;
-    local.b = 0.62 - global.smooth_progress * 0.48;
-    bar_fill_sprite.SetColor(local.r, local.g, local.b, 0.95);
-
-    # 7. Milestone Phase Status Strings
+    # Status Telemetry
     if (global.smooth_progress < 0.20) {
-        local.phase_msg = "✦ INITIALIZING SOVEREIGN KERNEL";
+        global.status_msg = "✦ INITIALIZING SOVEREIGN KERNEL";
     } else if (global.smooth_progress < 0.40) {
-        local.phase_msg = "✦ MOUNTING ARSENAL [KALI + PARROT]";
-    } else if (global.smooth_progress < 0.65) {
-        local.phase_msg = "✦ ACTIVATING SECURITY & TOR CLOAK";
-    } else if (global.smooth_progress < 0.88) {
-        local.phase_msg = "✦ STARTING AI & FRONTIER AGENT ENGINES";
+        global.status_msg = "✦ VERIFYING SYSTEM INTEGRITY";
+    } else if (global.smooth_progress < 0.60) {
+        global.status_msg = "✦ LOADING CRYPTOGRAPHIC VAULT";
+    } else if (global.smooth_progress < 0.80) {
+        global.status_msg = "✦ MOUNTING IMMUTABLE ROOT";
     } else {
-        local.phase_msg = "✦ TRANSMUTING REALITY [ZOTHOS APEX]";
+        global.status_msg = "✦ STARTING SOVEREIGN DESKTOP";
     }
 
-    pt_img = Image.Text(local.phase_msg, 0.0, 1.0, 0.62, 0.95, "JetBrains Mono Bold 13");
-    progress_text_sprite.SetImage(pt_img);
-    progress_text_sprite.SetPosition(screen_width / 2 - pt_img.GetWidth() / 2, bar_y + bar_height + 18, 100);
+    text_alpha = 0.75 + Math.Sin(t * 3.0) * 0.20;
+    status.image = Image.Text(global.status_msg, 0.98, 0.84, 0.20, text_alpha, "DejaVu Sans Mono Bold 10");
+    status.sprite.SetImage(status.image);
+    status.sprite.SetX(cx - status.image.GetWidth() / 2);
 }
 
 Plymouth.SetRefreshFunction(refresh_callback);
 
-# ── Boot Progress Callback ──────────────────────────────────────────────────
-fun boot_progress_callback(duration, progress) {
+# 9. Progress Callback
+fun boot_progress_callback (duration, progress) {
     global.boot_progress = progress;
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
-# ── Status Update Callback ──────────────────────────────────────────────────
-fun update_status_callback(status) {
-    global.status_message = status;
+# 10. Message Callback
+fun message_callback (text) {
+    global.status_msg = text;
 }
-Plymouth.SetUpdateStatusFunction(update_status_callback);
+Plymouth.SetMessageFunction(message_callback);
 
-# ── Root Mounted Callback ───────────────────────────────────────────────────
-fun root_mounted_callback() {
-    global.boot_progress = 0.65;
-}
-Plymouth.SetRootMountedFunction(root_mounted_callback);
+# 11. Password / Crypt LUKS Callback
+fun display_password_callback (prompt_str, bullets_count) {
+    global.mode = "password";
+    if (lock.orig != null) lock.sprite.SetOpacity(0.95);
+    if (box.orig != null) box.sprite.SetOpacity(0.90);
 
-# ── LUKS / Password Input Callback ──────────────────────────────────────────
-fun display_password_callback(prompt, bullets_count) {
-    lock_sprite.SetOpacity(1.0);
-    box_dialog_sprite.SetOpacity(0.95);
+    prompt.image = Image.Text(prompt_str, 0.98, 0.84, 0.14, 0.95, "DejaVu Sans Mono Bold 12");
+    prompt.sprite.SetImage(prompt.image);
+    prompt.sprite.SetOpacity(0.95);
+    prompt.sprite.SetPosition(cx - 160, cy - 75, 510);
 
-    p_img = Image.Text(prompt, 0.98, 0.84, 0.14, 1.0, "JetBrains Mono Bold 13");
-    prompt_text_sprite.SetImage(p_img);
-    prompt_text_sprite.SetPosition(screen_width / 2 - 150, screen_height / 2 - 75, 510);
-    prompt_text_sprite.SetOpacity(1.0);
+    bar_bg.sprite.SetOpacity(0.0);
+    bar_fill.sprite.SetOpacity(0.0);
+    status.sprite.SetOpacity(0.0);
 
-    # Render bullets
-    local.start_bx = screen_width / 2 - 140;
-    local.by = screen_height / 2 - 26;
-    for (i = 0; i < 16; i++) {
+    entry_x = cx - 145;
+    entry_y = cy - 32;
+    for (i = 0; i < 24; i++) {
         if (i < bullets_count) {
-            if (bullets[i] == null) {
-                bullets[i] = Sprite(bullet_image);
-                bullets[i].SetPosition(local.start_bx + (i * 18), local.by, 520);
+            if (bullet[i].sprite == null && bullet.orig != null) {
+                bullet[i].sprite = Sprite(bullet.orig);
+                bullet[i].sprite.SetPosition(entry_x + i * 12, entry_y, 520);
+                bullet[i].sprite.SetOpacity(1.0);
             }
-            bullets[i].SetOpacity(1.0);
-        } else if (bullets[i] != null) {
-            bullets[i].SetOpacity(0.0);
+        } else {
+            if (bullet[i].sprite != null) {
+                bullet[i].sprite = null;
+            }
         }
     }
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
-# ── Display Normal Callback ─────────────────────────────────────────────────
-fun display_normal_callback() {
-    lock_sprite.SetOpacity(0.0);
-    box_dialog_sprite.SetOpacity(0.0);
-    prompt_text_sprite.SetOpacity(0.0);
-    for (i = 0; i < 16; i++) {
-        if (bullets[i] != null) {
-            bullets[i].SetOpacity(0.0);
-        }
-    }
+# 12. Normal Display Callback
+fun display_normal_callback () {
+    global.mode = "boot";
+    if (lock.orig != null) lock.sprite.SetOpacity(0.0);
+    if (box.orig != null) box.sprite.SetOpacity(0.0);
+    prompt.sprite.SetOpacity(0.0);
+    for (i = 0; i < 24; i++) bullet[i].sprite = null;
+
+    bar_bg.sprite.SetOpacity(0.70);
+    bar_fill.sprite.SetOpacity(0.95);
+    status.sprite.SetOpacity(0.90);
 }
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
-# ── Display Message Callback ────────────────────────────────────────────────
-fun display_message_callback(text) {
-    p_img = Image.Text(text, 0.0, 1.0, 0.62, 1.0, "JetBrains Mono Regular 12");
-    prompt_text_sprite.SetImage(p_img);
-    prompt_text_sprite.SetPosition(screen_width / 2 - p_img.GetWidth() / 2, screen_height / 2 + 270, 510);
-    prompt_text_sprite.SetOpacity(0.9);
-}
-Plymouth.SetDisplayMessageFunction(display_message_callback);
-
-# ── Quit Function ───────────────────────────────────────────────────────────
-fun quit_callback() {
-    # Fade out smoothly on quit
+# 13. Quit Callback
+fun quit_callback () {
 }
 Plymouth.SetQuitFunction(quit_callback);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="MaxTilt" type="double">
+      <label>Maximum 3D Tilt Angle (degrees)</label>
+      <default>24.0</default>
+    </entry>
+    <entry name="InfluenceRadius" type="double">
+      <label>Mouse Proximity Radius (pixels)</label>
+      <default>650.0</default>
+    </entry>
+    <entry name="FloatingEmbers" type="bool">
+      <label>Enable floating ambient stardust embers</label>
+      <default>true</default>
+    </entry>
+  </group>
+</kcfg>

@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "info@nullai.tech",
+                "Name": "NullAI Tech / Neal Frazier"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "ZOTHOS 3D Interactive Mouse-Tracking Gold Wallpaper",
+        "Icon": "preferences-desktop-wallpaper",
+        "Id": "org.zothos.interactive",
+        "Name": "ZOTHOS 3D Interactive",
+        "Version": "3.0"
+    }
+}

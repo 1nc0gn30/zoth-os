@@ -1,0 +1,15 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "info@nullai.tech",
+                "Name": "NullAI Tech / Neal Frazier"
+            }
+        ],
+        "Description": "ZOTHOS Sovereign 24K Celtic Gold Master Splash",
+        "Id": "org.zothos.desktop",
+        "Name": "ZOTHOS Sovereign",
+        "Version": "3.0"
+    }
+}
