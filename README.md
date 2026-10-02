@@ -17,7 +17,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/NullAITech/zoth-os/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
+    <img src="https://img.shields.io/badge/License-TBA-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: to be announced" />
     <a href="https://www.debian.org"><img src="https://img.shields.io/badge/Base-Debian%2013%20Trixie-d70a53.svg?style=for-the-badge&logo=debian&logoColor=white" alt="Base: Debian 13" /></a>
     <a href="https://kde.org/plasma-desktop/"><img src="https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3-1d99f3.svg?style=for-the-badge&logo=kde&logoColor=white" alt="Desktop: KDE Plasma 6.3" /></a>
     <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Vault-Argon2id%20%2B%20ChaCha20-00e5ff.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Crypto: Argon2id + ChaCha20" /></a>
@@ -399,7 +399,7 @@ ZOTHOS is built using a customized Debian Live Build framework with surgical rep
 
 ## ✦ License & Attributions
 
-- **ZOTHOS Linux**: Released under the [MIT License](LICENSE).
+- **ZOTHOS Linux**: License to be announced (a `LICENSE` file will be added). Upstream components keep their own licenses.
 - **Core Engine & Architecture**: Engineered by **NullAI Tech** ([nullai.tech](https://nullai.tech)).
 - **Upstream Foundations**: Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security OS.
 
