@@ -64,6 +64,14 @@ for suid_bin in chroot/usr/bin/sudo chroot/usr/bin/su chroot/usr/bin/pkexec chro
     fi
 done
 
+# Enforce SGID shadow on unix_chkpwd for PAM unlock and screen locker
+for chkpwd_bin in chroot/usr/sbin/unix_chkpwd chroot/sbin/unix_chkpwd; do
+    if [ -f "$chkpwd_bin" ]; then
+        sudo chown root:shadow "$chkpwd_bin"
+        sudo chmod 2755 "$chkpwd_bin"
+    fi
+done
+
 
 # Ensure tor-browser and simplex binaries are user-executable
 sudo chmod -R u+rwX,go+rX chroot/opt/tor-browser 2>/dev/null || true

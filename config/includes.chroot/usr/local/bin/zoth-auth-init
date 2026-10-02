@@ -36,6 +36,8 @@ echo "root:zoth" | chpasswd 2>/dev/null || true
 chown root:shadow /etc/shadow /etc/gshadow 2>/dev/null || true
 chmod 640 /etc/shadow /etc/gshadow 2>/dev/null || true
 chmod 644 /etc/passwd /etc/group 2>/dev/null || true
+chown root:shadow /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
+chmod 2755 /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 
 # Ensure zoth and azoth are in all essential groups
 for grp in sudo audio video netdev plugdev dialout cdrom dip lpadmin scanner bluetooth autologin nopasswdlogin docker render input kvm; do
