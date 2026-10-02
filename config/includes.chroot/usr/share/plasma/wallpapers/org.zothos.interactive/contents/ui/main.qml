@@ -14,8 +14,16 @@ WallpaperItem {
     property real rawMouseY: root.height > 0 ? root.height / 2 : 540
     property real smoothMouseX: rawMouseX
     property real smoothMouseY: rawMouseY
+    property real prevSmoothX: rawMouseX
+    property real prevSmoothY: rawMouseY
+    property real cursorActivity: 0.0
     property double lastLocalMouseTime: 0
     property real breathingPhase: 0.0
+
+    // Particle pool state
+    readonly property int sparkCount: 56
+    property int sparkHead: 0
+    property var sparkItems: []
 
     // ── 1. Base Wallpaper Vignette Layer ───────────────────────────────────
     Image {
@@ -60,7 +68,98 @@ WallpaperItem {
         }
     }
 
-    // ── 3. Central Ambient Golden Bloom ────────────────────────────────────
+    // ── 3. Dynamic Interactive Golden Cursor Trails & Aura ─────────────────
+    Item {
+        id: mouseTrailsLayer
+        anchors.fill: parent
+
+        // Outer ambient golden cursor bloom on the obsidian background
+        Image {
+            id: cursorAuraOuter
+            source: "images/glow.png"
+            width: 360
+            height: 360
+            x: root.smoothMouseX - width / 2
+            y: root.smoothMouseY - height / 2
+            opacity: 0.07 + root.cursorActivity * 0.23
+            scale: 0.85 + root.cursorActivity * 0.35
+            asynchronous: true
+            cache: true
+        }
+
+        // Inner golden brilliance wake
+        Image {
+            id: cursorAuraInner
+            source: "images/glow.png"
+            width: 150
+            height: 150
+            x: root.smoothMouseX - width / 2
+            y: root.smoothMouseY - height / 2
+            opacity: 0.12 + root.cursorActivity * 0.42
+            scale: 0.70 + root.cursorActivity * 0.40
+            asynchronous: true
+            cache: true
+        }
+
+        // Pool of floating golden sparks
+        Repeater {
+            id: sparksRepeater
+            model: root.sparkCount
+
+            Item {
+                id: sparkItem
+                property real px: 0
+                property real py: 0
+                property real pLife: 0.0
+                property real pSize: 4.0
+                property real pVx: 0.0
+                property real pVy: 0.0
+                property real pDecay: 0.02
+                property real pRot: 0.0
+                property real pVRot: 0.0
+                property color pColor: "#FFD700"
+
+                x: px - width / 2
+                y: py - height / 2
+                width: pSize
+                height: pSize
+                visible: pLife > 0.01
+                opacity: Math.max(0.0, Math.min(1.0, pLife))
+                scale: Math.max(0.1, Math.min(1.0, pLife * 1.35))
+
+                // Core luminous circular ember
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width
+                    height: parent.height
+                    radius: width / 2
+                    color: sparkItem.pColor
+                }
+
+                // Celestial 4-pointed diamond glint on larger sparks
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width * 2.8
+                    height: 1.2
+                    color: sparkItem.pColor
+                    opacity: 0.65
+                    rotation: sparkItem.pRot
+                    visible: sparkItem.pSize > 4.2
+                }
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 1.2
+                    height: parent.height * 2.8
+                    color: sparkItem.pColor
+                    opacity: 0.65
+                    rotation: sparkItem.pRot
+                    visible: sparkItem.pSize > 4.2
+                }
+            }
+        }
+    }
+
+    // ── 4. Central Ambient Golden Bloom ────────────────────────────────────
     Image {
         id: centerBloom
         source: "images/glow.png"
@@ -254,7 +353,81 @@ WallpaperItem {
             root.smoothMouseX += (root.rawMouseX - root.smoothMouseX) * 0.20;
             root.smoothMouseY += (root.rawMouseY - root.smoothMouseY) * 0.20;
 
-            // 3. Compute 3D physics for each of the 6 letters
+            // 3. Compute cursor speed and update particle trails
+            var dxMouse = root.smoothMouseX - root.prevSmoothX;
+            var dyMouse = root.smoothMouseY - root.prevSmoothY;
+            var moveDist = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+            root.prevSmoothX = root.smoothMouseX;
+            root.prevSmoothY = root.smoothMouseY;
+
+            var targetActivity = Math.min(moveDist / 5.0, 1.0);
+            if (targetActivity > root.cursorActivity) {
+                root.cursorActivity += (targetActivity - root.cursorActivity) * 0.35;
+            } else {
+                root.cursorActivity *= 0.94;
+            }
+
+            // Ensure cached particle references are initialized
+            if (root.sparkItems.length === 0) {
+                var list = [];
+                for (var k = 0; k < root.sparkCount; k++) {
+                    var itm = sparksRepeater.itemAt(k);
+                    if (itm) list.push(itm);
+                }
+                if (list.length === root.sparkCount) {
+                    root.sparkItems = list;
+                }
+            }
+
+            var items = root.sparkItems;
+            if (items && items.length === root.sparkCount) {
+                // Spawn golden sparks when cursor is moving
+                if (moveDist > 1.5) {
+                    var spawnCount = Math.min(Math.floor(moveDist / 3.0) + 1, 4);
+                    var palette = ["#FFFFFF", "#FFF9C4", "#FFE082", "#FFD700", "#FFC107", "#FFB300", "#FFA000"];
+
+                    for (var s = 0; s < spawnCount; s++) {
+                        var p = items[root.sparkHead];
+                        if (p) {
+                            var t = Math.random();
+                            p.px = (root.smoothMouseX - dxMouse * t) + (Math.random() - 0.5) * 12;
+                            p.py = (root.smoothMouseY - dyMouse * t) + (Math.random() - 0.5) * 12;
+
+                            var angle = Math.random() * 6.28318;
+                            var speed = 0.4 + Math.random() * 2.2;
+                            p.pVx = Math.cos(angle) * speed - dxMouse * 0.10;
+                            p.pVy = Math.sin(angle) * speed - dyMouse * 0.10 - 0.45;
+
+                            p.pLife = 1.0;
+                            p.pDecay = 0.015 + Math.random() * 0.020;
+                            p.pSize = 2.6 + Math.random() * 4.6;
+                            p.pRot = Math.random() * 360;
+                            p.pVRot = (Math.random() - 0.5) * 6.0;
+                            p.pColor = palette[Math.floor(Math.random() * palette.length)];
+                        }
+                        root.sparkHead = (root.sparkHead + 1) % root.sparkCount;
+                    }
+                }
+
+                // Update living sparks
+                for (var pi = 0; pi < root.sparkCount; pi++) {
+                    var spk = items[pi];
+                    if (spk && spk.pLife > 0.005) {
+                        spk.px += spk.pVx;
+                        spk.py += spk.pVy;
+                        spk.pVy -= 0.035; // gentle upward stardust float
+                        spk.pVx *= 0.95;  // air resistance
+                        spk.pVy *= 0.95;
+                        spk.pRot += spk.pVRot;
+                        spk.pLife -= spk.pDecay;
+                        if (spk.pLife <= 0.005) {
+                            spk.pLife = 0;
+                        }
+                    }
+                }
+            }
+
+            // 4. Compute 3D physics for each of the 6 letters
             var letters = [letZ, letO1, letT, letH, letO2, letS];
             var containerX = wordContainer.x;
             var containerY = wordContainer.y;

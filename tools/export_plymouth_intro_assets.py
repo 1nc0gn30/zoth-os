@@ -100,16 +100,37 @@ def main():
         font_main = ImageFont.load_default()
         font_sub = ImageFont.load_default()
         
-    main_text = "✦   S O V E R E I G N   I N T E L L I G E N C E   O S   ✦"
+    main_text = "S O V E R E I G N   I N T E L L I G E N C E   O S"
     mbound = draw.textbbox((0, 0), main_text, font=font_main)
-    mx = (1000 - (mbound[2] - mbound[0])) // 2
-    my = 20
+    tw = mbound[2] - mbound[0]
+    th = mbound[3] - mbound[1]
+    mx = (1000 - tw) // 2
+    my = 22
     
     # Golden glow shadow
     for ox in [-1, 0, 1]:
         for oy in [-1, 0, 1]:
-            draw.text((mx + ox, my + oy), main_text, font=font_main, fill=(255, 215, 0, 100))
-    draw.text((mx, my), main_text, font=font_main, fill=(255, 230, 160, 240))
+            draw.text((mx + ox, my + oy), main_text, font=font_main, fill=(255, 215, 0, 90))
+    draw.text((mx, my), main_text, font=font_main, fill=(255, 230, 160, 245))
+
+    # Vector 4-pointed stars with celestial wings
+    def draw_star(cx, cy, r_out, r_in):
+        pts = []
+        for i in range(8):
+            ang = i * (math.pi / 4)
+            r = r_out if i % 2 == 0 else r_in
+            pts.append((cx + r * math.sin(ang), cy - r * math.cos(ang)))
+        for ox in [-1, 0, 1]:
+            for oy in [-1, 0, 1]:
+                gpts = [(px + ox, py + oy) for px, py in pts]
+                draw.polygon(gpts, fill=(255, 215, 0, 80))
+        draw.polygon(pts, fill=(255, 230, 160, 255))
+        draw.line([(cx - 38, cy), (cx - 16, cy)], fill=(255, 215, 0, 160), width=1)
+        draw.line([(cx + 16, cy), (cx + 38, cy)], fill=(255, 215, 0, 160), width=1)
+
+    star_y = my + th // 2
+    draw_star(mx - 65, star_y, 11, 3.5)
+    draw_star(mx + tw + 65, star_y, 11, 3.5)
     
     sub_text = "ALCHEMICAL INTELLIGENCE · CRYPTOGRAPHIC VAULT · OFFENSIVE SECURITY"
     sbound = draw.textbbox((0, 0), sub_text, font=font_sub)

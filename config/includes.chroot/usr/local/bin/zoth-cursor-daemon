@@ -26,12 +26,17 @@ latest_payload = '{"x":960,"y":540,"timestamp":0}'
 class CursorHTTPHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         global latest_payload
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.end_headers()
-        self.wfile.write(latest_payload.encode())
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(latest_payload.encode())
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+        except Exception:
+            pass
 
     def log_message(self, format, *args):
         pass
