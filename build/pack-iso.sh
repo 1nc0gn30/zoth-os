@@ -117,9 +117,16 @@ sudo rsync -aHAX ../../config/hooks/ config/hooks/ 2>/dev/null || true
 
 echo "✦ Building live hybrid ISO..."
 sudo rm -rf .build/binary_* binary live-image-amd64.hybrid.iso
+sudo test -f chroot.files || sudo touch chroot.files
+if [ -d chroot/etc/needrestart ]; then
+    sudo mkdir -p chroot/etc/needrestart/conf.d
+    echo '$nrconf{restart} = "l";' | sudo tee chroot/etc/needrestart/conf.d/99-no-prompt.conf >/dev/null
+fi
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
 unset LIVE_BUILD
 export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
-yes | sudo -E MKSQUASHFS_OPTIONS="-processors 3 -mem 3G" lb binary 2>&1 | tee /tmp/lb-binary.log
+yes | sudo -E DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a MKSQUASHFS_OPTIONS="-processors 3 -mem 3G" lb binary 2>&1 | tee /tmp/lb-binary.log
 test -f live-image-amd64.hybrid.iso
 
 cp -f live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
