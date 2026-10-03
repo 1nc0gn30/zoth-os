@@ -11,8 +11,8 @@
       --gold-dark: #B8860B;
       --gold-glow: rgba(255, 215, 0, 0.4);
       --gold-border: rgba(255, 215, 0, 0.42);
-      --bg-dark: rgba(9, 10, 15, 0.94);
-      --panel-bg: rgba(17, 19, 27, 0.82);
+      --bg-dark: rgba(9, 10, 15, 0.95);
+      --panel-bg: rgba(17, 19, 27, 0.84);
       --text-main: #F5E9C5;
       --text-muted: #A39B86;
       --cyan-accent: #00E5FF;
@@ -44,7 +44,7 @@
       background: var(--bg-dark);
       border: 1px solid var(--gold-border);
       border-radius: 14px;
-      box-shadow: 0 18px 52px rgba(0, 0, 0, 0.92), 0 0 26px rgba(255, 215, 0, 0.16);
+      box-shadow: 0 18px 56px rgba(0, 0, 0, 0.94), 0 0 28px rgba(255, 215, 0, 0.16);
       backdrop-filter: blur(20px);
       display: flex;
       flex-direction: column;
@@ -68,7 +68,7 @@
 
     /* Header Bar */
     header {
-      height: 42px;
+      height: 38px;
       padding: 0 12px;
       display: flex;
       align-items: center;
@@ -81,20 +81,20 @@
     .title-group {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
     .pillar-symbol {
       color: var(--gold-bright);
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       text-shadow: 0 0 12px var(--gold-glow);
     }
 
     .title-text {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 1.6px;
+      letter-spacing: 1.4px;
       color: var(--gold-bright);
       text-transform: uppercase;
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
@@ -104,9 +104,9 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 9px;
-      letter-spacing: 1px;
-      padding: 2px 7px;
+      font-size: 8.5px;
+      letter-spacing: 0.8px;
+      padding: 1px 6px;
       border-radius: 10px;
       background: rgba(0, 230, 118, 0.12);
       border: 1px solid rgba(0, 230, 118, 0.35);
@@ -114,8 +114,8 @@
     }
 
     .status-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--green-online);
       box-shadow: 0 0 6px var(--green-online);
@@ -144,7 +144,7 @@
       border: 1px solid rgba(255, 215, 0, 0.25);
       border-radius: 5px;
       color: var(--gold-bright);
-      font-size: 11px;
+      font-size: 10.5px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -160,36 +160,49 @@
       border-color: var(--gold-primary);
     }
 
-    .formula-deck-btn {
-      padding: 2px 7px;
+    /* ── Navigation Mode Bar ───────────────────────────────────────────────── */
+    .nav-tabs-bar {
+      display: flex;
+      padding: 3px 12px 0 12px;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+      background: rgba(0, 0, 0, 0.25);
+      -webkit-app-region: no-drag;
+    }
+
+    .nav-tab {
+      padding: 4px 8px;
       font-size: 8.5px;
       font-weight: 800;
       letter-spacing: 0.8px;
-      background: rgba(255, 215, 0, 0.1);
-      border: 1px solid var(--gold-border);
-      border-radius: 4px;
-      color: var(--gold-bright);
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
       cursor: pointer;
+      text-transform: uppercase;
       transition: all 0.15s ease;
     }
 
-    .formula-deck-btn:hover {
-      background: rgba(255, 215, 0, 0.25);
-      color: #FFF;
-      box-shadow: 0 0 8px var(--gold-glow);
+    .nav-tab:hover {
+      color: var(--gold-bright);
+    }
+
+    .nav-tab.active {
+      color: var(--gold-bright);
+      border-bottom-color: var(--gold-primary);
+      text-shadow: 0 0 8px var(--gold-glow);
     }
 
     /* Agent Dropdown Bar */
     .agent-selector-bar {
-      padding: 7px 14px 4px 14px;
+      padding: 6px 14px 4px 14px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       -webkit-app-region: no-drag;
     }
 
     .selector-label {
-      font-size: 8.5px;
+      font-size: 8px;
       letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--text-muted);
@@ -207,7 +220,7 @@
       background: rgba(14, 16, 24, 0.96);
       border: 1px solid var(--gold-border);
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 5px 10px;
       color: var(--gold-bright);
       font-size: 11px;
       font-weight: 700;
@@ -224,7 +237,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: var(--gold-primary);
-      font-size: 9px;
+      font-size: 8.5px;
       pointer-events: none;
     }
 
@@ -232,55 +245,122 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 9.5px;
+      font-size: 9px;
       padding: 1px 2px;
     }
 
     .meta-model {
       color: var(--text-muted);
       font-family: monospace;
-      font-size: 9px;
+      font-size: 8.5px;
     }
 
     .meta-phase-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .meta-phase {
-      padding: 1px 7px;
+      padding: 1px 6px;
       border-radius: 4px;
       background: rgba(255, 215, 0, 0.15);
       border: 1px solid rgba(255, 215, 0, 0.3);
       color: var(--gold-bright);
       font-weight: bold;
       letter-spacing: 0.8px;
-      font-size: 8.5px;
+      font-size: 8px;
     }
 
     .meta-markov {
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
       background: rgba(0, 229, 255, 0.12);
       border: 1px solid rgba(0, 229, 255, 0.3);
       color: var(--cyan-accent);
       font-weight: bold;
-      font-size: 8px;
+      font-size: 7.5px;
       letter-spacing: 0.6px;
     }
 
-    /* ── Main Pillars Grid ─────────────────────────────────────────────────── */
-    .pillars-container {
+    /* ── Smart Cognitive Diagnostic Ticker ──────────────────────────────────── */
+    .smart-oracle-ticker {
+      margin: 2px 14px 4px 14px;
+      background: rgba(14, 18, 26, 0.85);
+      border: 1px solid rgba(0, 229, 255, 0.28);
+      border-radius: 6px;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.05);
+    }
+
+    .oracle-icon {
+      font-size: 13px;
+      color: var(--cyan-accent);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    .oracle-body {
       flex: 1;
-      padding: 6px 14px;
+      font-size: 8.5px;
+      line-height: 1.35;
+      color: #DDE5F0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .oracle-badge {
+      font-size: 7.5px;
+      font-weight: bold;
+      font-family: monospace;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(0, 230, 118, 0.12);
+      color: var(--green-online);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      white-space: nowrap;
+    }
+
+    /* ── Main Views Container ──────────────────────────────────────────────── */
+    #tab-content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      position: relative;
+    }
+
+    .view-pane {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .view-pane.active {
+      display: flex;
+    }
+
+    /* ── Pillars Grid ──────────────────────────────────────────────────────── */
+    .pillars-container {
+      padding: 4px 14px;
       display: grid;
       grid-template-columns: 96px 1fr;
       gap: 12px;
       min-height: 0;
+      flex-shrink: 0;
     }
 
-    /* Left: Pillar III - Context Cylinder (KV Tensor Space) */
+    /* Left: Pillar III - Context Cylinder */
     .cylinder-pillar {
       background: var(--panel-bg);
       border: 1px solid rgba(255, 215, 0, 0.28);
@@ -288,7 +368,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 8px 4px;
+      padding: 7px 4px;
       position: relative;
     }
 
@@ -301,16 +381,16 @@
     }
 
     .cylinder-title {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       color: var(--gold-bright);
       letter-spacing: 0.8px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       text-align: center;
     }
 
     .glass-tube {
-      flex: 1;
+      height: 165px;
       width: 44px;
       background: rgba(0, 0, 0, 0.68);
       border: 1.5px solid rgba(255, 215, 0, 0.45);
@@ -353,7 +433,7 @@
       flex-direction: column;
       justify-content: space-between;
       pointer-events: none;
-      padding: 10px 0;
+      padding: 8px 0;
     }
 
     .tick { width: 5px; height: 1px; background: rgba(255, 215, 0, 0.45); }
@@ -363,7 +443,7 @@
       font-size: 11px;
       font-weight: 800;
       color: var(--gold-bright);
-      margin-top: 5px;
+      margin-top: 4px;
       font-family: monospace;
     }
 
@@ -379,7 +459,7 @@
       font-size: 8px;
       color: var(--cyan-accent);
       font-family: monospace;
-      margin-top: 3px;
+      margin-top: 2px;
       font-weight: 600;
     }
 
@@ -394,7 +474,7 @@
     .gauges-pillar {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
       min-height: 0;
     }
 
@@ -402,10 +482,10 @@
       background: var(--panel-bg);
       border: 1px solid rgba(255, 215, 0, 0.22);
       border-radius: 9px;
-      padding: 6px 10px;
+      padding: 5px 9px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2.5px;
       position: relative;
     }
 
@@ -413,7 +493,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 8.5px;
+      font-size: 8px;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       color: var(--text-muted);
@@ -421,12 +501,12 @@
 
     .gauge-formula {
       font-family: monospace;
-      font-size: 8px;
+      font-size: 7.5px;
       color: var(--gold-dark);
     }
 
     .gauge-val-big {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--gold-bright);
       font-family: monospace;
@@ -436,17 +516,17 @@
     }
 
     .gauge-val-big span.unit {
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 500;
       color: var(--text-muted);
     }
 
     .accel-badge {
-      font-size: 8.5px;
+      font-size: 8px;
       font-family: monospace;
       color: var(--green-online);
       background: rgba(0, 230, 118, 0.1);
-      padding: 1px 5px;
+      padding: 1px 4px;
       border-radius: 3px;
       border: 1px solid rgba(0, 230, 118, 0.25);
     }
@@ -458,7 +538,7 @@
     }
 
     .segmented-bar {
-      height: 6px;
+      height: 5px;
       background: rgba(0, 0, 0, 0.55);
       border: 1px solid rgba(255, 215, 0, 0.22);
       border-radius: 4px;
@@ -476,10 +556,9 @@
       transition: width 0.35s ease;
     }
 
-    /* Attention Softmax Wave Canvas */
     #entropy-canvas {
       width: 100%;
-      height: 38px;
+      height: 34px;
       background: rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(255, 215, 0, 0.18);
       border-radius: 5px;
@@ -488,7 +567,7 @@
     .mini-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 5px;
+      gap: 4px;
       margin-top: 1px;
     }
 
@@ -496,19 +575,19 @@
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 215, 0, 0.15);
       border-radius: 4px;
-      padding: 3px 5px;
+      padding: 2px 4px;
       text-align: center;
     }
 
     .mini-stat-lbl {
-      font-size: 7px;
+      font-size: 6.5px;
       text-transform: uppercase;
       color: var(--text-muted);
       letter-spacing: 0.5px;
     }
 
     .mini-stat-val {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: bold;
       color: var(--gold-bright);
       font-family: monospace;
@@ -517,14 +596,15 @@
 
     /* ── Mathematical Why & How Stream ──────────────────────────────────────── */
     .log-section {
-      height: 135px;
-      margin: 0 14px 8px 14px;
+      flex: 1;
+      margin: 4px 14px 6px 14px;
       background: rgba(7, 8, 12, 0.92);
       border: 1px solid rgba(255, 215, 0, 0.22);
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-height: 120px;
     }
 
     .log-header {
@@ -534,11 +614,31 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--gold-primary);
+    }
+
+    .log-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 3px;
+      color: var(--text-muted);
+      font-size: 7.5px;
+      font-weight: bold;
+      padding: 1px 5px;
+      cursor: pointer;
       text-transform: uppercase;
+      transition: all 0.12s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--gold-bright);
+      border-color: var(--gold-primary);
     }
 
     .log-stream {
@@ -546,11 +646,11 @@
       padding: 6px 8px;
       overflow-y: auto;
       font-family: monospace;
-      font-size: 8.8px;
+      font-size: 8.5px;
       line-height: 1.45;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
 
     .log-stream::-webkit-scrollbar { width: 3px; }
@@ -562,60 +662,209 @@
     .log-entry {
       color: #E2D7BC;
       border-left: 2px solid rgba(255, 215, 0, 0.45);
-      padding-left: 5px;
+      padding: 3px 6px;
+      background: rgba(255, 215, 0, 0.02);
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .log-entry .time { color: var(--text-muted); font-size: 7.5px; margin-right: 4px; }
-    .log-entry .phase { color: var(--gold-bright); font-weight: bold; margin-right: 4px; }
-    .log-entry .markov { color: var(--cyan-accent); font-size: 8px; margin-right: 4px; }
-    .log-entry .entropy { color: var(--gold-primary); font-size: 8px; margin-left: 4px; }
+    .log-entry:hover {
+      background: rgba(255, 215, 0, 0.08);
+      border-left-color: var(--gold-bright);
+    }
 
-    /* Footer Bar */
-    footer {
-      height: 26px;
-      padding: 0 14px;
-      border-top: 1px solid rgba(255, 215, 0, 0.15);
+    .log-entry.expanded {
+      background: rgba(18, 22, 32, 0.95);
+      border-left: 2px solid var(--cyan-accent);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .log-summary-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 8.5px;
-      color: var(--text-muted);
-      background: rgba(0, 0, 0, 0.25);
     }
 
-    .test-pulse-btn {
-      background: transparent;
-      border: 1px solid rgba(255, 215, 0, 0.25);
-      border-radius: 4px;
-      color: var(--gold-bright);
+    .log-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .log-entry .time { color: var(--text-muted); font-size: 7.5px; }
+    .log-entry .phase { color: var(--gold-bright); font-weight: bold; }
+    .log-entry .markov { color: var(--cyan-accent); font-size: 7.5px; }
+    .log-entry .entropy { color: var(--gold-primary); font-size: 7.5px; }
+
+    /* Expanded Details Drawer inside Log */
+    .log-detail-card {
+      display: none;
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px dashed rgba(255, 215, 0, 0.2);
       font-size: 8px;
-      padding: 2px 6px;
-      cursor: pointer;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .detail-item {
+      display: flex;
+      gap: 5px;
+    }
+
+    .detail-lbl {
+      color: var(--gold-bright);
+      font-weight: bold;
+      min-width: 65px;
+    }
+
+    .detail-txt {
+      color: #E6EDF5;
+      line-height: 1.35;
+    }
+
+    /* ── Cognitive Oracle Panel View ────────────────────────────────────────── */
+    #view-oracle {
+      padding: 10px 14px;
+      overflow-y: auto;
+      gap: 8px;
+    }
+
+    .oracle-card {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 215, 0, 0.22);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .oracle-card-title {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .oracle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .oracle-metric-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      border-radius: 5px;
+      padding: 6px;
+    }
+
+    .oracle-metric-box .val {
+      font-size: 14px;
+      font-weight: 800;
+      font-family: monospace;
+      color: var(--cyan-accent);
+      margin-top: 2px;
+    }
+
+    .nodes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8px;
+      margin-top: 4px;
+      font-family: monospace;
+    }
+
+    .nodes-table th {
+      text-align: left;
+      color: var(--gold-primary);
+      padding: 3px 4px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .nodes-table td {
+      padding: 3px 4px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+      color: #E2E8F0;
+    }
+
+    /* ── Controls & Export View ────────────────────────────────────────────── */
+    #view-controls {
+      padding: 10px 14px;
+      overflow-y: auto;
+      gap: 10px;
+    }
+
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(18, 20, 28, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 6px;
+    }
+
+    .action-btn-gold {
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid var(--gold-border);
+      border-radius: 5px;
+      color: var(--gold-bright);
+      font-size: 9px;
+      font-weight: bold;
+      padding: 5px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       transition: all 0.15s ease;
     }
-    .test-pulse-btn:hover {
-      background: rgba(255, 215, 0, 0.2);
+
+    .action-btn-gold:hover {
+      background: rgba(255, 215, 0, 0.28);
       color: #FFF;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .toast-banner {
+      display: none;
+      padding: 6px 10px;
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid var(--green-online);
+      border-radius: 5px;
+      color: var(--green-online);
+      font-size: 8.5px;
+      font-family: monospace;
     }
 
     /* ── Mathematical Proof Inspector Overlay ──────────────────────────────── */
     #formula-deck-overlay {
       position: absolute;
-      top: 42px;
+      top: 38px;
       left: 0;
       right: 0;
-      bottom: 26px;
-      background: rgba(8, 9, 14, 0.97);
+      bottom: 24px;
+      background: rgba(8, 9, 14, 0.98);
       backdrop-filter: blur(24px);
       border-top: 1px solid var(--gold-border);
       display: none;
       flex-direction: column;
-      padding: 12px 16px;
+      padding: 10px 14px;
       z-index: 100;
       overflow-y: auto;
-      gap: 10px;
+      gap: 8px;
     }
 
     #formula-deck-overlay.active {
@@ -627,14 +876,14 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid rgba(255, 215, 0, 0.25);
-      padding-bottom: 6px;
+      padding-bottom: 5px;
     }
 
     .deck-title {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       color: var(--gold-bright);
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
     }
 
@@ -642,7 +891,7 @@
       background: transparent;
       border: none;
       color: var(--gold-bright);
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
     }
 
@@ -650,21 +899,21 @@
       background: rgba(18, 20, 28, 0.7);
       border: 1px solid rgba(255, 215, 0, 0.2);
       border-radius: 6px;
-      padding: 8px 10px;
+      padding: 7px 9px;
       display: flex;
       flex-direction: column;
       gap: 3px;
     }
 
     .deck-pillar-name {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: bold;
       color: var(--gold-primary);
     }
 
     .deck-formula {
       font-family: monospace;
-      font-size: 9.5px;
+      font-size: 9px;
       color: var(--cyan-accent);
       background: rgba(0, 0, 0, 0.5);
       padding: 3px 6px;
@@ -673,10 +922,23 @@
     }
 
     .deck-proof {
-      font-size: 8.5px;
+      font-size: 8px;
       color: var(--text-main);
-      line-height: 1.4;
+      line-height: 1.35;
       margin-top: 2px;
+    }
+
+    /* Footer Bar */
+    footer {
+      height: 24px;
+      padding: 0 14px;
+      border-top: 1px solid rgba(255, 215, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 8px;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.3);
     }
 
     /* ── Compact Pill View ─────────────────────────────────────────────────── */
@@ -691,22 +953,18 @@
       cursor: grab;
     }
 
-    body.compact-mode #pillar-root {
-      border-radius: 24px;
-    }
-
+    body.compact-mode #pillar-root { border-radius: 24px; }
     body.compact-mode header,
+    body.compact-mode .nav-tabs-bar,
     body.compact-mode .agent-selector-bar,
-    body.compact-mode .pillars-container,
-    body.compact-mode .log-section,
+    body.compact-mode .smart-oracle-ticker,
+    body.compact-mode #tab-content-area,
     body.compact-mode footer,
     body.compact-mode #formula-deck-overlay {
       display: none !important;
     }
 
-    body.compact-mode #compact-pill {
-      display: flex !important;
-    }
+    body.compact-mode #compact-pill { display: flex !important; }
 
     .pill-left {
       display: flex;
@@ -747,14 +1005,21 @@
         </div>
       </div>
       <div class="controls-group">
-        <button class="formula-deck-btn" id="btn-toggle-deck" title="Inspect Mathematical Formulations">π PROOF DECK</button>
         <button class="ctrl-btn pinned" id="btn-pin" title="Always on Top">📌</button>
         <button class="ctrl-btn" id="btn-compact" title="Compact Pill Mode">⤡</button>
         <button class="ctrl-btn" id="btn-close" title="Close">✕</button>
       </div>
     </header>
 
-    <!-- 2. Agent Selector Dropdown -->
+    <!-- 2. Mode Navigation Tabs -->
+    <div class="nav-tabs-bar">
+      <div class="nav-tab active" data-view="view-pillars">📊 Pillars HUD</div>
+      <div class="nav-tab" data-view="view-oracle">🧠 Cognitive Oracle</div>
+      <div class="nav-tab" data-view="view-controls">⚙️ Options & Export</div>
+      <div class="nav-tab" id="btn-proof-deck">π Proof Deck</div>
+    </div>
+
+    <!-- 3. Target Agent Selector -->
     <div class="agent-selector-bar">
       <div class="selector-label">
         <span>Active Telemetry Target</span>
@@ -775,107 +1040,240 @@
       </div>
     </div>
 
-    <!-- 3. The Pillars Grid -->
-    <div class="pillars-container">
-      <!-- Left Pillar: Pillar III (Context Cylinder & KV-Cache Tensor Space) -->
-      <div class="cylinder-pillar">
-        <span class="pillar-tag">Pillar III</span>
-        <div class="cylinder-title">𝛀_KV Ctx</div>
-        <div class="glass-tube">
-          <div class="tube-liquid" id="tube-level"></div>
-          <div class="tube-ticks">
-            <div class="tick major"></div>
-            <div class="tick"></div>
-            <div class="tick"></div>
-            <div class="tick major"></div>
-            <div class="tick"></div>
-            <div class="tick"></div>
-            <div class="tick major"></div>
+    <!-- 4. Smart Cognitive Oracle Ticker -->
+    <div class="smart-oracle-ticker">
+      <span class="oracle-icon">🧠</span>
+      <div class="oracle-body" id="oracle-ticker-text">
+        Analyzing cognitive telemetry...
+      </div>
+      <span class="oracle-badge" id="oracle-ticker-badge">DIRAC COHERENT</span>
+    </div>
+
+    <!-- 5. View Content Area -->
+    <div id="tab-content-area">
+      <!-- VIEW 1: PILLARS & EVENT STREAM (Default) -->
+      <div class="view-pane active" id="view-pillars">
+        <!-- Pillars Grid -->
+        <div class="pillars-container">
+          <!-- Left: Pillar III (Context Cylinder & KV Tensor Space) -->
+          <div class="cylinder-pillar">
+            <span class="pillar-tag">Pillar III</span>
+            <div class="cylinder-title">𝛀_KV Ctx</div>
+            <div class="glass-tube">
+              <div class="tube-liquid" id="tube-level"></div>
+              <div class="tube-ticks">
+                <div class="tick major"></div>
+                <div class="tick"></div>
+                <div class="tick"></div>
+                <div class="tick major"></div>
+                <div class="tick"></div>
+                <div class="tick"></div>
+                <div class="tick major"></div>
+              </div>
+            </div>
+            <div class="cylinder-val" id="context-pct">5.2%</div>
+            <div class="cylinder-sub" id="context-raw">54.2k / 1.05M</div>
+            <div class="cylinder-kv" id="kv-cache-val">KV: 108.4 MB</div>
+            <div class="cylinder-dim" id="dim-val">d: ℝ⁴⁰⁹⁶</div>
+          </div>
+
+          <!-- Right: Pillars I, II & IV -->
+          <div class="gauges-pillar">
+            <!-- Pillar II: Velocity & Acceleration -->
+            <div class="gauge-card">
+              <div class="gauge-header">
+                <span>Pillar II: ∂T/∂t Velocity</span>
+                <span class="gauge-formula">v_T = ∂T/∂t</span>
+              </div>
+              <div class="gauge-val-big">
+                <span id="velocity-display">88 <span class="unit">tok/sec</span></span>
+                <span class="accel-badge" id="accel-display">+3.2 a_T</span>
+              </div>
+              <div class="segmented-bar">
+                <div class="bar-fill" id="velocity-bar" style="width: 58%;"></div>
+              </div>
+            </div>
+
+            <!-- Pillar I: Shannon Attention Entropy & Perplexity -->
+            <div class="gauge-card">
+              <div class="gauge-header">
+                <span>Pillar I: 𝚮 Attention Entropy</span>
+                <span id="entropy-val" style="color: var(--cyan-accent); font-family: monospace;">0.138 [DIRAC COHERENT]</span>
+              </div>
+              <canvas id="entropy-canvas" width="320" height="34"></canvas>
+              <div class="mini-stats-grid">
+                <div class="mini-stat">
+                  <div class="mini-stat-lbl">Perplexity (2^𝚮)</div>
+                  <div class="mini-stat-val" id="ppl-val">1.100</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="mini-stat-lbl">Confidence ℙ</div>
+                  <div class="mini-stat-val" id="confidence-val">97.0%</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="mini-stat-lbl">Gradient ∇J</div>
+                  <div class="mini-stat-val" id="gradient-val">0.016</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pillar IV: Bayesian Step Vector & Memory -->
+            <div class="gauge-card">
+              <div class="gauge-header">
+                <span>Pillar IV: Bayesian Step Vector</span>
+                <span id="vram-val" style="color: var(--gold-bright); font-family: monospace;">VRAM: 850 MB</span>
+              </div>
+              <div class="segmented-bar" style="height: 5px; margin-top: 1px;">
+                <div class="bar-fill" id="step-bar" style="width: 52%; background: linear-gradient(90deg, #00E5FF, #FFD700);"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="cylinder-val" id="context-pct">5.2%</div>
-        <div class="cylinder-sub" id="context-raw">54.2k / 1.05M</div>
-        <div class="cylinder-kv" id="kv-cache-val">KV: 108.4 MB</div>
-        <div class="cylinder-dim" id="dim-val">d: ℝ⁴⁰⁹⁶</div>
+
+        <!-- Mathematical Why & How Stream -->
+        <div class="log-section">
+          <div class="log-header">
+            <span style="font-size: 8px; font-weight: 700; color: var(--gold-primary); text-transform: uppercase;">
+              ❯ Mathematical Why & How Stream
+            </span>
+            <div class="log-filter-group">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="reason">Reason</button>
+              <button class="filter-btn" data-filter="tool">Tools</button>
+              <button class="filter-btn" data-filter="anomaly">Anomalies</button>
+            </div>
+          </div>
+          <div class="log-stream" id="log-stream">
+            <div class="log-entry">
+              <div class="log-summary-row">
+                <div class="log-summary-left">
+                  <span class="time">[21:05:00]</span>
+                  <span class="phase">[Antigravity]</span>
+                  <span class="markov">REASONING</span>
+                  <span>Awaiting mathematical telemetry frames...</span>
+                </div>
+                <span class="entropy">H:0.138</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Right Pillar Modules: Pillars I, II & IV -->
-      <div class="gauges-pillar">
-        <!-- Pillar II: Calculus & Token Flux -->
-        <div class="gauge-card">
-          <div class="gauge-header">
-            <span>Pillar II: ∂T/∂t Velocity</span>
-            <span class="gauge-formula">v_T = ∂T/∂t</span>
+      <!-- VIEW 2: COGNITIVE ORACLE (Deep Diagnostics) -->
+      <div class="view-pane" id="view-oracle">
+        <div class="oracle-card">
+          <div class="oracle-card-title">
+            <span>Cognitive State Stability</span>
+            <span id="oracle-diag-status" style="color: var(--green-online);">OPTIMAL</span>
           </div>
-          <div class="gauge-val-big">
-            <span id="velocity-display">88 <span class="unit">tok/sec</span></span>
-            <span class="accel-badge" id="accel-display">+3.2 a_T</span>
+          <div class="oracle-grid">
+            <div class="oracle-metric-box">
+              <div class="mini-stat-lbl">Coherence Score</div>
+              <div class="val" id="oracle-coherence-val">96%</div>
+            </div>
+            <div class="oracle-metric-box">
+              <div class="mini-stat-lbl">Hallucination Risk</div>
+              <div class="val" id="oracle-risk-val" style="color: var(--green-online);">MINIMAL</div>
+            </div>
           </div>
-          <div class="segmented-bar">
-            <div class="bar-fill" id="velocity-bar" style="width: 58%;"></div>
+          <div style="font-size: 8.5px; color: #CCD5E0; line-height: 1.4; margin-top: 4px;" id="oracle-full-summary">
+            Loading deep cognitive analysis...
           </div>
         </div>
 
-        <!-- Pillar I: Information Theory & Attention Entropy -->
-        <div class="gauge-card">
-          <div class="gauge-header">
-            <span>Pillar I: 𝚮 Attention Entropy</span>
-            <span id="entropy-val" style="color: var(--cyan-accent); font-family: monospace;">0.138 [DIRAC COHERENT]</span>
+        <div class="oracle-card">
+          <div class="oracle-card-title">
+            <span>Autonomous Mathematical Heuristic</span>
           </div>
-          <canvas id="entropy-canvas" width="310" height="38"></canvas>
-          <div class="mini-stats-grid">
-            <div class="mini-stat">
-              <div class="mini-stat-lbl">Perplexity (2^𝚮)</div>
-              <div class="mini-stat-val" id="ppl-val">1.100</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-stat-lbl">Confidence ℙ</div>
-              <div class="mini-stat-val" id="confidence-val">97.0%</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-stat-lbl">Gradient ∇J</div>
-              <div class="mini-stat-val" id="gradient-val">0.016</div>
-            </div>
+          <div style="font-size: 8.5px; color: var(--gold-bright); font-style: italic; line-height: 1.35;" id="oracle-recommendation">
+            Nominal operational status. All mathematical invariants within bounds.
           </div>
         </div>
 
-        <!-- Pillar IV: Bayesian Step Progression & VRAM -->
-        <div class="gauge-card">
-          <div class="gauge-header">
-            <span>Pillar IV: Bayesian Step Vector</span>
-            <span id="vram-val" style="color: var(--gold-bright); font-family: monospace;">VRAM: 850 MB</span>
+        <div class="oracle-card" style="flex: 1; min-height: 140px; display: flex; flex-direction: column;">
+          <div class="oracle-card-title">
+            <span>Active Swarm Mesh Nodes</span>
+            <span id="oracle-nodes-count" style="font-size: 8px; color: var(--text-muted);">4 Online</span>
           </div>
-          <div class="segmented-bar" style="height: 6px; margin-top: 2px;">
-            <div class="bar-fill" id="step-bar" style="width: 52%; background: linear-gradient(90deg, #00E5FF, #FFD700);"></div>
+          <div style="flex: 1; overflow-y: auto;">
+            <table class="nodes-table" id="nodes-table">
+              <thead>
+                <tr>
+                  <th>Agent</th>
+                  <th>Model</th>
+                  <th>Phase</th>
+                  <th>Speed</th>
+                  <th>RAM</th>
+                </tr>
+              </thead>
+              <tbody id="nodes-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: CONTROLS & EXPORT -->
+      <div class="view-pane" id="view-controls">
+        <div class="control-row">
+          <div>
+            <div style="font-size: 10px; font-weight: bold; color: var(--gold-bright);">Export Telemetry Audit</div>
+            <div style="font-size: 8px; color: var(--text-muted);">Generate Markdown report to ~/.local/share/zothos/</div>
+          </div>
+          <button class="action-btn-gold" id="btn-export-audit">📥 Export (.md)</button>
+        </div>
+
+        <div class="toast-banner" id="export-toast">
+          Report saved successfully!
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div style="font-size: 10px; font-weight: bold; color: var(--gold-bright);">Reset Token Accumulator</div>
+            <div style="font-size: 8px; color: var(--text-muted);">Clear session cumulative token integral (∫ v_T dt)</div>
+          </div>
+          <button class="action-btn-gold" id="btn-reset-integrals">🔄 Reset</button>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div style="font-size: 10px; font-weight: bold; color: var(--gold-bright);">Clear Stream History</div>
+            <div style="font-size: 8px; color: var(--text-muted);">Flush log buffer for selected agent</div>
+          </div>
+          <button class="action-btn-gold" id="btn-clear-stream">🧹 Clear</button>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div style="font-size: 10px; font-weight: bold; color: var(--gold-bright);">Synthetic Telemetry Pulse</div>
+            <div style="font-size: 8px; color: var(--text-muted);">Inject synthetic attention step via loopback HTTP</div>
+          </div>
+          <button class="action-btn-gold" id="btn-inject-pulse">⚡ Inject Step</button>
+        </div>
+
+        <div class="oracle-card" style="margin-top: 4px;">
+          <div class="oracle-card-title">Telemetry Ingestion Endpoints</div>
+          <div style="font-size: 8.5px; font-family: monospace; color: var(--cyan-accent); line-height: 1.5; margin-top: 3px;">
+            • HTTP: http://127.0.0.1:9995/telemetry (POST)<br>
+            • Health: http://127.0.0.1:9995/health (GET)<br>
+            • Active: http://127.0.0.1:9995/active (GET)<br>
+            • UDP: 127.0.0.1:9996 (Datagram streaming)<br>
+            • CLI: /usr/local/bin/zoth-telemetry
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 4. Mathematical Why & How Event Stream -->
-    <div class="log-section">
-      <div class="log-header">
-        <span>❯ Mathematical Why & How Stream</span>
-        <span style="font-size: 8px; color: var(--text-muted);">AUTO-SYNC (1.5s)</span>
-      </div>
-      <div class="log-stream" id="log-stream">
-        <div class="log-entry">
-          <span class="time">[20:57:30]</span>
-          <span class="phase">[Antigravity]</span>
-          <span class="markov">REASONING</span>
-          <span>Attention manifold converged [H=0.138 bits, PPL=1.100, P(T|x)=0.98]</span>
-          <span class="entropy">H:0.138</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. Footer Bar -->
+    <!-- 6. Footer Bar -->
     <footer>
-      <span>Ingest: 127.0.0.1:9995/telemetry (HTTP/UDP)</span>
-      <button class="test-pulse-btn" id="btn-test-pulse">⚡ Inject Step</button>
+      <span id="footer-status-text">Ingest: 127.0.0.1:9995 (HTTP/UDP)</span>
+      <span style="color: var(--gold-primary); font-weight: bold; font-family: monospace;" id="footer-integral-tokens">
+        ∫ v_T dt: 0 tok
+      </span>
     </footer>
 
-    <!-- 6. Mathematical Proof Deck Drawer Overlay -->
+    <!-- 7. Mathematical Proof Deck Drawer Overlay -->
     <div id="formula-deck-overlay">
       <div class="deck-header">
         <span class="deck-title">✦ Classical Mathematical Pillars Formulation</span>
@@ -915,7 +1313,7 @@
       </div>
     </div>
 
-    <!-- 7. Compact Mode Overlay -->
+    <!-- 8. Compact Mode Overlay -->
     <div id="compact-pill">
       <div class="pill-left">
         <span style="color: var(--gold-bright); font-weight: bold; font-size: 14px;">𝛗</span>
@@ -934,7 +1332,9 @@
     const { ipcRenderer } = require('electron');
 
     let currentRegistry = {};
+    let currentInsights = {};
     let selectedAgentKey = 'ALL';
+    let activeFilter = 'all';
     let isCompact = false;
     let isPinned = true;
     let entropyHistory = Array(50).fill(0.138);
@@ -963,11 +1363,68 @@
 
     // Proof Deck Toggle
     const deckOverlay = document.getElementById('formula-deck-overlay');
-    document.getElementById('btn-toggle-deck').addEventListener('click', () => {
+    document.getElementById('btn-proof-deck').addEventListener('click', () => {
       deckOverlay.classList.toggle('active');
     });
     document.getElementById('btn-close-deck').addEventListener('click', () => {
       deckOverlay.classList.remove('active');
+    });
+
+    // Navigation Tabs
+    const navTabs = document.querySelectorAll('.nav-tab[data-view]');
+    navTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const viewId = tab.getAttribute('data-view');
+        document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+        const targetPane = document.getElementById(viewId);
+        if (targetPane) targetPane.classList.add('active');
+      });
+    });
+
+    // Log Stream Filter Buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        if (currentRegistry[selectedAgentKey]) {
+          renderLogs(currentRegistry[selectedAgentKey].logs || []);
+        }
+      });
+    });
+
+    // Controls Panel Buttons
+    document.getElementById('btn-export-audit').addEventListener('click', () => {
+      ipcRenderer.send('export-telemetry', selectedAgentKey);
+    });
+
+    document.getElementById('btn-clear-stream').addEventListener('click', () => {
+      ipcRenderer.send('clear-logs', selectedAgentKey);
+    });
+
+    document.getElementById('btn-reset-integrals').addEventListener('click', () => {
+      ipcRenderer.send('reset-integrals', selectedAgentKey);
+    });
+
+    document.getElementById('btn-inject-pulse').addEventListener('click', () => {
+      injectPulseStep();
+    });
+
+    ipcRenderer.on('export-result', (event, result) => {
+      const toast = document.getElementById('export-toast');
+      if (result.success) {
+        toast.style.display = 'block';
+        toast.textContent = `[✓] Exported ${result.count} steps to: ${result.filePath}`;
+        setTimeout(() => { toast.style.display = 'none'; }, 6000);
+      } else {
+        toast.style.display = 'block';
+        toast.style.color = '#FF5252';
+        toast.style.borderColor = '#FF5252';
+        toast.textContent = `[!] Export failed: ${result.error}`;
+      }
     });
 
     // Agent selector
@@ -977,8 +1434,7 @@
       updateUI();
     });
 
-    // Test pulse generator
-    document.getElementById('btn-test-pulse').addEventListener('click', () => {
+    function injectPulseStep() {
       const target = selectedAgentKey === 'ALL' ? 'Antigravity' : selectedAgentKey;
       const speed = 75 + Math.floor(Math.random() * 40);
       const ent = +(0.08 + Math.random() * 0.22).toFixed(3);
@@ -997,22 +1453,21 @@
           reasoning: `Attention manifold converged with Shannon entropy H=${ent} bits [PPL=${(Math.pow(2, ent)).toFixed(3)}]`
         })
       }).catch(() => {});
-    });
+    }
 
     ipcRenderer.on('telemetry-update', (event, payload) => {
       if (payload && payload.registry) {
         currentRegistry = payload.registry;
+        if (payload.insights) currentInsights = payload.insights;
         syncAgentDropdown();
         updateUI();
       }
     });
 
-    // Dynamically synchronize dropdown options with all registered AI tools
     function syncAgentDropdown() {
       const keys = Object.keys(currentRegistry);
       const currentVal = agentSelect.value || selectedAgentKey;
 
-      // Ensure 'ALL' is first, then online agents, then offline
       const sortedKeys = ['ALL', ...keys.filter(k => k !== 'ALL').sort((a, b) => {
         const aOnline = currentRegistry[a].online ? 1 : 0;
         const bOnline = currentRegistry[b].online ? 1 : 0;
@@ -1020,7 +1475,6 @@
         return a.localeCompare(b);
       })];
 
-      // Check if options changed
       const existingOptions = Array.from(agentSelect.options).map(o => o.value);
       const isDiff = sortedKeys.length !== existingOptions.length || sortedKeys.some((k, i) => k !== existingOptions[i]);
 
@@ -1046,6 +1500,7 @@
     function updateUI() {
       if (!currentRegistry[selectedAgentKey]) return;
       const data = currentRegistry[selectedAgentKey];
+      const insight = currentInsights[selectedAgentKey] || {};
 
       // Meta
       document.getElementById('agent-model-name').textContent = data.model || 'Unknown';
@@ -1055,7 +1510,17 @@
       const countOnline = Object.values(currentRegistry).filter(a => a.online && a.name !== 'ALL').length;
       document.getElementById('active-agent-count').textContent = `${countOnline} Active (Mesh)`;
 
-      // Pillar III: Context Cylinder & KV Tensor Space
+      // Smart Cognitive Diagnostic Ticker
+      const tickerText = insight.summary || `${data.name} active. Invariants nominal.`;
+      document.getElementById('oracle-ticker-text').textContent = tickerText;
+      const ent = data.entropy || 0.138;
+      let badgeLabel = 'DIRAC COHERENT';
+      if (ent >= 0.20 && ent < 0.40) badgeLabel = 'SYNTACTIC FOCUS';
+      else if (ent >= 0.40 && ent < 0.65) badgeLabel = 'BALANCED COGNITION';
+      else if (ent >= 0.65) badgeLabel = 'DIFFUSE SEARCH';
+      document.getElementById('oracle-ticker-badge').textContent = badgeLabel;
+
+      // Pillar III: Context Cylinder
       const maxCtx = data.contextMax || 1048576;
       const usedCtx = data.contextUsed || 0;
       const pct = Math.min(100, Math.max(1, Math.round((usedCtx / maxCtx) * 100)));
@@ -1079,21 +1544,20 @@
       accelElem.classList.toggle('amber', accel < 0);
 
       // Pillar I: Shannon Attention Entropy & Perplexity
-      const ent = data.entropy || 0.138;
-      let entLabel = '[DIRAC COHERENT]';
-      if (ent >= 0.20 && ent < 0.40) entLabel = '[SYNTACTIC FOCUS]';
-      else if (ent >= 0.40 && ent < 0.65) entLabel = '[BALANCED COGNITION]';
-      else if (ent >= 0.65) entLabel = '[DIFFUSE SEARCH]';
-
-      document.getElementById('entropy-val').textContent = `${ent.toFixed(3)} ${entLabel}`;
+      document.getElementById('entropy-val').textContent = `${ent.toFixed(3)} [${badgeLabel}]`;
       document.getElementById('ppl-val').textContent = (data.perplexity || Math.pow(2, ent)).toFixed(3);
       document.getElementById('confidence-val').textContent = `${Math.round((data.confidence || 0.96) * 100)}%`;
       document.getElementById('gradient-val').textContent = `${(data.gradientLoss || ent * 0.12).toFixed(3)}`;
 
-      // Pillar IV: Step & VRAM
+      // Pillar IV: Step & Memory
       const stepPct = Math.min(100, Math.round(((data.step || 1) / (data.maxSteps || 25)) * 100));
       document.getElementById('step-bar').style.width = `${stepPct}%`;
-      document.getElementById('vram-val').textContent = `VRAM: ${data.vramMb || 0} MB`;
+      const vramMb = data.vramMb || 0;
+      const vramDisp = vramMb >= 1024 ? `${(vramMb/1024).toFixed(2)} GB` : `${vramMb} MB`;
+      document.getElementById('vram-val').textContent = `RAM: ${vramDisp}`;
+
+      // Footer
+      document.getElementById('footer-integral-tokens').textContent = `∫ v_T dt: ${formatNum(data.cumulativeTokens || 0)} tok`;
 
       // Compact Mode
       document.getElementById('pill-agent-name').textContent = selectedAgentKey;
@@ -1104,25 +1568,96 @@
       entropyHistory.push(ent);
       if (entropyHistory.length > 50) entropyHistory.shift();
 
+      // Update Oracle View
+      updateOracleView(data, insight);
+
       // Render logs
       renderLogs(data.logs || []);
     }
 
+    function updateOracleView(data, insight) {
+      document.getElementById('oracle-diag-status').textContent = data.online ? (data.phase || 'ONLINE') : 'STANDBY';
+      document.getElementById('oracle-coherence-val').textContent = `${insight.coherenceScore || 96}%`;
+      const riskElem = document.getElementById('oracle-risk-val');
+      riskElem.textContent = insight.hallucinationRisk || 'MINIMAL';
+      riskElem.style.color = (insight.hallucinationRisk && insight.hallucinationRisk.includes('ELEVATED')) ? '#FFAB00' : '#00E676';
+      document.getElementById('oracle-full-summary').textContent = insight.summary || 'Operational telemetry nominal.';
+      document.getElementById('oracle-recommendation').textContent = `Heuristic: ${insight.recommendation || 'All mathematical invariants within bounds.'}`;
+
+      // Nodes table
+      const tbody = document.getElementById('nodes-table-body');
+      const activeEntries = Object.entries(currentRegistry).filter(([k, v]) => k !== 'ALL');
+      tbody.innerHTML = activeEntries.map(([k, node]) => `
+        <tr>
+          <td><span style="color: ${node.online ? 'var(--green-online)' : 'var(--text-muted)'};">●</span> <strong>${escapeHtml(k)}</strong></td>
+          <td style="color: var(--text-muted);">${escapeHtml(node.model || '')}</td>
+          <td><span style="color: var(--gold-bright);">${escapeHtml(node.phase || 'STANDBY')}</span></td>
+          <td style="color: var(--cyan-accent);">${node.tokensSec || 0} t/s</td>
+          <td>${node.vramMb || 0} MB</td>
+        </tr>
+      `).join('');
+      document.getElementById('oracle-nodes-count').textContent = `${Object.values(currentRegistry).filter(v => v.online && v.name !== 'ALL').length} Online`;
+    }
+
     function renderLogs(logs) {
       const stream = document.getElementById('log-stream');
-      if (logs.length === 0) {
-        stream.innerHTML = '<div style="color: var(--text-muted); font-size: 8.5px; padding: 4px;">Awaiting telemetry frames...</div>';
+      let filtered = logs;
+
+      if (activeFilter === 'reason') {
+        filtered = logs.filter(l => l.phase && (l.phase.includes('REASON') || (l.markovState && l.markovState.includes('REASON'))));
+      } else if (activeFilter === 'tool') {
+        filtered = logs.filter(l => l.tool || (l.markovState && l.markovState.includes('TOOL')));
+      } else if (activeFilter === 'anomaly') {
+        filtered = logs.filter(l => l.risk === 'ELEVATED' || (l.entropy !== undefined && l.entropy > 0.35));
+      }
+
+      if (filtered.length === 0) {
+        stream.innerHTML = '<div style="color: var(--text-muted); font-size: 8.5px; padding: 6px;">Awaiting telemetry frames for this filter...</div>';
         return;
       }
-      stream.innerHTML = logs.slice(0, 15).map(l => `
-        <div class="log-entry">
-          <span class="time">[${l.time}]</span>
-          <span class="phase">${escapeHtml(l.phase)}</span>
-          <span class="markov">${escapeHtml(l.markovState || 'EXEC')}</span>
-          <span>${escapeHtml(l.note)}</span>
-          <span class="entropy">H:${l.entropy !== undefined ? l.entropy : '0.14'}</span>
-        </div>
-      `).join('');
+
+      stream.innerHTML = filtered.slice(0, 20).map((l, idx) => {
+        const hasDetail = l.explanation || l.proof;
+        return `
+          <div class="log-entry" onclick="toggleLogDetail(this)">
+            <div class="log-summary-row">
+              <div class="log-summary-left">
+                <span class="time">[${l.time}]</span>
+                <span class="phase">${escapeHtml(l.agent ? `[${l.agent}]` : l.phase)}</span>
+                <span class="markov">${escapeHtml(l.markovState || 'EXEC')}</span>
+                <span>${escapeHtml(l.what || l.note)}</span>
+              </div>
+              <span class="entropy">H:${l.entropy !== undefined ? l.entropy : '0.14'}</span>
+            </div>
+            ${hasDetail ? `
+              <div class="log-detail-card">
+                <div class="detail-item">
+                  <span class="detail-lbl">❯ WHY:</span>
+                  <span class="detail-txt">${escapeHtml(l.explanation || l.note)}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-lbl">❯ PILLAR:</span>
+                  <span class="detail-txt" style="color: var(--cyan-accent);">${escapeHtml(l.pillar || 'Mathematical Formulation')}</span>
+                </div>
+                ${l.proof ? `
+                  <div class="detail-item">
+                    <span class="detail-lbl">❯ PROOF:</span>
+                    <span class="detail-txt" style="color: var(--gold-bright); font-family: monospace;">${escapeHtml(l.proof)}</span>
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleLogDetail(elem) {
+      elem.classList.toggle('expanded');
+      const detail = elem.querySelector('.log-detail-card');
+      if (detail) {
+        detail.style.display = elem.classList.contains('expanded') ? 'flex' : 'none';
+      }
     }
 
     function formatNum(n) {
@@ -1146,16 +1681,13 @@
       ctx.strokeStyle = 'rgba(255, 215, 0, 0.12)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(0, h - 6);
-      ctx.lineTo(w, h - 6);
+      ctx.moveTo(0, h - 5);
+      ctx.lineTo(w, h - 5);
       ctx.stroke();
 
       const latestEnt = entropyHistory[entropyHistory.length - 1] || 0.14;
       wavePhase += 0.045;
 
-      // Mathematical Attention Distribution:
-      // When entropy is low: narrow, sharp Dirac delta spike in gold/cyan.
-      // When entropy is high: broad multi-modal dispersed harmonic wave.
       ctx.beginPath();
       ctx.lineWidth = 2.0;
       ctx.strokeStyle = '#FFD700';
@@ -1167,32 +1699,29 @@
 
       for (let i = 0; i <= numPoints; i++) {
         const x = i * dx;
-        const normX = (i / numPoints) * 2 - 1; // -1 to +1
+        const normX = (i / numPoints) * 2 - 1;
 
-        // Dirac focus peak center with subtle harmonic drift
         const center = Math.sin(wavePhase * 0.4) * 0.18;
         const sigma = Math.max(0.12, latestEnt * 1.8);
         const gaussian = Math.exp(-Math.pow(normX - center, 2) / (2 * Math.pow(sigma, 2)));
 
-        // Multi-head harmonic modulation
         const harmonics = Math.sin(i * 0.35 + wavePhase) * (latestEnt * 0.25) +
                           Math.cos(i * 0.7 - wavePhase * 1.2) * (latestEnt * 0.15);
 
-        const amp = (h - 10) * Math.min(1.0, gaussian + harmonics);
-        const y = (h - 6) - amp;
+        const amp = (h - 8) * Math.min(1.0, gaussian + harmonics);
+        const y = (h - 5) - amp;
 
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      // Accentuate peak focus with glowing cyan marker
       const peakX = (w / 2) + Math.sin(wavePhase * 0.4) * 0.18 * (w / 2);
       ctx.fillStyle = '#00E5FF';
       ctx.shadowBlur = 12;
       ctx.shadowColor = '#00E5FF';
       ctx.beginPath();
-      ctx.arc(peakX, 8, 2.5, 0, Math.PI * 2);
+      ctx.arc(peakX, 7, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.shadowBlur = 0;
