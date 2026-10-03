@@ -243,8 +243,8 @@
     /* ── Navigation Mode Bar ───────────────────────────────────────────────── */
     .nav-tabs-bar {
       display: flex;
-      padding: 5px 12px 4px 12px;
-      gap: 5px;
+      padding: 5px 10px 4px 10px;
+      gap: 4px;
       border-bottom: 1px solid rgba(255, 215, 0, 0.16);
       background: rgba(4, 5, 8, 0.55);
       -webkit-app-region: no-drag;
@@ -254,10 +254,10 @@
 
     .nav-tab {
       flex: 1;
-      padding: 5px 4px;
-      font-size: 8px;
+      padding: 5px 3px;
+      font-size: 7.5px;
       font-weight: 700;
-      letter-spacing: 0.7px;
+      letter-spacing: 0.6px;
       color: var(--text-muted);
       border-radius: 6px;
       border: 1px solid transparent;
@@ -269,7 +269,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .nav-tab:hover {
@@ -288,10 +288,10 @@
 
     /* ── Agent Target Selector Bar ─────────────────────────────────────────── */
     .agent-selector-bar {
-      padding: 6px 14px 4px 14px;
+      padding: 5px 14px 4px 14px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       -webkit-app-region: no-drag;
       position: relative;
       z-index: 5;
@@ -317,9 +317,9 @@
       background: rgba(11, 14, 22, 0.95);
       border: 1px solid var(--gold-rim);
       border-radius: 7px;
-      padding: 6px 28px 6px 10px;
+      padding: 5px 28px 5px 10px;
       color: var(--gold-bright);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       letter-spacing: 0.5px;
       outline: none;
@@ -398,7 +398,7 @@
       border: 1px solid rgba(0, 229, 255, 0.28);
       border-left: 3px solid var(--cyan-accent);
       border-radius: 7px;
-      padding: 5px 9px;
+      padding: 4px 9px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -421,7 +421,7 @@
 
     .oracle-body {
       flex: 1;
-      font-size: 8.5px;
+      font-size: 8px;
       line-height: 1.35;
       color: #E0E8F2;
       white-space: nowrap;
@@ -433,7 +433,7 @@
       font-size: 7.5px;
       font-weight: 800;
       font-family: 'Fira Code', monospace;
-      padding: 2px 6px;
+      padding: 1px 6px;
       border-radius: 4px;
       background: rgba(0, 230, 118, 0.14);
       color: var(--green-online);
@@ -462,6 +462,323 @@
 
     .view-pane.active {
       display: flex;
+    }
+
+    /* ── VIEW 0: VISUAL COCKPIT (Intuitive for Non-Math Users) ─────────────── */
+    #view-visual {
+      padding: 5px 14px 6px 14px;
+      overflow-y: auto;
+      gap: 7px;
+    }
+
+    .visual-card {
+      background: var(--obsidian-surface);
+      border: 1px solid var(--gold-rim);
+      border-radius: 9px;
+      padding: 7px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.6), 0 3px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .visual-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .visual-title {
+      font-family: 'Orbitron', 'Cinzel', sans-serif;
+      font-size: 8.5px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .visual-badge {
+      font-size: 7.5px;
+      font-weight: 800;
+      font-family: 'Fira Code', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid rgba(0, 230, 118, 0.4);
+      color: var(--green-online);
+      box-shadow: 0 0 8px rgba(0, 230, 118, 0.25);
+    }
+
+    .focus-meter-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: 1px;
+    }
+
+    .focus-meter-bar {
+      height: 7px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      padding: 1px;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+    }
+
+    .focus-meter-fill {
+      height: 100%;
+      width: 95%;
+      background: linear-gradient(90deg, #FF5252 0%, #FFB300 35%, #00E5FF 70%, #00E676 100%);
+      box-shadow: 0 0 10px var(--green-glow);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .focus-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 6.5px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+      padding: 0 2px;
+    }
+
+    .visual-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .vis-stat-box {
+      background: rgba(3, 5, 8, 0.55);
+      border: 1px solid rgba(255, 215, 0, 0.16);
+      border-radius: 5px;
+      padding: 3px 5px;
+      text-align: center;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .vis-stat-lbl {
+      font-size: 6.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .vis-stat-val {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      font-family: 'Fira Code', monospace;
+      margin-top: 1px;
+    }
+
+    .visual-explain-note {
+      font-size: 8px;
+      color: #CAD5E2;
+      line-height: 1.35;
+      margin-top: 2px;
+      padding: 3px 6px;
+      background: rgba(0, 229, 255, 0.05);
+      border-left: 2px solid var(--cyan-accent);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .visual-row-dual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .speed-big-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      font-family: 'Fira Code', monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      text-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .speed-big-val .unit {
+      font-size: 8px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .visual-sub-badge {
+      font-size: 7px;
+      font-family: 'Fira Code', monospace;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--gold-bright);
+    }
+
+    .visual-small-note {
+      font-size: 7.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-family: 'Fira Code', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Thinking Journey Stepper */
+    .journey-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 215, 0, 0.16);
+      margin-top: 2px;
+    }
+
+    .journey-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 7.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .journey-step.active {
+      color: var(--gold-bright);
+      text-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      font-size: 11px;
+      transition: all 0.2s ease;
+    }
+
+    .journey-step.active .step-circle {
+      background: linear-gradient(135deg, var(--gold-primary), #B8860B);
+      color: #000;
+      border-color: #FFF;
+      box-shadow: 0 0 10px var(--gold-primary);
+      transform: scale(1.15);
+    }
+
+    .journey-arrow {
+      color: rgba(255, 215, 0, 0.3);
+      font-size: 9px;
+      user-select: none;
+    }
+
+    .journey-current-note {
+      font-size: 8px;
+      color: var(--gold-bright);
+      font-style: italic;
+      line-height: 1.35;
+      padding: 3px 6px;
+      background: rgba(255, 215, 0, 0.05);
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+
+    /* Simple Plain English Activity Feed */
+    .simple-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 2px;
+      margin-top: 3px;
+    }
+
+    .simple-stream::-webkit-scrollbar { width: 3px; }
+    .simple-stream::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.4);
+      border-radius: 2px;
+    }
+
+    .simple-entry {
+      background: rgba(10, 13, 20, 0.88);
+      border: 1px solid rgba(255, 215, 0, 0.18);
+      border-left: 3px solid var(--gold-primary);
+      border-radius: 5px;
+      padding: 5px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .simple-entry:hover {
+      background: rgba(255, 215, 0, 0.08);
+      border-left-color: var(--gold-bright);
+      transform: translateX(1px);
+    }
+
+    .simple-entry.expanded {
+      background: rgba(14, 18, 28, 0.96);
+      border: 1px solid var(--cyan-accent);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .simple-entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .simple-entry-title {
+      font-size: 8.5px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .simple-entry-time {
+      font-size: 7px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .simple-entry-why {
+      font-size: 8px;
+      color: #CFDAE6;
+      line-height: 1.35;
+    }
+
+    .simple-entry-math-drawer {
+      display: none;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed rgba(255, 215, 0, 0.2);
+      font-size: 7.5px;
+      font-family: 'Fira Code', monospace;
+      color: var(--cyan-accent);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: 4px;
     }
 
     /* ── VIEW 1: PILLARS HUD ───────────────────────────────────────────────── */
@@ -1015,7 +1332,7 @@
       stroke: url(#gold-cyan-grad);
       stroke-width: 6;
       stroke-linecap: round;
-      stroke-dasharray: 213.6; /* 2 * PI * 34 */
+      stroke-dasharray: 213.6;
       stroke-dashoffset: 30;
       transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       filter: drop-shadow(0 0 6px var(--gold-glow));
@@ -1385,7 +1702,8 @@
 
     <!-- 2. Mode Navigation Tabs -->
     <div class="nav-tabs-bar">
-      <div class="nav-tab active" data-view="view-pillars">📊 Pillars HUD</div>
+      <div class="nav-tab active" data-view="view-visual">💡 Visual Cockpit</div>
+      <div class="nav-tab" data-view="view-pillars">🔬 Math Pillars</div>
       <div class="nav-tab" data-view="view-oracle">🧠 Cognitive Oracle</div>
       <div class="nav-tab" data-view="view-controls">⚙️ Options & Export</div>
       <div class="nav-tab" id="btn-proof-deck">π Proof Deck</div>
@@ -1423,8 +1741,119 @@
 
     <!-- 5. Main Views Container -->
     <div id="tab-content-area">
-      <!-- VIEW 1: PILLARS HUD -->
-      <div class="view-pane active" id="view-pillars">
+
+      <!-- VIEW 0: VISUAL COCKPIT (Intuitive for Non-Math Users) -->
+      <div class="view-pane active" id="view-visual">
+        <!-- Card 1: AI Brain Focus Dial -->
+        <div class="visual-card">
+          <div class="visual-card-header">
+            <span class="visual-title">🎯 AI Brain Focus & Clarity</span>
+            <span class="visual-badge" id="vis-focus-badge">🎯 LASER SHARP</span>
+          </div>
+          <div class="focus-meter-wrap">
+            <div class="focus-meter-bar">
+              <div class="focus-meter-fill" id="vis-focus-fill" style="width: 95%;"></div>
+            </div>
+            <div class="focus-labels">
+              <span>Confused</span>
+              <span>Searching</span>
+              <span>Focused</span>
+              <span>Laser Sharp</span>
+            </div>
+          </div>
+          <div class="visual-stat-row">
+            <div class="vis-stat-box">
+              <div class="vis-stat-lbl">Certainty</div>
+              <div class="vis-stat-val" id="vis-certainty-val">98% Sure</div>
+            </div>
+            <div class="vis-stat-box">
+              <div class="vis-stat-lbl">Confusion Level</div>
+              <div class="vis-stat-val" id="vis-confusion-val" style="color: var(--green-online);">Very Low (1.1x)</div>
+            </div>
+            <div class="vis-stat-box">
+              <div class="vis-stat-lbl">Thinking Mode</div>
+              <div class="vis-stat-val" id="vis-thinking-mode" style="color: var(--cyan-accent);">Deep Focus</div>
+            </div>
+          </div>
+          <div class="visual-explain-note" id="vis-focus-explain">
+            The AI is thinking with precision and not guessing or making things up.
+          </div>
+        </div>
+
+        <!-- Row 2: Speedometer & Memory Fuel Tank -->
+        <div class="visual-row-dual">
+          <!-- Speedometer -->
+          <div class="visual-card">
+            <div class="visual-card-header">
+              <span class="visual-title">🚀 Thought Speed</span>
+              <span class="visual-sub-badge" id="vis-speed-tier">⚡ TURBO</span>
+            </div>
+            <div class="speed-big-val" id="vis-speed-val">268 <span class="unit">words/s</span></div>
+            <div class="segmented-bar">
+              <div class="bar-fill" id="vis-speed-bar" style="width: 82%;"></div>
+            </div>
+            <div class="visual-small-note" id="vis-speed-note">Generating responses at peak speed</div>
+          </div>
+
+          <!-- Memory Tank -->
+          <div class="visual-card">
+            <div class="visual-card-header">
+              <span class="visual-title">🔋 Memory Tank</span>
+              <span class="visual-sub-badge" id="vis-tank-pct">45% FULL</span>
+            </div>
+            <div class="speed-big-val" id="vis-mem-val">488k <span class="unit">words</span></div>
+            <div class="segmented-bar">
+              <div class="bar-fill" id="vis-tank-bar" style="width: 45%; background: linear-gradient(90deg, #00E676, #FFD700);"></div>
+            </div>
+            <div class="visual-small-note" id="vis-mem-note">55% conversation room free</div>
+          </div>
+        </div>
+
+        <!-- Card 3: Thinking Journey Stepper -->
+        <div class="visual-card">
+          <div class="visual-card-header">
+            <span class="visual-title">🪜 What The AI Is Doing Right Now</span>
+          </div>
+          <div class="journey-stepper">
+            <div class="journey-step" id="jstep-1">
+              <div class="step-circle">👁️</div>
+              <span>1. Reading</span>
+            </div>
+            <div class="journey-arrow">➔</div>
+            <div class="journey-step" id="jstep-2">
+              <div class="step-circle">🧠</div>
+              <span>2. Planning</span>
+            </div>
+            <div class="journey-arrow">➔</div>
+            <div class="journey-step active" id="jstep-3">
+              <div class="step-circle">🔧</div>
+              <span>3. Executing</span>
+            </div>
+            <div class="journey-arrow">➔</div>
+            <div class="journey-step" id="jstep-4">
+              <div class="step-circle">✨</div>
+              <span>4. Answering</span>
+            </div>
+          </div>
+          <div class="journey-current-note" id="vis-journey-note">
+            Step 3: Running tools, checking system processes, and editing code.
+          </div>
+        </div>
+
+        <!-- Card 4: Plain English Activity Feed -->
+        <div class="visual-card" style="flex: 1; min-height: 120px;">
+          <div class="visual-card-header">
+            <span class="visual-title">💬 Live Activity Feed (Plain English)</span>
+            <span style="font-size: 7.5px; color: var(--gold-bright);">Click any item to peek at why</span>
+          </div>
+          <div class="simple-stream" id="simple-stream">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 1: PILLARS HUD (Math Rigor Mode) -->
+      <div class="view-pane" id="view-pillars">
         <div class="pillars-container">
           <!-- Left: Pillar III (Context Cylinder & KV Volume) -->
           <div class="cylinder-pillar">
@@ -1920,6 +2349,10 @@
       else if (ent >= 0.65) badgeLabel = 'DIFFUSE SEARCH';
       document.getElementById('oracle-ticker-badge').textContent = badgeLabel;
 
+      // ── VIEW 0: Update Visual Cockpit ──
+      updateVisualCockpit(data, insight);
+
+      // ── VIEW 1: Update Math Pillars ──
       // Pillar III: Context Cylinder
       const maxCtx = data.contextMax || 1048576;
       const usedCtx = data.contextUsed || 0;
@@ -1975,8 +2408,105 @@
       // Update Oracle View
       updateOracleView(data, insight);
 
-      // Render logs
+      // Render math logs
       renderLogs(data.logs || []);
+    }
+
+    function updateVisualCockpit(data, insight) {
+      const visFocus = insight.visualFocus || {};
+      const visSpeed = insight.visualSpeed || {};
+      const visMem = insight.visualMemory || {};
+      const visJourney = insight.visualJourney || {};
+
+      // 1. Brain Focus & Clarity
+      const focusBadge = document.getElementById('vis-focus-badge');
+      if (focusBadge) {
+        focusBadge.textContent = visFocus.badge || '🎯 LASER SHARP';
+        const isElev = visFocus.badge && visFocus.badge.includes('UNCERTAINTY');
+        focusBadge.style.color = isElev ? 'var(--amber-accent)' : 'var(--green-online)';
+        focusBadge.style.borderColor = isElev ? 'var(--amber-accent)' : 'var(--green-online)';
+      }
+      const focusFill = document.getElementById('vis-focus-fill');
+      if (focusFill) {
+        focusFill.style.width = `${visFocus.certaintyPct || 95}%`;
+      }
+      const certVal = document.getElementById('vis-certainty-val');
+      if (certVal) certVal.textContent = `${visFocus.certaintyPct || 96}% Sure`;
+      const confVal = document.getElementById('vis-confusion-val');
+      if (confVal) confVal.textContent = visFocus.confusionLevel || 'Very Low (1.1x)';
+      const modeVal = document.getElementById('vis-thinking-mode');
+      if (modeVal) modeVal.textContent = data.phase || 'Deep Focus';
+      const explainElem = document.getElementById('vis-focus-explain');
+      if (explainElem) explainElem.textContent = visFocus.plainExplain || 'The AI is confident and thinking with precision.';
+
+      // 2. Speed
+      const speedVal = document.getElementById('vis-speed-val');
+      if (speedVal) speedVal.innerHTML = `${visSpeed.wordsPerSec || data.tokensSec || 0} <span class="unit">words/s</span>`;
+      const speedBar = document.getElementById('vis-speed-bar');
+      if (speedBar) speedBar.style.width = `${Math.min(100, Math.round(((visSpeed.wordsPerSec || data.tokensSec || 0) / 150) * 100))}%`;
+      const speedTier = document.getElementById('vis-speed-tier');
+      if (speedTier) speedTier.textContent = visSpeed.tier || '⚡ TURBO';
+      const speedNote = document.getElementById('vis-speed-note');
+      if (speedNote) speedNote.textContent = visSpeed.note || 'Generating responses steadily';
+
+      // 3. Memory Fuel Tank
+      const memVal = document.getElementById('vis-mem-val');
+      if (memVal) memVal.innerHTML = `${formatNum(visMem.wordsInMemory || 450000)} <span class="unit">words</span>`;
+      const tankBar = document.getElementById('vis-tank-bar');
+      if (tankBar) tankBar.style.width = `${visMem.percentUsed || 45}%`;
+      const tankPct = document.getElementById('vis-tank-pct');
+      if (tankPct) tankPct.textContent = `${visMem.percentUsed || 45}% FULL`;
+      const memNote = document.getElementById('vis-mem-note');
+      if (memNote) memNote.textContent = visMem.plainNote || 'Conversation room remaining';
+
+      // 4. Thinking Stepper Journey
+      const activeStep = visJourney.activeStep || 3;
+      for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById(`jstep-${i}`);
+        if (stepEl) stepEl.classList.toggle('active', i === activeStep);
+      }
+      const journeyNote = document.getElementById('vis-journey-note');
+      if (journeyNote) journeyNote.textContent = `Step ${activeStep}: ${visJourney.stepNote || 'Running tools and editing files.'}`;
+
+      // 5. Render Plain-English Simple Activity Stream
+      renderSimpleStream(data.logs || []);
+    }
+
+    function renderSimpleStream(logs) {
+      const stream = document.getElementById('simple-stream');
+      if (!stream) return;
+      if (!logs || logs.length === 0) {
+        stream.innerHTML = '<div style="color: var(--text-muted); font-size: 8px; padding: 6px;">Waiting for AI activity...</div>';
+        return;
+      }
+
+      stream.innerHTML = logs.slice(0, 15).map(l => {
+        const title = l.plainAction || l.what || l.tool || 'AI Activity';
+        const why = l.plainWhy || l.explanation || l.note || 'Processing request.';
+        const proof = l.proof ? `Pillar: ${l.pillar || 'Math'} | Proof: ${l.proof}` : null;
+        return `
+          <div class="simple-entry" onclick="toggleSimpleDetail(this)">
+            <div class="simple-entry-header">
+              <span class="simple-entry-title">${escapeHtml(title)}</span>
+              <span class="simple-entry-time">[${l.time}] ${escapeHtml(l.agent || '')}</span>
+            </div>
+            <div class="simple-entry-why"><strong>Why:</strong> ${escapeHtml(why)}</div>
+            ${proof ? `
+              <div class="simple-entry-math-drawer">
+                ${escapeHtml(proof)}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleSimpleDetail(elem) {
+      elem.classList.toggle('expanded');
+      const drawer = elem.querySelector('.simple-entry-math-drawer');
+      if (drawer) {
+        drawer.style.display = elem.classList.contains('expanded') ? 'block' : 'none';
+      }
     }
 
     function updateMarkovPipeline(state) {
@@ -1999,7 +2529,6 @@
       const coherence = insight.coherenceScore || 96;
       document.getElementById('oracle-coherence-val').textContent = `${coherence}%`;
       
-      // Update SVG circular gauge: stroke-dashoffset = 213.6 - (213.6 * coherence / 100)
       const circleFill = document.getElementById('oracle-circle-fill');
       if (circleFill) {
         const circumference = 213.6;
@@ -2038,6 +2567,7 @@
 
     function renderLogs(logs) {
       const stream = document.getElementById('log-stream');
+      if (!stream) return;
       let filtered = logs;
 
       if (activeFilter === 'reason') {

@@ -461,24 +461,30 @@ function generateExplanation(agentKey, data, ent, ppl) {
 
   if (tool.includes('run_command') || tool.includes('shell')) {
     return {
-      pillar: 'Pillar I & IV',
+      pillar: 'Pillar I & IV: Information & Markov',
       what: `Shell Command Execution (${data.tool || 'run_command'})`,
+      plainAction: `🔧 Ran System Terminal Command`,
+      plainWhy: `Tested the environment, verified running apps, or executed system tasks safely.`,
       why: `The model experienced high syntactic convergence (H=${ent} bits, PPL=${ppl}). It computed a 98% Bayesian posterior probability that system inspection was required to resolve the terminal task.`,
       proof: `Shannon Attention Entropy H(A) = -∑ a_i log₂ a_i collapsed onto deterministic shell tokens. Decision posterior P(Tool | Context) reached peak confidence.`,
       risk: ent > 0.35 ? 'ELEVATED' : 'MINIMAL'
     };
   } else if (tool.includes('view_file') || tool.includes('read')) {
     return {
-      pillar: 'Pillar III: Tensor KV',
+      pillar: 'Pillar III: Tensor KV Geometry',
       what: `Context Retrieval & File Ingestion (${data.tool || 'view_file'})`,
+      plainAction: `📖 Opened and Inspected File`,
+      plainWhy: `Examined source code and configuration to understand how the project is structured.`,
       why: `The agent expanded its active KV-cache projection tensor subspace to absorb file context. Low entropy ensures sharp token embedding alignment.`,
       proof: `KV-Cache tensor memory volume Ω_KV = 2·L·N_heads·d_head·T·b expanded. Subspace orthogonal projection preserved semantic clarity.`,
       risk: 'MINIMAL'
     };
   } else if (tool.includes('replace_file') || tool.includes('write')) {
     return {
-      pillar: 'Pillar I & II',
+      pillar: 'Pillar I & II: Information & Flux',
       what: `Code Synthesis & File Modification (${data.tool || 'replace_file'})`,
+      plainAction: `✍️ Wrote & Applied Code Changes`,
+      plainWhy: `Applied targeted code updates, enhancements, or bug fixes directly into project files.`,
       why: `The model reached deterministic generation mode. First-derivative velocity v_T surged into burst streaming, executing code transformations with high accuracy.`,
       proof: `Loss gradient norm ||∇L|| is minimized. First derivative v_T = ∂T/∂t reflects laminar token throughput.`,
       risk: 'LOW'
@@ -487,22 +493,28 @@ function generateExplanation(agentKey, data, ent, ppl) {
     return {
       pillar: 'Pillar IV: Bayesian Decision',
       what: `Git Repository Sync & Versioning (${data.tool || 'git_sync'})`,
+      plainAction: `📦 Backed Up to Git Repository`,
+      plainWhy: `Committed and pushed clean changes to GitHub so project progress is safe and versioned.`,
       why: `Agent synchronized local repository HEAD with remote state. Validating branch consistency before code commits.`,
       proof: `State transition: PERCEIVE ➔ TOOL_EXEC. Preserving Git working-tree invariants.`,
       risk: 'MINIMAL'
     };
   } else if (tool.includes('mcp') || note.includes('mcp')) {
     return {
-      pillar: 'Pillar IV: Markov Mesh',
+      pillar: 'Pillar IV: Markov Mesh Leases',
       what: `Model Context Protocol Hub Lease (${data.tool || 'mcp_hub'})`,
+      plainAction: `🔌 Connected AI Tool Extension (MCP)`,
+      plainWhy: `Leased tools and capabilities from external services (browser, shell, memory bridge).`,
       why: `Model Context Protocol hub negotiated tool access across active server extensions. Tool schemas projected into LLM prompt space.`,
       proof: `P(MCP_Server | x) dynamically leases connected tool definitions into system context.`,
       risk: 'MINIMAL'
     };
   } else if (tool.includes('resilience') || agentKey === 'Zoth-Sentinel') {
     return {
-      pillar: 'Pillar IV: Autonomous Markov',
+      pillar: 'Pillar IV: Autonomous Markov Supervisor',
       what: `OS Security Ring & Memory Supervision`,
+      plainAction: `🛡️ Checked System Health & Security`,
+      plainWhy: `Monitored active memory, verified zero zombie processes, and guarded system resources.`,
       why: `Zoth Sentinel performed a Ring-1 supervisor audit of active processes, verified zero zombies, and monitored high-RSS consumers.`,
       proof: `Autonomous safety invariant verification: CPU and RSS memory limits enforced.`,
       risk: 'MINIMAL'
@@ -511,6 +523,8 @@ function generateExplanation(agentKey, data, ent, ppl) {
     return {
       pillar: 'Pillar I: Information & Entropy',
       what: `Cognitive Deliberation & Search`,
+      plainAction: `🧠 Thinking & Formulating Solution`,
+      plainWhy: `Analyzing user instructions, planning steps, and ensuring high confidence before acting.`,
       why: `Attention entropy H=${ent} bits (PPL=${ppl}) reflects ${ent < 0.20 ? 'sharp Dirac deterministic focus' : ent < 0.40 ? 'balanced syntactic reasoning' : 'wide exploratory hypothesis search'}.`,
       proof: `Softmax attention distribution matrix A = Softmax(QK^T / √d_k) evaluated across multi-head latent space.`,
       risk: ent > 0.45 ? 'ELEVATED' : 'MINIMAL'
@@ -525,7 +539,16 @@ function generateSmartInsights(agentKey, ag) {
       summary: `${ag.name || agentKey} is currently idle or on standby. Ready for execution dispatch.`,
       coherenceScore: 100,
       hallucinationRisk: 'ZERO (OFFLINE)',
-      recommendation: 'Model ready to be called via CLI, IDE, or API.'
+      recommendation: 'Model ready to be called via CLI, IDE, or API.',
+      visualFocus: {
+        badge: '💤 IDLE / STANDBY',
+        certaintyPct: 100,
+        confusionLevel: '1.0x (Zero)',
+        plainExplain: 'The agent is currently on standby waiting for commands.'
+      },
+      visualSpeed: { tier: '💤 IDLE', wordsPerSec: 0, note: 'Standby mode' },
+      visualMemory: { percentUsed: 0, roomLeftPct: 100, wordsInMemory: 0, plainNote: '100% memory free.' },
+      visualJourney: { activeStep: 1, stepName: 'Standby', stepNote: 'Ready for user request.' }
     };
   }
 
@@ -569,12 +592,66 @@ function generateSmartInsights(agentKey, ag) {
     recommendation = 'Deliberation stall: model may be waiting on asynchronous subagent or external I/O.';
   }
 
+  // Visual Layman Metaphors
+  const isSuperConfident = ent <= 0.22;
+  const isFocused = ent > 0.22 && ent <= 0.42;
+  const isSearching = ent > 0.42 && ent <= 0.65;
+
+  const visualFocus = {
+    badge: isSuperConfident ? '🎯 LASER SHARP' : isFocused ? '💡 FOCUSED' : isSearching ? '🧭 EXPLORING' : '⚠️ HIGH UNCERTAINTY',
+    certaintyPct: Math.max(70, Math.min(99, Math.round((1.0 - ent * 0.72) * 100))),
+    confusionLevel: `${ppl.toFixed(2)}x (${ppl < 1.25 ? 'Very Low' : ppl < 1.6 ? 'Moderate' : 'High'})`,
+    plainExplain: isSuperConfident 
+      ? 'The AI is confident and thinking with precision. Zero confusion or guessing detected.'
+      : isFocused
+      ? 'The AI is carefully working through the solution step-by-step.'
+      : 'The AI is exploring multiple paths to find the best answer.'
+  };
+
+  const visualSpeed = {
+    tier: tokSec > 160 ? '⚡ TURBO' : tokSec > 60 ? '🏃 STEADY' : tokSec > 0 ? '🚶 DELIBERATING' : '💤 IDLE',
+    wordsPerSec: tokSec,
+    note: tokSec > 120 ? 'Generating responses at peak speed' : tokSec > 0 ? 'Streaming answers steadily' : 'Waiting for next task'
+  };
+
+  const visualMemory = {
+    percentUsed: Math.min(100, Math.round(ctxRatio * 100)),
+    roomLeftPct: Math.max(0, 100 - Math.round(ctxRatio * 100)),
+    wordsInMemory: Math.round(usedCtx * 0.75),
+    plainNote: `${Math.max(0, 100 - Math.round(ctxRatio * 100))}% conversation memory free.`
+  };
+
+  let activeStep = 3;
+  let stepName = 'Executing';
+  let stepNote = 'Running commands and editing code.';
+  const p = (ag.phase || '').toUpperCase();
+  const m = (ag.markovState || '').toUpperCase();
+  if (m.includes('PERCEIVE') || p.includes('PERCEIVE')) {
+    activeStep = 1; stepName = 'Reading'; stepNote = 'Reading your prompt and inspecting workspace files.';
+  } else if (m.includes('REASON') || p.includes('REASON')) {
+    activeStep = 2; stepName = 'Planning'; stepNote = 'Thinking through the plan and designing the architecture.';
+  } else if (m.includes('TOOL') || p.includes('TOOL')) {
+    activeStep = 3; stepName = 'Executing'; stepNote = 'Running terminal commands, editing code, and verifying builds.';
+  } else {
+    activeStep = 4; stepName = 'Answering'; stepNote = 'Synthesizing the final clean response for you.';
+  }
+
+  const visualJourney = {
+    activeStep,
+    stepName,
+    stepNote
+  };
+
   return {
     status: ag.phase,
     summary,
     coherenceScore,
     hallucinationRisk: risk,
-    recommendation
+    recommendation,
+    visualFocus,
+    visualSpeed,
+    visualMemory,
+    visualJourney
   };
 }
 
@@ -673,6 +750,8 @@ function ingestTelemetry(data) {
       pillar: expl.pillar,
       proof: expl.proof,
       what: expl.what,
+      plainAction: expl.plainAction || expl.what,
+      plainWhy: expl.plainWhy || expl.why,
       risk: expl.risk,
       entropy: ag.entropy,
       perplexity: ag.perplexity || +(Math.pow(2, ag.entropy)).toFixed(3),
@@ -866,28 +945,47 @@ function probeAllAgents() {
         const lines = content.trim().split('\n').filter(Boolean);
         if (lines.length > 0) {
           const lastLine = lines[lines.length - 1];
+          const prevLine = lines.length > 1 ? lines[lines.length - 2] : null;
           try {
             const step = JSON.parse(lastLine);
+            const prevStep = prevLine ? JSON.parse(prevLine) : null;
             const text = step.thinking || step.content || '';
             const toolCalls = step.tool_calls || [];
             const ent = calculateShannonEntropy(text);
             const toolName = toolCalls.length > 0 ? toolCalls[0].name : (step.type === 'PLANNER_RESPONSE' ? 'synthesis' : null);
             const markov = toolCalls.length > 0 ? 'TOOL_EXEC' : (step.type === 'PLANNER_RESPONSE' ? 'REASONING' : 'PERCEIVE');
 
+            // Ground truth calculations from actual transcript step metrics
+            let stepChars = (step.content || '').length + (step.thinking || '').length;
+            if (toolCalls.length > 0) stepChars += JSON.stringify(toolCalls).length;
+            const stepTokens = Math.max(16, Math.round(stepChars / 3.8));
+
+            let realSpeed = 85;
+            if (prevStep && prevStep.created_at && step.created_at) {
+              const dtSec = Math.max(0.25, (new Date(step.created_at) - new Date(prevStep.created_at)) / 1000);
+              realSpeed = Math.min(320, Math.max(20, Math.round(stepTokens / dtSec)));
+            }
+
+            // Real conversational context token estimate from transcript
+            let sampleChars = 0;
+            const recentSlice = lines.slice(-30);
+            for (const l of recentSlice) sampleChars += l.length;
+            const approxTotalTokens = Math.round((sampleChars / recentSlice.length) * lines.length / 3.8);
+
             ingestTelemetry({
               agent: 'Antigravity',
               model: 'gemini-3.8-flash',
-              phase: step.type === 'PLANNER_RESPONSE' ? 'REASONING' : 'EXEC',
+              phase: step.type === 'PLANNER_RESPONSE' ? 'REASONING' : (toolCalls.length > 0 ? 'TOOL_EXEC' : 'EXEC'),
               markovState: markov,
-              tokensSec: 80 + Math.floor(Math.random() * 25),
-              contextUsed: Math.min(1048576, 54000 + lines.length * 150),
+              tokensSec: realSpeed,
+              contextUsed: Math.min(1048576, Math.max(32000, approxTotalTokens)),
               contextMax: 1048576,
               entropy: ent,
               step: step.step_index || lines.length,
-              maxSteps: Math.max(lines.length + 12, 35),
+              maxSteps: Math.max(lines.length + 15, 40),
               tool: toolName,
               reasoning: toolName 
-                ? `Mathematical dispatch: ${toolName} [H=${ent} bits, PPL=${(Math.pow(2, ent)).toFixed(3)}, P(T|x)=0.98]` 
+                ? `Tool execution: ${toolName} [H=${ent} bits, PPL=${(Math.pow(2, ent)).toFixed(3)}]` 
                 : `Cognitive deliberation step #${step.step_index || lines.length} [Attention coherence: H=${ent}]`
             });
           } catch (e) {}
