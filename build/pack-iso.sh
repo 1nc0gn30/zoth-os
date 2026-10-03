@@ -115,8 +115,10 @@ sudo rsync -aHAX --delete "$PROJECT_DIR/config/includes.binary/" config/includes
 sudo rsync -aHAX --delete "$PROJECT_DIR/config/bootloaders/" config/bootloaders/
 sudo rsync -aHAX ../../config/hooks/ config/hooks/ 2>/dev/null || true
 
-echo "✦ Building live hybrid ISO..."
-sudo rm -rf .build/binary_* binary live-image-amd64.hybrid.iso
+if [ ! -f binary/live/filesystem.squashfs ]; then
+    sudo rm -rf .build/binary_* binary
+fi
+sudo rm -f live-image-amd64.hybrid.iso
 sudo test -f chroot.files || sudo touch chroot.files
 if [ -d chroot/etc/needrestart ]; then
     sudo mkdir -p chroot/etc/needrestart/conf.d

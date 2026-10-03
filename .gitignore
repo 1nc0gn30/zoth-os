@@ -271,6 +271,8 @@ build/live_workspace/
 build/live-workspace/
 build/*.iso
 build/*.sha256
+build/parts/
+build/upload-remaining-parts.sh
 .build/
 dist/
 chroot/
