@@ -1274,6 +1274,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
+  mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+    console.log(`[Renderer Console] [lvl:${level}] ${message} (at line ${line})`);
+  });
+
   if (cfg.alwaysOnTop !== false) {
     mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
   }
