@@ -98,7 +98,7 @@ def render_subtitle(target_w, target_h, scale_factor):
     
     font_size = int(28 * scale_factor)
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", font_size)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
     except:
         font = ImageFont.load_default()
         
