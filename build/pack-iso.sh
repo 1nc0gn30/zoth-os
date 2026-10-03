@@ -1,3 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_DIR="$PROJECT_DIR/build/live_workspace"
 mkdir -p "$WORK_DIR"
@@ -12,8 +15,8 @@ sudo rm -rf chroot/usr/share/zothos/assets/avatars chroot/usr/share/zothos/asset
 sudo find chroot -name "*matrix-rain*" -exec rm -f {} + 2>/dev/null || true
 
 echo "✦ Synchronizing config/includes.chroot..."
-sudo rsync -aHAX --delete ../../config/includes.chroot/ config/includes.chroot/
-sudo rsync -aHAX ../../config/includes.chroot/ chroot/
+sudo rsync -aHAX --delete "$PROJECT_DIR/config/includes.chroot/" config/includes.chroot/
+sudo rsync -aHAX "$PROJECT_DIR/config/includes.chroot/" chroot/
 
 echo "✦ Scrubbing sensitive data, histories, and build caches..."
 sudo find chroot -name ".aider*" -exec rm -rf {} + 2>/dev/null || true
@@ -106,15 +109,17 @@ sudo ln -sfn /usr/lib/systemd/system/graphical.target chroot/etc/systemd/system/
 sudo ln -sfn /usr/lib/systemd/system/sddm.service chroot/etc/systemd/system/display-manager.service
 
 echo "✦ Synchronizing config/binary, config/includes.binary, bootloaders, and hooks..."
-sudo cp -f ../../config/binary config/binary
+sudo cp -f "$PROJECT_DIR/config/binary" config/binary
 sudo mkdir -p config/includes.binary config/bootloaders config/hooks/binary
-sudo rsync -aHAX --delete ../../config/includes.binary/ config/includes.binary/
-sudo rsync -aHAX --delete ../../config/bootloaders/ config/bootloaders/
-sudo rsync -aHAX ../../config/hooks/ config/hooks/
+sudo rsync -aHAX --delete "$PROJECT_DIR/config/includes.binary/" config/includes.binary/
+sudo rsync -aHAX --delete "$PROJECT_DIR/config/bootloaders/" config/bootloaders/
+sudo rsync -aHAX ../../config/hooks/ config/hooks/ 2>/dev/null || true
 
 echo "✦ Building live hybrid ISO..."
 sudo rm -rf .build/binary_* binary live-image-amd64.hybrid.iso
-yes | sudo lb binary || true
+unset LIVE_BUILD
+export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
+yes | sudo -E MKSQUASHFS_OPTIONS="-processors 3 -mem 3G" lb binary 2>&1 | tee /tmp/lb-binary.log
 test -f live-image-amd64.hybrid.iso
 
 cp -f live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
@@ -130,7 +135,7 @@ M1=$(mktemp -d)
 trap 'sudo umount "$M1" 2>/dev/null || true; rm -rf "$M1"' EXIT
 sudo mount -o loop,ro "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$M1"
 test -f "$M1/live/filesystem.squashfs"
-unsquashfs -s "$M1/live/filesystem.squashfs"
+sudo unsquashfs -s "$M1/live/filesystem.squashfs"
 sudo umount "$M1"
 trap - EXIT
 rm -rf "$M1"
