@@ -23,6 +23,10 @@ def main():
     parser.add_argument("--confidence", type=float, default=None, help="Confidence probability (0.0 to 1.0)")
     parser.add_argument("--latency", type=int, default=None, help="Execution latency in ms")
     parser.add_argument("--tool", default=None, help="Tool invoked")
+    parser.add_argument("--markov", default=None, help="Discrete Markov state (PERCEIVE, REASONING, HYPOTHESIZE, TOOL_EXEC, SYNTHESIS)")
+    parser.add_argument("--vram", type=int, default=None, help="VRAM usage in MB")
+    parser.add_argument("--step", type=int, default=None, help="Current step index")
+    parser.add_argument("--max-steps", type=int, default=None, help="Total step horizon")
     parser.add_argument("--note", default=None, help="Mathematical / reasoning explanation note")
     parser.add_argument("--host", default="127.0.0.1", help="Telemetry host")
     parser.add_argument("--port", type=int, default=9995, help="Telemetry port")
@@ -34,12 +38,16 @@ def main():
         "phase": args.phase
     }
     if args.model: payload["model"] = args.model
+    if args.markov: payload["markovState"] = args.markov
     if args.tok_sec is not None: payload["tokensSec"] = args.tok_sec
     if args.context_used is not None: payload["contextUsed"] = args.context_used
     if args.context_max is not None: payload["contextMax"] = args.context_max
     if args.entropy is not None: payload["entropy"] = args.entropy
     if args.confidence is not None: payload["confidence"] = args.confidence
     if args.latency is not None: payload["latencyMs"] = args.latency
+    if args.vram is not None: payload["vramMb"] = args.vram
+    if args.step is not None: payload["step"] = args.step
+    if args.max_steps is not None: payload["maxSteps"] = args.max_steps
     if args.tool: payload["tool"] = args.tool
     if args.note: payload["reasoning"] = args.note
 
