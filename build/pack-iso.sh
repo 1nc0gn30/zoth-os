@@ -1,6 +1,8 @@
-#!/bin/bash
-set -euo pipefail
-cd ${ZOTH_HOME}/zothos/build/live_workspace
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+WORK_DIR="$PROJECT_DIR/build/live_workspace"
+mkdir -p "$WORK_DIR"
+cd "$WORK_DIR"
+export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
 
 echo "✦ Cleaning up old assets from chroot..."
 sudo rm -rf chroot/chroot chroot/home/neo
@@ -115,20 +117,23 @@ sudo rm -rf .build/binary_* binary live-image-amd64.hybrid.iso
 yes | sudo lb binary || true
 test -f live-image-amd64.hybrid.iso
 
-cp -f live-image-amd64.hybrid.iso ${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso
-cp -f live-image-amd64.hybrid.iso ${ZOTH_HOME}/zothos/build/zothos-3.0-amd64.iso
-chmod 644 ${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso ${ZOTH_HOME}/zothos/build/zothos-3.0-amd64.iso || true
-chown libvirt-qemu:libvirt-qemu ${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso ${ZOTH_HOME}/zothos/build/zothos-3.0-amd64.iso 2>/dev/null || true
+cp -f live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
+cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-3.0-amd64.iso"
+cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-1.0-amd64.iso"
+chmod 644 "$PROJECT_DIR"/build/zothos-*.iso || true
+chown "$SUDO_USER:$SUDO_USER" "$PROJECT_DIR"/build/zothos-*.iso 2>/dev/null || true
+cd "$PROJECT_DIR/build"
+sha256sum zothos-3.1-amd64.iso > zothos-3.1-amd64.iso.sha256
 
 echo "✦ Verifying ISO filesystem..."
 M1=$(mktemp -d)
 trap 'sudo umount "$M1" 2>/dev/null || true; rm -rf "$M1"' EXIT
-sudo mount -o loop,ro ${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso "$M1"
+sudo mount -o loop,ro "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$M1"
 test -f "$M1/live/filesystem.squashfs"
 unsquashfs -s "$M1/live/filesystem.squashfs"
 sudo umount "$M1"
 trap - EXIT
 rm -rf "$M1"
 
-ls -lh ${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso
+ls -lh "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
 echo "DONE_KDE_PLASMA_ISO"

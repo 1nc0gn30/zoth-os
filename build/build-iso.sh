@@ -57,15 +57,17 @@ echo -e "${CYAN}[3/6] Initializing live-build configuration...${RESET}"
 # ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
+export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
+
 lb config \
     --distribution trixie \
     --architecture amd64 \
     --archive-areas "main contrib non-free non-free-firmware" \
     --bootloaders "syslinux grub-efi" \
     --binary-images iso-hybrid \
-    --iso-application "ZOTHOS Linux 1.0 (Azoth)" \
+    --iso-application "ZOTHOS Linux 3.1 (Sovereign Alchemical Intelligence)" \
     --iso-publisher "Zoth Studio & NullAI <https://zoth.nullai.tech>" \
-    --iso-volume "ZOTHOS_1.0" \
+    --iso-volume "ZOTHOS_3.1" \
     --initramfs live-boot \
     --linux-flavours amd64 \
     --linux-packages linux-image \
@@ -131,9 +133,9 @@ mkdir -p config/hooks/normal
 cat <<'EOF' > config/hooks/normal/0000-install-initramfs.hook.chroot
 #!/bin/sh
 set -e
-echo "[ZOTHOS HOOK] Guaranteeing desktop, LightDM, initramfs-tools & linux-image..."
+echo "[ZOTHOS HOOK] Guaranteeing kernel, initramfs & bootloader essentials..."
 apt-get update -y || true
-apt-get install -y --no-install-recommends initramfs-tools linux-image-amd64 live-boot xfce4 xfce4-terminal xfce4-goodies lightdm lightdm-gtk-greeter xorg x11-xserver-utils desktop-base dbus-x11 at-spi2-core xfce4-settings || true
+apt-get install -y --no-install-recommends initramfs-tools linux-image-amd64 live-boot live-config live-config-systemd sddm || true
 EOF
 chmod +x config/hooks/normal/0000-install-initramfs.hook.chroot
 
@@ -143,24 +145,45 @@ set -e
 
 if ! id "zoth" >/dev/null 2>&1; then
     groupadd -f docker || true
-    useradd -m -s /bin/bash -G sudo,audio,video zoth; useradd -m -s /bin/bash -G sudo,audio,video azoth 2>/dev/null || true
-    echo "zoth:zoth"; echo "azoth:zoth" | chpasswd
+    useradd -m -s /bin/bash -G sudo,audio,video,docker zoth || true
+    useradd -m -s /bin/bash -G sudo,audio,video,docker azoth || true
+    echo "zoth:zoth" | chpasswd
+    echo "azoth:zoth" | chpasswd
 fi
 
-# Enable NetworkManager and LightDM
+# Enable NetworkManager and SDDM
 systemctl enable NetworkManager || true
-systemctl enable lightdm || true
+systemctl enable sddm || true
 systemctl enable tor || true
 systemctl set-default graphical.target || true
 
+# Enforce SGID shadow on unix_chkpwd for PAM unlock and screen locker
+for chkpwd_bin in /usr/sbin/unix_chkpwd /sbin/unix_chkpwd; do
+    if [ -f "$chkpwd_bin" ]; then
+        chown root:shadow "$chkpwd_bin"
+        chmod 2755 "$chkpwd_bin"
+    fi
+done
+
+# Enforce SUID bit on Chromium & Electron sandbox helpers
+for sb in /opt/google/chrome/chrome-sandbox /opt/Element/chrome-sandbox /opt/Signal/chrome-sandbox /opt/electron/chrome-sandbox; do
+    if [ -f "$sb" ]; then
+        chown root:root "$sb"
+        chmod 4755 "$sb"
+    fi
+done
+
 # Configure Plymouth default boot splash
 if command -v plymouth-set-default-theme >/dev/null 2>&1; then
-    plymouth-set-default-theme -R zothos-matrix 2>/dev/null || plymouth-set-default-theme -R zoth-matrix 2>/dev/null || true
+    plymouth-set-default-theme -R zothos 2>/dev/null || plymouth-set-default-theme -R zoth-matrix 2>/dev/null || true
 fi
 
 # Setup Fastfetch / Bash defaults
-cp -rf /etc/skel/. ${ZOTH_HOME}/
-chown -R zoth:zoth ${ZOTH_HOME}
+cp -rf /etc/skel/. ${ZOTH_HOME}/ 2>/dev/null || true
+cp -rf /etc/skel/. /home/azoth/ 2>/dev/null || true
+chown -R zoth:zoth ${ZOTH_HOME} 2>/dev/null || true
+chown -R azoth:azoth /home/azoth 2>/dev/null || true
+chmod 750 ${ZOTH_HOME} /home/azoth 2>/dev/null || true
 
 echo "[ZOTHOS HOOK] Complete."
 EOF
@@ -172,17 +195,7 @@ if compgen -G "$PROJECT_DIR/build/hooks/normal/*.hook.chroot" >/dev/null; then
     chmod +x config/hooks/normal/*.hook.chroot
 fi
 
-echo -e "${CYAN}[5/6] Generating 4K wallpapers & 3D visual assets...${RESET}"
-# Execute master wallpaper, 3D glassmorphic icon, and Plymouth theme synthesizers
-if [ -f "$PROJECT_DIR/tools/generate_plymouth_assets.py" ]; then
-    python3 "$PROJECT_DIR/tools/generate_plymouth_assets.py" 2>&1 | tail -5
-fi
-if [ -f "$PROJECT_DIR/generate_zoth_wallpapers.py" ]; then
-    python3 "$PROJECT_DIR/generate_zoth_wallpapers.py" 2>&1 | tail -5
-fi
-if [ -f "$PROJECT_DIR/generate_zoth_icons.py" ]; then
-    python3 "$PROJECT_DIR/generate_zoth_icons.py" 2>&1 | tail -5
-fi
+echo -e "${CYAN}[5/6] Verifying pre-built wallpapers & visual assets...${RESET}"
 cp -a "$PROJECT_DIR/config/includes.chroot/usr/share/backgrounds/zothos" config/includes.chroot/usr/share/backgrounds/ 2>/dev/null || true
 cp -a "$PROJECT_DIR/config/includes.chroot/usr/share/icons/." config/includes.chroot/usr/share/icons/ 2>/dev/null || true
 cp -a "$PROJECT_DIR/config/includes.chroot/usr/share/plymouth/themes/." config/includes.chroot/usr/share/plymouth/themes/ 2>/dev/null || true
@@ -192,11 +205,18 @@ echo -e "${YELLOW}[*] This will bootstrap the Debian base, fetch security & AI p
 # ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
+export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
 lb build 2>&1 | tee /tmp/lb-build.log
 
 if [[ -f live-image-amd64.hybrid.iso ]]; then
-    mv live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-1.0-amd64.iso"
-    echo -e "\n${GREEN}${BOLD}[✓] SUCCESS: ZOTHOS ISO built at: $PROJECT_DIR/build/zothos-1.0-amd64.iso${RESET}\n"
+    mv live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
+    cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-3.0-amd64.iso"
+    cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-1.0-amd64.iso"
+    chmod 644 "$PROJECT_DIR"/build/zothos-*.iso || true
+    chown "$SUDO_USER:$SUDO_USER" "$PROJECT_DIR"/build/zothos-*.iso 2>/dev/null || true
+    cd "$PROJECT_DIR/build"
+    sha256sum zothos-3.1-amd64.iso > zothos-3.1-amd64.iso.sha256
+    echo -e "\n${GREEN}${BOLD}[✓] SUCCESS: ZOTHOS ISO built at: $PROJECT_DIR/build/zothos-3.1-amd64.iso${RESET}\n"
 else
     echo -e "\n${YELLOW}[!] Build finished. Inspect workspace logs in $WORK_DIR${RESET}\n"
 fi

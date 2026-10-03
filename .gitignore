@@ -267,13 +267,13 @@ Thumbs.db
 *.deb
 *.rpm
 *.tar.gz
-*.AppImage
-build/
+build/live_workspace/
+build/live-workspace/
+build/*.iso
+build/*.sha256
 .build/
 dist/
 chroot/
-build/live_workspace/
-build/live-workspace/
 config/apt/
 config/binary
 config/bootstrap
