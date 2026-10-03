@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Math Pillar
+GenericName=AI Telemetry & Mathematical Gauge HUD
+Comment=Live Mathematical Telemetry, Attention Entropy & Token Velocity Pillar for AI Agents & Models
+Exec=/usr/local/bin/zoth-math-pillar
+Icon=zoth-math-pillar
+Terminal=false
+Categories=Utility;System;Monitor;ArtificialIntelligence;Development;
+Keywords=math;pillar;gauge;telemetry;entropy;tokens;ai;agents;ollama;antigravity;grok;aider;
+StartupNotify=true
+Actions=AllAgents;Antigravity;Ollama;
+
+[Desktop Action AllAgents]
+Name=Monitor All Swarm Agents
+Exec=/usr/local/bin/zoth-math-pillar --agent ALL
+
+[Desktop Action Antigravity]
+Name=Monitor Antigravity CLI
+Exec=/usr/local/bin/zoth-math-pillar --agent Antigravity
+
+[Desktop Action Ollama]
+Name=Monitor Ollama Local Models
+Exec=/usr/local/bin/zoth-math-pillar --agent Ollama

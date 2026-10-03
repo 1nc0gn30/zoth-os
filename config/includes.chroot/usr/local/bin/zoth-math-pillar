@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  ZOTHOS MATHEMATICAL PILLAR TELEMETRY GAUGE HUD v1.0
+# ==============================================================================
+set -euo pipefail
+
+APP_DIR="/opt/zoth-math-pillar"
+
+# Resolve Electron binary
+ELECTRON_BIN=""
+for e in /usr/local/bin/electron /usr/bin/electron /opt/electron/electron "$(which electron 2>/dev/null || true)"; do
+    if [[ -n "$e" && -x "$e" ]]; then
+        ELECTRON_BIN="$e"
+        break
+    fi
+done
+
+if [[ -z "$ELECTRON_BIN" ]]; then
+    echo "[!] Electron binary not found." >&2
+    exit 1
+fi
+
+if [[ -z "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
+    echo "[!] No graphical display environment found (DISPLAY or WAYLAND_DISPLAY)." >&2
+    exit 1
+fi
+
+if [[ ! -f "$APP_DIR/main.js" ]]; then
+    echo "[!] Math Pillar application files not found at $APP_DIR." >&2
+    exit 1
+fi
+
+exec "$ELECTRON_BIN" \
+    --no-sandbox \
+    --disable-dev-shm-usage \
+    --disable-gpu-sandbox \
+    --enable-transparent-visuals \
+    "$APP_DIR" "$@"

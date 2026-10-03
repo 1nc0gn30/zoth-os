@@ -1,0 +1,8 @@
+{
+  "name": "zoth-math-pillar",
+  "version": "1.0.0",
+  "description": "ZothOS Sovereign AI Mathematical Telemetry & Pillar Gauge HUD",
+  "main": "main.js",
+  "author": "Neal Frazier (NullAI Tech)",
+  "license": "MIT"
+}

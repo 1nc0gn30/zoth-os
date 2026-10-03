@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZothOS Math Pillar HUD</title>
+  <style>
+    :root {
+      --gold-primary: #FFD700;
+      --gold-bright: #FFE57F;
+      --gold-deep: #FFB300;
+      --gold-dark: #B8860B;
+      --gold-glow: rgba(255, 215, 0, 0.35);
+      --gold-border: rgba(255, 215, 0, 0.4);
+      --bg-dark: rgba(12, 13, 18, 0.92);
+      --panel-bg: rgba(20, 22, 30, 0.75);
+      --text-main: #F4E8C1;
+      --text-muted: #A09882;
+      --cyan-accent: #00E5FF;
+      --green-online: #00E676;
+      --red-offline: #FF5252;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'DejaVu Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      color: var(--text-main);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Outer Container */
+    #pillar-root {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--gold-border);
+      border-radius: 14px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 215, 0, 0.12);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    /* Celtic Corner Accents */
+    .corner-bracket {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--gold-primary);
+      pointer-events: none;
+      opacity: 0.85;
+    }
+    .top-left { top: 3px; left: 3px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+    .top-right { top: 3px; right: 3px; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
+    .bottom-left { bottom: 3px; left: 3px; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
+    .bottom-right { bottom: 3px; right: 3px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+
+    /* Header Bar */
+    header {
+      height: 42px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      -webkit-app-region: drag;
+      cursor: grab;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pillar-symbol {
+      color: var(--gold-bright);
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .title-text {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--gold-bright);
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: rgba(0, 230, 118, 0.12);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      color: var(--green-online);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-online);
+      box-shadow: 0 0 6px var(--green-online);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      -webkit-app-region: no-drag;
+    }
+
+    .ctrl-btn {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 5px;
+      color: var(--gold-bright);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 215, 0, 0.25);
+      color: #FFF;
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .ctrl-btn.pinned {
+      background: rgba(255, 215, 0, 0.35);
+      border-color: var(--gold-primary);
+    }
+
+    /* Agent Dropdown Bar */
+    .agent-selector-bar {
+      padding: 10px 14px 6px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      -webkit-app-region: no-drag;
+    }
+
+    .selector-label {
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .custom-select-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    select#agent-select {
+      width: 100%;
+      background: rgba(16, 18, 24, 0.95);
+      border: 1px solid var(--gold-border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--gold-bright);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      outline: none;
+      cursor: pointer;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+      appearance: none;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold-primary);
+      font-size: 9px;
+      pointer-events: none;
+    }
+
+    .agent-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      padding: 2px 2px;
+    }
+
+    .meta-model {
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .meta-phase {
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--gold-bright);
+      font-weight: bold;
+      letter-spacing: 0.8px;
+    }
+
+    /* Main Pillars Section */
+    .pillars-container {
+      flex: 1;
+      padding: 8px 14px;
+      display: grid;
+      grid-template-columns: 85px 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    /* Left: Context Cylinder Pillar */
+    .cylinder-pillar {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 4px;
+      position: relative;
+    }
+
+    .cylinder-title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .glass-tube {
+      flex: 1;
+      width: 38px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 215, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .tube-liquid {
+      width: 100%;
+      height: 25%;
+      background: linear-gradient(180deg, #FFE57F 0%, #FFB300 40%, #B8860B 100%);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .tube-liquid::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #FFFFFF;
+      box-shadow: 0 0 8px #FFFFFF, 0 0 14px var(--gold-primary);
+      border-radius: 50%;
+    }
+
+    /* Tick marks on tube */
+    .tube-ticks {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+      padding: 10px 0;
+    }
+
+    .tick {
+      width: 6px;
+      height: 1px;
+      background: rgba(255, 215, 0, 0.5);
+    }
+    .tick.major {
+      width: 10px;
+      background: rgba(255, 215, 0, 0.85);
+    }
+
+    .cylinder-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      margin-top: 6px;
+      font-family: monospace;
+    }
+
+    .cylinder-sub {
+      font-size: 8px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    /* Right: Mathematical Dynamic Gauges */
+    .gauges-pillar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .gauge-card {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 215, 0, 0.22);
+      border-radius: 9px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .gauge-val-big {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      font-family: monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .gauge-val-big span.unit {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* Velocity Meter Bar */
+    .segmented-bar {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+      padding: 1px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, #FFB300, #FFE57F);
+      box-shadow: 0 0 8px var(--gold-glow);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Entropy Canvas */
+    #entropy-canvas {
+      width: 100%;
+      height: 38px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      border-radius: 5px;
+    }
+
+    .mini-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .mini-stat {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      border-radius: 5px;
+      padding: 4px 6px;
+      text-align: center;
+    }
+
+    .mini-stat-lbl {
+      font-size: 7px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .mini-stat-val {
+      font-size: 10px;
+      font-weight: bold;
+      color: var(--gold-bright);
+      font-family: monospace;
+      margin-top: 1px;
+    }
+
+    /* Mathematical Log / Why & How Trace */
+    .log-section {
+      height: 145px;
+      margin: 0 14px 10px 14px;
+      background: rgba(8, 9, 12, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .log-header {
+      padding: 5px 10px;
+      background: rgba(255, 215, 0, 0.06);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+    }
+
+    .log-stream {
+      flex: 1;
+      padding: 6px 10px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 9.5px;
+      line-height: 1.45;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .log-stream::-webkit-scrollbar {
+      width: 4px;
+    }
+    .log-stream::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.3);
+      border-radius: 2px;
+    }
+
+    .log-entry {
+      color: #DCD0B0;
+      border-left: 2px solid rgba(255, 215, 0, 0.4);
+      padding-left: 6px;
+    }
+
+    .log-entry .time {
+      color: var(--text-muted);
+      font-size: 8.5px;
+      margin-right: 4px;
+    }
+
+    .log-entry .phase {
+      color: var(--gold-bright);
+      font-weight: bold;
+      margin-right: 4px;
+    }
+
+    .log-entry .entropy {
+      color: var(--cyan-accent);
+      font-size: 8.5px;
+      margin-left: 4px;
+    }
+
+    /* Footer Bar */
+    footer {
+      height: 28px;
+      padding: 0 14px;
+      border-top: 1px solid rgba(255, 215, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .test-pulse-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 4px;
+      color: var(--gold-bright);
+      font-size: 8px;
+      padding: 2px 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.15s ease;
+    }
+    .test-pulse-btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #FFF;
+    }
+
+    /* Compact Pill View */
+    #compact-pill {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 0 12px;
+      align-items: center;
+      justify-content: space-between;
+      -webkit-app-region: drag;
+      cursor: grab;
+    }
+
+    body.compact-mode #pillar-root {
+      border-radius: 24px;
+    }
+
+    body.compact-mode header,
+    body.compact-mode .agent-selector-bar,
+    body.compact-mode .pillars-container,
+    body.compact-mode .log-section,
+    body.compact-mode footer {
+      display: none !important;
+    }
+
+    body.compact-mode #compact-pill {
+      display: flex !important;
+    }
+
+    .pill-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--gold-bright);
+    }
+    .pill-stat {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--cyan-accent);
+      padding: 2px 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div id="pillar-root">
+    <div class="corner-bracket top-left"></div>
+    <div class="corner-bracket top-right"></div>
+    <div class="corner-bracket bottom-left"></div>
+    <div class="corner-bracket bottom-right"></div>
+
+    <!-- 1. Header Bar -->
+    <header>
+      <div class="title-group">
+        <span class="pillar-symbol">𝛗</span>
+        <span class="title-text">Math Pillar HUD</span>
+        <div class="status-badge" id="hud-status">
+          <div class="status-dot"></div>
+          <span id="hud-status-text">ONLINE</span>
+        </div>
+      </div>
+      <div class="controls-group">
+        <button class="ctrl-btn pinned" id="btn-pin" title="Always on Top">📌</button>
+        <button class="ctrl-btn" id="btn-compact" title="Compact Pill Mode">⤡</button>
+        <button class="ctrl-btn" id="btn-close" title="Close">✕</button>
+      </div>
+    </header>
+
+    <!-- 2. Agent Selector -->
+    <div class="agent-selector-bar">
+      <div class="selector-label">
+        <span>Active Telemetry Target</span>
+        <span id="active-agent-count">1 Online</span>
+      </div>
+      <div class="custom-select-wrap">
+        <select id="agent-select">
+          <option value="ALL">✦ ALL ACTIVE AGENTS (SWARM SYNTHESIS)</option>
+          <option value="Antigravity">✦ Antigravity (Gemini 3.8 / AGY)</option>
+          <option value="Ollama">✦ Ollama (Local Models)</option>
+          <option value="Aider">✦ Aider AI Coding Agent</option>
+          <option value="Grok">✦ Grok Bot</option>
+          <option value="Cursor">✦ Cursor AI / Composer</option>
+          <option value="Hermes">✦ Hermes Swarm / HexStrike</option>
+        </select>
+        <div class="select-arrow">▼</div>
+      </div>
+      <div class="agent-meta-row">
+        <span class="meta-model" id="agent-model-name">gemini-3.8-flash</span>
+        <span class="meta-phase" id="agent-phase">IDLE</span>
+      </div>
+    </div>
+
+    <!-- 3. The Pillars Grid -->
+    <div class="pillars-container">
+      <!-- Left: Context Cylinder -->
+      <div class="cylinder-pillar">
+        <div class="cylinder-title">Ω CONTEXT</div>
+        <div class="glass-tube">
+          <div class="tube-liquid" id="tube-level"></div>
+          <div class="tube-ticks">
+            <div class="tick major"></div>
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="tick major"></div>
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="tick major"></div>
+          </div>
+        </div>
+        <div class="cylinder-val" id="context-pct">4.8%</div>
+        <div class="cylinder-sub" id="context-raw">48.9k / 1.05M</div>
+      </div>
+
+      <!-- Right: Dynamics Core -->
+      <div class="gauges-pillar">
+        <!-- Metric 1: Velocity -->
+        <div class="gauge-card">
+          <div class="gauge-header">
+            <span>∂T/∂t Token Velocity</span>
+            <span id="throughput-val">4.2 MB/s</span>
+          </div>
+          <div class="gauge-val-big" id="velocity-display">
+            65 <span class="unit">tok/sec</span>
+          </div>
+          <div class="segmented-bar">
+            <div class="bar-fill" id="velocity-bar" style="width: 45%;"></div>
+          </div>
+        </div>
+
+        <!-- Metric 2: Reasoning Attention Entropy -->
+        <div class="gauge-card">
+          <div class="gauge-header">
+            <span>H(X) Reasoning Entropy</span>
+            <span id="entropy-val" style="color: var(--cyan-accent);">0.142 [COHERENT]</span>
+          </div>
+          <canvas id="entropy-canvas" width="300" height="40"></canvas>
+          <div class="mini-stats-grid">
+            <div class="mini-stat">
+              <div class="mini-stat-lbl">Confidence</div>
+              <div class="mini-stat-val" id="confidence-val">96.4%</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-lbl">Latency</div>
+              <div class="mini-stat-val" id="latency-val">95ms</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-lbl">Tools</div>
+              <div class="mini-stat-val" id="tools-val">14 / 0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric 3: Compute & Step Depth -->
+        <div class="gauge-card">
+          <div class="gauge-header">
+            <span>Step Depth (k / Kmax)</span>
+            <span id="vram-val">VRAM: 820 MB</span>
+          </div>
+          <div class="segmented-bar" style="height: 6px; margin-top: 3px;">
+            <div class="bar-fill" id="step-bar" style="width: 32%; background: linear-gradient(90deg, #00E5FF, #FFD700);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Mathematical Why & How Event Stream -->
+    <div class="log-section">
+      <div class="log-header">
+        <span>⚡ Mathematical Why & How Stream</span>
+        <span style="font-size: 8px; color: var(--text-muted);">AUTO-SYNC</span>
+      </div>
+      <div class="log-stream" id="log-stream">
+        <div class="log-entry">
+          <span class="time">[20:46:12]</span>
+          <span class="phase">[PREFILL]</span>
+          <span>Prompt tensors loaded (N=48,912 tokens)</span>
+          <span class="entropy">H:0.12</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Footer Bar -->
+    <footer>
+      <span>Endpoint: 127.0.0.1:9995/telemetry</span>
+      <button class="test-pulse-btn" id="btn-test-pulse">⚡ Inject Step</button>
+    </footer>
+
+    <!-- 6. Compact Mode Overlay -->
+    <div id="compact-pill">
+      <div class="pill-left">
+        <span style="color: var(--gold-bright); font-weight: bold; font-size: 14px;">𝛗</span>
+        <span class="pill-title" id="pill-agent-name">Antigravity</span>
+        <span class="pill-stat" id="pill-speed">65 tok/s</span>
+        <span class="pill-stat" id="pill-entropy" style="color: var(--gold-primary);">H: 0.14</span>
+      </div>
+      <div class="controls-group">
+        <button class="ctrl-btn" id="btn-expand" title="Expand Full Pillar">⤢</button>
+        <button class="ctrl-btn" id="btn-close-compact" title="Close">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let currentRegistry = {};
+    let selectedAgentKey = 'ALL';
+    let isCompact = false;
+    let isPinned = true;
+    let entropyHistory = Array(60).fill(0.15);
+
+    // Canvas setup
+    const canvas = document.getElementById('entropy-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Controls
+    document.getElementById('btn-close').addEventListener('click', () => ipcRenderer.send('window-close'));
+    document.getElementById('btn-close-compact').addEventListener('click', () => ipcRenderer.send('window-close'));
+    
+    document.getElementById('btn-pin').addEventListener('click', () => {
+      isPinned = !isPinned;
+      document.getElementById('btn-pin').classList.toggle('pinned', isPinned);
+      ipcRenderer.send('toggle-pin', isPinned);
+    });
+
+    const toggleCompactMode = () => {
+      isCompact = !isCompact;
+      document.body.classList.toggle('compact-mode', isCompact);
+      ipcRenderer.send('toggle-compact', isCompact);
+    };
+
+    document.getElementById('btn-compact').addEventListener('click', toggleCompactMode);
+    document.getElementById('btn-expand').addEventListener('click', toggleCompactMode);
+
+    // Agent selector
+    const agentSelect = document.getElementById('agent-select');
+    agentSelect.addEventListener('change', (e) => {
+      selectedAgentKey = e.target.value;
+      updateUI();
+    });
+
+    // Test pulse generator
+    document.getElementById('btn-test-pulse').addEventListener('click', () => {
+      fetch('http://127.0.0.1:9995/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agent: selectedAgentKey === 'ALL' ? 'Antigravity' : selectedAgentKey,
+          phase: 'REASONING_STEP',
+          tokensSec: 80 + Math.floor(Math.random() * 30),
+          contextUsed: Math.floor(Math.random() * 80000) + 20000,
+          entropy: +(0.08 + Math.random() * 0.22).toFixed(3),
+          confidence: +(0.92 + Math.random() * 0.07).toFixed(3),
+          latencyMs: 80 + Math.floor(Math.random() * 40),
+          tool: 'search_vector_db',
+          reasoning: `Calculus attention vector converged (loss: ${(0.01 + Math.random()*0.02).toFixed(4)})`
+        })
+      }).catch(() => {});
+    });
+
+    // Receive telemetry from main process
+    ipcRenderer.on('telemetry-update', (event, registry) => {
+      currentRegistry = registry;
+      updateUI();
+    });
+
+    function updateUI() {
+      if (!currentRegistry[selectedAgentKey]) return;
+      const data = currentRegistry[selectedAgentKey];
+
+      // Update meta
+      document.getElementById('agent-model-name').textContent = data.model || 'Unknown';
+      document.getElementById('agent-phase').textContent = data.phase || 'STANDBY';
+      
+      const countOnline = Object.values(currentRegistry).filter(a => a.online && a.name !== 'ALL').length;
+      document.getElementById('active-agent-count').textContent = `${countOnline} Active`;
+
+      // Context Cylinder
+      const maxCtx = data.contextMax || 1048576;
+      const usedCtx = data.contextUsed || 0;
+      const pct = Math.min(100, Math.max(1, Math.round((usedCtx / maxCtx) * 100)));
+      document.getElementById('tube-level').style.height = `${pct}%`;
+      document.getElementById('context-pct').textContent = `${pct}%`;
+      document.getElementById('context-raw').textContent = `${formatNum(usedCtx)} / ${formatNum(maxCtx)}`;
+
+      // Velocity
+      const tokSec = data.tokensSec || 0;
+      document.getElementById('velocity-display').innerHTML = `${tokSec} <span class="unit">tok/sec</span>`;
+      const velBarWidth = Math.min(100, Math.round((tokSec / 150) * 100));
+      document.getElementById('velocity-bar').style.width = `${velBarWidth}%`;
+      document.getElementById('throughput-val').textContent = `${(tokSec * 0.045).toFixed(1)} KB/s`;
+
+      // Entropy & Confidence
+      const ent = data.entropy || 0.15;
+      const entLabel = ent < 0.20 ? '[COHERENT]' : (ent < 0.35 ? '[FOCUSED]' : '[DISPERSED]');
+      document.getElementById('entropy-val').textContent = `${ent.toFixed(3)} ${entLabel}`;
+      document.getElementById('confidence-val').textContent = `${Math.round((data.confidence || 0.9) * 100)}%`;
+      document.getElementById('latency-val').textContent = `${data.latencyMs || 0}ms`;
+      document.getElementById('tools-val').textContent = `${data.toolCalls || 0} / ${data.toolFail || 0}`;
+
+      // Step & VRAM
+      const stepPct = Math.min(100, Math.round(((data.step || 1) / (data.maxSteps || 20)) * 100));
+      document.getElementById('step-bar').style.width = `${stepPct}%`;
+      document.getElementById('vram-val').textContent = `VRAM: ${data.vramMb || 0} MB`;
+
+      // Compact Pill updates
+      document.getElementById('pill-agent-name').textContent = selectedAgentKey;
+      document.getElementById('pill-speed').textContent = `${tokSec} t/s`;
+      document.getElementById('pill-entropy').textContent = `H: ${ent.toFixed(2)}`;
+
+      // Push entropy history for wave
+      entropyHistory.push(ent);
+      if (entropyHistory.length > 60) entropyHistory.shift();
+
+      // Logs
+      renderLogs(data.logs || []);
+    }
+
+    function renderLogs(logs) {
+      const stream = document.getElementById('log-stream');
+      if (logs.length === 0) {
+        stream.innerHTML = '<div style="color: var(--text-muted); font-size: 9px; padding: 4px;">Awaiting telemetry frames...</div>';
+        return;
+      }
+      stream.innerHTML = logs.slice(0, 15).map(l => `
+        <div class="log-entry">
+          <span class="time">[${l.time}]</span>
+          <span class="phase">${l.phase}</span>
+          <span>${escapeHtml(l.note)}</span>
+          <span class="entropy">H:${l.entropy !== undefined ? l.entropy : '0.15'}</span>
+        </div>
+      `).join('');
+    }
+
+    function formatNum(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+      return n.toString();
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ── Animated Mathematical Wave Canvas ────────────────────────────────────
+    let wavePhase = 0;
+    function renderWave() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Draw grid line
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+
+      // Draw mathematical entropy dispersion wave
+      ctx.beginPath();
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 1.8;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+
+      wavePhase += 0.05;
+      const step = w / (entropyHistory.length - 1);
+
+      for (let i = 0; i < entropyHistory.length; i++) {
+        const x = i * step;
+        const ent = entropyHistory[i];
+        // Amplitude based on entropy value
+        const amp = (h / 2.6) * Math.min(1.2, ent * 3.5);
+        const y = (h / 2) + Math.sin(i * 0.35 + wavePhase) * amp;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      requestAnimationFrame(renderWave);
+    }
+
+    // Initial trigger
+    ipcRenderer.send('request-telemetry');
+    renderWave();
+  </script>
+</body>
+</html>
