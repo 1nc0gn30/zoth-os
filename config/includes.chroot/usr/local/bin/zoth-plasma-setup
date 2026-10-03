@@ -25,21 +25,44 @@ if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
     ' >/dev/null 2>&1 || true
 fi
 
-# Apply ZOTHOS Celtic Gold Master Wallpaper directly via plasma-apply-wallpaperimage
-if [ -f "$WALLPAPER" ] && command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
-    plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 || true
-fi
+# Apply ZOTHOS Interactive 3D Wallpaper Plugin (or fallback to static master wallpaper)
+INTERACTIVE_PLUGIN="/usr/share/plasma/wallpapers/org.zothos.interactive"
+USER_INTERACTIVE_PLUGIN="$HOME/.local/share/plasma/wallpapers/org.zothos.interactive"
 
-# Also set via Plasma JavaScript evaluateScript on all containment desktops
-if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
-    "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
-        var desktops = desktops();
-        for (var i = 0; i < desktops.length; i++) {
-            desktops[i].wallpaperPlugin = "org.kde.image";
-            desktops[i].currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
-            desktops[i].writeConfig("Image", "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg");
-        }
-    ' >/dev/null 2>&1 || true
+if [ -d "$INTERACTIVE_PLUGIN" ] || [ -d "$USER_INTERACTIVE_PLUGIN" ]; then
+    # Ensure all desktop containments use org.zothos.interactive
+    if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
+        "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+            var desktops = desktops();
+            for (var i = 0; i < desktops.length; i++) {
+                desktops[i].wallpaperPlugin = "org.zothos.interactive";
+            }
+        ' >/dev/null 2>&1 || true
+    fi
+    # Also persist to desktop appletsrc for any new sessions
+    if command -v kwriteconfig6 >/dev/null 2>&1 && [ -f "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" ]; then
+        for cid in $(grep -E "^\[Containments\]\[[0-9]+\]$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null | tr -d '[]' | sed 's/Containments//'); do
+            is_desktop=$(kreadconfig6 --file plasma-org.kde.plasma.desktop-appletsrc --group Containments --group "$cid" --key plugin 2>/dev/null || true)
+            if [ "$is_desktop" = "org.kde.plasma.folder" ] || [ "$is_desktop" = "org.kde.desktopcontainment" ]; then
+                kwriteconfig6 --file plasma-org.kde.plasma.desktop-appletsrc --group Containments --group "$cid" --key wallpaperplugin "org.zothos.interactive" 2>/dev/null || true
+            fi
+        done
+    fi
+else
+    # Fallback to static master wallpaper if interactive plugin is absent
+    if [ -f "$WALLPAPER" ] && command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+        plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 || true
+    fi
+    if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
+        "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+            var desktops = desktops();
+            for (var i = 0; i < desktops.length; i++) {
+                desktops[i].wallpaperPlugin = "org.kde.image";
+                desktops[i].currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
+                desktops[i].writeConfig("Image", "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg");
+            }
+        ' >/dev/null 2>&1 || true
+    fi
 fi
 
 # Ensure KDE dark colorscheme is applied

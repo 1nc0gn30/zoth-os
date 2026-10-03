@@ -98,11 +98,11 @@ def render_subtitle(target_w, target_h, scale_factor):
     
     font_size = int(28 * scale_factor)
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", font_size)
     except:
         font = ImageFont.load_default()
         
-    text = "✦   S O V E R E I G N   I N T E L L I G E N C E   O S   ✦"
+    text = "S O V E R E I G N   I N T E L L I G E N C E   O S"
     
     # Text bounding
     bbox = draw.textbbox((0, 0), text, font=font)
@@ -120,6 +120,30 @@ def render_subtitle(target_w, target_h, scale_factor):
             
     # Sharp gold foreground
     draw.text((tx, ty), text, font=font, fill=(250, 225, 150, 240))
+
+    # Vector 4-pointed celestial diamond stars
+    star_y = ty + th // 2
+    r_out = int(12 * scale_factor)
+    r_in = int(3.8 * scale_factor)
+    wing = int(40 * scale_factor)
+    gap = int(60 * scale_factor)
+
+    def draw_star(cx, cy):
+        pts = []
+        for i in range(8):
+            ang = i * (math.pi / 4)
+            r = r_out if i % 2 == 0 else r_in
+            pts.append((cx + r * math.sin(ang), cy - r * math.cos(ang)))
+        for ox in [-2, 0, 2]:
+            for oy in [-2, 0, 2]:
+                gpts = [(px + ox, py + oy) for px, py in pts]
+                draw.polygon(gpts, fill=(255, 215, 0, 80))
+        draw.polygon(pts, fill=(250, 225, 150, 255))
+        draw.line([(cx - wing, cy), (cx - r_out - 4, cy)], fill=(255, 215, 0, 160), width=1)
+        draw.line([(cx + r_out + 4, cy), (cx + wing, cy)], fill=(255, 215, 0, 160), width=1)
+
+    draw_star(tx - gap, star_y)
+    draw_star(tx + tw + gap, star_y)
     
     # Sub-tagline
     sub_font_size = int(14 * scale_factor)
