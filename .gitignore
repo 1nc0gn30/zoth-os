@@ -267,10 +267,14 @@ Thumbs.db
 *.deb
 *.rpm
 *.tar.gz
+# Build Outputs & Temporary Artifacts
 build/live_workspace/
 build/live-workspace/
 build/*.iso
-build/*.sha256
+build/*.json
+!build/*.sha256
+!build/*.bundle
+!build/cosign.pub
 build/parts/
 build/upload-remaining-parts.sh
 .build/

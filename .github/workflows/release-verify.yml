@@ -1,0 +1,54 @@
+name: "Release Verification, Sigstore & SBOM"
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  provenance-and-sbom:
+    name: Generate SBOM & Sign Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0.16.0
+
+      - name: Generate Repository SBOM (SPDX)
+        run: |
+          syft dir:. -o spdx-json=zothos-repo-sbom.spdx.json -o cyclonedx-json=zothos-repo-sbom.cyclonedx.json
+
+      - name: Scan SBOM with Grype
+        uses: anchore/scan-action@v3
+        with:
+          sbom: zothos-repo-sbom.spdx.json
+          fail-build: false
+          output-format: sarif
+          severity-cutoff: high
+
+      - name: Sign Checksums with Sigstore (Keyless OIDC)
+        run: |
+          if [ -f build/zothos-*.iso.sha256 ]; then
+            for f in build/zothos-*.iso.sha256; do
+              cosign sign-blob --yes --bundle "${f}.bundle" "${f}"
+            done
+          fi
+
+      - name: Upload Verification Assets to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            zothos-repo-sbom.spdx.json
+            zothos-repo-sbom.cyclonedx.json
+            build/*.bundle
+            build/cosign.pub

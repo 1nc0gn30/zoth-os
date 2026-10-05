@@ -13,6 +13,41 @@
 #     /etc/zothos/gfx.conf  ->  ZOTH_GFX=software|hardware|auto
 # ==============================================================================
 
+# Nouveau breaks Chromium's EGL swap only when it is the GPU driving the
+# screen. Hybrid machines often load nouveau next to a working Intel or AMD
+# GPU. Forcing software mode in that case passes --disable-gpu, and Chrome
+# then has no WebGL even when hardware acceleration is turned on.
+zoth_nouveau_owns_display() {
+    local conn status card drv any=0 other=0 node path
+    grep -qs '^nouveau ' /proc/modules 2>/dev/null || return 1
+    shopt -s nullglob
+    for conn in /sys/class/drm/card[0-9]-*; do
+        [[ -r "$conn/status" ]] || continue
+        status="$(cat "$conn/status" 2>/dev/null || true)"
+        [[ "$status" == "connected" ]] || continue
+        any=1
+        card="$(basename "$conn")"
+        card="${card%%-*}"
+        drv="$(basename "$(readlink -f "/sys/class/drm/${card}/device/driver" 2>/dev/null)" 2>/dev/null || true)"
+        if [[ "$drv" != "nouveau" ]]; then
+            other=1
+        fi
+    done
+    # Connectors unreadable: software only when every render node is nouveau.
+    if [[ "$any" == 0 ]]; then
+        for node in /dev/dri/renderD*; do
+            [[ -e "$node" ]] || continue
+            any=1
+            path="/sys/class/drm/$(basename "$node")/device/driver"
+            drv="$(basename "$(readlink -f "$path" 2>/dev/null)" 2>/dev/null || true)"
+            if [[ "$drv" != "nouveau" ]]; then
+                other=1
+            fi
+        done
+    fi
+    [[ "$any" == 1 && "$other" == 0 ]]
+}
+
 zoth_gfx_mode() {
     local mode="${ZOTH_GFX:-}"
     if [[ -z "$mode" && -r /etc/zothos/gfx.conf ]]; then
@@ -25,8 +60,7 @@ zoth_gfx_mode() {
     if command -v systemd-detect-virt >/dev/null 2>&1 && systemd-detect-virt --vm --quiet 2>/dev/null; then
         echo software; return 0
     fi
-    # Nouveau on hybrid/Nvidia laptops fails EGL swap buffers -> software
-    if grep -qs "nouveau" /proc/modules 2>/dev/null; then
+    if zoth_nouveau_owns_display; then
         echo software; return 0
     fi
     # no DRM render node (no usable GPU driver) -> software
