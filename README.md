@@ -20,7 +20,10 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
     <a href="SECURITY.md"><img src="https://img.shields.io/badge/Sigstore-Cosign%20%2B%20Rekor%20Verified-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Sigstore Cosign" /></a>
     <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Builds-Reproducible%20Deterministic-success.svg?style=for-the-badge" alt="Reproducible Builds" /></a>
-    <a href="https://github.com/NullAITech/zoth-os/actions/workflows/scorecard.yml"><img src="https://img.shields.io/badge/OpenSSF-Scorecard%20Audited-brightgreen.svg?style=for-the-badge&logo=openssf&logoColor=white" alt="OpenSSF Scorecard" /></a>
+    <a href="https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os"><img src="https://api.scorecard.dev/projects/github.com/NullAITech/zoth-os/badge" alt="OpenSSF Scorecard" /></a>
+    <a href="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml"><img src="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
+    <a href="docs/OPENSSF_BEST_PRACTICES.md"><img src="https://img.shields.io/badge/OpenSSF-Best%20Practices%20Standard-4c1.svg?style=for-the-badge&logo=openssf&logoColor=white" alt="OpenSSF Best Practices" /></a>
+    <a href="https://www.virustotal.com/gui/file/44ab8e7bf2e50e1096ebea16b258133ed57aecd910a6b2178c3f3f65736ba1fc"><img src="https://img.shields.io/badge/VirusTotal-70%2B%20Engines%20Clean-brightgreen.svg?style=for-the-badge&logo=virustotal&logoColor=white" alt="VirusTotal Clean" /></a>
     <a href="https://www.debian.org"><img src="https://img.shields.io/badge/Base-Debian%2013%20Trixie-d70a53.svg?style=for-the-badge&logo=debian&logoColor=white" alt="Base: Debian 13" /></a>
     <a href="https://kde.org/plasma-desktop/"><img src="https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3-1d99f3.svg?style=for-the-badge&logo=kde&logoColor=white" alt="Desktop: KDE Plasma 6.3" /></a>
     <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Vault-Argon2id%20%2B%20ChaCha20-00e5ff.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Crypto: Argon2id + ChaCha20" /></a>
@@ -414,16 +417,24 @@ ZothOS rejects self-awarded labels and untrusted badges in favor of **auditable,
 | **Software Bill of Materials (SBOM)** | Anchore `syft` & `grype` | Full package provenance published in standard **SPDX 2.3** and **CycloneDX** JSON formats. |
 | **Static Code Analysis** | GitHub Advanced Security CodeQL | Automated AST static analysis running on every commit across Python, Shell, and Actions. |
 
-### How to Verify the ISO with Sigstore
+### Independent Verification Tooling
+
+ZothOS ships with automated independent verification scripts in `tools/`:
+
 ```bash
-# 1. Download release files: zothos-3.1-amd64.iso, .sha256, and .bundle
-# 2. Verify signature against Sigstore's Rekor Transparency Ledger:
+# 1. 1-Command Automated Third-Party Verifier (Cosign + SHA256 + VirusTotal)
+./tools/verify-iso.sh build/zothos-3.1-amd64.iso
+
+# 2. Bitwise Reproducible Build Verification (Diffoscope)
+./tools/diff-reproducible.sh build/zothos-3.1-run1.iso build/zothos-3.1-run2.iso
+
+# 3. Manual Cosign Verification against Rekor Public Transparency Ledger:
 cosign verify-blob \
   --key https://raw.githubusercontent.com/NullAITech/zoth-os/main/build/cosign.pub \
   --bundle zothos-3.1-amd64.iso.sha256.bundle \
   zothos-3.1-amd64.iso.sha256
 
-# 3. Verify ISO SHA-256 checksum:
+# 4. Verify ISO SHA-256 Checksum:
 sha256sum -c zothos-3.1-amd64.iso.sha256
 ```
 
