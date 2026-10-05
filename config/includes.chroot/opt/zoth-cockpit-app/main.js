@@ -384,7 +384,7 @@ const DAEMONS = [
     port: 8790,
     type: 'port',
     processName: 'swarm_daemon.py',
-    startCmd: 'nohup python3 ${ZOTH_SRC_ROOT}/zoth-studio-v2/bin/swarm_daemon.py >/tmp/swarm.log 2>&1 &',
+    startCmd: 'nohup python3 /opt/zoth-studio/bin/swarm_daemon.py >/tmp/swarm.log 2>&1 || nohup python3 "$HOME/NullAITech/zoth-studio-v2/bin/swarm_daemon.py" >/tmp/swarm.log 2>&1 &',
     stopCmd: 'pkill -f swarm_daemon.py || true',
   },
   {
@@ -436,7 +436,7 @@ const DAEMONS = [
     port: 5225,
     type: 'port',
     processName: 'simplex-chat',
-    startCmd: 'nohup /usr/local/bin/simplex-chat -d ${ZOTH_HOME}/.simplex/zoth_agent -p 5225 --user-display-name "Zoth Studio AI" >/tmp/simplex.log 2>&1 &',
+    startCmd: 'nohup /usr/local/bin/simplex-chat -d "$HOME/.simplex/zoth_agent" -p 5225 --user-display-name "Zoth Studio AI" >/tmp/simplex.log 2>&1 &',
     stopCmd: 'pkill -f simplex-chat || true',
   },
 ];

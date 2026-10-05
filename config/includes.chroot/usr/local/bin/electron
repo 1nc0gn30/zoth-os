@@ -13,8 +13,8 @@ fi
 
 ELECTRON_BIN="/opt/electron/electron"
 if [[ ! -x "$ELECTRON_BIN" ]]; then
-    if [[ -x "${ZOTH_HOME}/zothos/config/includes.chroot/opt/electron/electron" ]]; then
-        ELECTRON_BIN="${ZOTH_HOME}/zothos/config/includes.chroot/opt/electron/electron"
+    if [[ -n "${ZOTHOS_SRC:-}" && -x "${ZOTHOS_SRC}/config/includes.chroot/opt/electron/electron" ]]; then
+        ELECTRON_BIN="${ZOTHOS_SRC}/config/includes.chroot/opt/electron/electron"
     elif [[ -x "/usr/bin/electron" ]]; then
         ELECTRON_BIN="/usr/bin/electron"
     elif [[ -x "/usr/local/lib/node_modules/electron/dist/electron" ]]; then

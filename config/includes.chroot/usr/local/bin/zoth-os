@@ -11,7 +11,7 @@ ROOT=""
 for candidate in \
   /opt/zoth-os \
   "$HERE/../../../opt/zoth-os" \
-  ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-os
+  "${ZOTHOS_SRC:-}/config/includes.chroot/opt/zoth-os"
 do
   if [[ -f "$candidate/serve.py" ]]; then
     ROOT="$(cd "$candidate" && pwd)"

@@ -15,10 +15,13 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 WIDTH, HEIGHT = 1920, 1080
-OUT_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos"
-BUILD_CHROOT_DIR = "${ZOTH_HOME}/zothos/build/live_workspace/chroot/usr/share/backgrounds/zothos"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+OUT_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/backgrounds/zothos")
+BUILD_CHROOT_DIR = os.path.join(ROOT_DIR, "build/live_workspace/chroot/usr/share/backgrounds/zothos")
 os.makedirs(OUT_DIR, exist_ok=True)
-os.makedirs(BUILD_CHROOT_DIR, exist_ok=True)
+if os.path.exists(os.path.dirname(BUILD_CHROOT_DIR)):
+    os.makedirs(BUILD_CHROOT_DIR, exist_ok=True)
 
 # ── 1. HERMETIC MATRIX REALITY ──────────────────────────────────────────────
 def generate_matrix_wallpaper():
@@ -255,14 +258,16 @@ def generate_win11_wallpaper():
 def verify_gold_wallpaper():
     print("[*] Ensuring Azoth Gold Sanctum master wallpaper...")
     # Source master gold
-    src_gold = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos/zothos-celtic-dark.png"
+    src_gold = os.path.join(OUT_DIR, "zothos-celtic-dark.png")
     dst_master = f"{OUT_DIR}/zoth-gold-master.png"
     if os.path.exists(src_gold):
         import shutil
         shutil.copy2(src_gold, dst_master)
-        shutil.copy2(src_gold, f"{BUILD_CHROOT_DIR}/zoth-gold-master.png")
+        if os.path.exists(BUILD_CHROOT_DIR):
+            shutil.copy2(src_gold, f"{BUILD_CHROOT_DIR}/zoth-gold-master.png")
         shutil.copy2(src_gold, f"{OUT_DIR}/alchemical-gold.png")
-        shutil.copy2(src_gold, f"{BUILD_CHROOT_DIR}/alchemical-gold.png")
+        if os.path.exists(BUILD_CHROOT_DIR):
+            shutil.copy2(src_gold, f"{BUILD_CHROOT_DIR}/alchemical-gold.png")
         print(f"    -> Synced {dst_master} (Cyber-Gold Master)")
 
 if __name__ == "__main__":

@@ -16,7 +16,8 @@ import os
 import math
 from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageChops
 
-ROOT_DIR = "${ZOTH_HOME}/zothos"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
 ASSETS_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/opt/zoth-studio/public/assets")
 THEME_DIRS = [
     os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/plymouth/themes/zothos-matrix"),

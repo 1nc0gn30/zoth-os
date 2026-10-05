@@ -26,7 +26,6 @@ CANDIDATE_ROOTS = [
     "/opt/zoth-studio",
     "/usr/share/zoth-studio",
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "share/zoth-studio"),
-    "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio",
     os.path.expanduser("~/zoth-studio"),
 ]
 

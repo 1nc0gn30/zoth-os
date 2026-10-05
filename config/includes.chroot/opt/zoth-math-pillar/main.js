@@ -1276,7 +1276,7 @@ function scrapeCursorLogs(ag, hasAgentWorker, totalRssMb) {
         maxSteps: 25,
         tool: hasAgentWorker ? 'worker_daemon_sync' : 'ide_workspace_watch',
         reasoning: hasAgentWorker 
-          ? `Cursor Private Worker active: workspace \${ZOTH_SRC_ROOT}/zoth-os (RSS: ${totalRssMb} MB)`
+          ? `Cursor Private Worker active: workspace ${process.env.PWD || process.cwd()} (RSS: ${totalRssMb} MB)`
           : `Cursor IDE nominal: ${ag.vramMb} MB RSS allocated across editor processes`
       });
     }

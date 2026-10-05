@@ -3,10 +3,12 @@
 #  ZOTHOS VM CUSTOMIZATION INJECTION
 # ==============================================================================
 
-set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-VM_DISK="${ZOTH_HOME}/hermes-workspace/vms/zothos/zothos.qcow2"
-ZOTHOS_SRC="${ZOTH_HOME}/zothos/config/includes.chroot"
+VM_DISK="${VM_DISK:-$ROOT_DIR/build/vms/zothos.qcow2}"
+ZOTHOS_SRC="$ROOT_DIR/config/includes.chroot"
+VM_USER="${VM_USER:-zoth}"
 
 SSH_KEY_PUB="${HOME}/.ssh/id_ed25519.pub"
 if [[ ! -f "$SSH_KEY_PUB" ]]; then
@@ -30,10 +32,10 @@ echo "[*] Customizing ZOTHOS VM disk image with virt-customize..."
 
 virt-customize -a "$VM_DISK" \
     --root-password password:zoth \
-    --run-command "useradd -m -s /bin/bash -G sudo,audio,video,dialout neo 2>/dev/null || true" \
-    --run-command "echo 'neo:zoth' | chpasswd" \
-    --run-command "echo 'neo ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/neo && chmod 0440 /etc/sudoers.d/neo" \
-    --run-command "mkdir -p /usr/share/backgrounds /usr/share/themes /usr/share/plymouth/themes /etc/xdg/xfce4/xfwm4 /etc/xdg/xfwm4 /opt /etc/systemd/network /etc/systemd/system/multi-user.target.wants /etc/systemd/system/sockets.target.wants ${ZOTH_HOME}/.ssh" \
+    --run-command "useradd -m -s /bin/bash -G sudo,audio,video,dialout $VM_USER 2>/dev/null || true" \
+    --run-command "echo '$VM_USER:zoth' | chpasswd" \
+    --run-command "echo '$VM_USER ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$VM_USER && chmod 0440 /etc/sudoers.d/$VM_USER" \
+    --run-command "mkdir -p /usr/share/backgrounds /usr/share/themes /usr/share/plymouth/themes /etc/xdg/xfce4/xfwm4 /etc/xdg/xfwm4 /opt /etc/systemd/network /etc/systemd/system/multi-user.target.wants /etc/systemd/system/sockets.target.wants /home/$VM_USER/.ssh" \
     --network \
     --install openssh-server,qemu-guest-agent,sudo,curl,rsync \
     --copy-in "$ZOTHOS_SRC/usr/local/bin:/usr/local" \
@@ -69,13 +71,13 @@ virt-customize -a "$VM_DISK" \
     --run-command "ln -sf /lib/systemd/system/systemd-networkd.service /etc/systemd/system/multi-user.target.wants/systemd-networkd.service 2>/dev/null || true" \
     --run-command "ln -sf /lib/systemd/system/qemu-guest-agent.service /etc/systemd/system/multi-user.target.wants/qemu-guest-agent.service 2>/dev/null || true" \
     --run-command "chmod +x /usr/local/bin/* /opt/zoth-studio/launch.sh 2>/dev/null || true" \
-    --run-command "rm -rf ${ZOTH_HOME}/.config/xfce4/panel/launcher-* 2>/dev/null || true" \
-    --run-command "cp -rf /etc/skel/. ${ZOTH_HOME}/ && chown -R neo:neo ${ZOTH_HOME}" \
-    --run-command "if [ -n '$SSH_KEY_CONTENT' ]; then echo '$SSH_KEY_CONTENT' > ${ZOTH_HOME}/.ssh/authorized_keys && chmod 700 ${ZOTH_HOME}/.ssh && chmod 600 ${ZOTH_HOME}/.ssh/authorized_keys && chown -R neo:neo ${ZOTH_HOME}/.ssh; fi" \
+    --run-command "rm -rf /home/$VM_USER/.config/xfce4/panel/launcher-* 2>/dev/null || true" \
+    --run-command "cp -rf /etc/skel/. /home/$VM_USER/ && chown -R $VM_USER:$VM_USER /home/$VM_USER" \
+    --run-command "if [ -n '$SSH_KEY_CONTENT' ]; then echo '$SSH_KEY_CONTENT' > /home/$VM_USER/.ssh/authorized_keys && chmod 700 /home/$VM_USER/.ssh && chmod 600 /home/$VM_USER/.ssh/authorized_keys && chown -R $VM_USER:$VM_USER /home/$VM_USER/.ssh; fi" \
     --run-command "mkdir -p /etc/systemd/system/getty@tty1.service.d" \
-    --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o \"-p -f -- \\\\\\\\\\\\\\\\u\" --noclear --autologin neo %%I \$TERM\n' > /etc/systemd/system/getty@tty1.service.d/autologin.conf" \
+    --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o \"-p -f -- \\\\\\\\\\\\\\\\u\" --noclear --autologin $VM_USER %%I \$TERM\n' > /etc/systemd/system/getty@tty1.service.d/autologin.conf" \
     --run-command "mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d" \
-    --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o \"-p -f -- \\\\\\\\\\\\\\\\u\" --keep-baud --autologin neo 115200,38400,9600 %%I \$TERM\n' > /etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf" \
+    --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o \"-p -f -- \\\\\\\\\\\\\\\\u\" --keep-baud --autologin $VM_USER 115200,38400,9600 %%I \$TERM\n' > /etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf" \
     --run-command "systemctl daemon-reload 2>/dev/null || true"
 
 echo "[✓] ZOTHOS VM disk image successfully customized."

@@ -20,9 +20,10 @@ import json
 
 CANDIDATE_DIRS = [
     "/usr/share/hexstrike-ai",
-    "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/hexstrike-ai",
     "/opt/hexstrike-ai",
 ]
+if os.environ.get("ZOTHOS_SRC"):
+    CANDIDATE_DIRS.append(os.path.join(os.environ["ZOTHOS_SRC"], "config/includes.chroot/usr/share/hexstrike-ai"))
 
 HEXSTRIKE_DIR = "/usr/share/hexstrike-ai"
 for d in CANDIDATE_DIRS:
@@ -32,8 +33,8 @@ for d in CANDIDATE_DIRS:
 
 BACKEND_DIR = os.path.join(HEXSTRIKE_DIR, "backend") if os.path.exists(os.path.join(HEXSTRIKE_DIR, "backend")) else HEXSTRIKE_DIR
 ICON_PATH = "/usr/share/pixmaps/hexstrike.png"
-if not os.path.exists(ICON_PATH):
-    fallback_icon = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/pixmaps/hexstrike.png"
+if not os.path.exists(ICON_PATH) and os.environ.get("ZOTHOS_SRC"):
+    fallback_icon = os.path.join(os.environ["ZOTHOS_SRC"], "config/includes.chroot/usr/share/pixmaps/hexstrike.png")
     if os.path.exists(fallback_icon):
         ICON_PATH = fallback_icon
 

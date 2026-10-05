@@ -5,7 +5,8 @@ Appends high-contrast desktop icon selection and hover rules to all ZothOS GTK t
 
 import os
 
-THEMES_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/themes"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+THEMES_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/themes")
 
 STYLES = {
     "Zoth-Hermetic-Matrix": """

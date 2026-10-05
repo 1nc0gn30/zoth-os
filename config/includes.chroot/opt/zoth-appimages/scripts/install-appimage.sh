@@ -72,7 +72,11 @@ fi
 
 # Setup Desktop Launcher
 LAUNCHER_PATH="/usr/share/applications/$DESKTOP_NAME"
-DESKTOP_DIR="${ZOTH_HOME}/Desktop"
+TARGET_USER="${SUDO_USER:-$(id -un)}"
+[[ "$TARGET_USER" == "root" ]] && TARGET_USER="zoth"
+TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6 2>/dev/null)
+[[ -z "$TARGET_HOME" ]] && TARGET_HOME="/home/$TARGET_USER"
+DESKTOP_DIR="$TARGET_HOME/Desktop"
 SKEL_DESKTOP_DIR="/etc/skel/Desktop"
 sudo mkdir -p "$DESKTOP_DIR" "$SKEL_DESKTOP_DIR"
 
@@ -100,7 +104,7 @@ sudo chmod +x "$LAUNCHER_PATH"
 sudo cp -f "$LAUNCHER_PATH" "$DESKTOP_DIR/$DESKTOP_NAME"
 sudo cp -f "$LAUNCHER_PATH" "$SKEL_DESKTOP_DIR/$DESKTOP_NAME"
 sudo chmod +x "$DESKTOP_DIR/$DESKTOP_NAME" "$SKEL_DESKTOP_DIR/$DESKTOP_NAME"
-sudo chown -R neo:neo "$DESKTOP_DIR" 2>/dev/null || true
+sudo chown -R "$TARGET_USER:$TARGET_USER" "$DESKTOP_DIR" 2>/dev/null || true
 
 # Add symlink to /usr/local/bin
 sudo bash -c "cat > '/usr/local/bin/$ID'" << EOF

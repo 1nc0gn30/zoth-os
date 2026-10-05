@@ -8,7 +8,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_DIR/build"
-ISO_PATH="$BUILD_DIR/zothos-1.0-amd64.iso"
+ISO_PATH="${ISO_PATH:-$(find "$BUILD_DIR" -maxdepth 1 -name "zothos-*.iso" 2>/dev/null | head -n 1)}"
+ISO_PATH="${ISO_PATH:-$BUILD_DIR/zothos-3.1-amd64.iso}"
 ARTIFACT_DIR="${ARTIFACT_DIR:-/tmp/zothos-preview}"
 
 echo "=================================================="
@@ -21,12 +22,14 @@ if [[ -d "$BUILD_DIR/live_workspace" ]]; then
     mkdir -p "$BUILD_DIR/live_workspace/config/includes.chroot"
     sudo cp -a "$PROJECT_DIR/config/includes.chroot/." "$BUILD_DIR/live_workspace/config/includes.chroot/" 2>/dev/null || true
     sudo cp -a "$PROJECT_DIR/config/includes.chroot/." "$BUILD_DIR/live_workspace/chroot/" 2>/dev/null || true
-    if [[ -d "$BUILD_DIR/live_workspace/chroot/home/neo" ]]; then
-        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/gtk-3.0/gtk.css" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/gtk-3.0/gtk.css" 2>/dev/null || true
-        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kdeglobals" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/kdeglobals" 2>/dev/null || true
-        sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kwinrc" "$BUILD_DIR/live_workspace/chroot/home/neo/.config/kwinrc" 2>/dev/null || true
-        sudo chown -R 1000:1000 "$BUILD_DIR/live_workspace/chroot/home/neo" 2>/dev/null || true
-    fi
+    for user_home in "$BUILD_DIR/live_workspace/chroot/home/"*; do
+        if [[ -d "$user_home" ]]; then
+            sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/gtk-3.0/gtk.css" "$user_home/.config/gtk-3.0/gtk.css" 2>/dev/null || true
+            sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kdeglobals" "$user_home/.config/kdeglobals" 2>/dev/null || true
+            sudo cp -f "$PROJECT_DIR/config/includes.chroot/etc/skel/.config/kwinrc" "$user_home/.config/kwinrc" 2>/dev/null || true
+            sudo chown -R 1000:1000 "$user_home" 2>/dev/null || true
+        fi
+    done
 fi
 
 # 2. Rebuild ISO
@@ -39,7 +42,7 @@ sudo virsh destroy zothos-iso-live 2>/dev/null || true
 sudo rm -f /tmp/zothos-iso-test.qcow2
 sudo qemu-img create -f qcow2 /tmp/zothos-iso-test.qcow2 50G >/dev/null
 
-cat << 'EOF' > /tmp/zothos-iso-live.xml
+cat << EOF > /tmp/zothos-iso-live.xml
 <domain type='kvm'>
   <name>zothos-iso-live</name>
   <memory unit='KiB'>8388608</memory>
@@ -61,7 +64,7 @@ cat << 'EOF' > /tmp/zothos-iso-live.xml
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso'/>
+      <source file='${ISO_PATH}'/>
       <target dev='sda' bus='sata'/>
       <readonly/>
       <boot order='1'/>

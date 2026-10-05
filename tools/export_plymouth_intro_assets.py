@@ -15,9 +15,11 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-WALLPAPER_PATH = "${ZOTH_SRC_ROOT}/zoth-os/config/includes.chroot/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+WALLPAPER_PATH = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/backgrounds/zothos/zoth-gold-master.jpg")
 THEME_DESTS = [
-    "${ZOTH_SRC_ROOT}/zoth-os/config/includes.chroot/usr/share/plymouth/themes/zothos"
+    os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/plymouth/themes/zothos")
 ]
 
 def main():

@@ -5,6 +5,8 @@
 
 set -e
 export DEBIAN_FRONTEND=noninteractive
+TARGET_USER="${TARGET_USER:-${SUDO_USER:-$USER}}"
+TARGET_HOME="${HOME:-/home/$TARGET_USER}"
 
 echo "[1/7] Installing Node.js LTS (v22.x) & Package Managers (pnpm, yarn, bun)..."
 if ! node -v 2>/dev/null | grep -q "v2[0-9]"; then
@@ -86,7 +88,7 @@ if ! which forge >/dev/null 2>&1; then
 fi
 
 echo "[6/7] Creating Desktop & Whisker Menu Launchers..."
-mkdir -p /usr/share/applications ${ZOTH_HOME}/Desktop ${ZOTH_HOME}/.local/share/applications
+mkdir -p /usr/share/applications "$TARGET_HOME/Desktop" "$TARGET_HOME/.local/share/applications"
 
 # Obsidian Desktop Launcher
 cat <<'EOF' > /usr/share/applications/obsidian.desktop
@@ -150,13 +152,16 @@ Categories=Development;
 EOF
 
 # Sync to user desktop & permissions
-cp -f /usr/share/applications/obsidian.desktop ${ZOTH_HOME}/Desktop/
-cp -f /usr/share/applications/tailscale.desktop ${ZOTH_HOME}/Desktop/
-cp -f /usr/share/applications/anonsurf.desktop ${ZOTH_HOME}/Desktop/
-cp -f /usr/share/applications/tor-anonymity.desktop ${ZOTH_HOME}/Desktop/
-cp -f /usr/share/applications/web3-dev.desktop ${ZOTH_HOME}/Desktop/
-chmod +x ${ZOTH_HOME}/Desktop/*.desktop /usr/share/applications/*.desktop
-chown -R neo:neo ${ZOTH_HOME}/Desktop ${ZOTH_HOME}/.local 2>/dev/null || true
+if [[ -d "$TARGET_HOME/Desktop" ]]; then
+    cp -f /usr/share/applications/obsidian.desktop "$TARGET_HOME/Desktop/" 2>/dev/null || true
+    cp -f /usr/share/applications/tailscale.desktop "$TARGET_HOME/Desktop/" 2>/dev/null || true
+    cp -f /usr/share/applications/anonsurf.desktop "$TARGET_HOME/Desktop/" 2>/dev/null || true
+    cp -f /usr/share/applications/tor-anonymity.desktop "$TARGET_HOME/Desktop/" 2>/dev/null || true
+    cp -f /usr/share/applications/web3-dev.desktop "$TARGET_HOME/Desktop/" 2>/dev/null || true
+    chmod +x "$TARGET_HOME/Desktop/"*.desktop 2>/dev/null || true
+    chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/Desktop" "$TARGET_HOME/.local" 2>/dev/null || true
+fi
+chmod +x /usr/share/applications/*.desktop 2>/dev/null || true
 
 echo "[7/7] Verifying Suite Installation..."
 for t in node npm blender gimp tor tailscale anonsurf obsidian solana cargo; do

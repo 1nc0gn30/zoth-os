@@ -107,11 +107,15 @@ def get_daemon_bin():
     candidates = [
         shutil.which("zoth-vault-daemon"),
         "/usr/local/bin/zoth-vault-daemon",
-        "${ZOTH_HOME}/zothos/config/includes.chroot/usr/local/bin/zoth-vault-daemon",
-        "${ZOTH_HOME}/zothos/build/live_workspace/chroot/usr/local/bin/zoth-vault-daemon",
-        "${ZOTH_HOME}/zothos/build/live_workspace/chroot/opt/zoth-studio/backend/vault-daemon/target/release/zoth-vault-daemon",
         "/opt/zoth-studio/backend/vault-daemon/target/release/zoth-vault-daemon",
     ]
+    zothos_src = os.environ.get("ZOTHOS_SRC")
+    if zothos_src:
+        candidates.extend([
+            os.path.join(zothos_src, "config/includes.chroot/usr/local/bin/zoth-vault-daemon"),
+            os.path.join(zothos_src, "build/live_workspace/chroot/usr/local/bin/zoth-vault-daemon"),
+            os.path.join(zothos_src, "build/live_workspace/chroot/opt/zoth-studio/backend/vault-daemon/target/release/zoth-vault-daemon"),
+        ])
     for c in candidates:
         if c and os.path.isfile(c) and os.access(c, os.X_OK):
             return c

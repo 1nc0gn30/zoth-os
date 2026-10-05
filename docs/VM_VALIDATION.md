@@ -10,7 +10,7 @@ This document details the virtual machine setup, hypervisor domains, network bri
 ### Installed Disk Domain (`zothos`)
 - **Hypervisor**: KVM / QEMU via Libvirt (`qemu:///system`)
 - **Domain Name**: `zothos`
-- **Virtual Disk**: `${ZOTH_HOME}/hermes-workspace/vms/zothos/zothos.qcow2` (QCOW2 with virtio bus)
+- **Virtual Disk**: `${VM_DISK:-build/vms/zothos.qcow2}` (QCOW2 with virtio bus)
 - **vCPU Allocation**: 4 vCPUs (`host-passthrough` / `host-model`)
 - **Memory Allocation**: 8192 MiB RAM
 - **Display Server**: KDE Plasma 6 + SDDM + KWin compositor (SPICE / VirtIO-GPU)
@@ -18,10 +18,10 @@ This document details the virtual machine setup, hypervisor domains, network bri
 ### Live ISO Verification Domain (`zothos-iso-live`)
 - **Hypervisor**: KVM / QEMU via Libvirt (`qemu:///system`)
 - **Domain Name**: `zothos-iso-live`
-- **Boot Media**: `${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso`
+- **Boot Media**: `build/zothos-*.iso`
 - **vCPU Allocation**: 4 vCPUs
 - **Memory Allocation**: 8192 MiB RAM
-- **Display Server**: KDE Plasma 6 Live Session (`user: neo`)
+- **Display Server**: KDE Plasma 6 Live Session (`user: zoth`)
 
 ---
 
@@ -34,7 +34,7 @@ This document details the virtual machine setup, hypervisor domains, network bri
 - **Automated SSH Access**:
   - OpenSSH Server active on port 22 (`ssh.service` & `ssh.socket`)
   - Key-based authentication configured from host (`~/.ssh/id_ed25519.pub`)
-  - Passwordless sudo for user `neo`
+  - Passwordless sudo for live user `zoth`
 
 ---
 
@@ -46,7 +46,7 @@ The validation suite provides 4 verification phases:
    - Validates all `/usr/local/bin/zoth*` and HexStrike scripts for executable bits and Bash/Python syntax.
    - Verifies systemd unit files, udev rules, KDE Plasma 6 configs, and wallpapers.
 2. **Desktop & Launcher Integrity**:
-   - Validates desktop entries in `${ZOTH_HOME}/Desktop/` and `/usr/share/applications/`.
+   - Validates desktop entries in `config/includes.chroot/etc/skel/Desktop/` and `/usr/share/applications/`.
    - Confirms clean 24K gold medallion icons and absence of broken or pruned launchers.
 3. **Libvirt Domain & Network Validation**:
    - Queries `virsh` domain state, memory, vCPUs, MAC, and leases.
@@ -69,15 +69,15 @@ The validation suite provides 4 verification phases:
 ./tools/test-zothos.sh --chroot
 
 # Boot ISO or QCOW2 directly in QEMU:
-./tools/test-zothos.sh --iso build/zothos-1.0-amd64.iso
-./tools/test-zothos.sh --qcow2 ${ZOTH_HOME}/hermes-workspace/vms/zothos/zothos.qcow2
+./tools/test-zothos.sh --iso build/zothos-3.1-amd64.iso
+./tools/test-zothos.sh --qcow2 "${VM_DISK:-build/vms/zothos.qcow2}"
 ```
 
 ---
 
 ## 4. Desktop Integration & Console Access
 
-- **Desktop Entry**: `${ZOTH_HOME}/Desktop/zothos-vm.desktop`
+- **Desktop Entry**: `~/.local/share/applications/zothos-vm.desktop`
 - **Action**: Opens the graphical VM console in Virtual Machine Manager:
   ```desktop
   [Desktop Entry]

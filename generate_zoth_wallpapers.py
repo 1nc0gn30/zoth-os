@@ -8,8 +8,9 @@ import os
 import math
 from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageOps, ImageChops
 
-BG_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos"
-ASSETS_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio/public/assets"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+BG_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/backgrounds/zothos")
+ASSETS_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/opt/zoth-studio/public/assets")
 
 WIDTH = 3840
 HEIGHT = 2160

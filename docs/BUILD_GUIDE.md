@@ -51,14 +51,14 @@ sudo bash build/pack-iso.sh
 ```
 
 ### What `pack-iso.sh` Executes:
-1. **Overlay Synchronization**: Synchronizes all files from [`config/includes.chroot/`](file://${ZOTH_HOME}/zothos/config/includes.chroot/) into `build/live_workspace/chroot/` using `rsync -aHAX`. This guarantees that edits to scripts, desktop entries, and skel configs are immediately present in the target filesystem.
+1. **Overlay Synchronization**: Synchronizes all files from [`config/includes.chroot/`](../config/includes.chroot/) into `build/live_workspace/chroot/` using `rsync -aHAX`. This guarantees that edits to scripts, desktop entries, and skel configs are immediately present in the target filesystem.
 2. **Squashfs Compression**: Runs `lb binary_rootfs` to compress the chroot into `live/filesystem.squashfs` using high-ratio XZ compression.
 3. **Binary ISO Assembly**: Runs `lb binary_iso` to generate the UEFI and legacy BIOS hybrid ISO using `xorriso`.
 4. **Permissions Normalization**: Automatically changes ISO permissions to `0644` so regular users can mount or attach the ISO to QEMU/KVM.
 5. **Loopback Sanity Audit**: Temporarily mounts `filesystem.squashfs` on a loopback device to verify that critical binaries (e.g., `zoth-update-studio`, `zoth-studio`, `zoth-pkg`) are present, executable, and free of corruption.
 
 Output image location:
-[`build/zothos-1.0-amd64.iso`](file://${ZOTH_HOME}/zothos/build/zothos-1.0-amd64.iso) (~12 GB).
+`build/zothos-1.0-amd64.iso` (~12 GB).
 
 ---
 

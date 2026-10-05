@@ -4,9 +4,9 @@ Generate ultra-luxurious, modern glassmorphic SVG icons for ZOTHOS.
 """
 
 import os
-import subprocess
-
-ICONS_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/icons/Zoth-Hermetic"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+ICONS_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/icons/Zoth-Hermetic")
 SCALABLE_DIR = os.path.join(ICONS_DIR, "scalable/apps")
 DIR_48 = os.path.join(ICONS_DIR, "48x48/apps")
 DIR_128 = os.path.join(ICONS_DIR, "128x128/apps")

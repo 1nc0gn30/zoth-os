@@ -12,7 +12,7 @@ import math
 import shutil
 from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageChops
 
-ROOT_DIR = "${ZOTH_HOME}/zothos"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/opt/zoth-studio/public/assets")
 LOCAL_ICONS = os.path.expanduser("~/.local/share/icons")
 
@@ -30,7 +30,7 @@ def get_asset_path(rel_path):
     if os.path.exists(p):
         return p
     # Fallback to local user paths or repo paths if needed
-    alt = os.path.join("${ZOTH_HOME}/lafvin/public/assets", rel_path)
+    alt = os.path.expanduser(f"~/lafvin/public/assets/{rel_path}")
     if os.path.exists(alt):
         return alt
     return None

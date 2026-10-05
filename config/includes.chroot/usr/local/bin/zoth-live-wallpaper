@@ -28,7 +28,7 @@ resolve_engine_path() {
     local candidate_paths=(
         "/usr/share/zothos/live-wallpaper/index.html"
         "$(dirname "$(readlink -f "$0")")/../share/zothos/live-wallpaper/index.html"
-        "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/zothos/live-wallpaper/index.html"
+        "${ZOTHOS_SRC:-}/config/includes.chroot/usr/share/zothos/live-wallpaper/index.html"
         "$HOME/.local/share/zothos/live-wallpaper/index.html"
     )
     for p in "${candidate_paths[@]}"; do

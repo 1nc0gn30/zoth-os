@@ -6,7 +6,6 @@
 set -euo pipefail
 
 CONFIG_FILE="/etc/zothos/agent-permissions.json"
-DEV_CONFIG_FILE="${ZOTH_HOME}/zothos/config/includes.chroot/etc/zothos/agent-permissions.json"
 USER_STATE="$HOME/.config/zothos/agent-layer.state"
 USER_RING_STATE="$HOME/.config/zothos/agent-ring.state"
 
@@ -24,8 +23,6 @@ get_active_layer() {
         cat "$USER_STATE"
     elif [[ -f "$CONFIG_FILE" ]] && command -v jq >/dev/null 2>&1; then
         jq -r '.active_layer // 2' "$CONFIG_FILE"
-    elif [[ -f "$DEV_CONFIG_FILE" ]] && command -v jq >/dev/null 2>&1; then
-        jq -r '.active_layer // 2' "$DEV_CONFIG_FILE"
     else
         echo "2"
     fi

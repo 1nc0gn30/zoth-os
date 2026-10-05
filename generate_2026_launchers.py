@@ -407,7 +407,8 @@ exec bash
 """
 }
 
-target_dir = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/local/bin"
+root_dir = os.path.dirname(os.path.abspath(__file__))
+target_dir = os.path.join(root_dir, "config/includes.chroot/usr/local/bin")
 os.makedirs(target_dir, exist_ok=True)
 
 for name, script in LAUNCHERS.items():

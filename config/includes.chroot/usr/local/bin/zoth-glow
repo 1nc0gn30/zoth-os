@@ -12,7 +12,7 @@ set -euo pipefail
 
 APP="zoth-gold-glow"
 APP_DIR="/opt/$APP"
-SRC_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/opt/$APP"
+SRC_DIR="${ZOTHOS_SRC:-}/config/includes.chroot/opt/$APP"
 AUTOSTART="/etc/xdg/autostart/zoth-gold-glow.desktop"
 PIDFILE="/tmp/zoth-glow.pid"
 

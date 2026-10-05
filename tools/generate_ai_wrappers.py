@@ -2,7 +2,9 @@
 import os
 import stat
 
-bin_dir = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/local/bin"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+bin_dir = os.path.join(ROOT_DIR, "config/includes.chroot/usr/local/bin")
 
 tools = [
     {

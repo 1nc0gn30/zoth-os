@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
@@ -17,9 +18,9 @@ app.on('child-process-gone', (event, details) => {
 let mainWindow = null;
 
 function getConfigPath() {
-  const userPath = path.join(process.env.HOME || '${ZOTH_HOME}', '.config/zothos/mcp-servers.json');
+  const userPath = path.join(os.homedir(), '.config/zothos/mcp-servers.json');
   const sysPath = '/etc/zothos/mcp-servers.json';
-  const chrootPath = '${ZOTH_HOME}/zothos/config/includes.chroot/etc/zothos/mcp-servers.json';
+  const chrootPath = path.resolve(__dirname, '../../etc/zothos/mcp-servers.json');
 
   if (fs.existsSync(userPath)) return userPath;
   if (fs.existsSync(sysPath)) return sysPath;
@@ -121,7 +122,7 @@ ipcMain.on('sync-mcp-config', (event) => {
 
   exec(cmd, (err, stdout, stderr) => {
     // Also perform explicit direct copy fallback to ensure agent dirs get it
-    const home = process.env.HOME || '${ZOTH_HOME}';
+    const home = os.homedir();
     const cfgPath = getConfigPath();
 
     if (fs.existsSync(cfgPath)) {

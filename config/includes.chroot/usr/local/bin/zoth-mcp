@@ -27,8 +27,8 @@ get_config_path() {
         echo "$USER_MCP_CONFIG"
     elif [[ -f "$MCP_CONFIG" ]]; then
         echo "$MCP_CONFIG"
-    elif [[ -f "${ZOTH_HOME}/zothos/config/includes.chroot/etc/zothos/mcp-servers.json" ]]; then
-        echo "${ZOTH_HOME}/zothos/config/includes.chroot/etc/zothos/mcp-servers.json"
+    elif [[ -n "${ZOTHOS_SRC:-}" && -f "${ZOTHOS_SRC}/config/includes.chroot/etc/zothos/mcp-servers.json" ]]; then
+        echo "${ZOTHOS_SRC}/config/includes.chroot/etc/zothos/mcp-servers.json"
     else
         echo "$MCP_CONFIG"
     fi
@@ -150,7 +150,7 @@ cmd_health() {
         local fallback
         fallback=$(jq -r ".mcpServers[\"$s\"].fallbackHandler // \"none\"" "$cfg")
         local sandbox
-        sandbox=$(jq -r ".mcpServers[\"$s\"].sandbox // \"${ZOTH_HOME}\"" "$cfg")
+        sandbox=$(jq -r ".mcpServers[\"$s\"].sandbox // \"${HOME:-${ZOTH_HOME}}\"" "$cfg")
 
         echo -e "${BOLD}▶ [${s}]${RESET} (${ring})"
         
@@ -426,8 +426,10 @@ case "$action" in
     gui|app)
         if [[ -n "${DISPLAY:-}" ]] && command -v electron >/dev/null 2>&1 && [[ -d "/opt/zoth-mcp-app" ]]; then
             exec electron /opt/zoth-mcp-app
-        elif [[ -d "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-mcp-app" ]]; then
-            exec ${ZOTH_HOME}/zothos/config/includes.chroot/opt/electron/electron ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-mcp-app
+        elif [[ -n "${ZOTHOS_SRC:-}" && -d "${ZOTHOS_SRC}/config/includes.chroot/opt/zoth-mcp-app" ]]; then
+            local elec_bin="electron"
+            [[ -x "${ZOTHOS_SRC}/config/includes.chroot/opt/electron/electron" ]] && elec_bin="${ZOTHOS_SRC}/config/includes.chroot/opt/electron/electron"
+            exec "$elec_bin" "${ZOTHOS_SRC}/config/includes.chroot/opt/zoth-mcp-app"
         else
             interactive_menu
         fi

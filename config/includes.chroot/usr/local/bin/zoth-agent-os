@@ -24,7 +24,6 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 
 CONFIG_FILE = Path("/etc/zothos/agent-permissions.json")
-DEV_CONFIG_FILE = Path("${ZOTH_HOME}/zothos/config/includes.chroot/etc/zothos/agent-permissions.json")
 USER_CONFIG_FILE = Path(os.path.expanduser("~/.config/zothos/agent-permissions.json"))
 USER_STATE = Path(os.path.expanduser("~/.config/zothos/agent-layer.state"))
 USER_RING_STATE = Path(os.path.expanduser("~/.config/zothos/agent-ring.state"))
@@ -108,7 +107,7 @@ def log_msg(msg: str):
         pass
 
 def load_policy_config() -> Dict[str, Any]:
-    for path in [USER_CONFIG_FILE, CONFIG_FILE, DEV_CONFIG_FILE]:
+    for path in [USER_CONFIG_FILE, CONFIG_FILE]:
         if path.exists():
             try:
                 return json.loads(path.read_text())

@@ -120,14 +120,15 @@ find_studio_root() {
 
     local CANDIDATES=(
         "/opt/zoth-studio"
-        "${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio"
+        "${ZOTHOS_SRC:-}/config/includes.chroot/opt/zoth-studio"
         "/usr/share/zoth-studio"
         "$HOME/zoth-studio"
         "$HOME/zoth-studio-v2"
+        "$HOME/NullAITech/zoth-studio-v2"
     )
 
     for cand in "${CANDIDATES[@]}"; do
-        if [[ -d "$cand" && ( -f "$cand/package.json" || -d "$cand/.git" ) ]]; then
+        if [[ -n "$cand" && -d "$cand" && ( -f "$cand/package.json" || -d "$cand/.git" ) ]]; then
             echo "$cand"
             return 0
         fi
@@ -146,7 +147,7 @@ STUDIO_ROOT=$(find_studio_root || true)
 
 if [[ -z "$STUDIO_ROOT" || ! -d "$STUDIO_ROOT" ]]; then
     echo -e "${RED}[✗] Zoth Studio directory not found!${RESET}"
-    echo -e "    Checked: /opt/zoth-studio, ${ZOTH_HOME}/zothos/config/includes.chroot/opt/zoth-studio"
+    echo -e "    Checked standard locations (/opt/zoth-studio, ~/zoth-studio, etc.)"
     echo -e "    Pass target explicitly: ${CYAN}zoth-update-studio --target /path/to/zoth-studio${RESET}"
     exit 1
 fi

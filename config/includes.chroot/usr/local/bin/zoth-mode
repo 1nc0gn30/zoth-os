@@ -36,14 +36,7 @@ get_current_mode() {
 }
 
 WP_DIR="/usr/share/backgrounds/zothos"
-if [[ ! -d "$WP_DIR" && -d "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos" ]]; then
-    WP_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/backgrounds/zothos"
-fi
-
 SOUND_DIR="/usr/share/sounds/zothos"
-if [[ ! -d "$SOUND_DIR" && -d "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/sounds/zothos" ]]; then
-    SOUND_DIR="${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/sounds/zothos"
-fi
 
 apply_wallpaper() {
     local wp="$1"

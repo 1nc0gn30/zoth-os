@@ -266,9 +266,10 @@ DESK_ENTRIES = {
     }
 }
 
+root_dir = os.path.dirname(os.path.abspath(__file__))
 target_dirs = [
-    "${ZOTH_HOME}/zothos/config/includes.chroot/etc/skel/Desktop",
-    "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/applications"
+    os.path.join(root_dir, "config/includes.chroot/etc/skel/Desktop"),
+    os.path.join(root_dir, "config/includes.chroot/usr/share/applications")
 ]
 
 for tdir in target_dirs:

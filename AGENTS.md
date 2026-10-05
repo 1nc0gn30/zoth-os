@@ -73,12 +73,12 @@ Always run the verification tool before committing changes:
 ```
 *Requirement*: Must exit with status code `0` and 100% PASS on all integrity checks.
 
-### 3.2 Testing Changes in the Live KVM VM
-The repository includes a live QCOW2 virtual machine image located at `${ZOTH_HOME}/hermes-workspace/vms/zothos/zothos.qcow2`.
+### 3.2 Testing Changes in a Live KVM VM
+Testing can be performed against a local QCOW2 virtual machine image (configured via the `VM_DISK` environment variable, or placed at `build/vms/zothos.qcow2`):
 
 1. **Inject modifications into VM disk**:
    ```bash
-   ./tools/inject-vm-customization.sh
+   VM_DISK="${VM_DISK:-build/vms/zothos.qcow2}" ./tools/inject-vm-customization.sh
    ```
 2. **Boot or restart VM**:
    ```bash
@@ -98,7 +98,7 @@ To produce the final hybrid UEFI/BIOS ISO image (`zothos-1.0-amd64.iso`):
 ```bash
 sudo ./build/build-iso.sh
 ```
-*Note*: ISO build output files are written to `${ZOTH_HOME}/zothos/build/`. Stale ISO files should be cleaned before fresh compilation.
+*Note*: ISO build output files are written to `build/`. Stale ISO files should be cleaned before fresh compilation.
 
 ---
 

@@ -9,7 +9,8 @@ import struct
 import math
 from PIL import Image, ImageDraw, ImageFilter
 
-CURSORS_DIR = "${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/icons"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+CURSORS_DIR = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/icons")
 
 THEMES = {
     "Zoth-Hermetic-Matrix": {

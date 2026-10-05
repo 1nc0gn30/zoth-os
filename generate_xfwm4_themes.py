@@ -184,8 +184,10 @@ def generate_win11_theme(dest_dir):
             shutil.copy(os.path.join(src_xfwm, f), os.path.join(dest_dir, f))
 
 if __name__ == "__main__":
-    generate_matrix_theme("${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/themes/Zoth-Hermetic-Matrix/xfwm4")
-    generate_ghost_theme("${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/themes/Zoth-Ghost-NullAI/xfwm4")
-    generate_gold_theme("${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/themes/Zoth-Azoth-Gold/xfwm4")
-    generate_win11_theme("${ZOTH_HOME}/zothos/config/includes.chroot/usr/share/themes/Zoth-Incognito-Win11/xfwm4")
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    themes_base = os.path.join(root_dir, "config/includes.chroot/usr/share/themes")
+    generate_matrix_theme(os.path.join(themes_base, "Zoth-Hermetic-Matrix/xfwm4"))
+    generate_ghost_theme(os.path.join(themes_base, "Zoth-Ghost-NullAI/xfwm4"))
+    generate_gold_theme(os.path.join(themes_base, "Zoth-Azoth-Gold/xfwm4"))
+    generate_win11_theme(os.path.join(themes_base, "Zoth-Incognito-Win11/xfwm4"))
     print("XFWM4 themes successfully generated!")

@@ -19,8 +19,10 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-WALLPAPER_PATH = "${ZOTH_SRC_ROOT}/zoth-os/config/includes.chroot/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
-OUTPUT_DIR = "${ZOTH_SRC_ROOT}/zoth-os/assets/video"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+WALLPAPER_PATH = os.path.join(ROOT_DIR, "config/includes.chroot/usr/share/backgrounds/zothos/zoth-gold-master.jpg")
+OUTPUT_DIR = os.path.join(ROOT_DIR, "assets/video")
 
 def create_background_plate(orig):
     """Inpaint text region from original wallpaper to create pristine obsidian vignette."""
