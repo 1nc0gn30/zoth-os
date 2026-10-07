@@ -181,7 +181,20 @@ mkdir -p /usr/local/share/fonts/zothos
 cp /usr/share/fonts/truetype/jetbrains-mono/*.ttf /usr/local/share/fonts/zothos/ 2>/dev/null || true
 fc-cache -f 2>/dev/null || true
 
-# ── 12. Completion Marker ──────────────────────────────────────────────────
+# ── 12. UFW Firewall Baseline ─────────────────────────────────────────────
+if command -v ufw &>/dev/null; then
+    echo "[UFW] Configuring sovereign firewall baseline..."
+    ufw --force reset || true
+    ufw default deny incoming || true
+    ufw default allow outgoing || true
+    ufw allow in on lo || true
+    ufw allow in on tailscale0 || true
+    ufw allow 41641/udp comment "Tailscale Wireguard" || true
+    ufw allow 7890/tcp comment "Anderson Sentinel Camera Feed" || true
+    ufw --force enable || true
+fi
+
+# ── 13. Completion Marker ──────────────────────────────────────────────────
 echo "Bootstrap completed at $TIMESTAMP" > "$MARKER"
 chmod 444 "$MARKER"
 

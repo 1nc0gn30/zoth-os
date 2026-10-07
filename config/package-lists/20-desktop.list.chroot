@@ -63,6 +63,7 @@ firmware-misc-nonfree
 firmware-iwlwifi
 firmware-realtek
 firmware-atheros
+firmware-mediatek
 firmware-brcm80211
 firmware-libertas
 firmware-zd1211

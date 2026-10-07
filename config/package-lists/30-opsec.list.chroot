@@ -4,6 +4,7 @@ proxychains4
 macchanger
 iptables
 nftables
+ufw
 iproute2
 wireguard-tools
 openvpn

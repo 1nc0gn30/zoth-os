@@ -142,3 +142,12 @@ if [[ -x /usr/local/bin/zoth-fastfetch ]] && [[ -z "${ZOTH_FASTFETCH_SHOWN:-}" ]
     export ZOTH_FASTFETCH_SHOWN=1
     /usr/local/bin/zoth-fastfetch
 fi
+
+# ── Safe Local Development Server Defaults (Localhost Only) ───────────────
+alias serve='python3 -m http.server --bind 127.0.0.1'
+alias pyhttp='python3 -m http.server --bind 127.0.0.1'
+
+# ── Grok AI Path & Completions ─────────────────────────────────────────────
+export PATH="$HOME/.grok/bin:$PATH"
+[[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
+
