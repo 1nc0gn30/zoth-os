@@ -18,10 +18,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v4.1.2
 
       - name: Install Syft
-        uses: anchore/sbom-action/download-syft@v0.16.0
+        uses: anchore/sbom-action/download-syft@v0.24.3
 
       - name: Generate Repository SBOM (SPDX)
         run: |
@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Upload Verification Assets to Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
