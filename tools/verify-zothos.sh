@@ -95,6 +95,7 @@ SCRIPTS=(
     "$CHROOT/usr/local/bin/agent-mock-twin"
     "$CHROOT/usr/local/bin/agent-firewall"
     "$CHROOT/usr/local/bin/neuro-memory"
+    "$CHROOT/usr/local/bin/agent-flight"
 )
 
 for s in "${SCRIPTS[@]}"; do
@@ -114,6 +115,7 @@ check_file "$CHROOT/etc/systemd/system/neuro-memory.service" "Neuro-Memory Biolo
 check_file "$CHROOT/etc/systemd/system/agent-egress-sentinel.service" "Agent Egress Sentinel Service"
 check_file "$CHROOT/etc/systemd/system/agent-mock-twin.service" "Agent Mock Twin Service"
 check_file "$CHROOT/etc/systemd/system/agent-prompt-firewall.service" "Agent Prompt Firewall Service"
+check_file "$CHROOT/etc/systemd/system/agent-flight-recorder.service" "Agent Flight Recorder Service"
 check_file "$CHROOT/etc/systemd/system/zoth-watchdog.service" "Self-Healing Watchdog Service"
 check_file "$CHROOT/etc/systemd/system/zoth-watchdog.timer" "Self-Healing Watchdog Timer"
 check_file "$CHROOT/etc/udev/rules.d/99-zoth-panic.rules" "Panic Udev Rules"

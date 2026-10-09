@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Flight Recorder
+GenericName=AI Agent Black Box Telemetry Forensics Hub
+Comment=Autonomous time-scrubbing telemetry forensics and incident black box for AI agents
+Exec=/usr/local/bin/agent-flight serve
+Icon=zoth-flight-recorder
+Terminal=false
+Categories=Development;System;Monitor;X-ZothOS-AI;
+Keywords=flight;recorder;blackbox;forensics;telemetry;replay;ai;agent;timeline;
+StartupNotify=true
+Actions=Deck;Stats;Export;
+
+[Desktop Action Deck]
+Name=Launch Flight Deck Web UI
+Exec=xdg-open http://127.0.0.1:8104
+
+[Desktop Action Stats]
+Name=Flight Recorder Stats
+Exec=xfce4-terminal --hold -T "Flight Recorder Stats" -e "/usr/local/bin/agent-flight status"
+
+[Desktop Action Export]
+Name=Export Latest Session Bundle
+Exec=xfce4-terminal --hold -T "Flight Recorder Export" -e "/usr/local/bin/agent-flight export"
