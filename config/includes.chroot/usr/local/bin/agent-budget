@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Agent Budget Sentinel CLI Wrapper
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+PRIMARY_BIN="${ZOTH_SRC_ROOT}/agent-budget-sentinel/bin/agent-budget"
+REPO_DIR="${ZOTH_SRC_ROOT}/agent-budget-sentinel"
+
+if [[ -x "$PRIMARY_BIN" ]]; then
+    exec "$PRIMARY_BIN" "$@"
+elif [[ -d "$REPO_DIR/src/agent_budget_sentinel" ]]; then
+    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+    exec python3 -m agent_budget_sentinel.cli "$@"
+else
+    echo "Error: agent-budget not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    exit 1
+fi

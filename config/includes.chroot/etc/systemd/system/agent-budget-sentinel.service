@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Agent Budget Sentinel - Autonomous Token Cost Circuit Breaker & Guardrail
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/agent-budget-sentinel
+ExecStart=/usr/bin/python3 ${ZOTH_SRC_ROOT}/agent-budget-sentinel/bin/agent-budget serve --web-port 8110 --proxy-port 8111
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-budget-sentinel/src
+
+[Install]
+WantedBy=multi-user.target

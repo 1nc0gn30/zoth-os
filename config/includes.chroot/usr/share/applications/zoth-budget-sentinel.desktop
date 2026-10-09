@@ -1,0 +1,29 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Budget Sentinel
+GenericName=AI Agent Token Cost Circuit Breaker & Radar
+Comment=Autonomous LLM token cost circuit breaker, spending radar, and guardrail for AI agents
+Exec=/usr/local/bin/agent-budget serve
+Icon=zoth-budget-sentinel
+Terminal=false
+Categories=Security;Development;Network;X-ZothOS-AI;
+Keywords=budget;cost;token;breaker;sentinel;guardrail;ai;agent;proxy;spend;
+StartupNotify=true
+Actions=Radar;Status;Trip;Reset;
+
+[Desktop Action Radar]
+Name=Launch Web Radar Cockpit
+Exec=xdg-open http://127.0.0.1:8110
+
+[Desktop Action Status]
+Name=Inspect Spending Status
+Exec=xfce4-terminal --hold -T "Budget Sentinel Status" -e "/usr/local/bin/agent-budget status"
+
+[Desktop Action Trip]
+Name=Trip Emergency Circuit Breaker
+Exec=xfce4-terminal -T "Trip Circuit Breaker" -e "/usr/local/bin/agent-budget trip --reason 'Manual desktop trip'"
+
+[Desktop Action Reset]
+Name=Reset Circuit Breaker
+Exec=xfce4-terminal -T "Reset Circuit Breaker" -e "/usr/local/bin/agent-budget reset"
