@@ -1,37 +1,22 @@
 {
-  "description": "ZOTHOS Master Model Context Protocol (MCP) Server Registry",
-  "version": "3.0.0",
+  "description": "ZOTHOS Master Model Context Protocol (MCP) Server Registry. Servers with enabled true are started by coding agents. The others are installed in the catalog and stay off until zoth-mcp enable <name>.",
+  "version": "3.1.0",
+  "updated": "2026-10-08",
   "mcpServers": {
-    "hexstrike-ai": {
-      "command": "python3",
-      "args": [
-        "/usr/share/hexstrike-ai/hexstrike_mcp.py",
-        "--server",
-        "http://127.0.0.1:8000"
-      ],
-      "description": "HexStrike AI v6.0 - Autonomous Penetration Testing & Cybersecurity Arsenal MCP Server",
-      "offline": true,
-      "securityRing": "RING_2_TOOLMASTER",
-      "ring_level": 2,
-      "sandbox": "${ZOTH_HOME}/.hexstrike",
-      "fallbackHandler": "/usr/local/bin/zoth-sec mcp",
-      "timeout": 300,
-      "alwaysAllow": []
-    },
     "filesystem": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-filesystem",
+        "@modelcontextprotocol/server-filesystem@2026.8.31",
         "${ZOTH_HOME}",
         "/usr/share/zothos",
         "/opt",
         "/etc/zothos",
-        "/var/lib/zothos",
         "/tmp"
       ],
-      "description": "Local Filesystem MCP Server - Safe sandboxed file operations",
+      "description": "Official filesystem server. Sandboxed to the home directory, Zoth share, /opt, /etc/zothos, and /tmp.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_1_SYSADMIN",
       "ring_level": 1,
       "sandbox": "${ZOTH_HOME}",
@@ -43,61 +28,419 @@
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-memory"
+        "@modelcontextprotocol/server-memory@2026.8.31"
       ],
-      "description": "Memory MCP Server - Graph-based persistent knowledge & memory for AI agents",
+      "description": "Official memory server. A local knowledge graph for the agent.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_0_SOVEREIGN",
       "ring_level": 0,
-      "sandbox": "/var/lib/zothos/memory",
-      "fallbackHandler": "sqlite3 /var/lib/zothos/memory.db",
+      "sandbox": "${ZOTH_HOME}/.zothos/mcp",
+      "fallbackHandler": "sqlite3 ${ZOTH_HOME}/.zothos/mcp/knowledge.db",
       "timeout": 60,
+      "alwaysAllow": []
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking@2026.8.31"
+      ],
+      "description": "Official sequential-thinking server. Stepwise plans for longer development tasks.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git"
+      ],
+      "description": "Official Git server (PyPI mcp-server-git). Uses the working directory of the agent.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "git",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time"
+      ],
+      "description": "Official time server (PyPI mcp-server-time). Local timezone conversions.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "date",
+      "timeout": 30,
+      "alwaysAllow": []
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "description": "Official fetch server (PyPI mcp-server-fetch). Reads public pages and respects robots.txt.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "curl -s",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "sqlite": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-sqlite",
+        "--db-path",
+        "${ZOTH_HOME}/.zothos/mcp/knowledge.db"
+      ],
+      "description": "Official SQLite server (PyPI mcp-server-sqlite). Local database at ~/.zothos/mcp/knowledge.db.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}/.zothos/mcp/knowledge.db",
+      "fallbackHandler": "sqlite3 ${ZOTH_HOME}/.zothos/mcp/knowledge.db",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@4.2.0"
+      ],
+      "description": "Context7 from Upstash. Current library documentation for the agent.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@0.0.83",
+        "--browser",
+        "chrome"
+      ],
+      "description": "Microsoft Playwright MCP. Browser automation for page checks, using the installed Chrome.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "google-chrome",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@1.10.1",
+        "--headless",
+        "--isolated",
+        "--executablePath",
+        "/opt/google/chrome/chrome",
+        "--categoryExperimentalWebmcp"
+      ],
+      "env": {
+        "CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS": "1"
+      },
+      "description": "Chrome DevTools MCP, headless and isolated, with the WebMCP tool category. It does not attach to the user's open Chrome.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "/opt/google/chrome/chrome",
+      "timeout": 180,
       "alwaysAllow": []
     },
     "puppeteer": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-puppeteer"
+        "@modelcontextprotocol/server-puppeteer@2025.5.12"
       ],
-      "description": "Puppeteer MCP Server - Headless & visible browser automation, clicks, navigation, screenshots",
+      "description": "Official Puppeteer reference server. Off by default. Playwright and Chrome DevTools cover browser work.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_2_TOOLMASTER",
       "ring_level": 2,
       "sandbox": "/tmp/puppeteer_sandbox",
-      "fallbackHandler": "chromium --headless --remote-debugging-port=9222",
+      "fallbackHandler": "chromium --headless",
       "timeout": 180,
       "alwaysAllow": []
     },
-    "kali-parrot-sectools": {
-      "command": "python3",
-      "args": [
-        "/usr/local/bin/zoth-sec",
-        "mcp"
-      ],
-      "description": "Kali Linux & Parrot OS Unified Security Tools MCP Bridge - Nmap, Masscan, SQLMap, Nuclei, FFUF, Gobuster",
-      "offline": true,
-      "securityRing": "RING_1_SYSADMIN",
-      "ring_level": 1,
-      "sandbox": "${ZOTH_HOME}",
-      "fallbackHandler": "/usr/local/bin/zoth-sec",
-      "timeout": 300,
-      "alwaysAllow": []
-    },
-    "sqlite": {
+    "everything": {
       "command": "npx",
       "args": [
         "-y",
-        "mcp-server-sqlite",
-        "--db-path",
-        "/var/lib/zothos/knowledge.db"
+        "@modelcontextprotocol/server-everything@2026.8.31"
       ],
-      "description": "SQLite Database MCP Server - Query, mutate and explore SQLite stores",
+      "description": "Official reference demo server. Exercises the protocol. Off by default.",
       "offline": true,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github@2025.4.8"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "description": "GitHub reference server. Set GITHUB_PERSONAL_ACCESS_TOKEN, then zoth-mcp enable github.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "git",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "linear": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.linear.app/mcp"
+      ],
+      "description": "Linear's remote MCP. OAuth for this user is already stored. It can read and change Linear issues, projects, and comments.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "sentry": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sentry/mcp-server@0.42.0"
+      ],
+      "description": "Sentry's official MCP. Needs a Sentry auth token. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "notion": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@notionhq/notion-mcp-server@2.5.2"
+      ],
+      "description": "Notion's official MCP. Needs a Notion integration token. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@0.13.0"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": ""
+      },
+      "description": "Supabase's official MCP. Can change a project. Set SUPABASE_ACCESS_TOKEN, then enable it.",
+      "offline": false,
+      "enabled": false,
       "securityRing": "RING_1_SYSADMIN",
       "ring_level": 1,
-      "sandbox": "/var/lib/zothos/knowledge.db",
-      "fallbackHandler": "python3 -c 'import sqlite3'",
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "stripe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@stripe/mcp@0.3.3"
+      ],
+      "env": {
+        "STRIPE_SECRET_KEY": ""
+      },
+      "description": "Stripe's official MCP. It can create and change live Stripe objects. Set STRIPE_SECRET_KEY, then enable it on purpose.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "firebase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "firebase-tools@15.32.1",
+        "mcp"
+      ],
+      "description": "Firebase CLI MCP command. Uses the logged-in Firebase account. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "firebase",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "azure": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@3.0.0-beta.50"
+      ],
+      "description": "Microsoft Azure MCP. Uses the Azure login. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "az",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "heroku": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@heroku/mcp-server@1.2.11"
+      ],
+      "description": "Heroku's official MCP. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "heroku",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "cloudflare": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cloudflare/mcp-server-cloudflare@0.2.0"
+      ],
+      "description": "Cloudflare's official MCP. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "mongodb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mongodb-js/mongodb-mcp-server@0.0.3"
+      ],
+      "description": "MongoDB's official MCP. Needs a connection string. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "elastic": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@elastic/mcp-server-elasticsearch@0.3.1"
+      ],
+      "description": "Elastic's official Elasticsearch MCP. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres@0.6.2",
+        "postgresql://postgres@localhost:5432/zothos"
+      ],
+      "description": "Official Postgres reference server for postgresql://postgres@localhost:5432/zothos. Off until that database is up.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "postgresql://postgres@localhost:5432/zothos",
+      "fallbackHandler": "sqlite3 ${ZOTH_HOME}/.zothos/mcp/knowledge.db",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "redis": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-redis@2025.4.25"
+      ],
+      "description": "Official Redis reference server. Off until a local Redis is the target.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "redis://127.0.0.1:6379",
+      "fallbackHandler": "redis-cli",
       "timeout": 60,
       "alwaysAllow": []
     },
@@ -107,15 +450,227 @@
         "-y",
         "@duckdb/mcp-server",
         "--db-path",
-        "/var/lib/zothos/analytics.duckdb"
+        "${ZOTH_HOME}/.zothos/mcp/analytics.duckdb"
       ],
-      "description": "DuckDB Analytical Database MCP Server - High-performance vectorized OLAP & AI data queries",
+      "description": "Placeholder. @duckdb/mcp-server was not on npm on 2026-10-07, so this stays off.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_1_SYSADMIN",
       "ring_level": 1,
-      "sandbox": "/var/lib/zothos/analytics.duckdb",
+      "sandbox": "${ZOTH_HOME}/.zothos/mcp/analytics.duckdb",
       "fallbackHandler": "python3 -c 'import duckdb'",
       "timeout": 120,
+      "alwaysAllow": []
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack@2025.4.25"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": ""
+      },
+      "description": "Official Slack reference server. Can post messages. Set SLACK_BOT_TOKEN, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-gitlab@2025.4.25"
+      ],
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "description": "Official GitLab reference server. Set GITLAB_PERSONAL_ACCESS_TOKEN, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "git",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "gdrive": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-gdrive@2025.1.14"
+      ],
+      "description": "Official Google Drive reference server. Needs OAuth credentials. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "google-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps@0.6.2"
+      ],
+      "env": {
+        "GOOGLE_MAPS_API_KEY": ""
+      },
+      "description": "Official Google Maps reference server. Set GOOGLE_MAPS_API_KEY, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search@0.6.2"
+      ],
+      "env": {
+        "BRAVE_API_KEY": ""
+      },
+      "description": "Official Brave Search reference server. Set BRAVE_API_KEY, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "aws-kb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-aws-kb-retrieval@0.6.2"
+      ],
+      "description": "Official AWS knowledge-base retrieval reference server. Off until AWS credentials are set.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "aws",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "firecrawl-mcp@3.28.2"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": ""
+      },
+      "description": "Firecrawl's MCP. Set FIRECRAWL_API_KEY, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "exa-mcp-server@3.4.2"
+      ],
+      "env": {
+        "EXA_API_KEY": ""
+      },
+      "description": "Exa's official search MCP. Set EXA_API_KEY, then enable it.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "apify": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@apify/actors-mcp-server@0.17.4"
+      ],
+      "description": "Apify's official actors MCP. Needs an Apify token. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "browserbase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@browserbasehq/mcp@3.0.0"
+      ],
+      "description": "Browserbase's official cloud-browser MCP. Off until enabled.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "hexstrike-ai": {
+      "command": "python3",
+      "args": [
+        "/usr/share/hexstrike-ai/hexstrike_mcp.py",
+        "--server",
+        "http://127.0.0.1:8000"
+      ],
+      "description": "HexStrike local security arsenal. Off in coding agents until zoth-mcp enable hexstrike-ai.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "${ZOTH_HOME}/.hexstrike",
+      "fallbackHandler": "/usr/local/bin/zoth-sec mcp",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "kali-parrot-sectools": {
+      "command": "python3",
+      "args": [
+        "/usr/local/bin/zoth-sec",
+        "mcp"
+      ],
+      "description": "Local Kali and Parrot tool bridge. Off in coding agents until zoth-mcp enable kali-parrot-sectools.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "/usr/local/bin/zoth-sec",
+      "timeout": 300,
       "alwaysAllow": []
     },
     "hermes-bridge": {
@@ -123,8 +678,9 @@
       "args": [
         "mcp"
       ],
-      "description": "Nous Research Hermes Agent MCP Bridge - Autonomous multi-step tool-calling agent runtime",
+      "description": "Hermes agent bridge. Off until zoth-mcp enable hermes-bridge.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_0_SOVEREIGN",
       "ring_level": 0,
       "sandbox": "${ZOTH_HOME}/.hermes",
@@ -138,8 +694,9 @@
         "/usr/local/bin/zoth-agent-os",
         "mcp"
       ],
-      "description": "ZOTHOS Autonomous OS Control MCP Server - Ring-gated system execution & GUI automation",
+      "description": "Zoth OS control bridge. Off until zoth-mcp enable zoth-agent-os.",
       "offline": true,
+      "enabled": false,
       "securityRing": "RING_0_SOVEREIGN",
       "ring_level": 0,
       "sandbox": "${ZOTH_HOME}",
@@ -147,72 +704,1896 @@
       "timeout": 300,
       "alwaysAllow": []
     },
-    "fetch": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-fetch"
-      ],
-      "description": "Fetch MCP Server - Web scraping, HTTP requests, and text extraction",
+    "microsoft-learn": {
       "offline": false,
       "securityRing": "RING_2_TOOLMASTER",
       "ring_level": 2,
       "sandbox": "/tmp",
-      "fallbackHandler": "curl -s",
-      "timeout": 60,
-      "alwaysAllow": []
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-brave-search"
-      ],
-      "env": {
-        "BRAVE_API_KEY": ""
-      },
-      "description": "Brave Search MCP Server - Real-time web intelligence and search",
-      "offline": false,
-      "securityRing": "RING_2_TOOLMASTER",
-      "ring_level": 2,
-      "sandbox": "/tmp",
-      "fallbackHandler": "/usr/share/zothos/docs",
-      "timeout": 60,
-      "alwaysAllow": []
-    },
-    "github": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
-      },
-      "description": "GitHub MCP Server - PRs, repositories, commits, and issue automation",
-      "offline": false,
-      "securityRing": "RING_2_TOOLMASTER",
-      "ring_level": 2,
-      "sandbox": "${ZOTH_HOME}",
-      "fallbackHandler": "git",
+      "fallbackHandler": "true",
       "timeout": 120,
-      "alwaysAllow": []
-    },
-    "postgres": {
+      "alwaysAllow": [],
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-postgres",
-        "postgresql://postgres@localhost:5432/zothos"
+        "mcp-remote@0.14.3",
+        "https://learn.microsoft.com/api/mcp"
       ],
-      "description": "PostgreSQL MCP Server - Enterprise relational database manipulation",
+      "description": "Microsoft Learn docs MCP. No key. Searches official Microsoft documentation.",
+      "enabled": false
+    },
+    "figma": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.figma.com/mcp"
+      ],
+      "description": "Figma's remote MCP. The first call opens OAuth. Off until zoth-mcp enable figma.",
+      "enabled": false
+    },
+    "atlassian": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.atlassian.com/v2/mcp"
+      ],
+      "description": "Atlassian Rovo MCP for Jira and Confluence. OAuth. Off until zoth-mcp enable atlassian.",
+      "enabled": false
+    },
+    "vercel": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.vercel.com"
+      ],
+      "description": "Vercel's remote MCP. OAuth. Can read projects and deployments. Off until zoth-mcp enable vercel.",
+      "enabled": false
+    },
+    "netlify": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://netlify-mcp.netlify.app/mcp"
+      ],
+      "description": "Netlify's hosted MCP. It can create and deploy sites. Off until zoth-mcp enable netlify.",
+      "enabled": false
+    },
+    "neon": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.neon.tech/mcp?readonly=true"
+      ],
+      "description": "Neon Postgres MCP on the read-only URL. OAuth. Off until zoth-mcp enable neon.",
+      "enabled": false
+    },
+    "posthog": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.posthog.com/mcp"
+      ],
+      "description": "PostHog's remote MCP. OAuth. It can change flags and dashboards. Off until zoth-mcp enable posthog.",
+      "enabled": false
+    },
+    "grafana": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "uvx",
+      "args": [
+        "mcp-grafana",
+        "--disable-write"
+      ],
+      "env": {
+        "GRAFANA_URL": "",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": ""
+      },
+      "description": "Grafana's official MCP with write tools off. Set GRAFANA_URL and GRAFANA_SERVICE_ACCOUNT_TOKEN, then zoth-mcp enable grafana.",
+      "enabled": false
+    },
+    "cloudflare-docs": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://docs.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Docs public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "cloudflare-radar": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://radar.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Radar official read MCP. Off until zoth-mcp enable cloudflare-radar.",
+      "enabled": false
+    },
+    "cloudflare-blog": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://blog.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Blog public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "cloudflare-browser": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://browser.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Browser official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-browser.",
+      "enabled": false
+    },
+    "cloudflare-bindings": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://bindings.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Bindings official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-bindings.",
+      "enabled": false
+    },
+    "cloudflare-builds": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://builds.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Builds official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-builds.",
+      "enabled": false
+    },
+    "cloudflare-observability": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://observability.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Observability official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-observability.",
+      "enabled": false
+    },
+    "cloudflare-logs": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://logs.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Logs official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-logs.",
+      "enabled": false
+    },
+    "cloudflare-ai-gateway": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://ai-gateway.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Ai Gateway official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-ai-gateway.",
+      "enabled": false
+    },
+    "cloudflare-ai-search": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://autorag.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Ai Search official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-ai-search.",
+      "enabled": false
+    },
+    "cloudflare-audit": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://auditlogs.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Audit official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-audit.",
+      "enabled": false
+    },
+    "cloudflare-dns": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://dns-analytics.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Dns official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-dns.",
+      "enabled": false
+    },
+    "cloudflare-dex": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://dex.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Dex official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-dex.",
+      "enabled": false
+    },
+    "cloudflare-casb": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://casb.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Casb official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-casb.",
+      "enabled": false
+    },
+    "cloudflare-containers": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://containers.mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Containers official MCP. OAuth or a token. Off until zoth-mcp enable cloudflare-containers.",
+      "enabled": false
+    },
+    "aws-mcp": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://aws-mcp.us-east-1.api.aws/mcp"
+      ],
+      "description": "Aws Mcp official MCP. It can change cloud resources. Off until zoth-mcp enable aws-mcp.",
+      "enabled": false
+    },
+    "aws-knowledge-mcp": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://knowledge-mcp.global.api.aws/mcp"
+      ],
+      "description": "Aws Knowledge Mcp public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "x-docs": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://docs.x.com/mcp"
+      ],
+      "description": "X Docs public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "x-api": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://api.x.com/mcp"
+      ],
+      "description": "X Api official MCP. It can send messages. Off until zoth-mcp enable x-api.",
+      "enabled": false
+    },
+    "github-readonly": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://api.githubcopilot.com/mcp/readonly"
+      ],
+      "description": "Github Readonly official read MCP. Off until zoth-mcp enable github-readonly.",
+      "enabled": false
+    },
+    "hubspot-root": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.hubspot.com"
+      ],
+      "description": "Hubspot Root official MCP. OAuth or a token. Off until zoth-mcp enable hubspot-root.",
+      "enabled": false
+    },
+    "monday": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.monday.com/mcp"
+      ],
+      "description": "Monday official MCP. OAuth or a token. Off until zoth-mcp enable monday.",
+      "enabled": false
+    },
+    "asana": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.asana.com/mcp"
+      ],
+      "description": "Asana official MCP. OAuth or a token. Off until zoth-mcp enable asana.",
+      "enabled": false
+    },
+    "clickup": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.clickup.com/mcp"
+      ],
+      "description": "Clickup official MCP. OAuth or a token. Off until zoth-mcp enable clickup.",
+      "enabled": false
+    },
+    "canva": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.canva.com/mcp"
+      ],
+      "description": "Canva official MCP. OAuth or a token. Off until zoth-mcp enable canva.",
+      "enabled": false
+    },
+    "webflow": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.webflow.com/mcp"
+      ],
+      "description": "Webflow official MCP. OAuth or a token. Off until zoth-mcp enable webflow.",
+      "enabled": false
+    },
+    "framer": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.framer.com/mcp"
+      ],
+      "description": "Framer official MCP. OAuth or a token. Off until zoth-mcp enable framer.",
+      "enabled": false
+    },
+    "miro": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.miro.com/mcp"
+      ],
+      "description": "Miro official MCP. OAuth or a token. Off until zoth-mcp enable miro.",
+      "enabled": false
+    },
+    "airtable": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.airtable.com/mcp"
+      ],
+      "description": "Airtable official MCP. OAuth or a token. Off until zoth-mcp enable airtable.",
+      "enabled": false
+    },
+    "intercom": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.intercom.com/mcp"
+      ],
+      "description": "Intercom official MCP. It can send messages. Off until zoth-mcp enable intercom.",
+      "enabled": false
+    },
+    "zendesk": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.zendesk.com/mcp"
+      ],
+      "description": "Zendesk official MCP. It can send messages. Off until zoth-mcp enable zendesk.",
+      "enabled": false
+    },
+    "resend": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.resend.com/mcp"
+      ],
+      "description": "Resend official MCP. It can send messages. Off until zoth-mcp enable resend.",
+      "enabled": false
+    },
+    "replicate": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.replicate.com/mcp"
+      ],
+      "description": "Replicate official MCP. It can spend or charge. Off until zoth-mcp enable replicate.",
+      "enabled": false
+    },
+    "clerk": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.clerk.com/mcp"
+      ],
+      "description": "Clerk official MCP. OAuth or a token. Off until zoth-mcp enable clerk.",
+      "enabled": false
+    },
+    "workos": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.workos.com/mcp"
+      ],
+      "description": "Workos official MCP. OAuth or a token. Off until zoth-mcp enable workos.",
+      "enabled": false
+    },
+    "railway": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.railway.com/mcp"
+      ],
+      "description": "Railway official MCP. It can deploy. Off until zoth-mcp enable railway.",
+      "enabled": false
+    },
+    "render": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.render.com/mcp"
+      ],
+      "description": "Render official MCP. It can deploy. Off until zoth-mcp enable render.",
+      "enabled": false
+    },
+    "digitalocean": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.digitalocean.com/mcp"
+      ],
+      "description": "Digitalocean official MCP. It can change cloud resources. Off until zoth-mcp enable digitalocean.",
+      "enabled": false
+    },
+    "convex": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.convex.dev/mcp"
+      ],
+      "description": "Convex official MCP. OAuth or a token. Off until zoth-mcp enable convex.",
+      "enabled": false
+    },
+    "prisma": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.prisma.io/mcp"
+      ],
+      "description": "Prisma docs MCP. Needs a login. Off until zoth-mcp enable prisma.",
+      "enabled": false
+    },
+    "upstash": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.upstash.com/mcp"
+      ],
+      "description": "Upstash official MCP. OAuth or a token. Off until zoth-mcp enable upstash.",
+      "enabled": false
+    },
+    "amplitude": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.amplitude.com/mcp"
+      ],
+      "description": "Amplitude official read MCP. Off until zoth-mcp enable amplitude.",
+      "enabled": false
+    },
+    "mixpanel": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.mixpanel.com/mcp"
+      ],
+      "description": "Mixpanel official read MCP. Off until zoth-mcp enable mixpanel.",
+      "enabled": false
+    },
+    "pagerduty": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.pagerduty.com/mcp"
+      ],
+      "description": "Pagerduty official MCP. OAuth or a token. Off until zoth-mcp enable pagerduty.",
+      "enabled": false
+    },
+    "newrelic": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.newrelic.com/mcp"
+      ],
+      "description": "Newrelic official MCP. OAuth or a token. Off until zoth-mcp enable newrelic.",
+      "enabled": false
+    },
+    "honeycomb": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.honeycomb.io/mcp"
+      ],
+      "description": "Honeycomb official MCP. OAuth or a token. Off until zoth-mcp enable honeycomb.",
+      "enabled": false
+    },
+    "buildkite": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.buildkite.com/mcp"
+      ],
+      "description": "Buildkite official MCP. OAuth or a token. Off until zoth-mcp enable buildkite.",
+      "enabled": false
+    },
+    "sanity": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.sanity.io/mcp"
+      ],
+      "description": "Sanity official MCP. OAuth or a token. Off until zoth-mcp enable sanity.",
+      "enabled": false
+    },
+    "contentful": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.contentful.com/mcp"
+      ],
+      "description": "Contentful official MCP. OAuth or a token. Off until zoth-mcp enable contentful.",
+      "enabled": false
+    },
+    "storyblok": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.storyblok.com/mcp"
+      ],
+      "description": "Storyblok official MCP. OAuth or a token. Off until zoth-mcp enable storyblok.",
+      "enabled": false
+    },
+    "cal": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.cal.com/mcp"
+      ],
+      "description": "Cal official MCP. OAuth or a token. Off until zoth-mcp enable cal.",
+      "enabled": false
+    },
+    "box": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.box.com/mcp"
+      ],
+      "description": "Box official MCP. OAuth or a token. Off until zoth-mcp enable box.",
+      "enabled": false
+    },
+    "dropbox": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.dropbox.com/mcp"
+      ],
+      "description": "Dropbox official MCP. OAuth or a token. Off until zoth-mcp enable dropbox.",
+      "enabled": false
+    },
+    "paypal": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.paypal.com/mcp"
+      ],
+      "description": "Paypal official MCP. It can spend or charge. Off until zoth-mcp enable paypal.",
+      "enabled": false
+    },
+    "paddle": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.paddle.com/mcp"
+      ],
+      "description": "Paddle official MCP. It can spend or charge. Off until zoth-mcp enable paddle.",
+      "enabled": false
+    },
+    "square": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.squareup.com/mcp"
+      ],
+      "description": "Square official MCP. It can spend or charge. Off until zoth-mcp enable square.",
+      "enabled": false
+    },
+    "airbyte": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.airbyte.com/mcp"
+      ],
+      "description": "Airbyte official MCP. OAuth or a token. Off until zoth-mcp enable airbyte.",
+      "enabled": false
+    },
+    "clickhouse": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.clickhouse.cloud/mcp"
+      ],
+      "description": "Clickhouse official MCP. OAuth or a token. Off until zoth-mcp enable clickhouse.",
+      "enabled": false
+    },
+    "mongodb-atlas": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.mongodb.com/mcp"
+      ],
+      "description": "Mongodb Atlas official MCP. OAuth or a token. Off until zoth-mcp enable mongodb-atlas.",
+      "enabled": false
+    },
+    "qdrant": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.qdrant.tech/mcp"
+      ],
+      "description": "Qdrant official MCP. OAuth or a token. Off until zoth-mcp enable qdrant.",
+      "enabled": false
+    },
+    "langsmith": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://api.smith.langchain.com/mcp"
+      ],
+      "description": "Langsmith official MCP. OAuth or a token. Off until zoth-mcp enable langsmith.",
+      "enabled": false
+    },
+    "openrouter": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.openrouter.ai/mcp"
+      ],
+      "description": "Openrouter official MCP. It can spend or charge. Off until zoth-mcp enable openrouter.",
+      "enabled": false
+    },
+    "fal": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.fal.ai/mcp"
+      ],
+      "description": "Fal official MCP. It can spend or charge. Off until zoth-mcp enable fal.",
+      "enabled": false
+    },
+    "make": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.make.com/mcp"
+      ],
+      "description": "Make official MCP. OAuth or a token. Off until zoth-mcp enable make.",
+      "enabled": false
+    },
+    "ngrok": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.ngrok.com/mcp"
+      ],
+      "description": "Ngrok official MCP. OAuth or a token. Off until zoth-mcp enable ngrok.",
+      "enabled": false
+    },
+    "mapbox": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.mapbox.com/mcp"
+      ],
+      "description": "Mapbox official MCP. OAuth or a token. Off until zoth-mcp enable mapbox.",
+      "enabled": false
+    },
+    "algolia": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.algolia.com/mcp"
+      ],
+      "description": "Algolia official MCP. OAuth or a token. Off until zoth-mcp enable algolia.",
+      "enabled": false
+    },
+    "loops": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.loops.so/mcp"
+      ],
+      "description": "Loops official MCP. It can send messages. Off until zoth-mcp enable loops.",
+      "enabled": false
+    },
+    "customerio": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.customer.io/mcp"
+      ],
+      "description": "Customerio official MCP. It can send messages. Off until zoth-mcp enable customerio.",
+      "enabled": false
+    },
+    "apollo": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.apollo.io/mcp"
+      ],
+      "description": "Apollo official MCP. OAuth or a token. Off until zoth-mcp enable apollo.",
+      "enabled": false
+    },
+    "attio": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.attio.com/mcp"
+      ],
+      "description": "Attio official MCP. OAuth or a token. Off until zoth-mcp enable attio.",
+      "enabled": false
+    },
+    "pipedrive": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.pipedrive.com/mcp"
+      ],
+      "description": "Pipedrive official MCP. OAuth or a token. Off until zoth-mcp enable pipedrive.",
+      "enabled": false
+    },
+    "gong": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.gong.io/mcp"
+      ],
+      "description": "Gong official MCP. OAuth or a token. Off until zoth-mcp enable gong.",
+      "enabled": false
+    },
+    "axiom": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.axiom.co/mcp"
+      ],
+      "description": "Axiom official MCP. OAuth or a token. Off until zoth-mcp enable axiom.",
+      "enabled": false
+    },
+    "incidentio": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.incident.io/mcp"
+      ],
+      "description": "Incidentio official MCP. OAuth or a token. Off until zoth-mcp enable incidentio.",
+      "enabled": false
+    },
+    "rootly": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.rootly.com/mcp"
+      ],
+      "description": "Rootly official MCP. OAuth or a token. Off until zoth-mcp enable rootly.",
+      "enabled": false
+    },
+    "growthbook": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.growthbook.io/mcp"
+      ],
+      "description": "Growthbook official MCP. OAuth or a token. Off until zoth-mcp enable growthbook.",
+      "enabled": false
+    },
+    "flagsmith": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.flagsmith.com/mcp"
+      ],
+      "description": "Flagsmith official MCP. OAuth or a token. Off until zoth-mcp enable flagsmith.",
+      "enabled": false
+    },
+    "appwrite": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.appwrite.io/mcp"
+      ],
+      "description": "Appwrite official MCP. OAuth or a token. Off until zoth-mcp enable appwrite.",
+      "enabled": false
+    },
+    "wix": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.wix.com/mcp"
+      ],
+      "description": "Wix official MCP. OAuth or a token. Off until zoth-mcp enable wix.",
+      "enabled": false
+    },
+    "gitlab-cloud": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://gitlab.com/api/v4/mcp"
+      ],
+      "description": "Gitlab Cloud official MCP. OAuth or a token. Off until zoth-mcp enable gitlab-cloud.",
+      "enabled": false
+    },
+    "deepwiki": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.deepwiki.com/mcp"
+      ],
+      "description": "Deepwiki public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "ref-tools": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://api.ref.tools/mcp"
+      ],
+      "description": "Ref Tools docs MCP. Needs a login. Off until zoth-mcp enable ref-tools.",
+      "enabled": false
+    },
+    "tavily": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.tavily.com/mcp"
+      ],
+      "description": "Tavily official MCP. OAuth or a token. Off until zoth-mcp enable tavily.",
+      "enabled": false
+    },
+    "huggingface": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://huggingface.co/mcp"
+      ],
+      "description": "Huggingface docs MCP. Needs a login. Off until zoth-mcp enable huggingface.",
+      "enabled": false
+    },
+    "discord": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.discord.com/mcp"
+      ],
+      "description": "Discord official MCP. It can send messages. Off until zoth-mcp enable discord.",
+      "enabled": false
+    },
+    "rudderstack": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.rudderstack.com/mcp"
+      ],
+      "description": "Rudderstack official MCP. OAuth or a token. Off until zoth-mcp enable rudderstack.",
+      "enabled": false
+    },
+    "terraform": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.terraform.io/mcp"
+      ],
+      "description": "Terraform official MCP. It can change cloud resources. Off until zoth-mcp enable terraform.",
+      "enabled": false
+    },
+    "shortcut": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.shortcut.com/mcp"
+      ],
+      "description": "Shortcut official MCP. OAuth or a token. Off until zoth-mcp enable shortcut.",
+      "enabled": false
+    },
+    "beehiiv": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.beehiiv.com/mcp"
+      ],
+      "description": "Beehiiv official MCP. It can send messages. Off until zoth-mcp enable beehiiv.",
+      "enabled": false
+    },
+    "unsplash": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.unsplash.com/mcp"
+      ],
+      "description": "Unsplash official read MCP. Off until zoth-mcp enable unsplash.",
+      "enabled": false
+    },
+    "npm-docs": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.npmjs.com/mcp"
+      ],
+      "description": "Npm Docs docs MCP. Needs a login. Off until zoth-mcp enable npm-docs.",
+      "enabled": false
+    },
+    "svelte": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.svelte.dev/mcp"
+      ],
+      "description": "Svelte public docs MCP. No key. Search only.",
+      "enabled": false
+    },
+    "cypress": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.cypress.io/mcp"
+      ],
+      "description": "Cypress official MCP. OAuth or a token. Off until zoth-mcp enable cypress.",
+      "enabled": false
+    },
+    "postman": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.postman.com/mcp"
+      ],
+      "description": "Postman official MCP. OAuth or a token. Off until zoth-mcp enable postman.",
+      "enabled": false
+    },
+    "mux": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.mux.com/mcp"
+      ],
+      "description": "Mux official MCP. OAuth or a token. Off until zoth-mcp enable mux.",
+      "enabled": false
+    },
+    "knock": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.knock.app/mcp"
+      ],
+      "description": "Knock official MCP. It can send messages. Off until zoth-mcp enable knock.",
+      "enabled": false
+    },
+    "courier": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.courier.com/mcp"
+      ],
+      "description": "Courier official MCP. It can send messages. Off until zoth-mcp enable courier.",
+      "enabled": false
+    },
+    "klaviyo": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.klaviyo.com/mcp"
+      ],
+      "description": "Klaviyo official MCP. It can send messages. Off until zoth-mcp enable klaviyo.",
+      "enabled": false
+    },
+    "hashnode": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.hashnode.com/mcp"
+      ],
+      "description": "Hashnode official MCP. It can send messages. Off until zoth-mcp enable hashnode.",
+      "enabled": false
+    },
+    "openalex": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.openalex.org/mcp"
+      ],
+      "description": "Openalex docs MCP. Needs a login. Off until zoth-mcp enable openalex.",
+      "enabled": false
+    },
+    "cloudflare-api": {
+      "offline": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
+      "timeout": 120,
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "https://mcp.cloudflare.com/mcp"
+      ],
+      "description": "Cloudflare Api official MCP. It can change cloud resources. Off until zoth-mcp enable cloudflare-api.",
+      "enabled": false
+    },
+    "repomix": {
       "offline": true,
-      "securityRing": "RING_1_SYSADMIN",
-      "ring_level": 1,
-      "sandbox": "postgresql://postgres@localhost:5432/zothos",
-      "fallbackHandler": "sqlite3 /var/lib/zothos/knowledge.db",
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "true",
       "timeout": 120,
-      "alwaysAllow": []
+      "alwaysAllow": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp",
+        "--sandbox"
+      ],
+      "description": "Repomix packs the working tree into one file for the agent. Sandboxed to that directory.",
+      "enabled": false
     }
   }
 }

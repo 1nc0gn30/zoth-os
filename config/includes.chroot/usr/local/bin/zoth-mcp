@@ -41,7 +41,7 @@ banner() {
     echo -e "${GREEN}${BOLD}   ███╔╝  ██║   ██║   ██║   ██╔══██║     ██║╚██╔╝██║██║     ██╔═══╝ ${RESET}"
     echo -e "${GREEN}${BOLD}  ███████╗╚██████╔╝   ██║   ██║  ██║     ██║ ╚═╝ ██║╚██████╗██║     ${RESET}"
     echo -e "${GREEN}${BOLD}  ╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝     ╚═╝     ╚═╝ ╚═════╝╚═╝     ${RESET}"
-    echo -e "         ${BOLD}${GOLD}[+] MASTER MODEL CONTEXT PROTOCOL (MCP) HUB v3.0 [+]${RESET}"
+    echo -e "         ${BOLD}${GOLD}[+] MASTER MODEL CONTEXT PROTOCOL (MCP) HUB v3.1 [+]${RESET}"
     echo ""
 }
 
@@ -54,7 +54,9 @@ show_help() {
     echo -e "  ${GREEN}health${RESET}               Comprehensive health & latency diagnostics of all MCP endpoints"
     echo -e "  ${GREEN}start-all${RESET}            Spawn all required offline MCP background daemons"
     echo -e "  ${GREEN}stop-all${RESET}             Stop all running MCP daemon processes"
-    echo -e "  ${GREEN}sync${RESET}                 Sync master MCP registry to Claude Code, Hermes, Codex & OpenCode"
+    echo -e "  ${GREEN}sync${RESET}                 Sync the registry to Grok, AGY, Claude Code, Hermes, Codex, OpenCode, Cursor, and Aider"
+    echo -e "  ${GREEN}enable <name>${RESET}        Turn a catalog server on and sync it"
+    echo -e "  ${GREEN}disable <name>${RESET}       Turn a catalog server off and sync it"
     echo -e "  ${GREEN}test [server]${RESET}        Validate configuration, execution & sandbox for specified server"
     echo -e "  ${GREEN}status${RESET}               Display quick operational status of all registered MCP endpoints"
     echo -e "  ${GREEN}json${RESET}                 Output raw JSON master configuration"
@@ -99,9 +101,13 @@ cmd_list() {
                 ring_color="$GREEN"
             fi
 
-            local mode_str="${GREEN}[OFFLINE]${RESET}"
-            if [[ "$offline" != "true" ]]; then
-                mode_str="${YELLOW}[NET-REQ]${RESET}"
+            local enabled
+            enabled=$(jq -r ".mcpServers[\"$s\"].enabled // true" "$cfg")
+            local mode_str="${GREEN}[ON]${RESET}"
+            if [[ "$enabled" != "true" ]]; then
+                mode_str="${GRAY}[off]${RESET}"
+            elif [[ "$offline" != "true" ]]; then
+                mode_str="${YELLOW}[ON+NET]${RESET}"
             fi
 
             # Shorten sandbox path if too long
@@ -261,56 +267,189 @@ cmd_status() {
     echo ""
 }
 
+write_config() {
+    local src="$1"
+    local dest="$2"
+    local dest_dir
+    dest_dir=$(dirname "$dest")
+    mkdir -p "$dest_dir" 2>/dev/null || sudo -n mkdir -p "$dest_dir"
+    if [[ -w "$dest" ]] || [[ ! -e "$dest" && -w "$dest_dir" ]]; then
+        cp "$src" "$dest"
+    elif sudo -n true 2>/dev/null; then
+        sudo -n cp "$src" "$dest"
+    else
+        echo -e "  ${RED}[!]${RESET} Cannot write ${dest}"
+        return 1
+    fi
+}
+
 cmd_sync() {
     local cfg
     cfg=$(get_config_path)
-    echo -e "${BOLD}${CYAN}[*] Synchronizing MCP servers across all local AI agent configurations...${RESET}"
-    
+    echo -e "${BOLD}${CYAN}[*] Synchronizing MCP servers across local AI agents...${RESET}"
+
     if [[ ! -f "$cfg" ]]; then
         echo -e "${RED}[!] Error: Configuration file not found at ${cfg}${RESET}"
         return 1
     fi
+    if ! command -v jq >/dev/null 2>&1; then
+        echo -e "${RED}[!] jq is required to sync the registry.${RESET}"
+        return 1
+    fi
+    if ! jq empty "$cfg" >/dev/null 2>&1; then
+        echo -e "${RED}[!] Registry JSON is not valid: ${cfg}${RESET}"
+        return 1
+    fi
 
     local USER_HOME="${HOME:-${ZOTH_HOME}}"
-    
-    # 1. Sync to Claude Code config
-    local CLAUDE_CONFIG_DIR="$USER_HOME/.config/claude-code"
-    mkdir -p "$CLAUDE_CONFIG_DIR"
-    cp "$cfg" "$CLAUDE_CONFIG_DIR/mcp.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} Claude Code MCP synced: ${CLAUDE_CONFIG_DIR}/mcp.json"
+    mkdir -p "${USER_HOME}/.zothos/mcp" "${USER_HOME}/.grok" "${USER_HOME}/.gemini/config" \
+        "${USER_HOME}/.config/claude-code" "${USER_HOME}/.hermes" "${USER_HOME}/.config/codex" \
+        "${USER_HOME}/.config/opencode" "${USER_HOME}/.cursor" "${USER_HOME}/.aider"
 
-    # 2. Sync to Hermes Agent
-    local HERMES_CONFIG_DIR="$USER_HOME/.hermes"
-    mkdir -p "$HERMES_CONFIG_DIR"
-    cp "$cfg" "$HERMES_CONFIG_DIR/mcp_servers.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} Hermes Agent MCP synced: ${HERMES_CONFIG_DIR}/mcp_servers.json"
+    python3 - "$cfg" "$USER_HOME" << 'PY'
+import json, os, sys
+cfg_path, home = sys.argv[1], sys.argv[2]
+with open(cfg_path) as f:
+    registry = json.load(f)
+servers = registry.get("mcpServers") or {}
 
-    # 3. Sync to Codex
-    local CODEX_CONFIG_DIR="$USER_HOME/.config/codex"
-    mkdir -p "$CODEX_CONFIG_DIR"
-    cp "$cfg" "$CODEX_CONFIG_DIR/mcp.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} OpenAI Codex MCP synced: ${CODEX_CONFIG_DIR}/mcp.json"
+def client_entry(spec):
+    entry = {
+        "command": spec.get("command", ""),
+        "args": spec.get("args") or [],
+        "enabled": bool(spec.get("enabled", True)),
+    }
+    env = spec.get("env") or {}
+    if env:
+        entry["env"] = env
+    return entry
 
-    # 4. Sync to OpenCode
-    local OPENCODE_CONFIG_DIR="$USER_HOME/.config/opencode"
-    mkdir -p "$OPENCODE_CONFIG_DIR"
-    cp "$cfg" "$OPENCODE_CONFIG_DIR/mcp.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} OpenCode AI MCP synced: ${OPENCODE_CONFIG_DIR}/mcp.json"
+def merge_env(old, new):
+    merged = dict(new.get("env") or {})
+    for key, value in (old.get("env") or {}).items():
+        if value not in ("", None) and merged.get(key) in ("", None):
+            merged[key] = value
+    if merged:
+        new["env"] = merged
+    return new
 
-    # 5. Sync to Cursor MCP settings
-    local CURSOR_CONFIG_DIR="$USER_HOME/.cursor"
-    mkdir -p "$CURSOR_CONFIG_DIR"
-    cp "$cfg" "$CURSOR_CONFIG_DIR/mcp.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} Cursor MCP synced: ${CURSOR_CONFIG_DIR}/mcp.json"
+def merge_json(path):
+    current = {"mcpServers": {}}
+    if os.path.isfile(path):
+        try:
+            with open(path) as f:
+                loaded = json.load(f)
+            if isinstance(loaded, dict) and isinstance(loaded.get("mcpServers"), dict):
+                current = loaded
+        except Exception:
+            current = {"mcpServers": {}}
+    dest = current.setdefault("mcpServers", {})
+    for name, spec in servers.items():
+        if not spec.get("enabled", True):
+            dest.pop(name, None)
+            continue
+        entry = client_entry(spec)
+        if name in dest and isinstance(dest[name], dict):
+            entry = merge_env(dest[name], entry)
+        dest[name] = entry
+    tmp = path + ".zoth-mcp.tmp"
+    with open(tmp, "w") as f:
+        json.dump(current, f, indent=2)
+        f.write("\n")
+    os.replace(tmp, path)
+    on = sum(1 for spec in servers.values() if spec.get("enabled", True))
+    print(f"json {path} {len(servers)} catalog {on} on")
 
-    # 6. Sync to Aider
-    local AIDER_CONFIG_DIR="$USER_HOME/.aider"
-    mkdir -p "$AIDER_CONFIG_DIR"
-    cp "$cfg" "$AIDER_CONFIG_DIR/mcp.json" 2>/dev/null || true
-    echo -e "  ${GREEN}[✓]${RESET} Aider MCP synced: ${AIDER_CONFIG_DIR}/mcp.json"
+targets = [
+    os.path.join(home, ".gemini", "config", "mcp_config.json"),
+    os.path.join(home, ".config", "claude-code", "mcp.json"),
+    os.path.join(home, ".hermes", "mcp_servers.json"),
+    os.path.join(home, ".config", "codex", "mcp.json"),
+    os.path.join(home, ".config", "opencode", "mcp.json"),
+    os.path.join(home, ".cursor", "mcp.json"),
+    os.path.join(home, ".aider", "mcp.json"),
+]
+for path in targets:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    merge_json(path)
 
+def toml_str(value):
+    return '"' + str(value).replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+lines = ["# zoth-mcp:begin", "# Written by zoth-mcp sync. Change a server with: zoth-mcp enable <name>"]
+for name in servers:
+    spec = servers[name]
+    if not spec.get("enabled", True):
+        continue
+    timeout = int(spec.get("timeout") or 60)
+    lines.append(f"[mcp_servers.{name}]")
+    lines.append(f"command = {toml_str(spec.get('command', ''))}")
+    args = ", ".join(toml_str(item) for item in (spec.get("args") or []))
+    lines.append(f"args = [{args}]")
+    env = spec.get("env") or {}
+    if env:
+        pairs = ", ".join(f"{key} = {toml_str(value)}" for key, value in env.items())
+        lines.append(f"env = {{ {pairs} }}")
+    flag = "true" if spec.get("enabled", True) else "false"
+    lines.append(f"enabled = {flag}")
+    lines.append(f"startup_timeout_sec = {min(timeout, 120)}")
+    lines.append(f"tool_timeout_sec = {timeout}")
+    desc = " ".join(str(spec.get("description") or "").split())
+    if desc:
+        lines.append("# " + desc.replace("\n", " "))
+    lines.append("")
+lines.append("# zoth-mcp:end")
+block = "\n".join(lines) + "\n"
+grok_path = os.path.join(home, ".grok", "config.toml")
+existing = ""
+if os.path.isfile(grok_path):
+    with open(grok_path) as f:
+        existing = f.read()
+begin, end = "# zoth-mcp:begin", "# zoth-mcp:end"
+if begin in existing and end in existing:
+    pre, rest = existing.split(begin, 1)
+    _, post = rest.split(end, 1)
+    post = post.lstrip("\n")
+    updated = pre.rstrip() + "\n\n" + block + post
+else:
+    updated = existing.rstrip() + "\n\n" + block
+tmp = grok_path + ".zoth-mcp.tmp"
+with open(tmp, "w") as f:
+    f.write(updated if updated.endswith("\n") else updated + "\n")
+os.replace(tmp, grok_path)
+on = sum(1 for spec in servers.values() if spec.get("enabled", True))
+print(f"toml {grok_path} {len(servers)} catalog {on} on")
+PY
+
+    echo -e "  ${GREEN}[✓]${RESET} Grok, AGY, Claude Code, Hermes, Codex, OpenCode, Cursor, and Aider updated"
+    echo -e "  ${GRAY}Servers with enabled=false stay in the catalog and are not started.${RESET}"
     echo ""
-    echo -e "${BOLD}${GREEN}[✓] All AI agent runtimes are primed with master MCP servers!${RESET}"
+    echo -e "${BOLD}${GREEN}[✓] MCP catalog synced.${RESET}"
+}
+
+cmd_set_enabled() {
+    local name="${1:-}"
+    local flag="${2:-}"
+    local cfg
+    cfg=$(get_config_path)
+    if [[ -z "$name" || ( "$flag" != "true" && "$flag" != "false" ) ]]; then
+        echo -e "${RED}[!] Usage: zoth-mcp enable <name> | zoth-mcp disable <name>${RESET}"
+        return 1
+    fi
+    if ! jq -e --arg n "$name" '.mcpServers[$n]' "$cfg" >/dev/null 2>&1; then
+        echo -e "${RED}[!] '${name}' is not in ${cfg}${RESET}"
+        echo -e "    Available: $(jq -r '.mcpServers | keys | join(", ")' "$cfg")"
+        return 1
+    fi
+    local tmp
+    tmp=$(mktemp)
+    jq --arg n "$name" --argjson flag "$flag" '.mcpServers[$n].enabled = $flag' "$cfg" > "$tmp"
+    write_config "$tmp" "$cfg"
+    rm -f "$tmp"
+    local word="enabled"
+    [[ "$flag" == "false" ]] && word="disabled"
+    echo -e "${GREEN}[✓]${RESET} ${name} ${word}"
+    cmd_sync
 }
 
 cmd_test() {
@@ -365,7 +504,7 @@ interactive_menu() {
         echo -e "  ${BOLD}${GREEN}[1]${RESET} [LIST]      ${BOLD}Detailed Server Registry Listing & Rings${RESET}"
         echo -e "  ${BOLD}${CYAN}[2]${RESET} [HEALTH]    ${BOLD}Run Health & Latency Diagnostics${RESET}"
         echo -e "  ${BOLD}${GOLD}[3]${RESET} [START-ALL] ${BOLD}Spawn Offline MCP Daemons${RESET}"
-        echo -e "  ${BOLD}${PURPLE}[4]${RESET} [SYNC]      ${BOLD}Sync MCP to Claude Code, Hermes, Codex, OpenCode${RESET}"
+        echo -e "  ${BOLD}${PURPLE}[4]${RESET} [SYNC]      ${BOLD}Sync MCP to Grok, AGY, Claude Code, Hermes, Codex, OpenCode${RESET}"
         echo -e "  ${BOLD}${YELLOW}[5]${RESET} [TEST]      ${BOLD}Test Specific Server Endpoint${RESET}"
         echo -e "  ${BOLD}${RED}[6]${RESET} [STOP-ALL]  ${BOLD}Stop Running Daemons${RESET}"
         echo -e "  ${BOLD}${GRAY}[7]${RESET} [JSON]      ${BOLD}View Raw MCP Configuration JSON${RESET}"
@@ -416,6 +555,12 @@ case "$action" in
     sync)
         banner
         cmd_sync
+        ;;
+    enable)
+        cmd_set_enabled "${2:-}" true
+        ;;
+    disable)
+        cmd_set_enabled "${2:-}" false
         ;;
     test)
         cmd_test "${2:-filesystem}"
