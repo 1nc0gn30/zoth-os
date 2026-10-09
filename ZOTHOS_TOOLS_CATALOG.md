@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 31-Tool Sovereign Arsenal & Workstation Ecosystem v2.7
+#  ZOTHOS — 32-Tool Sovereign Arsenal & Workstation Ecosystem v2.8
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  Fully Aligned with Zoth Studio v2 (6 Cadres · 31 Production Tools)
+#  Fully Aligned with Zoth Studio v2 (6 Cadres · 32 Production Tools)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
@@ -204,6 +204,11 @@
 - **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
 - **Core Architecture:** Kernel Enclave Sandbox & Ephemeral Process Isolation (127.0.0.1:8105)
 - **Capability:** Autonomous zero-dependency Linux process sandbox enforcing strict resource quotas via `resource.setrlimit` (CPU, RAM, process count, file size), ephemeral copy-on-write scratch spaces, environment sanitization (purging cloud/API secrets), and real-time filesystem delta diffing with automated telemetry streaming into `agent-flight-recorder` (:8104). Zero external dependencies.
+
+### 32. agent-policy-auditor (Agent Policy Auditor)
+- **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
+- **Core Architecture:** Cryptographic Capability Leaser & Static Manifest Auditor (127.0.0.1:8106)
+- **Capability:** Issues time-bound HMAC-SHA256 signed capability leases (FS_READ, FS_WRITE, NET_EGRESS, SHELL_EXEC, TOKEN_BUDGET) with automatic TTL expiry and emergency kill-switches. Audits agent tool schemas, MCP definitions, and prompts against OWASP Top 10 for LLMs and NIST AI RMF with real-time scoring. Zero external dependencies.
 
 ---
 

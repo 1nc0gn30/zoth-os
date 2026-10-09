@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Policy Auditor
+GenericName=AI Agent Capability Broker & Manifest Auditor
+Comment=Autonomous capability leases, permission brokering, and OWASP LLM manifest security auditing
+Exec=/usr/local/bin/agent-policy serve --port 8106
+Icon=zoth-policy-auditor
+Terminal=false
+Categories=Security;Development;System;X-ZothOS-AI;
+Keywords=policy;auditor;lease;broker;security;permissions;owasp;manifest;mcp;
+StartupNotify=true
+Actions=Cockpit;Status;
+
+[Desktop Action Cockpit]
+Name=Launch Policy Cockpit Web UI
+Exec=xdg-open http://127.0.0.1:8106
+
+[Desktop Action Status]
+Name=Policy Broker Status
+Exec=xfce4-terminal --hold -T "Policy Broker Status" -e "/usr/local/bin/agent-policy status"

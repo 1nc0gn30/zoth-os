@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Agent Policy Auditor CLI Wrapper
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+PRIMARY_BIN="${ZOTH_SRC_ROOT}/agent-policy-auditor/bin/agent-policy"
+REPO_DIR="${ZOTH_SRC_ROOT}/agent-policy-auditor"
+
+if [[ -x "$PRIMARY_BIN" ]]; then
+    exec "$PRIMARY_BIN" "$@"
+elif [[ -d "$REPO_DIR/src/agent_policy_auditor" ]]; then
+    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+    exec python3 -m agent_policy_auditor.cli "$@"
+else
+    echo "Error: agent-policy not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    exit 1
+fi
