@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Etsy Connector
+GenericName=Etsy Open API v3 & Antigravity MCP Bridge
+Comment=Etsy Open API v3 integration, 13-tag SEO auditor, fee calculator, and Printify payload bridge
+Exec=/usr/local/bin/etsy-connector serve --port 8108
+Icon=zoth-etsy-connector
+Terminal=false
+Categories=Network;Development;Utility;X-ZothOS-AI;
+Keywords=etsy;mcp;api;seo;tags;fees;margins;printify;antigravity;
+StartupNotify=true
+Actions=Cockpit;Audit;
+
+[Desktop Action Cockpit]
+Name=Launch Etsy Connector Web Cockpit
+Exec=xdg-open http://127.0.0.1:8108
+
+[Desktop Action Audit]
+Name=Run SEO Auditor CLI
+Exec=xfce4-terminal --hold -T "Etsy SEO Auditor" -e "/usr/local/bin/etsy-connector audit --help"

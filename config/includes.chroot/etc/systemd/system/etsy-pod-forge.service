@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Etsy Print-on-Demand Studio & Listing Synthesizer
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/etsy-pod-forge
+ExecStart=/usr/bin/python3 -m etsy_pod_forge.server --host 127.0.0.1 --port 8107
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/etsy-pod-forge/src
+
+[Install]
+WantedBy=multi-user.target

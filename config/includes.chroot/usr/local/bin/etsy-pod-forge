@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Etsy POD Forge CLI Wrapper
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+PRIMARY_BIN="${ZOTH_SRC_ROOT}/etsy-pod-forge/bin/etsy-pod-forge"
+REPO_DIR="${ZOTH_SRC_ROOT}/etsy-pod-forge"
+
+if [[ -x "$PRIMARY_BIN" ]]; then
+    exec "$PRIMARY_BIN" "$@"
+elif [[ -d "$REPO_DIR/src/etsy_pod_forge" ]]; then
+    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+    exec python3 -m etsy_pod_forge.cli "$@"
+else
+    echo "Error: etsy-pod-forge not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    exit 1
+fi

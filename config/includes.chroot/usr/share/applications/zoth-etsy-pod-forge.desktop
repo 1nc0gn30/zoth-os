@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Etsy POD Forge
+GenericName=Print-on-Demand Studio & Listing Synthesizer
+Comment=Autonomous POD canvas rendering, mockup compositing, and listing kits targeting the 55+ women demographic
+Exec=/usr/local/bin/etsy-pod-forge serve --port 8107
+Icon=zoth-etsy-pod-forge
+Terminal=false
+Categories=Graphics;Publishing;Development;X-ZothOS-AI;
+Keywords=etsy;pod;printify;mockup;canvas;commerce;botanical;watercolor;55+;
+StartupNotify=true
+Actions=Cockpit;Status;
+
+[Desktop Action Cockpit]
+Name=Launch POD Forge Web UI
+Exec=xdg-open http://127.0.0.1:8107
+
+[Desktop Action Status]
+Name=POD Forge Health Status
+Exec=xfce4-terminal --hold -T "Etsy POD Forge Status" -e "/usr/local/bin/etsy-pod-forge status"
