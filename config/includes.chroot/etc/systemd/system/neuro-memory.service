@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Neuro-Memory Biological Substrate & 3D Synaptic Daemon
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/neuro-memory-daemon
+ExecStart=/opt/zothos-ai-env/bin/python3 -m neuro_memory_daemon.cli serve --host 127.0.0.1 --port 8094
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/neuro-memory-daemon/src
+
+[Install]
+WantedBy=multi-user.target

@@ -5,6 +5,7 @@ const os = require('os');
 const http = require('http');
 const dgram = require('dgram');
 const { exec } = require('child_process');
+const measure = require('./measure');
 
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
@@ -20,31 +21,31 @@ const CONFIG_FILE = path.join(os.homedir(), '.config', 'zothos', 'math_pillar_co
 const MATH_PILLARS_META = {
   pillar1: {
     symbol: '𝚮',
-    title: 'Pillar I: Information Theory & Attention Entropy',
-    formula: '𝚮(A_t) = -∑ a_i log₂ a_i  |  PPL = 2^𝚮',
-    desc: 'Shannon Multi-Head Attention Entropy, Perplexity & Dirac Coherence',
-    proof: 'Measures dispersion across self-attention weight matrix Softmax(QK^T / √d_k). When 𝚮 → 0, attention collapses onto sharp deterministic tokens (Dirac focus). When 𝚮 is high, attention explores broad semantic manifolds.'
+    title: 'Pillar I: Shannon entropy of the observed text',
+    formula: 'H = -∑ p_i log₂ p_i   |   PPL = 2^H',
+    desc: 'Bits per character of the text that was actually written. Not attention weights.',
+    proof: 'p_i is the frequency of each character in the sample. Perplexity is 2^H for that character model. The QK attention matrix is not in the sample.'
   },
   pillar2: {
     symbol: '∂T/∂t',
-    title: 'Pillar II: Differential Calculus & Flux Dynamics',
-    formula: 'v_T = ∂T/∂t  |  a_T = ∂²T/∂t²  |  ∫ v_T dt',
-    desc: 'Differential Token Generation Flux, Instantaneous Acceleration & Loss Gradient',
-    proof: 'First derivative v_T models token generation throughput; second derivative a_T models cognitive momentum & inter-token latency shifts during deep reasoning vs. burst streaming.'
+    title: 'Pillar II: Token rate from timestamps',
+    formula: 'v = output_tokens / Δt   |   a = Δv / Δt',
+    desc: 'Tokens reported by the step, divided by the clock gap to the previous counted step.',
+    proof: 'A rate is shown only when a token count and two timestamps exist. CPU load is not converted into tokens.'
   },
   pillar3: {
     symbol: '𝛀_KV',
-    title: 'Pillar III: High-Dimensional Linear Algebra & Tensor Geometry',
-    formula: '𝛀_KV = 2 · N_layers · N_heads_kv · d_head · L_ctx · b',
-    desc: 'Key-Value Cache Multi-Head Projection Subspace Volume & Orthogonality',
-    proof: 'Calculates the memory-footprint tensor subspace spanning ℝ^(d_model). Visualized as an alchemical cylindrical fluid column representing active memory consumption vs. theoretical context horizon.'
+    title: 'Pillar III: Cache tokens, bytes only when the shape is known',
+    formula: 'bytes = 2 · layers · kv_heads · head_dim · tokens · bytes_per_elem',
+    desc: 'Cache token counts come from the transcript. Byte size is filled only from a model card.',
+    proof: 'Ollama /api/show can supply block_count, kv heads, and head dimension. A missing shape stays blank.'
   },
   pillar4: {
     symbol: 'ℙ',
-    title: 'Pillar IV: Bayesian Probability & Markov Decision Processes',
-    formula: 'ℙ(Tool_k | 𝒪) = exp(w_k^T h) / ∑ exp(w_j^T h)  |  𝒮_t → 𝒮_t+1',
-    desc: 'Bayesian Posterior Tool Selection Probability & Discrete Cognitive Markov Chains',
-    proof: 'Maps observation vectors 𝒪 into posterior tool utility distributions. Governs discrete state transitions across [PERCEIVE → REASON → HYPOTHESIZE → TOOL_EXEC → SYNTHESIZE].'
+    title: 'Pillar IV: Observed tool counts',
+    formula: 'P(tool) = count(tool) / counted steps',
+    desc: 'Empirical share of tool names in the steps that were read.',
+    proof: 'This is a frequency in the log. It is not a softmax over a hidden state.'
   }
 };
 
@@ -430,29 +431,44 @@ const agentRegistry = {
   }
 };
 
+function markUnmeasured(ag) {
+  ag.online = false;
+  ag.tokensSec = null;
+  ag.accelTokSec = null;
+  ag.cumulativeTokens = 0;
+  ag.contextUsed = null;
+  ag.contextMax = null;
+  ag.kvCacheMb = null;
+  ag.entropy = null;
+  ag.perplexity = null;
+  ag.confidence = null;
+  ag.gradientLoss = null;
+  ag.bigramBits = null;
+  ag.latencyMs = null;
+  ag.toolCalls = 0;
+  ag.toolSuccess = 0;
+  ag.toolFail = 0;
+  ag.vramMb = null;
+  ag.step = 0;
+  ag.maxSteps = null;
+  ag.lastActive = 0;
+  ag.rateObserved = false;
+  ag.cacheTokens = null;
+  ag.outputTokens = null;
+  ag.measureNote = 'No sample yet.';
+  ag.logs = [];
+}
+
+for (const ag of Object.values(agentRegistry)) markUnmeasured(ag);
+
 function getTimestamp() {
   const d = new Date();
   return d.toTimeString().split(' ')[0];
 }
 
-// ── Accurate Shannon Attention Entropy & Perplexity Math ─────────────────────
 function calculateShannonEntropy(text) {
-  if (!text || text.length < 8) return 0.138;
-  const counts = {};
-  const len = text.length - 1;
-  for (let i = 0; i < len; i++) {
-    const bg = text.substring(i, i + 2);
-    counts[bg] = (counts[bg] || 0) + 1;
-  }
-  let ent = 0;
-  for (const count of Object.values(counts)) {
-    const p = count / len;
-    ent -= p * Math.log2(p);
-  }
-  const maxEnt = Math.log2(len);
-  const norm = maxEnt > 0 ? (ent / maxEnt) : 0.15;
-  // Scaled cognitive attention dispersion in bits (0.06 to 0.48 bits)
-  return +(Math.max(0.06, Math.min(0.48, norm * 0.42))).toFixed(3);
+  const measured = measure.measureText(text);
+  return measured.bitsPerChar;
 }
 
 function generateExplanation(agentKey, data, ent, ppl) {
@@ -465,8 +481,8 @@ function generateExplanation(agentKey, data, ent, ppl) {
       what: `Shell Command Execution (${data.tool || 'run_command'})`,
       plainAction: `🔧 Ran System Terminal Command`,
       plainWhy: `Tested the environment, verified running apps, or executed system tasks safely.`,
-      why: `The model experienced high syntactic convergence (H=${ent} bits, PPL=${ppl}). It computed a 98% Bayesian posterior probability that system inspection was required to resolve the terminal task.`,
-      proof: `Shannon Attention Entropy H(A) = -∑ a_i log₂ a_i collapsed onto deterministic shell tokens. Decision posterior P(Tool | Context) reached peak confidence.`,
+      why: `Observed a shell step. Text entropy H=${ent == null ? '—' : ent} bits/char, character perplexity ${ppl == null ? '—' : ppl}. That number is the text, not a posterior over tools.`,
+      proof: `H is the Shannon entropy of the characters in the step. No attention matrix was read.`,
       risk: ent > 0.35 ? 'ELEVATED' : 'MINIMAL'
     };
   } else if (tool.includes('view_file') || tool.includes('read')) {
@@ -475,8 +491,8 @@ function generateExplanation(agentKey, data, ent, ppl) {
       what: `Context Retrieval & File Ingestion (${data.tool || 'view_file'})`,
       plainAction: `📖 Opened and Inspected File`,
       plainWhy: `Examined source code and configuration to understand how the project is structured.`,
-      why: `The agent expanded its active KV-cache projection tensor subspace to absorb file context. Low entropy ensures sharp token embedding alignment.`,
-      proof: `KV-Cache tensor memory volume Ω_KV = 2·L·N_heads·d_head·T·b expanded. Subspace orthogonal projection preserved semantic clarity.`,
+      why: `Observed a file read. Cache bytes are shown only when a model card supplies the layer shape.`,
+      proof: `The step name was counted. KV bytes were not invented from a default 32-layer network.`,
       risk: 'MINIMAL'
     };
   } else if (tool.includes('replace_file') || tool.includes('write')) {
@@ -485,8 +501,8 @@ function generateExplanation(agentKey, data, ent, ppl) {
       what: `Code Synthesis & File Modification (${data.tool || 'replace_file'})`,
       plainAction: `✍️ Wrote & Applied Code Changes`,
       plainWhy: `Applied targeted code updates, enhancements, or bug fixes directly into project files.`,
-      why: `The model reached deterministic generation mode. First-derivative velocity v_T surged into burst streaming, executing code transformations with high accuracy.`,
-      proof: `Loss gradient norm ||∇L|| is minimized. First derivative v_T = ∂T/∂t reflects laminar token throughput.`,
+      why: `Observed a file write. Token rate is filled only when the step carries a token count and a timestamp.`,
+      proof: `v = output_tokens / Δt when both exist. Loss gradient is not in the log.`,
       risk: 'LOW'
     };
   } else if (tool.includes('git') || note.includes('git')) {
@@ -525,9 +541,9 @@ function generateExplanation(agentKey, data, ent, ppl) {
       what: `Cognitive Deliberation & Search`,
       plainAction: `🧠 Thinking & Formulating Solution`,
       plainWhy: `Analyzing user instructions, planning steps, and ensuring high confidence before acting.`,
-      why: `Attention entropy H=${ent} bits (PPL=${ppl}) reflects ${ent < 0.20 ? 'sharp Dirac deterministic focus' : ent < 0.40 ? 'balanced syntactic reasoning' : 'wide exploratory hypothesis search'}.`,
-      proof: `Softmax attention distribution matrix A = Softmax(QK^T / √d_k) evaluated across multi-head latent space.`,
-      risk: ent > 0.45 ? 'ELEVATED' : 'MINIMAL'
+      why: `Text entropy H=${ent == null ? '—' : ent} bits/char (character perplexity ${ppl == null ? '—' : ppl}). This describes the written text.`,
+      proof: `H = -∑ p log₂ p over characters in the sample.`,
+      risk: 'TEXT ONLY'
     };
   }
 }
@@ -552,73 +568,69 @@ function generateSmartInsights(agentKey, ag) {
     };
   }
 
-  const ent = ag.entropy || 0.14;
-  const ppl = ag.perplexity || Math.pow(2, ent);
-  const tokSec = ag.tokensSec || 0;
-  const accel = ag.accelTokSec || 0;
-  const vram = ag.vramMb || 0;
-  const usedCtx = ag.contextUsed || 0;
-  const maxCtx = ag.contextMax || 131072;
-  const ctxRatio = usedCtx / maxCtx;
+  const ent = typeof ag.entropy === 'number' ? ag.entropy : null;
+  const ppl = typeof ag.perplexity === 'number' ? ag.perplexity : null;
+  const tokSec = ag.rateObserved && typeof ag.tokensSec === 'number' ? ag.tokensSec : null;
+  const accel = typeof ag.accelTokSec === 'number' ? ag.accelTokSec : null;
+  const vram = ag.vramMb;
+  const usedCtx = typeof ag.contextUsed === 'number' ? ag.contextUsed : null;
+  const maxCtx = typeof ag.contextMax === 'number' ? ag.contextMax : null;
+  const ctxRatio = usedCtx != null && maxCtx ? usedCtx / maxCtx : null;
 
-  let coherenceScore = Math.max(70, Math.min(99, Math.round((1.0 - ent * 0.7) * 100)));
-  let risk = 'NEGLIGIBLE';
-  if (ent > 0.45) risk = 'ELEVATED (EXPLORATORY)';
-  else if (ent > 0.30) risk = 'LOW (SYNTACTIC FOCUS)';
-  else risk = 'MINIMAL (DIRAC COHERENT)';
+  const coherenceScore = ent == null ? null : Math.round(Math.min(1, ent / 8) * 100);
+  const risk = ent == null ? 'NO TEXT SAMPLE' : 'TEXT ENTROPY ONLY';
 
   let summary = '';
   if (agentKey === 'ALL') {
     const activeNodes = Object.values(agentRegistry).filter(a => a.online && a.name !== 'ALL').length;
-    summary = `Swarm Neural Mesh active: synthesizing ${activeNodes} online models across ${ag.kvCacheMb >= 1024 ? (ag.kvCacheMb/1024).toFixed(1)+' GB' : ag.kvCacheMb+' MB'} KV tensor space. Aggregate streaming velocity: ${tokSec} tok/sec (${accel >= 0 ? '+' : ''}${accel} a_T).`;
+    const rateBit = tokSec == null ? 'token rate not observed' : `${tokSec} tok/s from timestamps`;
+    summary = `${activeNodes} agents have a live process or a fresh sample. ${rateBit}.`;
   } else if (agentKey === 'Cursor') {
-    summary = `Cursor IDE & Composer Worker operating at peak memory allocation (${vram} MB RSS). Git sync and MCP server streaming smoothly with high tensor stability (${tokSec} t/s).`;
+    summary = `Cursor process RSS ${vram == null ? 'unknown' : vram + ' MB'}. ${tokSec == null ? 'Token rate is not in the editor log.' : tokSec + ' tok/s measured.'}`;
   } else if (agentKey === 'Antigravity') {
-    summary = `Antigravity Gemini engine is in Dirac Coherent state (H=${ent.toFixed(3)} bits, PPL=${ppl.toFixed(3)}). Cognitive attention is tightly focused on deterministic code and tool dispatches with zero hallucination drift.`;
+    summary = ent == null
+      ? 'AGY is online. The latest step has no text to measure.'
+      : `AGY text entropy H=${ent.toFixed(3)} bits/char. Character perplexity ${ppl}. Cache tokens ${ag.cacheTokens == null ? 'not in this step' : ag.cacheTokens}.`;
   } else if (agentKey === 'Zoth-Sentinel') {
-    summary = `Zoth Sentinel Ring-1 supervisor active. Running continuous resilience loops, memory auditor, and zombie cleanup without degradation.`;
+    summary = `Sentinel process is up. RSS ${vram == null ? 'unknown' : vram + ' MB'}. No model text was sampled.`;
   } else if (agentKey === 'Ollama') {
-    summary = `Ollama local model ${ag.model} resident in memory. Local inference engine standby with zero network egress.`;
+    summary = `Ollama model ${ag.model}. VRAM ${vram == null ? 'not reported' : vram + ' MB'}. Token rate appears only while a generation reports counts.`;
   } else {
-    summary = `${ag.name || agentKey} online. Operating in ${ag.phase} phase with H=${ent.toFixed(3)} bits and ${tokSec} tok/sec throughput.`;
+    summary = `${ag.name || agentKey} online. ${ent == null ? 'No text sample.' : 'H=' + ent.toFixed(3) + ' bits/char.'} ${tokSec == null ? 'Rate not observed.' : tokSec + ' tok/s.'}`;
   }
 
-  let recommendation = 'Nominal operational status. All mathematical invariants within bounds.';
-  if (ctxRatio > 0.8) {
-    recommendation = 'Context horizon exceeds 80%: recommend activating context compression or memory summarization.';
-  } else if (ent > 0.45) {
-    recommendation = 'Entropy elevated: model is exploring wide hypothesis spaces. Verify tool arguments before execution.';
-  } else if (tokSec === 0 && ag.phase === 'REASONING') {
-    recommendation = 'Deliberation stall: model may be waiting on asynchronous subagent or external I/O.';
+  let recommendation = ent == null
+    ? 'No text sample yet. Rates and entropy stay blank until a log or transcript provides them.'
+    : 'Entropy is the written text. It is not a score of whether the model is right.';
+  if (ctxRatio != null && ctxRatio > 0.8) {
+    recommendation = 'Observed context is over 80% of the known window.';
+  } else if (tokSec == null && ag.online) {
+    recommendation = 'The process is up. Token rate needs a count and two timestamps.';
   }
 
-  // Visual Layman Metaphors
-  const isSuperConfident = ent <= 0.22;
-  const isFocused = ent > 0.22 && ent <= 0.42;
-  const isSearching = ent > 0.42 && ent <= 0.65;
-
+  const band = ent == null ? 'none' : ent < 2.5 ? 'repetitive' : ent < 4.2 ? 'ordinary' : ent < 5.5 ? 'dense' : 'random';
   const visualFocus = {
-    badge: isSuperConfident ? '🎯 LASER SHARP' : isFocused ? '💡 FOCUSED' : isSearching ? '🧭 EXPLORING' : '⚠️ HIGH UNCERTAINTY',
-    certaintyPct: Math.max(70, Math.min(99, Math.round((1.0 - ent * 0.72) * 100))),
-    confusionLevel: `${ppl.toFixed(2)}x (${ppl < 1.25 ? 'Very Low' : ppl < 1.6 ? 'Moderate' : 'High'})`,
-    plainExplain: isSuperConfident 
-      ? 'The AI is confident and thinking with precision. Zero confusion or guessing detected.'
-      : isFocused
-      ? 'The AI is carefully working through the solution step-by-step.'
-      : 'The AI is exploring multiple paths to find the best answer.'
+    badge: band === 'none' ? 'NO SAMPLE' : band === 'repetitive' ? 'REPETITIVE TEXT' : band === 'ordinary' ? 'ORDINARY TEXT' : band === 'dense' ? 'DENSE TEXT' : 'NEAR RANDOM',
+    certaintyPct: typeof ag.confidence === 'number' ? Math.round(ag.confidence * 100) : null,
+    confusionLevel: ppl == null ? '—' : `${ppl.toFixed(2)} char PPL`,
+    plainExplain: ent == null
+      ? 'Nothing has been measured for this agent yet.'
+      : `The last text sample is ${ent.toFixed(3)} bits per character. That is not the model's attention or its confidence.`
   };
 
   const visualSpeed = {
-    tier: tokSec > 160 ? '⚡ TURBO' : tokSec > 60 ? '🏃 STEADY' : tokSec > 0 ? '🚶 DELIBERATING' : '💤 IDLE',
+    tier: tokSec == null ? 'NOT OBSERVED' : tokSec > 80 ? 'FAST SAMPLE' : tokSec > 15 ? 'STEADY SAMPLE' : 'SLOW SAMPLE',
     wordsPerSec: tokSec,
-    note: tokSec > 120 ? 'Generating responses at peak speed' : tokSec > 0 ? 'Streaming answers steadily' : 'Waiting for next task'
+    note: tokSec == null ? 'No token count with timestamps' : `Measured ${tokSec} tok/s from the step clock`
   };
 
   const visualMemory = {
-    percentUsed: Math.min(100, Math.round(ctxRatio * 100)),
-    roomLeftPct: Math.max(0, 100 - Math.round(ctxRatio * 100)),
-    wordsInMemory: Math.round(usedCtx * 0.75),
-    plainNote: `${Math.max(0, 100 - Math.round(ctxRatio * 100))}% conversation memory free.`
+    percentUsed: ctxRatio == null ? null : Math.min(100, Math.round(ctxRatio * 100)),
+    roomLeftPct: ctxRatio == null ? null : Math.max(0, 100 - Math.round(ctxRatio * 100)),
+    wordsInMemory: usedCtx,
+    plainNote: usedCtx == null
+      ? 'Context length was not in the sample.'
+      : (maxCtx ? `${Math.round((usedCtx / maxCtx) * 100)}% of the known window.` : `${usedCtx} tokens observed. Window size was not reported.`)
   };
 
   let activeStep = 3;
@@ -673,10 +685,10 @@ function ingestTelemetry(data) {
       contextMax: data.contextMax || 131072,
       kvCacheMb: 0,
       dModel: data.dModel || 4096,
-      entropy: 0.16,
-      perplexity: 1.117,
-      confidence: 0.94,
-      gradientLoss: 0.019,
+      entropy: null,
+      perplexity: null,
+      confidence: null,
+      gradientLoss: null,
       latencyMs: 80,
       toolCalls: 0,
       toolSuccess: 0,
@@ -697,33 +709,42 @@ function ingestTelemetry(data) {
   if (data.phase) ag.phase = data.phase;
   if (data.markovState) ag.markovState = data.markovState;
 
-  // Pillar II: Velocity & Acceleration
-  if (typeof data.tokensSec === 'number') {
-    const prevSpeed = ag.tokensSec || 0;
-    ag.accelTokSec = +((data.tokensSec - prevSpeed) * 0.35).toFixed(1);
-    ag.tokensSec = data.tokensSec;
-    ag.cumulativeTokens = (ag.cumulativeTokens || 0) + Math.round(data.tokensSec * 1.5);
+  if (typeof data.text === 'string' && data.text.length >= 2) {
+    const measured = measure.measureText(data.text);
+    if (measured.bitsPerChar != null) {
+      ag.entropy = measured.bitsPerChar;
+      ag.bigramBits = measured.bigramBits;
+      ag.perplexity = measured.perplexity;
+      ag.gradientLoss = measured.bigramBits;
+      ag.confidence = measured.uniqueRatio;
+      ag.measureNote = `Text sample ${measured.chars} chars.`;
+    }
   }
 
-  // Pillar III: KV Cache Tensor Geometry
-  if (typeof data.contextUsed === 'number') {
-    ag.contextUsed = data.contextUsed;
-    const dHead = 128;
-    const nLayers = 32;
-    const nHeadsKv = 8;
-    const bytesPerElem = 2;
-    const totalBytes = 2 * nLayers * nHeadsKv * dHead * ag.contextUsed * bytesPerElem;
-    ag.kvCacheMb = +(totalBytes / (1024 * 1024)).toFixed(1);
+  if (data.rateObserved && typeof data.tokensSec === 'number') {
+    const prevSpeed = ag.tokensSec;
+    ag.tokensSec = data.tokensSec;
+    ag.rateObserved = true;
+    if (typeof prevSpeed === 'number' && data.dtSec > 0) {
+      ag.accelTokSec = +((data.tokensSec - prevSpeed) / data.dtSec).toFixed(2);
+    }
   }
+  if (typeof data.outputTokens === 'number' && data.outputTokens >= 0) {
+    ag.outputTokens = data.outputTokens;
+    ag.cumulativeTokens = (ag.cumulativeTokens || 0) + data.outputTokens;
+  }
+
+  if (typeof data.contextUsed === 'number') ag.contextUsed = data.contextUsed;
+  if (typeof data.cacheTokens === 'number') ag.cacheTokens = data.cacheTokens;
   if (typeof data.contextMax === 'number') ag.contextMax = data.contextMax;
   if (typeof data.dModel === 'number') ag.dModel = data.dModel;
-
-  // Pillar I: Shannon Attention Entropy & Perplexity
-  if (typeof data.entropy === 'number') {
-    ag.entropy = data.entropy;
-    ag.perplexity = +(Math.pow(2, ag.entropy)).toFixed(3);
-    ag.confidence = +(Math.max(0.72, Math.min(0.995, 1.0 - (ag.entropy * 0.72)))).toFixed(3);
-    ag.gradientLoss = +(ag.entropy * 0.12).toFixed(4);
+  if (data.kvShape && typeof (data.cacheTokens ?? data.contextUsed) === 'number') {
+    const tokens = data.cacheTokens ?? data.contextUsed;
+    const mb = measure.kvBytesMb(tokens, data.kvShape);
+    if (mb != null) {
+      ag.kvCacheMb = mb;
+      ag.kvEstimated = true;
+    }
   }
 
   // Pillar IV: Markov & Bayesian Metrics
@@ -788,53 +809,67 @@ function broadcastTelemetryUpdate() {
 function recomputeSwarmAggregate() {
   const swarm = agentRegistry['ALL'];
   let totalCtx = 0;
+  let ctxN = 0;
   let maxCtx = 0;
-  let totalTokSec = 0;
+  let rateSum = 0;
+  let rateN = 0;
   let totalCumulative = 0;
-  let weightedEntropy = 0;
-  let weightedConfidence = 0;
-  let totalLatency = 0;
+  const entropies = [];
+  const bigrams = [];
+  const uniques = [];
   let totalCalls = 0;
   let totalSuccess = 0;
   let totalFail = 0;
   let totalVram = 0;
+  let vramN = 0;
   let activeCount = 0;
 
   for (const [k, a] of Object.entries(agentRegistry)) {
     if (k === 'ALL') continue;
-    if (Date.now() - a.lastActive < 120000 || a.online) {
-      activeCount++;
+    if (!(a.online || (a.lastActive && Date.now() - a.lastActive < 120000))) continue;
+    activeCount += 1;
+    if (typeof a.contextUsed === 'number') {
       totalCtx += a.contextUsed;
-      maxCtx = Math.max(maxCtx, a.contextMax);
-      totalTokSec += a.tokensSec;
-      totalCumulative += (a.cumulativeTokens || 0);
-      weightedEntropy += a.entropy;
-      weightedConfidence += a.confidence;
-      totalLatency += a.latencyMs;
-      totalCalls += a.toolCalls;
-      totalSuccess += a.toolSuccess;
-      totalFail += a.toolFail;
+      ctxN += 1;
+    }
+    if (typeof a.contextMax === 'number') maxCtx = Math.max(maxCtx, a.contextMax);
+    if (a.rateObserved && typeof a.tokensSec === 'number') {
+      rateSum += a.tokensSec;
+      rateN += 1;
+    }
+    totalCumulative += (a.cumulativeTokens || 0);
+    if (typeof a.entropy === 'number') entropies.push(a.entropy);
+    if (typeof a.bigramBits === 'number') bigrams.push(a.bigramBits);
+    if (typeof a.confidence === 'number') uniques.push(a.confidence);
+    totalCalls += a.toolCalls || 0;
+    totalSuccess += a.toolSuccess || 0;
+    totalFail += a.toolFail || 0;
+    if (typeof a.vramMb === 'number') {
       totalVram += a.vramMb;
+      vramN += 1;
     }
   }
 
-  if (activeCount > 0) {
-    swarm.tokensSec = totalTokSec;
-    swarm.cumulativeTokens = totalCumulative;
-    swarm.contextUsed = totalCtx;
-    swarm.contextMax = Math.max(maxCtx, 1048576);
-    swarm.kvCacheMb = +((totalCtx * 2 * 32 * 8 * 128 * 2) / (1024 * 1024)).toFixed(1);
-    swarm.entropy = +(weightedEntropy / activeCount).toFixed(3);
-    swarm.perplexity = +(Math.pow(2, swarm.entropy)).toFixed(3);
-    swarm.confidence = +(weightedConfidence / activeCount).toFixed(3);
-    swarm.gradientLoss = +(swarm.entropy * 0.12).toFixed(4);
-    swarm.latencyMs = Math.round(totalLatency / activeCount);
-    swarm.toolCalls = totalCalls;
-    swarm.toolSuccess = totalSuccess;
-    swarm.toolFail = totalFail;
-    swarm.vramMb = totalVram;
-    swarm.online = true;
-  }
+  swarm.online = activeCount > 0;
+  swarm.tokensSec = rateN ? +rateSum.toFixed(2) : null;
+  swarm.rateObserved = rateN > 0;
+  swarm.cumulativeTokens = totalCumulative;
+  swarm.contextUsed = ctxN ? totalCtx : null;
+  swarm.contextMax = maxCtx || null;
+  swarm.kvCacheMb = null;
+  const mean = (xs) => xs.length ? +(xs.reduce((s, x) => s + x, 0) / xs.length).toFixed(3) : null;
+  swarm.entropy = mean(entropies);
+  swarm.perplexity = swarm.entropy == null ? null : +Math.pow(2, swarm.entropy).toFixed(3);
+  swarm.confidence = mean(uniques);
+  swarm.bigramBits = mean(bigrams);
+  swarm.gradientLoss = swarm.bigramBits;
+  swarm.toolCalls = totalCalls;
+  swarm.toolSuccess = totalSuccess;
+  swarm.toolFail = totalFail;
+  swarm.vramMb = vramN ? totalVram : null;
+  swarm.measureNote = activeCount
+    ? `${activeCount} live. Entropy averaged over ${entropies.length} text samples. Rate summed over ${rateN}.`
+    : 'No sample yet.';
 }
 
 // ── Ingestion Servers ────────────────────────────────────────────────────────
@@ -944,55 +979,91 @@ function probeAllAgents() {
         const content = fs.readFileSync(latestConv, 'utf8');
         const lines = content.trim().split('\n').filter(Boolean);
         if (lines.length > 0) {
-          const lastLine = lines[lines.length - 1];
-          const prevLine = lines.length > 1 ? lines[lines.length - 2] : null;
-          try {
-            const step = JSON.parse(lastLine);
-            const prevStep = prevLine ? JSON.parse(prevLine) : null;
-            const text = step.thinking || step.content || '';
-            const toolCalls = step.tool_calls || [];
-            const ent = calculateShannonEntropy(text);
-            const toolName = toolCalls.length > 0 ? toolCalls[0].name : (step.type === 'PLANNER_RESPONSE' ? 'synthesis' : null);
-            const markov = toolCalls.length > 0 ? 'TOOL_EXEC' : (step.type === 'PLANNER_RESPONSE' ? 'REASONING' : 'PERCEIVE');
+          let latestStep = null;
+          let latestStepIdx = -1;
+          for (let i = lines.length - 1; i >= 0 && i >= lines.length - 20; i -= 1) {
+            try {
+              const p = JSON.parse(lines[i]);
+              if (p.thinking || p.content || typeof p.output_tokens === 'number') {
+                latestStep = p;
+                latestStepIdx = i;
+                break;
+              }
+            } catch (err) {}
+          }
+          if (!latestStep) {
+            try { latestStep = JSON.parse(lines[lines.length - 1]); latestStepIdx = lines.length - 1; } catch (e) {}
+          }
 
-            // Ground truth calculations from actual transcript step metrics
-            let stepChars = (step.content || '').length + (step.thinking || '').length;
-            if (toolCalls.length > 0) stepChars += JSON.stringify(toolCalls).length;
-            const stepTokens = Math.max(16, Math.round(stepChars / 3.8));
-
-            let realSpeed = 85;
-            if (prevStep && prevStep.created_at && step.created_at) {
-              const dtSec = Math.max(0.25, (new Date(step.created_at) - new Date(prevStep.created_at)) / 1000);
-              realSpeed = Math.min(320, Math.max(20, Math.round(stepTokens / dtSec)));
+          if (latestStep) {
+            let prevCounted = null;
+            for (let i = latestStepIdx - 1; i >= 0 && i >= latestStepIdx - 40; i -= 1) {
+              try {
+                const candidate = JSON.parse(lines[i]);
+                if (typeof candidate.output_tokens === 'number' && candidate.created_at) {
+                  prevCounted = candidate;
+                  break;
+                }
+              } catch (err) {}
+            }
+            let text = `${latestStep.thinking || ''}\n${latestStep.content || ''}`.trim();
+            if (latestStep.truncated_fields && (latestStep.truncated_fields.includes('content') || latestStep.truncated_fields.includes('thinking'))) {
+              try {
+                const fullPath = latestConv.replace('transcript.jsonl', 'transcript_full.jsonl');
+                if (fs.existsSync(fullPath)) {
+                  const fullLines = fs.readFileSync(fullPath, 'utf8').trim().split('\n').filter(Boolean);
+                  if (fullLines[latestStepIdx]) {
+                    const fullStep = JSON.parse(fullLines[latestStepIdx]);
+                    text = `${fullStep.thinking || ''}\n${fullStep.content || ''}`.trim();
+                  }
+                }
+              } catch (err) {}
             }
 
-            // Real conversational context token estimate from transcript
-            let sampleChars = 0;
-            const recentSlice = lines.slice(-30);
-            for (const l of recentSlice) sampleChars += l.length;
-            const approxTotalTokens = Math.round((sampleChars / recentSlice.length) * lines.length / 3.8);
-
+            const toolCalls = latestStep.tool_calls || [];
+            const toolName = toolCalls.length > 0 && toolCalls[0].name ? toolCalls[0].name : (toolCalls.length > 0 && toolCalls[0].function ? toolCalls[0].function.name : null);
+            const markov = toolCalls.length > 0 ? 'TOOL_EXEC' : (latestStep.type === 'PLANNER_RESPONSE' ? 'REASONING' : 'PERCEIVE');
+            let tokensSec = null;
+            let dtSec = null;
+            let rateObserved = false;
+            if (prevCounted && latestStep.created_at && typeof latestStep.output_tokens === 'number') {
+              dtSec = (new Date(latestStep.created_at) - new Date(prevCounted.created_at)) / 1000;
+              const rate = measure.tokenRate(latestStep.output_tokens, dtSec);
+              if (rate != null) {
+                tokensSec = rate;
+                rateObserved = true;
+              }
+            }
+            const cacheTokens = typeof latestStep.cache_read_tokens === 'number' ? latestStep.cache_read_tokens : null;
+            const contextUsed = cacheTokens != null ? cacheTokens : (typeof latestStep.input_tokens === 'number' ? latestStep.input_tokens : null);
             ingestTelemetry({
               agent: 'Antigravity',
-              model: 'gemini-3.8-flash',
-              phase: step.type === 'PLANNER_RESPONSE' ? 'REASONING' : (toolCalls.length > 0 ? 'TOOL_EXEC' : 'EXEC'),
+              model: 'Gemini 3.8 Flash / AGY',
+              phase: latestStep.type === 'PLANNER_RESPONSE' ? 'REASONING' : (toolCalls.length > 0 ? 'TOOL_EXEC' : 'EXEC'),
               markovState: markov,
-              tokensSec: realSpeed,
-              contextUsed: Math.min(1048576, Math.max(32000, approxTotalTokens)),
-              contextMax: 1048576,
-              entropy: ent,
-              step: step.step_index || lines.length,
-              maxSteps: Math.max(lines.length + 15, 40),
+              text,
+              tokensSec,
+              rateObserved,
+              dtSec,
+              outputTokens: typeof latestStep.output_tokens === 'number' ? latestStep.output_tokens : null,
+              contextUsed,
+              cacheTokens,
+              step: latestStep.step_index || lines.length,
+              maxSteps: lines.length,
               tool: toolName,
-              reasoning: toolName 
-                ? `Tool execution: ${toolName} [H=${ent} bits, PPL=${(Math.pow(2, ent)).toFixed(3)}]` 
-                : `Cognitive deliberation step #${step.step_index || lines.length} [Attention coherence: H=${ent}]`
+              toolCalls: toolCalls.length,
+              reasoning: toolName
+                ? `Tool ${toolName}. output_tokens=${latestStep.output_tokens == null ? 'absent' : latestStep.output_tokens}. cache_read_tokens=${cacheTokens == null ? 'absent' : cacheTokens}.`
+                : `Step ${latestStep.step_index || lines.length} ${latestStep.type || ''}. output_tokens=${latestStep.output_tokens == null ? 'absent' : latestStep.output_tokens}. cache_read_tokens=${cacheTokens == null ? 'absent' : cacheTokens}.`
             });
-          } catch (e) {}
+          }
         }
       }
     }
   } catch (e) {}
+
+  // 1b. Grok live session reader
+  probeGrok();
 
   // 2. Ollama live probe (tags & active ps)
   if (Date.now() - lastOllamaCheck > 4000) {
@@ -1012,13 +1083,18 @@ function probeAllAgents() {
           const d = JSON.parse(body);
           if (d && Array.isArray(d.models) && d.models.length > 0) {
             const m = d.models[0];
-            agentRegistry['Ollama'].online = true;
-            agentRegistry['Ollama'].model = m.name;
-            agentRegistry['Ollama'].phase = 'INFERENCE_ACTIVE';
-            agentRegistry['Ollama'].markovState = 'REASONING';
-            agentRegistry['Ollama'].contextMax = m.details?.context_length || 32768;
-            agentRegistry['Ollama'].vramMb = Math.round((m.size_vram || m.size || 986000000) / (1024 * 1024));
-            agentRegistry['Ollama'].lastActive = Date.now();
+            const ag = agentRegistry['Ollama'];
+            ag.online = true;
+            ag.model = m.name;
+            ag.phase = 'INFERENCE_ACTIVE';
+            ag.markovState = 'REASONING';
+            if (m.details && m.details.context_length) ag.contextMax = m.details.context_length;
+            const bytes = m.size_vram || m.size;
+            if (bytes) ag.vramMb = Math.round(bytes / (1024 * 1024));
+            ag.lastActive = Date.now();
+            ag.rateObserved = false;
+            ag.measureNote = `Ollama has ${m.name} loaded. VRAM bytes ${bytes || 'not reported'}.`;
+            applyOllamaShape(m.name);
           } else {
             // Check available tags
             checkOllamaTags();
@@ -1050,8 +1126,10 @@ function probeAllAgents() {
       agentRegistry['Aider'].online = lower.includes('aider');
       if (agentRegistry['Aider'].online) agentRegistry['Aider'].lastActive = Date.now();
 
-      agentRegistry['Grok'].online = lower.includes('grok');
-      if (agentRegistry['Grok'].online) agentRegistry['Grok'].lastActive = Date.now();
+      if (!agentRegistry['Grok'].online) {
+        agentRegistry['Grok'].online = lower.includes('grok');
+        if (agentRegistry['Grok'].online) agentRegistry['Grok'].lastActive = Date.now();
+      }
 
       agentRegistry['Hermes'].online = lower.includes('hexstrike') || lower.includes('hermes');
       if (agentRegistry['Hermes'].online) agentRegistry['Hermes'].lastActive = Date.now();
@@ -1071,13 +1149,153 @@ function probeAllAgents() {
   });
 
   recomputeSwarmAggregate();
+  broadcastTelemetryUpdate();
+}
 
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('telemetry-update', {
-      registry: agentRegistry,
-      mathMeta: MATH_PILLARS_META
+let lastGrokMtime = 0;
+function probeGrok() {
+  try {
+    const grokSessionsDir = path.join(os.homedir(), '.grok', 'sessions');
+    if (!fs.existsSync(grokSessionsDir)) return;
+
+    const workDirs = fs.readdirSync(grokSessionsDir);
+    let latestUsage = null;
+    let latestChat = null;
+    let latestMtime = 0;
+
+    for (const wd of workDirs) {
+      const fullWd = path.join(grokSessionsDir, wd);
+      try {
+        if (!fs.statSync(fullWd).isDirectory()) continue;
+        const subdirs = fs.readdirSync(fullWd);
+        for (const sd of subdirs) {
+          const sessionPath = path.join(fullWd, sd);
+          try {
+            if (!fs.statSync(sessionPath).isDirectory()) continue;
+            const usageFile = path.join(sessionPath, 'usage.json');
+            const chatFile = path.join(sessionPath, 'chat_history.jsonl');
+            if (fs.existsSync(usageFile) || fs.existsSync(chatFile)) {
+              const mtime = Math.max(
+                fs.existsSync(usageFile) ? fs.statSync(usageFile).mtimeMs : 0,
+                fs.existsSync(chatFile) ? fs.statSync(chatFile).mtimeMs : 0
+              );
+              if (mtime > latestMtime) {
+                latestMtime = mtime;
+                latestUsage = usageFile;
+                latestChat = chatFile;
+              }
+            }
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+
+    if (latestMtime > 0 && latestMtime > lastGrokMtime) {
+      lastGrokMtime = latestMtime;
+      let model = 'grok-4.7-build';
+      let cacheTokens = null;
+      let outputTokens = null;
+      let turnCount = null;
+      let text = '';
+
+      if (latestUsage && fs.existsSync(latestUsage)) {
+        try {
+          const usage = JSON.parse(fs.readFileSync(latestUsage, 'utf8'));
+          if (usage.session) {
+            model = usage.session.primaryModelId || model;
+            outputTokens = usage.session.outputTokens;
+            cacheTokens = usage.session.cachedReadTokens;
+            turnCount = usage.session.turnCount;
+          }
+          if (Array.isArray(usage.turns) && usage.turns.length > 0) {
+            const lastTurn = usage.turns[usage.turns.length - 1];
+            if (typeof lastTurn.outputTokens === 'number') outputTokens = lastTurn.outputTokens;
+            if (typeof lastTurn.cachedReadTokens === 'number') cacheTokens = lastTurn.cachedReadTokens;
+          }
+        } catch (e) {}
+      }
+
+      if (latestChat && fs.existsSync(latestChat)) {
+        try {
+          const chatRaw = fs.readFileSync(latestChat, 'utf8');
+          const lines = chatRaw.trim().split('\n').filter(Boolean);
+          for (let i = lines.length - 1; i >= 0 && i >= lines.length - 20; i -= 1) {
+            try {
+              const entry = JSON.parse(lines[i]);
+              if (entry.type === 'assistant' && typeof entry.content === 'string' && entry.content.length > 0) {
+                text = entry.content;
+                break;
+              } else if (entry.type === 'reasoning' && Array.isArray(entry.summary) && entry.summary.length > 0) {
+                text = entry.summary.map(s => s.text || '').join('\n');
+                break;
+              }
+            } catch (err) {}
+          }
+        } catch (e) {}
+      }
+
+      const ag = agentRegistry['Grok'];
+      ag.online = true;
+      ag.lastActive = Date.now();
+      ag.model = model;
+      ag.phase = 'ACTIVE_AGENT';
+      ag.markovState = 'REASONING';
+
+      ingestTelemetry({
+        agent: 'Grok',
+        model: model,
+        phase: 'ACTIVE_AGENT',
+        markovState: 'REASONING',
+        text: text,
+        rateObserved: false,
+        outputTokens: outputTokens,
+        cacheTokens: cacheTokens,
+        contextUsed: cacheTokens,
+        step: turnCount || 1,
+        maxSteps: Math.max(20, (turnCount || 1) + 5),
+        tool: 'grok_session_sync',
+        reasoning: `Grok active: model ${model}. Turn ${turnCount || 'unknown'}. Cache tokens: ${cacheTokens || 'none'}.`
+      });
+    }
+  } catch (e) {}
+}
+
+function applyOllamaShape(name) {
+  if (!name) return;
+  const body = JSON.stringify({ name });
+  const req = http.request({
+    hostname: '127.0.0.1',
+    port: 11434,
+    path: '/api/show',
+    method: 'POST',
+    timeout: 1500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body)
+    }
+  }, (res) => {
+    let buf = '';
+    res.on('data', (c) => { buf += c; });
+    res.on('end', () => {
+      try {
+        const parsed = JSON.parse(buf);
+        const shape = measure.shapeFromOllamaInfo(parsed.model_info);
+        const ag = agentRegistry['Ollama'];
+        if (!shape) {
+          ag.measureNote = `Ollama model ${name} answered /api/show without a layer shape.`;
+          return;
+        }
+        ag.kvShape = shape;
+        if (shape.embed) ag.dModel = shape.embed;
+        const tokens = typeof ag.cacheTokens === 'number' ? ag.cacheTokens : ag.contextUsed;
+        if (typeof tokens === 'number') ag.kvCacheMb = measure.kvBytesMb(tokens, shape);
+        ag.measureNote = `Ollama shape ${shape.layers} layers, ${shape.kvHeads} kv heads, head dim ${shape.headDim}.`;
+        broadcastTelemetryUpdate();
+      } catch (e) {}
     });
-  }
+  });
+  req.on('error', () => {});
+  req.end(body);
 }
 
 function checkOllamaTags() {
@@ -1098,8 +1316,9 @@ function checkOllamaTags() {
           agentRegistry['Ollama'].online = true;
           agentRegistry['Ollama'].model = m.name;
           agentRegistry['Ollama'].phase = 'READY_STANDBY';
-          agentRegistry['Ollama'].contextMax = m.details?.context_length || 32768;
-          agentRegistry['Ollama'].vramMb = Math.round((m.size || 986000000) / (1024 * 1024));
+          if (m.details && m.details.context_length) agentRegistry['Ollama'].contextMax = m.details.context_length;
+          if (m.size) agentRegistry['Ollama'].vramMb = Math.round(m.size / (1024 * 1024));
+          applyOllamaShape(m.name);
         }
       } catch (e) {}
     });
@@ -1142,17 +1361,8 @@ function probeCursor() {
         ag.vramMb = totalRssMb;
         ag.phase = hasAgentWorker ? 'BACKGROUND_AGENT' : (totalCpu > 1.0 ? 'ACTIVE_COMPOSER' : 'IDLE_IDE');
         ag.markovState = hasAgentWorker ? 'TOOL_EXEC' : (totalCpu > 1.0 ? 'REASONING' : 'PERCEIVE');
-
-        // Dynamic tokens/sec based on CPU & worker
-        if (totalCpu > 1.0 || hasAgentWorker) {
-          ag.tokensSec = Math.min(130, Math.round(55 + totalCpu * 12));
-          ag.accelTokSec = +((Math.random() * 3.5 - 1.2)).toFixed(1);
-          ag.cumulativeTokens = (ag.cumulativeTokens || 0) + Math.round(ag.tokensSec * 1.5);
-        } else {
-          ag.tokensSec = 0;
-          ag.accelTokSec = 0;
-        }
-
+        ag.cpuPct = +totalCpu.toFixed(1);
+        ag.measureNote = `Cursor RSS ${totalRssMb} MB, CPU ${ag.cpuPct}%. Token rate is not derived from CPU.`;
         scrapeCursorLogs(ag, hasAgentWorker, totalRssMb);
       } else {
         ag.online = false;
@@ -1217,7 +1427,6 @@ function scrapeCursorLogs(ag, hasAgentWorker, totalRssMb) {
       const logLines = raw.trim().split('\n').filter(Boolean);
       if (logLines.length > 0) {
         const lastLogLine = logLines[logLines.length - 1];
-        const ent = calculateShannonEntropy(lastLogLine);
         const fileName = path.basename(candidateFile, '.log');
 
         let toolName = 'cursor_editor_event';
@@ -1241,44 +1450,17 @@ function scrapeCursorLogs(ag, hasAgentWorker, totalRssMb) {
 
         ingestTelemetry({
           agent: 'Cursor',
-          model: 'Claude 3.7 Sonnet / Cursor Composer',
+          model: 'Cursor process',
           phase: hasAgentWorker ? 'BACKGROUND_AGENT' : 'ACTIVE_IDE',
           markovState: markov,
-          tokensSec: ag.tokensSec || (65 + Math.floor(Math.random() * 25)),
-          contextUsed: Math.min(200000, 36000 + logLines.length * 60),
-          contextMax: 200000,
-          entropy: ent,
-          vramMb: totalRssMb || 1200,
-          step: Math.min(25, Math.floor(logLines.length / 5) + 1),
-          maxSteps: 30,
+          text: lastLogLine,
+          rateObserved: false,
+          vramMb: totalRssMb,
+          step: logLines.length,
           tool: toolName,
-          reasoning: `Cursor [${fileName}]: ${cleanNote}`
+          reasoning: `Cursor log ${fileName}. RSS ${totalRssMb == null ? 'unknown' : totalRssMb + ' MB'}. ${cleanNote}`
         });
-        return;
       }
-    }
-
-    // Heartbeat if logs are empty or haven't pulsed recently
-    if (ag.logs.length === 0 || (Date.now() - lastCursorScrapeTick > 8000)) {
-      lastCursorScrapeTick = Date.now();
-      const ent = +(0.14 + Math.random() * 0.05).toFixed(3);
-      ingestTelemetry({
-        agent: 'Cursor',
-        model: 'Claude 3.7 Sonnet / Cursor Composer',
-        phase: hasAgentWorker ? 'BACKGROUND_AGENT' : 'ACTIVE_IDE',
-        markovState: hasAgentWorker ? 'TOOL_EXEC' : 'PERCEIVE',
-        tokensSec: ag.tokensSec || (hasAgentWorker ? 48 : 0),
-        contextUsed: 38400,
-        contextMax: 200000,
-        entropy: ent,
-        vramMb: totalRssMb || 1200,
-        step: 6,
-        maxSteps: 25,
-        tool: hasAgentWorker ? 'worker_daemon_sync' : 'ide_workspace_watch',
-        reasoning: hasAgentWorker 
-          ? `Cursor Private Worker active: workspace ${process.env.PWD || process.cwd()} (RSS: ${totalRssMb} MB)`
-          : `Cursor IDE nominal: ${ag.vramMb} MB RSS allocated across editor processes`
-      });
     }
   } catch (e) {}
 }
@@ -1292,27 +1474,14 @@ function probeZothSentinel() {
       if (!err && stdout && stdout.trim().length > 0) {
         ag.online = true;
         ag.lastActive = Date.now();
-        ag.model = 'llama3.2:latest (Ring-1)';
-
-        if (ag.logs.length === 0 || (Date.now() - lastSentinelTick > 10000)) {
-          lastSentinelTick = Date.now();
-          const ent = +(0.11 + Math.random() * 0.03).toFixed(3);
-          ingestTelemetry({
-            agent: 'Zoth-Sentinel',
-            model: 'llama3.2:latest (Ring-1)',
-            phase: 'SUPERVISOR_PASS',
-            markovState: 'PERCEIVE',
-            tokensSec: 28 + Math.floor(Math.random() * 12),
-            contextUsed: 14200,
-            contextMax: 131072,
-            entropy: ent,
-            vramMb: 1250,
-            step: 5,
-            maxSteps: 15,
-            tool: 'resilience_audit',
-            reasoning: `OS Sentinel supervisor pass: Ring 1 active, 0 failed units, memory auditor clean`
-          });
-        }
+        ag.model = 'sentinel process';
+        let rssMb = null;
+        const parts = stdout.trim().split('\n')[0].trim().split(/\s+/);
+        if (parts.length >= 6) rssMb = Math.round((parseInt(parts[5], 10) || 0) / 1024);
+        ag.vramMb = rssMb;
+        ag.rateObserved = false;
+        ag.tokensSec = null;
+        ag.measureNote = `Sentinel process is up. RSS ${rssMb == null ? 'unknown' : rssMb + ' MB'}. No text sample.`;
       } else {
         ag.online = false;
       }

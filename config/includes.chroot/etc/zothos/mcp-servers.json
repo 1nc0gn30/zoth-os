@@ -40,6 +40,23 @@
       "timeout": 60,
       "alwaysAllow": []
     },
+    "neuro-memory": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "neuro_memory_daemon.cli",
+        "mcp"
+      ],
+      "description": "Biological-fidelity neuro-memory substrate with STDP, 3-factor neuromodulation, and spreading activation.",
+      "offline": true,
+      "enabled": true,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}/.neuro_memory",
+      "fallbackHandler": "python3 -m neuro_memory_daemon.cli search ''",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
     "sequential-thinking": {
       "command": "npx",
       "args": [

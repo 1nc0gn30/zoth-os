@@ -1763,12 +1763,12 @@
           </div>
           <div class="visual-stat-row">
             <div class="vis-stat-box">
-              <div class="vis-stat-lbl">Certainty</div>
-              <div class="vis-stat-val" id="vis-certainty-val">98% Sure</div>
+              <div class="vis-stat-lbl">Distinct symbols</div>
+              <div class="vis-stat-val" id="vis-certainty-val">—</div>
             </div>
             <div class="vis-stat-box">
-              <div class="vis-stat-lbl">Confusion Level</div>
-              <div class="vis-stat-val" id="vis-confusion-val" style="color: var(--green-online);">Very Low (1.1x)</div>
+              <div class="vis-stat-lbl">Char perplexity</div>
+              <div class="vis-stat-val" id="vis-confusion-val" style="color: var(--green-online);">—</div>
             </div>
             <div class="vis-stat-box">
               <div class="vis-stat-lbl">Thinking Mode</div>
@@ -1776,7 +1776,7 @@
             </div>
           </div>
           <div class="visual-explain-note" id="vis-focus-explain">
-            The AI is thinking with precision and not guessing or making things up.
+            Entropy is computed from text the agent wrote. It is not a confidence score.
           </div>
         </div>
 
@@ -1788,7 +1788,7 @@
               <span class="visual-title">🚀 Thought Speed</span>
               <span class="visual-sub-badge" id="vis-speed-tier">⚡ TURBO</span>
             </div>
-            <div class="speed-big-val" id="vis-speed-val">268 <span class="unit">words/s</span></div>
+            <div class="speed-big-val" id="vis-speed-val">— <span class="unit">tok/s</span></div>
             <div class="segmented-bar">
               <div class="bar-fill" id="vis-speed-bar" style="width: 82%;"></div>
             </div>
@@ -1801,7 +1801,7 @@
               <span class="visual-title">🔋 Memory Tank</span>
               <span class="visual-sub-badge" id="vis-tank-pct">45% FULL</span>
             </div>
-            <div class="speed-big-val" id="vis-mem-val">488k <span class="unit">words</span></div>
+            <div class="speed-big-val" id="vis-mem-val">— <span class="unit">tok</span></div>
             <div class="segmented-bar">
               <div class="bar-fill" id="vis-tank-bar" style="width: 45%; background: linear-gradient(90deg, #00E676, #FFD700);"></div>
             </div>
@@ -1891,7 +1891,7 @@
                 <span class="gauge-formula">v_T = ∂T/∂t</span>
               </div>
               <div class="gauge-val-big">
-                <span id="velocity-display">268 <span class="unit">tok/sec</span></span>
+                <span id="velocity-display">— <span class="unit">tok/sec</span></span>
                 <span class="accel-badge" id="accel-display">+2.1 a_T</span>
               </div>
               <div class="segmented-bar">
@@ -1902,22 +1902,22 @@
             <!-- Pillar I: Attention Entropy Spectrum -->
             <div class="gauge-card">
               <div class="gauge-header">
-                <span>Pillar I: 𝚮 Attention Entropy</span>
-                <span id="entropy-val" style="color: var(--cyan-accent); font-family: 'Fira Code', monospace;">0.183 [DIRAC COHERENT]</span>
+                <span>Pillar I: text entropy H</span>
+                <span id="entropy-val" style="color: var(--cyan-accent); font-family: 'Fira Code', monospace;">— no text sample</span>
               </div>
               <canvas id="entropy-canvas" width="320" height="36"></canvas>
               <div class="mini-stats-grid">
                 <div class="mini-stat">
-                  <div class="mini-stat-lbl">Perplexity (2^𝚮)</div>
-                  <div class="mini-stat-val" id="ppl-val">1.135</div>
+                  <div class="mini-stat-lbl">Char perplexity 2^H</div>
+                  <div class="mini-stat-val" id="ppl-val">—</div>
                 </div>
                 <div class="mini-stat">
-                  <div class="mini-stat-lbl">Confidence ℙ</div>
-                  <div class="mini-stat-val" id="confidence-val">89%</div>
+                  <div class="mini-stat-lbl">Distinct ratio</div>
+                  <div class="mini-stat-val" id="confidence-val">—</div>
                 </div>
                 <div class="mini-stat">
-                  <div class="mini-stat-lbl">Gradient ∇J</div>
-                  <div class="mini-stat-val" id="gradient-val">0.022</div>
+                  <div class="mini-stat-lbl">Bigram H</div>
+                  <div class="mini-stat-val" id="gradient-val">—</div>
                 </div>
               </div>
             </div>
@@ -1925,7 +1925,7 @@
             <!-- Pillar IV: Bayesian Step Vector & Memory -->
             <div class="gauge-card">
               <div class="gauge-header">
-                <span>Pillar IV: Bayesian Step Vector</span>
+                <span>Pillar IV: observed step</span>
                 <span id="vram-val" style="color: var(--gold-bright); font-family: 'Fira Code', monospace;">RAM: 6.89 GB</span>
               </div>
               <div class="markov-pipeline">
@@ -2076,7 +2076,7 @@
             <div style="font-size: 10px; font-weight: bold; color: var(--gold-bright); font-family: 'Orbitron', sans-serif;">Synthetic Telemetry Pulse</div>
             <div style="font-size: 8px; color: var(--text-muted); font-family: 'Fira Code', monospace;">Inject synthetic attention step via loopback HTTP</div>
           </div>
-          <button class="action-btn-gold" id="btn-inject-pulse">⚡ Inject Step</button>
+          <button class="action-btn-gold" id="btn-inject-pulse">Measure a known sentence</button>
         </div>
 
         <div class="oracle-card" style="margin-top: 4px;">
@@ -2109,10 +2109,10 @@
       </div>
 
       <div class="deck-pillar-card">
-        <span class="deck-pillar-name">Pillar I: Information & Entropy (Shannon Attention)</span>
-        <div class="deck-formula">ℋ(A) = - Σ a_ij log₂ a_ij  |  Perplexity = 2^ℋ</div>
+        <span class="deck-pillar-name">Pillar I: Shannon entropy of observed text</span>
+        <div class="deck-formula">H = - Σ p_i log₂ p_i  |  Perplexity = 2^H</div>
         <div class="deck-proof">
-          Softmax attention weights across multi-head latent space QKᵀ / √d_k yield an empirical discrete probability distribution A. As attention concentrates deterministically on relevant syntactic tokens, Shannon entropy H collapses toward 0 (Dirac Coherence). Diffuse attention indicates high entropy exploration or hallucination drift.
+          p_i is how often each character appears in the text that was logged. The chart is that measurement over time. Attention weights are not in the log, so they are not drawn.
         </div>
       </div>
 
@@ -2120,23 +2120,23 @@
         <span class="deck-pillar-name">Pillar II: Flux & Kinematics (Token Velocity)</span>
         <div class="deck-formula">v_T = ∂T/∂t  |  a_T = ∂²T/∂t²  |  T_cum = ∫ v_T dt</div>
         <div class="deck-proof">
-          Discrete token emission modeled as continuous hydrodynamic flux through autoregressive generation manifolds. Instantaneous acceleration a_T signals burst reasoning phases or speculative draft-model verification cycles.
+          v is output_tokens divided by the seconds between this step and the previous step that reported a count. If either number is missing, the rate stays blank. CPU percent is not turned into tokens.
         </div>
       </div>
 
       <div class="deck-pillar-card">
         <span class="deck-pillar-name">Pillar III: Tensor Geometry & KV Compression</span>
-        <div class="deck-formula">Ω_KV = 2 · L · H_kv · d_k · N_ctx · (b / 8)</div>
+        <div class="deck-formula">bytes = 2 · layers · kv_heads · head_dim · tokens · bytes_per_elem</div>
         <div class="deck-proof">
-          Key-Value tensor memory footprint defined by transformer layer depth L, key-value heads H_kv, head dimension d_k, precision bytes b, and context window length N_ctx. Volumetric gauge verifies attention context density and PageAttention virtual memory bounds.
+          The transcript can include cache_read_tokens. Byte size is computed only after Ollama /api/show reports layer count, kv heads, and head dimension. Otherwise the HUD shows the token count and leaves bytes blank.
         </div>
       </div>
 
       <div class="deck-pillar-card">
-        <span class="deck-pillar-name">Pillar IV: Bayesian Inference & Markov Transitions</span>
-        <div class="deck-formula">P(S_{t+1} | S_t, O_t) = Softmax(W_s [h_t; e_O] + b_s)</div>
+        <span class="deck-pillar-name">Pillar IV: counts in the log</span>
+        <div class="deck-formula">P(tool) = count(tool) / counted steps</div>
         <div class="deck-proof">
-          Agent operational states evolve as a non-homogeneous hidden Markov process over the discrete state space {PERCEIVE, REASON, TOOL_EXEC, SYNTHESIS}. State transition matrix governed by environmental observations, exit code verifications, and supervisor feedback.
+          The step name comes from the transcript type or a tool name that was written down. The share is how often that name appeared. It is not a probability computed inside the model.
         </div>
       </div>
     </div>
@@ -2265,21 +2265,17 @@
 
     function injectPulseStep() {
       const target = selectedAgentKey === 'ALL' ? 'Antigravity' : selectedAgentKey;
-      const speed = 75 + Math.floor(Math.random() * 40);
-      const ent = +(0.08 + Math.random() * 0.22).toFixed(3);
       fetch('http://127.0.0.1:9995/telemetry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           agent: target,
-          tokensSec: speed,
-          entropy: ent,
-          phase: 'EXEC',
+          text: 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.',
+          phase: 'CALIBRATION',
           markovState: 'SYNTHESIS',
-          contextUsed: Math.floor(Math.random() * 65000) + 35000,
-          latencyMs: 60 + Math.floor(Math.random() * 45),
-          tool: 'vector_attention_dispatch',
-          reasoning: `Attention manifold converged with Shannon entropy H=${ent} bits [PPL=${(Math.pow(2, ent)).toFixed(3)}]`
+          rateObserved: false,
+          tool: 'calibration_probe',
+          reasoning: 'Calibration sentence. This is not a live model sample.'
         })
       }).catch(() => {});
     }
@@ -2342,11 +2338,14 @@
       // Smart Cognitive Diagnostic Ticker
       const tickerText = insight.summary || `${data.name} active. Invariants nominal.`;
       document.getElementById('oracle-ticker-text').textContent = tickerText;
-      const ent = data.entropy || 0.138;
-      let badgeLabel = 'DIRAC COHERENT';
-      if (ent >= 0.20 && ent < 0.40) badgeLabel = 'SYNTACTIC FOCUS';
-      else if (ent >= 0.40 && ent < 0.65) badgeLabel = 'BALANCED COGNITION';
-      else if (ent >= 0.65) badgeLabel = 'DIFFUSE SEARCH';
+      let badgeLabel = 'NO SAMPLE';
+      if (typeof data.entropy === 'number') {
+        const entVal = data.entropy;
+        if (entVal < 2.5) badgeLabel = 'REPETITIVE';
+        else if (entVal < 4.2) badgeLabel = 'ORDINARY TEXT';
+        else if (entVal < 5.5) badgeLabel = 'DENSE';
+        else badgeLabel = 'NEAR RANDOM';
+      }
       document.getElementById('oracle-ticker-badge').textContent = badgeLabel;
 
       // ── VIEW 0: Update Visual Cockpit ──
@@ -2354,43 +2353,74 @@
 
       // ── VIEW 1: Update Math Pillars ──
       // Pillar III: Context Cylinder
-      const maxCtx = data.contextMax || 1048576;
-      const usedCtx = data.contextUsed || 0;
-      const pct = Math.min(100, Math.max(1, Math.round((usedCtx / maxCtx) * 100)));
-      document.getElementById('tube-level').style.height = `${pct}%`;
-      document.getElementById('context-pct').textContent = `${pct}%`;
-      document.getElementById('context-raw').textContent = `${formatNum(usedCtx)} / ${formatNum(maxCtx)}`;
-      const kvMb = parseFloat(data.kvCacheMb || (usedCtx * 0.002)) || 0;
-      const kvDisplay = kvMb >= 1024 ? `${(kvMb / 1024).toFixed(1)} GB` : `${kvMb.toFixed(1)} MB`;
-      document.getElementById('kv-cache-val').textContent = `KV: ${kvDisplay}`;
-      document.getElementById('dim-val').textContent = `d: ℝ${data.dModel || 4096}`;
+      const maxCtx = typeof data.contextMax === 'number' ? data.contextMax : null;
+      const usedCtx = typeof data.contextUsed === 'number' ? data.contextUsed : null;
+      const tubeLevel = document.getElementById('tube-level');
+      const ctxPctElem = document.getElementById('context-pct');
+      const ctxRawElem = document.getElementById('context-raw');
+      if (usedCtx != null && maxCtx) {
+        const pct = Math.min(100, Math.max(1, Math.round((usedCtx / maxCtx) * 100)));
+        tubeLevel.style.height = `${pct}%`;
+        ctxPctElem.textContent = `${pct}%`;
+        ctxRawElem.textContent = `${formatNum(usedCtx)} / ${formatNum(maxCtx)}`;
+      } else if (usedCtx != null) {
+        tubeLevel.style.height = '0%';
+        ctxPctElem.textContent = 'window unknown';
+        ctxRawElem.textContent = `${formatNum(usedCtx)} tok`;
+      } else {
+        tubeLevel.style.height = '0%';
+        ctxPctElem.textContent = '—';
+        ctxRawElem.textContent = '—';
+      }
+      const kvElem = document.getElementById('kv-cache-val');
+      if (typeof data.kvCacheMb === 'number') {
+        const kvMb = data.kvCacheMb;
+        const kvDisplay = kvMb >= 1024 ? `${(kvMb / 1024).toFixed(1)} GB` : `${kvMb.toFixed(1)} MB`;
+        kvElem.textContent = `KV: ${kvDisplay}`;
+      } else if (typeof (data.cacheTokens ?? data.contextUsed) === 'number') {
+        kvElem.textContent = `KV tok: ${formatNum(data.cacheTokens ?? data.contextUsed)}`;
+      } else {
+        kvElem.textContent = 'KV: —';
+      }
+      document.getElementById('dim-val').textContent = data.dModel ? `d: ℝ${data.dModel}` : 'd: —';
 
       // Pillar II: Velocity & Acceleration
-      const tokSec = data.tokensSec || 0;
+      const tokSec = data.rateObserved && typeof data.tokensSec === 'number' ? data.tokensSec : null;
       const velElem = document.getElementById('velocity-display');
-      if (velElem) velElem.innerHTML = `${tokSec} <span class="unit">tok/sec</span>`;
+      if (velElem) {
+        velElem.innerHTML = tokSec == null ? '— not observed' : `${tokSec} <span class="unit">tok/sec</span>`;
+      }
       const velBar = document.getElementById('velocity-bar');
-      if (velBar) velBar.style.width = `${Math.min(100, Math.round((tokSec / 150) * 100))}%`;
-      const accel = data.accelTokSec || 0;
-      const accelSign = accel >= 0 ? `+${accel}` : `${accel}`;
+      if (velBar) velBar.style.width = tokSec == null ? '0%' : `${Math.min(100, Math.round((tokSec / 150) * 100))}%`;
+      const accel = typeof data.accelTokSec === 'number' ? data.accelTokSec : null;
       const accelElem = document.getElementById('accel-display');
       if (accelElem) {
-        accelElem.textContent = `${accelSign} a_T`;
-        accelElem.classList.toggle('amber', accel < 0);
+        if (accel != null) {
+          const accelSign = accel >= 0 ? `+${accel}` : `${accel}`;
+          accelElem.textContent = `${accelSign} a_T`;
+          accelElem.style.display = 'inline-block';
+          accelElem.classList.toggle('amber', accel < 0);
+        } else {
+          accelElem.style.display = 'none';
+        }
       }
 
       // Pillar I: Shannon Attention Entropy & Perplexity
-      document.getElementById('entropy-val').textContent = `${ent.toFixed(3)} [${badgeLabel}]`;
-      document.getElementById('ppl-val').textContent = (data.perplexity || Math.pow(2, ent)).toFixed(3);
-      document.getElementById('confidence-val').textContent = `${Math.round((data.confidence || 0.96) * 100)}%`;
-      document.getElementById('gradient-val').textContent = `${(data.gradientLoss || ent * 0.12).toFixed(3)}`;
+      if (typeof data.entropy === 'number') {
+        document.getElementById('entropy-val').textContent = `${data.entropy.toFixed(3)} [${badgeLabel}]`;
+      } else {
+        document.getElementById('entropy-val').textContent = '— no text sample';
+      }
+      document.getElementById('ppl-val').textContent = typeof data.perplexity === 'number' ? data.perplexity.toFixed(3) : '—';
+      document.getElementById('confidence-val').textContent = typeof data.confidence === 'number' ? `${Math.round(data.confidence * 100)}%` : '—';
+      document.getElementById('gradient-val').textContent = typeof data.gradientLoss === 'number' ? data.gradientLoss.toFixed(3) : '—';
 
       // Pillar IV: Markov Pipeline & Step Memory
       updateMarkovPipeline(data.markovState || data.phase);
       const stepPct = Math.min(100, Math.round(((data.step || 1) / (data.maxSteps || 25)) * 100));
       document.getElementById('step-bar').style.width = `${stepPct}%`;
-      const vramMb = data.vramMb || 0;
-      const vramDisp = vramMb >= 1024 ? `${(vramMb/1024).toFixed(2)} GB` : `${vramMb} MB`;
+      const vramMb = typeof data.vramMb === 'number' ? data.vramMb : null;
+      const vramDisp = vramMb == null ? '—' : (vramMb >= 1024 ? `${(vramMb/1024).toFixed(2)} GB` : `${vramMb} MB`);
       document.getElementById('vram-val').textContent = `RAM: ${vramDisp}`;
 
       // Footer
@@ -2398,12 +2428,14 @@
 
       // Compact Mode
       document.getElementById('pill-agent-name').textContent = selectedAgentKey;
-      document.getElementById('pill-speed').textContent = `${tokSec} t/s`;
-      document.getElementById('pill-entropy').textContent = `H: ${ent.toFixed(2)}`;
+      document.getElementById('pill-speed').textContent = tokSec == null ? '—' : `${tokSec} t/s`;
+      document.getElementById('pill-entropy').textContent = typeof data.entropy === 'number' ? `H: ${data.entropy.toFixed(2)}` : 'H: —';
 
-      // Push entropy history
-      entropyHistory.push(ent);
-      if (entropyHistory.length > 50) entropyHistory.shift();
+      // Push entropy history only when observed
+      if (typeof data.entropy === 'number') {
+        entropyHistory.push(data.entropy);
+        if (entropyHistory.length > 50) entropyHistory.shift();
+      }
 
       // Update Oracle View
       updateOracleView(data, insight);
@@ -2421,52 +2453,54 @@
       // 1. Brain Focus & Clarity
       const focusBadge = document.getElementById('vis-focus-badge');
       if (focusBadge) {
-        focusBadge.textContent = visFocus.badge || '🎯 LASER SHARP';
-        const isElev = visFocus.badge && visFocus.badge.includes('UNCERTAINTY');
+        focusBadge.textContent = visFocus.badge || (data.entropy == null ? 'NO SAMPLE' : 'MEASURED');
+        const isElev = visFocus.badge && (visFocus.badge.includes('UNCERTAINTY') || visFocus.badge.includes('RANDOM') || visFocus.badge.includes('REPETITIVE'));
         focusBadge.style.color = isElev ? 'var(--amber-accent)' : 'var(--green-online)';
         focusBadge.style.borderColor = isElev ? 'var(--amber-accent)' : 'var(--green-online)';
       }
       const focusFill = document.getElementById('vis-focus-fill');
       if (focusFill) {
-        focusFill.style.width = `${visFocus.certaintyPct || 95}%`;
+        focusFill.style.width = visFocus.certaintyPct != null ? `${visFocus.certaintyPct}%` : '0%';
       }
       const certVal = document.getElementById('vis-certainty-val');
-      if (certVal) certVal.textContent = `${visFocus.certaintyPct || 96}% Sure`;
+      if (certVal) certVal.textContent = visFocus.certaintyPct != null ? `${visFocus.certaintyPct}%` : '—';
       const confVal = document.getElementById('vis-confusion-val');
-      if (confVal) confVal.textContent = visFocus.confusionLevel || 'Very Low (1.1x)';
+      if (confVal) confVal.textContent = visFocus.confusionLevel || '—';
       const modeVal = document.getElementById('vis-thinking-mode');
-      if (modeVal) modeVal.textContent = data.phase || 'Deep Focus';
+      if (modeVal) modeVal.textContent = data.phase || 'STANDBY';
       const explainElem = document.getElementById('vis-focus-explain');
-      if (explainElem) explainElem.textContent = visFocus.plainExplain || 'The AI is confident and thinking with precision.';
+      if (explainElem) explainElem.textContent = visFocus.plainExplain || 'Entropy is computed from text the agent wrote.';
 
       // 2. Speed
       const speedVal = document.getElementById('vis-speed-val');
-      if (speedVal) speedVal.innerHTML = `${visSpeed.wordsPerSec || data.tokensSec || 0} <span class="unit">words/s</span>`;
+      const curSpeed = visSpeed.wordsPerSec != null ? visSpeed.wordsPerSec : (data.rateObserved && typeof data.tokensSec === 'number' ? data.tokensSec : null);
+      if (speedVal) speedVal.innerHTML = curSpeed != null ? `${curSpeed} <span class="unit">tok/s</span>` : '— <span class="unit">tok/s</span>';
       const speedBar = document.getElementById('vis-speed-bar');
-      if (speedBar) speedBar.style.width = `${Math.min(100, Math.round(((visSpeed.wordsPerSec || data.tokensSec || 0) / 150) * 100))}%`;
+      if (speedBar) speedBar.style.width = curSpeed != null ? `${Math.min(100, Math.round((curSpeed / 150) * 100))}%` : '0%';
       const speedTier = document.getElementById('vis-speed-tier');
-      if (speedTier) speedTier.textContent = visSpeed.tier || '⚡ TURBO';
+      if (speedTier) speedTier.textContent = visSpeed.tier || (curSpeed != null ? '⚡ MEASURED' : 'NOT OBSERVED');
       const speedNote = document.getElementById('vis-speed-note');
-      if (speedNote) speedNote.textContent = visSpeed.note || 'Generating responses steadily';
+      if (speedNote) speedNote.textContent = visSpeed.note || (curSpeed != null ? 'Measured from timestamps' : 'No rate observed yet');
 
       // 3. Memory Fuel Tank
       const memVal = document.getElementById('vis-mem-val');
-      if (memVal) memVal.innerHTML = `${formatNum(visMem.wordsInMemory || 450000)} <span class="unit">words</span>`;
+      const curMem = visMem.wordsInMemory != null ? visMem.wordsInMemory : data.contextUsed;
+      if (memVal) memVal.innerHTML = curMem != null ? `${formatNum(curMem)} <span class="unit">tok</span>` : '— <span class="unit">tok</span>';
       const tankBar = document.getElementById('vis-tank-bar');
-      if (tankBar) tankBar.style.width = `${visMem.percentUsed || 45}%`;
+      if (tankBar) tankBar.style.width = `${visMem.percentUsed || 0}%`;
       const tankPct = document.getElementById('vis-tank-pct');
-      if (tankPct) tankPct.textContent = `${visMem.percentUsed || 45}% FULL`;
+      if (tankPct) tankPct.textContent = visMem.percentUsed != null ? `${visMem.percentUsed}% FULL` : 'WINDOW UNKNOWN';
       const memNote = document.getElementById('vis-mem-note');
-      if (memNote) memNote.textContent = visMem.plainNote || 'Conversation room remaining';
+      if (memNote) memNote.textContent = visMem.plainNote || 'Context measurement';
 
       // 4. Thinking Stepper Journey
-      const activeStep = visJourney.activeStep || 3;
+      const activeStep = visJourney.activeStep || 1;
       for (let i = 1; i <= 4; i++) {
         const stepEl = document.getElementById(`jstep-${i}`);
         if (stepEl) stepEl.classList.toggle('active', i === activeStep);
       }
       const journeyNote = document.getElementById('vis-journey-note');
-      if (journeyNote) journeyNote.textContent = `Step ${activeStep}: ${visJourney.stepNote || 'Running tools and editing files.'}`;
+      if (journeyNote) journeyNote.textContent = `Step ${activeStep}: ${visJourney.stepNote || 'Awaiting activity.'}`;
 
       // 5. Render Plain-English Simple Activity Stream
       renderSimpleStream(data.logs || []);
@@ -2526,24 +2560,25 @@
     function updateOracleView(data, insight) {
       document.getElementById('oracle-diag-status').textContent = data.online ? (data.phase || 'ONLINE') : 'STANDBY';
       
-      const coherence = insight.coherenceScore || 96;
-      document.getElementById('oracle-coherence-val').textContent = `${coherence}%`;
+      const coherence = typeof insight.coherenceScore === 'number' ? insight.coherenceScore : null;
+      document.getElementById('oracle-coherence-val').textContent = coherence != null ? `${coherence}%` : '—';
       
       const circleFill = document.getElementById('oracle-circle-fill');
       if (circleFill) {
         const circumference = 213.6;
-        const offset = circumference - (circumference * coherence / 100);
+        const offset = coherence != null ? circumference - (circumference * coherence / 100) : circumference;
         circleFill.style.strokeDashoffset = offset;
       }
 
       const riskElem = document.getElementById('oracle-risk-val');
-      riskElem.textContent = insight.hallucinationRisk || 'MINIMAL (DIRAC COHERENT)';
-      const isElevated = insight.hallucinationRisk && insight.hallucinationRisk.includes('ELEVATED');
+      const risk = insight.hallucinationRisk || (data.entropy == null ? 'NO TEXT SAMPLE' : 'TEXT ENTROPY ONLY');
+      riskElem.textContent = risk;
+      const isElevated = risk.includes('RANDOM') || risk.includes('ELEVATED');
       riskElem.style.color = isElevated ? '#FFAB00' : '#00E676';
       
       const riskBar = document.getElementById('risk-meter-bar-fill');
       if (riskBar) {
-        riskBar.style.width = isElevated ? '65%' : '18%';
+        riskBar.style.width = coherence != null ? `${coherence}%` : '0%';
         riskBar.style.background = isElevated ? 'linear-gradient(90deg, #FFB300, #FF5252)' : 'linear-gradient(90deg, #00E676, #00E5FF)';
       }
 
@@ -2637,80 +2672,85 @@
       return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    // ── Multi-Head Softmax Attention Spectrum Canvas ─────────────────────────
-    let wavePhase = 0;
+    // ── Observed Text Entropy History Canvas (0 - 8 bits) ───────────────────
     function renderWave() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const w = canvas.width;
       const h = canvas.height;
 
       // Base grid line
-      ctx.strokeStyle = 'rgba(255, 215, 0, 0.12)';
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.15)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(0, h - 5);
       ctx.lineTo(w, h - 5);
       ctx.stroke();
 
-      const latestEnt = entropyHistory[entropyHistory.length - 1] || 0.14;
-      wavePhase += 0.045;
+      // Mid-grid line (4 bits)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
 
-      const numPoints = 80;
-      const dx = w / numPoints;
-      const points = [];
-
-      for (let i = 0; i <= numPoints; i++) {
-        const x = i * dx;
-        const normX = (i / numPoints) * 2 - 1;
-
-        const center = Math.sin(wavePhase * 0.4) * 0.18;
-        const sigma = Math.max(0.12, latestEnt * 1.8);
-        const gaussian = Math.exp(-Math.pow(normX - center, 2) / (2 * Math.pow(sigma, 2)));
-
-        const harmonics = Math.sin(i * 0.35 + wavePhase) * (latestEnt * 0.25) +
-                          Math.cos(i * 0.7 - wavePhase * 1.2) * (latestEnt * 0.15);
-
-        const amp = (h - 8) * Math.min(1.0, gaussian + harmonics);
-        const y = (h - 5) - amp;
-        points.push({ x, y });
+      if (!entropyHistory || entropyHistory.length === 0) {
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.25)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, h - 5);
+        ctx.lineTo(w, h - 5);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        requestAnimationFrame(renderWave);
+        return;
       }
 
-      // Draw Gradient Fill underneath curve
+      // Plot entropy history scaled 0 to 8 bits
+      const step = entropyHistory.length > 1 ? w / (entropyHistory.length - 1) : w;
+      const points = entropyHistory.map((val, idx) => {
+        const clamped = Math.max(0, Math.min(8, val));
+        const y = (h - 6) - (clamped / 8) * (h - 10);
+        const x = entropyHistory.length === 1 ? w / 2 : idx * step;
+        return { x, y };
+      });
+
+      // Gradient fill under history curve
       const grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, 'rgba(255, 215, 0, 0.35)');
-      grad.addColorStop(0.7, 'rgba(255, 179, 0, 0.1)');
-      grad.addColorStop(1, 'rgba(255, 215, 0, 0.0)');
+      grad.addColorStop(0, 'rgba(0, 229, 255, 0.30)');
+      grad.addColorStop(0.7, 'rgba(0, 229, 255, 0.08)');
+      grad.addColorStop(1, 'rgba(0, 229, 255, 0.0)');
 
       ctx.beginPath();
-      ctx.moveTo(0, h - 5);
+      ctx.moveTo(points[0].x, h - 5);
       points.forEach(p => ctx.lineTo(p.x, p.y));
-      ctx.lineTo(w, h - 5);
+      ctx.lineTo(points[points.length - 1].x, h - 5);
       ctx.closePath();
       ctx.fillStyle = grad;
       ctx.fill();
 
-      // Draw Top Stroke
+      // Top stroke
       ctx.beginPath();
-      ctx.lineWidth = 2.0;
-      ctx.strokeStyle = '#FFD700';
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = 'rgba(255, 215, 0, 0.7)';
+      ctx.lineWidth = 1.8;
+      ctx.strokeStyle = '#00E5FF';
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(0, 229, 255, 0.6)';
       points.forEach((p, idx) => {
         if (idx === 0) ctx.moveTo(p.x, p.y);
         else ctx.lineTo(p.x, p.y);
       });
       ctx.stroke();
-
-      // Peak Focal Tracking Dot
-      const peakX = (w / 2) + Math.sin(wavePhase * 0.4) * 0.18 * (w / 2);
-      ctx.fillStyle = '#00E5FF';
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = '#00E5FF';
-      ctx.beginPath();
-      ctx.arc(peakX, 8, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-
       ctx.shadowBlur = 0;
+
+      // Tracking dot on latest sample
+      const last = points[points.length - 1];
+      ctx.fillStyle = '#FFD700';
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#FFD700';
+      ctx.beginPath();
+      ctx.arc(last.x, last.y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
       requestAnimationFrame(renderWave);
     }
 
