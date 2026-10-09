@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth MCP Lens
+GenericName=Model Context Protocol Traffic Sniffer & Auditor
+Comment=Zero-dependency MCP traffic sniffer, schema minifier, and token weight auditor
+Exec=/usr/local/bin/mcp-lens serve --port 8109
+Icon=zoth-mcp-lens
+Terminal=false
+Categories=Development;Network;Utility;X-ZothOS-AI;
+Keywords=mcp;lens;traffic;sniffer;token;schema;audit;jsonrpc;antigravity;
+StartupNotify=true
+Actions=Cockpit;Test;
+
+[Desktop Action Cockpit]
+Name=Launch MCP Lens Web Cockpit
+Exec=xdg-open http://127.0.0.1:8109
+
+[Desktop Action Test]
+Name=Run MCP Lens Self-Diagnostics
+Exec=xfce4-terminal --hold -T "MCP Lens Diagnostics" -e "/usr/local/bin/mcp-lens test"
