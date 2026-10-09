@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 25-Tool Sovereign Arsenal & Workstation Ecosystem v2.5
+#  ZOTHOS — 30-Tool Sovereign Arsenal & Workstation Ecosystem v2.6
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  Fully Aligned with Zoth Studio v2 (5 Cadres · 25 Production Tools)
+#  Fully Aligned with Zoth Studio v2 (6 Cadres · 30 Production Tools)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
@@ -168,6 +168,37 @@
 - **GitHub:** https://github.com/NullAITech/zoth-swarm-multiplexer
 - **Core Architecture:** 21-Agent Matrix Cockpit & Consensus Arena (127.0.0.1:8790)
 - **Capability:** Multi-pane autonomous swarm coordination cockpit monitoring 21 named Pantheon roles with real-time ping telemetry.
+
+---
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 6 — SOVEREIGN AGENT GOVERNANCE, DEFENSE & TELEMETRY (5 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 26. agent-egress-sentinel (Agent Egress Sentinel)
+- **GitHub:** https://github.com/1nc0gn30/agent-egress-sentinel
+- **Core Architecture:** In-Memory TLS SNI Extractor & Forward Proxy (127.0.0.1:8095/8096)
+- **Capability:** Intercepts agent outbound TCP/TLS network calls, visualizes real-time domain traffic on a kinetic radar, enforces quarantine rules (ALLOW_ALL, BLOCK_TELEMETRY, ZERO_EGRESS), and exports Chrome/Wireshark compatible HAR 1.2 bundles. Zero external dependencies.
+
+### 27. agent-mock-twin (Agent Mock Twin)
+- **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
+- **Core Architecture:** Multi-Tier Deterministic Mock & Replay Server (127.0.0.1:8097)
+- **Capability:** Simulates upstream OpenAI/Anthropic model endpoints locally with $0 token spend. Features Tier 1 Exact Hash Matching, Tier 2 Fuzzy Semantic Matching, and Tier 3 Fallback Synthesis with real-time token/USD cost avoidance gauges.
+
+### 28. agent-prompt-firewall (Agent Prompt Firewall)
+- **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
+- **Core Architecture:** Heuristic Threat Cascade & PII Redactor (127.0.0.1:8098/8099)
+- **Capability:** Sub-millisecond defense against prompt injections, DAN jailbreaks, context contamination, and system prompt leaks. Redacts API tokens, SSH keys, emails, and credit cards with Shannon entropy scoring and streams live threats via Server-Sent Events (SSE).
+
+### 29. agent-flight-recorder (Agent Flight Recorder)
+- **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
+- **Core Architecture:** Black Box Telemetry Forensics & Time-Scrubber Hub (127.0.0.1:8104)
+- **Capability:** Ingests millisecond-timestamped events across Sentinel, Mock Twin, Firewall, Memory, and subprocess streams. Features a DAW-style interactive timeline scrubber, multi-speed playback (1x, 2x, 4x), Kokoro TTS voice debriefing (:9394), and standalone single-file HTML replay export.
+
+### 30. zoth-agent-conductor (Zoth Agent Conductor)
+- **GitHub:** https://github.com/NullAITech/conductor
+- **Core Architecture:** Multi-Cadre Sovereign Daemon Orchestrator & Health Mesh
+- **Capability:** Unifies telemetry, health checks, and cross-daemon test pipelines across all 7 running sovereign background services. Provides ASCII Bento status grids, synthetic verification cycles, and automated recovery handlers without pip dependencies.
 
 ---
 
