@@ -50,7 +50,7 @@ PlasmaExtras.PlasmoidHeading {
         focus: true
 
         width: (tabWidth * 2) + tabBarListView.spacing
-        implicitWidth: width + leftPadding + rightPadding
+        implicitWidth: (minTabWidth * 2) + tabBarListView.spacing + leftPadding + rightPadding
         implicitHeight: 42
 
         // This is needed to keep the separators horizontally aligned

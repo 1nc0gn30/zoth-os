@@ -318,7 +318,42 @@ WallpaperItem {
         }
     }
 
-    // ── 7. 60 FPS Physics & Global Cursor Daemon Polling Engine ─────────────
+    // ── 7. Global Cursor Daemon Polling Engine (Throttled & Non-Blocking) ──
+    property bool xhrInFlight: false
+
+    Timer {
+        id: cursorDaemonTimer
+        interval: 50
+        running: true
+        repeat: true
+
+        onTriggered: {
+            var now = Date.now();
+            if (root.xhrInFlight || (now - root.lastLocalMouseTime <= 80)) {
+                return;
+            }
+            root.xhrInFlight = true;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://127.0.0.1:9989/");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    root.xhrInFlight = false;
+                    if (xhr.status === 200 && xhr.responseText) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            if (data && typeof data.x === "number" && typeof data.y === "number") {
+                                root.rawMouseX = data.x;
+                                root.rawMouseY = data.y;
+                            }
+                        } catch (e) {}
+                    }
+                }
+            };
+            xhr.send();
+        }
+    }
+
+    // ── 8. 60 FPS Physics Engine ───────────────────────────────────────────
     Timer {
         id: physicsTimer
         interval: 16
@@ -326,30 +361,9 @@ WallpaperItem {
         repeat: true
 
         onTriggered: {
-            var now = Date.now();
             root.breathingPhase += 0.04;
 
-            // 1. If no local desktop mouse movement in the last 60ms, poll cursor daemon HTTP endpoint
-            if (now - root.lastLocalMouseTime > 60) {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://127.0.0.1:9989/");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200 && xhr.responseText) {
-                            try {
-                                var data = JSON.parse(xhr.responseText);
-                                if (data && typeof data.x === "number" && typeof data.y === "number") {
-                                    root.rawMouseX = data.x;
-                                    root.rawMouseY = data.y;
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                };
-                xhr.send();
-            }
-
-            // 2. Smoothly interpolate cursor position
+            // 1. Smoothly interpolate cursor position
             root.smoothMouseX += (root.rawMouseX - root.smoothMouseX) * 0.20;
             root.smoothMouseY += (root.rawMouseY - root.smoothMouseY) * 0.20;
 
