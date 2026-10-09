@@ -142,11 +142,11 @@ for t in "${THEMES[@]}"; do
 done
 
 PLYMOUTH_FILES=(
-    "$CHROOT/usr/share/plymouth/themes/zothos-matrix/zothos-matrix.plymouth"
-    "$CHROOT/usr/share/plymouth/themes/zothos-matrix/zothos-matrix.script"
-    "$CHROOT/usr/share/plymouth/themes/zothos-matrix/seal.png"
-    "$CHROOT/usr/share/plymouth/themes/zothos-matrix/ring.png"
-    "$CHROOT/usr/share/plymouth/themes/zothos-matrix/glow.png"
+    "$CHROOT/usr/share/plymouth/themes/zoth-matrix/zoth-matrix.plymouth"
+    "$CHROOT/usr/share/plymouth/themes/zoth-matrix/zoth-matrix.script"
+    "$CHROOT/usr/share/plymouth/themes/zoth-matrix/seal.png"
+    "$CHROOT/usr/share/plymouth/themes/zoth-matrix/ring.png"
+    "$CHROOT/usr/share/plymouth/themes/zoth-matrix/glow.png"
     "$CHROOT/etc/plymouth/plymouthd.conf"
 )
 for p in "${PLYMOUTH_FILES[@]}"; do
@@ -234,7 +234,7 @@ for df in "${DESKTOP_FILES[@]}"; do
     else
         # Skip known system/third-party commands and custom paths
         case "$cmd" in
-            xfce4-terminal|konsole|kitty|electron|hermes-agent|openbox|startplasma-x11)
+            xfce4-terminal|konsole|kitty|electron|hermes-agent|openbox|startplasma-x11|onionshare|veracrypt)
                 echo -e "  [PASS] Desktop $df_basename -> ${CYAN}$cmd${RESET} (system command)" ;;
             /opt/*)
                 echo -e "  [PASS] Desktop $df_basename -> ${CYAN}$cmd${RESET} (custom path)" ;;

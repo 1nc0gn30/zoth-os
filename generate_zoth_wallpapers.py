@@ -21,7 +21,11 @@ def ensure_dirs():
 def load_image(rel_path):
     p = os.path.join(ASSETS_DIR, rel_path)
     if not os.path.exists(p):
-        raise FileNotFoundError(f"Asset not found: {p}")
+        p_fallback = os.path.join(ROOT_DIR, "../zoth-studio-og/public/assets", rel_path)
+        if os.path.exists(p_fallback):
+            p = p_fallback
+        else:
+            raise FileNotFoundError(f"Asset not found: {p}")
     return Image.open(p).convert("RGBA")
 
 def create_radial_gradient(w, h, center_color, edge_color, radius=None):
@@ -408,6 +412,13 @@ def main():
     generate_hermetic_matrix()
     generate_ghostmode_nullai()
     generate_zoth_gold_master()
+
+    win11_src = os.path.join(ROOT_DIR, "config/includes.chroot/usr/local/share/backgrounds/zothos/win11-bloom.jpg")
+    if os.path.exists(win11_src):
+        import shutil
+        shutil.copy2(win11_src, os.path.join(BG_DIR, "win11-bloom.jpg"))
+        print(f"[✓] Win11 Bloom synced to {BG_DIR}/win11-bloom.jpg")
+
     print("\n✨ All 4K Ultra-High-Definition Master Wallpapers generated successfully!")
 
 if __name__ == "__main__":
