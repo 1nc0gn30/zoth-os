@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 30-Tool Sovereign Arsenal & Workstation Ecosystem v2.6
+#  ZOTHOS — 31-Tool Sovereign Arsenal & Workstation Ecosystem v2.7
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  Fully Aligned with Zoth Studio v2 (6 Cadres · 30 Production Tools)
+#  Fully Aligned with Zoth Studio v2 (6 Cadres · 31 Production Tools)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
@@ -198,7 +198,12 @@
 ### 30. zoth-agent-conductor (Zoth Agent Conductor)
 - **GitHub:** https://github.com/NullAITech/conductor
 - **Core Architecture:** Multi-Cadre Sovereign Daemon Orchestrator & Health Mesh
-- **Capability:** Unifies telemetry, health checks, and cross-daemon test pipelines across all 7 running sovereign background services. Provides ASCII Bento status grids, synthetic verification cycles, and automated recovery handlers without pip dependencies.
+- **Capability:** Unifies telemetry, health checks, and cross-daemon test pipelines across all 8 running sovereign background services. Provides ASCII Bento status grids, synthetic verification cycles, and automated recovery handlers without pip dependencies.
+
+### 31. agent-capsule-jail (Agent Capsule Jail)
+- **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
+- **Core Architecture:** Kernel Enclave Sandbox & Ephemeral Process Isolation (127.0.0.1:8105)
+- **Capability:** Autonomous zero-dependency Linux process sandbox enforcing strict resource quotas via `resource.setrlimit` (CPU, RAM, process count, file size), ephemeral copy-on-write scratch spaces, environment sanitization (purging cloud/API secrets), and real-time filesystem delta diffing with automated telemetry streaming into `agent-flight-recorder` (:8104). Zero external dependencies.
 
 ---
 

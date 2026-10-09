@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Agent Capsule Jail & Ephemeral Process Enclave
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/agent-capsule-jail
+ExecStart=/opt/zothos-ai-env/bin/python3 -m agent_capsule_jail.cli serve --host 127.0.0.1 --port 8105
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-capsule-jail/src
+
+[Install]
+WantedBy=multi-user.target

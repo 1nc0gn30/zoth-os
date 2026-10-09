@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Capsule Jail
+GenericName=Kernel Enclave & Ephemeral Process Sandbox
+Comment=Autonomous process isolation, resource quotas, and ephemeral sandbox for AI agent subprocesses
+Exec=/usr/local/bin/agent-capsule serve --port 8105
+Icon=zoth-capsule-jail
+Terminal=false
+Categories=Security;Development;System;X-ZothOS-AI;
+Keywords=capsule;jail;sandbox;security;isolation;enclave;cgroups;rlimit;subprocess;
+StartupNotify=true
+Actions=Cockpit;Stats;Run;
+
+[Desktop Action Cockpit]
+Name=Launch Capsule Cockpit Web UI
+Exec=xdg-open http://127.0.0.1:8105
+
+[Desktop Action Stats]
+Name=Capsule Sandbox Stats
+Exec=xfce4-terminal --hold -T "Capsule Jail Stats" -e "/usr/local/bin/agent-capsule status"
+
+[Desktop Action Run]
+Name=Execute Test Capsule Run
+Exec=xfce4-terminal --hold -T "Capsule Test Run" -e "/usr/local/bin/agent-capsule test"
