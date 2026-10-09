@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Egress Sentinel
+GenericName=AI Agent Network Sniffer & Egress Radar
+Comment=Autonomous network traffic sniffer, egress proxy daemon, quarantine policy, and OpenAPI synthesizer
+Exec=/usr/local/bin/agent-egress serve
+Icon=zoth-egress-sentinel
+Terminal=false
+Categories=Security;Network;X-ZothOS-AI;
+Keywords=egress;sentinel;proxy;network;traffic;sniff;har;openapi;ai;agent;
+StartupNotify=true
+Actions=Stats;Radar;Export;
+
+[Desktop Action Stats]
+Name=Egress Traffic Stats
+Exec=xfce4-terminal --hold -T "Egress Sentinel Stats" -e "/usr/local/bin/agent-egress stats"
+
+[Desktop Action Radar]
+Name=Launch Egress Radar Dashboard
+Exec=xdg-open http://127.0.0.1:8095
+
+[Desktop Action Export]
+Name=Export Traffic HAR Log
+Exec=xfce4-terminal -T "Export Traffic HAR" -e "/usr/local/bin/agent-egress export"

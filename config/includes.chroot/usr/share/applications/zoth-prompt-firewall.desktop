@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Prompt Firewall
+GenericName=AI Agent Prompt Firewall & Security Radar
+Comment=Zero-dependency prompt injection defense, PII redaction, and security proxy for AI agents
+Exec=/usr/local/bin/agent-firewall serve
+Icon=zoth-prompt-firewall
+Terminal=false
+Categories=Security;Development;X-ZothOS-AI;
+Keywords=firewall;prompt;injection;security;pii;ai;agent;proxy;defense;
+StartupNotify=true
+Actions=Scan;Stats;Radar;
+
+[Desktop Action Scan]
+Name=Scan Prompt in Terminal
+Exec=xfce4-terminal -T "Prompt Firewall Scan" -e "/usr/local/bin/agent-firewall scan"
+
+[Desktop Action Stats]
+Name=Firewall Telemetry Stats
+Exec=xfce4-terminal --hold -T "Prompt Firewall Stats" -e "/usr/local/bin/agent-firewall stats"
+
+[Desktop Action Radar]
+Name=Launch Web Radar Dashboard
+Exec=xdg-open http://127.0.0.1:8098

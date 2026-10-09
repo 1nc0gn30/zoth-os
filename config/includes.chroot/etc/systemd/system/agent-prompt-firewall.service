@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Agent Prompt Firewall & Security Radar
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/agent-prompt-firewall
+ExecStart=/opt/zothos-ai-env/bin/python3 -m agent_prompt_firewall.cli serve --web-port 8098 --proxy-port 8099
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-prompt-firewall/src
+
+[Install]
+WantedBy=multi-user.target

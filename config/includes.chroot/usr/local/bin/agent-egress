@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Agent Egress Sentinel CLI Wrapper
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+PRIMARY_BIN="${ZOTH_SRC_ROOT}/agent-egress-sentinel/bin/agent-egress"
+REPO_DIR="${ZOTH_SRC_ROOT}/agent-egress-sentinel"
+
+if [[ -x "$PRIMARY_BIN" ]]; then
+    exec "$PRIMARY_BIN" "$@"
+elif [[ -d "$REPO_DIR/src/agent_egress_sentinel" ]]; then
+    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+    exec python3 -m agent_egress_sentinel.cli "$@"
+else
+    echo "Error: agent-egress not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    exit 1
+fi

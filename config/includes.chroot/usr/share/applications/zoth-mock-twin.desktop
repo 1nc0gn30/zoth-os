@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Mock Twin
+GenericName=Autonomous Offline API Simulator & Network Twin
+Comment=Deterministic offline API simulation, chaos fault injection, and token cost avoidance for AI agents
+Exec=/usr/local/bin/agent-mock-twin serve
+Icon=zoth-mock-twin
+Terminal=false
+Categories=Development;Testing;X-ZothOS-AI;
+Keywords=mock;twin;simulator;har;openapi;testing;tokens;offline;ai;agent;
+StartupNotify=true
+Actions=Stats;Dashboard;
+
+[Desktop Action Stats]
+Name=Mock Twin Savings Stats
+Exec=xfce4-terminal --hold -T "Mock Twin Stats" -e "/usr/local/bin/agent-mock-twin stats"
+
+[Desktop Action Dashboard]
+Name=Launch Mock Twin Dashboard
+Exec=xdg-open http://127.0.0.1:8097

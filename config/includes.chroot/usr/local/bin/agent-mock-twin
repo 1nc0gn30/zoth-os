@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Agent Mock Twin CLI Wrapper
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+PRIMARY_BIN="${ZOTH_SRC_ROOT}/agent-mock-twin/bin/agent-mock-twin"
+ALT_BIN="${ZOTH_SRC_ROOT}/agent-mock-twin/bin/agent-mock"
+REPO_DIR="${ZOTH_SRC_ROOT}/agent-mock-twin"
+
+if [[ -x "$PRIMARY_BIN" ]]; then
+    exec "$PRIMARY_BIN" "$@"
+elif [[ -x "$ALT_BIN" ]]; then
+    exec "$ALT_BIN" "$@"
+elif [[ -d "$REPO_DIR/src/agent_mock_twin" ]]; then
+    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+    exec python3 -m agent_mock_twin.cli "$@"
+else
+    echo "Error: agent-mock-twin not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    exit 1
+fi

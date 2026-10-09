@@ -90,6 +90,11 @@ SCRIPTS=(
     "$CHROOT/usr/local/bin/zoth-agent-hud"
     "$CHROOT/usr/local/bin/zoth-agent-layer"
     "$CHROOT/usr/local/bin/zoth-live-wallpaper"
+    "$CHROOT/usr/local/bin/zoth-agent-conductor"
+    "$CHROOT/usr/local/bin/agent-egress"
+    "$CHROOT/usr/local/bin/agent-mock-twin"
+    "$CHROOT/usr/local/bin/agent-firewall"
+    "$CHROOT/usr/local/bin/neuro-memory"
 )
 
 for s in "${SCRIPTS[@]}"; do
@@ -105,6 +110,10 @@ done
 echo -e "\n${BOLD}${YELLOW}[2/6] Auditing Systemd Units & Udev Rules ...${RESET}"
 check_file "$CHROOT/etc/systemd/system/zoth-ghost-amnesic.service" "Amnesic Systemd Unit"
 check_file "$CHROOT/etc/systemd/system/zoth-sentinel.service" "Sentinel AI Systemd Unit"
+check_file "$CHROOT/etc/systemd/system/neuro-memory.service" "Neuro-Memory Biological Daemon"
+check_file "$CHROOT/etc/systemd/system/agent-egress-sentinel.service" "Agent Egress Sentinel Service"
+check_file "$CHROOT/etc/systemd/system/agent-mock-twin.service" "Agent Mock Twin Service"
+check_file "$CHROOT/etc/systemd/system/agent-prompt-firewall.service" "Agent Prompt Firewall Service"
 check_file "$CHROOT/etc/systemd/system/zoth-watchdog.service" "Self-Healing Watchdog Service"
 check_file "$CHROOT/etc/systemd/system/zoth-watchdog.timer" "Self-Healing Watchdog Timer"
 check_file "$CHROOT/etc/udev/rules.d/99-zoth-panic.rules" "Panic Udev Rules"

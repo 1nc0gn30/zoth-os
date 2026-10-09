@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Neuro-Memory
+GenericName=Biological Substrate & 3D Synaptic Memory Studio
+Comment=Cognitive associative memory substrate with STDP, 3-factor neuromodulation, and 3D synaptic graph
+Exec=/usr/local/bin/neuro-memory serve
+Icon=zoth-neuro-memory
+Terminal=false
+Categories=Utility;Development;X-ZothOS-AI;
+Keywords=memory;neuro;substrate;stdp;synaptic;associative;cognition;mcp;ai;
+StartupNotify=true
+Actions=Stats;Studio;Doctor;
+
+[Desktop Action Stats]
+Name=Substrate Telemetry Stats
+Exec=xfce4-terminal --hold -T "Neuro-Memory Stats" -e "/usr/local/bin/neuro-memory stats"
+
+[Desktop Action Studio]
+Name=Launch Memory Studio Web UI
+Exec=xdg-open http://127.0.0.1:8094
+
+[Desktop Action Doctor]
+Name=Substrate Diagnostics & Health
+Exec=xfce4-terminal --hold -T "Neuro-Memory Diagnostics" -e "/usr/local/bin/neuro-memory doctor"

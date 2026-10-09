@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Agent Mock Twin Autonomous Offline API Simulator
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=${ZOTH_SRC_ROOT}/agent-mock-twin
+ExecStart=/opt/zothos-ai-env/bin/python3 -m agent_mock_twin.cli serve --host 127.0.0.1 --port 8097
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-mock-twin/src
+
+[Install]
+WantedBy=multi-user.target
