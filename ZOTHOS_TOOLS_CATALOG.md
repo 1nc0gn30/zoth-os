@@ -260,11 +260,11 @@
 - **Execution Mode:** BROWSER • [Live App](https://certpath-roadmap-studio.netlify.app)
 - **Operational Value:** Interactive cybersecurity & engineering certification roadmap generator.
 
-### 22. regex-droid-builder (Regex Droid Builder)
+### 22. regex-droid-builder (Regex Droid Studio)
 - **GitHub:** https://github.com/NullAITech/regex-droid-builder
 - **Category:** Automation
-- **Execution Mode:** WEBGPU
-- **Operational Value:** Visual regular expression tester, neural explainer, and syntax highlighter.
+- **Execution Mode:** BROWSER • [Live App](https://regexdroid.nullai.tech)
+- **Operational Value:** 100% in-browser visual regular expression builder, AST breakdown, railroad vector diagrams, multi-language code generator, and static ReDoS vulnerability guardian. Dual Stripe + Solana rails ($19).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
