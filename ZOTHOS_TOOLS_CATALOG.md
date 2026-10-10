@@ -175,8 +175,8 @@
 ### 23. schema-illustrator-studio (Schema Illustrator Studio)
 - **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
 - **Category:** Autonomous Web
-- **Execution Mode:** WEBGPU
-- **Operational Value:** Interactive JSON-Schema to database diagram visualizer and code generator.
+- **Execution Mode:** BROWSER • [Live App](https://schemaillustrator.nullai.tech)
+- **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Dual Stripe + Solana rails ($19).
 
 ### 24. zoth-webgen (Zoth WebGen Foundry)
 - **GitHub:** https://github.com/NullAITech/zoth-webgen
