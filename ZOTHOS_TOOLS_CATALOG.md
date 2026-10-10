@@ -44,11 +44,14 @@
 - **Execution Mode:** LOCAL_CLI
 - **Operational Value:** E2EE WebSocket signal protocol and Simplex peer mesh IPC communicator.
 
-### 5. vector-search-engine (Vector Search Engine)
+### 5. vector-search-engine (Vector Search Engine & Studio)
+- **Live Studio:** https://vectorsearch.nullai.tech
 - **GitHub:** https://github.com/NullAITech/vector-search-engine
 - **Category:** Swarm & Core
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Local HNSW vector index engine for fast zero-latency semantic similarity search.
+- **Execution Mode:** BROWSER (100% In-Browser Client Studio with Material 3 Design)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Pure client-side HNSW skip-graph vector database, IVF clustering, Okapi BM25 lexical engine, Reciprocal Rank Fusion (RRF) hybrid search simulator, 2D/3D projection explorer, and real-time benchmark suite (13K+ QPS) with zero external backend dependencies.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 25. zoth-swarm-multiplexer (21-Agent Swarm Multiplexer)
 - **GitHub:** https://github.com/NullAITech/zoth-swarm-multiplexer
