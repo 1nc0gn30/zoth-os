@@ -166,11 +166,11 @@
 - **Execution Mode:** LOCAL_CLI • [Live App](https://cwv-speed-studio.netlify.app)
 - **Operational Value:** Core Web Vitals LCP, CLS, and INP diagnostic engine and asset minifier. Live app is $39.
 
-### 21. pwa-manifest-builder (PWA Manifest Builder)
+### 21. pwa-manifest-builder (PWA Manifest Studio)
 - **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
 - **Category:** Autonomous Web
-- **Execution Mode:** WEBGPU
-- **Operational Value:** Progressive Web App manifest authoring, icon generator, and offline service worker builder.
+- **Execution Mode:** BROWSER • [Live App](https://pwabuilder.nullai.tech)
+- **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Dual Stripe + Solana rails ($19).
 
 ### 23. schema-illustrator-studio (Schema Illustrator Studio)
 - **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
