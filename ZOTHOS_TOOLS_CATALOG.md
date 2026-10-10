@@ -213,6 +213,73 @@
 ---
 
 ## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 7 — SOVEREIGN COMMERCE, ETSY & PRINT-ON-DEMAND ARSENAL (12 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 33. etsy-pod-forge (Autonomous Etsy POD & Listing Studio)
+- **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
+- **Core Architecture:** Autonomous Listing Synthesizer (127.0.0.1:8107)
+- **Capability:** Full-stack listing synthesis, canvas generation, photorealistic mockup composition, and revenue forecasting.
+
+### 34. etsy-connector (Etsy Open API v3 & MCP Suite)
+- **GitHub:** https://github.com/1nc0gn30/etsy-connector
+- **Core Architecture:** Etsy v3 OpenAPI REST Client & MCP Server (127.0.0.1:8108)
+- **Capability:** 8 MCP tools for keyword search volume, listing tag audits, taxonomy category resolution, and direct draft publishing.
+
+### 35. mcp-lens (Zero-Dep MCP Sniffer & Token Weight Auditor)
+- **GitHub:** https://github.com/1nc0gn30/mcp-lens
+- **Core Architecture:** Model Context Protocol Traffic Interceptor (127.0.0.1:8109)
+- **Capability:** Real-time stdio/SSE token overhead profiling, JSON-RPC frame dissection, and 70%+ token weight pruning.
+
+### 36. agent-budget-sentinel (Token Cost Circuit Breaker & Spending Radar)
+- **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
+- **Core Architecture:** BPE Tokenizer & Mid-Flight SSE Guillotine (127.0.0.1:8110/8111)
+- **Capability:** Real-time token consumption governor, sub-millisecond BPE token counting, and automated TCP termination on budget breach.
+
+### 37. agent-gods-eye (Shodan OSINT Planetary Threat Radar)
+- **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
+- **Core Architecture:** Shodan OSINT Tactical Reconnaissance (127.0.0.1:8112)
+- **Capability:** 3D kinetic attack surface visualization, host vulnerability fingerprinting, and automated perimeter threat scoring.
+
+### 38. shopify-connector (Shopify GraphQL Admin & POD Sync Engine)
+- **GitHub:** https://github.com/1nc0gn30/shopify-connector
+- **Core Architecture:** Shopify GraphQL 2026 Admin API & Etsy Transpiler (127.0.0.1:8113)
+- **Capability:** Automated Etsy-to-Shopify listing transpiler, margin calculator, and multi-channel inventory synchronization.
+
+### 39. agent-voice-call (Sovereign Live Voice Calling Cockpit)
+- **GitHub:** https://github.com/1nc0gn30/agent-voice-call
+- **Core Architecture:** Full-Duplex Web Audio & Voice Synthesizer (127.0.0.1:8114)
+- **Capability:** Real-time voice calls with autonomous agents, multi-persona voice synthesizer, and zero-telemetry WebSockets.
+
+### 40. printify-connector (Printify Open API v1 & 20% Margin Engine)
+- **GitHub:** https://github.com/1nc0gn30/printify-connector
+- **Core Architecture:** Printify REST API v1 Client & MCP Suite (127.0.0.1:8115)
+- **Capability:** Catalog blueprint search, print provider routing, 20% Premium discount margin calculation, and 300 DPI image auditing.
+
+### 41. gelato-connector (Gelato Open API v2 & 32-Country Local POD Router)
+- **GitHub:** https://github.com/1nc0gn30/gelato-connector
+- **Core Architecture:** Gelato v2 Order API Client & MCP Suite (127.0.0.1:8116)
+- **Capability:** 32-country domestic print routing, multi-currency conversion, local factory proximity dispatch, and tariff elimination.
+
+### 42. pod-smart-router (Multi-Channel POD Router & Tariff Killer)
+- **GitHub:** https://github.com/1nc0gn30/pod-smart-router
+- **Core Architecture:** Real-Time Landed Cost & Proximity Optimizer (127.0.0.1:8117)
+- **Capability:** Evaluates Printify vs Gelato landed costs in real-time, eliminates cross-border tariffs, and formats compliant dispatch JSON payloads.
+
+### 43. digital-asset-forge (300 DPI Wall Art Pack Generator)
+- **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
+- **Core Architecture:** Mathematical Multi-Ratio Pack Engine (127.0.0.1:8118)
+- **Capability:** 5-ratio master resolution formatting at 300 DPI (2:3, 3:4, 4:5, 11:14, ISO), Etsy 20MB multi-zip splitting, customer printing guides, and 98% net margins.
+
+### 44. pod-mockup-forge (Autonomous Lifestyle Mockup Synthesis)
+- **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
+- **Core Architecture:** Photorealistic Perspective & Lighting Composite Engine (127.0.0.1:8119)
+- **Capability:** Multi-angle lifestyle mockup rendering (flat lay, hanger, model, interior wall), fabric displacement texture blending, and 2000x2000 Etsy-optimized export.
+
+---
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
 ##  QUICK-START: UPDATING & RUNNING
 ## ═══════════════════════════════════════════════════════════════════════════════
 
