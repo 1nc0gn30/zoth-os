@@ -1,13 +1,13 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 32-Tool Sovereign Arsenal & Workstation Ecosystem v2.8
+#  ZOTHOS — 59-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.0
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  Fully Aligned with Zoth Studio v2 (6 Cadres · 32 Production Tools)
+#  100% Workstation Coverage in Zoth Studio v2 (19 Browser + 40 Enclaves)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 25 tools.
-#   Tools execute locally with zero cloud telemetry, validated JSON-Schema contracts,
-#   and biomorphic STDP memory integration.
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 59 tools.
+#   All tools execute locally with zero cloud telemetry, validated JSON-Schema contracts,
+#   and dual payment rails (Stripe + Solana DePay).
 #
 # Launching via CLI & Dispatchers:
 #   zoth-studio                        # Launch full Zoth Studio v2 Cockpit
@@ -16,292 +16,442 @@
 #   zoth-tool-nexus                    # Interactive TUI tool dispatcher
 #   zoth-pkg list                      # Inspect installed system & arsenal tools
 
+
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 1 — ARCHITECTS & CORE SWARM INFRASTRUCTURE (5 TOOLS)
+##  CADRE 1 — PLANNING (1 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 1. adytum-alchemist-ai-workflow (Adytum Planner)
 - **GitHub:** https://github.com/NullAITech/adytum-alchemist-ai-workflow
-- **Core Architecture:** 22-Key Hermetic Planning Rite, Local Model Gating
-- **Capability:** Structured intent formulation, 5-minute incubation cycles, and deterministic task decomposition.
+- **Category:** Planning
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** The 22-key hermetic planning rite. Intention, five-minute incubation, and a local-model gate.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 2 — SWARM & CORE (5 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 2. azoth-local-agent (AZOTH Local Archon Agent)
 - **GitHub:** https://github.com/NullAITech/azoth-local-agent
-- **Core Architecture:** Zero-telemetry Autonomous Subagent Dispatcher
-- **Capability:** Primary Archon Orchestrator executing sandboxed shell actions, multi-turn plan synthesis, and self-evaluating code generation.
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Archon Orchestrator core agent for local zero-telemetry task dispatching and subagent delegation.
 
 ### 3. sovereign-agent-bridge (Sovereign Agent Signal Bridge)
 - **GitHub:** https://github.com/NullAITech/sovereign-agent-bridge
-- **Core Architecture:** Ed25519 E2EE WebSockets, Simplex Peer Mesh IPC (127.0.0.1:8102)
-- **Capability:** Sub-millisecond peer-to-peer message passing across sovereign agent cadences without centralized point of failure.
-
-### 4. neuro-memory-daemon (Neuro Memory Daemon)
-- **GitHub:** https://github.com/NullAITech/neuro-memory-daemon
-- **Core Architecture:** STDP Biomorphic Synaptic Vector Recall (127.0.0.1:8094)
-- **Capability:** Spike-timing-dependent plasticity vector memory layer retaining cross-session agent context with associative recall.
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** E2EE WebSocket signal protocol and Simplex peer mesh IPC communicator.
 
 ### 5. vector-search-engine (Vector Search Engine)
 - **GitHub:** https://github.com/NullAITech/vector-search-engine
-- **Core Architecture:** HNSW Graph Index, BM25 Hybrid Fusion
-- **Capability:** High-dimensional zero-cloud vector similarity search for local agent memory and document retrieval.
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Local HNSW vector index engine for fast zero-latency semantic similarity search.
 
----
+### 25. zoth-swarm-multiplexer (21-Agent Swarm Multiplexer)
+- **GitHub:** https://github.com/NullAITech/zoth-swarm-multiplexer
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** 21-terminal autonomous agent multiplexer daemon with hot-swappable AI harnesses, PWD control, and SSE telemetry.
+
+### 58. zoth-civilization (Zoth Civilization Hub)
+- **GitHub:** https://github.com/1nc0gn30/zoth-civilization
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** The living heart of the 21-agent society. Runs the GameBoy pixel world simulation, Adytum Initiation Deck, and meditation art catalog.
+
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 2 — CODE SYNTHESIS & REASONING (5 TOOLS)
+##  CADRE 3 — MEMORY & BRAIN (1 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 4. neuro-memory-daemon (Neuro-Memory Daemon)
+- **GitHub:** https://github.com/NullAITech/neuro-memory-daemon
+- **Category:** Memory & Brain
+- **Execution Mode:** LOCAL_CLI • [Live App](https://neuro-memory.nullai.tech)
+- **Operational Value:** Biological-fidelity memory substrate with 3D Cosmic Nebula.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 4 — AI & KNOWLEDGE (3 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 6. deepsearch-research-agent (DeepSearch Research Agent)
 - **GitHub:** https://github.com/NullAITech/deepsearch-research-agent
-- **Core Architecture:** Multi-Source Evidence Graph Crawler
-- **Capability:** Autonomous technical dossier compiler synthesizing structured research reports with grounded citations.
+- **Category:** AI & Knowledge
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Autonomous multi-source research agent with grounded inline citations and web scraping.
 
 ### 7. promptmaster-studio (PromptMaster Studio)
 - **GitHub:** https://github.com/NullAITech/promptmaster-studio
-- **Core Architecture:** Prompt Chaining, Systematic A/B Test Harness
-- **Capability:** Visual prompt engineering workbench with token metering, AST variable interpolation, and automated regression testing.
+- **Category:** AI & Knowledge
+- **Execution Mode:** LOCAL_CLI • [Live App](https://promptmaster-studio.netlify.app)
+- **Operational Value:** In-browser prompt optimizer. AST linting, scoring, and token costs stay in the browser. Pro is $19, and the live page has a free plan.
 
-### 8. polyglot-framework-exporter (Polyglot Framework Exporter)
-- **GitHub:** https://github.com/NullAITech/polyglot-framework-exporter
-- **Core Architecture:** Cross-Framework AST Translation Layer
-- **Capability:** Normalizes agent tool manifests and system prompts between AGY, Claude Code, OpenAI Codex, and Hermes formats.
+### 26. webmcp-protocol-inspector (WebMCP Protocol Suite)
+- **GitHub:** https://github.com/NullAITech/zoth-studio-v2
+- **Category:** AI & Knowledge
+- **Execution Mode:** WEBGPU
+- **Operational Value:** In-browser Model Context Protocol (MCP) JSON-RPC 2.0 inspector, tool schema dispatcher, and Zoth OS bare-metal video showcase.
 
-### 9. regex-droid-builder (Regex Droid Builder)
-- **GitHub:** https://github.com/NullAITech/regex-droid-builder
-- **Core Architecture:** NFA/DFA State Machine Visualizer, ReDoS Analysis
-- **Capability:** Interactive regular expression constructor rendering finite automata graphs with automated catastrophic backtracking detection.
-
-### 10. cron-rhythm-studio (CronRhythm Studio)
-- **GitHub:** https://github.com/NullAITech/cron-rhythm-studio
-- **Core Architecture:** POSIX/K8s/Quartz Heatmap Transpiler
-- **Capability:** Temporal schedule visualizer, schedule conflict detector, and natural-language cron expression humanizer.
-
----
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 3 — DEFENSIVE SECURITY & CRYPTOGRAPHY (5 TOOLS)
+##  CADRE 5 — SECURITY & RECON (7 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 11. hexstrike-arsenal (HexStrike Security Arsenal)
-- **GitHub:** https://github.com/NullAITech/hexstrike-arsenal
-- **Core Architecture:** MITRE ATT&CK Autonomous Security Station
-- **Capability:** Integrated offensive/defensive orchestration engine interfacing with local Nmap, Metasploit, and custom vulnerability modules.
+### 8. hexstrike-arsenal (HexStrike Security Arsenal)
+- **GitHub:** https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal
+- **Category:** Security & Recon
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.
 
-### 12. envguard-secrets-vault (EnvGuard Secrets Vault)
+### 9. envguard-secrets-vault (EnvGuard Secrets Vault)
 - **GitHub:** https://github.com/NullAITech/envguard-secrets-vault
-- **Core Architecture:** High-Entropy Secret Scanner, GPG Vault Integration
-- **Capability:** Prevents secret leakage in git commits, audits shell environments, and manages encrypted credential vaults.
+- **Category:** Security & Recon
+- **Execution Mode:** LOCAL_CLI • [Live App](https://envguard-vault.netlify.app)
+- **Operational Value:** Argon2id + AES-256-GCM hardware vault for zero-cloud secret storage and leak scanning. Live app is $29.
 
-### 13. jwt-inspector-guard (JWT Inspector Guard)
+### 10. jwt-inspector-guard (JWT Inspector Guard)
 - **GitHub:** https://github.com/NullAITech/jwt-inspector-guard
-- **Core Architecture:** RFC 7519 Cryptographic Token Validator
-- **Capability:** Zero-dependency JWT inspector auditing claims, verifying signatures, and detecting algorithm-confusion exploits.
+- **Category:** Security & Recon
+- **Execution Mode:** WEBGPU
+- **Operational Value:** In-browser JWT token decoder, cryptographic signature validator, and auth claim auditor.
 
-### 14. payload-entropy-studio (Payload Entropy Studio)
+### 11. payload-entropy-studio (Payload Entropy Studio)
 - **GitHub:** https://github.com/NullAITech/payload-entropy-studio
-- **Core Architecture:** Shannon Entropy (-∑ p log p) Visualizer
-- **Capability:** Binary payload inspector identifying obfuscated shellcode, packed PE/ELF sections, and hidden encrypted blobs.
+- **Category:** Security & Recon
+- **Execution Mode:** WEBGPU
+- **Operational Value:** In-browser Shannon entropy analysis tool for detecting obfuscated web shells and encrypted payloads.
 
-### 15. web-security-guard (Web Security Guard)
+### 12. web-security-guard (Web Security Guard)
 - **GitHub:** https://github.com/NullAITech/web-security-guard
-- **Core Architecture:** CSP / CORS / Security Header Compliance Engine
-- **Capability:** Audits web endpoints for missing security headers, unsafe reflection vectors, and misconfigured CORS policies.
+- **Category:** Security & Recon
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Security headers auditor, CSP validator, and WAF protection scanner.
 
----
+### 41. agent-gods-eye (Agent God)
+- **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
+- **Category:** Security & Recon
+- **Execution Mode:** LOCAL_CLI • [Live App](https://godseye.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency Shodan OSINT tactical radar, 3D kinetic planetary attack surface reconnaissance, and threat scoring.
+
+### 56. osint-scout-skill (Domain Intel OSINT Scout)
+- **GitHub:** https://github.com/1nc0gn30/osint-scout-skill
+- **Category:** Security & Recon
+- **Execution Mode:** BROWSER • [Live App](https://osint-domain-scout.netlify.app)
+- **Operational Value:** Autonomous passive reconnaissance agent skill auditing Certificate Transparency logs via crt.sh, DNS records, and WHOIS ownership data.
+
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 4 — CREATIVE, WEB & UI/UX (5 TOOLS)
+##  CADRE 6 — AUTONOMOUS WEB (7 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 13. polyglot-framework-exporter (Polyglot Framework Exporter)
+- **GitHub:** https://github.com/NullAITech/polyglot-framework-exporter
+- **Category:** Autonomous Web
+- **Execution Mode:** WEBGPU
+- **Operational Value:** In-browser exporter from React/JSX code to HTML/CSS, Vue, Svelte, and Solid.js framework outputs.
+
+### 14. aeo-graph-engine (AEO Graph Engine)
+- **GitHub:** https://github.com/NullAITech/aeo-graph-engine
+- **Category:** Autonomous Web
+- **Execution Mode:** LOCAL_CLI • [Live App](https://aeo-graph-engine.netlify.app)
+- **Operational Value:** Answer Engine Optimization knowledge graph builder and Schema.org entity linker. Live app is $49.
+
+### 15. cwv-speed-engine (CWV Speed Engine)
+- **GitHub:** https://github.com/NullAITech/cwv-speed-engine
+- **Category:** Autonomous Web
+- **Execution Mode:** LOCAL_CLI • [Live App](https://cwv-speed-studio.netlify.app)
+- **Operational Value:** Core Web Vitals LCP, CLS, and INP diagnostic engine and asset minifier. Live app is $39.
+
+### 21. pwa-manifest-builder (PWA Manifest Builder)
+- **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
+- **Category:** Autonomous Web
+- **Execution Mode:** WEBGPU
+- **Operational Value:** Progressive Web App manifest authoring, icon generator, and offline service worker builder.
+
+### 23. schema-illustrator-studio (Schema Illustrator Studio)
+- **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
+- **Category:** Autonomous Web
+- **Execution Mode:** WEBGPU
+- **Operational Value:** Interactive JSON-Schema to database diagram visualizer and code generator.
+
+### 24. zoth-webgen (Zoth WebGen Foundry)
+- **GitHub:** https://github.com/NullAITech/zoth-webgen
+- **Category:** Autonomous Web
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Published Python generator with 6 archetypes and an MCP server. A separate local site foundry keeps Grok CLI, Hermes, OpenCode, Cline, Aider, AGY, or Claude Code working until the site artifact is closed.
+
+### 57. bolt.diy (Bolt.DIY Full-Stack Engine)
+- **GitHub:** https://github.com/1nc0gn30/bolt.diy
+- **Category:** Autonomous Web
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Localized open-source AI software engineer capable of scaffolding, modifying, and running full-stack web applications locally in the browser.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 7 — MEDIA & 3D (6 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 16. vision-gesture-control (Vision Gesture Control)
 - **GitHub:** https://github.com/NullAITech/vision-gesture-control
-- **Core Architecture:** Touchless Air Gesture Controller
-- **Capability:** Translates local webcam hand tracking into window navigation, media controls, and desktop macro triggers.
+- **Category:** Media & 3D
+- **Execution Mode:** WEBGPU
+- **Operational Value:** In-browser MediaPipe webcam hand-gesture recognition interface controller.
 
-### 17. aeo-graph-engine (AEO Graph Engine)
-- **GitHub:** https://github.com/NullAITech/aeo-graph-engine
-- **Core Architecture:** Schema.org Semantic Knowledge Graph Synthesizer
-- **Capability:** Generates rich JSON-LD structures and entity relationship maps for high-authority AI answer engine indexing.
+### 28. badge3d-coin-generator (Badge3D Coin Generator)
+- **GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER • [Live App](https://badge3d-coin-studio.netlify.app)
+- **Operational Value:** Browser 3D coin, medallion, and relief badge generator. Live checkout is $19. The page also lists $79 regular.
 
-### 18. cwv-speed-engine (CWV Speed Engine)
-- **GitHub:** https://github.com/NullAITech/cwv-speed-engine
-- **Core Architecture:** Core Web Vitals Diagnostic Engine
-- **Capability:** Local performance profiler calculating LCP, CLS, and INP metrics with deterministic DOM remediation hints.
+### 51. cyber-turtle-studio (Cyber Turtle Studio)
+- **GitHub:** https://github.com/1nc0gn30/cyber-turtle-studio
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER • [Live App](https://cyber-turtle-studio.netlify.app)
+- **Operational Value:** High-precision turtle graphics, L-System fractal synthesizer (botany & Hilbert curves), and physical CNC pen-plotter G-Code generator.
 
-### 19. pwa-manifest-builder (PWA Manifest Builder)
-- **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
-- **Core Architecture:** Progressive Web App Asset & Service Worker Generator
-- **Capability:** Scaffolds standards-compliant PWA manifests, icon suites, and offline caching recipes for desktop and mobile apps.
+### 52. datamosh-glitch-studio (Datamosh Glitch Studio)
+- **GitHub:** https://github.com/1nc0gn30/datamosh-glitch-studio
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER • [Live App](https://datamosh-glitch-studio.netlify.app)
+- **Operational Value:** Parametric video datamoshing, I-frame drop corruption, delta-frame duplication, and glitch art synthesizer with FastMCP stdio server.
 
-### 20. schema-illustrator-studio (Schema Illustrator Studio)
-- **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
-- **Core Architecture:** Visual Data Structure & DB Schema Modeler
-- **Capability:** Interactive database and entity-relationship designer exporting SQL migrations, Prisma schemas, and SVG diagrams.
+### 53. nexus-3d-scene-studio (Nexus 3D Scene Studio)
+- **GitHub:** https://github.com/1nc0gn30/nexus-3d-scene-studio
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER • [Live App](https://nexus-3d-studio.netlify.app)
+- **Operational Value:** Pure Python 3D mathematical geometry engine, parametric mesh generator, and Model Context Protocol (MCP) server for spatial agent synthesis.
 
----
+### 54. ufo-sacred-geometry (UFO Sacred Geometry Studio)
+- **GitHub:** https://github.com/1nc0gn30/ufo-sacred-geometry
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER • [Live App](https://ufo-sacred-geometry.netlify.app)
+- **Operational Value:** Sacred geometry & agro-glyph synthesizer exporting to AutoCAD DXF R12/2000, Wavefront OBJ 3D Meshes, and vector SVGs.
+
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 5 — RECONNAISSANCE & DISTRIBUTED SWARM (5 TOOLS)
+##  CADRE 8 — AUTOMATION (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 21. subsweep-lead-scanner (SubSweep Lead Scanner)
+### 17. subsweep-lead-scanner (SubSweep Lead Scanner)
 - **GitHub:** https://github.com/NullAITech/subsweep-lead-scanner
-- **Core Architecture:** Passive DNS & OSINT Asset Enumerator
-- **Capability:** Discovers domain attack surfaces, exposed subdomains, and corporate infrastructure footprints without active scanning.
+- **Category:** Automation
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Subdomain recon scanner and OSINT lead enrichment engine.
 
-### 22. omnipost-social-engine (OmniPost Social Engine)
+### 18. omnipost-social-engine (OmniPost Social Engine)
 - **GitHub:** https://github.com/NullAITech/omnipost-social-engine
-- **Core Architecture:** Multi-Platform Thread Architect & Formatter
-- **Capability:** Formats and schedules technical broadcasts across X, Mastodon, and LinkedIn with per-network character and media discipline.
+- **Category:** Automation
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Multi-platform social content scheduler and cross-post automation engine.
 
-### 23. certpath-roadmap-studio (CertPath Roadmap Studio)
-- **GitHub:** https://github.com/NullAITech/certpath-roadmap-studio
-- **Core Architecture:** X.509 PKI Trust Chain Analyzer
-- **Capability:** Audits TLS certificate paths, validates intermediate anchors, and diagnoses expiration and revocation status.
+### 19. cron-rhythm-studio (CronRhythm Studio)
+- **GitHub:** https://github.com/NullAITech/cron-rhythm-studio
+- **Category:** Automation
+- **Execution Mode:** LOCAL_CLI • [Live App](https://cronrhythm.nullai.tech)
+- **Operational Value:** Cron expression rhythm visualizer, scheduler simulator, and task trigger matrix.
 
-### 24. zoth-webgen (Zoth WebGen Foundry)
-- **GitHub:** https://github.com/NullAITech/zoth-webgen
-- **Core Architecture:** Multi-Model Prompt & Web Prototype Foundry
-- **Capability:** Generates full-stack single-file web applications and interactive prototypes from natural language prompts.
+### 20. certpath-roadmap-studio (CertPath Roadmap Studio)
+- **GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
+- **Category:** Automation
+- **Execution Mode:** BROWSER • [Live App](https://certpath-roadmap-studio.netlify.app)
+- **Operational Value:** Interactive cybersecurity & engineering certification roadmap generator.
 
-### 25. zoth-swarm-multiplexer (21-Agent Swarm Multiplexer)
-- **GitHub:** https://github.com/NullAITech/zoth-swarm-multiplexer
-- **Core Architecture:** 21-Agent Matrix Cockpit & Consensus Arena (127.0.0.1:8790)
-- **Capability:** Multi-pane autonomous swarm coordination cockpit monitoring 21 named Pantheon roles with real-time ping telemetry.
+### 22. regex-droid-builder (Regex Droid Builder)
+- **GitHub:** https://github.com/NullAITech/regex-droid-builder
+- **Category:** Automation
+- **Execution Mode:** WEBGPU
+- **Operational Value:** Visual regular expression tester, neural explainer, and syntax highlighter.
 
----
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 6 — SOVEREIGN AGENT GOVERNANCE, DEFENSE & TELEMETRY (5 TOOLS)
+##  CADRE 9 — SECURITY & OPSEC (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 26. agent-egress-sentinel (Agent Egress Sentinel)
+### 27. anderson-security-sentinel (Anderson Security Sentinel)
+- **GitHub:** https://github.com/1nc0gn30/anderson-security-sentinel
+- **Category:** Security & OpSec
+- **Execution Mode:** BROWSER • [Live App](https://anderson-security-sentinel.netlify.app)
+- **Operational Value:** Tri-transceiver synthetic aperture array, differential RF wall discriminator, real-time AoA & optical camera tracking.
+
+### 50. audiocipher-stego-engine (AudioCipher Stego Engine)
+- **GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
+- **Category:** Security & OpSec
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Audio-keyed authenticated cryptography, PCM WAV audio steganography (LSB hiding), and Morse code spectrogram synthesizer with FastMCP server.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 10 — GROWTH & SEO (2 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 29. robots-txt-auditor (Robots.txt & AEO Auditor)
+- **GitHub:** https://github.com/1nc0gn30/robots-txt-auditor
+- **Category:** Growth & SEO
+- **Execution Mode:** BROWSER • [Live App](https://robots-txt-auditor.netlify.app)
+- **Operational Value:** Frontier AI bot crawler validation, Googlebot and Perplexity rate analysis, and Schema.org graph verification. Live app is $19.
+
+### 30. city-desk (City Desk)
+- **GitHub:** https://github.com/1nc0gn30/city-desk
+- **Category:** Growth & SEO
+- **Execution Mode:** BROWSER • [Live App](https://city-desk.netlify.app)
+- **Operational Value:** One studio writes the finished page for a trade and a city. Boise painters $800, plumbers $900, HVAC $1,100. Those are the page price, not a job quote. Owner name, phone, and email stay blank.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 11 — SECURITY & NETWORK (3 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 31. agent-egress-sentinel (Agent Egress Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-egress-sentinel
-- **Core Architecture:** In-Memory TLS SNI Extractor & Forward Proxy (127.0.0.1:8095/8096)
-- **Capability:** Intercepts agent outbound TCP/TLS network calls, visualizes real-time domain traffic on a kinetic radar, enforces quarantine rules (ALLOW_ALL, BLOCK_TELEMETRY, ZERO_EGRESS), and exports Chrome/Wireshark compatible HAR 1.2 bundles. Zero external dependencies.
+- **Category:** Security & Network
+- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-egress.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency network interceptor, TLS SNI sniffer, and kinetic egress radar.
 
-### 27. agent-mock-twin (Agent Mock Twin)
-- **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
-- **Core Architecture:** Multi-Tier Deterministic Mock & Replay Server (127.0.0.1:8097)
-- **Capability:** Simulates upstream OpenAI/Anthropic model endpoints locally with $0 token spend. Features Tier 1 Exact Hash Matching, Tier 2 Fuzzy Semantic Matching, and Tier 3 Fallback Synthesis with real-time token/USD cost avoidance gauges.
-
-### 28. agent-prompt-firewall (Agent Prompt Firewall)
+### 33. agent-prompt-firewall (Agent Prompt Firewall)
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
-- **Core Architecture:** Heuristic Threat Cascade & PII Redactor (127.0.0.1:8098/8099)
-- **Capability:** Sub-millisecond defense against prompt injections, DAN jailbreaks, context contamination, and system prompt leaks. Redacts API tokens, SSH keys, emails, and credit cards with Shannon entropy scoring and streams live threats via Server-Sent Events (SSE).
+- **Category:** Security & Network
+- **Execution Mode:** LOCAL_CLI • [Live App](https://firewall.nullai.tech)
+- **Operational Value:** Autonomous inline prompt injection defense, PII redactor, and threat radar for AI agents.
 
-### 29. agent-flight-recorder (Agent Flight Recorder)
-- **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
-- **Core Architecture:** Black Box Telemetry Forensics & Time-Scrubber Hub (127.0.0.1:8104)
-- **Capability:** Ingests millisecond-timestamped events across Sentinel, Mock Twin, Firewall, Memory, and subprocess streams. Features a DAW-style interactive timeline scrubber, multi-speed playback (1x, 2x, 4x), Kokoro TTS voice debriefing (:9394), and standalone single-file HTML replay export.
-
-### 30. zoth-agent-conductor (Zoth Agent Conductor)
-- **GitHub:** https://github.com/NullAITech/conductor
-- **Core Architecture:** Multi-Cadre Sovereign Daemon Orchestrator & Health Mesh
-- **Capability:** Unifies telemetry, health checks, and cross-daemon test pipelines across all 8 running sovereign background services. Provides ASCII Bento status grids, synthetic verification cycles, and automated recovery handlers without pip dependencies.
-
-### 31. agent-capsule-jail (Agent Capsule Jail)
-- **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
-- **Core Architecture:** Kernel Enclave Sandbox & Ephemeral Process Isolation (127.0.0.1:8105)
-- **Capability:** Autonomous zero-dependency Linux process sandbox enforcing strict resource quotas via `resource.setrlimit` (CPU, RAM, process count, file size), ephemeral copy-on-write scratch spaces, environment sanitization (purging cloud/API secrets), and real-time filesystem delta diffing with automated telemetry streaming into `agent-flight-recorder` (:8104). Zero external dependencies.
-
-### 32. agent-policy-auditor (Agent Policy Auditor)
-- **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
-- **Core Architecture:** Cryptographic Capability Leaser & Static Manifest Auditor (127.0.0.1:8106)
-- **Capability:** Issues time-bound HMAC-SHA256 signed capability leases (FS_READ, FS_WRITE, NET_EGRESS, SHELL_EXEC, TOKEN_BUDGET) with automatic TTL expiry and emergency kill-switches. Audits agent tool schemas, MCP definitions, and prompts against OWASP Top 10 for LLMs and NIST AI RMF with real-time scoring. Zero external dependencies.
-
----
-
-## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 7 — SOVEREIGN COMMERCE, ETSY & PRINT-ON-DEMAND ARSENAL (12 TOOLS)
-## ═══════════════════════════════════════════════════════════════════════════════
-
-### 33. etsy-pod-forge (Autonomous Etsy POD & Listing Studio)
-- **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
-- **Core Architecture:** Autonomous Listing Synthesizer (127.0.0.1:8107)
-- **Capability:** Full-stack listing synthesis, canvas generation, photorealistic mockup composition, and revenue forecasting.
-
-### 34. etsy-connector (Etsy Open API v3 & MCP Suite)
-- **GitHub:** https://github.com/1nc0gn30/etsy-connector
-- **Core Architecture:** Etsy v3 OpenAPI REST Client & MCP Server (127.0.0.1:8108)
-- **Capability:** 8 MCP tools for keyword search volume, listing tag audits, taxonomy category resolution, and direct draft publishing.
-
-### 35. mcp-lens (Zero-Dep MCP Sniffer & Token Weight Auditor)
-- **GitHub:** https://github.com/1nc0gn30/mcp-lens
-- **Core Architecture:** Model Context Protocol Traffic Interceptor (127.0.0.1:8109)
-- **Capability:** Real-time stdio/SSE token overhead profiling, JSON-RPC frame dissection, and 70%+ token weight pruning.
-
-### 36. agent-budget-sentinel (Token Cost Circuit Breaker & Spending Radar)
+### 40. agent-budget-sentinel (Agent Budget Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
-- **Core Architecture:** BPE Tokenizer & Mid-Flight SSE Guillotine (127.0.0.1:8110/8111)
-- **Capability:** Real-time token consumption governor, sub-millisecond BPE token counting, and automated TCP termination on budget breach.
+- **Category:** Security & Network
+- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-budget-sentinel.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency spending guardrail, real-time token cost circuit breaker, and runaway loop interceptor.
 
-### 37. agent-gods-eye (Shodan OSINT Planetary Threat Radar)
-- **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
-- **Core Architecture:** Shodan OSINT Tactical Reconnaissance (127.0.0.1:8112)
-- **Capability:** 3D kinetic attack surface visualization, host vulnerability fingerprinting, and automated perimeter threat scoring.
 
-### 38. shopify-connector (Shopify GraphQL Admin & POD Sync Engine)
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 12 — SIMULATION & TESTING (2 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 32. agent-mock-twin (Agent Mock Twin)
+- **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
+- **Category:** Simulation & Testing
+- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-mock.nullai.tech)
+- **Operational Value:** Autonomous offline API mock & deterministic replay server for AI agents with $0 token spend.
+
+### 39. mcp-lens (MCP Lens)
+- **GitHub:** https://github.com/1nc0gn30/mcp-lens
+- **Category:** Simulation & Testing
+- **Execution Mode:** LOCAL_CLI • [Live App](https://mcp-lens.nullai.tech)
+- **Operational Value:** Zero-dependency real-time stdio/SSE traffic sniffer, token weight auditor, and visual playground for Model Context Protocol.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 13 — FORENSICS & TELEMETRY (1 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 34. agent-flight-recorder (Agent Flight Recorder)
+- **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
+- **Category:** Forensics & Telemetry
+- **Execution Mode:** LOCAL_CLI • [Live App](https://flight.nullai.tech)
+- **Operational Value:** Black box flight recorder & time-scrubbing telemetry forensics hub for AI agents.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 14 — SECURITY & ENCLAVE (2 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 35. agent-capsule-jail (Agent Capsule Jail)
+- **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
+- **Category:** Security & Enclave
+- **Execution Mode:** LOCAL_CLI • [Live App](https://capsule.nullai.tech)
+- **Operational Value:** Kernel enclave sandbox, resource quotas, and ephemeral process isolation for AI agents.
+
+### 36. agent-policy-auditor (Agent Policy Auditor)
+- **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
+- **Category:** Security & Enclave
+- **Execution Mode:** LOCAL_CLI • [Live App](https://policy.nullai.tech)
+- **Operational Value:** Cryptographic capability leaser, permission broker, and OWASP LLM manifest security auditor.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 15 — COMMERCE & POD (2 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 37. etsy-pod-forge (Etsy POD Forge)
+- **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
+- **Category:** Commerce & POD
+- **Execution Mode:** LOCAL_CLI • [Live App](https://pod.nullai.tech)
+- **Operational Value:** Autonomous Print-on-Demand canvas engine, lifestyle mockup compositor, and listing kit synthesizer targeting 55+ women demographic.
+
+### 59. storefront-catalog (YourDigitalSpace POD Showcase)
+- **GitHub:** https://github.com/1nc0gn30/storefront-catalog
+- **Category:** Commerce & POD
+- **Execution Mode:** BROWSER • [Live App](https://yourdigitalspace.nullai.tech)
+- **Operational Value:** 10 master Etsy Print-on-Demand products optimized for 55+ demographic with 62.6% blended profit margin, 13/13 tag sets, and dual Stripe + Solana checkout rails.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 16 — COMMERCE & MCP (8 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 38. etsy-connector (Etsy Connector)
+- **GitHub:** https://github.com/1nc0gn30/etsy-connector
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://etsy.nullai.tech)
+- **Operational Value:** Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.
+
+### 42. shopify-connector (Shopify Connector)
 - **GitHub:** https://github.com/1nc0gn30/shopify-connector
-- **Core Architecture:** Shopify GraphQL 2026 Admin API & Etsy Transpiler (127.0.0.1:8113)
-- **Capability:** Automated Etsy-to-Shopify listing transpiler, margin calculator, and multi-channel inventory synchronization.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://shopify.nullai.tech)
+- **Operational Value:** Shopify GraphQL Admin API & POD sync engine with 1-click Etsy listing transpiler, net profit simulator, and Antigravity MCP suite.
 
-### 39. agent-voice-call (Sovereign Live Voice Calling Cockpit)
-- **GitHub:** https://github.com/1nc0gn30/agent-voice-call
-- **Core Architecture:** Full-Duplex Web Audio & Voice Synthesizer (127.0.0.1:8114)
-- **Capability:** Real-time voice calls with autonomous agents, multi-persona voice synthesizer, and zero-telemetry WebSockets.
-
-### 40. printify-connector (Printify Open API v1 & 20% Margin Engine)
+### 43. printify-connector (Printify Connector)
 - **GitHub:** https://github.com/1nc0gn30/printify-connector
-- **Core Architecture:** Printify REST API v1 Client & MCP Suite (127.0.0.1:8115)
-- **Capability:** Catalog blueprint search, print provider routing, 20% Premium discount margin calculation, and 300 DPI image auditing.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://printify.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite.
 
-### 41. gelato-connector (Gelato Open API v2 & 32-Country Local POD Router)
+### 44. gelato-connector (Gelato Connector)
 - **GitHub:** https://github.com/1nc0gn30/gelato-connector
-- **Core Architecture:** Gelato v2 Order API Client & MCP Suite (127.0.0.1:8116)
-- **Capability:** 32-country domestic print routing, multi-currency conversion, local factory proximity dispatch, and tariff elimination.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://gelato.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite.
 
-### 42. pod-smart-router (Multi-Channel POD Router & Tariff Killer)
+### 46. pod-smart-router (POD Smart Router)
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
-- **Core Architecture:** Real-Time Landed Cost & Proximity Optimizer (127.0.0.1:8117)
-- **Capability:** Evaluates Printify vs Gelato landed costs in real-time, eliminates cross-border tariffs, and formats compliant dispatch JSON payloads.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-smart-router.nullai.tech)
+- **Operational Value:** Multi-channel POD order router dynamically comparing Printify (:8115) and Gelato (:8116) on landed cost, domestic proximity, delivery speed, and tariff avoidance.
 
-### 43. digital-asset-forge (300 DPI Wall Art Pack Generator)
+### 47. digital-asset-forge (Digital Asset Forge)
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
-- **Core Architecture:** Mathematical Multi-Ratio Pack Engine (127.0.0.1:8118)
-- **Capability:** 5-ratio master resolution formatting at 300 DPI (2:3, 3:4, 4:5, 11:14, ISO), Etsy 20MB multi-zip splitting, customer printing guides, and 98% net margins.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://digital-asset-forge.nullai.tech)
+- **Operational Value:** High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB multi-zip splitting.
 
-### 44. pod-mockup-forge (Autonomous Lifestyle Mockup Synthesis)
+### 48. pod-mockup-forge (POD Mockup Forge)
 - **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
-- **Core Architecture:** Photorealistic Perspective & Lighting Composite Engine (127.0.0.1:8119)
-- **Capability:** Multi-angle lifestyle mockup rendering (flat lay, hanger, model, interior wall), fabric displacement texture blending, and 2000x2000 Etsy-optimized export.
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-mockup-forge.nullai.tech)
+- **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor.
 
-### 45. pod-margin-sentinel (Autonomous Profit Sentinel & Break-Even Matrix)
+### 49. pod-margin-sentinel (POD Margin Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
-- **Core Architecture:** Algorithmic P&L Fee Engine & Break-Even Simulator (127.0.0.1:8120)
-- **Capability:** Real-time net margin velocity, Etsy 2026 15% Offsite Ads sensitivity, multi-platform comparison (Shopify, TikTok Shop), coupon discount safety stress matrix, and 1-click bulk CSV pricing export.
-
----
-
+- **Category:** Commerce & MCP
+- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-margin-sentinel.nullai.tech)
+- **Operational Value:** Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  QUICK-START: UPDATING & RUNNING
+##  CADRE 17 — VOICE & REAL-TIME (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-```bash
-# Update Zoth Studio to latest release:
-zoth-update-studio
+### 45. agent-voice-call (Agent Voice Call)
+- **GitHub:** https://github.com/1nc0gn30/agent-voice-call
+- **Category:** Voice & Real-Time
+- **Execution Mode:** LOCAL_CLI • [Live App](https://call.nullai.tech)
+- **Operational Value:** Autonomous sovereign real-time voice cockpit, live audio WebSocket streaming, multi-persona voice synthesizer, and zero-telemetry call protocol.
 
-# Check update status without modifying:
-zoth-update-studio --check
+### 55. likeness-desk (Likeness Desk (AI Video Double))
+- **GitHub:** https://github.com/1nc0gn30/likeness-desk
+- **Category:** Voice & Real-Time
+- **Execution Mode:** LOCAL_CLI
+- **Operational Value:** Local video double on GPU; Chatterbox Turbo voice cloning and Wav2Lip photorealistic mouth animation on Quadro P1000 with zero cloud leakage.
 
-# Launch Zoth Studio:
-zoth-studio
-
-# Package manager integration:
-zoth-pkg update studio
-zoth-pkg list
-```
-
-*ZOTHOS Linux — Sovereign Operating System · NullAI Tech*

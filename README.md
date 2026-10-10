@@ -60,6 +60,7 @@
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node v26, Python 3.12, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **215+ Verified Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
+| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (19 WebGPU + 40 Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -310,6 +311,49 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 | **Nous Hermes Agent** | `hermes` | Yes (Local Models) | Autonomous agent runner with 70+ built-in developer skills. |
 | **OpenAI Codex CLI** | `codex` | No (Cloud API) | Fast terminal code generation and interactive diff patch assistant. |
 | **Ollama Model Runtime** | `ollama serve` | 100% Offline | Resident local LLM engine running Qwen 2.5 Coder, Llama 3.2, and DeepSeek. |
+
+---
+
+## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
+
+ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (19 In-Browser WebGPU/WASM + 40 Sovereign Enclave Workstations):
+
+### 1. The 22 Resident Loopback Daemons (Zero-Cloud Egress)
+Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
+
+| Port | Daemon Service | Technology | Operational Function |
+| :--- | :--- | :--- | :--- |
+| **`:8094`** | `neuro-memory-daemon` | Python / SQLite | Biological STDP synaptic vector memory & 3D Cosmic Nebula. |
+| **`:8095/:8096`** | `agent-egress-sentinel` | Python / TLS SNI | Autonomous zero-dependency network proxy & telemetry blocker. |
+| **`:8097`** | `agent-mock-twin` | Python / JSON-RPC | Deterministic offline API replay twin for subagents. |
+| **`:8098/:8099`** | `agent-prompt-firewall` | Python / Regex AST | Inline prompt injection defense & PII redactor. |
+| **`:8104`** | `agent-flight-recorder` | Python / SQLite | Immutable cryptographic black box event traces. |
+| **`:8105`** | `agent-capsule-jail` | Python / Cgroups | Linux kernel enclave sandbox with RAM/CPU quotas. |
+| **`:8106`** | `agent-policy-auditor` | Python / Ed25519 | Cryptographic capability leaser & OWASP LLM auditor. |
+| **`:8107`** | `etsy-pod-forge` | FastMCP / Pillow | Lifestyle mockup compositor & 2026 SEO tag optimizer. |
+| **`:8108`** | `etsy-connector` | FastMCP / Open API v3| Fee/margin modeling & syndicated draft product pusher. |
+| **`:8109`** | `mcp-lens` | FastMCP / Inspector | Real-time Model Context Protocol JSON-RPC 2.0 sniffer. |
+| **`:8110/:8111`** | `agent-budget-sentinel` | Python / Reverse Proxy| Real-time financial circuit breaker & LLM token spend limiter. |
+| **`:8112`** | `agent-gods-eye` | Python / Shodan | Planetary OSINT threat radar & industrial asset mapper. |
+| **`:8113`** | `shopify-connector` | FastMCP / GraphQL | Transpiles Etsy listings to Shopify draft products in ms. |
+| **`:8114`** | `agent-voice-call` | Python / WebRTC P2P | Full-duplex voice calling cockpit with P2P audio streaming. |
+| **`:8115`** | `printify-connector` | FastMCP / Open API v1| 20% Premium margins calculation & apparel routing. |
+| **`:8116`** | `gelato-connector` | FastMCP / Open API v2| Localized production routing across 32 countries. |
+| **`:8117`** | `pod-smart-router` | FastMCP / Python | Landed-cost & speed arbitration between Printify & Gelato. |
+| **`:8118`** | `digital-asset-forge` | FastMCP / Pillow | Master 300 DPI multi-ratio wall art pack generator (98% margin). |
+| **`:8119`** | `pod-mockup-forge` | FastMCP / Pillow | Photorealistic mockup studio with Lumen Matrix ink blending. |
+| **`:8120`** | `pod-margin-sentinel` | FastMCP / Math Engine| Multi-channel break-even solver & 2026 fee simulator. |
+| **`:9393`** | `zoth-civilization` | Node.js Server | 21-Agent society simulation, citizen tasks, & economic velocity. |
+| **`:5225`** | `simplex-chat` | SimpleX Peer Bus | Sovereign end-to-end encrypted agent signal mesh. |
+| **`:8787`** | `zoth-vault-daemon` | Rust / ChaCha20 | Memory-only cryptographic secrets injection engine. |
+
+### 2. Strict Thermal & Hardware Invariants
+- **CPU Thermal Ceiling**: Maintained strictly **< 55.0°C** under continuous autonomous builder cadences.
+- **Whisper-Quiet Operation**: Cooling fans locked at **0 RPM** during standard workloads via passive heat dissipation.
+- **Turbo Boost Lock**: `no_turbo = 1` enforced to prevent thermal throttling and acoustic disruption.
+- **Kokoro Voice Standby**: Kokoro TTS (`:9394`) kept strictly **OFFLINE in Thermal Guard Standby** when not actively generating speech.
+
+See the complete 59-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_TOOLS_CATALOG.md).
 
 ---
 
