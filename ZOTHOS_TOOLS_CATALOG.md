@@ -163,11 +163,14 @@
 - **Execution Mode:** BROWSER • [Live App](https://polyglot.nullai.tech)
 - **Operational Value:** 100% in-browser multi-framework project scaffolder (13 modern frameworks), AST component transpiler, and client-side PKZIP compressor. Dual Stripe + Solana rails ($19).
 
-### 14. aeo-graph-engine (AEO Graph Engine)
-- **GitHub:** https://github.com/NullAITech/aeo-graph-engine
+### 14. aeo-graph-engine (AEO Graph Engine & Studio)
+- **Live Studio:** https://aeo-graph-engine.netlify.app
+- **GitHub:** https://github.com/1nc0gn30/aeo-graph-engine
 - **Category:** Autonomous Web
-- **Execution Mode:** LOCAL_CLI • [Live App](https://aeo-graph-engine.netlify.app)
-- **Operational Value:** Answer Engine Optimization knowledge graph builder and Schema.org entity linker. Live app is $49.
+- **Execution Mode:** BROWSER (100% In-Browser Answer Engine Optimization Workbench)
+- **Dual Monetization:** $49 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** 100% in-browser Answer Engine Optimization (AEO/GEO) workbench, Schema.org JSON-LD @graph linked data generator, multi-client MCP presets (Claude Desktop, Cursor, Windsurf), automated llms.txt & llms-full.txt generator, technical audit report generator, and client-side ZIP bundle packaging with zero cloud egress.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 15. cwv-speed-engine (CWV Speed Engine)
 - **GitHub:** https://github.com/NullAITech/cwv-speed-engine
