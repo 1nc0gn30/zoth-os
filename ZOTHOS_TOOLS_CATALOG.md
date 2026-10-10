@@ -276,7 +276,13 @@
 - **Core Architecture:** Photorealistic Perspective & Lighting Composite Engine (127.0.0.1:8119)
 - **Capability:** Multi-angle lifestyle mockup rendering (flat lay, hanger, model, interior wall), fabric displacement texture blending, and 2000x2000 Etsy-optimized export.
 
+### 45. pod-margin-sentinel (Autonomous Profit Sentinel & Break-Even Matrix)
+- **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
+- **Core Architecture:** Algorithmic P&L Fee Engine & Break-Even Simulator (127.0.0.1:8120)
+- **Capability:** Real-time net margin velocity, Etsy 2026 15% Offsite Ads sensitivity, multi-platform comparison (Shopify, TikTok Shop), coupon discount safety stress matrix, and 1-click bulk CSV pricing export.
+
 ---
+
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
