@@ -81,11 +81,14 @@
 ##  CADRE 4 — AI & KNOWLEDGE (3 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 6. deepsearch-research-agent (DeepSearch Research Agent)
+### 6. deepsearch-research-agent (DeepSearch Research Agent & Studio)
+- **Live Studio:** https://deepsearch.nullai.tech
 - **GitHub:** https://github.com/NullAITech/deepsearch-research-agent
 - **Category:** AI & Knowledge
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Autonomous multi-source research agent with grounded inline citations and web scraping.
+- **Execution Mode:** BROWSER (100% In-Browser Autonomous Deep Research & Consensus Synthesis)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Autonomous multi-source deep research agent with recursive Tree-of-Thought query decomposition, 5-stage research planner, empirical claims cross-corroboration consensus matrix, calibrated confidence mathematical scoring, interactive SVG visual benchmarks, and zero cloud telemetry.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 7. promptmaster-studio (PromptMaster Studio)
 - **Live Studio:** https://promptmaster-studio.netlify.app
