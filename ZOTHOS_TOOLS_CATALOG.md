@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #  ZOTHOS — 59-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.0
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  100% Workstation Coverage in Zoth Studio v2 (19 Browser + 40 Enclaves)
+#  100% Workstation Coverage in Zoth Studio v2 (23 Browser + 36 Enclaves)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
@@ -128,8 +128,8 @@
 ### 12. web-security-guard (Web Security Guard)
 - **GitHub:** https://github.com/NullAITech/web-security-guard
 - **Category:** Security & Recon
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Security headers auditor, CSP validator, and WAF protection scanner.
+- **Execution Mode:** BROWSER • [Live App](https://websecurity.nullai.tech)
+- **Operational Value:** 100% in-browser client-side security headers auditor, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and WCAG 2.2 simulator. Dual Stripe + Solana rails.
 
 ### 41. agent-gods-eye (Agent God)
 - **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
@@ -239,20 +239,20 @@
 ### 17. subsweep-lead-scanner (SubSweep Lead Scanner)
 - **GitHub:** https://github.com/NullAITech/subsweep-lead-scanner
 - **Category:** Automation
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Subdomain recon scanner and OSINT lead enrichment engine.
+- **Execution Mode:** BROWSER • [Live App](https://subsweep.nullai.tech)
+- **Operational Value:** 100% in-browser subdomain recon scanner, attack surface analyzer, and OSINT lead enrichment engine. Dual Stripe + Solana rails.
 
 ### 18. omnipost-social-engine (OmniPost Social Engine)
 - **GitHub:** https://github.com/NullAITech/omnipost-social-engine
 - **Category:** Automation
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Multi-platform social content scheduler and cross-post automation engine.
+- **Execution Mode:** BROWSER • [Live App](https://omnipost.nullai.tech)
+- **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, and MCP client config generator with zero cloud egress. Dual Stripe + Solana rails.
 
 ### 19. cron-rhythm-studio (CronRhythm Studio)
 - **GitHub:** https://github.com/NullAITech/cron-rhythm-studio
 - **Category:** Automation
-- **Execution Mode:** LOCAL_CLI • [Live App](https://cronrhythm.nullai.tech)
-- **Operational Value:** Cron expression rhythm visualizer, scheduler simulator, and task trigger matrix.
+- **Execution Mode:** BROWSER • [Live App](https://cronrhythm.nullai.tech)
+- **Operational Value:** 100% in-browser cron expression rhythm visualizer, scheduler simulator, and task trigger matrix with dual checkout rails.
 
 ### 20. certpath-roadmap-studio (CertPath Roadmap Studio)
 - **GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
