@@ -151,8 +151,8 @@
 ### 13. polyglot-framework-exporter (Polyglot Framework Exporter)
 - **GitHub:** https://github.com/NullAITech/polyglot-framework-exporter
 - **Category:** Autonomous Web
-- **Execution Mode:** WEBGPU
-- **Operational Value:** In-browser exporter from React/JSX code to HTML/CSS, Vue, Svelte, and Solid.js framework outputs.
+- **Execution Mode:** BROWSER • [Live App](https://polyglot.nullai.tech)
+- **Operational Value:** 100% in-browser multi-framework project scaffolder (13 modern frameworks), AST component transpiler, and client-side PKZIP compressor. Dual Stripe + Solana rails ($19).
 
 ### 14. aeo-graph-engine (AEO Graph Engine)
 - **GitHub:** https://github.com/NullAITech/aeo-graph-engine
