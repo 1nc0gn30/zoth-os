@@ -88,10 +88,13 @@
 - **Operational Value:** Autonomous multi-source research agent with grounded inline citations and web scraping.
 
 ### 7. promptmaster-studio (PromptMaster Studio)
-- **GitHub:** https://github.com/NullAITech/promptmaster-studio
+- **Live Studio:** https://promptmaster-studio.netlify.app
+- **GitHub:** https://github.com/1nc0gn30/promptmaster-studio
 - **Category:** AI & Knowledge
-- **Execution Mode:** LOCAL_CLI • [Live App](https://promptmaster-studio.netlify.app)
-- **Operational Value:** In-browser prompt optimizer. AST linting, scoring, and token costs stay in the browser. Pro is $19, and the live page has a free plan.
+- **Execution Mode:** BROWSER (100% In-Browser Prompt Engineering & Meta-Optimization Studio)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Real-time client-side AST prompt linter (negative constraints, vague directives, injection risks), multi-model rewrites (Claude XML, OpenAI, Gemini, CoT), live token cost estimator, side-by-side prompt diffing, and local Git-like version history with zero telemetry.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 26. webmcp-protocol-inspector (WebMCP Protocol Suite)
 - **GitHub:** https://github.com/NullAITech/zoth-studio-v2

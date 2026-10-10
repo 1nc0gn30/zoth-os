@@ -60,7 +60,7 @@
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node v26, Python 3.12, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **215+ Verified Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
-| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (24 In-Browser WebGPU/Client + 35 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
+| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (25 In-Browser WebGPU/Client + 34 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -316,7 +316,7 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (24 In-Browser WebGPU & Client Workstations + 35 Sovereign Enclave Workstations):
+ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (25 In-Browser WebGPU & Client Workstations + 34 Sovereign Enclave Workstations):
 
 ### 1. The 22 Resident Loopback Daemons (Zero-Cloud Egress)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
@@ -348,7 +348,7 @@ Every backend capability runs as an isolated daemon on localhost loopback (`127.
 | **`:8787`** | `zoth-vault-daemon` | Rust / ChaCha20 | Memory-only cryptographic secrets injection engine. |
 
 ### 2. Autonomous Client-Side Micro-SaaS Conversions & Dual Monetization Rails
-Recent sovereign hardening cadences have ported key tools (`subsweep-lead-scanner`, `omnipost-social-engine`, `web-security-guard`, `jwt-inspector-guard`, `payload-entropy-studio`, `pwa-manifest-builder`, `regex-droid-builder`, `schema-illustrator-studio`, `polyglot-framework-exporter`, `audiocipher-stego-engine`, `vector-search-engine`, `cron-rhythm-studio`, `osint-scout-skill`, `cyber-turtle-studio`, `datamosh-glitch-studio`, `nexus-3d-scene-studio`, `ufo-sacred-geometry`) to **100% in-browser client-side execution** requiring zero external backend cloud infrastructure.
+Recent sovereign hardening cadences have ported key tools (`subsweep-lead-scanner`, `omnipost-social-engine`, `web-security-guard`, `jwt-inspector-guard`, `payload-entropy-studio`, `pwa-manifest-builder`, `regex-droid-builder`, `schema-illustrator-studio`, `polyglot-framework-exporter`, `audiocipher-stego-engine`, `vector-search-engine`, `promptmaster-studio`, `cron-rhythm-studio`, `osint-scout-skill`, `cyber-turtle-studio`, `datamosh-glitch-studio`, `nexus-3d-scene-studio`, `ufo-sacred-geometry`) to **100% in-browser client-side execution** requiring zero external backend cloud infrastructure.
 - **Instant Client Utility**: AST linting, Web Crypto SHA-384 hashing, L-System generation, and DoH reconnaissance execute 100% in the browser.
 - **Dual Monetization Funnel**: Glassmorphic sales banner ($19 founding lifetime vs $79 regular), dual Stripe + Solana DePay checkout rails, frosted glass output paywall blurs, and 1-click license unlocks (`?licensed=true`).
 - **Triple-Viewport Automated Verification**: Headless Chrome tests verify 0 console errors and 0px horizontal overflow across mobile (390px), tablet (820px), and desktop (1425px).
