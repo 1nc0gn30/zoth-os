@@ -277,11 +277,11 @@
 - **Execution Mode:** BROWSER • [Live App](https://anderson-security-sentinel.netlify.app)
 - **Operational Value:** Tri-transceiver synthetic aperture array, differential RF wall discriminator, real-time AoA & optical camera tracking.
 
-### 50. audiocipher-stego-engine (AudioCipher Stego Engine)
+### 50. audiocipher-stego-engine (AudioCipher Stego Studio)
 - **GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
 - **Category:** Security & OpSec
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Audio-keyed authenticated cryptography, PCM WAV audio steganography (LSB hiding), and Morse code spectrogram synthesizer with FastMCP server.
+- **Execution Mode:** BROWSER • [Live App](https://audiocipher.nullai.tech)
+- **Operational Value:** 100% in-browser acoustic cryptography, PCM audio LSB steganography, DTMF Goertzel decoder, ITU Morse synthesizer, and ultrasonic BFSK air-gap modem. Dual Stripe + Solana rails ($19).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
