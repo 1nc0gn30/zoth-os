@@ -116,14 +116,14 @@
 ### 10. jwt-inspector-guard (JWT Inspector Guard)
 - **GitHub:** https://github.com/NullAITech/jwt-inspector-guard
 - **Category:** Security & Recon
-- **Execution Mode:** WEBGPU
-- **Operational Value:** In-browser JWT token decoder, cryptographic signature validator, and auth claim auditor.
+- **Execution Mode:** BROWSER • [Live App](https://jwtguard.nullai.tech)
+- **Operational Value:** Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor. Dual Stripe + Solana rails ($19).
 
 ### 11. payload-entropy-studio (Payload Entropy Studio)
 - **GitHub:** https://github.com/NullAITech/payload-entropy-studio
 - **Category:** Security & Recon
-- **Execution Mode:** WEBGPU
-- **Operational Value:** In-browser Shannon entropy analysis tool for detecting obfuscated web shells and encrypted payloads.
+- **Execution Mode:** BROWSER • [Live App](https://entropystudio.nullai.tech)
+- **Operational Value:** In-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Dual Stripe + Solana rails ($19).
 
 ### 12. web-security-guard (Web Security Guard)
 - **GitHub:** https://github.com/NullAITech/web-security-guard
