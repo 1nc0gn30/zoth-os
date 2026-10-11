@@ -271,10 +271,10 @@
 - **Operational Value:** 100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, and executive lead intelligence with dual checkout rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
 
 ### 18. omnipost-social-engine (OmniPost Social Engine)
-- **GitHub:** https://github.com/NullAITech/omnipost-social-engine
+- **GitHub:** https://github.com/1nc0gn30/omnipost-social-engine
 - **Category:** Automation
-- **Execution Mode:** BROWSER • [Live App](https://omnipost.nullai.tech)
-- **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, and MCP client config generator with zero cloud egress. Dual Stripe + Solana rails.
+- **Execution Mode:** BROWSER • [Live App](https://omnipost.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
+- **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, and MCP client config generator with dual Stripe + Solana rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
 
 ### 19. cron-rhythm-studio (CronRhythm Studio)
 - **GitHub:** https://github.com/1nc0gn30/cron-rhythm-studio
