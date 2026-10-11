@@ -449,7 +449,7 @@
 ### 46. pod-smart-router (POD Smart Router)
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-smart-router.nullai.tech)
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://pod-smart-router.nullai.tech)
 - **Operational Value:** Multi-channel POD order router dynamically comparing Printify (:8115) and Gelato (:8116) on landed cost, domestic proximity, delivery speed, and tariff avoidance.
 
 ### 47. digital-asset-forge (Digital Asset Forge)
