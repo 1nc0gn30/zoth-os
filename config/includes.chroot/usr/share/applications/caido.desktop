@@ -4,6 +4,7 @@ Type=Application
 Name=Zoth Caido Web Security Suite
 GenericName=Web Application Security Proxy
 Comment=Modern Rust-based Web Application Security & Auditing Proxy
+TryExec=caido
 Exec=/usr/bin/caido %U
 Icon=caido
 Terminal=false

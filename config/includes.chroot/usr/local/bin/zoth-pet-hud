@@ -6,6 +6,18 @@ set -euo pipefail
 
 PET_DIR="/opt/zoth-desktop-pet"
 
+# Optional: --pet NAME selects the companion before launch (used by the menu actions).
+if [[ "${1:-}" == "--pet" ]]; then
+    PET_ID="${2:-}"
+    if [[ ! "$PET_ID" =~ ^[a-z0-9_-]{1,32}$ ]]; then
+        echo "[!] Invalid pet name: '$PET_ID'" >&2
+        exit 2
+    fi
+    mkdir -p "$HOME/.config/zothos"
+    printf '{"petId":"%s"}\n' "$PET_ID" > "$HOME/.config/zothos/pet_config.json"
+    shift 2
+fi
+
 # Resolve Electron binary
 ELECTRON_BIN=""
 for e in /usr/local/bin/electron /usr/bin/electron /opt/electron/electron "$(which electron 2>/dev/null || true)"; do

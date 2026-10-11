@@ -4,6 +4,7 @@ Type=Application
 Name=Zoth VeraCrypt Vault
 GenericName=Disk Encryption
 Comment=Plausibly Deniable Encrypted Volumes and Drives
+TryExec=veracrypt
 Exec=veracrypt
 Icon=veracrypt
 Terminal=false

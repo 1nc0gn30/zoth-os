@@ -4,6 +4,7 @@ Type=Application
 Name=Zoth OnionShare Privacy
 GenericName=Anonymous File Sharing
 Comment=Secure and Anonymous File Sharing, Chat, and Hosting over Tor
+TryExec=onionshare
 Exec=onionshare
 Icon=onionshare
 Terminal=false
