@@ -183,7 +183,7 @@
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 21. pwa-manifest-builder (PWA Manifest Studio)
-- **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
+- **GitHub:** https://github.com/1nc0gn30/pwa-manifest-builder
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://pwabuilder.nullai.tech)
 - **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Dual Stripe + Solana rails ($19).
