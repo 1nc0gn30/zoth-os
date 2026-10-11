@@ -437,8 +437,8 @@
 ### 43. printify-connector (Printify Connector)
 - **GitHub:** https://github.com/1nc0gn30/printify-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://printify.nullai.tech)
-- **Operational Value:** Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://printify.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 44. gelato-connector (Gelato Connector)
 - **GitHub:** https://github.com/1nc0gn30/gelato-connector
