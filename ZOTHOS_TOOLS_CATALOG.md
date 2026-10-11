@@ -212,10 +212,12 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 16. vision-gesture-control (Vision Gesture Control)
-- **GitHub:** https://github.com/NullAITech/vision-gesture-control
+- **GitHub:** https://github.com/1nc0gn30/vision-gesture-control
 - **Category:** Media & 3D
-- **Execution Mode:** WEBGPU
-- **Operational Value:** In-browser MediaPipe webcam hand-gesture recognition interface controller.
+- **Execution Mode:** BROWSER • [Live App](https://vision-gesture-control.netlify.app)
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** 100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivity with sub-15ms client latency.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 28. badge3d-coin-generator (Badge3D Coin Generator)
 - **GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
