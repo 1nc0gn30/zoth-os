@@ -29,13 +29,13 @@ KALI_LIST="/etc/apt/sources.list.d/kali.list"
 PARROT_LIST="/etc/apt/sources.list.d/parrot.list"
 if [[ -f "$KALI_LIST" ]] && ! grep -qE '^deb ' "$KALI_LIST"; then
     cat > "$KALI_LIST" << 'KALEOF'
-deb [trusted=yes] http://http.kali.org/kali kali-rolling main non-free non-free-firmware
+deb [signed-by=/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg] https://http.kali.org/kali kali-rolling main non-free non-free-firmware
 KALEOF
     echo "[REPO] Kali enabled"
 fi
 if [[ -f "$PARROT_LIST" ]] && ! grep -qE '^deb ' "$PARROT_LIST"; then
     cat > "$PARROT_LIST" << 'PARROTEOF'
-deb [trusted=yes] http://deb.parrot.sh/parrot parrot main non-free non-free-firmware
+deb [signed-by=/etc/apt/trusted.gpg.d/parrot-archive-keyring.gpg] https://deb.parrot.sh/parrot parrot main non-free non-free-firmware
 PARROTEOF
     echo "[REPO] Parrot enabled"
 fi
@@ -124,7 +124,7 @@ if [[ $ONLINE -eq 1 ]]; then
     # ── 6. Rust Toolchain ─────────────────────────────────────────────────────
     if ! command -v rustc &>/dev/null; then
         echo "[RUST] Installing Rust toolchain..."
-        curl --connect-timeout 5 --max-time 30 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path 2>/dev/null || true
+        curl --proto =https --tlsv1.2 --connect-timeout 5 --max-time 30 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path 2>/dev/null || true
     fi
 
     # ── 7. Go Tools ───────────────────────────────────────────────────────────
@@ -137,7 +137,7 @@ if [[ $ONLINE -eq 1 ]]; then
     # ── 8. Ollama (Local LLM Runtime) ─────────────────────────────────────────
     if ! command -v ollama &>/dev/null; then
         echo "[OLLAMA] Installing Ollama local LLM runtime..."
-        curl --connect-timeout 5 --max-time 30 -fsSL https://ollama.ai/install.sh | sh 2>/dev/null || true
+        curl --proto =https --tlsv1.2 --connect-timeout 5 --max-time 30 -fsSL https://ollama.ai/install.sh | sh 2>/dev/null || true
     fi
 
     # ── 9. Pull git repos (templates, arsenal, appimages) ─────────────────────

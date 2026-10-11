@@ -683,7 +683,14 @@ async def run_daemon_server():
             pass
     server = await asyncio.start_unix_server(handle_ipc_client, path=sock_path)
     log(f"Zoth Sentinel AI Daemon started on socket {sock_path}", "START")
-    os.chmod(sock_path, 0o666)
+    # Not world-writable (audit: py/overly-permissive-file). Root + the admin group only.
+    try:
+        import grp
+        gid = grp.getgrnam(os.environ.get("ZOTH_SENTINEL_GROUP", "sudo")).gr_gid
+        os.chown(sock_path, 0, gid)
+        os.chmod(sock_path, 0o660)
+    except (KeyError, PermissionError, OSError):
+        os.chmod(sock_path, 0o600)
 
     # Link /run socket if directory is writable
     if os.path.isdir("/run") and os.access("/run", os.W_OK):

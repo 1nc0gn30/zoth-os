@@ -1,0 +1,31 @@
+#!/bin/sh
+# ZOTHOS secure-by-default service policy (audit 2026-10, P0-3).
+# Debian packages enable their own services on install; the live image should not
+# start network-facing servers with default credentials. Everything stays
+# installed; enable what you need with `sudo systemctl enable --now <unit>`.
+set -e
+
+for unit in beef-xss.service nginx.service caddy.service postgresql.service \
+            exim4.service rpcbind.service rpcbind.socket bloodhound.service \
+            neo4j.service libvirtd.service libvirtd.socket docker.service docker.socket \
+            containerd.service apache2.service smbd.service nmbd.service; do
+    systemctl disable "$unit" >/dev/null 2>&1 || true
+done
+
+# Default-deny inbound firewall (ufw over nftables). Outbound stays open.
+if command -v ufw >/dev/null 2>&1; then
+    sed -i 's/^DEFAULT_INPUT_POLICY=.*/DEFAULT_INPUT_POLICY="DROP"/; s/^DEFAULT_OUTPUT_POLICY=.*/DEFAULT_OUTPUT_POLICY="ACCEPT"/; s/^DEFAULT_FORWARD_POLICY=.*/DEFAULT_FORWARD_POLICY="DROP"/' /etc/default/ufw 2>/dev/null || true
+    sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf 2>/dev/null || true
+    systemctl enable ufw.service >/dev/null 2>&1 || true
+fi
+
+# Ollama: loopback only (the systemd unit already sets 127.0.0.1; keep it that way).
+if [ -f /etc/systemd/system/ollama.service.d/override.conf ]; then
+    sed -i 's/OLLAMA_HOST=0\.0\.0\.0/OLLAMA_HOST=127.0.0.1/' /etc/systemd/system/ollama.service.d/override.conf
+fi
+
+# BeEF must never run with its shipped default password.
+if [ -f /etc/beef-xss/config.yaml ]; then
+    sed -i 's/^\(\s*passwd:\s*\)"beef"/\1"CHANGE-ME-BEFORE-ENABLING"/' /etc/beef-xss/config.yaml || true
+fi
+exit 0

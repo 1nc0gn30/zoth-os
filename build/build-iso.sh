@@ -57,7 +57,15 @@ echo -e "${CYAN}[3/6] Initializing live-build configuration...${RESET}"
 # ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
-export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
+# --- Reproducibility (audit §8) ------------------------------------------------
+# Pin every timestamp to the last git commit unless the caller sets it.
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$PROJECT_DIR" log -1 --format=%ct 2>/dev/null || date +%s)}"
+export TZ=UTC LC_ALL=C.UTF-8
+# Deterministic squashfs: fixed inode/file times, single fixed sort, no build-host clock.
+export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G -mkfs-time $SOURCE_DATE_EPOCH -all-time $SOURCE_DATE_EPOCH -no-exports"
+# Optional: pin the Debian archive to a snapshot.debian.org date (e.g. 20261003T000000Z)
+# so package versions are fixed. Unset = live mirror (not reproducible).
+ZOTHOS_SNAPSHOT="${ZOTHOS_SNAPSHOT:-}"
 
 lb config \
     --distribution trixie \
@@ -72,15 +80,31 @@ lb config \
     --linux-flavours amd64 \
     --linux-packages linux-image \
     --bootappend-live "boot=live components username=zoth hostname=zothos quiet splash systemd.unit=graphical.target" \
-    --apt-secure false \
-    --apt-options "--yes --ignore-missing"
+    --apt-secure true \
+    --apt-options "--yes --ignore-missing" \
+    ${ZOTHOS_SNAPSHOT:+--mirror-bootstrap "https://snapshot.debian.org/archive/debian/$ZOTHOS_SNAPSHOT/" --mirror-chroot "https://snapshot.debian.org/archive/debian/$ZOTHOS_SNAPSHOT/" --mirror-binary "https://deb.debian.org/debian/"}
 
 # ZOTHOS-LOCALFIX: live-build reads repos from config/archives/*.list.chroot,
 # NOT config/apt/sources.list.d (that dir was silently ignored, so Kali/Parrot
 # packages were never available in the previous builds).
 mkdir -p "$WORK_DIR/config/archives"
+# Signature checking stays ON (audit P0-4): third-party archives are verified
+# against keyrings shipped in this repo, after checking their pinned fingerprints.
+KALI_KEY_FPR="827C8569F2518CC677FECA1AED65462EC8D5E4C5"     # kali.org/docs/introduction/download-images-securely
+PARROT_KEY_FPR="B711822346552E4D92DA02DF7A8286AF0E81EE4A"   # Parrot Project (2024-2026)
+stage_archive_key() {  # <keyring.gpg> <expected fingerprint> <out .key.chroot>
+    local fpr
+    fpr=$(gpg --show-keys --with-colons "$1" 2>/dev/null | awk -F: '/^fpr/{print $10; exit}')
+    if [ "$fpr" != "$2" ]; then
+        echo "FATAL: $1 fingerprint '$fpr' != pinned '$2'; refusing to build with an unverified archive key." >&2
+        exit 1
+    fi
+    gpg --no-default-keyring --keyring "$1" --export --armor > "$3"
+}
+KEYDIR="$PROJECT_DIR/config/includes.chroot/etc/apt/trusted.gpg.d"
+stage_archive_key "$KEYDIR/kali-archive-keyring.gpg" "$KALI_KEY_FPR" "$WORK_DIR/config/archives/kali.key.chroot"
 cat > "$WORK_DIR/config/archives/kali.list.chroot" << 'KALEOF'
-deb [trusted=yes] http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
+deb https://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
 KALEOF
 # Vendor apt repos for desktop apps not in Debian/Kali (Google Chrome, Element,
 # Signal), installed by build/hooks/normal/0500-zothos-desktop-apps.hook.chroot.
@@ -109,8 +133,9 @@ PREFEOF
 # using an official Parrot mirror instead. Set to true to enable.
 ENABLE_PARROT="${ENABLE_PARROT:-false}"
 if [ "$ENABLE_PARROT" = "true" ]; then
+stage_archive_key "$KEYDIR/parrot-archive-keyring.gpg" "$PARROT_KEY_FPR" "$WORK_DIR/config/archives/parrot.key.chroot"
 cat > "$WORK_DIR/config/archives/parrot.list.chroot" << 'PAROTEOF'
-deb [trusted=yes] https://parrot.mirror.garr.it/mirrors/parrot parrot main contrib non-free
+deb https://parrot.mirror.garr.it/mirrors/parrot parrot main contrib non-free
 PAROTEOF
 fi
 
@@ -205,7 +230,7 @@ echo -e "${YELLOW}[*] This will bootstrap the Debian base, fetch security & AI p
 # ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
-export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
+# (MKSQUASHFS_OPTIONS set above with SOURCE_DATE_EPOCH)
 lb build 2>&1 | tee /tmp/lb-build.log
 
 if [[ -f live-image-amd64.hybrid.iso ]]; then
