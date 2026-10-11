@@ -425,8 +425,8 @@
 ### 38. etsy-connector (Etsy Connector)
 - **GitHub:** https://github.com/1nc0gn30/etsy-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://etsy.nullai.tech)
-- **Operational Value:** Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://etsy.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous zero-dependency Etsy Open API v3 & Antigravity MCP bridge with 140-char/13-tag SEO auditor, fee/profit calculator, Printify POD payload generator, and CSV matrix export. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 42. shopify-connector (Shopify Connector)
 - **GitHub:** https://github.com/1nc0gn30/shopify-connector
