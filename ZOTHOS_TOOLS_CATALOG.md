@@ -431,8 +431,8 @@
 ### 42. shopify-connector (Shopify Connector)
 - **GitHub:** https://github.com/1nc0gn30/shopify-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://shopify.nullai.tech)
-- **Operational Value:** Shopify GraphQL Admin API & POD sync engine with 1-click Etsy listing transpiler, net profit simulator, and Antigravity MCP suite.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://shopify.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous zero-dependency Shopify GraphQL Admin API connector, 1-click Etsy-to-Shopify payload transpiler, net profit margin simulator, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 43. printify-connector (Printify Connector)
 - **GitHub:** https://github.com/1nc0gn30/printify-connector
