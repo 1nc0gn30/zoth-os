@@ -443,8 +443,8 @@
 ### 44. gelato-connector (Gelato Connector)
 - **GitHub:** https://github.com/1nc0gn30/gelato-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://gelato.nullai.tech)
-- **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://gelato.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 46. pod-smart-router (POD Smart Router)
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
