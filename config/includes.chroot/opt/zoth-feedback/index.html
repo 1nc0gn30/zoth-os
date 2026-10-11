@@ -229,7 +229,7 @@
       try {
         let res = null;
         if (window.require) {
-          const { ipcRenderer } = window.require('electron');
+          const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
           res = await ipcRenderer.invoke('send-feedback', payload);
         } else {
           res = { ok: true, file: 'spooled' };

@@ -617,8 +617,9 @@ function createWindow() {
     resizable: true,
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false,
     },
   });

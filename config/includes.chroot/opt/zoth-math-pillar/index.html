@@ -2154,7 +2154,7 @@
   </div>
 
   <script>
-    const { ipcRenderer } = require('electron');
+    const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
     let currentRegistry = {};
     let currentInsights = {};

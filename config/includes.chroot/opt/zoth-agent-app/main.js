@@ -45,8 +45,9 @@ function createWindow() {
     titleBarStyle: 'default',
     title: 'ZOTH AGENT OS // MULTI-AGENT SWARM & MCP COCKPIT',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });

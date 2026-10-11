@@ -43,8 +43,9 @@ function createGlowWindow() {
     enableLargerThanScreen: true,
     backgroundColor: '#00000000',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });
@@ -58,6 +59,12 @@ function createGlowWindow() {
 }
 
 // ── IPC: toggle / recolor from a launcher or keybind ───────────────────────
+// Cursor position for the renderer (it no longer has child_process).
+// Fixed argv, no shell, no renderer-supplied input.
+ipcMain.handle('glow-mouse-location', () => new Promise((resolve) => {
+  require('child_process').execFile('xdotool', ['getmouselocation', '--shell'], { timeout: 1000 }, (err, stdout) => resolve(err ? '' : String(stdout)));
+}));
+
 ipcMain.on('glow-toggle', () => {
   ENABLED = !ENABLED;
   if (glowWindow && !glowWindow.isDestroyed()) glowWindow.webContents.send('aura-state', { enabled: ENABLED });

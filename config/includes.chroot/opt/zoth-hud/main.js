@@ -332,8 +332,9 @@ function createWindow() {
     skipTaskbar: false,
     show: true,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true
     }
   });
 

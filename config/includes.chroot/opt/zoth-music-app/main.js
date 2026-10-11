@@ -38,8 +38,9 @@ function createWindow() {
     title: 'ZOTH MUSIC // HERMETIC AUDIO STUDIO',
     icon: '/usr/share/pixmaps/zoth-soundtrack.png',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });

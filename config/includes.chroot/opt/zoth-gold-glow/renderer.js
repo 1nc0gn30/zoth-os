@@ -8,8 +8,7 @@
 // main process often has no DISPLAY (stale reads); the renderer renders on the
 // display it reads, so self-polling is the reliable path on X11.
 
-const { ipcRenderer } = require('electron');
-const { exec } = require('child_process');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 const canvas = document.getElementById('aura');
 const ctx = canvas.getContext('2d');
@@ -69,8 +68,8 @@ function makeSparks(x, y, n) {
 // ── Cursor polling (self-poll via xdotool — reliable on the renderer's display)
 let lastX = cursor.x, lastY = cursor.y, lastT = performance.now();
 function pollCursor() {
-  exec('xdotool getmouselocation --shell 2>/dev/null', (err, stdout) => {
-    if (!err && stdout) {
+  ipcRenderer.invoke('glow-mouse-location').then((stdout) => {
+    if (stdout) {
       const r = {};
       String(stdout).trim().split('\n').forEach((l) => {
         const [k, val] = l.split('=');
@@ -86,7 +85,7 @@ function pollCursor() {
         lastX = r.x; lastY = r.y; lastT = now;
       }
     }
-  });
+  }).catch(() => {});
 }
 setInterval(pollCursor, 16);   // ~60 FPS
 

@@ -323,8 +323,9 @@ function createWindow() {
     closable: true,
     title: 'ZOTH TOOL NEXUS PRO // 153+ ARSENAL & SOVEREIGN RUNTIMES',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });

@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 // ── Theme State ─────────────────────────────────────────────────
 const THEMES = ['emerald', 'ghost', 'gold', 'cyan'];

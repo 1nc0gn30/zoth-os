@@ -74,10 +74,10 @@ function createWindow() {
     titleBarStyle: 'default',
     title: 'ZOTH WEB3 CORE // SOVEREIGN BLOCKCHAIN STUDIO & SWARM ENCLAVE',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false,
-      allowRunningInsecureContent: true
     }
   });
 

@@ -76,8 +76,9 @@ function createWindow() {
     titleBarStyle: 'default',
     title: 'ZOTH AI STACK // NEURAL COMPUTE & AGENT HARNESS COCKPIT',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });

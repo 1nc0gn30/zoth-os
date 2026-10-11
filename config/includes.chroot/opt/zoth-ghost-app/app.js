@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 let isCloaked = false;
 const masterShield = document.getElementById('master-shield');

@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 let currentAgent = 'sentinel';
 let currentModel = 'llama3.2:latest';

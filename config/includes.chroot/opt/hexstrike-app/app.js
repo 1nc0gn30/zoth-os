@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 const termOutput = document.getElementById('term-output');
 const termInput = document.getElementById('term-input');

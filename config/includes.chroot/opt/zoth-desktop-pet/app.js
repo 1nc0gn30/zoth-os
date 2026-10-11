@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Pantheon Mascot Roster & Personalities (20 Legendary Familiars)

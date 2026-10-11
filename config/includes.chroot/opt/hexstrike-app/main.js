@@ -46,8 +46,9 @@ function createWindow() {
     titleBarStyle: 'default',
     title: 'HEXSTRIKE AI // OFFENSIVE CYBER WARFARE COCKPIT',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false
     }
   });
