@@ -135,10 +135,10 @@
 - **Operational Value:** In-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Dual Stripe + Solana rails ($19).
 
 ### 12. web-security-guard (Web Security Guard)
-- **GitHub:** https://github.com/NullAITech/web-security-guard
+- **GitHub:** https://github.com/1nc0gn30/web-security-guard
 - **Category:** Security & Recon
-- **Execution Mode:** BROWSER • [Live App](https://websecurity.nullai.tech)
-- **Operational Value:** 100% in-browser client-side security headers auditor, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and WCAG 2.2 simulator. Dual Stripe + Solana rails.
+- **Execution Mode:** BROWSER • [Live App](https://securityguard.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
+- **Operational Value:** 100% in-browser client-side security headers auditor, TLS 1.3 cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and multi-framework deployment hardening exporter. Dual Stripe + Solana rails ($19).
 
 ### 41. agent-gods-eye (Agent God)
 - **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
