@@ -369,8 +369,8 @@
 ### 39. mcp-lens (MCP Lens)
 - **GitHub:** https://github.com/1nc0gn30/mcp-lens
 - **Category:** Simulation & Testing
-- **Execution Mode:** LOCAL_CLI • [Live App](https://mcp-lens.nullai.tech)
-- **Operational Value:** Zero-dependency real-time stdio/SSE traffic sniffer, token weight auditor, and visual playground for Model Context Protocol.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://mcp-lens.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous zero-dependency Model Context Protocol real-time stdio/SSE traffic sniffer, BPE token weight auditor, AST schema minifier (-35% token bloat), and Cursor & Claude export rules engine. Triple-viewport verified (0px overflow, 0 errors).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
