@@ -474,3 +474,25 @@ function decodeHexResult(hexStr) {
     return hexStr;
   }
 }
+
+// --- ZOTHOS navigation guard -------------------------------------------------
+// Windows run with nodeIntegration, so a remote page loaded into one would get
+// full Node (RCE). Keep every window on local files; open web links externally.
+{
+  const { app: __gApp, shell: __gShell } = require('electron');
+  const __isLocal = (u) => typeof u === 'string' && (u.startsWith('file://') || u.startsWith('devtools://') || u === 'about:blank');
+  __gApp.on('web-contents-created', (_e, contents) => {
+    contents.on('will-navigate', (ev, url) => {
+      if (__isLocal(url)) return;
+      ev.preventDefault();
+      if (/^https?:\/\//i.test(url)) __gShell.openExternal(url);
+    });
+    contents.on('will-redirect', (ev, url) => { if (!__isLocal(url)) ev.preventDefault(); });
+    contents.on('will-attach-webview', (ev) => ev.preventDefault());
+    contents.setWindowOpenHandler(({ url }) => {
+      if (__isLocal(url)) return { action: 'allow' };
+      if (/^https?:\/\//i.test(url)) __gShell.openExternal(url);
+      return { action: 'deny' };
+    });
+  });
+}
