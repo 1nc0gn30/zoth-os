@@ -455,8 +455,8 @@
 ### 47. digital-asset-forge (Digital Asset Forge)
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://digital-asset-forge.nullai.tech)
-- **Operational Value:** High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB multi-zip splitting.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://digital-asset-forge.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB multi-zip splitting. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 48. pod-mockup-forge (POD Mockup Forge)
 - **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
