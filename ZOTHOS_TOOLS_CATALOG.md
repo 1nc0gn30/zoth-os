@@ -397,8 +397,9 @@
 ### 36. agent-policy-auditor (Agent Policy Auditor)
 - **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
 - **Category:** Security & Enclave
-- **Execution Mode:** LOCAL_CLI • [Live App](https://policy.nullai.tech)
-- **Operational Value:** Cryptographic capability leaser, permission broker, and OWASP LLM manifest security auditor.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://policy.nullai.tech)
+- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Operational Value:** Autonomous zero-dependency capability leasing broker, permission manager, and static manifest security auditor enforcing time-bound HMAC leases and OWASP LLM compliance.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
