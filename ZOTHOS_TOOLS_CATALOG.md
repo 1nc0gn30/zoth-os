@@ -265,10 +265,10 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 17. subsweep-lead-scanner (SubSweep Lead Scanner)
-- **GitHub:** https://github.com/NullAITech/subsweep-lead-scanner
+- **GitHub:** https://github.com/1nc0gn30/subsweep-lead-scanner
 - **Category:** Automation
-- **Execution Mode:** BROWSER • [Live App](https://subsweep.nullai.tech)
-- **Operational Value:** 100% in-browser subdomain recon scanner, attack surface analyzer, and OSINT lead enrichment engine. Dual Stripe + Solana rails.
+- **Execution Mode:** BROWSER • [Live App](https://subsweep.nullai.tech) • [Headless Verified: 100% PASS]
+- **Operational Value:** 100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, and executive lead intelligence with dual checkout rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
 
 ### 18. omnipost-social-engine (OmniPost Social Engine)
 - **GitHub:** https://github.com/NullAITech/omnipost-social-engine
