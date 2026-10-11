@@ -352,7 +352,7 @@
 ### 40. agent-budget-sentinel (Agent Budget Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
 - **Category:** Security & Network
-- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-budget-sentinel.nullai.tech)
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-budget-sentinel.nullai.tech)
 - **Operational Value:** Autonomous zero-dependency spending guardrail, real-time token cost circuit breaker, and runaway loop interceptor.
 
 
