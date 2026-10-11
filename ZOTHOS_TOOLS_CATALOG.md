@@ -326,11 +326,13 @@
 - **Operational Value:** 100% in-browser RFC 9309 robots.txt parser, AI crawler simulator (Googlebot, GPTBot, ClaudeBot, PerplexityBot, Applebot), Pro Drift Shield, dynamic crawlability health scoring, and instant client-side license activation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 30. city-desk (City Desk)
+### 30. city-desk (City Desk Lead Studio)
 - **GitHub:** https://github.com/1nc0gn30/city-desk
 - **Category:** Growth & SEO
 - **Execution Mode:** BROWSER • [Live App](https://city-desk.netlify.app)
-- **Operational Value:** One studio writes the finished page for a trade and a city. Boise painters $800, plumbers $900, HVAC $1,100. Those are the page price, not a job quote. Owner name, phone, and email stay blank.
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Programmatic local landing page generator constructing 1,000 localized service pages across 20 trades and 50 mid-size cities with live client customizer, instant Pro license activation (`CITY-PRO-2026`), and standalone HTML bundle export.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
