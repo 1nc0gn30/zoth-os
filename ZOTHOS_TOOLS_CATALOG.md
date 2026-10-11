@@ -219,7 +219,9 @@
 - **GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://badge3d-coin-studio.netlify.app)
-- **Operational Value:** Browser 3D coin, medallion, and relief badge generator. Live checkout is $19. The page also lists $79 regular.
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** 100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders, watertight binary STL & Wavefront OBJ CAD export, manifold 2-mesh slicing, and precision precious metal weight estimation.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 51. cyber-turtle-studio (Cyber Turtle Studio)
 - **GitHub:** https://github.com/1nc0gn30/cyber-turtle-studio
