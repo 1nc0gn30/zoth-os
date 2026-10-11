@@ -346,8 +346,9 @@
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
 - **Category:** Security & Network
-- **Execution Mode:** LOCAL_CLI • [Live App](https://firewall.nullai.tech)
-- **Operational Value:** Autonomous inline prompt injection defense, PII redactor, and threat radar for AI agents.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://firewall.nullai.tech)
+- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Operational Value:** Autonomous inline prompt injection defense, secret/PII redactor, and kinetic threat radar for AI agents with real-time AST/semantic inspection and SOC-2 audit export.
 
 ### 40. agent-budget-sentinel (Agent Budget Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
