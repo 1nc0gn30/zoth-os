@@ -340,8 +340,9 @@
 ### 31. agent-egress-sentinel (Agent Egress Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-egress-sentinel
 - **Category:** Security & Network
-- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-egress.nullai.tech)
-- **Operational Value:** Autonomous zero-dependency network interceptor, TLS SNI sniffer, and kinetic egress radar.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-egress.nullai.tech)
+- **Operational Value:** Autonomous zero-dependency network interceptor, TLS SNI sniffer, kinetic egress radar, and kernel quarantine with dual Stripe + Solana rails.
+- **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) • [DePay Solana](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19)
 
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
