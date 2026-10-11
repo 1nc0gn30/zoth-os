@@ -1,0 +1,45 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  lint:
+    name: Syntax and policy checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Shell syntax (bash -n)
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r -d '' f; do
+            head -1 "$f" | grep -qE '^#!.*(ba)?sh' || continue
+            bash -n "$f" || { echo "::error file=$f::bash syntax error"; fail=1; }
+          done < <(find build tools config/includes.chroot/usr/local/bin config/hooks build/hooks -type f -print0 2>/dev/null)
+          exit $fail
+      - name: Python syntax
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r -d '' f; do
+            if [[ "$f" == *.py ]] || head -1 "$f" | grep -q python; then
+              python3 -W ignore -m py_compile "$f" || { echo "::error file=$f::python syntax error"; fail=1; }
+            fi
+          done < <(find build tools config/includes.chroot/usr/local/bin config/includes.chroot/opt -type f \( -name '*.py' -o -perm -u+x \) -not -path '*/node_modules/*' -not -path '*/vendor/*' -print0)
+          exit $fail
+      - name: JavaScript syntax (Electron mains)
+        run: |
+          set -euo pipefail
+          for f in config/includes.chroot/opt/*/main.js; do [ -L "$(dirname "$f")" ] || node --check "$f"; done
+      - name: Security policy guards (audit regressions)
+        run: |
+          set -euo pipefail
+          ! grep -rn -- '--apt-secure false' build/ || { echo "::error::apt signature checking must stay on"; exit 1; }
+          ! grep -rnE '^deb \[trusted=yes\] https?://' build/ config/includes.chroot/usr/local/bin/ || { echo "::error::no trusted=yes network archives"; exit 1; }
+          ! grep -rn 'OLLAMA_HOST=0.0.0.0' config/includes.chroot/etc || { echo "::error::Ollama must bind loopback"; exit 1; }
+          ! grep -n 'shell=True' config/includes.chroot/usr/local/bin/zoth-bridge || { echo "::error::zoth-bridge must never run request data through a shell"; exit 1; }

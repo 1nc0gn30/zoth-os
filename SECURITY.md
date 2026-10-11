@@ -1,87 +1,65 @@
-# Security Policy & Cryptographic Verification
+# Security Policy
 
-The ZothOS engineering philosophy adheres to the **Sovereign Zero-Leak Standard** and third-party auditable cryptographic provenance. We believe security claims must be verifiable by anyone without trusting self-reported labels or marketing badges.
+ZOTHOS is a one-maintainer Debian-based distribution. This page says plainly what
+is and is not in place today, so you can decide how much to trust it.
 
----
+## Supported versions
 
-## 1. Supported Versions
+| Version | Status |
+|---|---|
+| 3.1.x | Current. Fixes land on `main` and in the next release. |
+| < 3.1 | Not supported. |
 
-| Version | Status | Security Updates | Provenance |
-| :--- | :--- | :--- | :--- |
-| **v3.1.x** | **Active / Current** | Supported (Rolling upstream Debian Trixie/Sid + Zoth kernel) | Sigstore Signed + Rekor Verified |
-| **v3.0.x** | Deprecated | Critical fixes only | Checksum verified |
-| **v1.x** | Archived | End of life | Legacy |
+## Reporting a vulnerability
 
----
+- Email **neal@nealfrazier.tech** with "ZOTHOS security" in the subject, or use
+  GitHub's **private vulnerability reporting** on this repo (Security → Report a vulnerability).
+- Please don't open public issues for undisclosed vulnerabilities.
+- We aim to acknowledge within 3 days and to ship a fix or mitigation for
+  high/critical issues within 30 days. You'll be credited in the release notes unless you prefer not to be.
 
-## 2. Cryptographic Release Verification (Sigstore Cosign)
+## Known security properties of the live image (read this)
 
-Every official ZothOS ISO release is cryptographically signed using **Sigstore (`cosign`)** and logged to the public **Rekor Transparency Log**. You do not have to blindly trust an ISO hash posted on a website—anyone can verify that the checksum was signed by the legitimate project release key and recorded in the append-only transparency ledger.
+These are deliberate choices for a live/pentest desktop. They are **not safe for a
+machine on an untrusted network** without changes.
 
-### How to Verify the ZothOS ISO
+| Behaviour | Detail | How to change it |
+|---|---|---|
+| **Fixed passwords, reset on every boot** | `zoth-auth-init` (runs before the login manager) sets the passwords for `zoth`, `azoth` **and `root`** to `zoth` on every boot, so changing them with `passwd` does not persist across reboots. | Disable the unit: `sudo systemctl disable zoth-auth-init`, then set your own passwords. |
+| **Passwordless sudo** | `zoth` and `azoth` have `NOPASSWD: ALL` (`/etc/sudoers.d/99-zoth-users`). Combined with the known password, anyone with local or remote shell access as these users is root. | Remove that file (`sudo visudo -f /etc/sudoers.d/99-zoth-users`). |
+| **Third-party package sources** | Kali rolling and Parrot are enabled at low pin priority (100) next to Debian trixie. | Remove `/etc/apt/sources.list.d/{kali,parrot}.list`. |
+| **`curl \| sh` installers** | Some optional tool installers (Ollama, uv, rustup, Foundry, Starship, Tailscale, Claude CLI) run the vendor's install script. They are forced to https/TLS 1.2 and fail on HTTP errors, but the scripts themselves are not pinned or checksummed because vendors change them without versioning. | Prefer Debian packages or verified release binaries. |
 
-1. **Install `cosign`** (if not already installed):
-   ```bash
-   # Linux / macOS (Homebrew or binary release)
-   curl -sSfL https://raw.githubusercontent.com/sigstore/cosign/main/install.sh | sh
-   ```
+## What was hardened (Oct 2026, after the third-party audit)
 
-2. **Download the Release Artifacts**:
-   * `zothos-3.1-amd64.iso`
-   * `zothos-3.1-amd64.iso.sha256`
-   * `zothos-3.1-amd64.iso.sha256.bundle` (Sigstore transparency bundle)
-   * `cosign.pub` (Official public key)
+- `zoth-bridge` (127.0.0.1:8199): the unauthenticated `/api/exec` shell endpoint was **removed**. App launching is token-protected, allowlisted, and never uses a shell. Host/Origin checks block drive-by requests from websites.
+- Zoth OS desk (`/opt/zoth-os/serve.py`): cross-origin and DNS-rebinding POSTs are rejected.
+- Network services that packages enable on install (BeEF, nginx, caddy, PostgreSQL, exim4, rpcbind, BloodHound, libvirt, Docker...) are **disabled** in the image; a **default-deny inbound ufw firewall** is enabled. BeEF's default password is replaced.
+- Ollama listens on `127.0.0.1` only and accepts browser requests from local pages only.
+- The ISO build runs with **APT signature checking on**; Kali/Parrot archives are verified against keyrings whose fingerprints are pinned in `build/build-iso.sh`.
+- `zoth-sentinel`'s root IPC socket is no longer world-writable.
+- Electron apps block navigation to remote pages and `<webview>`; several are moving to `contextIsolation`.
 
-3. **Verify the Sigstore Cryptographic Signature & Rekor Log**:
-   ```bash
-   cosign verify-blob \
-     --key cosign.pub \
-     --bundle zothos-3.1-amd64.iso.sha256.bundle \
-     zothos-3.1-amd64.iso.sha256
-   ```
-   *Expected output: `Verified OK`*
+## Release verification
 
-4. **Verify the ISO SHA-256 Checksum**:
-   ```bash
-   sha256sum -c zothos-3.1-amd64.iso.sha256
-   ```
-   *Expected output: `zothos-3.1-amd64.iso: OK`*
+Releases published after this change get a `SHA256SUMS` file signed with Sigstore
+cosign (keyless, from GitHub Actions) plus SLSA build provenance. **v3.1.0 and
+earlier are not signed**; only their checksums exist. See [docs/VERIFYING.md](docs/VERIFYING.md).
 
-5. **VirusTotal Multi-Engine AV Verification**:
-   The ISO SHA-256 hash can be independently inspected across 70+ antivirus engines:
-   * **SHA-256**: `44ab8e7bf2e50e1096ebea16b258133ed57aecd910a6b2178c3f3f65736ba1fc`
-   * **VirusTotal Public Report**: [Inspect on VirusTotal](https://www.virustotal.com/gui/file/44ab8e7bf2e50e1096ebea16b258133ed57aecd910a6b2178c3f3f65736ba1fc)
+## Automated checks
 
----
+| Workflow | What it does |
+|---|---|
+| `ci.yml` | Shell/Python/JS syntax checks and guards against the audit regressions (apt-secure off, `trusted=yes`, Ollama on 0.0.0.0, `/api/exec`). |
+| `codeql.yml` | CodeQL security-extended on JS/TS, Python and Actions. |
+| `semgrep.yml` | Semgrep security-audit + secrets rules (SARIF to code scanning). |
+| `scorecard.yml` | OpenSSF Scorecard, published. |
+| `sbom.yml` | SPDX + CycloneDX SBOMs of the source tree (attached to releases). |
+| `release-sign.yml` | cosign signature + provenance for release checksums. |
 
-## 3. Software Bill of Materials (SBOM) & Vulnerability Scanning
+## Not done yet (honest gaps)
 
-To provide transparent insight into every package, shared library, and binary bundled inside ZothOS:
-
-* **SPDX 2.3 & CycloneDX SBOMs** are generated using Anchore **`syft`** for every release.
-* **Vulnerability Reports** are audited using **`grype`** against the National Vulnerability Database (NVD) and Debian Security Tracker.
-* You can inspect the bundled packages at any time:
-  ```bash
-  syft zothos-3.1-amd64.iso -o table
-  ```
-
----
-
-## 4. Reporting a Security Vulnerability
-
-If you discover a potential security vulnerability in ZothOS or any of its bundled tools, please notify us immediately through coordinated disclosure:
-
-* **Primary Security Contact**: `neal@nealfrazier.tech`
-* **Lead Architect**: Neal Frazier (@1nc0gn30)
-* **Response SLA**:
-  * **Initial Acknowledgment**: Within **24 hours**.
-  * **Triage & Remediation Timeline**: Within **72 hours** for high/critical severity.
-* **Responsible Disclosure**: Please do not open public GitHub issues for undisclosed security vulnerabilities. We will coordinate a patch, credit you in the release notes, and publish the advisory simultaneously with the patched release.
-
----
-
-## 5. Security Hygiene & CI Auditing
-
-* **OpenSSF Scorecard**: Automated branch protection, dependency pinning, and release signing scored via `.github/workflows/scorecard.yml`.
-* **GitHub CodeQL**: Deep AST static code analysis running on Python, Shell, and GitHub Actions via `.github/workflows/codeql.yml`.
-* **Zero-Leak Guard**: Automated pre-commit and build-time secret scanning (`engine/secret_scanner.js`).
+- Builds are **not yet reproducible** end to end (see [docs/REPRODUCIBLE-BUILDS.md](docs/REPRODUCIBLE-BUILDS.md)).
+- `zoth-vault-daemon` is a committed binary without source in this repo, so its cryptography cannot be audited here.
+- No branch protection or second reviewer yet; no OpenSSF Best Practices badge yet.
+- The ISO bundles proprietary software (e.g. Google Chrome); redistribution terms are being reviewed.
