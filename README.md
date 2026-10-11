@@ -60,7 +60,7 @@
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node v26, Python 3.12, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **215+ Verified Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
-| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (27 In-Browser WebGPU/Client + 32 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
+| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (28 In-Browser WebGPU/Client + 31 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -316,7 +316,7 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (27 In-Browser WebGPU & Client Workstations + 32 Sovereign Enclave Workstations):
+ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
 
 ### 1. The 22 Resident Loopback Daemons (Zero-Cloud Egress)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:

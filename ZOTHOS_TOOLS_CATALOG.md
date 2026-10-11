@@ -173,10 +173,12 @@
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 15. cwv-speed-engine (CWV Speed Engine)
-- **GitHub:** https://github.com/NullAITech/cwv-speed-engine
+- **GitHub:** https://github.com/1nc0gn30/cwv-speed-engine
 - **Category:** Autonomous Web
-- **Execution Mode:** LOCAL_CLI • [Live App](https://cwv-speed-studio.netlify.app)
-- **Operational Value:** Core Web Vitals LCP, CLS, and INP diagnostic engine and asset minifier. Live app is $39.
+- **Execution Mode:** BROWSER • [Live App](https://cwv-speed-studio.netlify.app)
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** 100% in-browser Core Web Vitals diagnostic engine, client AST HTML speed transformer, W3C PWA manifest builder, Service Worker caching architect, performance budget simulator, and multi-network latency analyzer running entirely in client silicon with zero backend egress.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 21. pwa-manifest-builder (PWA Manifest Studio)
 - **GitHub:** https://github.com/NullAITech/pwa-manifest-builder
