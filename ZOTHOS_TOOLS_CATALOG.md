@@ -289,7 +289,7 @@
 - **Operational Value:** 100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, dual checkout rails ($19), and action interceptors.
 
 ### 22. regex-droid-builder (Regex Droid Studio)
-- **GitHub:** https://github.com/NullAITech/regex-droid-builder
+- **GitHub:** https://github.com/1nc0gn30/regex-droid-builder
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://regexdroid.nullai.tech)
 - **Operational Value:** 100% in-browser visual regular expression builder, AST breakdown, railroad vector diagrams, multi-language code generator, and static ReDoS vulnerability guardian. Dual Stripe + Solana rails ($19).
