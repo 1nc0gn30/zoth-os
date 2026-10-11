@@ -140,10 +140,10 @@
 - **Execution Mode:** BROWSER • [Live App](https://securityguard.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
 - **Operational Value:** 100% in-browser client-side security headers auditor, TLS 1.3 cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and multi-framework deployment hardening exporter. Dual Stripe + Solana rails ($19).
 
-### 41. agent-gods-eye (Agent God)
+### 41. agent-gods-eye (Agent God's Eye)
 - **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
 - **Category:** Security & Recon
-- **Execution Mode:** LOCAL_CLI • [Live App](https://godseye.nullai.tech)
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-gods-eye.nullai.tech)
 - **Operational Value:** Autonomous zero-dependency Shodan OSINT tactical radar, 3D kinetic planetary attack surface reconnaissance, and threat scoring.
 
 ### 56. osint-scout-skill (Domain Intel OSINT Scout)
