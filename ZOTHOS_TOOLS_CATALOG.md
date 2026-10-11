@@ -467,8 +467,8 @@
 ### 49. pod-margin-sentinel (POD Margin Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-margin-sentinel.nullai.tech)
-- **Operational Value:** Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop.
+- **Execution Mode:** BROWSER • [Live App](https://pod-margin-sentinel.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop. Fully hardened with client-side mathematical execution, 60fps kinetic chronometer canvas, frosted paywall lock, and instant 1-click Pro activation.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
