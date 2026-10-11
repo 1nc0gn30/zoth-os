@@ -189,7 +189,7 @@
 - **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Dual Stripe + Solana rails ($19).
 
 ### 23. schema-illustrator-studio (Schema Illustrator Studio)
-- **GitHub:** https://github.com/NullAITech/schema-illustrator-studio
+- **GitHub:** https://github.com/1nc0gn30/schema-illustrator-studio
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://schemaillustrator.nullai.tech)
 - **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Dual Stripe + Solana rails ($19).
