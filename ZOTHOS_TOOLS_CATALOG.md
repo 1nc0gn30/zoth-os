@@ -391,8 +391,9 @@
 ### 35. agent-capsule-jail (Agent Capsule Jail)
 - **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
 - **Category:** Security & Enclave
-- **Execution Mode:** LOCAL_CLI • [Live App](https://capsule.nullai.tech)
-- **Operational Value:** Kernel enclave sandbox, resource quotas, and ephemeral process isolation for AI agents.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://capsule.nullai.tech)
+- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Operational Value:** Autonomous kernel enclave sandbox, resource quota manager, and ephemeral process isolation for AI agents with secret stripping and filesystem delta diffing.
 
 ### 36. agent-policy-auditor (Agent Policy Auditor)
 - **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
