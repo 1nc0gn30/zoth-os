@@ -301,7 +301,9 @@
 - **GitHub:** https://github.com/1nc0gn30/anderson-security-sentinel
 - **Category:** Security & OpSec
 - **Execution Mode:** BROWSER • [Live App](https://anderson-security-sentinel.netlify.app)
-- **Operational Value:** Tri-transceiver synthetic aperture array, differential RF wall discriminator, real-time AoA & optical camera tracking.
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Autonomous biometric laptop perimeter defense, WiFi X-Ray RF tomography, USB Rubber Ducky tripwire guard, FLIR thermal optics, and forensic incident dossier air-gapped export.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 50. audiocipher-stego-engine (AudioCipher Stego Studio)
 - **GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
