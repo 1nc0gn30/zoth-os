@@ -59,7 +59,7 @@ earlier are not signed**; only their checksums exist. See [docs/VERIFYING.md](do
 
 ## Not done yet (honest gaps)
 
-- Builds are **not yet reproducible** end to end (see [docs/REPRODUCIBLE-BUILDS.md](docs/REPRODUCIBLE-BUILDS.md)).
+- Builds are **not yet reproducible** end to end (see [REPRODUCIBLE_BUILDS.md](REPRODUCIBLE_BUILDS.md)).
 - `zoth-vault-daemon` is a committed binary without source in this repo, so its cryptography cannot be audited here.
 - No branch protection or second reviewer yet; no OpenSSF Best Practices badge yet.
 - The ISO bundles proprietary software (e.g. Google Chrome); redistribution terms are being reviewed.

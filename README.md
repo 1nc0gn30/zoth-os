@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.0 Sovereign Master Banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
+  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.1 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
 
   <br />
   <br />
@@ -9,7 +9,7 @@
   <h3><em>The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System</em></h3>
 
   <p>
-    <strong>KDE Plasma 6.3 Wayland &bull; Debian 13 Trixie &bull; Kali Rolling &bull; Parrot OS &bull; Linux 6.12+ Hardened</strong>
+    <strong>KDE Plasma 6.3 Wayland &bull; Debian 13 Trixie &bull; Kali Rolling &bull; Parrot OS &bull; Debian Linux 6.12 kernel</strong>
   </p>
 
   <p>
@@ -18,17 +18,14 @@
 
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
-    <a href="SECURITY.md"><img src="https://img.shields.io/badge/Sigstore-Cosign%20%2B%20Rekor%20Verified-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Sigstore Cosign" /></a>
-    <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Builds-Reproducible%20Deterministic-success.svg?style=for-the-badge" alt="Reproducible Builds" /></a>
+    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-cosign%20signing%20from%20next%20release-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
+    <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Reproducible%20builds-in%20progress-yellow.svg?style=for-the-badge" alt="Reproducible builds: in progress" /></a>
     <a href="https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os"><img src="https://api.scorecard.dev/projects/github.com/NullAITech/zoth-os/badge" alt="OpenSSF Scorecard" /></a>
     <a href="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml"><img src="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
-    <a href="docs/OPENSSF_BEST_PRACTICES.md"><img src="https://img.shields.io/badge/OpenSSF-Best%20Practices%20Standard-4c1.svg?style=for-the-badge&logo=openssf&logoColor=white" alt="OpenSSF Best Practices" /></a>
-    <a href="https://www.virustotal.com/gui/file/44ab8e7bf2e50e1096ebea16b258133ed57aecd910a6b2178c3f3f65736ba1fc"><img src="https://img.shields.io/badge/VirusTotal-70%2B%20Engines%20Clean-brightgreen.svg?style=for-the-badge&logo=virustotal&logoColor=white" alt="VirusTotal Clean" /></a>
+    <a href="docs/OPENSSF_BEST_PRACTICES.md"><img src="https://img.shields.io/badge/OpenSSF%20Best%20Practices-not%20registered-lightgrey.svg?style=for-the-badge&logo=openssf&logoColor=white" alt="OpenSSF Best Practices: not registered" /></a>
     <a href="https://www.debian.org"><img src="https://img.shields.io/badge/Base-Debian%2013%20Trixie-d70a53.svg?style=for-the-badge&logo=debian&logoColor=white" alt="Base: Debian 13" /></a>
     <a href="https://kde.org/plasma-desktop/"><img src="https://img.shields.io/badge/Desktop-KDE%20Plasma%206.3-1d99f3.svg?style=for-the-badge&logo=kde&logoColor=white" alt="Desktop: KDE Plasma 6.3" /></a>
-    <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Vault-Argon2id%20%2B%20ChaCha20-00e5ff.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Crypto: Argon2id + ChaCha20" /></a>
-    <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Telemetry-Zero%20Egress-00ff9d.svg?style=for-the-badge&logo=shieldsdotio&logoColor=black" alt="Zero Telemetry" /></a>
-    <a href="https://github.com/NullAITech/zoth-os"><img src="https://img.shields.io/badge/Architecture-x86__64%20Hybrid%20UEFI-cca800.svg?style=for-the-badge" alt="x86_64 Hybrid UEFI" /></a>
+            <a href="https://github.com/NullAITech/zoth-os"><img src="https://img.shields.io/badge/Architecture-x86__64%20Hybrid%20UEFI-cca800.svg?style=for-the-badge" alt="x86_64 Hybrid UEFI" /></a>
   </p>
 
   <br />
@@ -54,12 +51,12 @@
 | :--- | :--- | :--- |
 | **Desktop Core** | **KDE Plasma 6.3 Wayland** | Translucent obsidian frosted glass, 24K Celtic Gold insignia, KWin compositor effects, and custom golden cursor trails. |
 | **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for 100% package cohesion. |
-| **Kernel Stack** | **Linux 6.12+ Hardened** | Low-latency desktop kernel with Intel UHD (`i915`) + NVIDIA Quadro hybrid graphics DRM auto-switching. |
-| **Sovereign Vault** | **Rust ChaCha20-Poly1305** | Native resident daemon on `127.0.0.1:8787` using Argon2id key derivation; injects secrets directly into process RAM. |
+| **Kernel Stack** | **Debian Linux 6.12 (stock)** | Debian's standard `linux-image-amd64` kernel with Intel UHD (`i915`) + NVIDIA Quadro hybrid graphics DRM auto-switching. |
+| **Sovereign Vault** | **Local secrets daemon** | Resident daemon on `127.0.0.1:8787` (described as Argon2id + ChaCha20-Poly1305). It ships as a prebuilt binary whose source is not yet in this repo, so these crypto claims cannot be independently audited. |
 | **Frontier AI Forge** | **Autonomous Agent Swarm** | Google Antigravity CLI, Aider AI, Cursor AI, Grok Bot, Claude Code, Cline, and Ollama offline LLM model runner. |
-| **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node v26, Python 3.12, Rust, Go, Foundry, and Solana. |
+| **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.13, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
-| **Security Arsenal** | **215+ Verified Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
+| **Security Arsenal** | **215+ Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
 | **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (28 In-Browser WebGPU/Client + 31 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
@@ -73,7 +70,7 @@
 
 The flagship KDE Plasma 6.3 Wayland experience: 24K Celtic Gold icons, alchemical typography, translucent frosted obsidian taskbar, and responsive desktop shortcuts for the complete sovereign workstation suite.
 
-![ZothOS 3.0 Sovereign Desktop](docs/screenshots/zothos-desktop.png)
+![ZOTHOS 3.1 desktop](docs/screenshots/zothos-desktop.png)
 
 </details>
 
@@ -91,7 +88,7 @@ Every application category in the Kickoff menu features high-fidelity, hand-craf
 <summary><b>3. Zoth Sovereign Vault (<code>zoth-vault</code>)</b></summary>
 <br />
 
-Zero-leak cryptographic secrets engine powered by Rust, Argon2id, and authenticated ChaCha20-Poly1305. Features multi-vault management supporting **Zoth Sovereign Vault**, **Bitwarden CLI (`bw`)**, **KeePassXC**, and **UNIX Pass (GPG)** with memory-only child process injection.
+Secrets manager front-end for a local daemon (designed around Argon2id and ChaCha20-Poly1305; the daemon is a prebuilt binary, see the note above). Features multi-vault management supporting **Zoth Sovereign Vault**, **Bitwarden CLI (`bw`)**, **KeePassXC**, and **UNIX Pass (GPG)** with memory-only child process injection.
 
 ![Zoth Sovereign Vault](docs/screenshots/zoth-vault.png)
 
@@ -121,7 +118,7 @@ Dedicated interactive terminal operations deck for Netlify: site linking, local 
 <summary><b>6. Streamlit Studio & ML Dashboard Station (<code>zoth-streamlit</code>)</b></summary>
 <br />
 
-Isolated Python 3.12 environment with pre-bundled data science, machine learning, and cyber intelligence dashboards with live local server management on `http://localhost:8501`.
+Isolated Python environment with pre-bundled data science, machine learning, and cyber intelligence dashboards with live local server management on `http://localhost:8501`.
 
 ![Streamlit Studio](docs/screenshots/zoth-streamlit.png)
 
@@ -179,7 +176,7 @@ Comprehensive offline documentation codex preloaded directly inside the operatin
 ```mermaid
 graph TB
     subgraph Core ["Sovereign Kernel & System Foundations"]
-        K[Linux 6.12+ Hardened Kernel]
+        K[Debian Linux 6.12 Kernel]
         D[Debian 13 Trixie Base]
         K --> D
         D --> APT1[Debian Stable APT]
@@ -316,9 +313,9 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.0 integrates seamlessly with [Zoth Studio v2](file://${ZOTH_SRC_ROOT}/zoth-studio-v2) to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
+ZOTHOS Linux 3.1 integrates with Zoth Studio v2 to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
 
-### 1. The 22 Resident Loopback Daemons (Zero-Cloud Egress)
+### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
 
 | Port | Daemon Service | Technology | Operational Function |
@@ -403,7 +400,7 @@ ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIO
 ### 1. Booting the Live ISO
 Flash the ISO to a USB flash drive (minimum 16 GB recommended):
 ```bash
-sudo dd if=zothos-3.0-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
+sudo dd if=zothos-3.1-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
 ### 2. Live Credentials
@@ -453,39 +450,31 @@ ZOTHOS is built using a customized Debian Live Build framework with surgical rep
 
 ---
  
-## ✦ Third-Party Cryptographic Provenance & Verification
+## ✦ Verification & Security Status (honest)
 
-ZothOS rejects self-awarded labels and untrusted badges in favor of **auditable, third-party-verifiable cryptographic standards**:
+What is in place today, and what is not:
 
-| Verification Standard | Engine / Framework | Verification Status |
-| :--- | :--- | :--- |
-| **Sigstore Cosign Signing** | Sigstore Public Ledger | Signed with `cosign` and logged to the public **Rekor Transparency Log**. |
-| **Reproducible Builds** | Debian `SOURCE_DATE_EPOCH` + `diffoscope` | Deterministic build scripts clamp timestamps & compression. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
-| **OpenSSF Scorecard** | Automated GitHub Action | Security hygiene scored by the OpenSSF across branch protection, pinning, and releases. |
-| **OpenSSF Best Practices** | Structured Policy Assessment | Comprehensive security policy and disclosure SLA in [`SECURITY.md`](SECURITY.md). |
-| **VirusTotal 70-Engine Scan** | VirusTotal Multi-Engine AV | Public SHA-256 analysis report: [`44ab8e7bf...`](https://www.virustotal.com/gui/file/44ab8e7bf2e50e1096ebea16b258133ed57aecd910a6b2178c3f3f65736ba1fc). |
-| **Software Bill of Materials (SBOM)** | Anchore `syft` & `grype` | Full package provenance published in standard **SPDX 2.3** and **CycloneDX** JSON formats. |
-| **Static Code Analysis** | GitHub Advanced Security CodeQL | Automated AST static analysis running on every commit across Python, Shell, and Actions. |
+| Item | Status |
+| :--- | :--- |
+| **Release checksums** | ✅ SHA-256 published for every release. Detects corruption, not tampering. |
+| **Release signatures** | ⏳ `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC) plus SLSA provenance **from the next release on**. v3.1.0 and earlier are unsigned. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
+| **Reproducible builds** | ⏳ In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
+| **OpenSSF Scorecard** | ✅ Workflow runs and publishes results (score was 1.0/10 at the Oct 2026 audit; fixes since then should raise it). |
+| **Static analysis** | ✅ CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
+| **SBOM** | ✅ SPDX + CycloneDX of the source tree on every push and release (`sbom.yml`). |
+| **OpenSSF Best Practices badge** | ❌ Not registered yet. |
+| **VirusTotal** | ❌ Not submitted (files are too large for VirusTotal). |
+| **Third-party audit** | An automated third-party audit (Scorecard, CodeQL, Semgrep, secret scanning, SBOM/vuln scans) was run in Oct 2026; its P0 findings are fixed in `main`. Not a human pentest. |
 
-### Independent Verification Tooling
-
-ZothOS ships with automated independent verification scripts in `tools/`:
+Known live-image defaults you should understand before using ZOTHOS on a real network
+(fixed passwords reset at boot, passwordless sudo) are documented in [`SECURITY.md`](SECURITY.md).
 
 ```bash
-# 1. 1-Command Automated Third-Party Verifier (Cosign + SHA256 + VirusTotal)
-./tools/verify-iso.sh build/zothos-3.1-amd64.iso
-
-# 2. Bitwise Reproducible Build Verification (Diffoscope)
-./tools/diff-reproducible.sh build/zothos-3.1-run1.iso build/zothos-3.1-run2.iso
-
-# 3. Manual Cosign Verification against Rekor Public Transparency Ledger:
-cosign verify-blob \
-  --key https://raw.githubusercontent.com/NullAITech/zoth-os/main/build/cosign.pub \
-  --bundle zothos-3.1-amd64.iso.sha256.bundle \
-  zothos-3.1-amd64.iso.sha256
-
-# 4. Verify ISO SHA-256 Checksum:
-sha256sum -c zothos-3.1-amd64.iso.sha256
+# Verify a signed release (next release onward)
+cosign verify-blob SHA256SUMS --bundle SHA256SUMS.cosign.bundle \
+  --certificate-identity-regexp '^https://github.com/NullAITech/zoth-os/\.github/workflows/release-sign\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+sha256sum --ignore-missing -c SHA256SUMS
 ```
 
 ---

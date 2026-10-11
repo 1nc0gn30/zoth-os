@@ -225,7 +225,7 @@ caido
 ## ✦ Cadre IV: Sovereign OPSEC & Cryptographic Defense
 
 ### 21. Zoth Ghostmode
-Military-grade amnesic operational security: transparent Tor traffic routing, automatic MAC address randomization, randomized hostname, and ephemeral RAM cache scrubbing.
+Privacy tooling: transparent Tor traffic routing, automatic MAC address randomization, randomized hostname, and ephemeral RAM cache scrubbing.
 ```bash
 # Enable Ghostmode routing and OPSEC hardening
 zoth-ghost on
