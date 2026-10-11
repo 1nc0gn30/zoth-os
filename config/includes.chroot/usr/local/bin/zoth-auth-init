@@ -79,13 +79,23 @@ SystemAccount=false
 ACCEO2
 chmod 644 /var/lib/AccountsService/users/* 2>/dev/null || true
 
-# Ensure home directory ownership and populate from skel if needed
+# Ensure home directory ownership and populate from skel if needed.
+# Never chown -R an established home at boot: on a dev box it holds millions of
+# files (node_modules, ISO build chroots), which blew the 15s unit timeout and
+# would hand root-owned build chroots / TLS keys to the user if it completed.
 for u in zoth azoth; do
     if [ -d "/home/$u" ]; then
         if [ ! -f "/home/$u/.profile" ] && [ -d /etc/skel ]; then
             cp -a /etc/skel/. "/home/$u/" 2>/dev/null || true
+            # Fresh home: only skel content exists, so a recursive fix is cheap.
+            chown -R "$u:$u" "/home/$u" 2>/dev/null || true
+        else
+            chown "$u:$u" "/home/$u" 2>/dev/null || true
+            # Repair only the top-level dotfiles the session needs, without recursing.
+            for f in .profile .bashrc .bash_logout .config .local .cache; do
+                [ -e "/home/$u/$f" ] && chown "$u:$u" "/home/$u/$f" 2>/dev/null || true
+            done
         fi
-        chown -R "$u:$u" "/home/$u" 2>/dev/null || true
         chmod 750 "/home/$u" 2>/dev/null || true
     fi
 done
