@@ -76,3 +76,9 @@ calamares
 calamares-settings-debian
 # Browser engine fallback for zoth-chrome when Google Chrome is unavailable
 chromium
+
+# Fonts: pinned explicitly so splash dingbats (✦) and UI emoji never render as tofu
+fonts-dejavu-core
+fonts-dejavu-mono
+fonts-noto-color-emoji
+fonts-symbola
