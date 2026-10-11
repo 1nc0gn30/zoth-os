@@ -380,8 +380,9 @@
 ### 34. agent-flight-recorder (Agent Flight Recorder)
 - **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
 - **Category:** Forensics & Telemetry
-- **Execution Mode:** LOCAL_CLI • [Live App](https://flight.nullai.tech)
-- **Operational Value:** Black box flight recorder & time-scrubbing telemetry forensics hub for AI agents.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://flight.nullai.tech)
+- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Operational Value:** Autonomous black box flight recorder & time-scrubbing telemetry forensics hub for AI agents with synchronized terminal playback, network egress graph, and offline single-file bundles.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
