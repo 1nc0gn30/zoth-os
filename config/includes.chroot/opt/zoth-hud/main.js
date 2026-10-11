@@ -360,6 +360,7 @@ function createWindow() {
 
 // ── IPC Handlers ────────────────────────────────────────────────
 ipcMain.on('randomize-mac', (event, iface) => {
+  if (typeof iface !== 'string' || !/^[A-Za-z0-9_.:-]{1,15}$/.test(iface)) { console.warn('[zoth] rejected interface name'); return; }
   exec(`sudo macchanger -r ${iface} || (sudo ip link set dev ${iface} down && sudo ip link set dev ${iface} address 02:$(hexdump -n5 -e'/1 ":%02x"' /dev/urandom | cut -c2-) && sudo ip link set dev ${iface} up)`, (err) => {
     exec(`notify-send -i /usr/share/pixmaps/zothos.png "[+] MAC CLOAKED" "Interface ${iface} spoofed"`);
   });

@@ -146,6 +146,7 @@ ipcMain.on('ghost-change-circuit', (event) => {
 });
 
 ipcMain.on('ghost-spoof-mac', (event, iface) => {
+  if (typeof iface !== 'string' || !/^[A-Za-z0-9_.:-]{1,15}$/.test(iface)) { console.warn('[zoth] rejected interface name'); return; }
   exec(`sudo macchanger -r ${iface} || sudo ip link set dev ${iface} address 02:$(hexdump -n5 -e'/1 ":%02x"' /dev/urandom)`, (err, stdout) => {
     event.reply('ghost-action-result', { action: 'spoof', iface, success: !err, log: stdout });
   });

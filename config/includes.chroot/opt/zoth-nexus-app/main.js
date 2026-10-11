@@ -480,6 +480,9 @@ ipcMain.on('get-bundles', (event) => {
 
 // ── IPC: Launch Tool ──────────────────────────────────────────────────
 ipcMain.on('launch-tool', (_event, toolCmd) => {
+  // A tool command is a program plus plain arguments; reject shell syntax.
+  const isCatalogCmd = TOOLS_DATABASE.some((t) => t.cmd === toolCmd);
+  if (!isCatalogCmd && (typeof toolCmd !== 'string' || toolCmd.length > 200 || /[;&|`$<>(){}\\'"\n\r*?!#~]/.test(toolCmd))) { console.warn('[nexus] rejected tool command'); return; }
   const isGui = [
     'zoth-studio', 'zoth-agent-hud', 'zoth-ghost-gui', 'zoth-mode', 'zoth-mcp',
     'burpsuite', 'caido', 'wireshark', 'ghidra', 'obsidian', 'blender',

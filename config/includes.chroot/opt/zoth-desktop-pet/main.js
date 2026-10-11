@@ -403,11 +403,35 @@ ipcMain.on('launch-app', (event, appName) => {
     'soundtrack': 'zoth-soundtrack',
     'fastfetch': 'konsole --hold -e zoth-fastfetch'
   };
+  if (!apps[appName] && (typeof appName !== 'string' || !/^[A-Za-z0-9._+-]{1,64}$/.test(appName))) return;
   const cmd = apps[appName] || appName;
   exec(`nohup ${cmd} >/dev/null 2>&1 &`);
 });
 
+// Spells are the fixed set defined in app.js; anything else is refused.
+const ALLOWED_SPELLS = new Set([
+  "konsole",
+  "konsole -e btop",
+  "konsole --hold -e zoth-fastfetch",
+  "konsole --title \"HexStrike MCP Terminal\" -e hexstrike",
+  "konsole --title \"Network Sockets\" -e ss -tulpn",
+  "konsole --title \"Storage Metrics\" -e df -h",
+  "konsole --title \"System Doctor\" -e zoth-doctor",
+  "konsole --title \"System Timers\" -e systemctl list-timers",
+  "konsole --title \"Zoth Build Forge\" -e make -v",
+  "konsole --title \"ZothOS Cockpit\" -e zoth-cockpit",
+  "konsole --title \"ZothOS Cockpit\" -e zoth-cockpit --status",
+  "konsole --title \"Zoth Self-Heal\" -e zoth-heal",
+  "konsole --title \"Zoth Sentinel HUD\" -e zoth-sentinel-hud",
+  "konsole --title \"Zoth System Doctor\" -e zoth-doctor",
+  "zoth-ghost-gui",
+  "zoth-mode",
+  "zoth-soundtrack",
+  "zoth-studio",
+  "zoth-tool-nexus"
+]);
 ipcMain.on('run-spell', (event, spellCommand) => {
+  if (!ALLOWED_SPELLS.has(spellCommand)) { event.reply('spell-result', { success: false, output: 'Unknown spell' }); return; }
   exec(spellCommand, (err, stdout, stderr) => {
     event.reply('spell-result', {
       success: !err,
@@ -423,7 +447,10 @@ ipcMain.on('alchemical-distill', (event) => {
 });
 
 ipcMain.on('speak-text', (event, { text, pitch = 50, speed = 155, voice = 'en' }) => {
-  const sanitized = text.replace(/["`$\\]/g, ' ').substring(0, 200);
+  if (typeof voice !== 'string' || !/^[A-Za-z0-9+_-]{1,24}$/.test(voice)) voice = 'en';
+  pitch = Math.min(99, Math.max(0, Math.round(Number(pitch) || 50)));
+  speed = Math.min(450, Math.max(80, Math.round(Number(speed) || 155)));
+  const sanitized = String(text || '').replace(/["`$\\]/g, ' ').substring(0, 200);
   exec(`espeak-ng -v "${voice}" -p ${pitch} -s ${speed} "${sanitized}" >/dev/null 2>&1 &`);
 });
 

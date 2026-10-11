@@ -767,6 +767,7 @@ ipcMain.handle('get-daemon-logs', async (event, { daemonId }) => {
 // ── Reality Mode Switcher IPC ─────────────────────────────────────────
 ipcMain.handle('switch-reality-mode', async (event, { mode }) => {
   return new Promise((resolve) => {
+    if (typeof mode !== 'string' || !/^[a-z0-9-]{1,32}$/.test(mode)) return resolve({ success: false, message: 'Invalid mode' });
     const cmd = `/usr/local/bin/zoth-mode ${mode}`;
     exec(cmd, (err, stdout, stderr) => {
       resolve({
@@ -796,6 +797,8 @@ ipcMain.handle('launch-tool', async (event, { toolId }) => {
     'btop': 'konsole --title "Btop Resource Monitor" -e btop &',
   };
 
+  // Unknown tools may only be a bare executable name (no shell syntax).
+  if (!toolMap[toolId] && (typeof toolId !== 'string' || !/^[A-Za-z0-9._+-]{1,64}$/.test(toolId))) return { success: false, message: 'Invalid tool id' };
   const cmd = toolMap[toolId] || `nohup ${toolId} >/dev/null 2>&1 &`;
   return new Promise((resolve) => {
     exec(cmd, (err) => {
@@ -893,7 +896,8 @@ function fallbackToOllama(agentId, prompt, resolve) {
 // ── Process Terminate IPC ─────────────────────────────────────────────
 ipcMain.handle('kill-process', async (event, { pid }) => {
   return new Promise((resolve) => {
-    if (!pid || pid <= 1) return resolve({ success: false, message: 'Invalid PID' });
+    pid = Number(pid);
+    if (!Number.isInteger(pid) || pid <= 1) return resolve({ success: false, message: 'Invalid PID' });
     exec(`kill -15 ${pid} 2>/dev/null || kill -9 ${pid} 2>/dev/null`, (err) => {
       resolve({ success: !err });
     });

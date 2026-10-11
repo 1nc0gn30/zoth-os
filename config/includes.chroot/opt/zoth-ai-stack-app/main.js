@@ -126,6 +126,7 @@ ipcMain.on('get-ai-tools', (event) => {
 
 // ── Launch AI Tool IPC ────────────────────────────────────────────────
 ipcMain.on('launch-ai-tool', (event, cmd) => {
+  if (typeof cmd !== 'string' || !/^[A-Za-z0-9._+-]{1,64}$/.test(cmd)) return;
   const guiApps = ['zoth-studio', 'zoth-mcp-gui', 'comfyui', 'open-webui'];
   if (guiApps.includes(cmd)) {
     exec(`nohup ${cmd} >/dev/null 2>&1 &`);
@@ -136,6 +137,10 @@ ipcMain.on('launch-ai-tool', (event, cmd) => {
 
 // ── Install AI Tool IPC ───────────────────────────────────────────────
 ipcMain.on('install-ai-tool', (event, tool) => {
+  // Use the main-process catalog entry, never an install command sent by the renderer.
+  const known = AI_TOOLS_DATABASE.find((t) => tool && t.id === tool.id);
+  if (!known || !known.pkg) { event.reply('install-complete', { toolId: tool && tool.id, success: false }); return; }
+  tool = known;
   const cmd = `konsole --title 'INSTALLING ${tool.name.toUpperCase()}' -e 'bash -c "${tool.pkg.replace(/"/g, '\\"')}; echo \"\"; echo \"[✓] Installer finished. Press Enter to close...\"; read"'`;
   exec(cmd, (err) => {
     event.reply('install-complete', { toolId: tool.id, success: !err });
