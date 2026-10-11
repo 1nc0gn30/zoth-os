@@ -757,7 +757,22 @@ class Handler(BaseHTTPRequestHandler):
             return
         self.send_file(target)
 
+    def _trusted(self) -> bool:
+        """Block CSRF (other websites POSTing installs) and DNS rebinding."""
+        host = (self.headers.get("Host") or "").rsplit(":", 1)[0].strip("[]").lower()
+        if host not in ("127.0.0.1", "localhost", "::1"):
+            return False
+        origin = self.headers.get("Origin")
+        if origin:
+            o = urlparse(origin)
+            if o.scheme not in ("http", "https") or (o.hostname or "") not in ("127.0.0.1", "localhost", "::1"):
+                return False
+        return True
+
     def do_POST(self) -> None:
+        if not self._trusted():
+            self.send_json({"ok": False, "error": "cross-origin request blocked"}, 403)
+            return
         path = urlparse(self.path).path
         length = int(self.headers.get("Content-Length") or 0)
         if length > 8192:
