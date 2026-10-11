@@ -147,10 +147,12 @@
 - **Operational Value:** Autonomous zero-dependency Shodan OSINT tactical radar, 3D kinetic planetary attack surface reconnaissance, and threat scoring.
 
 ### 56. osint-scout-skill (Domain Intel OSINT Scout)
-- **GitHub:** https://github.com/1nc0gn30/osint-scout-skill
+- **GitHub:** https://github.com/NullAITech/osint-scout-skill
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER • [Live App](https://osint-domain-scout.netlify.app)
-- **Operational Value:** Autonomous passive reconnaissance agent skill auditing Certificate Transparency logs via crt.sh, DNS records, and WHOIS ownership data.
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Autonomous passive reconnaissance engine auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture with zero cloud telemetry and dual checkout rails.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
