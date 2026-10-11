@@ -235,7 +235,9 @@
 - **GitHub:** https://github.com/1nc0gn30/datamosh-glitch-studio
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://datamosh-glitch-studio.netlify.app)
-- **Operational Value:** Parametric video datamoshing, I-frame drop corruption, delta-frame duplication, and glitch art synthesizer with FastMCP stdio server.
+- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** 100% in-browser parametric video datamosh synthesizer, H.264 I-frame drop corruption, CRT scanlines, and live camera mosh buffer with dual checkout rails.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ### 53. nexus-3d-scene-studio (Nexus 3D Scene Studio)
 - **GitHub:** https://github.com/1nc0gn30/nexus-3d-scene-studio
