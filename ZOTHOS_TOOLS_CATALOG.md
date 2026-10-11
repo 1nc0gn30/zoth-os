@@ -129,10 +129,10 @@
 - **Operational Value:** Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor. Dual Stripe + Solana rails ($19).
 
 ### 11. payload-entropy-studio (Payload Entropy Studio)
-- **GitHub:** https://github.com/NullAITech/payload-entropy-studio
+- **GitHub:** https://github.com/1nc0gn30/payload-entropy-studio
 - **Category:** Security & Recon
-- **Execution Mode:** BROWSER • [Live App](https://entropystudio.nullai.tech)
-- **Operational Value:** In-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Dual Stripe + Solana rails ($19).
+- **Execution Mode:** BROWSER • [Live App](https://entropystudio.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
+- **Operational Value:** 100% in-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Dual Stripe + Solana rails ($19).
 
 ### 12. web-security-guard (Web Security Guard)
 - **GitHub:** https://github.com/1nc0gn30/web-security-guard
