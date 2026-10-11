@@ -22,6 +22,12 @@ jobs:
             bash -n "$f" || { echo "::error file=$f::bash syntax error"; fail=1; }
           done < <(find build tools config/includes.chroot/usr/local/bin config/hooks build/hooks -type f -print0 2>/dev/null)
           exit $fail
+      - name: ShellCheck (errors fail the build)
+        run: |
+          # shellcheck is preinstalled on ubuntu-latest runners
+          git ls-files -z | while IFS= read -r -d '' f; do
+            head -c 64 "$f" 2>/dev/null | head -1 | grep -qE '^#!.*\b(ba)?sh\b' && printf '%s\0' "$f"
+          done | xargs -0 -r shellcheck -S error
       - name: Python syntax
         run: |
           set -euo pipefail

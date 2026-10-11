@@ -35,6 +35,7 @@ FLAGS=(
 
 # Ozone / Display Server Handling
 if [[ -n "${WAYLAND_DISPLAY:-}" ]] && [[ -z "${DISPLAY:-}" ]]; then
+    # shellcheck disable=SC2054  # comma is part of the --enable-features value
     FLAGS+=(
         --ozone-platform=wayland
         --enable-features=UseOzonePlatform,WaylandWindowDecorations

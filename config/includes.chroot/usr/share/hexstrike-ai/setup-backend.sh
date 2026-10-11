@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd backend
+cd "$(dirname "$(readlink -f "$0")")/backend" || { echo "hexstrike: backend dir missing" >&2; exit 1; }
 
 if [ ! -d "venv" ]; then
     echo "venv not found. Creating it now..."
