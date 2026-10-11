@@ -170,7 +170,11 @@ def resolve_bin(name: str) -> str:
         if not directory:
             continue
         candidate = Path(directory) / name
-        if candidate.is_file() and os.access(candidate, os.X_OK):
+        try:
+            usable = candidate.is_file() and os.access(candidate, os.X_OK)
+        except OSError:  # unreadable PATH entries (e.g. /root/go/bin) must not crash the desk
+            usable = False
+        if usable:
             hits.append(candidate.resolve())
     outside = [hit for hit in hits if hit.parent != overlay]
     if outside:
