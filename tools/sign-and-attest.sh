@@ -97,7 +97,7 @@ fi
 echo -e "\n${BLUE}─── 3. Software Bill of Materials (SBOM via Syft) ───${RESET}"
 if ! command -v syft >/dev/null 2>&1; then
     echo -e "${YELLOW}[!] 'syft' not found. Skipping SBOM generation.${RESET}"
-    echo -e "    Install syft: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh"
+    echo -e "    Install syft: curl --proto =https --tlsv1.2 -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh"
 else
     echo -e "${CYAN}[*] Scanning packages and libraries inside image...${RESET}"
     syft "$ISO_PATH" -o "spdx-json=${SPDX_SBOM}" -o "cyclonedx-json=${CYCLONEDX_SBOM}" --quiet
@@ -109,7 +109,7 @@ fi
 echo -e "\n${BLUE}─── 4. Vulnerability Audit (Grype Scan) ───${RESET}"
 if ! command -v grype >/dev/null 2>&1; then
     echo -e "${YELLOW}[!] 'grype' not found. Skipping vulnerability scan.${RESET}"
-    echo -e "    Install grype: curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh"
+    echo -e "    Install grype: curl --proto =https --tlsv1.2 -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh"
 elif [[ -f "$SPDX_SBOM" ]]; then
     echo -e "${CYAN}[*] Auditing SBOM against NVD and Debian Security Trackers...${RESET}"
     grype "sbom:${SPDX_SBOM}" -o sarif --file "$GRYPE_REPORT" --fail-on critical 2>/dev/null || true

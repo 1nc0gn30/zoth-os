@@ -28,7 +28,7 @@ tools = [
         ],
         "check_names": ["claude-code", "claude"],
         "node_pkg": "~/.local/lib/node_modules/@anthropic-ai/claude-code/cli.mjs",
-        "install_cmd": "mkdir -p ~/.local/bin && (npm install -g --prefix ~/.local @anthropic-ai/claude-code || curl -fsSL https://claude.ai/install.sh | bash)",
+        "install_cmd": "mkdir -p ~/.local/bin && (npm install -g --prefix ~/.local @anthropic-ai/claude-code || curl --proto =https --tlsv1.2 -fsSL https://claude.ai/install.sh | bash)",
         "install_desc": "npm install -g @anthropic-ai/claude-code (or curl https://claude.ai/install.sh)"
     },
     {

@@ -62,7 +62,7 @@ fi
 echo -e "\n${CYAN}[2/3] Verifying Sigstore Cryptographic Attestation...${RESET}"
 if ! command -v cosign >/dev/null 2>&1; then
     echo -e "${YELLOW}[!] 'cosign' is not installed. To verify signatures against Rekor:${RESET}"
-    echo -e "    curl -sSfL https://raw.githubusercontent.com/sigstore/cosign/main/install.sh | sh"
+    echo -e "    curl --proto =https --tlsv1.2 -sSfL https://raw.githubusercontent.com/sigstore/cosign/main/install.sh | sh"
 else
     if [[ -f "$BUNDLE_FILE" && -f "$SHA_FILE" ]]; then
         if [[ -f "$PUB_KEY" ]]; then

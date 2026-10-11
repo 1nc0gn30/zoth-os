@@ -10,12 +10,12 @@ TARGET_HOME="${HOME:-/home/$TARGET_USER}"
 
 echo "[1/7] Installing Node.js LTS (v22.x) & Package Managers (pnpm, yarn, bun)..."
 if ! node -v 2>/dev/null | grep -q "v2[0-9]"; then
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+    curl --proto =https --tlsv1.2 -fsSL https://deb.nodesource.com/setup_22.x | bash -
     apt-get install -y nodejs
 fi
 npm install -g pnpm yarn 2>/dev/null || true
 if ! which bun >/dev/null 2>&1; then
-    curl -fsSL https://bun.sh/install | bash 2>/dev/null || true
+    curl --proto =https --tlsv1.2 -fsSL https://bun.sh/install | bash 2>/dev/null || true
     if [ -f "$HOME/.bun/bin/bun" ]; then
         ln -sf "$HOME/.bun/bin/bun" /usr/local/bin/bun
     fi
@@ -39,7 +39,7 @@ apt-get install -y tor nyx torbrowser-launcher || true
 
 # Tailscale
 if ! which tailscale >/dev/null 2>&1; then
-    curl -fsSL https://tailscale.com/install.sh | sh || true
+    curl --proto =https --tlsv1.2 -fsSL https://tailscale.com/install.sh | sh || true
 fi
 
 # Anonsurf
@@ -64,7 +64,7 @@ fi
 echo "[5/7] Installing Web3 & Solana Tooling (Rust, Solana CLI, Foundry)..."
 # Rust
 if ! which cargo >/dev/null 2>&1; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal || true
+    curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal || true
     if [ -f "$HOME/.cargo/bin/cargo" ]; then
         ln -sf "$HOME/.cargo/bin/"* /usr/local/bin/ 2>/dev/null || true
     fi
@@ -80,7 +80,7 @@ fi
 
 # Foundry (Forge, Cast, Anvil)
 if ! which forge >/dev/null 2>&1; then
-    curl -L https://foundry.paradigm.xyz | bash 2>/dev/null || true
+    curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash 2>/dev/null || true
     if [ -f "$HOME/.foundry/bin/foundryup" ]; then
         "$HOME/.foundry/bin/foundryup" || true
         ln -sf "$HOME/.foundry/bin/"* /usr/local/bin/ 2>/dev/null || true

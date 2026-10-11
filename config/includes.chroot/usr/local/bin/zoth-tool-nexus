@@ -268,7 +268,7 @@ def execute_single_package_install(pkg):
             """
         elif target == "foundry":
             cmd = """
-            curl -L https://foundry.paradigm.xyz | bash
+            curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash
             if [[ -x "$HOME/.foundry/bin/foundryup" ]]; then
                 "$HOME/.foundry/bin/foundryup"
             fi
@@ -309,13 +309,13 @@ def execute_single_package_install(pkg):
             fi
             """
         elif target == "ollama":
-            cmd = "curl -fsSL https://ollama.com/install.sh | sh"
+            cmd = "curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh"
         elif target == "uv":
-            cmd = "curl -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv"
+            cmd = "curl --proto =https --tlsv1.2 -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv"
         elif target == "starship":
-            cmd = 'curl -sS https://starship.rs/install.sh | sh -s -- -y'
+            cmd = 'curl --proto =https --tlsv1.2 -fsS https://starship.rs/install.sh | sh -s -- -y'
         elif target == "tailscale":
-            cmd = 'curl -fsSL https://tailscale.com/install.sh | sh'
+            cmd = 'curl --proto =https --tlsv1.2 -fsSL https://tailscale.com/install.sh | sh'
         elif target == "rustscan":
             cmd = 'sudo apt-get install -y rustscan 2>/dev/null || cargo install rustscan'
         elif target == "caido":

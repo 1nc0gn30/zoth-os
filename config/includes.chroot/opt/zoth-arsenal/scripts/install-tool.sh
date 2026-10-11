@@ -65,7 +65,7 @@ case "$TYPE" in
         else
             case "$ID" in
                 ollama)
-                    curl -fsSL https://ollama.com/install.sh | sh
+                    curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh
                     ;;
                 cline)
                     npm install -g cline 2>/dev/null || true
@@ -74,7 +74,7 @@ case "$TYPE" in
                     /usr/local/bin/hermes setup || pip install --break-system-packages hermes-agent
                     ;;
                 foundry)
-                    curl -L https://foundry.paradigm.xyz | bash && ~/.foundry/bin/foundryup
+                    curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash && ~/.foundry/bin/foundryup
                     ;;
                 solana-cli)
                     sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"

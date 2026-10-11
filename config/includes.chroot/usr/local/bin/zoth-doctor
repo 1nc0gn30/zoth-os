@@ -119,8 +119,8 @@ audit_tool aircrack-ng "Wireless Auditing" "aircrack-ng --help" "sudo apt-get in
 # ─────────────────────────────────────────────────────────────────────────────
 echo -e "\n${CYAN}${BOLD}[2/7] Auditing Frontier AI & Autonomous Agent Stack ...${RESET}"
 audit_tool hermes "Nous Research Agent" "hermes --version" ""
-audit_tool ollama "Local LLM Inference" "ollama --version" "curl -fsSL https://ollama.com/install.sh | sh"
-audit_tool uv "Astral Python Fast Pip" "uv --version" "curl -LsSf https://astral.sh/uv/install.sh | sh"
+audit_tool ollama "Local LLM Inference" "ollama --version" "curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh"
+audit_tool uv "Astral Python Fast Pip" "uv --version" "curl --proto =https --tlsv1.2 -LsSf https://astral.sh/uv/install.sh | sh"
 audit_tool aider "AI Pair Programming" "aider --version" "uv pip install aider-chat"
 audit_tool garak "LLM Vulnerability Scanner" "garak --version" "uv pip install garak"
 audit_tool pyrit "AI Red-Teaming Toolkit" "pyrit --help" "uv pip install pyrit"

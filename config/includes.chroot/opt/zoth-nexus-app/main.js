@@ -562,7 +562,7 @@ function getRecipeScript(tool) {
       return `su - ${os.userInfo().username} -c "sh -c \\"\\$(curl -sSfL https://release.anza.xyz/stable/install)\\"" && if [ -d "/home/${os.userInfo().username}/.local/share/solana/install/active_release/bin" ]; then ln -sf /home/${os.userInfo().username}/.local/share/solana/install/active_release/bin/* /usr/local/bin/ 2>/dev/null || true; fi`;
     }
     if (target === 'foundry') {
-      return `su - ${os.userInfo().username} -c "curl -L https://foundry.paradigm.xyz | bash && if [ -x \\$HOME/.foundry/bin/foundryup ]; then \\$HOME/.foundry/bin/foundryup; fi" && if [ -d "/home/${os.userInfo().username}/.foundry/bin" ]; then ln -sf /home/${os.userInfo().username}/.foundry/bin/* /usr/local/bin/ 2>/dev/null || true; fi`;
+      return `su - ${os.userInfo().username} -c "curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash && if [ -x \\$HOME/.foundry/bin/foundryup ]; then \\$HOME/.foundry/bin/foundryup; fi" && if [ -d "/home/${os.userInfo().username}/.foundry/bin" ]; then ln -sf /home/${os.userInfo().username}/.foundry/bin/* /usr/local/bin/ 2>/dev/null || true; fi`;
     }
     if (target === 'caido') {
       return `curl -fsSL -L -o /tmp/caido.tar.gz https://caido.download/releases/v0.45.1/caido-cli-v0.45.1-linux-x86_64.tar.gz && tar -xzf /tmp/caido.tar.gz -C /usr/local/bin/ caido 2>/dev/null && rm -f /tmp/caido.tar.gz && chmod +x /usr/local/bin/caido`;
@@ -571,13 +571,13 @@ function getRecipeScript(tool) {
       return `curl -fsSL https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall && chmod +x /tmp/msfinstall && /tmp/msfinstall && rm -f /tmp/msfinstall`;
     }
     if (target === 'starship') {
-      return `curl -sS https://starship.rs/install.sh | sh -s -- -y`;
+      return `curl --proto =https --tlsv1.2 -fsS https://starship.rs/install.sh | sh -s -- -y`;
     }
     if (target === 'uv') {
-      return `curl -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv`;
+      return `curl --proto =https --tlsv1.2 -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv`;
     }
     if (target === 'tailscale') {
-      return `curl -fsSL https://tailscale.com/install.sh | sh`;
+      return `curl --proto =https --tlsv1.2 -fsSL https://tailscale.com/install.sh | sh`;
     }
     if (target === 'obsidian') {
       return `curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb" && dpkg -i /tmp/obsidian.deb 2>/dev/null || apt-get -f install -y && rm -f /tmp/obsidian.deb`;

@@ -145,7 +145,7 @@ elif [[ -f "/root/.cargo/bin/uv" ]]; then
     exec "/root/.cargo/bin/uv" "$@"
 else
     echo -e "\\e[1;36m[*] Installing uv (Astral high-speed Python manager)...\\e[0m"
-    curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 || true
+    curl --proto =https --tlsv1.2 -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 || true
     if [[ -f "$HOME/.cargo/bin/uv" ]]; then
         exec "$HOME/.cargo/bin/uv" "$@"
     else

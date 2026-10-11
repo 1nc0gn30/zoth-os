@@ -41,7 +41,7 @@ npm install -g \
 echo -e "${CYAN}[4/8] Verifying Ollama...${RESET}"
 if ! command -v ollama >/dev/null 2>&1; then
     echo "Installing Ollama binary..."
-    curl -fsSL https://ollama.com/install.sh | sh || true
+    curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh || true
 fi
 
 # 5. Install Python AI packages & Evaluation suites

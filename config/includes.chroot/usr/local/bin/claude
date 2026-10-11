@@ -21,7 +21,7 @@ TOOL_NAME = "Anthropic Claude Code"
 BIN_CANDIDATES = ['~/.local/bin/claude', '~/.local/bin/claude-code', '~/.npm-global/bin/claude', '~/.claude/bin/claude', '/usr/local/bin/claude-code', '/usr/bin/claude', '/usr/bin/claude-code']
 CHECK_NAMES = ['claude-code', 'claude']
 NODE_PKG = "~/.local/lib/node_modules/@anthropic-ai/claude-code/cli.mjs"
-INSTALL_CMD = "mkdir -p ~/.local/bin && (npm install -g --prefix ~/.local @anthropic-ai/claude-code || curl -fsSL https://claude.ai/install.sh | bash)"
+INSTALL_CMD = "mkdir -p ~/.local/bin && (npm install -g --prefix ~/.local @anthropic-ai/claude-code || curl --proto =https --tlsv1.2 -fsSL https://claude.ai/install.sh | bash)"
 INSTALL_DESC = "npm install -g @anthropic-ai/claude-code (or curl https://claude.ai/install.sh)"
 
 def find_real_binary():

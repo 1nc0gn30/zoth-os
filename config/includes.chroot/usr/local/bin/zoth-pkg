@@ -171,22 +171,22 @@ def install_single_tool(t):
 
     elif ttype == "custom":
         if tool_id == "ollama":
-            res = subprocess.run("curl -fsSL https://ollama.com/install.sh | sh", shell=True)
+            res = subprocess.run("curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh", shell=True)
             return res.returncode == 0
         elif tool_id == "solana":
             res = subprocess.run('sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)" && cp -a /root/.local/share/solana/install/active_release/bin/* /usr/local/bin/', shell=True)
             return res.returncode == 0
         elif tool_id == "foundry":
-            res = subprocess.run('curl -L https://foundry.paradigm.xyz | bash && /root/.foundry/bin/foundryup && cp -a /root/.foundry/bin/* /usr/local/bin/', shell=True)
+            res = subprocess.run('curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash && /root/.foundry/bin/foundryup && cp -a /root/.foundry/bin/* /usr/local/bin/', shell=True)
             return res.returncode == 0
         elif tool_id == "starship":
-            res = subprocess.run('curl -sS https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin', shell=True)
+            res = subprocess.run('curl --proto =https --tlsv1.2 -fsS https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin', shell=True)
             return res.returncode == 0
         elif tool_id == "cloudflared":
             res = subprocess.run('curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared && chmod +x /usr/local/bin/cloudflared', shell=True)
             return res.returncode == 0
         elif tool_id == "tailscale":
-            res = subprocess.run('curl -fsSL https://tailscale.com/install.sh | sh', shell=True)
+            res = subprocess.run('curl --proto =https --tlsv1.2 -fsSL https://tailscale.com/install.sh | sh', shell=True)
             return res.returncode == 0
         elif tool_id == "obsidian":
             res = subprocess.run('curl -fsSL -L -o /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb" && dpkg -i /tmp/obsidian.deb 2>/dev/null || apt-get -f install -y', shell=True)

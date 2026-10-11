@@ -21,8 +21,8 @@ TOOL_NAME = "xAI Grok CLI"
 BIN_CANDIDATES = ['~/.local/bin/grok', '~/.grok/bin/grok', '~/.npm-global/bin/grok', '/usr/local/bin/grok-cli', '/usr/bin/grok']
 CHECK_NAMES = ['grok-cli', 'grok']
 NODE_PKG = ""
-INSTALL_CMD = "curl -fsSL https://x.ai/cli/install.sh | bash"
-INSTALL_DESC = "curl -fsSL https://x.ai/cli/install.sh | bash"
+INSTALL_CMD = "curl --proto =https --tlsv1.2 -fsSL https://x.ai/cli/install.sh | bash"
+INSTALL_DESC = "curl --proto =https --tlsv1.2 -fsSL https://x.ai/cli/install.sh | bash"
 
 def find_real_binary():
     self_path = os.path.realpath(sys.argv[0])
