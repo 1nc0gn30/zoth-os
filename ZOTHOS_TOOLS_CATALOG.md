@@ -273,8 +273,8 @@
 ### 20. certpath-roadmap-studio (CertPath Roadmap Studio)
 - **GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
 - **Category:** Automation
-- **Execution Mode:** BROWSER • [Live App](https://certpath-roadmap-studio.netlify.app)
-- **Operational Value:** Interactive cybersecurity & engineering certification roadmap generator.
+- **Execution Mode:** BROWSER • [Live App](https://certpath-roadmap-studio.netlify.app) • [Headless Verified: 100% PASS]
+- **Operational Value:** 100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, dual checkout rails ($19), and action interceptors.
 
 ### 22. regex-droid-builder (Regex Droid Studio)
 - **GitHub:** https://github.com/NullAITech/regex-droid-builder
