@@ -55,7 +55,7 @@ const TOOLS_DATABASE = [
   { id: 'zoth-ghost', name: 'Zoth Ghostmode', domain: 'flagship', desc: 'Anti-forensics & RAM-Only Ephemeral Routing Workstation', cmd: 'zoth-ghost', pkg: 'zoth-ghost', type: 'system' },
   { id: 'zoth-sentinel', name: 'Zoth Sentinel Monitor', domain: 'flagship', desc: 'Real-time System Call & Ring-0 Kernel Security Sentinel', cmd: 'zoth-sentinel', pkg: 'zoth-sentinel', type: 'system' },
   { id: 'zoth-mcp', name: 'Zoth MCP Registry', domain: 'flagship', desc: 'Model Context Protocol Server & Client Registry Deck', cmd: 'zoth-mcp', pkg: 'zoth-mcp', type: 'system' },
-  { id: 'zoth-bridge', name: 'Zoth Sovereign Bridge', domain: 'flagship', desc: 'Ed25519 E2EE Agent Signal Bridge & Inter-Agent Mesh', cmd: 'zoth-bridge', pkg: 'zoth-bridge', type: 'system' },
+  { id: 'zoth-bridge', name: 'Zoth Sovereign Bridge', domain: 'flagship', desc: 'Local loopback bridge: telemetry and launching installed apps (token-protected)', cmd: 'zoth-bridge', pkg: 'zoth-bridge', type: 'system' },
   { id: 'zoth-ai', name: 'Zoth AI Prompt Foundry', domain: 'flagship', desc: 'Multi-Model Prompt Engineering & Generative CLI', cmd: 'zoth-ai', pkg: 'zoth-ai', type: 'system' },
   { id: 'zoth-heal', name: 'Zoth Auto-Healer', domain: 'flagship', desc: 'Autonomous System Integrity & Package Repair Engine', cmd: 'zoth-heal', pkg: 'zoth-heal', type: 'system' },
   { id: 'zoth-live-wallpaper', name: 'Zoth Live Wallpaper', domain: 'flagship', desc: 'Dynamic Shader & Hermetic Background Visualizer Engine', cmd: 'zoth-live-wallpaper', pkg: 'zoth-live-wallpaper', type: 'system' },
