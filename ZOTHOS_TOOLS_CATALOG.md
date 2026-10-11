@@ -408,8 +408,8 @@
 ### 37. etsy-pod-forge (Etsy POD Forge)
 - **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
 - **Category:** Commerce & POD
-- **Execution Mode:** LOCAL_CLI • [Live App](https://pod.nullai.tech)
-- **Operational Value:** Autonomous Print-on-Demand canvas engine, lifestyle mockup compositor, and listing kit synthesizer targeting 55+ women demographic.
+- **Execution Mode:** BROWSER • [Live App](https://etsy-pod.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
+- **Operational Value:** 100% in-browser 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer with dual Stripe + Solana rails ($19), canvas stage paywall blur, export action interceptors, and 1-click Pro license unlock.
 
 ### 59. storefront-catalog (YourDigitalSpace POD Showcase)
 - **GitHub:** https://github.com/1nc0gn30/storefront-catalog
