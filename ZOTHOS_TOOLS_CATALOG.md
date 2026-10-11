@@ -461,8 +461,8 @@
 ### 48. pod-mockup-forge (POD Mockup Forge)
 - **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
 - **Category:** Commerce & MCP
-- **Execution Mode:** LOCAL_CLI • [Live App](https://pod-mockup-forge.nullai.tech)
-- **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor.
+- **Execution Mode:** BROWSER • [Live App](https://pod-mockup-forge.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor. Fully hardened with client-side canvas compositing, frosted paywall lock, and instant 1-click Pro activation.
 
 ### 49. pod-margin-sentinel (POD Margin Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
