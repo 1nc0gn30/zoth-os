@@ -364,8 +364,9 @@
 ### 32. agent-mock-twin (Agent Mock Twin)
 - **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
 - **Category:** Simulation & Testing
-- **Execution Mode:** LOCAL_CLI • [Live App](https://agent-mock.nullai.tech)
-- **Operational Value:** Autonomous offline API mock & deterministic replay server for AI agents with $0 token spend.
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-mock.nullai.tech)
+- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Operational Value:** Autonomous offline API mock & deterministic network twin for AI agents with HAR 1.2 / OpenAPI 3.0 ingestion, microsecond latency simulation, and CI/CD Docker bundle export with $0 token spend.
 
 ### 39. mcp-lens (MCP Lens)
 - **GitHub:** https://github.com/1nc0gn30/mcp-lens
