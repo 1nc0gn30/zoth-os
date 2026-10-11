@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+trap 'exit 130' INT
 # ==============================================================================
 #  ZOTHOS STREAMLIT STUDIO & DATA APP RUNNER
 # ==============================================================================
@@ -98,7 +99,7 @@ BANNER
 pause_menu() {
     echo ""
     echo -e "${GOLD}${BOLD}Press [ENTER] to return to the Streamlit Studio Menu...${NC}"
-    read -r
+    read -r || exit 130
 }
 
 show_cheatsheet() {
@@ -135,7 +136,7 @@ show_cheatsheet() {
 scaffold_app() {
     clear
     echo -e "${GOLD}${BOLD}═ CREATE NEW STREAMLIT APP TEMPLATE ═${NC}\n"
-    read -p "Enter app script name [app.py]: " app_name
+    read -p "Enter app script name [app.py]: " app_name || exit 130
     app_name=${app_name:-app.py}
 
     if [[ -f "$app_name" ]]; then
@@ -179,7 +180,7 @@ PYAPP
 
     echo -e "${GREEN}✓ Created '$app_name' successfully!${NC}"
     echo -e "  To launch immediately: ${CYAN}streamlit run $app_name${NC}\n"
-    read -p "Launch it now? [y/N]: " launch_now
+    read -p "Launch it now? [y/N]: " launch_now || exit 130
     if [[ "$launch_now" =~ ^[Yy]$ ]]; then
         streamlit run "$app_name"
     fi
@@ -198,7 +199,7 @@ while true; do
     echo -e "    ${CYAN}[7]${NC}  ${BOLD}💻 Streamlit Python Terminal Shell${NC}            ${DIM}(Interactive bash with streamlit)${NC}"
     echo -e "    ${RED}[0]${NC}  ${BOLD}🚪 Exit${NC}\n"
     
-    read -p "  Enter selection [0-7]: " choice
+    read -p "  Enter selection [0-7]: " choice || exit 130
     case "$choice" in
         1)
             echo -e "\n${CYAN}[+] Launching ZothOS Cyber Intelligence Studio...${NC}"
@@ -216,7 +217,7 @@ while true; do
             ;;
         3)
             echo ""
-            read -e -p "Enter path to Python script (.py): " py_path
+            read -e -p "Enter path to Python script (.py): " py_path || exit 130
             if [[ -f "$py_path" ]]; then
                 echo -e "\n${CYAN}[+] Launching '$py_path'...${NC}\n"
                 open_browser_url "http://localhost:8501"

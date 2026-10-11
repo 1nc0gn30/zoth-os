@@ -18,4 +18,4 @@ Exec=xdg-open http://127.0.0.1:8108
 
 [Desktop Action Audit]
 Name=Run SEO Auditor CLI
-Exec=xfce4-terminal --hold -T "Etsy SEO Auditor" -e "/usr/local/bin/etsy-connector audit --help"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Etsy SEO Auditor" -- /usr/local/bin/etsy-connector audit --help

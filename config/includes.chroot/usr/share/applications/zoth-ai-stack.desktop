@@ -3,10 +3,9 @@ Version=1.0
 Type=Application
 Name=Zoth AI Neural Stack
 Comment=Stacked Neural Compute Chips & ML Pipeline
-Exec=konsole -p tabtitle='AI Stack' -e 'zoth-ai-stack'
+Exec=/usr/local/bin/zoth-konsole --title "AI Stack" -- zoth-ai-stack
 Icon=zoth-ai-stack
 Terminal=false
 Categories=Development;AI;
-Keywords=ai;stack;neural;chips;ml;pipeline;compute;deep-learning;
-MimeType=application/x-zoth-ai-stack;
 StartupNotify=true
+Keywords=ai;stack;neural;chips;ml;pipeline;compute;deep-learning;

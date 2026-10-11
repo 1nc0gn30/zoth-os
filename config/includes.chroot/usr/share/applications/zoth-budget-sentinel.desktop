@@ -18,12 +18,10 @@ Exec=xdg-open http://127.0.0.1:8110
 
 [Desktop Action Status]
 Name=Inspect Spending Status
-Exec=xfce4-terminal --hold -T "Budget Sentinel Status" -e "/usr/local/bin/agent-budget status"
-
+Exec=/usr/local/bin/zoth-konsole --pause --title "Budget Sentinel Status" -- /usr/local/bin/agent-budget status
 [Desktop Action Trip]
 Name=Trip Emergency Circuit Breaker
-Exec=xfce4-terminal -T "Trip Circuit Breaker" -e "/usr/local/bin/agent-budget trip --reason 'Manual desktop trip'"
-
+Exec=/usr/local/bin/zoth-konsole --pause --title "Trip Circuit Breaker" -- /usr/local/bin/agent-budget trip --reason "Manual desktop trip"
 [Desktop Action Reset]
 Name=Reset Circuit Breaker
-Exec=xfce4-terminal -T "Reset Circuit Breaker" -e "/usr/local/bin/agent-budget reset"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Reset Circuit Breaker" -- /usr/local/bin/agent-budget reset

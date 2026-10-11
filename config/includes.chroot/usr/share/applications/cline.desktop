@@ -3,9 +3,9 @@ Version=1.0
 Type=Application
 Name=Cline Autonomous Agent
 Comment=Cline.bot Open-Source Autonomous Coding Agent & CLI
-Exec=konsole -p tabtitle='Cline AI' -e cline
+Exec=/usr/local/bin/zoth-konsole --title "Cline AI" -- cline
 Icon=/usr/share/pixmaps/opencode.png
 Terminal=false
 Categories=Development;AI;
-Keywords=cline;agent;autonomous;coding;ai;bot;
 StartupNotify=true
+Keywords=cline;agent;autonomous;coding;ai;bot;

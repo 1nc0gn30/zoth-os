@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# zoth-konsole — ZOTHOS terminal launcher
+# Opens Konsole WITHOUT --hold/--noclose so the window closes when the
+# session exits. Ctrl+C / clean tool exit both close the window.
+#
+# Usage:
+#   zoth-konsole [--title NAME] [--pause] [--shell] [--] command [args...]
+#   zoth-konsole --pause --title "Doctor" -- zoth-doctor
+#   zoth-konsole --shell --title "Arsenal" -- zoth
+#
+# --pause  After the command finishes, show exit status and wait for Enter
+#          (or Ctrl+C) before closing. Use for one-shot status/doctor runs.
+# --shell  After the command finishes, drop into an interactive bash.
+#          Window closes on 'exit' / Ctrl+D (normal shell). Prefer --pause
+#          for one-shots; use --shell only when a toolkit shell is intended.
+set -euo pipefail
+
+TITLE=""
+PAUSE=0
+SHELL_AFTER=0
+ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --title|-t)
+      TITLE="${2:-}"; shift 2 ;;
+    --pause)
+      PAUSE=1; shift ;;
+    --shell)
+      SHELL_AFTER=1; shift ;;
+    --)
+      shift; ARGS+=("$@"); break ;;
+    -h|--help)
+      sed -n '2,18p' "$0"; exit 0 ;;
+    *)
+      ARGS+=("$@"); break ;;
+  esac
+done
+
+if [[ ${#ARGS[@]} -eq 0 && "$SHELL_AFTER" -eq 0 ]]; then
+  echo "zoth-konsole: need a command (or --shell)" >&2
+  exit 2
+fi
+
+# Build the inner session argv for zoth-term-session
+inner=(/usr/local/bin/zoth-term-session)
+[[ "$PAUSE" -eq 1 ]] && inner+=(--pause)
+[[ "$SHELL_AFTER" -eq 1 ]] && inner+=(--shell)
+inner+=(-- "${ARGS[@]}")
+
+kargs=()
+if [[ -n "$TITLE" ]]; then
+  # Prefer -p tabtitle= and --qwindowtitle for KDE taskbar/window title
+  kargs+=(-p "tabtitle=${TITLE}" --qwindowtitle "$TITLE")
+fi
+
+# Never pass --hold / --noclose. Window closes when zoth-term-session exits.
+exec konsole "${kargs[@]}" -e "${inner[@]}"

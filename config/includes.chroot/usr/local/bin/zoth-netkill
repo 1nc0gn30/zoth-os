@@ -35,4 +35,4 @@ done
 
 echo -e "\e[1;31m[!] NetKill blocking active. Run 'ufw enable' or 'iptables -F' to restore.\e[0m"
 echo -e "\e[1;32m[*] NetKill secured — isolated network posture. Type 'netkill --restore' to reverse.\e[0m"
-exec bash
+echo -e "\e[1;36m[*] Done. Window will close (or press Ctrl+C).\e[0m"

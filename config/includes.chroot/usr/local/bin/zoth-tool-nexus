@@ -268,7 +268,7 @@ def execute_single_package_install(pkg):
             """
         elif target == "foundry":
             cmd = """
-            curl --proto =https --tlsv1.2 -fL https://foundry.paradigm.xyz | bash
+            curl -L https://foundry.paradigm.xyz | bash
             if [[ -x "$HOME/.foundry/bin/foundryup" ]]; then
                 "$HOME/.foundry/bin/foundryup"
             fi
@@ -309,13 +309,13 @@ def execute_single_package_install(pkg):
             fi
             """
         elif target == "ollama":
-            cmd = "curl --proto =https --tlsv1.2 -fsSL https://ollama.com/install.sh | sh"
+            cmd = "curl -fsSL https://ollama.com/install.sh | sh"
         elif target == "uv":
-            cmd = "curl --proto =https --tlsv1.2 -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv"
+            cmd = "curl -LsSf https://astral.sh/uv/install.sh | sh || pip3 install --break-system-packages uv"
         elif target == "starship":
-            cmd = 'curl --proto =https --tlsv1.2 -fsS https://starship.rs/install.sh | sh -s -- -y'
+            cmd = 'curl -sS https://starship.rs/install.sh | sh -s -- -y'
         elif target == "tailscale":
-            cmd = 'curl --proto =https --tlsv1.2 -fsSL https://tailscale.com/install.sh | sh'
+            cmd = 'curl -fsSL https://tailscale.com/install.sh | sh'
         elif target == "rustscan":
             cmd = 'sudo apt-get install -y rustscan 2>/dev/null || cargo install rustscan'
         elif target == "caido":
@@ -347,12 +347,17 @@ def execute_single_package_install(pkg):
 
 
 def safe_input(prompt=""):
-    if sys.stdin.isatty():
-        try:
-            return input(prompt)
-        except (EOFError, KeyboardInterrupt):
-            return ""
-    return ""
+    """Read a line. Ctrl+C / EOF exits the process (status 130) so Konsole can close."""
+    if not sys.stdin.isatty():
+        return ""
+    try:
+        return input(prompt)
+    except EOFError:
+        print("\n[nexus] EOF — exiting.")
+        sys.exit(130)
+    except KeyboardInterrupt:
+        print("\n[nexus] interrupted — exiting.")
+        sys.exit(130)
 
 def install_module(pkg_def, interactive=True):
     if not pkg_def or pkg_def == "none":

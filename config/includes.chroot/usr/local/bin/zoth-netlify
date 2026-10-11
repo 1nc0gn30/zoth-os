@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+trap 'exit 130' INT
 # ==============================================================================
 #  ZOTHOS SOVEREIGN NETLIFY CLI HUB & CONTROL CONSOLE
 # ==============================================================================
@@ -57,7 +58,7 @@ BANNER
 pause_menu() {
     echo ""
     echo -e "${GOLD}${BOLD}Press [ENTER] to return to the Netlify Menu...${NC}"
-    read -r
+    read -r || exit 130
 }
 
 show_cheatsheet() {
@@ -108,7 +109,7 @@ show_cheatsheet() {
 scaffold_starter() {
     clear
     echo -e "${GOLD}${BOLD}═ SCAFFOLD NEW NETLIFY SERVERLESS PROJECT ═${NC}\n"
-    read -p "Enter project directory name [my-netlify-app]: " proj_name
+    read -p "Enter project directory name [my-netlify-app]: " proj_name || exit 130
     proj_name=${proj_name:-my-netlify-app}
 
     if [[ -d "$proj_name" ]]; then
@@ -209,7 +210,7 @@ while true; do
     echo -e "    ${CYAN}[11]${NC} ${BOLD}Drop to Netlify Interactive Shell${NC}     ${DIM}(Bash with netlify environment)${NC}"
     echo -e "    ${RED}[0]${NC}  ${BOLD}Exit${NC}\n"
     
-    read -p "  Enter selection [0-11]: " choice
+    read -p "  Enter selection [0-11]: " choice || exit 130
     case "$choice" in
         1)
             echo -e "\n${CYAN}Running 'netlify status'...${NC}\n"
@@ -238,7 +239,7 @@ while true; do
             ;;
         6)
             echo -e "\n${CYAN}[1] Link existing site | [2] Initialize new site${NC}"
-            read -p "Choose: " lchoice
+            read -p "Choose: " lchoice || exit 130
             if [[ "$lchoice" == "1" ]]; then
                 netlify link
             else
@@ -253,7 +254,7 @@ while true; do
             ;;
         8)
             echo -e "\n${CYAN}[1] Open Admin Dashboard | [2] Open Live Site${NC}"
-            read -p "Choose: " ochoice
+            read -p "Choose: " ochoice || exit 130
             if [[ "$ochoice" == "2" ]]; then
                 netlify open:site
             else

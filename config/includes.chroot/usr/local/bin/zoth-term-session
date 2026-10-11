@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# zoth-term-session — runs inside Konsole; always exits so the window can close.
+# SIGINT (Ctrl+C) terminates the session with status 130.
+set -uo pipefail
+
+PAUSE=0
+SHELL_AFTER=0
+ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --pause) PAUSE=1; shift ;;
+    --shell) SHELL_AFTER=1; shift ;;
+    --) shift; ARGS+=("$@"); break ;;
+    *) ARGS+=("$@"); break ;;
+  esac
+done
+
+# Ensure Ctrl+C kills this session (and the foreground child).
+trap 'echo; echo "[zoth-term] interrupted — closing."; exit 130' INT
+trap 'exit 143' TERM
+
+ec=0
+if [[ ${#ARGS[@]} -gt 0 ]]; then
+  # Run the tool in the foreground of this process group so Ctrl+C reaches it.
+  "${ARGS[@]}" && ec=0 || ec=$?
+  # 130 = died on SIGINT; propagate so callers/tests see it
+  if [[ "$ec" -eq 130 ]]; then
+    exit 130
+  fi
+fi
+
+if [[ "$SHELL_AFTER" -eq 1 ]]; then
+  echo
+  echo "[zoth-term] dropping to a shell — type 'exit' or press Ctrl+D to close this window."
+  # Interactive bash: Ctrl+C at an empty prompt is normal (^C, new prompt).
+  # Closing the window = exit the shell.
+  exec bash --login || exec bash
+fi
+
+if [[ "$PAUSE" -eq 1 ]]; then
+  echo
+  if [[ "$ec" -eq 0 ]]; then
+    echo "[zoth-term] finished successfully."
+  else
+    echo "[zoth-term] exited with status $ec."
+  fi
+  # read returns non-zero on Ctrl+C / EOF → we exit
+  if ! read -r -p "Press Enter to close (or Ctrl+C)... " _; then
+    exit 130
+  fi
+fi
+
+exit "$ec"

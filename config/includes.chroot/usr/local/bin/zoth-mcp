@@ -5,6 +5,7 @@
 # ==============================================================================
 
 set -euo pipefail
+trap 'exit 130' INT
 
 GREEN="\e[38;2;0;255;157m"
 GOLD="\e[38;2;255;215;0m"
@@ -510,23 +511,23 @@ interactive_menu() {
         echo -e "  ${BOLD}${GRAY}[7]${RESET} [JSON]      ${BOLD}View Raw MCP Configuration JSON${RESET}"
         echo -e "  ${BOLD}${GRAY}[0]${RESET} [EXIT]      ${BOLD}Exit Hub${RESET}"
         echo -e "${GREEN}${BOLD}══════════════════════════════════════════════════════════════════════${RESET}"
-        read -r -p "Select MCP operation [0-7]: " choice
+        read -r -p "Select MCP operation [0-7]: " choice || exit 130
         case "$choice" in
             1) cmd_list; read -r -p "Press Enter to continue..." _ ;;
             2) cmd_health; read -r -p "Press Enter to continue..." _ ;;
             3) cmd_start_all; read -r -p "Press Enter to continue..." _ ;;
             4) banner; cmd_sync; read -r -p "Press Enter to continue..." _ ;;
             5) 
-                read -r -p "Enter MCP server name to test [default: filesystem]: " sname
+                read -r -p "Enter MCP server name to test [default: filesystem]: " sname || exit 130
                 cmd_test "${sname:-filesystem}"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             6) cmd_stop_all; read -r -p "Press Enter to continue..." _ ;;
             7)
                 echo ""
                 cat "$(get_config_path)"
                 echo ""
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             0|q|Q) break ;;
             *) echo -e "${RED}Invalid option${RESET}"; sleep 1 ;;

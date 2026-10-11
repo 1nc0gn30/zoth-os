@@ -5,6 +5,7 @@
 # ==============================================================================
 
 set -uo pipefail
+trap 'exit 130' INT
 
 GREEN="\e[1;32m"
 CYAN="\e[1;36m"
@@ -218,80 +219,80 @@ interactive_menu() {
         echo -e "  ${GREEN}[9]${RESET} 09 - Anonymity & Anti-Forensics (Tor, Anonsurf, Macchanger, BleachBit)"
         echo -e "  ${BOLD}[0]${RESET} Exit"
         echo ""
-        read -r -p "ZOTH-SEC [choice]: " cat_opt
+        read -r -p "ZOTH-SEC [choice]: " cat_opt || exit 130
 
         case "$cat_opt" in
             1)
                 header
                 show_cat "01 - Information Gathering" nmap masscan amass nuclei sublist3r theHarvester recon-ng maltego
                 echo ""
-                read -r -p "Run tool (e.g. nmap -sV target, or press enter to back): " cmd
+                read -r -p "Run tool (e.g. nmap -sV target, or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             2)
                 header
                 show_cat "02 - Vulnerability Analysis" sqlmap nikto wpscan commix testssl.sh gobuster ffuf feroxbuster
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             3)
                 header
                 show_cat "03 - Exploitation Frameworks" msfconsole searchsploit beef-xss sliver routerploit
                 echo ""
-                read -r -p "Run tool (e.g. msfconsole, or press enter to back): " cmd
+                read -r -p "Run tool (e.g. msfconsole, or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             4)
                 header
                 show_cat "04 - Wireless & RF" aircrack-ng airgeddon kismet wifite bully reaver gqrx hackrf
                 echo ""
-                read -r -p "Run tool (e.g. airgeddon, or press enter to back): " cmd
+                read -r -p "Run tool (e.g. airgeddon, or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             5)
                 header
                 show_cat "05 - Password & Hashes" hashcat john hydra medusa crunch ophcrack cewl
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             6)
                 header
                 show_cat "06 - Reverse Engineering" ghidra radare2 cutter binwalk gdb rasm2
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             7)
                 header
                 show_cat "07 - Sniffing & Spoofing" wireshark tshark bettercap mitmproxy responder impacket-smbexec
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             8)
                 header
                 show_cat "08 - Post-Exploitation & Forensics" autopsy volatility lynis chkrootkit bloodhound
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             9)
                 header
                 show_cat "09 - Anonymity & Anti-Forensics" tor anonsurf macchanger bleachbit mat2 firejail proxychains4
                 echo ""
-                read -r -p "Run tool (or press enter to back): " cmd
+                read -r -p "Run tool (or press enter to back): " cmd || exit 130
                 [[ -n "$cmd" ]] && eval "$cmd"
-                read -r -p "Press Enter to continue..." _
+                read -r -p "Press Enter to continue..." _ || exit 130
                 ;;
             0|q|Q)
                 exit 0

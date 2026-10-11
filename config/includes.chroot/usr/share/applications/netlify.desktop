@@ -2,11 +2,11 @@
 Version=1.0
 Type=Application
 Name=Netlify CLI
-GenericName=Serverless & Edge Deployment
 Comment=Develop, build, test, and deploy projects to Netlify
-Exec=konsole -p tabtitle='Netlify CLI' -e /usr/local/bin/zoth-netlify
+Exec=/usr/local/bin/zoth-konsole --title "Netlify CLI" -- /usr/local/bin/zoth-netlify
 Icon=/usr/share/pixmaps/zoth-web3.png
 Terminal=false
 Categories=Development;Cloud;
-Keywords=netlify;deploy;serverless;functions;cli;
 StartupNotify=true
+GenericName=Serverless & Edge Deployment
+Keywords=netlify;deploy;serverless;functions;cli;

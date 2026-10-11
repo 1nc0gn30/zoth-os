@@ -3,7 +3,7 @@ Version=1.0
 Type=Application
 Name=Zoth Arsenal
 Comment=Kali, Parrot, AI & Web3 Sovereign Tool Registry
-Exec=konsole -p tabtitle="ZOTH ARSENAL" -e "bash -c 'zoth; exec bash'"
+Exec=/usr/local/bin/zoth-konsole --shell --title "ZOTH ARSENAL" -- zoth
 Icon=security-high
 Terminal=false
 Categories=Security;Development;System;

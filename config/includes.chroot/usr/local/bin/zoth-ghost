@@ -4,6 +4,7 @@
 #  Autonomous Anti-Forensics, Amnesic Memory, MAC-Spoofing & Torified Transparent Proxy
 # ==============================================================================
 set -e
+trap 'exit 130' INT
 
 GHOST_STATE="/run/zoth_ghostmode.state"
 AMNESIC_SERVICE="zoth-ghost-amnesic.service"
@@ -241,14 +242,14 @@ interactive_menu() {
         echo -e "  ${BOLD}${RED}[6]${RESET} ⛔       ${BOLD}Emergency Network Killswitch (Blackhole)${RESET}"
         echo -e "  ${BOLD}${GRAY}[0]${RESET} [X]      ${BOLD}Exit Deck${RESET}"
         echo ""
-        read -p "Select Ghostmode operation [0-6]: " choice
+        read -p "Select Ghostmode operation [0-6]: " choice || exit 130
         case "$choice" in
-            1) start_ghostmode; read -p "Press Enter to continue..." _ ;;
-            2) stop_ghostmode; read -p "Press Enter to continue..." _ ;;
-            3) change_identity; read -p "Press Enter to continue..." _ ;;
-            4) check_ip; read -p "Press Enter to continue..." _ ;;
-            5) amnesic_scrub; read -p "Press Enter to continue..." _ ;;
-            6) trigger_netkill; read -p "Press Enter to continue..." _ ;;
+            1) start_ghostmode; read -p "Press Enter to continue..." _  || exit 130;;
+            2) stop_ghostmode; read -p "Press Enter to continue..." _  || exit 130;;
+            3) change_identity; read -p "Press Enter to continue..." _  || exit 130;;
+            4) check_ip; read -p "Press Enter to continue..." _  || exit 130;;
+            5) amnesic_scrub; read -p "Press Enter to continue..." _  || exit 130;;
+            6) trigger_netkill; read -p "Press Enter to continue..." _  || exit 130;;
             0|q|Q) break ;;
             *) echo -e "${RED}Invalid selection${RESET}"; sleep 1 ;;
         esac
