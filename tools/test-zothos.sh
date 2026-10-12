@@ -12,7 +12,6 @@ CYAN="\e[1;36m"
 YELLOW="\e[1;33m"
 RED="\e[1;31m"
 BOLD="\e[1m"
-DIM="\e[2m"
 RESET="\e[0m"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

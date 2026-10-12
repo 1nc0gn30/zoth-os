@@ -8,7 +8,6 @@ set -e
 
 GREEN="\e[1;32m"
 CYAN="\e[1;36m"
-YELLOW="\e[1;33m"
 BOLD="\e[1m"
 RESET="\e[0m"
 
