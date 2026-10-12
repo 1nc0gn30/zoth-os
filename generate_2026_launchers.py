@@ -249,7 +249,7 @@ fi
 echo -e "\\e[1;31m[*] Terminating exposed ports and listeners...\\e[0m"
 for port in $(ss -tlnp 2>/dev/null | grep -oE ':[0-9]+' | tr -d ':' | sort -un); do
     [[ "$port" == "22" ]] && continue  # preserve SSH for VM management
-    pid=$(ss -tlnp 2>/dev/null | grep ":$port" | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | head -1)
+    pid=$(ss -tlnp 2>/dev/null | grep ":$port" | sed -n 's/.*pid=\\([0-9]*\\).*/\\1/p' | head -1)
     if [[ -n "$pid" ]]; then
         kill "$pid" 2>/dev/null && echo -e "\\e[1;31m[!] Killed listener on port $port (PID $pid)\\e[0m"
     fi
