@@ -2,8 +2,8 @@
 Version=1.0
 Type=Application
 Name=Plymouth Phoenix
-Comment=Boot Animation & Display Manager Theme
-Exec=
+Comment=List installed boot animation themes (current one marked by plymouth-set-default-theme)
+Exec=/usr/local/bin/zoth-konsole --pause --title "Plymouth Phoenix" -- /usr/sbin/plymouth-set-default-theme --list
 Icon=zoth-plymouth
 Terminal=false
 Categories=Settings;System;
