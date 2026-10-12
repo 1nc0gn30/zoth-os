@@ -14,12 +14,12 @@ Actions=Status;Chain;Verify;
 
 [Desktop Action Status]
 Name=Bento Grid Telemetry Status
-Exec=xfce4-terminal --hold -T "Agent Ecosystem Status" -e "/usr/local/bin/zoth-agent-conductor status"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Agent Ecosystem Status" -- /usr/local/bin/zoth-agent-conductor status
 
 [Desktop Action Chain]
 Name=Run Sovereign 4-Stage Chain
-Exec=xfce4-terminal --hold -T "Sovereign Agent Chain" -e "/usr/local/bin/zoth-agent-conductor chain"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Sovereign Agent Chain" -- /usr/local/bin/zoth-agent-conductor chain
 
 [Desktop Action Verify]
 Name=Verify Mesh Health Checks
-Exec=xfce4-terminal --hold -T "Agent Mesh Verification" -e "/usr/local/bin/zoth-agent-conductor verify"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Agent Mesh Verification" -- /usr/local/bin/zoth-agent-conductor verify

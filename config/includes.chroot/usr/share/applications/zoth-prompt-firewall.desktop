@@ -14,11 +14,11 @@ Actions=Scan;Stats;Radar;
 
 [Desktop Action Scan]
 Name=Scan Prompt in Terminal
-Exec=xfce4-terminal -T "Prompt Firewall Scan" -e "/usr/local/bin/agent-firewall scan"
+Exec=/usr/local/bin/zoth-konsole --title "Prompt Firewall Scan" -- /usr/local/bin/agent-firewall scan
 
 [Desktop Action Stats]
 Name=Firewall Telemetry Stats
-Exec=xfce4-terminal --hold -T "Prompt Firewall Stats" -e "/usr/local/bin/agent-firewall stats"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Prompt Firewall Stats" -- /usr/local/bin/agent-firewall stats
 
 [Desktop Action Radar]
 Name=Launch Web Radar Dashboard

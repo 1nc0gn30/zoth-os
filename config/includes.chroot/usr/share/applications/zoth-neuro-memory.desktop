@@ -14,7 +14,7 @@ Actions=Stats;Studio;Doctor;
 
 [Desktop Action Stats]
 Name=Substrate Telemetry Stats
-Exec=xfce4-terminal --hold -T "Neuro-Memory Stats" -e "/usr/local/bin/neuro-memory stats"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Neuro-Memory Stats" -- /usr/local/bin/neuro-memory stats
 
 [Desktop Action Studio]
 Name=Launch Memory Studio Web UI
@@ -22,4 +22,4 @@ Exec=xdg-open http://127.0.0.1:8094
 
 [Desktop Action Doctor]
 Name=Substrate Diagnostics & Health
-Exec=xfce4-terminal --hold -T "Neuro-Memory Diagnostics" -e "/usr/local/bin/neuro-memory doctor"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Neuro-Memory Diagnostics" -- /usr/local/bin/neuro-memory doctor

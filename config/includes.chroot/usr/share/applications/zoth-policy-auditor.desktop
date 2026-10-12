@@ -18,4 +18,4 @@ Exec=xdg-open http://127.0.0.1:8106
 
 [Desktop Action Status]
 Name=Policy Broker Status
-Exec=xfce4-terminal --hold -T "Policy Broker Status" -e "/usr/local/bin/agent-policy status"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Policy Broker Status" -- /usr/local/bin/agent-policy status

@@ -14,7 +14,7 @@ Actions=Stats;Dashboard;
 
 [Desktop Action Stats]
 Name=Mock Twin Savings Stats
-Exec=xfce4-terminal --hold -T "Mock Twin Stats" -e "/usr/local/bin/agent-mock-twin stats"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Mock Twin Stats" -- /usr/local/bin/agent-mock-twin stats
 
 [Desktop Action Dashboard]
 Name=Launch Mock Twin Dashboard

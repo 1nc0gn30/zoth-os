@@ -18,8 +18,8 @@ Exec=xdg-open http://127.0.0.1:8104
 
 [Desktop Action Stats]
 Name=Flight Recorder Stats
-Exec=xfce4-terminal --hold -T "Flight Recorder Stats" -e "/usr/local/bin/agent-flight status"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Flight Recorder Stats" -- /usr/local/bin/agent-flight status
 
 [Desktop Action Export]
 Name=Export Latest Session Bundle
-Exec=xfce4-terminal --hold -T "Flight Recorder Export" -e "/usr/local/bin/agent-flight export"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Flight Recorder Export" -- /usr/local/bin/agent-flight export

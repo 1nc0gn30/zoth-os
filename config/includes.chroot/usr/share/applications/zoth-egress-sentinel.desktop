@@ -14,7 +14,7 @@ Actions=Stats;Radar;Export;
 
 [Desktop Action Stats]
 Name=Egress Traffic Stats
-Exec=xfce4-terminal --hold -T "Egress Sentinel Stats" -e "/usr/local/bin/agent-egress stats"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Egress Sentinel Stats" -- /usr/local/bin/agent-egress stats
 
 [Desktop Action Radar]
 Name=Launch Egress Radar Dashboard
@@ -22,4 +22,4 @@ Exec=xdg-open http://127.0.0.1:8095
 
 [Desktop Action Export]
 Name=Export Traffic HAR Log
-Exec=xfce4-terminal -T "Export Traffic HAR" -e "/usr/local/bin/agent-egress export"
+Exec=/usr/local/bin/zoth-konsole --title "Export Traffic HAR" -- /usr/local/bin/agent-egress export

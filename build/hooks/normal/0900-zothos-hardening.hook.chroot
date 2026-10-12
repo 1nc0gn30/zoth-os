@@ -28,4 +28,9 @@ fi
 if [ -f /etc/beef-xss/config.yaml ]; then
     sed -i 's/^\(\s*passwd:\s*\)"beef"/\1"CHANGE-ME-BEFORE-ENABLING"/' /etc/beef-xss/config.yaml || true
 fi
+# chkrootkit-daily pipes alerts to `mail`, but no MTA ships, so the unit failed
+# (status 127) whenever it found anything. Send alerts to the journal instead.
+if [ -f /etc/chkrootkit/chkrootkit.conf ]; then
+    sed -i 's/^MAILTO="root"/MAILTO=""/' /etc/chkrootkit/chkrootkit.conf || true
+fi
 exit 0

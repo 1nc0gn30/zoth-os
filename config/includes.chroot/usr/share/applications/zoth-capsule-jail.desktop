@@ -18,8 +18,8 @@ Exec=xdg-open http://127.0.0.1:8105
 
 [Desktop Action Stats]
 Name=Capsule Sandbox Stats
-Exec=xfce4-terminal --hold -T "Capsule Jail Stats" -e "/usr/local/bin/agent-capsule status"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Capsule Jail Stats" -- /usr/local/bin/agent-capsule status
 
 [Desktop Action Run]
 Name=Execute Test Capsule Run
-Exec=xfce4-terminal --hold -T "Capsule Test Run" -e "/usr/local/bin/agent-capsule test"
+Exec=/usr/local/bin/zoth-konsole --pause --title "Capsule Test Run" -- /usr/local/bin/agent-capsule test
