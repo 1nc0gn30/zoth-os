@@ -56,7 +56,7 @@
 | **Frontier AI Forge** | **Autonomous Agent Swarm** | Google Antigravity CLI, Aider AI, Cursor AI, Grok Bot, Claude Code, Cline, and Ollama offline LLM model runner. |
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.13, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
-| **Security Arsenal** | **215+ Tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction. |
+| **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction (from the `30-opsec` + `40-security` package lists). |
 | **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (28 In-Browser WebGPU/Client + 31 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
