@@ -28,7 +28,7 @@ rsync -avz -e "ssh -o StrictHostKeyChecking=no" "$ZOTHOS_SRC/usr/share/themes/" 
 ssh -o StrictHostKeyChecking=no "$VM_USER@$VM_IP" "echo zoth | sudo -S cp -rf /tmp/themes/* /usr/share/themes/"
 
 # 4. Refresh user desktop & autostart configs
-rsync -avz -e "ssh -o StrictHostKeyChecking=no" "$ZOTHOS_SRC/etc/skel/.config/" "$VM_USER@$VM_IP":/home/"$VM_USER"/.config/
+rsync -avz -e "ssh -o StrictHostKeyChecking=no" "$ZOTHOS_SRC/etc/skel/.config/" "$VM_USER@$VM_IP:/home/$VM_USER/.config/"
 ssh -o StrictHostKeyChecking=no "$VM_USER@$VM_IP" "chown -R $VM_USER:$VM_USER /home/$VM_USER/.config"
 
 # 5. Sync opt apps (pet & hud)

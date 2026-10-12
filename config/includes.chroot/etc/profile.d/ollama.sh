@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 # Ollama talks to the local daemon only. The API has no authentication, so it is
 # not exposed to the LAN (audit P0-3). To serve other machines on purpose, put it
 # behind an authenticating proxy instead of changing this to 0.0.0.0.
