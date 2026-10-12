@@ -5,6 +5,7 @@ Name=Zoth Egress Sentinel
 GenericName=AI Agent Network Sniffer & Egress Radar
 Comment=Autonomous network traffic sniffer, egress proxy daemon, quarantine policy, and OpenAPI synthesizer
 Exec=/usr/local/bin/agent-egress serve
+TryExec=/usr/local/bin/agent-egress
 Icon=zoth-egress-sentinel
 Terminal=false
 Categories=Security;Network;X-ZothOS-AI;
@@ -15,11 +16,14 @@ Actions=Stats;Radar;Export;
 [Desktop Action Stats]
 Name=Egress Traffic Stats
 Exec=/usr/local/bin/zoth-konsole --pause --title "Egress Sentinel Stats" -- /usr/local/bin/agent-egress stats
+TryExec=/usr/local/bin/agent-egress
 
 [Desktop Action Radar]
 Name=Launch Egress Radar Dashboard
 Exec=xdg-open http://127.0.0.1:8095
+TryExec=/usr/local/bin/agent-egress
 
 [Desktop Action Export]
 Name=Export Traffic HAR Log
 Exec=/usr/local/bin/zoth-konsole --title "Export Traffic HAR" -- /usr/local/bin/agent-egress export
+TryExec=/usr/local/bin/agent-egress

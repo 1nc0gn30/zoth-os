@@ -5,6 +5,7 @@ Name=Zoth Flight Recorder
 GenericName=AI Agent Black Box Telemetry Forensics Hub
 Comment=Autonomous time-scrubbing telemetry forensics and incident black box for AI agents
 Exec=/usr/local/bin/agent-flight serve
+TryExec=/usr/local/bin/agent-flight
 Icon=zoth-flight-recorder
 Terminal=false
 Categories=Development;System;Monitor;X-ZothOS-AI;
@@ -15,11 +16,14 @@ Actions=Deck;Stats;Export;
 [Desktop Action Deck]
 Name=Launch Flight Deck Web UI
 Exec=xdg-open http://127.0.0.1:8104
+TryExec=/usr/local/bin/agent-flight
 
 [Desktop Action Stats]
 Name=Flight Recorder Stats
 Exec=/usr/local/bin/zoth-konsole --pause --title "Flight Recorder Stats" -- /usr/local/bin/agent-flight status
+TryExec=/usr/local/bin/agent-flight
 
 [Desktop Action Export]
 Name=Export Latest Session Bundle
 Exec=/usr/local/bin/zoth-konsole --pause --title "Flight Recorder Export" -- /usr/local/bin/agent-flight export
+TryExec=/usr/local/bin/agent-flight
