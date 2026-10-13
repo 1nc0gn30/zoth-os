@@ -81,6 +81,7 @@ lb config \
     --iso-publisher "Zoth Studio & NullAI <https://zoth.nullai.tech>" \
     --iso-volume "ZOTHOS_${ISO_VER}" \
     --initramfs live-boot \
+    --debootstrap-options "--include=ca-certificates" \
     --linux-flavours amd64 \
     --linux-packages linux-image \
     --bootappend-live "boot=live components username=zoth hostname=zothos quiet splash systemd.unit=graphical.target" \
@@ -88,6 +89,11 @@ lb config \
     --apt-options "--yes --ignore-missing" \
     ${ZOTHOS_SNAPSHOT:+--mirror-bootstrap "https://snapshot.debian.org/archive/debian/$ZOTHOS_SNAPSHOT/" --mirror-chroot "https://snapshot.debian.org/archive/debian/$ZOTHOS_SNAPSHOT/" --mirror-binary "https://deb.debian.org/debian/"}
 
+# ZOTHOS-FIX (v3.2): the Kali/Chrome/Element/Signal archives are https, and live-build runs
+# apt-get update for them right after debootstrap. A minbase chroot has no CA bundle, so every
+# third-party InRelease failed with "certificate verify failed" and all Kali-only packages
+# (caido, sliver, ghidra, seclists, ...) became "Unable to locate package". v3.1 used
+# http + [trusted=yes]; we keep https + pinned signing keys and bootstrap ca-certificates instead.
 # ZOTHOS-LOCALFIX: live-build reads repos from config/archives/*.list.chroot,
 # NOT config/apt/sources.list.d (that dir was silently ignored, so Kali/Parrot
 # packages were never available in the previous builds).
@@ -245,5 +251,7 @@ if [[ -f live-image-amd64.hybrid.iso ]]; then
     sha256sum ${ISO_NAME} > ${ISO_NAME}.sha256
     echo -e "\n${GREEN}${BOLD}[✓] SUCCESS: ZOTHOS ISO built at: $PROJECT_DIR/build/${ISO_NAME}${RESET}\n"
 else
-    echo -e "\n${YELLOW}[!] Build finished. Inspect workspace logs in $WORK_DIR${RESET}\n"
+    echo -e "\n${RED}[✗] FAILED: no ISO produced. See /tmp/lb-build.log and $WORK_DIR${RESET}"
+    grep -E "Failed to fetch|Unable to locate package|no installation candidate" /tmp/lb-build.log | sort -u | head -20 || true
+    exit 1
 fi
