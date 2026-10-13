@@ -9,7 +9,7 @@ ISO_NAME="zothos-${ISO_VER}-amd64.iso"
 SQUASHFS_PROCS="${ZOTHOS_SQUASHFS_PROCS:-6}"                     # thermal cap; override via env
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
-export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G"
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -no-exports"
 
 echo "✦ Cleaning up old assets from chroot..."
 sudo rm -rf chroot/chroot chroot/home/neo
@@ -131,7 +131,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 unset LIVE_BUILD
-export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G"
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -no-exports"
 yes | sudo -E nice -n 10 env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a MKSQUASHFS_OPTIONS="$MKSQUASHFS_OPTIONS" lb binary 2>&1 | tee /tmp/lb-binary.log
 test -f live-image-amd64.hybrid.iso
 

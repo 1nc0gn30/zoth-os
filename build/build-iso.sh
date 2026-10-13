@@ -65,8 +65,9 @@ unset LIVE_BUILD
 # Pin every timestamp to the last git commit unless the caller sets it.
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$PROJECT_DIR" log -1 --format=%ct 2>/dev/null || date +%s)}"
 export TZ=UTC LC_ALL=C.UTF-8
-# Deterministic squashfs: fixed inode/file times, single fixed sort, no build-host clock.
-export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -mkfs-time $SOURCE_DATE_EPOCH -all-time $SOURCE_DATE_EPOCH -no-exports"
+# Deterministic squashfs via SOURCE_DATE_EPOCH only. mksquashfs 4.6+ rejects
+# combining SOURCE_DATE_EPOCH with -mkfs-time/-all-time/-fstime CLI flags.
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -no-exports"
 # Optional: pin the Debian archive to a snapshot.debian.org date (e.g. 20261003T000000Z)
 # so package versions are fixed. Unset = live mirror (not reproducible).
 ZOTHOS_SNAPSHOT="${ZOTHOS_SNAPSHOT:-}"
@@ -240,7 +241,7 @@ echo -e "${YELLOW}[*] This will bootstrap the Debian base, fetch security & AI p
 # ZOTHOS-LOCALFIX: LIVE_BUILD must point to a live-build git checkout, not /usr/lib/live;
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
-# (MKSQUASHFS_OPTIONS set above with SOURCE_DATE_EPOCH)
+# (MKSQUASHFS_OPTIONS + SOURCE_DATE_EPOCH set above; no CLI timestamp flags)
 nice -n 10 lb build 2>&1 | tee /tmp/lb-build.log
 
 if [[ -f live-image-amd64.hybrid.iso ]]; then
