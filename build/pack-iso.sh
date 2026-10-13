@@ -12,6 +12,16 @@ cd "$WORK_DIR"
 export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -no-exports"
 
 echo "✦ Cleaning up old assets from chroot..."
+# If lb binary_chroot already nested the rootfs at chroot/chroot (no squashfs yet),
+# promote it back — do NOT delete it (that destroys the only full rootfs).
+if [ -d chroot/chroot/etc ] && [ ! -f binary/live/filesystem.squashfs ]; then
+    echo "✦ Restoring nested chroot/chroot from interrupted binary_rootfs..."
+    sudo rm -rf chroot.tmp
+    sudo mv chroot/chroot chroot.tmp
+    # drop the thin outer wrapper, keep caches/config beside it
+    sudo rm -rf chroot
+    sudo mv chroot.tmp chroot
+fi
 sudo rm -rf chroot/chroot chroot/home/neo
 sudo rm -rf chroot/usr/share/zothos/assets/avatars chroot/usr/share/zothos/assets/mascot 2>/dev/null || true
 [ -d chroot/usr/share/zothos/assets/brand ] && sudo find chroot/usr/share/zothos/assets/brand -type f -size +100k -exec rm -f {} + 2>/dev/null || true
@@ -47,9 +57,11 @@ sudo chown -R 997:988 chroot/usr/share/ollama 2>/dev/null || true
 
 
 echo "✦ Enforcing strict root security permissions (sudoers, SUID sandboxes)..."
-sudo chown -R root:root chroot/etc/sudoers.d chroot/etc/sudoers
-sudo chmod 0755 chroot/etc/sudoers.d
-sudo chmod 0440 chroot/etc/sudoers.d/* chroot/etc/sudoers 2>/dev/null || true
+if [ -e chroot/etc/sudoers ] || [ -d chroot/etc/sudoers.d ]; then
+    sudo chown -R root:root chroot/etc/sudoers.d chroot/etc/sudoers 2>/dev/null || true
+    sudo chmod 0755 chroot/etc/sudoers.d 2>/dev/null || true
+    sudo chmod 0440 chroot/etc/sudoers.d/* chroot/etc/sudoers 2>/dev/null || true
+fi
 
 # Enforce SUID bit on Chromium & Electron sandbox helpers
 for sb in chroot/opt/google/chrome/chrome-sandbox chroot/opt/Element/chrome-sandbox chroot/opt/Signal/chrome-sandbox chroot/opt/electron/chrome-sandbox; do
