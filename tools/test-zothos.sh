@@ -19,7 +19,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHROOT="$ROOT_DIR/config/includes.chroot"
 DEFAULT_VM_DISK="${VM_DISK:-$ROOT_DIR/build/vms/zothos.qcow2}"
 DEFAULT_ISO="$(find "$ROOT_DIR/build" -maxdepth 1 -name "zothos-*.iso" 2>/dev/null | head -n 1)"
-DEFAULT_ISO="${DEFAULT_ISO:-$ROOT_DIR/build/zothos-3.1-amd64.iso}"
+DEFAULT_ISO="${DEFAULT_ISO:-$ROOT_DIR/build/zothos-3.2-amd64.iso}"
 DEFAULT_VM_NAME="${VM_NAME:-zothos}"
 VM_USER="${VM_USER:-zoth}"
 
@@ -83,7 +83,7 @@ Examples:
   ./tools/test-zothos.sh --all
   ./tools/test-zothos.sh --vm
   ./tools/test-zothos.sh --audit
-  ./tools/test-zothos.sh --iso build/zothos-1.0-amd64.iso
+  ./tools/test-zothos.sh --iso build/zothos-3.2-amd64.iso
 EOF
 }
 

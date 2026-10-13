@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_DIR/build"
 ISO_PATH="${ISO_PATH:-$(find "$BUILD_DIR" -maxdepth 1 -name "zothos-*.iso" 2>/dev/null | head -n 1)}"
-ISO_PATH="${ISO_PATH:-$BUILD_DIR/zothos-3.1-amd64.iso}"
+ISO_PATH="${ISO_PATH:-$BUILD_DIR/zothos-3.2-amd64.iso}"
 ARTIFACT_DIR="${ARTIFACT_DIR:-/tmp/zothos-preview}"
 
 echo "=================================================="
