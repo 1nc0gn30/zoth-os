@@ -23,7 +23,7 @@ echo -e "${BLUE}${BOLD}=========================================================
 TARGET="${1:-}"
 if [[ -z "$TARGET" ]]; then
     echo -e "${RED}[✗] Usage: $0 <path-to-zothos-iso>${RESET}"
-    echo -e "    Example: $0 build/zothos-3.1-amd64.iso"
+    echo -e "    Example: $0 build/zothos-3.2-amd64.iso"
     exit 1
 fi
 

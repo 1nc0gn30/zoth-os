@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 #  ZOTHOS LIVE ISO BUILD SCRIPT
-#  Builds a bootable hybrid UEFI/BIOS ISO: zothos-1.0-amd64.iso
+#  Builds a bootable hybrid UEFI/BIOS ISO: zothos-<VERSION>-amd64.iso (version from ./VERSION)
 #  Based on Debian 13 (Trixie) with Kali & Parrot Security Arsenal + Frontier AI
 # ==============================================================================
 
@@ -29,6 +29,10 @@ fi
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_DIR="$PROJECT_DIR/build/live_workspace"
+ZOTHOS_VERSION="$(tr -d '[:space:]' < "$PROJECT_DIR/VERSION")"   # e.g. 3.2.0
+ISO_VER="${ZOTHOS_VERSION%.*}"                                   # e.g. 3.2
+ISO_NAME="zothos-${ISO_VER}-amd64.iso"
+SQUASHFS_PROCS="${ZOTHOS_SQUASHFS_PROCS:-6}"                     # thermal cap; override via env
 
 echo -e "${CYAN}[1/6] Verifying host build prerequisites...${RESET}"
 MISSING_PKGS=()
@@ -62,7 +66,7 @@ unset LIVE_BUILD
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$PROJECT_DIR" log -1 --format=%ct 2>/dev/null || date +%s)}"
 export TZ=UTC LC_ALL=C.UTF-8
 # Deterministic squashfs: fixed inode/file times, single fixed sort, no build-host clock.
-export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G -mkfs-time $SOURCE_DATE_EPOCH -all-time $SOURCE_DATE_EPOCH -no-exports"
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G -mkfs-time $SOURCE_DATE_EPOCH -all-time $SOURCE_DATE_EPOCH -no-exports"
 # Optional: pin the Debian archive to a snapshot.debian.org date (e.g. 20261003T000000Z)
 # so package versions are fixed. Unset = live mirror (not reproducible).
 ZOTHOS_SNAPSHOT="${ZOTHOS_SNAPSHOT:-}"
@@ -73,9 +77,9 @@ lb config \
     --archive-areas "main contrib non-free non-free-firmware" \
     --bootloaders "syslinux grub-efi" \
     --binary-images iso-hybrid \
-    --iso-application "ZOTHOS Linux 3.1 (Sovereign Alchemical Intelligence)" \
+    --iso-application "ZOTHOS Linux ${ISO_VER}" \
     --iso-publisher "Zoth Studio & NullAI <https://zoth.nullai.tech>" \
-    --iso-volume "ZOTHOS_3.1" \
+    --iso-volume "ZOTHOS_${ISO_VER}" \
     --initramfs live-boot \
     --linux-flavours amd64 \
     --linux-packages linux-image \
@@ -231,17 +235,15 @@ echo -e "${YELLOW}[*] This will bootstrap the Debian base, fetch security & AI p
 # setting it breaks binary_grub_cfg/binary_syslinux (cp: cannot stat /usr/lib/live/share/bootloaders/...).
 unset LIVE_BUILD
 # (MKSQUASHFS_OPTIONS set above with SOURCE_DATE_EPOCH)
-lb build 2>&1 | tee /tmp/lb-build.log
+nice -n 10 lb build 2>&1 | tee /tmp/lb-build.log
 
 if [[ -f live-image-amd64.hybrid.iso ]]; then
-    mv live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
-    cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-3.0-amd64.iso"
-    cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-1.0-amd64.iso"
+    mv live-image-amd64.hybrid.iso "$PROJECT_DIR/build/${ISO_NAME}"
     chmod 644 "$PROJECT_DIR"/build/zothos-*.iso || true
     chown "$SUDO_USER:$SUDO_USER" "$PROJECT_DIR"/build/zothos-*.iso 2>/dev/null || true
     cd "$PROJECT_DIR/build"
-    sha256sum zothos-3.1-amd64.iso > zothos-3.1-amd64.iso.sha256
-    echo -e "\n${GREEN}${BOLD}[✓] SUCCESS: ZOTHOS ISO built at: $PROJECT_DIR/build/zothos-3.1-amd64.iso${RESET}\n"
+    sha256sum ${ISO_NAME} > ${ISO_NAME}.sha256
+    echo -e "\n${GREEN}${BOLD}[✓] SUCCESS: ZOTHOS ISO built at: $PROJECT_DIR/build/${ISO_NAME}${RESET}\n"
 else
     echo -e "\n${YELLOW}[!] Build finished. Inspect workspace logs in $WORK_DIR${RESET}\n"
 fi

@@ -1,65 +1,37 @@
-# ✦ ZOTHOS v3.2 Master Release — Sovereign Perimeter, Tri-Transceiver RF & Cross-Model AI Mesh
+# ZOTHOS v3.2.0
 
-ZOTHOS v3.2 delivers a major leap in operational security, physical-layer RF sensing, and multi-agent AI federation. This release introduces the Sovereign Perimeter firewall baseline, localhost-only AI isolation, plug-and-play multi-antenna synthetic aperture radar (SAR), unified cross-model AI skill discovery (Antigravity + Grok), and bare-metal disk passthrough virtualization blueprints.
+Debian 13 (Trixie) + KDE Plasma 6.3 live/installable ISO (x86_64, hybrid UEFI/BIOS) with local AI agent tooling and ~75 curated security tools. 94 commits since v3.1.0.
 
----
+## Security & defaults
+- Default-deny `ufw` baked into the image; network services enabled by packages (BeEF, nginx, docker, kismet) now disabled by default.
+- Ollama bound to 127.0.0.1:11434; wildcard `OLLAMA_ORIGINS` removed.
+- apt signature checks on, with fingerprint-pinned Kali/Parrot keys over https; installers force https + TLS 1.2 + fail-fast.
+- zoth-bridge: removed `/api/exec`; token-gated allowlisted launches with Host/Origin checks. Zoth OS desk blocks cross-origin / DNS-rebinding POSTs.
+- Electron apps: 14 apps moved to contextIsolation with nodeIntegration off and per-app preload allowlists; renderer input validated before reaching a shell; remote navigation/new windows blocked.
+- Honest SECURITY.md (documents boot password reset and NOPASSWD sudo).
 
-### 🌟 Key Highlights & Major Additions
+## Fixes
+- zoth-auth-init no longer recursively chowns established homes at boot (was hitting the 15 s timeout).
+- Launchers: agent-tool terminals close cleanly on Ctrl+C (Konsole), TryExec on optional tools, Plymouth Phoenix launcher had empty Exec, pet menu actions validated.
+- Fonts pinned (DejaVu, Noto Color Emoji, Symbola) so splash/UI glyphs don't render as tofu.
+- Plasma QML TabBar binding loop fixed; cursor daemon polling throttled.
+- ShellCheck pass across scripts (CI now fails on ShellCheck errors).
 
-#### 🛡️ 1. Sovereign Perimeter Hardening & Network Baseline
-- **UFW Out-of-the-Box**: Integrated `ufw` directly into core opsec packages with automated firstboot bootstrapping (`zoth-bootstrap`).
-- **Strict Default-Deny Ingress**: All inbound connections are dropped by default (`deny incoming`), protecting the workstation from local network exposure and hostile WiFi environments.
-- **Encrypted Mesh Access**: Native ingress whitelist for local loopback (`lo`) and Tailscale mesh interfaces (`tailscale0` + `41641/udp`).
-- **Sentinel Telemetry Channel**: Dedicated port rule for encrypted high-speed remote monitoring (`7890/tcp`).
-- **Localhost Developer Server Guard**: Hardened system-wide shell aliases (`serve` and `pyhttp`) strictly bound to `127.0.0.1` to prevent accidental public data leakage during web testing.
+## New / packaged
+- Firmware for MT7612U / RTL8812AU USB Wi-Fi adapters (`firmware-mediatek`, `firmware-misc-nonfree`).
+- Packaged local services: neuro-memory-daemon, agent-flight-recorder, agent-capsule-jail, agent-policy-auditor, agent-budget-sentinel, MCP Lens, Etsy POD Forge/Connector.
+- MCP server catalog (152 entries) shipped, all disabled by default.
+- `zothos-join-iso.sh` to reassemble split ISO parts with clear errors.
 
-#### 🔒 2. Localhost AI Runtime Isolation
-- **Ollama Loopback Confinement**: Hardened `/etc/systemd/system/ollama.service` and drop-in overrides to bind strictly to `127.0.0.1:11434`.
-- **Wildcard CORS Elimination**: Stripped permissive `OLLAMA_ORIGINS=*` headers, immunizing local inference endpoints from browser drive-by prompt injection and unauthorized remote access.
-- **Unused Daemon Elimination**: Disabled untrusted local network listeners (`nginx`, `kismet`) to minimize host attack surface.
+## Docs & supply chain
+- Replaced unverified marketing claims with accurate statements; README tool count corrected to 75+.
+- CI/CodeQL/Semgrep/Scorecard/SBOM workflows SHA-pinned; keyless cosign signing of SHA256SUMS via `release-sign.yml`. Reproducible builds: in progress (see REPRODUCIBLE_BUILDS.md).
 
-#### 📡 3. Tri-Transceiver Synthetic Aperture Array & RF Sensing
-- **MediaTek & Multi-Chipset Firmware**: Added `firmware-mediatek` and `firmware-misc-nonfree` to guarantee immediate plug-and-play capability for MT7612U (Netgear A6210) and RTL8812AU (TP-Link T4U) dual-band USB adapters.
-- **Multi-Antenna Array Baseline**: Standardized physical antenna geometry ($X = -0.25\text{m}$, $0\text{m}$, $+0.25\text{m}$) across simultaneous interfaces (`wlan0`, `wlan1`, `wlan2`).
-- **Differential Wall Penetration Discriminator**: Real-time physical absorption ratio ($\Delta\text{Loss} = \text{RSSI}_{2.4\text{GHz}} - \text{RSSI}_{5.0\text{GHz}}$) enabling non-line-of-sight barrier identification (`FREE_AIR_LOS`, `DRYWALL_PARTITION`, `HEAVY_MASONRY`).
-- **AoA + Optical Ground Truth Fusion**: Differential Angle-of-Arrival computation coupled with real-time camera optical tracking in `anderson-security-sentinel`.
-
-#### 🤖 4. Universal AI Skill & Tool Federation (Antigravity ↔ Grok)
-- **Shared Cognitive Directory**: Pre-provisioned `~/.grok/config.toml` in skeleton profiles dynamically linking to `~/.gemini/config/skills`.
-- **Master UI/UX & SaaS Skills**: Instant parity across frontier models (Google Antigravity, Claude, and xAI Grok) for:
-  - `design-director` — High-end design critique and hierarchy enforcement
-  - `ui-verification-loop` — Multi-viewport CDP screenshot verification
-  - `avant-garde-ui` — Modern design commodities (conic beams, bento grids, aurora meshes)
-  - `sovereign-saas-design` — High-converting paywall blueprints and DePay/Stripe cash registers
-  - `motion-choreography` & `claude-motion-graphics` — Kinematics and 60fps canvas animation
-  - `zoth-studio-design-system` — Canonical Zoth design tokens and MotionReveal primitives
-
-#### ⚡ 5. Bare-Metal KVM Direct Drive Passthrough Blueprint
-- **Parrot OS Passthrough**: Complete production runbook (`docs/PARROT_OS_PASSTHROUGH_ROADMAP.md`) for zero-overhead secondary OS execution directly on physical disk partitions (`${ZOTH_PARROT_DISK}`).
-- **Hardware Isolation**: IOMMU group definitions, vfio-pci device assignment, CPU pinning (`host-passthrough`), and low-latency virtio networking.
-
----
-
-### 📂 Modified Configuration Invariants
-
-| Component | Target Path | Changes Applied |
-| :--- | :--- | :--- |
-| **Package Lists** | `config/package-lists/20-desktop.list.chroot` | Added `firmware-mediatek` |
-| **Opsec Packages** | `config/package-lists/30-opsec.list.chroot` | Added `ufw` |
-| **Ollama Service** | `config/includes.chroot/etc/systemd/system/ollama.service` | Bound to `127.0.0.1:11434`, stripped CORS |
-| **Ollama Override** | `config/includes.chroot/etc/systemd/system/ollama.service.d/override.conf` | Hardened localhost override |
-| **Bootstrap Provisioner** | `config/includes.chroot/usr/local/bin/zoth-bootstrap` | Added automated UFW rules and activation |
-| **User Shell Profile** | `config/includes.chroot/etc/skel/.bashrc` | Added localhost server aliases & Grok environment |
-| **Grok Configuration** | `config/includes.chroot/etc/skel/.grok/config.toml` | Universal skills path mapped |
-| **Hypervisor Docs** | `docs/PARROT_OS_PASSTHROUGH_ROADMAP.md` | Full production passthrough blueprint |
-
----
-
-### 💿 ISO Build & Deployment
-
-To pack and verify the updated live image:
-```bash
-cd ${ZOTH_SRC_ROOT}/zoth-os
-sudo ./build/pack-iso.sh
-./tools/sign-and-attest.sh build/zothos-3.2-amd64.iso
+## Download
+The ISO is split into <2 GB parts (GitHub asset limit). Download all `zothos-3.2-amd64.iso.partNN` files plus `zothos-join-iso.sh` and `SHA256SUMS` into one folder, then:
 ```
+bash zothos-join-iso.sh   # reassembles and checks the ISO SHA-256
+```
+Verify the signature: see docs/VERIFYING.md (cosign verify-blob with the SHA256SUMS.cosign.bundle).
+
+Also: Zoth Studio https://zoth.nullai.tech · CLI `npx @nullaitech/zoth`

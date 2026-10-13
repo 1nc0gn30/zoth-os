@@ -3,9 +3,13 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_DIR="$PROJECT_DIR/build/live_workspace"
+ZOTHOS_VERSION="$(tr -d '[:space:]' < "$PROJECT_DIR/VERSION")"   # e.g. 3.2.0
+ISO_VER="${ZOTHOS_VERSION%.*}"                                   # e.g. 3.2
+ISO_NAME="zothos-${ISO_VER}-amd64.iso"
+SQUASHFS_PROCS="${ZOTHOS_SQUASHFS_PROCS:-6}"                     # thermal cap; override via env
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
-export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G"
 
 echo "✦ Cleaning up old assets from chroot..."
 sudo rm -rf chroot/chroot chroot/home/neo
@@ -127,27 +131,25 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 unset LIVE_BUILD
-export MKSQUASHFS_OPTIONS="-processors 3 -mem 3G"
-yes | sudo -E DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a MKSQUASHFS_OPTIONS="-processors 3 -mem 3G" lb binary 2>&1 | tee /tmp/lb-binary.log
+export MKSQUASHFS_OPTIONS="-processors $SQUASHFS_PROCS -mem 3G"
+yes | sudo -E nice -n 10 env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a MKSQUASHFS_OPTIONS="$MKSQUASHFS_OPTIONS" lb binary 2>&1 | tee /tmp/lb-binary.log
 test -f live-image-amd64.hybrid.iso
 
-cp -f live-image-amd64.hybrid.iso "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
-cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-3.0-amd64.iso"
-cp -f "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$PROJECT_DIR/build/zothos-1.0-amd64.iso"
+cp -f live-image-amd64.hybrid.iso "$PROJECT_DIR/build/${ISO_NAME}"
 chmod 644 "$PROJECT_DIR"/build/zothos-*.iso || true
 chown "$SUDO_USER:$SUDO_USER" "$PROJECT_DIR"/build/zothos-*.iso 2>/dev/null || true
 cd "$PROJECT_DIR/build"
-sha256sum zothos-3.1-amd64.iso > zothos-3.1-amd64.iso.sha256
+sha256sum ${ISO_NAME} > ${ISO_NAME}.sha256
 
 echo "✦ Verifying ISO filesystem..."
 M1=$(mktemp -d)
 trap 'sudo umount "$M1" 2>/dev/null || true; rm -rf "$M1"' EXIT
-sudo mount -o loop,ro "$PROJECT_DIR/build/zothos-3.1-amd64.iso" "$M1"
+sudo mount -o loop,ro "$PROJECT_DIR/build/${ISO_NAME}" "$M1"
 test -f "$M1/live/filesystem.squashfs"
 sudo unsquashfs -s "$M1/live/filesystem.squashfs"
 sudo umount "$M1"
 trap - EXIT
 rm -rf "$M1"
 
-ls -lh "$PROJECT_DIR/build/zothos-3.1-amd64.iso"
+ls -lh "$PROJECT_DIR/build/${ISO_NAME}"
 echo "DONE_KDE_PLASMA_ISO"
