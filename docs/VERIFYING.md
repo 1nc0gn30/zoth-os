@@ -1,6 +1,6 @@
 # Verifying a ZOTHOS release
 
-Releases published after October 2026 carry two extra assets:
+v3.2.0 and later releases carry two extra assets:
 
 - `SHA256SUMS` - SHA-256 of every release asset (taken from GitHub's server-side asset digests).
 - `SHA256SUMS.cosign.bundle` - a Sigstore signature over `SHA256SUMS`, made by this repo's

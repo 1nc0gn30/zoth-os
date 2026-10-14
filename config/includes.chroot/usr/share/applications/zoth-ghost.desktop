@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Ghost Amnesic Mode
+Name=NullAI Ghostmode
 Comment=Tor Route, Amnesic RAM & Anti-Forensics Mode
-Exec=/usr/local/bin/zoth-konsole --title "Ghostmode Operations" -- zoth-ghost
+Exec=xfce4-terminal -T 'Ghostmode Operations' -e 'zoth-ghost'
 Icon=zoth-ghost
 Terminal=false
-Categories=Security;Privacy;
-StartupNotify=true
+Categories=Security;System;
 Keywords=ghost;nullai;tor;amnesic;anti-forensics;stealth;
+MimeType=application/x-zoth-ghost;
+StartupNotify=true

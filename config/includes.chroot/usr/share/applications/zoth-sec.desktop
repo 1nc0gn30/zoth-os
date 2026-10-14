@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Security Arsenal
+Name=ZOTHOS Sec Arsenal
 Comment=Kali & Parrot Pentesting Toolchain
-Exec=/usr/local/bin/zoth-konsole --title "Security Arsenal" -- zoth-sec
+Exec=xfce4-terminal -T 'Security Arsenal' -e 'zoth-sec'
 Icon=zoth-sec
 Terminal=false
-Categories=Security;Pentesting;
-StartupNotify=true
+Categories=Security;System;
 Keywords=security;pentest;kali;parrot;arsenal;toolchain;
+MimeType=application/x-zoth-sec;
+StartupNotify=true

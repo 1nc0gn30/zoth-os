@@ -1,39 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=ZothOS Cockpit Pro
-GenericName=System Operations Deck & Telemetry
-Comment=Flagship Sovereign System Telemetry, 21-Agent Swarm Deck & Control Panel
+Name=ZothOS Cockpit
+Comment=OS Dashboard & System Diagnostics
 Exec=/usr/local/bin/zoth-cockpit
-Icon=/usr/share/pixmaps/zoth-cockpit.png
+Icon=zoth-cockpit
 Terminal=false
-Categories=System;Settings;Monitor;
-Keywords=cockpit;dashboard;diagnostics;system;monitor;telemetry;zoth;os;swarm;agents;
+Categories=System;Monitoring;
+Keywords=cockpit;dashboard;diagnostics;system;monitor;os;
 MimeType=application/x-zoth-cockpit;
 StartupNotify=true
-Actions=TUI;Status;Doctor;ModeGold;ModeGhost;ModeMatrix;Studio;
-
-[Desktop Action TUI]
-Name=Launch Classic Curses TUI
-Exec=/usr/local/bin/zoth-konsole --title "ZothOS Cockpit TUI" -- /usr/local/bin/zoth-cockpit --tui
-[Desktop Action Status]
-Name=Telemetry Snapshot (Headless)
-Exec=/usr/local/bin/zoth-konsole --pause --title "Cockpit Status" -- /usr/local/bin/zoth-cockpit --status
-[Desktop Action Doctor]
-Name=Run Zoth System Doctor (Auditor)
-Exec=/usr/local/bin/zoth-konsole --pause --title "ZOTHOS Doctor" -- /usr/local/bin/zoth-doctor
-[Desktop Action ModeGold]
-Name=Engage Sovereign Gold Master
-Exec=/usr/local/bin/zoth-mode gold
-
-[Desktop Action ModeGhost]
-Name=Engage Ghostmode Stealth
-Exec=/usr/local/bin/zoth-mode ghost
-
-[Desktop Action ModeMatrix]
-Name=Engage Hermetic Matrix
-Exec=/usr/local/bin/zoth-mode matrix
-
-[Desktop Action Studio]
-Name=Launch Zoth Studio Pro
-Exec=/usr/local/bin/zoth-studio

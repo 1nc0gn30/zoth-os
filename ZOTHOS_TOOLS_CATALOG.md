@@ -200,11 +200,11 @@
 - **Execution Mode:** LOCAL_CLI
 - **Operational Value:** Published Python generator with 6 archetypes and an MCP server. A separate local site foundry keeps Grok CLI, Hermes, OpenCode, Cline, Aider, AGY, or Claude Code working until the site artifact is closed.
 
-### 57. bolt.diy (Bolt.DIY Full-Stack Engine)
-- **GitHub:** https://github.com/1nc0gn30/bolt.diy
+### 57. zoth-webgen (Zoth WebGen full-stack foundry)
+- **GitHub:** https://github.com/1nc0gn30/zoth-webgen
 - **Category:** Autonomous Web
 - **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Localized open-source AI software engineer capable of scaffolding, modifying, and running full-stack web applications locally in the browser.
+- **Operational Value:** Localized full-stack site foundry. Keeps Grok CLI, Hermes, OpenCode, Cline, Aider, AGY, or Claude Code on the job until the site is finished. Desktop launcher is still `bolt-diy`.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════

@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth NetKill [Pentesting]
+Name=NetKill
 Comment=Firewall Block & Network Neutralization
-Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth NetKill" -- /usr/local/bin/zoth-netkill
+Exec=/usr/local/bin/zoth-netkill
 Icon=zoth-netkill
 Terminal=false
-Categories=Security;Pentesting;ExploitationTools;
-StartupNotify=true
+Categories=Security;Network;System;
 Keywords=netkill;firewall;block;neutralize;iptables;network;security;
+MimeType=application/x-zoth-netkill;
+StartupNotify=true

@@ -1,11 +1,11 @@
 <div align="center">
 
-  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.1 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
+  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.2 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
 
   <br />
   <br />
 
-  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 0 &nbsp; 🜄</h1>
+  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 2 &nbsp; 🜄</h1>
   <h3><em>The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System</em></h3>
 
   <p>
@@ -18,7 +18,7 @@
 
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
-    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-cosign%20signing%20from%20next%20release-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
+    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.2.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
     <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Reproducible%20builds-in%20progress-yellow.svg?style=for-the-badge" alt="Reproducible builds: in progress" /></a>
     <a href="https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os"><img src="https://api.scorecard.dev/projects/github.com/NullAITech/zoth-os/badge" alt="OpenSSF Scorecard" /></a>
     <a href="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml"><img src="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
@@ -313,7 +313,7 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.1 integrates with Zoth Studio v2 to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
+ZOTHOS Linux 3.2 integrates with Zoth Studio v2 to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
 
 ### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
@@ -398,10 +398,14 @@ See the complete 59-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIOS systems.
 
 ### 1. Booting the Live ISO
-Flash the ISO to a USB flash drive (minimum 16 GB recommended):
+The current download is [v3.2.0](https://github.com/NullAITech/zoth-os/releases/tag/v3.2.0). GitHub splits the ISO into five parts plus `zothos-join-iso.sh`. Put those files in one folder, rejoin them, then flash a USB drive of at least 16 GB:
+
 ```bash
-sudo dd if=zothos-3.1-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
+bash zothos-join-iso.sh
+sudo dd if=zothos-3.2-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
+
+`zothos-join-iso.sh` checks the SHA-256 before it says the image is ready. Replace `/dev/sdX` with the USB device, not a partition.
 
 ### 2. Live Credentials
 - **Username:** `neo`
@@ -457,7 +461,7 @@ What is in place today, and what is not:
 | Item | Status |
 | :--- | :--- |
 | **Release checksums** | ✅ SHA-256 published for every release. Detects corruption, not tampering. |
-| **Release signatures** | ⏳ `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC) plus SLSA provenance **from the next release on**. v3.1.0 and earlier are unsigned. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
+| **Release signatures** | ✅ v3.2.0 ships `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
 | **Reproducible builds** | ⏳ In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
 | **OpenSSF Scorecard** | ✅ Workflow runs and publishes results (score was 1.0/10 at the Oct 2026 audit; fixes since then should raise it). |
 | **Static analysis** | ✅ CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
@@ -470,7 +474,7 @@ Known live-image defaults you should understand before using ZOTHOS on a real ne
 (fixed passwords reset at boot, passwordless sudo) are documented in [`SECURITY.md`](SECURITY.md).
 
 ```bash
-# Verify a signed release (next release onward)
+# Verify the v3.2.0 signature, then the part checksums
 cosign verify-blob SHA256SUMS --bundle SHA256SUMS.cosign.bundle \
   --certificate-identity-regexp '^https://github.com/NullAITech/zoth-os/\.github/workflows/release-sign\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com

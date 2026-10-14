@@ -442,7 +442,7 @@ fi
 
     "bolt-diy": """#!/usr/bin/env bash
 # ==============================================================================
-#  Bolt.DIY Full-Stack Engine — Localized AI Software Engineer
+#  Zoth WebGen — localized full-stack site foundry
 # ==============================================================================
 CANDIDATES=(
   "${ZOTH_SRC_ROOT}/bolt.diy"
@@ -458,15 +458,78 @@ for c in "${CANDIDATES[@]}"; do
   fi
 done
 if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
-  echo -e "\\e[1;33m[*] Cloning Bolt.DIY from sovereign repo...\\e[0m"
+  echo -e "\\e[1;33m[*] Cloning Zoth WebGen...\\e[0m"
   mkdir -p "${HOME}/NullAITech"
-  git clone https://github.com/1nc0gn30/bolt.diy.git "${HOME}/NullAITech/bolt.diy"
+  git clone https://github.com/1nc0gn30/zoth-webgen.git "${HOME}/NullAITech/bolt.diy"
   REPO_DIR="${HOME}/NullAITech/bolt.diy"
 fi
 cd "$REPO_DIR"
 RUNNER="npm"
 command -v pnpm >/dev/null 2>&1 && RUNNER="pnpm"
 exec "$RUNNER" run dev "$@"
+""",
+
+    "zoth-control-center": """#!/usr/bin/env python3
+# ==============================================================================
+#  ZothOS Sovereign Control Center — Hardware, Daemons & Suite Supervisor
+# ==============================================================================
+import json
+import os
+import socket
+import subprocess
+import sys
+import urllib.request
+
+SERVICES = [
+    ("Zoth Studio v2 (zoth.nullai.tech)", 3000, "/", "cd ~/NullAITech/zoth-studio-v2 && nohup npm run dev -- --port 3000 >/tmp/zoth-studio.log 2>&1 &"),
+    ("Zoth Civilization (3D World)", 9393, "/api/status", "nohup node ~/NullAITech/zoth-civilization/server.js >/tmp/zoth-civ.log 2>&1 &"),
+    ("Zoth WebGen", 5173, "/", "cd ~/NullAITech/bolt.diy && nohup pnpm run dev --port 5173 >/tmp/zoth-webgen.log 2>&1 &"),
+    ("Ollama Local LLM Runtime", 11434, "/api/tags", "nohup ollama serve >/tmp/zoth-ollama.log 2>&1 &"),
+    ("Neuro Memory Daemon", 8094, "/health", "nohup node ~/NullAITech/zoth-studio-v2/server/daemon-runner.mjs >/tmp/zoth-daemons.log 2>&1 &"),
+    ("Sovereign Agent Bridge", 8102, "/api/health", "nohup node ~/NullAITech/zoth-studio-v2/server/daemon-runner.mjs >/tmp/zoth-daemons.log 2>&1 &"),
+]
+
+def check_port(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.35)
+        return s.connect_ex(("127.0.0.1", port)) == 0
+
+def collect_report():
+    cpus = os.cpu_count() or 1
+    kvm = os.path.exists("/dev/kvm")
+    svcs = []
+    for name, port, path, boot_cmd in SERVICES:
+        up = check_port(port)
+        svcs.append({"name": name, "port": port, "up": up, "boot_cmd": boot_cmd})
+    return {"cpus": cpus, "kvm": kvm, "services": svcs}
+
+def print_dashboard(rep):
+    print("\\033[1;33m======================================================================\\033[0m")
+    print("\\033[1;33m  ⚡ ZOTHOS SOVEREIGN CONTROL CENTER · SYSTEM & ENGINE TELEMETRY\\033[0m")
+    print("\\033[1;33m======================================================================\\033[0m")
+    kvm_str = "\\033[1;32mAVAILABLE\\033[0m" if rep["kvm"] else "\\033[1;33mUNAVAILABLE\\033[0m"
+    print(f"  CPU Threads: {rep['cpus']}   |   KVM Hardware Virtualization: {kvm_str}")
+    print("----------------------------------------------------------------------")
+    for s in rep["services"]:
+        badge = "\\033[1;32m[ONLINE ]\\033[0m" if s["up"] else "\\033[1;31m[OFFLINE]\\033[0m"
+        print(f"  {badge} {s['name']:<36} (127.0.0.1:{s['port']})")
+    print("======================================================================")
+    print("  Commands: zoth-control-center --status | --json | --boot-all")
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    if "--boot-all" in args:
+        rep = collect_report()
+        for s in rep["services"]:
+            if not s["up"]:
+                print(f"[*] Auto-booting {s['name']} on :{s['port']}...")
+                subprocess.Popen(s["boot_cmd"], shell=True, executable="/bin/bash")
+        sys.exit(0)
+    rep = collect_report()
+    if "--json" in args:
+        print(json.dumps(rep, indent=2))
+    else:
+        print_dashboard(rep)
 """
 }
 
@@ -481,3 +544,4 @@ for name, script in LAUNCHERS.items():
     os.chmod(fpath, 0o755)
 
 print("2026 Hot Tool Launchers generated and chmod +x set!")
+

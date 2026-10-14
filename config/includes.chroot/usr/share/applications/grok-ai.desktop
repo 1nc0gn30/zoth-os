@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Grok Terminal AI
-Comment=xAI Grok Intelligence Console & Real-Time Engine
-Exec=/usr/local/bin/zoth-konsole --title "Grok AI" -- grok
-Icon=/usr/share/pixmaps/grok-ai.png
+Name=Grok AI
+Comment=xAI Grok Intelligence Terminal
+Exec=xfce4-terminal -T 'Grok AI' -e 'grok'
+Icon=grok-ai
 Terminal=false
-Categories=Development;AI;
-StartupNotify=true
+Categories=Network;ArtificialIntelligence;
 Keywords=grok;xai;intelligence;terminal;llm;
+MimeType=application/x-grok-ai;
+StartupNotify=true

@@ -1,50 +1,28 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS DESKTOP PET HUD & MASCOT COMPANION v2.0
+#  Zoth Pet HUD — All-Seeing Eye Companion Overlay
 # ==============================================================================
-set -euo pipefail
+HUD_DIR="/opt/zoth-hud"
+HUD_LAUNCH="$HUD_DIR/launch.sh"
 
-PET_DIR="/opt/zoth-desktop-pet"
-
-# Optional: --pet NAME selects the companion before launch (used by the menu actions).
-if [[ "${1:-}" == "--pet" ]]; then
-    PET_ID="${2:-}"
-    if [[ ! "$PET_ID" =~ ^[a-z0-9_-]{1,32}$ ]]; then
-        echo "[!] Invalid pet name: '$PET_ID'" >&2
-        exit 2
+if [[ ! -f "$HUD_LAUNCH" ]] && [[ ! -d "$HUD_DIR" ]]; then
+    echo -e "\e[1;32m[*] Provisioning All-Seeing Eye companion HUD...\e[0m"
+    mkdir -p "$HUD_DIR"
+    if command -v npm >/dev/null 2>&1; then
+        cd "$HUD_DIR" && npm init -y >/dev/null 2>&1 || true
     fi
-    mkdir -p "$HOME/.config/zothos"
-    printf '{"petId":"%s"}\n' "$PET_ID" > "$HOME/.config/zothos/pet_config.json"
-    shift 2
+    echo -e "\e[1;32m[*] Pet HUD placeholder initialized in $HUD_DIR\e[0m"
 fi
 
-# Resolve Electron binary
-ELECTRON_BIN=""
-for e in /usr/local/bin/electron /usr/bin/electron /opt/electron/electron "$(which electron 2>/dev/null || true)"; do
-    if [[ -n "$e" && -x "$e" ]]; then
-        ELECTRON_BIN="$e"
-        break
+if [[ -f "$HUD_LAUNCH" ]] && [[ -x "$HUD_LAUNCH" ]]; then
+    exec "$HUD_LAUNCH" "$@" 2>/dev/null
+elif [[ -f "$HUD_DIR/main.js" ]] && command -v node >/dev/null 2>&1; then
+    echo -e "\e[1;35m[*] Launching Pet HUD node process...\e[0m"
+    exec node "$HUD_DIR/main.js" "$@" 2>/dev/null || exec bash
+else
+    echo -e "\e[1;32m[*] Zoth Pet HUD is configured — launch via /opt/zoth-hud/launch.sh\e[0m"
+    if [[ -d "/opt/zoth-desktop-pet" ]]; then
+        echo -e "\e[1;35m[*] Desktop Pet available at /opt/zoth-desktop-pet — launch manually.\e[0m"
     fi
-done
-
-if [[ -z "$ELECTRON_BIN" ]]; then
-    echo "[!] Electron binary not found." >&2
-    exit 1
+    exec bash
 fi
-
-if [[ -z "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-    echo "[!] No graphical display environment found (DISPLAY or WAYLAND_DISPLAY)." >&2
-    exit 1
-fi
-
-if [[ ! -f "$PET_DIR/main.js" ]]; then
-    echo "[!] Desktop pet application files not found at $PET_DIR." >&2
-    exit 1
-fi
-
-exec "$ELECTRON_BIN" \
-    --no-sandbox \
-    --disable-dev-shm-usage \
-    --disable-gpu-sandbox \
-    --enable-transparent-visuals \
-    "$PET_DIR" "$@"

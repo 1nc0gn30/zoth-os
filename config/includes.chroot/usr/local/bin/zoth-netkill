@@ -27,7 +27,7 @@ fi
 echo -e "\e[1;31m[*] Terminating exposed ports and listeners...\e[0m"
 for port in $(ss -tlnp 2>/dev/null | grep -oE ':[0-9]+' | tr -d ':' | sort -un); do
     [[ "$port" == "22" ]] && continue  # preserve SSH for VM management
-    pid=$(ss -tlnp 2>/dev/null | grep ":$port" | grep -oP 'pid=\K[0-9]+' | head -1)
+    pid=$(ss -tlnp 2>/dev/null | grep ":$port" | sed -n 's/.*pid=\([0-9]*\).*//p' | head -1)
     if [[ -n "$pid" ]]; then
         kill "$pid" 2>/dev/null && echo -e "\e[1;31m[!] Killed listener on port $port (PID $pid)\e[0m"
     fi
@@ -35,4 +35,4 @@ done
 
 echo -e "\e[1;31m[!] NetKill blocking active. Run 'ufw enable' or 'iptables -F' to restore.\e[0m"
 echo -e "\e[1;32m[*] NetKill secured — isolated network posture. Type 'netkill --restore' to reverse.\e[0m"
-echo -e "\e[1;36m[*] Done. Window will close (or press Ctrl+C).\e[0m"
+exec bash

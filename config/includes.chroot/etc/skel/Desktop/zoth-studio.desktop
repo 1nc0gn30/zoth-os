@@ -1,12 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Studio Pro (Beta)
-Comment=Sovereign 3D WebGL Alchemical Cockpit & Workspace
+Name=Zoth Studio
+Comment=Alchemical Neural Hub & Tooling Suite
 Exec=/opt/zoth-studio/launch.sh
-Icon=/usr/share/pixmaps/zoth-studio.png
+Icon=zoth-studio
 Terminal=false
-Categories=Development;Graphics;AI;BetaExperimental;
+Categories=Development;ArtificialIntelligence;Security;
 Keywords=studio;hub;neural;alchemical;webgl;cockpit;
 MimeType=application/x-zoth-studio;
 StartupNotify=true

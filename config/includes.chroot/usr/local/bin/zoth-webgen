@@ -1,28 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ⚡ ZOTH WEBGEN FOUNDRY — Sovereign Autonomous Website Generator
+#  Zoth WebGen Foundry — Autonomous Website Generator & AST Engine
 # ==============================================================================
-#  Platform: ZothOS 2026 Edition • NullAI Platform
-#  Author: Neal Frazier Tech (@1nc0gn30)
-# ==============================================================================
-set -euo pipefail
-
-GOLD='\033[38;2;212;175;55m'
-CYAN='\033[38;2;56;189;248m'
-GREEN='\033[38;2;34;197;94m'
-RED='\033[38;2;239;68;68m'
-DIM='\033[2m'
-BOLD='\033[1m'
-NC='\033[0m'
-
-# Find repository location
 CANDIDATES=(
   "${ZOTH_SRC_ROOT}/zoth-webgen"
   "${HOME}/NullAITech/zoth-webgen"
   "/opt/zoth-webgen"
   "${HOME}/zoth-webgen"
 )
-
 REPO_DIR=""
 for c in "${CANDIDATES[@]}"; do
   if [[ -d "$c" && -f "$c/webgen_engine.py" ]]; then
@@ -30,125 +15,18 @@ for c in "${CANDIDATES[@]}"; do
     break
   fi
 done
-
-ensure_repo() {
-  if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
-    echo -e "${GOLD}${BOLD}[*] Zoth WebGen not found locally. Provisioning from sovereign origin...${NC}"
-    TARGET_DIR="${HOME}/NullAITech/zoth-webgen"
-    mkdir -p "$(dirname "$TARGET_DIR")"
-    git clone https://github.com/NullAITech/zoth-webgen.git "$TARGET_DIR"
-    REPO_DIR="$TARGET_DIR"
-    echo -e "${GREEN}✓ Provisioned to ${REPO_DIR}${NC}"
-  fi
-}
-
-launch_web() {
-  ensure_repo
-  local port="${1:-8092}"
-  echo -e "${GOLD}${BOLD}⚡ Launching Zoth WebGen Studio Web Server on http://127.0.0.1:${port} ...${NC}"
-  if command -v xdg-open >/dev/null 2>&1; then
-    (sleep 1.5 && xdg-open "http://127.0.0.1:${port}") &
-  fi
-  cd "$REPO_DIR"
-  exec python3 server.py --port "$port"
-}
-
-launch_desktop() {
-  ensure_repo
-  cd "$REPO_DIR"
-  if [[ -f "bin/webgen.js" ]]; then
-    exec node bin/webgen.js desktop
-  elif [[ -f "node_modules/.bin/electron" ]]; then
-    exec node_modules/.bin/electron .
-  else
-    launch_web 8092
-  fi
-}
-
-run_cli() {
-  ensure_repo
-  cd "$REPO_DIR"
-  exec python3 webgen_engine.py "$@"
-}
-
-# CLI passthrough if args given
+if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
+  echo -e "\e[1;33m[*] Cloning Zoth WebGen from sovereign repo...\e[0m"
+  mkdir -p "${HOME}/NullAITech"
+  git clone https://github.com/NullAITech/zoth-webgen.git "${HOME}/NullAITech/zoth-webgen"
+  REPO_DIR="${HOME}/NullAITech/zoth-webgen"
+fi
+cd "$REPO_DIR"
 if [[ $# -gt 0 ]]; then
-  case "$1" in
-    web|--web|-w)
-      shift
-      launch_web "${1:-8092}"
-      ;;
-    desktop|app|gui|--desktop|--app|--gui)
-      launch_desktop
-      ;;
-    --help|-h)
-      ensure_repo
-      cd "$REPO_DIR"
-      python3 webgen_engine.py --help || true
-      exit 0
-      ;;
-    *)
-      run_cli "$@"
-      ;;
-  esac
-fi
-
-# Interactive TUI if executed without arguments
-clear
-echo -e "${GOLD}${BOLD}★═════════════════════════════════════════════════════════════════════★${NC}"
-echo -e "         ${GOLD}${BOLD}🏛️  Z O T H   W E B G E N   F O U N D R Y${NC}"
-echo -e "      ${CYAN}Autonomous Website Generator & Multi-Model Engine (2026)${NC}"
-echo -e "${GOLD}${BOLD}★═════════════════════════════════════════════════════════════════════★${NC}"
-echo -e "  ${DIM}Creator:${NC} Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
-echo -e "  ${DIM}Repository:${NC} https://github.com/NullAITech/zoth-webgen"
-if [[ -n "$REPO_DIR" ]]; then
-  echo -e "  ${DIM}Local Path:${NC} ${GREEN}${REPO_DIR}${NC}"
+  if [[ "$1" == "web" ]]; then
+    exec python3 server.py --port "${2:-8092}"
+  fi
+  exec python3 webgen_engine.py "$@"
 else
-  echo -e "  ${DIM}Local Path:${NC} ${RED}Not cloned yet (auto-provision on launch)${NC}"
+  exec python3 server.py --port 8092
 fi
-echo ""
-echo -e "  ${BOLD}${GOLD}AVAILABLE OPERATIONS:${NC}"
-echo -e "    ${CYAN}[1]${NC}  ${BOLD}⚡ Launch WebGen Web UI (:8092)${NC}      ${DIM}(Interactive in-browser studio)${NC}"
-echo -e "    ${CYAN}[2]${NC}  ${BOLD}💻 Run WebGen CLI Engine${NC}              ${DIM}(python3 webgen_engine.py)${NC}"
-echo -e "    ${CYAN}[3]${NC}  ${BOLD}🖥️  Launch Desktop Workstation${NC}        ${DIM}(Electron client with hot reload)${NC}"
-echo -e "    ${CYAN}[4]${NC}  ${BOLD}🌐 Open WebGen in Zoth Studio v2${NC}      ${DIM}(http://127.0.0.1:3000/webgen)${NC}"
-echo -e "    ${CYAN}[5]${NC}  ${BOLD}🔄 Git Sync / Update Engine${NC}           ${DIM}(Pull latest commits)${NC}"
-echo -e "    ${RED}[0]${NC}  ${BOLD}🚪 Exit${NC}"
-echo ""
-
-read -rp "  Select operation [0-5]: " choice
-case "$choice" in
-  1)
-    launch_web 8092
-    ;;
-  2)
-    ensure_repo
-    cd "$REPO_DIR"
-    echo -e "\n${CYAN}Running python3 webgen_engine.py --help ...${NC}\n"
-    python3 webgen_engine.py --help || true
-    echo ""
-    exec bash
-    ;;
-  3)
-    launch_desktop
-    ;;
-  4)
-    if command -v xdg-open >/dev/null 2>&1; then
-      xdg-open "http://127.0.0.1:3000/webgen"
-    fi
-    echo -e "${GREEN}✓ Opened http://127.0.0.1:3000/webgen in browser.${NC}"
-    ;;
-  5)
-    ensure_repo
-    cd "$REPO_DIR"
-    git pull --rebase origin main || true
-    echo -e "${GREEN}✓ Engine up to date.${NC}"
-    ;;
-  0|q|Q|exit)
-    exit 0
-    ;;
-  *)
-    echo -e "${RED}Invalid selection.${NC}"
-    exit 1
-    ;;
-esac

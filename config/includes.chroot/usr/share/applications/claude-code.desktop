@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Claude Code Agent
-Comment=Anthropic Sovereign Autonomous CLI Agent Harness
-Exec=/usr/local/bin/zoth-konsole --title "Claude Code CLI" -- claude
-Icon=/usr/share/pixmaps/claude-code.png
+Name=Claude Code
+Comment=Claude Code Autonomous Agent
+Exec=xfce4-terminal -T 'Claude Code CLI' -e 'claude'
+Icon=claude-code
 Terminal=false
-Categories=Development;AI;
-StartupNotify=true
+Categories=Development;ArtificialIntelligence;
 Keywords=claude;code;anthropic;agent;cli;
+MimeType=application/x-claude-code;
+StartupNotify=true

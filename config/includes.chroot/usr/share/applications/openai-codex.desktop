@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth OpenAI Codex Agent
-Comment=OpenAI Autonomous Code Engine & Architecture Assistant
-Exec=/usr/local/bin/zoth-konsole --title "OpenAI Codex" -- codex
-Icon=/usr/share/pixmaps/openai-codex.png
+Name=OpenAI Codex
+Comment=OpenAI Codex CLI Suite
+Exec=xfce4-terminal -T 'OpenAI Codex' -e 'codex'
+Icon=openai-codex
 Terminal=false
-Categories=Development;AI;
-StartupNotify=true
+Categories=Development;ArtificialIntelligence;
 Keywords=openai;codex;cli;ai;developer;
+MimeType=application/x-openai-codex;
+StartupNotify=true

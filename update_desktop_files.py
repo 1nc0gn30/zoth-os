@@ -283,6 +283,16 @@ DESK_ENTRIES = {
         "Categories": "Development;ArtificialIntelligence;Utility;",
         "Keywords": "bolt;boltdiy;webgen;fullstack;ai;engineer;scaffold;remix;",
         "MimeType": "application/x-bolt-diy;"
+    },
+    "zoth-control-center.desktop": {
+        "Name": "Zoth Control Center",
+        "Comment": "Sovereign OS Supervisor for Zoth Studio v2, Zoth Civilization, Bolt.DIY WebGen & Local Daemons",
+        "Exec": "/usr/local/bin/zoth-konsole --title 'Zoth Control Center' -- /usr/local/bin/zoth-control-center --status",
+        "Icon": "zoth-cockpit",
+        "Terminal": "false",
+        "Categories": "System;Monitoring;ArtificialIntelligence;",
+        "Keywords": "control;center;supervisor;studio;civilization;webgen;daemons;zothos;",
+        "MimeType": "application/x-zoth-control-center;"
     }
 }
 
