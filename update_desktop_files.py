@@ -263,6 +263,26 @@ DESK_ENTRIES = {
         "Categories": "Security;System;",
         "Keywords": "security;suite;shield;crosshair;arsenal;pentest;defense;",
         "MimeType": "application/x-zoth-security-suite;"
+    },
+    "zoth-webgen.desktop": {
+        "Name": "Zoth WebGen Foundry",
+        "Comment": "Autonomous sovereign website generator and multi-model AST engine",
+        "Exec": "/usr/local/bin/zoth-konsole --title 'Zoth WebGen Foundry' -- /usr/local/bin/zoth-webgen",
+        "Icon": "zoth-webgen",
+        "Terminal": "false",
+        "Categories": "Development;ArtificialIntelligence;Utility;",
+        "Keywords": "webgen;generator;website;ast;foundry;ai;frontend;",
+        "MimeType": "application/x-zoth-webgen;"
+    },
+    "bolt-diy.desktop": {
+        "Name": "Bolt.DIY Full-Stack Engine",
+        "Comment": "Localized open-source AI software engineer for scaffolding and running web apps in the browser",
+        "Exec": "/usr/local/bin/zoth-konsole --title 'Bolt.DIY Engine' -- /usr/local/bin/bolt-diy",
+        "Icon": "bolt-diy",
+        "Terminal": "false",
+        "Categories": "Development;ArtificialIntelligence;Utility;",
+        "Keywords": "bolt;boltdiy;webgen;fullstack;ai;engineer;scaffold;remix;",
+        "MimeType": "application/x-bolt-diy;"
     }
 }
 

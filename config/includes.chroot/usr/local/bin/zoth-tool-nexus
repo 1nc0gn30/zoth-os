@@ -39,7 +39,7 @@ DOMAINS = {
         "tools": [
             ("cyberpunk-hud", "Full-viewport 360 radar & telemetry cockpit", "zoth-agent-hud", "none"),
             ("cockpit", "21-Agent autonomous swarm command deck & REPL", "zoth-cockpit", "pip:psutil,pip:rich"),
-            ("webgen", "Multi-model prompt foundry & generator", "zoth-ai webgen", "none"),
+            ("webgen", "Zoth WebGen sovereign website generator & AST engine", "zoth-webgen", "none"),
             ("zoth-ghost", "NullAI Ghostmode & Anti-forensics router", "zoth-ghost", "apt:tor,apt:macchanger"),
             ("zoth-undercover", "Windows 11 undercover chameleon mode", "zoth-undercover", "none"),
             ("zoth-sec", "Offensive security & penetration testing arsenal", "zoth-sec", "none"),
@@ -72,6 +72,7 @@ DOMAINS = {
         "description": "Nous Research Hermes, terminal coding agents, and AI evaluation",
         "tools": [
             ("hermes", "Nous Research autonomous agent & skill system (nousresearch.com)", "hermes", "custom:hermes"),
+            ("bolt.diy", "Localized full-stack AI software engineer (in-browser)", "bolt-diy", "none"),
             ("claude", "Anthropic Claude Code terminal assistant", "claude", "npm:@anthropic-ai/claude-code"),
             ("codex", "OpenAI Codex CLI coding companion", "codex", "npm:@openai/codex"),
             ("opencode", "OpenCode open-source coding engine", "opencode", "npm:opencode-ai"),

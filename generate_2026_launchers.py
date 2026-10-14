@@ -404,6 +404,69 @@ echo -e "\\e[1;34m[!] Undercover engaged — identity mask active.\\e[0m"
 echo -e "\\e[1;34m[*] Env: ZOTH_UNDERCOVER=$ZOTH_UNDERCOVER  PR_CA_SPOOF=$PR_CA_SPOOF\\e[0m"
 echo -e "\\e[1;36m[*] Type 'zoth-mode' to toggle reality layers.\\e[0m"
 exec bash
+""",
+
+    "zoth-webgen": """#!/usr/bin/env bash
+# ==============================================================================
+#  Zoth WebGen Foundry — Autonomous Website Generator & AST Engine
+# ==============================================================================
+CANDIDATES=(
+  "${ZOTH_SRC_ROOT}/zoth-webgen"
+  "${HOME}/NullAITech/zoth-webgen"
+  "/opt/zoth-webgen"
+  "${HOME}/zoth-webgen"
+)
+REPO_DIR=""
+for c in "${CANDIDATES[@]}"; do
+  if [[ -d "$c" && -f "$c/webgen_engine.py" ]]; then
+    REPO_DIR="$c"
+    break
+  fi
+done
+if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
+  echo -e "\\e[1;33m[*] Cloning Zoth WebGen from sovereign repo...\\e[0m"
+  mkdir -p "${HOME}/NullAITech"
+  git clone https://github.com/NullAITech/zoth-webgen.git "${HOME}/NullAITech/zoth-webgen"
+  REPO_DIR="${HOME}/NullAITech/zoth-webgen"
+fi
+cd "$REPO_DIR"
+if [[ $# -gt 0 ]]; then
+  if [[ "$1" == "web" ]]; then
+    exec python3 server.py --port "${2:-8092}"
+  fi
+  exec python3 webgen_engine.py "$@"
+else
+  exec python3 server.py --port 8092
+fi
+""",
+
+    "bolt-diy": """#!/usr/bin/env bash
+# ==============================================================================
+#  Bolt.DIY Full-Stack Engine — Localized AI Software Engineer
+# ==============================================================================
+CANDIDATES=(
+  "${ZOTH_SRC_ROOT}/bolt.diy"
+  "${HOME}/NullAITech/bolt.diy"
+  "/opt/bolt.diy"
+  "${HOME}/bolt.diy"
+)
+REPO_DIR=""
+for c in "${CANDIDATES[@]}"; do
+  if [[ -d "$c" && -f "$c/package.json" ]]; then
+    REPO_DIR="$c"
+    break
+  fi
+done
+if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
+  echo -e "\\e[1;33m[*] Cloning Bolt.DIY from sovereign repo...\\e[0m"
+  mkdir -p "${HOME}/NullAITech"
+  git clone https://github.com/1nc0gn30/bolt.diy.git "${HOME}/NullAITech/bolt.diy"
+  REPO_DIR="${HOME}/NullAITech/bolt.diy"
+fi
+cd "$REPO_DIR"
+RUNNER="npm"
+command -v pnpm >/dev/null 2>&1 && RUNNER="pnpm"
+exec "$RUNNER" run dev "$@"
 """
 }
 
