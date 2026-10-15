@@ -543,5 +543,12 @@ for name, script in LAUNCHERS.items():
         f.write(script)
     os.chmod(fpath, 0o755)
 
+bolt_diy_src = os.path.join(root_dir, "scripts", "bolt-diy.sh")
+if os.path.isfile(bolt_diy_src):
+    dest = os.path.join(target_dir, "bolt-diy")
+    with open(bolt_diy_src, "r", encoding="utf-8") as src, open(dest, "w", encoding="utf-8") as out:
+        out.write(src.read())
+    os.chmod(dest, 0o755)
+
 print("2026 Hot Tool Launchers generated and chmod +x set!")
 
