@@ -1,0 +1,1294 @@
+#!/usr/bin/env python3
+"""Zoth Lock — walk-away screen lock with a dedicated password.
+
+Processes, agents, and servers keep running. Sleep, idle suspend, and lid
+suspend are inhibited for the life of the lock. The password is scrypt-hashed
+under ~/.config/zothos/session-lock.hash (mode 0600) and is never accepted on
+the command line.
+
+This overlay is a walk-away cover on Plasma Wayland (XWayland). Super+L still
+uses the KDE session locker and the login password. Ctrl+Alt+Fn still reaches
+other TTY sessions.
+"""
+from __future__ import annotations
+
+import argparse
+import getpass
+import hashlib
+import hmac
+import json
+import os
+import shutil
+import signal
+import subprocess
+import sys
+import tempfile
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# Paths and visual tokens (Zoth gold on field-dark)
+# ---------------------------------------------------------------------------
+
+CONFIG_DIR = Path(os.environ.get("ZOTH_LOCK_DIR", Path.home() / ".config" / "zothos"))
+HASH_PATH = CONFIG_DIR / "session-lock.hash"
+RUNTIME_DIR = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"))
+PID_PATH = RUNTIME_DIR / "zoth-lock.pid"
+WALLPAPER = Path(
+    os.environ.get(
+        "ZOTH_LOCK_WALLPAPER",
+        "/usr/share/backgrounds/zothos/zoth-gold-master.jpg",
+    )
+)
+FONT_SANS = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+FONT_SANS_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+
+GOLD = "#D4AF37"
+GOLD_DIM = "#8A7024"
+GOLD_SOFT = "#C4A35A"
+BG = "#0B0F17"
+CARD = "#12141C"
+FIELD = "#1A1D27"
+TEXT = "#E8E4D9"
+MUTED = "#9A9488"
+FAIL = "#C45C5C"
+HAIR = "#2A261C"
+
+SCRYPT_N = 2**14
+SCRYPT_R = 8
+SCRYPT_P = 1
+SCRYPT_DKLEN = 32
+SALT_BYTES = 16
+MIN_PASSWORD = 4
+MAX_PASSWORD = 128
+FAIL_LIMIT = 5
+FAIL_BASE_SEC = 20
+
+INHIBIT_WHAT = "sleep:idle:handle-lid-switch"
+
+
+# ---------------------------------------------------------------------------
+# Password record
+# ---------------------------------------------------------------------------
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def password_is_set() -> bool:
+    return HASH_PATH.is_file() and HASH_PATH.stat().st_size > 0
+
+
+def load_record() -> dict:
+    raw = HASH_PATH.read_text(encoding="utf-8")
+    rec = json.loads(raw)
+    if rec.get("kdf") != "scrypt" or "salt" not in rec or "hash" not in rec:
+        raise ValueError("lock record is not a zoth-lock scrypt hash")
+    return rec
+
+
+def save_record(password: str) -> None:
+    if len(password) < MIN_PASSWORD:
+        raise ValueError(f"password must be at least {MIN_PASSWORD} characters")
+    if len(password) > MAX_PASSWORD:
+        raise ValueError(f"password must be at most {MAX_PASSWORD} characters")
+    salt = os.urandom(SALT_BYTES)
+    digest = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=SCRYPT_N,
+        r=SCRYPT_R,
+        p=SCRYPT_P,
+        dklen=SCRYPT_DKLEN,
+    )
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    record = {
+        "v": 1,
+        "kdf": "scrypt",
+        "n": SCRYPT_N,
+        "r": SCRYPT_R,
+        "p": SCRYPT_P,
+        "dklen": SCRYPT_DKLEN,
+        "salt": salt.hex(),
+        "hash": digest.hex(),
+        "created": _now_iso(),
+    }
+    tmp_fd, tmp_name = tempfile.mkstemp(prefix="session-lock.", dir=str(CONFIG_DIR))
+    try:
+        os.write(tmp_fd, (json.dumps(record, indent=2) + "\n").encode("utf-8"))
+        os.fchmod(tmp_fd, 0o600)
+        os.close(tmp_fd)
+        os.replace(tmp_name, HASH_PATH)
+        os.chmod(HASH_PATH, 0o600)
+    except Exception:
+        try:
+            os.close(tmp_fd)
+        except OSError:
+            pass
+        try:
+            os.unlink(tmp_name)
+        except OSError:
+            pass
+        raise
+
+
+def verify_password(password: str) -> bool:
+    if not password_is_set():
+        return False
+    rec = load_record()
+    salt = bytes.fromhex(rec["salt"])
+    expected = bytes.fromhex(rec["hash"])
+    digest = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=int(rec.get("n", SCRYPT_N)),
+        r=int(rec.get("r", SCRYPT_R)),
+        p=int(rec.get("p", SCRYPT_P)),
+        dklen=int(rec.get("dklen", SCRYPT_DKLEN)),
+    )
+    return hmac.compare_digest(digest, expected)
+
+
+# ---------------------------------------------------------------------------
+# Session helpers
+# ---------------------------------------------------------------------------
+
+def _pid_alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def lock_is_active() -> bool:
+    try:
+        pid = int(PID_PATH.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return False
+    return _pid_alive(pid)
+
+
+def write_pid() -> None:
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    PID_PATH.write_text(str(os.getpid()) + "\n", encoding="utf-8")
+
+
+def clear_pid() -> None:
+    try:
+        PID_PATH.unlink()
+    except OSError:
+        pass
+
+
+def _run(argv: list[str], timeout: float = 2.0) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        argv,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=timeout,
+        check=False,
+        text=True,
+    )
+
+
+def screensaver_inhibit() -> str | None:
+    try:
+        proc = _run(
+            [
+                "qdbus6",
+                "org.freedesktop.ScreenSaver",
+                "/ScreenSaver",
+                "Inhibit",
+                "Zoth Lock",
+                "custom lock active; keep agents running",
+            ]
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    cookie = (proc.stdout or "").strip()
+    return cookie or None
+
+
+def screensaver_uninhibit(cookie: str | None) -> None:
+    if not cookie:
+        return
+    _run(
+        [
+            "qdbus6",
+            "org.freedesktop.ScreenSaver",
+            "/ScreenSaver",
+            "UnInhibit",
+            cookie,
+        ]
+    )
+
+
+def reexec_with_inhibit() -> None:
+    """Stay in the foreground under systemd-inhibit so lid/idle cannot suspend."""
+    if os.environ.get("ZOTH_LOCK_INHIBITED") == "1":
+        return
+    if os.environ.get("ZOTH_LOCK_SKIP_INHIBIT") == "1":
+        return
+    inhibit = shutil.which("systemd-inhibit")
+    if not inhibit:
+        return
+    os.environ["ZOTH_LOCK_INHIBITED"] = "1"
+    os.execv(
+        inhibit,
+        [
+            inhibit,
+            f"--what={INHIBIT_WHAT}",
+            "--who=Zoth Lock",
+            "--why=session locked; keep agents and servers running",
+            "--mode=block",
+            sys.executable,
+            os.path.abspath(__file__),
+            *sys.argv[1:],
+        ],
+    )
+
+
+def have_display() -> bool:
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
+# X11 modifier masks. Control/Alt/Super chords stay with the WM.
+_MOD_CONTROL = 0x4
+_MOD_MOD1 = 0x8
+_MOD_MOD4 = 0x40
+
+
+def funnel_key_to_entry(entry, event, *, on_return=None):
+    """If a Key event missed the Entry, type it in. Never changes window focus.
+
+    Override-redirect windows and Tk force-focus fight KWin's XWayland seat
+    and drop keys.
+    """
+    widget = getattr(event, "widget", None)
+    try:
+        if widget is entry:
+            return None
+    except Exception:
+        pass
+    state = int(getattr(event, "state", 0) or 0)
+    if state & (_MOD_CONTROL | _MOD_MOD1 | _MOD_MOD4):
+        return "break"
+    keysym = getattr(event, "keysym", "") or ""
+    if keysym in ("Return", "KP_Enter"):
+        if on_return is not None:
+            on_return()
+        return "break"
+    if keysym == "BackSpace":
+        cur = entry.get()
+        if cur:
+            entry.delete(len(cur) - 1, "end")
+        return "break"
+    ch = getattr(event, "char", "") or ""
+    if ch and ch.isprintable() and ch not in "\r\n\t":
+        entry.insert("end", ch)
+        return "break"
+    return "break"
+
+
+# ---------------------------------------------------------------------------
+# Backdrop / preview render
+# ---------------------------------------------------------------------------
+
+def _font(path: str, size: int):
+    from PIL import ImageFont
+
+    try:
+        return ImageFont.truetype(path, size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def cover_wallpaper(size: tuple[int, int]):
+    from PIL import Image, ImageEnhance
+
+    w, h = size
+    canvas = Image.new("RGB", (w, h), BG)
+    if WALLPAPER.is_file():
+        src = Image.open(WALLPAPER).convert("RGB")
+        sw, sh = src.size
+        scale = max(w / sw, h / sh)
+        nw, nh = int(sw * scale), int(sh * scale)
+        src = src.resize((nw, nh), Image.Resampling.LANCZOS)
+        left = (nw - w) // 2
+        top = (nh - h) // 2
+        src = src.crop((left, top, left + w, top + h))
+        src = ImageEnhance.Brightness(src).enhance(0.28)
+        src = ImageEnhance.Contrast(src).enhance(1.08)
+        canvas = src
+    # Bottom wash so the card sits on a quieter field.
+    from PIL import ImageDraw
+
+    wash = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(wash)
+    for i in range(h // 2, h):
+        alpha = int(180 * ((i - h // 2) / (h / 2)))
+        draw.line([(0, i), (w, i)], fill=(11, 15, 23, alpha))
+    canvas = canvas.convert("RGBA")
+    canvas = Image.alpha_composite(canvas, wash).convert("RGB")
+    return canvas
+
+
+def render_lock_preview(
+    path: Path,
+    size: tuple[int, int] = (1920, 1080),
+    clock: str | None = None,
+    error: str = "",
+) -> Path:
+    """Draw a still of the lock for review. Does not grab the session."""
+    from PIL import Image, ImageDraw
+
+    w, h = size
+    img = cover_wallpaper(size).convert("RGBA")
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+
+    card_w, card_h = 460, 448
+    x0 = (w - card_w) // 2
+    y0 = (h - card_h) // 2 - 12
+    x1, y1 = x0 + card_w, y0 + card_h
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16, fill=(18, 20, 28, 236))
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16, outline=(212, 175, 55, 220), width=1)
+    d.line([(x0 + 32, y0 + 28), (x0 + 96, y0 + 28)], fill=(212, 175, 55, 255), width=2)
+
+    sans = _font(FONT_SANS, 12)
+    sans_sm = _font(FONT_SANS, 13)
+    bold_lg = _font(FONT_SANS_BOLD, 36)
+    bold_btn = _font(FONT_SANS_BOLD, 13)
+    mono = _font(FONT_MONO, 13)
+
+    def text_w(font, s: str) -> int:
+        box = d.textbbox((0, 0), s, font=font)
+        return box[2] - box[0]
+
+    eyebrow = "SESSION"
+    d.text((x0 + 32, y0 + 44), eyebrow, font=sans, fill=(212, 175, 55, 255))
+    d.text((x0 + 32, y0 + 68), "LOCKED", font=bold_lg, fill=(232, 228, 217, 255))
+    d.text(
+        (x0 + 32, y0 + 122),
+        "Agents, servers, and chats keep running.",
+        font=sans_sm,
+        fill=(154, 148, 136, 255),
+    )
+
+    field_y = y0 + 168
+    d.rounded_rectangle(
+        [x0 + 32, field_y, x1 - 32, field_y + 48],
+        radius=8,
+        fill=(26, 29, 39, 255),
+        outline=(42, 38, 28, 255),
+        width=1,
+    )
+    d.text((x0 + 48, field_y + 14), "password", font=sans_sm, fill=(154, 148, 136, 180))
+
+    btn_y = field_y + 64
+    d.rounded_rectangle(
+        [x0 + 32, btn_y, x1 - 32, btn_y + 48],
+        radius=8,
+        fill=(212, 175, 55, 255),
+    )
+    label = "UNLOCK"
+    d.text(
+        (x0 + (card_w - text_w(bold_btn, label)) // 2, btn_y + 16),
+        label,
+        font=bold_btn,
+        fill=(11, 15, 23, 255),
+    )
+
+    if error:
+        d.text((x0 + 32, btn_y + 64), error, font=sans, fill=(196, 92, 92, 255))
+    else:
+        d.text(
+            (x0 + 32, btn_y + 64),
+            "Stay-running lock  ·  lid will not sleep",
+            font=sans,
+            fill=(154, 148, 136, 255),
+        )
+
+    stamp = clock or datetime.now().strftime("%H:%M")
+    d.text((x0 + 32, y1 - 72), stamp, font=mono, fill=(212, 175, 55, 255))
+    d.text((x0 + 32, y1 - 48), "ZOTH", font=sans, fill=(138, 112, 36, 255))
+
+    out = Image.alpha_composite(img, overlay).convert("RGB")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    out.save(path, "PNG", optimize=True)
+    return path
+
+
+# ---------------------------------------------------------------------------
+# Tk dialogs
+# ---------------------------------------------------------------------------
+
+def _tk():
+    import tkinter as tk
+    from tkinter import font as tkfont
+
+    return tk, tkfont
+
+
+import re
+
+
+def detect_monitors(root=None) -> list[dict]:
+    """Return active monitor geometries [{'name', 'x', 'y', 'w', 'h', 'primary'}]."""
+    mons: list[dict] = []
+    try:
+        proc = _run(["xrandr", "--listmonitors"])
+        for line in (proc.stdout or "").splitlines():
+            m = re.search(
+                r"(\d+):\s+\+(\*?)(\S+)\s+(\d+)/\d+x(\d+)/\d+\+(-?\d+)\+(-?\d+)",
+                line,
+            )
+            if m:
+                mons.append(
+                    {
+                        "name": m.group(3),
+                        "w": int(m.group(4)),
+                        "h": int(m.group(5)),
+                        "x": int(m.group(6)),
+                        "y": int(m.group(7)),
+                        "primary": bool(m.group(2)),
+                    }
+                )
+    except Exception:
+        pass
+
+    if not mons:
+        try:
+            proc = _run(["xrandr", "--query"])
+            for line in (proc.stdout or "").splitlines():
+                m = re.match(
+                    r"^(\S+)\s+connected(?:\s+(primary))?\s+(\d+)x(\d+)\+(-?\d+)\+(-?\d+)",
+                    line,
+                )
+                if m:
+                    mons.append(
+                        {
+                            "name": m.group(1),
+                            "w": int(m.group(3)),
+                            "h": int(m.group(4)),
+                            "x": int(m.group(5)),
+                            "y": int(m.group(6)),
+                            "primary": bool(m.group(2)),
+                        }
+                    )
+        except Exception:
+            pass
+
+    if not mons:
+        try:
+            proc = _run(["kscreen-doctor", "-o"])
+            clean = re.sub(r"\x1b\[[0-9;]*m", "", proc.stdout or "")
+            cur_name = None
+            cur_enabled = False
+            cur_primary = False
+            for line in clean.splitlines():
+                s = line.strip()
+                m_out = re.match(r"^Output:\s+\d+\s+(\S+)", s)
+                if m_out:
+                    cur_name = m_out.group(1)
+                    cur_enabled = False
+                    cur_primary = False
+                elif s == "enabled":
+                    cur_enabled = True
+                elif s == "priority 1":
+                    cur_primary = True
+                elif cur_name and cur_enabled and s.startswith("Geometry:"):
+                    m_geo = re.search(r"Geometry:\s*(-?\d+),(-?\d+)\s+(\d+)x(\d+)", s)
+                    if m_geo:
+                        mons.append(
+                            {
+                                "name": cur_name,
+                                "x": int(m_geo.group(1)),
+                                "y": int(m_geo.group(2)),
+                                "w": int(m_geo.group(3)),
+                                "h": int(m_geo.group(4)),
+                                "primary": cur_primary,
+                            }
+                        )
+                        cur_name = None
+        except Exception:
+            pass
+
+    # Deduplicate by geometry and sort primary first, then left-to-right
+    unique: list[dict] = []
+    seen: set[tuple[int, int, int, int]] = set()
+    for m in sorted(mons, key=lambda d: (0 if d.get("primary") else 1, d["x"], d["y"])):
+        key = (m["x"], m["y"], m["w"], m["h"])
+        if key not in seen and m["w"] > 0 and m["h"] > 0:
+            seen.add(key)
+            unique.append(m)
+
+    if not unique:
+        sw = root.winfo_screenwidth() if root is not None else 1920
+        sh = root.winfo_screenheight() if root is not None else 1080
+        unique.append({"name": "default", "x": 0, "y": 0, "w": sw, "h": sh, "primary": True})
+    return unique
+
+
+def _place_on_monitor(tk, win, mon: dict, title: str = "Zoth Lock") -> None:
+    """Position a managed Tk/Toplevel window on a specific monitor and fullscreen it."""
+    x, y, w, h = mon["x"], mon["y"], mon["w"], mon["h"]
+    win.title(f"{title} — {mon.get('name', 'screen')}")
+    win.configure(bg=BG)
+    try:
+        win.overrideredirect(False)
+    except tk.TclError:
+        pass
+    try:
+        win.attributes("-fullscreen", False)
+    except tk.TclError:
+        pass
+    win.geometry(f"{w}x{h}+{x}+{y}")
+    win.update_idletasks()
+    win.update()
+    try:
+        win.attributes("-fullscreen", True)
+    except tk.TclError:
+        pass
+    try:
+        win.attributes("-topmost", True)
+    except tk.TclError:
+        pass
+    win.protocol("WM_DELETE_WINDOW", lambda: None)
+    win.update_idletasks()
+    # Verify KWin placed the fullscreen surface on the target monitor
+    if abs(win.winfo_rootx() - x) > 50 or abs(win.winfo_rooty() - y) > 50:
+        try:
+            win.attributes("-fullscreen", False)
+            win.geometry(f"{w}x{h}+{x}+{y}")
+            win.update()
+            win.attributes("-fullscreen", True)
+            win.attributes("-topmost", True)
+        except tk.TclError:
+            pass
+
+
+def _style_root(tk, root, title: str, w: int, h: int, preview: bool) -> None:
+    root.title(title)
+    root.configure(bg=BG)
+    # Managed window so KWin routes the Wayland seat into the Tk Entry.
+    # Override-redirect on XWayland makes the field untypable.
+    try:
+        root.overrideredirect(False)
+    except tk.TclError:
+        pass
+    if preview:
+        root.resizable(False, False)
+        root.geometry(f"{w}x{h}+80+80")
+        return
+    mons = detect_monitors(root)
+    _place_on_monitor(tk, root, mons[0], title=title)
+
+
+def _card(tk, parent, width: int):
+    wrap = tk.Frame(parent, bg=HAIR, padx=1, pady=1)
+    inner = tk.Frame(wrap, bg=CARD, padx=32, pady=28)
+    inner.pack(fill="both", expand=True)
+    wrap.configure(width=width)
+    return wrap, inner
+
+
+def _gold_button(tk, parent, text: str, command, width: int = 18):
+    btn = tk.Button(
+        parent,
+        text=text,
+        command=command,
+        bg=GOLD,
+        fg=BG,
+        activebackground=GOLD_SOFT,
+        activeforeground=BG,
+        disabledforeground=BG,
+        relief="flat",
+        bd=0,
+        highlightthickness=0,
+        padx=16,
+        pady=12,
+        font=("DejaVu Sans", 11, "bold"),
+        cursor="hand2",
+        width=width,
+        takefocus=0,
+    )
+    return btn
+
+
+def _entry(tk, parent, show: str = "•", textvariable=None):
+    kwargs = {}
+    if textvariable is not None:
+        kwargs["textvariable"] = textvariable
+    ent = tk.Entry(
+        parent,
+        show=show,
+        bg=FIELD,
+        fg=TEXT,
+        insertbackground=GOLD,
+        insertwidth=2,
+        relief="flat",
+        highlightthickness=1,
+        highlightbackground=HAIR,
+        highlightcolor=GOLD,
+        font=("DejaVu Sans", 13),
+        bd=8,
+        takefocus=1,
+        exportselection=0,
+        **kwargs,
+    )
+    return ent
+
+
+def gui_set_password(change: bool = False) -> bool:
+    """Prompt on the local display. Returns True if a hash was written."""
+    tk, _tkfont = _tk()
+    root = tk.Tk()
+    _style_root(tk, root, "Zoth Lock — set password", 460, 420, preview=True)
+    try:
+        root.attributes("-topmost", True)
+    except tk.TclError:
+        pass
+
+    saved = {"ok": False}
+    wrap, card = _card(tk, root, 420)
+    wrap.pack(expand=True, padx=20, pady=20)
+
+    tk.Label(card, text="ZOTH LOCK", bg=CARD, fg=GOLD, font=("DejaVu Sans", 10), anchor="w").pack(
+        fill="x"
+    )
+    tk.Label(
+        card,
+        text="Set password" if not change else "Change password",
+        bg=CARD,
+        fg=TEXT,
+        font=("DejaVu Sans", 18, "bold"),
+        anchor="w",
+    ).pack(fill="x", pady=(4, 8))
+    tk.Label(
+        card,
+        text="Typed only in this window. Never send it in chat.",
+        bg=CARD,
+        fg=MUTED,
+        font=("DejaVu Sans", 10),
+        anchor="w",
+        wraplength=360,
+        justify="left",
+    ).pack(fill="x", pady=(0, 12))
+
+    fields: dict[str, object] = {}
+    if change and password_is_set():
+        tk.Label(card, text="Current", bg=CARD, fg=MUTED, font=("DejaVu Sans", 10), anchor="w").pack(
+            fill="x"
+        )
+        fields["current"] = _entry(tk, card)
+        fields["current"].pack(fill="x", pady=(2, 10))
+
+    tk.Label(card, text="New password", bg=CARD, fg=MUTED, font=("DejaVu Sans", 10), anchor="w").pack(
+        fill="x"
+    )
+    fields["new"] = _entry(tk, card)
+    fields["new"].pack(fill="x", pady=(2, 10))
+    tk.Label(card, text="Confirm", bg=CARD, fg=MUTED, font=("DejaVu Sans", 10), anchor="w").pack(
+        fill="x"
+    )
+    fields["confirm"] = _entry(tk, card)
+    fields["confirm"].pack(fill="x", pady=(2, 8))
+
+    status = tk.Label(card, text="", bg=CARD, fg=FAIL, font=("DejaVu Sans", 10), anchor="w")
+    status.pack(fill="x", pady=(0, 8))
+
+    def submit(_event=None) -> None:
+        current = fields["current"].get() if "current" in fields else ""
+        new = fields["new"].get()
+        confirm = fields["confirm"].get()
+        if "current" in fields and not verify_password(current):
+            status.configure(text="Current password does not match.")
+            return
+        if new != confirm:
+            status.configure(text="New password and confirm do not match.")
+            return
+        if len(new) < MIN_PASSWORD:
+            status.configure(text=f"Use at least {MIN_PASSWORD} characters.")
+            return
+        try:
+            save_record(new)
+        except ValueError as exc:
+            status.configure(text=str(exc))
+            return
+        saved["ok"] = True
+        root.destroy()
+
+    def cancel(_event=None) -> None:
+        root.destroy()
+
+    row = tk.Frame(card, bg=CARD)
+    row.pack(fill="x", pady=(4, 0))
+    _gold_button(tk, row, "SAVE", submit, width=10).pack(side="left")
+    tk.Button(
+        row,
+        text="Cancel",
+        command=cancel,
+        bg=FIELD,
+        fg=TEXT,
+        activebackground=HAIR,
+        activeforeground=TEXT,
+        relief="flat",
+        bd=0,
+        padx=16,
+        pady=12,
+        font=("DejaVu Sans", 11),
+    ).pack(side="left", padx=(8, 0))
+
+    first = fields.get("current") or fields["new"]
+    first.focus_set()
+    root.bind("<Return>", submit)
+    root.bind("<Escape>", cancel)
+    root.mainloop()
+    return bool(saved["ok"])
+
+
+def tty_set_password() -> bool:
+    print("Zoth Lock — set password (input is hidden)")
+    if password_is_set():
+        current = getpass.getpass("Current password: ")
+        if not verify_password(current):
+            print("Current password does not match.", file=sys.stderr)
+            return False
+    new = getpass.getpass("New password: ")
+    confirm = getpass.getpass("Confirm: ")
+    if new != confirm:
+        print("New password and confirm do not match.", file=sys.stderr)
+        return False
+    try:
+        save_record(new)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return False
+    print(f"Saved {HASH_PATH} (mode 0600).")
+    return True
+
+
+def gui_lock(preview: bool = False) -> int:
+    tk, _tkfont = _tk()
+    from PIL import ImageTk
+
+    root = tk.Tk()
+    title = "Zoth Lock preview" if preview else "Zoth Lock"
+    mons = (
+        [{"name": "preview", "x": 80, "y": 80, "w": 960, "h": 620, "primary": True}]
+        if preview
+        else detect_monitors(root)
+    )
+
+    if preview:
+        _style_root(tk, root, title, 960, 620, preview=True)
+    else:
+        _place_on_monitor(tk, root, mons[0], title=title)
+
+    pw_var = tk.StringVar(master=root, value="")
+    default_status = (
+        "Stay-running lock  ·  lid will not sleep"
+        if not preview
+        else "Preview only — Close returns you to the desktop."
+    )
+    state = {
+        "fails": 0,
+        "lock_until": 0.0,
+        "unlocked": False,
+        "ss_cookie": None,
+        "status_msg": default_status,
+        "status_color": MUTED,
+        "tick_count": 0,
+    }
+    surfaces: list[dict] = []
+    covered_keys: set[tuple[int, int, int, int]] = set()
+
+    def set_status(msg: str, color: str = MUTED) -> None:
+        state["status_msg"] = msg
+        state["status_color"] = color
+        for surf in list(surfaces):
+            try:
+                surf["status"].configure(text=msg, fg=color)
+            except tk.TclError:
+                pass
+
+    def focus_surface_entry(entry_widget) -> None:
+        # focus_set goes through the WM. Tk's force-focus API uses
+        # XSetInputFocus; KWin then drops the XWayland seat.
+        try:
+            entry_widget.focus_set()
+            entry_widget.icursor("end")
+        except tk.TclError:
+            pass
+
+    def try_unlock(_event=None) -> None:
+        if preview:
+            root.destroy()
+            return
+        now = time.monotonic()
+        if now < state["lock_until"]:
+            wait = int(state["lock_until"] - now) + 1
+            set_status(f"Too many tries. Wait {wait}s.", FAIL)
+            return
+        guess = pw_var.get()
+        pw_var.set("")
+        if verify_password(guess):
+            state["unlocked"] = True
+            root.destroy()
+            return
+        state["fails"] += 1
+        if state["fails"] % FAIL_LIMIT == 0:
+            delay = FAIL_BASE_SEC * (2 ** (state["fails"] // FAIL_LIMIT - 1))
+            delay = min(delay, 80)
+            state["lock_until"] = time.monotonic() + delay
+            set_status(f"Too many tries. Wait {delay}s.", FAIL)
+        else:
+            left = FAIL_LIMIT - (state["fails"] % FAIL_LIMIT)
+            set_status(f"Wrong password. {left} before a wait.", FAIL)
+        if surfaces:
+            focus_surface_entry(surfaces[0]["entry"])
+
+    def _no_focus(widget, keep_entry) -> None:
+        if widget is keep_entry:
+            return
+        try:
+            widget.configure(takefocus=0)
+        except tk.TclError:
+            pass
+        for child in widget.winfo_children():
+            _no_focus(child, keep_entry)
+
+    def build_surface(win, mon: dict) -> dict:
+        w, h = mon["w"], mon["h"]
+        backdrop = cover_wallpaper((w, h))
+        photo = ImageTk.PhotoImage(backdrop)
+        bg = tk.Label(win, image=photo, bd=0, highlightthickness=0, takefocus=0)
+        bg.image = photo
+        bg.place(x=0, y=0, relwidth=1, relheight=1)
+
+        wrap, card = _card(tk, win, 460)
+        wrap.place(relx=0.5, rely=0.5, anchor="center")
+
+        tk.Frame(card, bg=GOLD, height=2, width=64).pack(anchor="w", pady=(0, 16))
+        tk.Label(card, text="SESSION", bg=CARD, fg=GOLD, font=("DejaVu Sans", 10), anchor="w").pack(
+            fill="x"
+        )
+        tk.Label(
+            card,
+            text="LOCKED" if not preview else "PREVIEW",
+            bg=CARD,
+            fg=TEXT,
+            font=("DejaVu Sans", 28, "bold"),
+            anchor="w",
+        ).pack(fill="x", pady=(2, 6))
+        tk.Label(
+            card,
+            text="Agents, servers, and chats keep running.",
+            bg=CARD,
+            fg=MUTED,
+            font=("DejaVu Sans", 11),
+            anchor="w",
+            wraplength=380,
+            justify="left",
+        ).pack(fill="x", pady=(0, 16))
+
+        tk.Label(
+            card,
+            text="Password",
+            bg=CARD,
+            fg=MUTED,
+            font=("DejaVu Sans", 10),
+            anchor="w",
+        ).pack(fill="x", pady=(0, 4))
+
+        entry = _entry(tk, card, show="•", textvariable=pw_var)
+        entry.pack(fill="x", ipady=8)
+
+        status = tk.Label(
+            card,
+            text=state["status_msg"],
+            bg=CARD,
+            fg=state["status_color"],
+            font=("DejaVu Sans", 10),
+            anchor="w",
+            wraplength=380,
+            justify="left",
+        )
+        status.pack(fill="x", pady=(10, 8))
+
+        clock = tk.Label(
+            card,
+            text=datetime.now().strftime("%H:%M"),
+            bg=CARD,
+            fg=GOLD,
+            font=("DejaVu Sans Mono", 13),
+            anchor="w",
+        )
+        clock.pack(fill="x", pady=(12, 0))
+        footer_text = "ZOTH" if preview else f"ZOTH  ·  {mon.get('name', 'SCREEN')}"
+        tk.Label(
+            card,
+            text=footer_text,
+            bg=CARD,
+            fg=GOLD_DIM,
+            font=("DejaVu Sans", 10),
+            anchor="w",
+        ).pack(fill="x", pady=(4, 0))
+
+        unlock_btn = _gold_button(tk, card, "CLOSE PREVIEW" if preview else "UNLOCK", try_unlock)
+        try:
+            unlock_btn.configure(takefocus=0)
+        except tk.TclError:
+            pass
+        unlock_btn.pack(fill="x", pady=(4, 0))
+
+        _no_focus(win, entry)
+        entry.configure(takefocus=1)
+
+        def focus_here(_event=None) -> None:
+            focus_surface_entry(entry)
+
+        def forward_key(event):
+            return funnel_key_to_entry(entry, event, on_return=try_unlock)
+
+        for widget in (bg, wrap, card, win):
+            widget.bind("<Button-1>", focus_here)
+
+        if not preview:
+            for seq in ("<Alt-F4>", "<Control-q>", "<Control-c>", "<Escape>"):
+                win.bind(seq, lambda _e: "break")
+        else:
+            win.bind("<Escape>", lambda _e: root.destroy())
+
+        win.bind("<Key>", forward_key)
+        entry.bind("<Return>", try_unlock)
+        win.bind("<Map>", lambda _e: win.after(80, focus_here))
+
+        surf = {
+            "win": win,
+            "mon": mon,
+            "entry": entry,
+            "status": status,
+            "clock": clock,
+            "photo": photo,
+        }
+        surfaces.append(surf)
+        covered_keys.add((mon["x"], mon["y"], mon["w"], mon["h"]))
+        return surf
+
+    # Build primary surface on root
+    primary_surf = build_surface(root, mons[0])
+
+    # Build full lock surfaces on all additional connected monitors
+    if not preview:
+        for extra_mon in mons[1:]:
+            top = tk.Toplevel(root)
+            _place_on_monitor(tk, top, extra_mon, title=title)
+            build_surface(top, extra_mon)
+
+    def sync_hotplug_monitors() -> None:
+        if preview:
+            return
+        for mon in detect_monitors(root):
+            key = (mon["x"], mon["y"], mon["w"], mon["h"])
+            if key not in covered_keys:
+                top = tk.Toplevel(root)
+                _place_on_monitor(tk, top, mon, title=title)
+                build_surface(top, mon)
+
+    def tick() -> None:
+        now_str = datetime.now().strftime("%H:%M")
+        for surf in list(surfaces):
+            try:
+                surf["clock"].configure(text=now_str)
+                if not preview:
+                    w = surf["win"]
+                    m = surf["mon"]
+                    w.attributes("-topmost", True)
+                    if abs(w.winfo_rootx() - m["x"]) > 50 or abs(w.winfo_rooty() - m["y"]) > 50:
+                        _place_on_monitor(tk, w, m, title=title)
+            except tk.TclError:
+                pass
+        state["tick_count"] += 1
+        if not preview and state["tick_count"] % 2 == 0:
+            sync_hotplug_monitors()
+        root.after(1000, tick)
+
+    if not preview:
+        write_pid()
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        state["ss_cookie"] = screensaver_inhibit()
+
+    root.after_idle(lambda: focus_surface_entry(primary_surf["entry"]))
+    tick()
+    try:
+        root.mainloop()
+    finally:
+        if not preview:
+            screensaver_uninhibit(state["ss_cookie"])
+            clear_pid()
+    return 0 if preview or state["unlocked"] else 1
+
+
+# ---------------------------------------------------------------------------
+# Commands
+# ---------------------------------------------------------------------------
+
+def cmd_unlock() -> int:
+    killed = False
+    if PID_PATH.is_file():
+        try:
+            pid = int(PID_PATH.read_text(encoding="utf-8").strip())
+            if _pid_alive(pid):
+                os.kill(pid, signal.SIGTERM)
+                killed = True
+        except (OSError, ValueError):
+            pass
+        clear_pid()
+    subprocess.run(["pkill", "-f", "zoth-lock --lock"], check=False)
+    print("Unlocked." if killed else "No active lock found (cleaned up PID if stale).")
+    return 0
+
+
+def cmd_status() -> int:
+    mons = detect_monitors()
+    mon_desc = ", ".join(f"{m['name']} ({m['w']}x{m['h']}+{m['x']}+{m['y']})" for m in mons)
+    print("Zoth Lock")
+    print(f"  hash:     {HASH_PATH}")
+    print(f"  set:      {'yes' if password_is_set() else 'no — run zoth-lock --set-password'}")
+    if HASH_PATH.is_file():
+        mode = oct(HASH_PATH.stat().st_mode & 0o777)
+        print(f"  mode:     {mode}")
+    print(f"  locked:   {'yes pid ' + PID_PATH.read_text().strip() if lock_is_active() else 'no'}")
+    print(f"  monitors: {len(mons)} active — {mon_desc}")
+    print(f"  inhibit:  {INHIBIT_WHAT}")
+    print(f"  wallpaper:{' yes' if WALLPAPER.is_file() else ' missing ' + str(WALLPAPER)}")
+    print("  leave:    click Zoth Lock on the desktop, or run zoth-lock")
+    print("  password: typed only in the lock window — never as a flag")
+    print("  note:     Super+L still uses the KDE login password")
+    print("  note:     lid/idle suspend already off in PowerDevil; lock adds inhibit")
+    return 0
+
+
+def cmd_reset() -> int:
+    if lock_is_active():
+        print("Unlock first, then reset.", file=sys.stderr)
+        return 1
+    if not password_is_set():
+        print("No lock password is set.")
+        return 0
+    if have_display():
+        tk, _ = _tk()
+        root = tk.Tk()
+        root.withdraw()
+        from tkinter import messagebox
+
+        ok = messagebox.askokcancel(
+            "Reset Zoth Lock",
+            "Remove the saved lock password?\nYou can set a new one next time you lock.",
+        )
+        root.destroy()
+        if not ok:
+            return 1
+    HASH_PATH.unlink()
+    print(f"Removed {HASH_PATH}")
+    return 0
+
+
+def cmd_selftest() -> int:
+    sample = "zoth-lock-selftest-not-a-real-password"
+    other = "zoth-lock-selftest-mismatch"
+    salt = os.urandom(SALT_BYTES)
+    digest = hashlib.scrypt(
+        sample.encode(), salt=salt, n=SCRYPT_N, r=SCRYPT_R, p=SCRYPT_P, dklen=SCRYPT_DKLEN
+    )
+    digest2 = hashlib.scrypt(
+        sample.encode(), salt=salt, n=SCRYPT_N, r=SCRYPT_R, p=SCRYPT_P, dklen=SCRYPT_DKLEN
+    )
+    digest3 = hashlib.scrypt(
+        other.encode(), salt=salt, n=SCRYPT_N, r=SCRYPT_R, p=SCRYPT_P, dklen=SCRYPT_DKLEN
+    )
+    assert hmac.compare_digest(digest, digest2), "scrypt not deterministic"
+    assert not hmac.compare_digest(digest, digest3), "scrypt collided"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        os.environ["ZOTH_LOCK_DIR"] = tmp
+        global CONFIG_DIR, HASH_PATH
+        CONFIG_DIR = Path(tmp)
+        HASH_PATH = CONFIG_DIR / "session-lock.hash"
+        save_record(sample)
+        mode = HASH_PATH.stat().st_mode & 0o777
+        assert mode == 0o600, f"hash mode {oct(mode)} != 0o600"
+        assert verify_password(sample)
+        assert not verify_password(other)
+        rec = json.loads(HASH_PATH.read_text())
+        assert rec["kdf"] == "scrypt"
+        assert "hash" in rec and "salt" in rec
+
+    preview = Path("/tmp/zoth-lock-preview.png")
+    render_lock_preview(preview)
+    assert preview.is_file() and preview.stat().st_size > 10_000, "preview png missing"
+
+    src = Path(__file__).read_text(encoding="utf-8")
+    bad_or = "." + "overrideredirect" + "(True)"
+    bad_ff = "." + "focus_force" + "("
+    assert src.count(bad_or) == 0, "override-redirect blocks XWayland keys"
+    assert src.count(bad_ff) == 0, "Tk force-focus fights KWin and drops keys"
+
+    import tkinter as tk
+
+    class _Evt:
+        def __init__(self, widget, keysym="", char="", state=0):
+            self.widget = widget
+            self.keysym = keysym
+            self.char = char
+            self.state = state
+
+    root = tk.Tk()
+    root.withdraw()
+    try:
+        root.overrideredirect(False)
+        entry = tk.Entry(root, show="•", takefocus=1, exportselection=0)
+        entry.pack()
+        root.update_idletasks()
+        hits: list[str] = []
+        assert funnel_key_to_entry(entry, _Evt(entry, "a", "a")) is None
+        assert entry.get() == ""
+        assert funnel_key_to_entry(entry, _Evt(root, "z", "z")) == "break"
+        assert funnel_key_to_entry(entry, _Evt(root, "o", "o")) == "break"
+        assert funnel_key_to_entry(entry, _Evt(root, "t", "t")) == "break"
+        assert funnel_key_to_entry(entry, _Evt(root, "h", "h")) == "break"
+        assert entry.get() == "zoth"
+        assert funnel_key_to_entry(entry, _Evt(root, "BackSpace")) == "break"
+        assert entry.get() == "zot"
+        funnel_key_to_entry(
+            entry, _Evt(root, "Return"), on_return=lambda: hits.append("ret")
+        )
+        assert hits == ["ret"]
+        assert (
+            funnel_key_to_entry(entry, _Evt(root, "a", "a", state=_MOD_CONTROL))
+            == "break"
+        )
+        assert entry.get() == "zot"
+    finally:
+        root.destroy()
+
+    inhibit = shutil.which("systemd-inhibit")
+    print("selftest ok")
+    print(f"  scrypt:   n={SCRYPT_N} r={SCRYPT_R} p={SCRYPT_P}")
+    print(f"  preview:  {preview} ({preview.stat().st_size} bytes)")
+    print(f"  keys:     funnel routes missed Key events into the Entry")
+    print(f"  inhibit:  {'found ' + inhibit if inhibit else 'MISSING'}")
+    print(f"  display:  {os.environ.get('DISPLAY') or 'none'}")
+    print("  lock:     not invoked")
+    return 0
+
+
+def cmd_set_password() -> int:
+    if lock_is_active():
+        print("Unlock first, then change the password.", file=sys.stderr)
+        return 1
+    if have_display():
+        ok = gui_set_password(change=password_is_set())
+        return 0 if ok else 1
+    if sys.stdin.isatty():
+        return 0 if tty_set_password() else 1
+    print(
+        "No display and no TTY. Run `zoth-lock --set-password` in a terminal or from the desktop icon.",
+        file=sys.stderr,
+    )
+    return 1
+
+
+def cmd_lock(preview: bool = False) -> int:
+    if preview:
+        if not have_display():
+            print("Preview needs a graphical session.", file=sys.stderr)
+            return 1
+        return gui_lock(preview=True)
+
+    if lock_is_active():
+        print("Zoth Lock is already active.", file=sys.stderr)
+        return 0
+    if not have_display():
+        print("Lock needs a graphical session (DISPLAY or WAYLAND_DISPLAY).", file=sys.stderr)
+        return 1
+    if not password_is_set():
+        if not gui_set_password(change=False):
+            print("Set a password before locking.", file=sys.stderr)
+            return 1
+        print("Password saved. Run zoth-lock again when you want to leave.")
+        return 0
+    reexec_with_inhibit()
+    return gui_lock(preview=False)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="zoth-lock",
+        description="Walk-away screen lock with a dedicated password. Agents keep running.",
+    )
+    p.add_argument("--lock", action="store_true", help="lock now (default when no flag is given)")
+    p.add_argument("--unlock", action="store_true", help="unlock an active zoth-lock session")
+    p.add_argument(
+        "--set-password",
+        action="store_true",
+        help="set or change the lock password in a local window",
+    )
+    p.add_argument("--status", action="store_true", help="print lock state")
+    p.add_argument("--reset", action="store_true", help="remove the saved password (unlocked only)")
+    p.add_argument(
+        "--preview",
+        action="store_true",
+        help="open a closeable preview; does not lock the session",
+    )
+    p.add_argument(
+        "--render-preview",
+        metavar="PNG",
+        help="write a still of the lock UI and exit",
+    )
+    p.add_argument("--selftest", action="store_true", help="crypto + preview smoke test; never locks")
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    flags = [
+        args.lock,
+        args.unlock,
+        args.set_password,
+        args.status,
+        args.reset,
+        args.preview,
+        bool(args.render_preview),
+        args.selftest,
+    ]
+    if sum(bool(f) for f in flags) > 1:
+        print("Use one action at a time.", file=sys.stderr)
+        return 2
+    if args.selftest:
+        return cmd_selftest()
+    if args.unlock:
+        return cmd_unlock()
+    if args.status:
+        return cmd_status()
+    if args.reset:
+        return cmd_reset()
+    if args.set_password:
+        return cmd_set_password()
+    if args.render_preview:
+        path = Path(args.render_preview)
+        render_lock_preview(path)
+        print(path)
+        return 0
+    if args.preview:
+        return cmd_lock(preview=True)
+    return cmd_lock(preview=False)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
