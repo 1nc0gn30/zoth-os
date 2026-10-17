@@ -36,6 +36,10 @@
             <a href="https://github.com/NullAITech/zoth-os"><img src="https://img.shields.io/badge/Architecture-x86__64%20Hybrid%20UEFI-cca800.svg?style=for-the-badge" alt="x86_64 Hybrid UEFI" /></a>
   </p>
 
+  <p>
+    <a href="https://www.producthunt.com/products/zothos/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-zothos" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1333989&theme=light" alt="ZOTHOS - Debian 13 + KDE Plasma 6 OS for AI agents and security | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  </p>
+
   <br />
 
   <p>
