@@ -7,7 +7,8 @@ is and is not in place today, so you can decide how much to trust it.
 
 | Version | Status |
 |---|---|
-| 3.1.x | Current. Fixes land on `main` and in the next release. |
+| 3.2.x | Current. Fixes land on `main` and in the next release. |
+| 3.1.x | Previous public ISO. Checksums only; not signed. |
 | < 3.1 | Not supported. |
 
 ## Reporting a vulnerability

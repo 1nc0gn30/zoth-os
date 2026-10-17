@@ -17,6 +17,14 @@
   </p>
 
   <p>
+    <strong>Site:</strong> <a href="https://zothos.nullai.tech">zothos.nullai.tech</a>
+    &nbsp;&bull;&nbsp;
+    <strong>ISO:</strong> <a href="https://github.com/NullAITech/zoth-os/releases/tag/v3.2.0">v3.2.0</a>
+    &nbsp;&bull;&nbsp;
+    <strong>Studio:</strong> <a href="https://zoth.nullai.tech">zoth.nullai.tech</a>
+  </p>
+
+  <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
     <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.2.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
     <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Reproducible%20builds-in%20progress-yellow.svg?style=for-the-badge" alt="Reproducible builds: in progress" /></a>
@@ -70,7 +78,7 @@
 
 The flagship KDE Plasma 6.3 Wayland experience: 24K Celtic Gold icons, alchemical typography, translucent frosted obsidian taskbar, and responsive desktop shortcuts for the complete sovereign workstation suite.
 
-![ZOTHOS 3.1 desktop](docs/screenshots/zothos-desktop.png)
+![ZOTHOS 3.2 desktop](docs/screenshots/zothos-desktop.png)
 
 </details>
 
@@ -408,10 +416,10 @@ sudo dd if=zothos-3.2-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 `zothos-join-iso.sh` checks the SHA-256 before it says the image is ready. Replace `/dev/sdX` with the USB device, not a partition.
 
 ### 2. Live Credentials
-- **Username:** `neo`
+The live image creates `zoth` and `azoth` (and keeps `root`). Password for all three is `zoth`. `zoth-auth-init` deletes the old `neo` account on boot.
+- **Users:** `zoth`, `azoth`, `root`
 - **Password:** `zoth`
-- **Root Password:** `zoth`
-- **Sudo:** Full passwordless privileges for user `neo`
+- **Sudo:** passwordless for `zoth` and `azoth`
 
 ### 3. Permanent System Installation
 Launch the 24K Gold Calamares graphical installer from the desktop icon or terminal:
@@ -486,6 +494,7 @@ sha256sum --ignore-missing -c SHA256SUMS
 ## ✦ License & Attributions
 
 - **ZOTHOS Linux**: MIT — see LICENSE. Upstream components keep their own licenses.
+- **Website**: [zothos.nullai.tech](https://zothos.nullai.tech)
 - **Core Engine & Architecture**: Engineered by **NullAI Tech** ([nullai.tech](https://nullai.tech)).
 - **Upstream Foundations**: Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security OS.
 

@@ -15,7 +15,7 @@ The system configuration inspected on this machine:
 | :--- | :--- | :--- |
 | **Drive / Bus** | `/dev/nvme0n1` (NVMe PCIe) | `/dev/sda` (SATA 6Gb/s) |
 | **Model** | disk named by ZOTH_HOST_DISK | disk named by ZOTH_PARROT_DISK |
-| **Serial / ID** | `ZOTH_PARROT_DISK` | `${ZOTH_PARROT_DISK}` |
+| **Serial / ID** | Host NVMe | Secondary SATA. Resolve live with `ls /dev/disk/by-id/ZOTH_PARROT_DISK` — do not publish the serial. |
 | **Partition Table** | GPT (`nvme0n1p1` ext4 root, `p2` EFI) | DOS/MBR (`sda1` bootable Btrfs root, `sda2` swap) |
 | **Host CPU & RAM** | 24 vCPU Threads | 32 GB Physical RAM (~22 GB available) |
 | **Acceleration** | Intel KVM active (`/dev/kvm`) | `qemu-system-x86_64` (v10.0.13) installed |
@@ -47,7 +47,7 @@ To launch Parrot OS without needing `sudo` every time (which preserves native Wa
 
 ```bash
 # File: /etc/udev/rules.d/99-parrot-disk.rules
-KERNEL=="sda*", SUBSYSTEM=="block", ENV{ID_SERIAL_SHORT}=="ZOTH_PARROT_DISK", GROUP="kvm", MODE="0660"
+KERNEL=="sda*", SUBSYSTEM=="block", ENV{ID_SERIAL_SHORT}=="<ID_SERIAL_SHORT from udevadm info /dev/sda>", GROUP="kvm", MODE="0660"
 ```
 
 Apply the rule:
@@ -148,7 +148,7 @@ If you prefer a full graphical hypervisor interface to adjust settings:
    ```
 2. In `virt-manager`:
    - Click **Create New Virtual Machine** -> **Import existing disk image**.
-   - Browse to path: `${ZOTH_PARROT_DISK}`.
+   - Browse to the live `ZOTH_PARROT_DISK` by-id path from `ls /dev/disk/by-id/`.
    - Set OS Type: **Debian 12** or **Linux**.
    - Configure CPU: 8 cores, Memory: 12288 MB.
    - Check **Customize configuration before install**:
