@@ -37,6 +37,8 @@
   </p>
 
   <p>
+    <a href="https://www.producthunt.com/products/zothos?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-zothos-2" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1276873&theme=light&t=1792205107200" alt="ZOTHOS - Debian 13 + KDE Plasma 6 OS for AI agents and security | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+    &nbsp;
     <a href="https://www.producthunt.com/products/zothos/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-zothos" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1333989&theme=light" alt="ZOTHOS - Debian 13 + KDE Plasma 6 OS for AI agents and security | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
   </p>
 
