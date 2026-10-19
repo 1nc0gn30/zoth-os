@@ -2611,6 +2611,143 @@
       ],
       "description": "Repomix packs the working tree into one file for the agent. Sandboxed to that directory.",
       "enabled": false
+    },
+    "bash": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "bash-mcp"
+      ],
+      "description": "ZothOS Interactive Bash Execution Engine. Sandboxed shell execution with audit logging.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "/bin/bash",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "wireshark": {
+      "command": "uvx",
+      "args": [
+        "wireshark-mcp"
+      ],
+      "description": "Wireshark & TShark Network Packet Analysis MCP. PCAP dissection, stream analysis, and DNS tunneling detection.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "tshark -r",
+      "timeout": 180,
+      "alwaysAllow": []
+    },
+    "shodan": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@burtthecoder/mcp-shodan"
+      ],
+      "env": {
+        "SHODAN_API_KEY": ""
+      },
+      "description": "Shodan Internet Intelligence & OSINT MCP. IP lookups, open ports, CVE correlation, and DNS queries.",
+      "offline": false,
+      "enabled": false,
+      "securityRing": "RING_2_TOOLMASTER",
+      "ring_level": 2,
+      "sandbox": "/tmp",
+      "fallbackHandler": "shodan info",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "nmap": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "nmap_mcp"
+      ],
+      "description": "Nmap Network Scanner & XML Parser MCP. Service fingerprinter and NSE vulnerability auditor.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "nmap",
+      "timeout": 300,
+      "alwaysAllow": []
+    },
+    "caido": {
+      "command": "caido-mcp-server",
+      "args": [
+        "--url",
+        "http://127.0.0.1:8080"
+      ],
+      "description": "Caido Web Security Proxy MCP. HTTPQL search, replay history, sitemap exploration, and tamper testing.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}/.local/share/caido",
+      "fallbackHandler": "curl -s http://127.0.0.1:8080",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "burp-suite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.14.3",
+        "http://127.0.0.1:9876/sse"
+      ],
+      "description": "PortSwigger Burp Suite Pro/Community MCP Bridge. Live proxy history, repeater triggers, and collaborator analysis.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "/tmp",
+      "fallbackHandler": "curl -s http://127.0.0.1:9876",
+      "timeout": 120,
+      "alwaysAllow": []
+    },
+    "graphiti-memory": {
+      "command": "uvx",
+      "args": [
+        "graphiti-memory"
+      ],
+      "env": {
+        "NEO4J_URI": "bolt://127.0.0.1:7687",
+        "NEO4J_USER": "neo4j",
+        "NEO4J_PASSWORD": ""
+      },
+      "description": "Graphiti Temporal Knowledge Graph MCP. Episodic memory, entity resolution, and temporal graph traversals.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}/.zothos/mcp",
+      "fallbackHandler": "true",
+      "timeout": 90,
+      "alwaysAllow": []
+    },
+    "mem0": {
+      "command": "uvx",
+      "args": [
+        "mem0-mcp"
+      ],
+      "env": {
+        "MEM0_DIR": "${ZOTH_HOME}/.zothos/data/mem0"
+      },
+      "description": "Mem0 Scalable Multi-Tier Memory Layer MCP. User, session, and agent persistent memory indexing.",
+      "offline": true,
+      "enabled": false,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}/.zothos/data/mem0",
+      "fallbackHandler": "true",
+      "timeout": 60,
+      "alwaysAllow": []
     }
   }
 }
