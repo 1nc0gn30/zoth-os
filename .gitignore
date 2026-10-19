@@ -328,3 +328,7 @@ config/includes.chroot/boot/initrd*
 config/includes.chroot/usr/lib/modules/
 config/includes.chroot/usr/local/lib/
 config/includes.chroot/usr/share/doc/
+
+# Ignore large ISO split chunks and local chroot home test vault
+build/release-*/zothos-*.iso.part*
+config/includes.chroot/home/
