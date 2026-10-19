@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Workspaces
+GenericName=Screens and virtual desktops
+Comment=Put the Samsung on its own screen and keep 8 named virtual desktops
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Workspaces" -- zoth-workspaces apply
+Icon=preferences-desktop-display
+Terminal=false
+Categories=Settings;System;
+Keywords=workspace;desktop;monitor;samsung;pager;virtual;
+StartupNotify=true
+Actions=Status;Extend;Desktops;
+
+[Desktop Action Status]
+Name=Show layout
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Workspaces" -- zoth-workspaces status
+
+[Desktop Action Extend]
+Name=Extend Samsung to the right
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Workspaces" -- zoth-workspaces extend
+
+[Desktop Action Desktops]
+Name=Restore 8 virtual desktops
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Workspaces" -- zoth-workspaces desktops

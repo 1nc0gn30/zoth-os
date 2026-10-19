@@ -1,0 +1,443 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# ZothOS workspaces — independent Samsung screen + 8 virtual desktops
+# ==============================================================================
+# The laptop panel (eDP) stays at 0,0. An attached Samsung (or any DP/HDMI
+# monitor) is placed to the right so it is its own screen, not a clone.
+# Eight named virtual desktops (2×4 pager) keep windows from stacking in one
+# environment. Meta+Ctrl+Arrows move between them; Ctrl+F1..F8 jump.
+# ==============================================================================
+set -euo pipefail
+
+QDBUS=$(command -v qdbus6 2>/dev/null || command -v qdbus 2>/dev/null || echo qdbus)
+KWRITE=$(command -v kwriteconfig6 2>/dev/null || true)
+KREAD=$(command -v kreadconfig6 2>/dev/null || true)
+
+DESKTOP_NAMES=(
+  Forge
+  Studio
+  WebGen
+  Memory
+  Agents
+  Comms
+  Ops
+  Sanctum
+)
+TARGET_COUNT=${#DESKTOP_NAMES[@]}
+TARGET_ROWS=2
+
+usage() {
+  cat <<'EOF'
+zoth-workspaces — ZothOS multi-monitor + virtual desktop layout
+
+  status       Show screens and virtual desktops
+  extend       Place Samsung / external monitor to the right of the laptop
+  desktops     Create 8 named virtual desktops (Forge … Sanctum)
+  panel        Add a pager panel on the external screen if missing
+  apply        extend + desktops + panel + shortcuts
+  help         This text
+
+Ctrl+F1..F8          jump to a desktop
+Meta+Ctrl+Arrows     walk the 2×4 grid
+Meta+Shift+F1..F8    send the active window
+Meta+W               overview
+EOF
+}
+
+log() { printf 'zoth-workspaces: %s\n' "$*"; }
+
+have_plasma() {
+  "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1
+}
+
+have_kwin() {
+  "$QDBUS" org.kde.KWin /KWin >/dev/null 2>&1
+}
+
+cmd_status() {
+  echo "=== screens ==="
+  if command -v kscreen-doctor >/dev/null 2>&1; then
+    kscreen-doctor -o 2>/dev/null | awk '
+      /^Output:/ {id=$0}
+      /enabled/ {en=$0}
+      /Geometry:/ {print id"  "$0}
+    '
+  else
+    echo "(kscreen-doctor missing)"
+  fi
+  echo
+  echo "=== virtual desktops ==="
+  python3 - <<'PY'
+import re, subprocess, shutil
+q = shutil.which("qdbus6") or shutil.which("qdbus") or "qdbus"
+try:
+    out = subprocess.check_output(
+        [q, "--literal", "org.kde.KWin", "/VirtualDesktopManager",
+         "org.kde.KWin.VirtualDesktopManager.desktops"],
+        text=True, stderr=subprocess.DEVNULL)
+    rows = subprocess.check_output(
+        [q, "org.kde.KWin", "/VirtualDesktopManager",
+         "org.kde.KWin.VirtualDesktopManager.rows"],
+        text=True, stderr=subprocess.DEVNULL).strip()
+    cur = subprocess.check_output(
+        [q, "org.kde.KWin", "/VirtualDesktopManager",
+         "org.kde.KWin.VirtualDesktopManager.current"],
+        text=True, stderr=subprocess.DEVNULL).strip()
+except Exception as e:
+    print("kwin dbus unavailable:", e)
+    raise SystemExit(0)
+found = re.findall(r'\(uss\)\s+(\d+),\s+"([^"]+)",\s+"([^"]*)"', out)
+print(f"count={len(found)} rows={rows} current={cur}")
+for pos, uid, name in found:
+    mark = " *" if uid == cur else ""
+    print(f"  {int(pos)+1}. {name}{mark}")
+PY
+}
+
+find_layout() {
+  python3 - <<'PY'
+import json, subprocess, sys
+try:
+    raw = subprocess.check_output(["kscreen-doctor", "-j"], text=True)
+    data = json.loads(raw)
+except Exception as e:
+    print("ERR", e, file=sys.stderr)
+    sys.exit(1)
+outputs = data.get("outputs") or data.get("connectedOutputs") or []
+# kscreen-doctor -j shape: {"outputs":[{name,enabled,pos,size,priority,type,...}]}
+laptop = None
+external = None
+for o in outputs:
+    name = o.get("name") or o.get("connectorName") or ""
+    enabled = o.get("enabled", True)
+    connected = o.get("connected", True)
+    if not connected:
+        continue
+    typ = (o.get("type") or o.get("outputType") or "").lower()
+    is_panel = name.startswith("eDP") or typ in ("panel", "edp", "internal")
+    rec = {
+        "name": name,
+        "enabled": enabled,
+        "x": (o.get("pos") or o.get("position") or {}).get("x", 0) if isinstance(o.get("pos") or o.get("position"), dict)
+             else (o.get("pos") or [0, 0])[0] if isinstance(o.get("pos"), list) else o.get("x", 0),
+        "y": (o.get("pos") or o.get("position") or {}).get("y", 0) if isinstance(o.get("pos") or o.get("position"), dict)
+             else (o.get("pos") or [0, 0])[1] if isinstance(o.get("pos"), list) else o.get("y", 0),
+        "w": (o.get("size") or {}).get("width", 1920) if isinstance(o.get("size"), dict) else 1920,
+        "h": (o.get("size") or {}).get("height", 1080) if isinstance(o.get("size"), dict) else 1080,
+    }
+    # fallback parse from modes/geometry keys used by kscreen 6
+    geom = o.get("geometry") or {}
+    if geom:
+        rec["x"] = geom.get("x", rec["x"])
+        rec["y"] = geom.get("y", rec["y"])
+        rec["w"] = geom.get("width", rec["w"])
+        rec["h"] = geom.get("height", rec["h"])
+    if is_panel or name.startswith("eDP"):
+        laptop = rec
+    elif enabled or connected:
+        # prefer currently enabled external; Samsung first
+        model = str(o.get("model") or o.get("edid") or "")
+        rec["model"] = model
+        rec["priority"] = 0 if ("SAM" in model.upper() or "Samsung" in model or "LS32" in model) else 1
+        if rec["name"] and rec["name"] != (laptop or {}).get("name"):
+            if external is None or rec["priority"] < external.get("priority", 9):
+                external = rec
+print("JSON_KEYS", list(data.keys()), file=sys.stderr)
+if laptop:
+    print(f"LAPTOP {laptop['name']} {laptop['w']}x{laptop['h']} @{laptop['x']},{laptop['y']}")
+if external:
+    print(f"EXTERNAL {external['name']} {external['w']}x{external['h']} @{external['x']},{external['y']}")
+PY
+}
+
+cmd_extend() {
+  if ! command -v kscreen-doctor >/dev/null 2>&1; then
+    log "kscreen-doctor missing"
+    return 1
+  fi
+  python3 - <<'PY'
+import json, subprocess, sys
+
+raw = subprocess.check_output(["kscreen-doctor", "-j"], text=True)
+data = json.loads(raw)
+outputs = data.get("outputs") or []
+
+def geom(o):
+    g = o.get("geometry") or {}
+    size = o.get("size") or {}
+    pos = o.get("pos") or o.get("position") or {}
+    x = g.get("x", pos.get("x", 0) if isinstance(pos, dict) else 0)
+    y = g.get("y", pos.get("y", 0) if isinstance(pos, dict) else 0)
+    w = g.get("width", size.get("width", 1920))
+    h = g.get("height", size.get("height", 1080))
+    return int(x), int(y), int(w), int(h)
+
+laptop = None
+externals = []
+for o in outputs:
+    name = o.get("name") or ""
+    if not o.get("connected", True):
+        continue
+    x, y, w, h = geom(o)
+    rec = {"name": name, "enabled": bool(o.get("enabled", True)), "x": x, "y": y, "w": w, "h": h,
+           "model": str(o.get("model") or "")}
+    if name.startswith("eDP"):
+        laptop = rec
+    else:
+        externals.append(rec)
+
+if laptop is None:
+    print("no laptop eDP output found", file=sys.stderr)
+    # still try to unclone two enabled outputs
+    enabled = [o for o in outputs if o.get("connected", True) and o.get("enabled", True)]
+    if len(enabled) >= 2:
+        a, b = enabled[0], enabled[1]
+        ax, ay, aw, ah = geom(a)
+        cmd = ["kscreen-doctor",
+               f"output.{a.get('name')}.position.0,0",
+               f"output.{b.get('name')}.position.{aw},0"]
+        print("APPLY", " ".join(cmd))
+        subprocess.check_call(cmd)
+        sys.exit(0)
+    sys.exit(1)
+
+# Prefer an enabled Samsung / DP / HDMI
+def score(rec):
+    n = rec["name"].upper()
+    m = rec["model"].upper()
+    s = 0
+    if rec["enabled"]:
+        s -= 10
+    if "SAM" in m or "LS32" in m or "SAMSUNG" in m:
+        s -= 50
+    if n.startswith("DP"):
+        s -= 5
+    if n.startswith("HDMI"):
+        s -= 3
+    return s
+
+externals.sort(key=score)
+if not externals:
+    print("no external monitor connected — laptop only")
+    sys.exit(0)
+
+ext = externals[0]
+# Enable it if needed, place to the right of the laptop, keep laptop at 0,0
+cmds = [
+    f"output.{laptop['name']}.enable",
+    f"output.{laptop['name']}.position.0,0",
+    f"output.{ext['name']}.enable",
+    f"output.{ext['name']}.position.{laptop['w']},0",
+]
+print(f"laptop {laptop['name']} 0,0 {laptop['w']}x{laptop['h']}")
+print(f"external {ext['name']} ({ext['model'] or 'monitor'}) -> {laptop['w']},0")
+if ext["x"] == laptop["w"] and ext["y"] == 0 and laptop["x"] == 0 and laptop["y"] == 0 and ext["enabled"]:
+    print("already extended — no change")
+    sys.exit(0)
+cmd = ["kscreen-doctor", *cmds]
+print("APPLY", " ".join(cmd))
+subprocess.check_call(cmd)
+PY
+}
+
+cmd_desktops() {
+  if ! have_kwin; then
+    log "KWin not on dbus — writing kwinrc only"
+  fi
+  python3 - <<'PY'
+import os, re, subprocess, shutil, time
+
+NAMES = ["Forge", "Studio", "WebGen", "Memory", "Agents", "Comms", "Ops", "Sanctum"]
+ROWS = 2
+q = shutil.which("qdbus6") or shutil.which("qdbus") or "qdbus"
+kw = shutil.which("kwriteconfig6")
+
+def qcall(*args, literal=False):
+    cmd = [q]
+    if literal:
+        cmd.append("--literal")
+    cmd += list(args)
+    return subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL).strip()
+
+def list_desktops():
+    out = qcall("--literal", "org.kde.KWin", "/VirtualDesktopManager",
+                "org.kde.KWin.VirtualDesktopManager.desktops") if False else None
+    out = subprocess.check_output(
+        [q, "--literal", "org.kde.KWin", "/VirtualDesktopManager",
+         "org.kde.KWin.VirtualDesktopManager.desktops"],
+        text=True, stderr=subprocess.DEVNULL)
+    return re.findall(r'\(uss\)\s+(\d+),\s+"([^"]+)",\s+"([^"]*)"', out)
+
+try:
+    found = list_desktops()
+except Exception as e:
+    print("kwin list failed:", e)
+    found = []
+
+print(f"current count={len(found)}")
+# create until 8
+while True:
+    found = list_desktops()
+    if len(found) >= len(NAMES):
+        break
+    pos = len(found)
+    name = NAMES[pos]
+    print(f"create [{pos}] {name}")
+    subprocess.check_call(
+        [q, "org.kde.KWin", "/VirtualDesktopManager",
+         "org.kde.KWin.VirtualDesktopManager.createDesktop", str(pos), name])
+    time.sleep(0.15)
+
+found = list_desktops()
+# extra desktops beyond 8: leave them (do not delete user desktops)
+for pos, uid, name in found[:len(NAMES)]:
+    want = NAMES[int(pos)]
+    if name != want:
+        print(f"rename {name!r} -> {want}")
+        subprocess.check_call(
+            [q, "org.kde.KWin", "/VirtualDesktopManager",
+             "org.kde.KWin.VirtualDesktopManager.setDesktopName", uid, want])
+
+# rows + wrap (qdbus writes the property when invoked this way)
+subprocess.call(
+    [q, "org.kde.KWin", "/VirtualDesktopManager",
+     "org.kde.KWin.VirtualDesktopManager.rows", str(ROWS)])
+subprocess.call(
+    [q, "org.kde.KWin", "/VirtualDesktopManager",
+     "org.kde.KWin.VirtualDesktopManager.navigationWrappingAround", "true"])
+
+if kw:
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Desktops", "--key", "Number", str(len(NAMES))])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Desktops", "--key", "Rows", str(ROWS)])
+    for i, n in enumerate(NAMES, 1):
+        subprocess.check_call([kw, "--file", "kwinrc", "--group", "Desktops", "--key", f"Name_{i}", n])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Windows", "--key", "SeparateScreenFocus", "true"])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Windows", "--key", "RollOverDesktops", "true"])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Plugins", "--key", "desktopchangeosdEnabled", "true"])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Plugins", "--key", "desktopgridEnabled", "true"])
+    subprocess.check_call([kw, "--file", "kwinrc", "--group", "Plugins", "--key", "overviewEnabled", "true"])
+
+# shortcuts Ctrl+F1..F8 and Meta+Shift+F1..F8
+if kw:
+    for i in range(1, 9):
+        subprocess.check_call([
+            kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+            "--key", f"Switch to Desktop {i}",
+            f"Ctrl+F{i},Ctrl+F{i},Switch to Desktop {i}",
+        ])
+        subprocess.check_call([
+            kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+            "--key", f"Window to Desktop {i}",
+            f"Meta+Shift+F{i},none,Window to Desktop {i}",
+        ])
+    subprocess.check_call([
+        kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+        "--key", "Switch to Next Screen",
+        "Meta+Alt+Right,none,Switch to Next Screen",
+    ])
+    subprocess.check_call([
+        kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+        "--key", "Switch to Previous Screen",
+        "Meta+Alt+Left,none,Switch to Previous Screen",
+    ])
+    subprocess.check_call([
+        kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+        "--key", "Switch to Screen 0",
+        "Meta+Alt+1,none,Switch to Screen 0",
+    ])
+    subprocess.check_call([
+        kw, "--file", "kglobalshortcutsrc", "--group", "kwin",
+        "--key", "Switch to Screen 1",
+        "Meta+Alt+2,none,Switch to Screen 1",
+    ])
+
+subprocess.call([q, "org.kde.KWin", "/KWin", "org.kde.KWin.reconfigure"])
+print("desktops ready:")
+for pos, uid, name in list_desktops():
+    print(f"  {int(pos)+1}. {name}")
+PY
+}
+
+cmd_panel() {
+  if ! have_plasma; then
+    log "Plasma not on dbus"
+    return 0
+  fi
+  "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    function ensureExternalPanel() {
+        var n = (typeof screenCount === "number") ? screenCount : 1;
+        if (n < 2) {
+            print("zoth-workspaces: still one logical screen");
+            return;
+        }
+        var p = panels();
+        var has1 = false;
+        for (var i = 0; i < p.length; i++) {
+            if (p[i].screen === 1) { has1 = true; }
+        }
+        if (!has1) {
+            var panel = new Panel;
+            panel.screen = 1;
+            panel.location = "bottom";
+            panel.height = 46;
+            try { panel.hiding = "none"; } catch (e) {}
+            panel.addWidget("org.kde.plasma.pager");
+            var tasks = panel.addWidget("org.kde.plasma.icontasks");
+            try {
+                tasks.currentConfigGroup = ["General"];
+                tasks.writeConfig("showOnlyCurrentScreen", true);
+                tasks.writeConfig("showOnlyCurrentDesktop", true);
+            } catch (e) {}
+            panel.addWidget("org.kde.plasma.marginsseparator");
+            panel.addWidget("org.kde.plasma.digitalclock");
+            print("zoth-workspaces: added panel on screen 1");
+        } else {
+            print("zoth-workspaces: screen 1 already has a panel");
+        }
+        // Laptop task manager: only this screen so Samsung windows stay on Samsung
+        p = panels();
+        for (var i = 0; i < p.length; i++) {
+            var ids = [];
+            try { ids = p[i].widgetIds; } catch (e) { ids = []; }
+            // widgets() if available
+            try {
+                var widgets = p[i].widgets();
+                for (var w = 0; w < widgets.length; w++) {
+                    if (widgets[w].type === "org.kde.plasma.icontasks") {
+                        widgets[w].currentConfigGroup = ["General"];
+                        widgets[w].writeConfig("showOnlyCurrentScreen", true);
+                        widgets[w].writeConfig("showOnlyCurrentDesktop", true);
+                    }
+                    if (widgets[w].type === "org.kde.plasma.pager") {
+                        widgets[w].currentConfigGroup = ["General"];
+                        widgets[w].writeConfig("displayedText", "Name");
+                        widgets[w].writeConfig("showWindowIcons", true);
+                    }
+                }
+            } catch (e) {}
+        }
+    }
+    ensureExternalPanel();
+  ' || log "plasma script returned non-zero"
+}
+
+cmd_apply() {
+  cmd_extend || true
+  # Plasma needs a beat to notice the new geometry as a second screen
+  sleep 1
+  cmd_desktops
+  sleep 0.5
+  cmd_panel
+  cmd_status
+  log "done. Ctrl+F1..F8 switch desktops. Meta+Alt+1 laptop, Meta+Alt+2 Samsung."
+}
+
+case "${1:-status}" in
+  status) cmd_status ;;
+  extend) cmd_extend; sleep 0.5; cmd_status ;;
+  desktops) cmd_desktops ;;
+  panel) cmd_panel ;;
+  apply|apply-all) cmd_apply ;;
+  help|-h|--help) usage ;;
+  *) usage; exit 2 ;;
+esac

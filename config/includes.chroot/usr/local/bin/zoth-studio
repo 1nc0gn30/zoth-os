@@ -23,6 +23,8 @@ import urllib.error
 # Discovery of Studio Root directory
 CANDIDATE_ROOTS = [
     os.environ.get("STUDIO_ROOT", ""),
+    os.path.expanduser("~/NullAITech/zoth-studio-v2"),
+    "${ZOTH_SRC_ROOT}/zoth-studio-v2",
     "/opt/zoth-studio",
     "/usr/share/zoth-studio",
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "share/zoth-studio"),

@@ -4,6 +4,18 @@ GLCore=true
 HiddenWindowsPreview=2
 WindowsBlockCompositing=false
 
+[Desktops]
+Number=8
+Rows=2
+Name_1=Forge
+Name_2=Studio
+Name_3=WebGen
+Name_4=Memory
+Name_5=Agents
+Name_6=Comms
+Name_7=Ops
+Name_8=Sanctum
+
 [Effect-Blur]
 BlurRadius=14
 CacheTexture=true
@@ -42,6 +54,8 @@ trackmouseEnabled=true
 [Windows]
 BorderColor=255,215,0
 TitlebarFont=JetBrains Mono,10,-1,5,75,0,0,0,0,0
+SeparateScreenFocus=true
+RollOverDesktops=true
 
 [WM]
 activeBackground=255,215,0

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# ZothOS Thermal & Fan Management Utility
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+set -e
+
+cmd="${1:-status}"
+
+case "$cmd" in
+  cool|quiet)
+    echo "❄️  Activating ZothOS Cool & Quiet Profile..."
+    # 1. Disable Intel Turbo Boost spikes
+    if [[ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]]; then
+      echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null
+    fi
+    # 2. Set CPU energy performance preference to balance_power
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+      if [[ -f "$cpu" ]]; then
+        echo "balance_power" | sudo tee "$cpu" > /dev/null
+      fi
+    done
+    echo "✓ CPU pinned to base/power-saving frequencies (Turbo Boost: OFF, EPP: balance_power)."
+    ;;
+
+  turbo|performance)
+    echo "⚡ Activating ZothOS Turbo Performance Profile..."
+    if [[ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]]; then
+      echo 0 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null
+    fi
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+      if [[ -f "$cpu" ]]; then
+        echo "balance_performance" | sudo tee "$cpu" > /dev/null
+      fi
+    done
+    echo "✓ CPU unrestricted for maximum compilation speed (Turbo Boost: ON, EPP: balance_performance)."
+    ;;
+
+  status|*)
+    echo "======================================================"
+    echo "  🌡️  ZOTHOS HARDWARE THERMAL TELEMETRY"
+    echo "======================================================"
+    turb=$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo "N/A")
+    epp=$(cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference 2>/dev/null || echo "N/A")
+    echo "• Turbo Boost:       $( [[ "$turb" == "1" ]] && echo "OFF (Cooling active)" || echo "ON (High Performance)" )"
+    echo "• Energy Preference: $epp"
+    echo "------------------------------------------------------"
+    sensors 2>/dev/null | grep -iE 'package|fan[12]:|temp1:' | sed 's/^/  /'
+    echo "======================================================"
+    echo "Usage: zoth-thermal cool | zoth-thermal turbo | zoth-thermal status"
+    ;;
+esac

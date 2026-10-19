@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Canon (Obsidian)
+Comment=Operator knowledge graph for Zoth OS v3.2 and Zoth Studio
+Exec=obsidian "${ZOTH_HOME}/Documents/Obsidian Vault"
+Icon=obsidian
+Terminal=false
+Categories=Office;Documentation;
+Keywords=obsidian;vault;zothos;studio;canon;notes;
+StartupNotify=true
+StartupWMClass=obsidian

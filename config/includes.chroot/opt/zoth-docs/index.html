@@ -312,7 +312,7 @@
       <div class="brand-mark">🜂</div>
       <div class="brand-text">
         <h1>ZothOS Codex</h1>
-        <p>Sovereign Operations Manual v3.0</p>
+        <p>Sovereign Operations Manual v3.2</p>
       </div>
     </div>
     <div class="search-box">
@@ -321,10 +321,14 @@
     <ul class="nav-list" id="navList">
       <li class="nav-item active" data-target="manifesto"><span class="nav-icon">📜</span> The Sovereign Manifesto</li>
       <li class="nav-item" data-target="os-identity"><span class="nav-icon">👑</span> ZothOS Core & Architecture</li>
-      <li class="nav-item" data-target="studio"><span class="nav-icon">⚡</span> Zoth Studio Pro & Workstations</li>
+      <li class="nav-item" data-target="studio"><span class="nav-icon">⚡</span> Zoth Studio v2</li>
+      <li class="nav-item" data-target="public-surfaces"><span class="nav-icon">🌐</span> Public Surfaces</li>
+      <li class="nav-item" data-target="mcp"><span class="nav-icon">🔌</span> MCP Catalog (All Off)</li>
+      <li class="nav-item" data-target="webgen"><span class="nav-icon">⚡</span> WebGen Foundry</li>
+      <li class="nav-item" data-target="memory"><span class="nav-icon">🧠</span> Neuro-Memory</li>
       <li class="nav-item" data-target="vault"><span class="nav-icon">🔐</span> Sovereign Vault & Secrets</li>
       <li class="nav-item" data-target="agents"><span class="nav-icon">🤖</span> AI Coding Agents & Swarms</li>
-      <li class="nav-item" data-target="cloud-web"><span class="nav-icon">🌐</span> Cloud & Web Engineering</li>
+      <li class="nav-item" data-target="cloud-web"><span class="nav-icon">☁️</span> Cloud & Web Engineering</li>
       <li class="nav-item" data-target="pentesting"><span class="nav-icon">🛡️</span> Penetration Testing Arsenal</li>
       <li class="nav-item" data-target="privacy"><span class="nav-icon">🧅</span> Privacy, Ghostmode & Tor</li>
       <li class="nav-item" data-target="modes"><span class="nav-icon">🔮</span> Environment & Stealth Modes</li>
@@ -334,7 +338,7 @@
       <li class="nav-item" data-target="cheatsheet"><span class="nav-icon">⌨️</span> Hotkeys & CLI Cheatsheet</li>
     </ul>
     <div class="sidebar-footer">
-      <span>ZOTHOS v3.0 // 2026</span>
+      <span>ZOTHOS v3.2 // 2026</span>
       <span>Debian 13 + KDE Plasma 6.3</span>
     </div>
   </aside>
@@ -359,7 +363,7 @@
         </div>
         <div class="card">
           <h4>🤖 3. Sovereign AI Runtimes</h4>
-          <p>Resident offline Ollama models paired with frontier coding agents (Aider, Claude Code, Cline, Grok, Hermes, Antigravity).</p>
+          <p>Ollama on 127.0.0.1:11434. Image <code>grok</code> / <code>hermes</code> / <code>agy</code> / <code>claude</code> / <code>opencode</code> are install wrappers. Real CLIs live in <code>~/.local/bin</code> on this workstation.</p>
         </div>
         <div class="card">
           <h4>🧅 4. Amnesic OPSEC & Privacy</h4>
@@ -389,8 +393,26 @@
         </div>
       </div>
 
+      <div class="card" style="margin-top:16px">
+        <h4>🔑 Root</h4>
+        <p><strong>Password:</strong> <code>zoth</code>. Live ISO and this workstation. <code>zoth-auth-init</code> deletes legacy <code>neo</code> on boot.</p>
+      </div>
+
+      <h3>Screens &amp; Virtual Desktops</h3>
+      <p>A cloned Samsung at <code>0,0</code> made Plasma treat laptop + monitor as one screen. <code>zoth-workspaces apply</code> extends the Samsung (or any DP/HDMI) to the right of the laptop and restores eight named virtual desktops in a 2×4 pager: Forge, Studio, WebGen, Memory, Agents, Comms, Ops, Sanctum.</p>
+      <div class="grid">
+        <div class="card">
+          <h4>🖥 Independent Samsung screen</h4>
+          <p>Laptop <code>eDP-1</code> at 0,0. External monitor at laptop-width,0. Each screen gets its own panel and desktop containment.</p>
+        </div>
+        <div class="card">
+          <h4>🗂 Eight workspaces</h4>
+          <p><code>Ctrl+F1…F8</code> jump. <code>Meta+Ctrl+Arrows</code> walk the grid. <code>Meta+Alt+1</code> laptop, <code>Meta+Alt+2</code> Samsung.</p>
+        </div>
+      </div>
+
       <div class="callout callout-gold">
-        <strong>Root Sudo Access:</strong> Both <code>zoth</code> and <code>azoth</code> have passwordless administrative privileges via <code>/etc/sudoers.d/010_zoth-nopasswd</code>. Legacy installer accounts (such as <code>neo</code>) have been completely removed from system manifests.
+        <strong>Root Sudo Access:</strong> Both <code>zoth</code> and <code>azoth</code> have passwordless administrative privileges via <code>/etc/sudoers.d/010_zoth-nopasswd</code>. Legacy installer accounts (such as <code>neo</code>) have been completely removed from system manifests. Product site: <a href="https://zothos.nullai.tech" style="color:var(--gold)">zothos.nullai.tech</a>.
       </div>
 
       <h3>Dual Repositories & Pinning Architecture</h3>
@@ -434,11 +456,11 @@
 
     <!-- 3. Zoth Studio Pro & Workstations -->
     <section class="doc-section" id="studio">
-      <h2>Zoth Studio Pro & 3D Alchemical Cockpit</h2>
-      <p class="section-subtitle">Complete operational manual for the 37 workstations, multi-agent swarm, local asset server, and Vault integration.</p>
+      <h2>Zoth Studio v2</h2>
+      <p class="section-subtitle">Public catalog at zoth.nullai.tech. Local Vite app at 127.0.0.1:3000. ISO launcher <code>zoth-studio</code> prefers ~/NullAITech/zoth-studio-v2 then /opt/zoth-studio.</p>
 
       <h3>Architecture & Multi-Tier Runtime</h3>
-      <p><strong>Zoth Studio Pro</strong> operates on a resilient multi-tier standalone architecture. When launched via <code>zoth-studio</code>, the system executes the following boot sequence:</p>
+      <p><strong>Zoth Studio v2</strong> is the Vite + React 19 catalog (Celtic Garamond, gold #D4AF37). Legacy orchestrator remains at <code>/opt/zoth-studio</code>. When launched via <code>zoth-studio</code>, the system executes the following boot sequence:</p>
       <ol>
         <li><strong>Local Asset Server Daemon:</strong> Spawns an internal HTTP server bound to <code>127.0.0.1</code> on the first available port (preferred: <code>3000</code>, <code>8088</code>, <code>8080</code>) serving pre-rendered static assets.</li>
         <li><strong>Multi-Tier Window Display:</strong>
@@ -487,12 +509,81 @@ zoth-studio --update</code>
       <p>To pull latest upstream improvements, rebuild routes, or re-render sitemaps without rebuilding the entire OS:</p>
       <div class="code-block">
         <span class="code-badge">BASH</span>
-        <code># Rebuild and test Zoth Studio routes locally:
-cd /opt/zoth-studio
-npm run build
-npm run test:routes</code>
-        <button class="copy-btn" onclick="copy('cd /opt/zoth-studio && npm run build')">Copy</button>
+        <code># Rebuild and test Zoth Studio v2 locally:
+cd ~/NullAITech/zoth-studio-v2
+npm run dev
+# production preview:
+npm run build && npm run test:routes</code>
+        <button class="copy-btn" onclick="copy('cd ~/NullAITech/zoth-studio-v2 && npm run dev')">Copy</button>
       </div>
+      <p>OS showcase route is <code>/zoth-os</code>. Primary CTA is <strong>https://zothos.nullai.tech</strong>. WebGen is <code>/webgen</code>. Memory daemon is <code>127.0.0.1:8094</code>.</p>
+    </section>
+
+    <!-- Public Surfaces -->
+    <section class="doc-section" id="public-surfaces">
+      <h2>Public Surfaces</h2>
+      <p class="section-subtitle">Shipped URLs as of v3.2. GitHub homepage and Product Hunt Visit website are still operator dashboard leftovers.</p>
+      <table>
+        <thead>
+          <tr><th>Surface</th><th>URL</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Zoth OS site</strong></td><td><code>https://zothos.nullai.tech</code></td><td>Netlify. Website repo production branch <code>main</code>.</td></tr>
+          <tr><td><strong>Zoth Studio</strong></td><td><code>https://zoth.nullai.tech</code></td><td>Catalog website. Tools need a local node.</td></tr>
+          <tr><td><strong>Product Hunt</strong></td><td><code>https://www.producthunt.com/products/zothos</code></td><td>Featured post 1276873. Review product 1333989.</td></tr>
+          <tr><td><strong>GitHub OS</strong></td><td><code>https://github.com/NullAITech/zoth-os</code></td><td>homepageUrl still nullai.tech until admin sets it.</td></tr>
+          <tr><td><strong>WebGen foundry</strong></td><td><code>https://github.com/1nc0gn30/zoth-webgen</code></td><td>Local folder remains <code>~/NullAITech/bolt.diy</code>.</td></tr>
+          <tr><td><strong>PromptMaster</strong></td><td><code>https://promptmaster-studio.netlify.app</code></td><td>Pro $19.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- MCP -->
+    <section class="doc-section" id="mcp">
+      <h2>MCP Catalog (All Off)</h2>
+      <p class="section-subtitle">152 servers in /etc/zothos/mcp-servers.json. None start until you name one.</p>
+      <div class="alert-dont">
+        <strong>DON'T:</strong> Re-enable the catalog. On 2026-10-08 every MCP server was stopped after browser login tabs. AGY starts every listed server and ignores <code>enabled: false</code>.
+      </div>
+      <div class="code-block">
+        <span>zoth-mcp status</span>
+        <button onclick="copy('zoth-mcp status')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-mcp enable &lt;name&gt;</span>
+        <button onclick="copy('zoth-mcp enable ')">Copy</button>
+      </div>
+      <p>Spend, send, deploy, and cloud-control servers stay disabled (Stripe, Slack, PayPal, Netlify, HexStrike, and the rest of that ring).</p>
+    </section>
+
+    <!-- WebGen -->
+    <section class="doc-section" id="webgen">
+      <h2>Zoth WebGen Foundry</h2>
+      <p class="section-subtitle">Local Remix foundry on 127.0.0.1:5173. GitHub 1nc0gn30/zoth-webgen. Folder ~/NullAITech/bolt.diy.</p>
+      <div class="code-block">
+        <span>bolt-diy</span>
+        <button onclick="copy('bolt-diy')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-webgen</span>
+        <button onclick="copy('zoth-webgen')">Copy</button>
+      </div>
+      <p>Menu: 1=dev :5173, 2=ollama :11434, 3=electron:dev, 4=edit .env.local, 5=git pull. Do not deploy WebGen. Studio pages: <code>/webgen</code> and <code>/webgen/docs</code>.</p>
+    </section>
+
+    <!-- Memory -->
+    <section class="doc-section" id="memory">
+      <h2>Neuro-Memory</h2>
+      <p class="section-subtitle">Federated memory viewer. Daemon on 127.0.0.1:8094.</p>
+      <div class="code-block">
+        <span>zoth-memory</span>
+        <button onclick="copy('zoth-memory')">Copy</button>
+      </div>
+      <div class="code-block">
+        <span>zoth-neuro-memory</span>
+        <button onclick="copy('zoth-neuro-memory')">Copy</button>
+      </div>
+      <p>Repo <code>NullAITech/neuro-memory-daemon</code>. Studio catalog id <code>neuro-memory-daemon</code>.</p>
     </section>
 
     <!-- 4. Sovereign Vault & Secrets -->
@@ -546,7 +637,7 @@ npm run test:routes</code>
     <!-- 3. AI Coding Agents & Swarms -->
     <section class="doc-section" id="agents">
       <h2>AI Coding Agents & Swarms</h2>
-      <p class="section-subtitle">Frontier and underground autonomous developer workstations pre-configured for instant use.</p>
+      <p class="section-subtitle">On a fresh ISO the named CLIs are install wrappers. This workstation has real binaries in ~/.local/bin. Ollama is bound to 127.0.0.1.</p>
 
       <h3>Autonomous Coding Workstations</h3>
       <table>
@@ -729,6 +820,12 @@ npm run test:routes</code>
       <div class="alert-dont">
         <strong>DON'T:</strong> Disable the root partition overlay or write credentials to the live ISO filesystem.
       </div>
+      <div class="alert-dont">
+        <strong>DON'T:</strong> Re-enable the 152-server MCP catalog, auto-post to Product Hunt / X, or bake a new ISO unless asked.
+      </div>
+      <div class="alert-do">
+        <strong>DO:</strong> Keep operator notes in <code>~/Documents/Obsidian Vault</code> and open them with Obsidian or <code>zoth-docs</code>.
+      </div>
     </section>
 
     <!-- 10. Focus Audio & Soundtrack -->
@@ -769,11 +866,21 @@ npm run test:routes</code>
           <tr><td><code>Super</code></td><td>Global Desktop</td><td>Open Applications Kickoff menu</td></tr>
           <tr><td><code>Alt + F2</code></td><td>Global Desktop</td><td>KRunner universal command search</td></tr>
           <tr><td><code>Super + D</code></td><td>Global Desktop</td><td>Toggle show/minimize desktop</td></tr>
-          <tr><td><code>Super + L</code></td><td>Global Desktop</td><td>QuickLock session lock</td></tr>
+          <tr><td><code>zoth-workspaces apply</code></td><td>Terminal</td><td>Samsung on its own screen + 8 virtual desktops (Forge…Sanctum)</td></tr>
+          <tr><td><code>Ctrl + F1 … F8</code></td><td>Global Desktop</td><td>Jump to virtual desktop 1–8</td></tr>
+          <tr><td><code>Meta + Ctrl + Arrows</code></td><td>Global Desktop</td><td>Walk the 2×4 desktop grid</td></tr>
+          <tr><td><code>Meta + Alt + 1 / 2</code></td><td>Global Desktop</td><td>Focus laptop screen / Samsung screen</td></tr>
+          <tr><td><code>Super + L</code></td><td>Global Desktop</td><td>KDE session lock (login password)</td></tr>
+          <tr><td><code>zoth-lock</code></td><td>Desktop / Terminal</td><td>Walk-away overlay; agents keep running</td></tr>
           <tr><td><code>zoth-mode toggle</code></td><td>Terminal</td><td>Instant switch between Default Gold & Ghostmode Stealth</td></tr>
           <tr><td><code>zoth-vault</code></td><td>Terminal</td><td>Sovereign Vault interactive terminal manager</td></tr>
           <tr><td><code>zoth-cockpit</code></td><td>Terminal</td><td>Full-screen terminal operations center</td></tr>
           <tr><td><code>zoth-fastfetch</code></td><td>Terminal</td><td>Display alchemical system banner and telemetry</td></tr>
+          <tr><td><code>zoth-studio</code></td><td>Terminal / GUI</td><td>Launch Studio v2 (prefers ~/NullAITech/zoth-studio-v2)</td></tr>
+          <tr><td><code>bolt-diy</code></td><td>Terminal</td><td>WebGen foundry TUI → 127.0.0.1:5173</td></tr>
+          <tr><td><code>zoth-memory</code></td><td>Terminal</td><td>Neuro-Memory viewer 127.0.0.1:8094</td></tr>
+          <tr><td><code>zoth-mcp status</code></td><td>Terminal</td><td>MCP catalog is all off until you enable a name</td></tr>
+          <tr><td><code>zoth-ph</code></td><td>Terminal</td><td>Product Hunt listing watchdog (login deferred)</td></tr>
           <tr><td><code>zoth-netlify</code></td><td>Terminal</td><td>Netlify CLI interactive operations deck</td></tr>
           <tr><td><code>zoth-streamlit</code></td><td>Terminal</td><td>Streamlit Studio dashboard runner</td></tr>
           <tr><td><code>aider</code></td><td>Terminal</td><td>Aider AI coding agent workstation</td></tr>

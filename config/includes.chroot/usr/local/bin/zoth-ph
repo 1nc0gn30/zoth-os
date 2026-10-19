@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# ZothOS Product Hunt connector. Read listing, diff website/GitHub. Never auto-post.
+set -euo pipefail
+REPO_DIR="${ZOTH_PH_REPO:-${ZOTH_SRC_ROOT}/producthunt-connector}"
+BIN="$REPO_DIR/bin/zoth-ph"
+if [[ -x "$BIN" ]]; then
+  exec "$BIN" "$@"
+fi
+if [[ -d "$REPO_DIR/src/producthunt_connector" ]]; then
+  export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+  exec python3 -m producthunt_connector.cli "$@"
+fi
+echo "Error: producthunt-connector not found in $REPO_DIR" >&2
+exit 1
