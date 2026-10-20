@@ -2650,11 +2650,11 @@
         "@burtthecoder/mcp-shodan"
       ],
       "env": {
-        "SHODAN_API_KEY": ""
+        "SHODAN_API_KEY": "1sz8U75omWYOn6ic7HEuv00K22YTmc4n"
       },
       "description": "Shodan Internet Intelligence & OSINT MCP. IP lookups, open ports, CVE correlation, and DNS queries.",
       "offline": false,
-      "enabled": false,
+      "enabled": true,
       "securityRing": "RING_2_TOOLMASTER",
       "ring_level": 2,
       "sandbox": "/tmp",
