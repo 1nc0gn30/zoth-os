@@ -2748,6 +2748,43 @@
       "fallbackHandler": "true",
       "timeout": 60,
       "alwaysAllow": []
+    },
+    "ghidra": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/LaurieWired/GhidraMCP",
+        "ghidra-mcp",
+        "--ghidra-server",
+        "http://127.0.0.1:8080/"
+      ],
+      "env": {
+        "GHIDRA_INSTALL_DIR": "/opt/ghidra"
+      },
+      "description": "LaurieWired GhidraMCP reverse engineering bridge. Autonomous binary decompilation, function enumeration, class mapping, and variable annotation.",
+      "offline": false,
+      "enabled": true,
+      "securityRing": "RING_1_SYSADMIN",
+      "ring_level": 1,
+      "sandbox": "${ZOTH_HOME}",
+      "fallbackHandler": "python3 -m ghidra_mcp --help",
+      "alwaysAllow": [
+        "get_program_info",
+        "list_functions",
+        "search_functions_by_name",
+        "list_classes",
+        "list_namespaces",
+        "list_segments",
+        "list_imports",
+        "list_exports",
+        "list_data_items",
+        "list_strings",
+        "get_function_by_address",
+        "decompile_function",
+        "rename_function",
+        "set_comment",
+        "get_current_address"
+      ]
     }
   }
 }
