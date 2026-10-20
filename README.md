@@ -359,12 +359,31 @@ Every backend capability runs as an isolated daemon on localhost loopback (`127.
 | **`:8787`** | `zoth-vault-daemon` | Rust / ChaCha20 | Memory-only cryptographic secrets injection engine. |
 
 ### 2. Autonomous Client-Side Micro-SaaS Conversions & Dual Monetization Rails
-Recent sovereign hardening cadences have ported key tools (`aeo-graph-engine`, `deepsearch-research-agent`, `promptmaster-studio`, `vector-search-engine`, `subsweep-lead-scanner`, `omnipost-social-engine`, `web-security-guard`, `jwt-inspector-guard`, `payload-entropy-studio`, `pwa-manifest-builder`, `regex-droid-builder`, `schema-illustrator-studio`, `polyglot-framework-exporter`, `audiocipher-stego-engine`, `cron-rhythm-studio`, `osint-scout-skill`, `cyber-turtle-studio`, `datamosh-glitch-studio`, `nexus-3d-scene-studio`, `ufo-sacred-geometry`) to **100% in-browser client-side execution** requiring zero external backend cloud infrastructure.
+Recent sovereign hardening cadences have ported key tools (`aeo-graph-engine`, `deepsearch-research-agent`, `promptmaster-studio`, `vector-search-engine`, `subsweep-lead-scanner`, `omnipost-social-engine`, `web-security-guard`, `jwt-inspector-guard`, `payload-entropy-studio`, `pwa-manifest-builder`, `regex-droid-builder`, `schema-illustrator-studio`, `certpath-roadmap-studio`, `badge3d-coin-generator`, `polyglot-framework-exporter`, `robots-txt-auditor`, `audiocipher-stego-engine`, `cron-rhythm-studio`, `osint-scout-skill`, `cyber-turtle-studio`, `datamosh-glitch-studio`, `nexus-3d-scene-studio`, `ufo-sacred-geometry`) to **100% in-browser client-side execution** requiring zero external backend cloud infrastructure.
 - **Instant Client Utility**: AST linting, Web Crypto SHA-384 hashing, L-System generation, and DoH reconnaissance execute 100% in the browser.
 - **Dual Monetization Funnel**: Glassmorphic sales banner ($19 founding lifetime vs $79 regular), dual Stripe + Solana DePay checkout rails, frosted glass output paywall blurs, and 1-click license unlocks (`?licensed=true`).
 - **Triple-Viewport Automated Verification**: Headless Chrome tests verify 0 console errors and 0px horizontal overflow across mobile (390px), tablet (820px), and desktop (1425px).
 
-### 3. Strict Thermal & Hardware Invariants
+### 3. Model Context Protocol (MCP) Server Architecture & 4-Tier Security Rings
+ZOTHOS Linux 3.2 implements the native **Model Context Protocol (MCP)** master catalog in `/etc/zothos/mcp-servers.json` managed via `zoth-mcp`. Tools are governed by strict mathematical privilege rings:
+
+| Security Ring | Level | Isolation Boundary | Assigned MCP Servers |
+| :--- | :--- | :--- | :--- |
+| **`RING_0_SOVEREIGN`** | Ring 0 | Memory-only, loopback unix sockets, zero external egress | `neuro-memory`, `memory`, `graphiti-memory`, `mem0`, `zoth-vault` |
+| **`RING_1_SYSADMIN`** | Ring 1 | Chrooted local filesystem, hardware registers, reverse engineering | `filesystem`, `sqlite`, `wireshark`, `nmap`, `caido`, `burp-suite`, **`ghidra` (LaurieWired GhidraMCP)** |
+| **`RING_2_TOOLMASTER`** | Ring 2 | Sandboxed process execution, rate-limited egress, developer tooling | `sequential-thinking`, `git`, `time`, `fetch`, `context7`, **`shodan` (OSINT & InternetDB)**, `etsy-connector`, `shopify-connector`, `mcp-lens` |
+| **`RING_3_APPLICATION_SANDBOX`**| Ring 3 | Client-side renderers, ephemeral subagents, browser runtimes | `puppeteer`, `playwright`, `zoth-webgen`, `likeness-desk` |
+
+#### LaurieWired GhidraMCP Integration (`ghidra`)
+- **Bridge Command**: `uvx --from git+https://github.com/LaurieWired/GhidraMCP ghidra-mcp --ghidra-server http://127.0.0.1:8080/`
+- **15 Native Autonomous Tools**: `get_program_info`, `list_functions`, `search_functions_by_name`, `list_classes`, `list_namespaces`, `list_segments`, `list_imports`, `list_exports`, `list_data_items`, `list_strings`, `get_function_by_address`, `decompile_function`, `rename_function`, `set_comment`, `get_current_address`.
+- **Zoth Studio Enclave**: Paired with the interactive in-browser C pseudocode decompiler in `GhidraMcpGodModeTool.jsx`.
+
+#### Shodan Attack Surface Sentinel (`shodan`)
+- **System CLI & MCP**: `/opt/zothos-ai-env/bin/shodan` pre-initialized; MCP server running via `@burtthecoder/mcp-shodan`.
+- **CORS Unmetered InternetDB Integration**: Direct, zero-credit real-time reconnaissance against `https://internetdb.shodan.io/${ip}` reporting open ports, CPEs, hostnames, and known CVE vulnerabilities.
+
+### 4. Strict Thermal & Hardware Invariants
 - **CPU Thermal Ceiling**: Maintained strictly **< 55.0°C** under continuous autonomous builder cadences.
 - **Whisper-Quiet Operation**: Cooling fans locked at **0 RPM** during standard workloads via passive heat dissipation.
 - **Turbo Boost Lock**: `no_turbo = 1` enforced to prevent thermal throttling and acoustic disruption.
