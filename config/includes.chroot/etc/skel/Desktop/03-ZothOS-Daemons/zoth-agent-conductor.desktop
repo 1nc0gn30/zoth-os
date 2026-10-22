@@ -1,0 +1,29 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Agent Conductor
+GenericName=Sovereign Agent Ecosystem Orchestrator
+Comment=Unified mesh conductor, ASCII Bento Grid telemetry dashboard, and automated verification engine
+Exec=/usr/local/bin/zoth-agent-conductor watch
+TryExec=/usr/local/bin/zoth-agent-conductor
+Icon=zoth-agent-conductor
+Terminal=true
+Categories=System;Monitor;X-ZothOS-AI;
+Keywords=conductor;orchestrator;mesh;telemetry;bento;monitor;supervisor;ai;agent;
+StartupNotify=true
+Actions=Status;Chain;Verify;
+
+[Desktop Action Status]
+Name=Bento Grid Telemetry Status
+Exec=/usr/local/bin/zoth-konsole --pause --title "Agent Ecosystem Status" -- /usr/local/bin/zoth-agent-conductor status
+TryExec=/usr/local/bin/zoth-agent-conductor
+
+[Desktop Action Chain]
+Name=Run Sovereign 4-Stage Chain
+Exec=/usr/local/bin/zoth-konsole --pause --title "Sovereign Agent Chain" -- /usr/local/bin/zoth-agent-conductor chain
+TryExec=/usr/local/bin/zoth-agent-conductor
+
+[Desktop Action Verify]
+Name=Verify Mesh Health Checks
+Exec=/usr/local/bin/zoth-konsole --pause --title "Agent Mesh Verification" -- /usr/local/bin/zoth-agent-conductor verify
+TryExec=/usr/local/bin/zoth-agent-conductor

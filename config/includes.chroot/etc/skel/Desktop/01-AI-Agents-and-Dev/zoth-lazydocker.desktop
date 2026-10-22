@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth LazyDocker TUI
+Comment=Interactive Terminal UI for Docker and Podman Containers
+Exec=/usr/local/bin/zoth-konsole --title "LazyDocker" -- lazydocker
+Icon=docker
+Terminal=false
+Categories=Development;System;ZothPentesting;
+StartupNotify=true
+GenericName=Docker Terminal Manager
+Keywords=docker;podman;containers;tui;terminal;

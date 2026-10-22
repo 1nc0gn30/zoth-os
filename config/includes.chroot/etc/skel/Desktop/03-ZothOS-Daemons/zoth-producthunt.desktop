@@ -1,0 +1,29 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Product Hunt
+GenericName=Product Hunt listing watchdog
+Comment=Read the ZOTHOS Product Hunt listing and show website/GitHub drift
+Exec=xdg-open "http://127.0.0.1:8121/"
+TryExec=/usr/local/bin/zoth-ph
+Icon=applications-internet
+Terminal=false
+Categories=Network;X-ZothOS-AI;
+Keywords=producthunt;zothos;launch;review;badge;
+StartupNotify=true
+Actions=Status;Cockpit;Login;
+
+[Desktop Action Status]
+Name=Listing status
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Product Hunt" -- /usr/local/bin/zoth-ph status
+TryExec=/usr/local/bin/zoth-ph
+
+[Desktop Action Cockpit]
+Name=Start cockpit
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Product Hunt" -- /usr/local/bin/zoth-ph serve
+TryExec=/usr/local/bin/zoth-ph
+
+[Desktop Action Login]
+Name=Save developer token
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Product Hunt login" -- /usr/local/bin/zoth-ph login
+TryExec=/usr/local/bin/zoth-ph

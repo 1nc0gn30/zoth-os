@@ -1,15 +1,26 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 59-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.0
+#  ZOTHOS — 62-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.2
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  100% Workstation Coverage in Zoth Studio v2 (23 Browser + 36 Enclaves)
+#  100% God-Mode Workstation + 15s Motion Edit Coverage in Zoth Studio v2 (45 Browser + 17 Enclaves)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 59 tools.
-#   All tools execute locally with zero cloud telemetry, validated JSON-Schema contracts,
-#   and dual payment rails (Stripe + Solana DePay).
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 62 tools.
+#   Every tool features a dedicated interactive God-Mode Workstation, a deterministic
+#   60fps 15-second Code-First Motion Edit showcase (6-scene Claude Motion / Revid.ai
+#   blueprint + Fullscreen Cinema Cut), validated JSON-Schema contracts, and dual payment
+#   rails (Stripe + Solana DePay).
+#
+# Desktop Consolidation Architecture (10 Root Flagships + 4 Pillars):
+#   ~/Desktop/ (10 Flagship Launchers)
+#   ├── 01-AI-Agents-and-Dev/      (16 Autonomous AI Harnesses & IDEs)
+#   ├── 02-Security-and-Privacy/   (19 Offensive Recon, OSINT & Crypto Enclaves)
+#   ├── 03-ZothOS-Daemons/         (17 Loopback System Sentinels & HUDs)
+#   └── 04-Media-and-Utilities/    (19 Creative Engines, POD & Bare-Metal Utils)
 #
 # Launching via CLI & Dispatchers:
+#   zoth-control-center --status       # Audit 4 Desktop Pillars & 22 Loopback Daemons
+#   zoth-control-center --boot-all     # Boot all Sovereign Enclave Daemons (:8094-:8121)
 #   zoth-studio                        # Launch full Zoth Studio v2 Cockpit
 #   zoth-update-studio                 # One-command git update & static rebuild
 #   zoth-cockpit                       # Full-screen curses terminal operations center
@@ -29,8 +40,17 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 2 — SWARM & CORE (5 TOOLS)
+##  CADRE 2 — SWARM & CORE (6 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
+
+### 62. zoth-os (Zoth OS v3.2 Bare-Metal Workstation & ISO Inspector)
+- **Live Studio:** https://zothos.nullai.tech • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/zoth-os)
+- **GitHub:** https://github.com/NullAITech/zoth-os
+- **Category:** Swarm & Core
+- **Execution Mode:** BROWSER / LOCAL_CLI (Debian 13 Trixie + KDE Plasma 6.3 Sovereign Distro & Interactive Cockpit)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Interactive Desktop Pillar Matrix (10 Root Flagships + 4 Consolidated Folders = 81 `.desktop` launchers), 22-daemon loopback telemetry inspector (`:8094`–`:8121`, `:9393`), 8-monitor `zoth-workspaces` visualizer, and custom Live-Build ISO & `zoth-control-center` bundle generator.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
 
 ### 2. azoth-local-agent (AZOTH Local Archon Agent)
 - **GitHub:** https://github.com/NullAITech/azoth-local-agent
@@ -107,7 +127,7 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 5 — SECURITY & RECON (7 TOOLS)
+##  CADRE 5 — SECURITY & RECON (9 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 8. hexstrike-arsenal (HexStrike Security Arsenal)
@@ -153,6 +173,24 @@
 - **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
 - **Operational Value:** Autonomous passive reconnaissance engine auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture with zero cloud telemetry and dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
+
+### 60. ghidra-mcp-bridge (Ghidra Sovereign MCP Bridge)
+- **Live Studio:** https://ghidra-mcp.nullai.tech • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/ghidra-mcp-bridge)
+- **GitHub:** https://github.com/1nc0gn30/ghidra-mcp-bridge
+- **Category:** Security & Recon
+- **Execution Mode:** BROWSER / LOCAL_CLI (`127.0.0.1:8122`)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Zero-egress reverse engineering workstation & Model Context Protocol (MCP) server for Ghidra headless binary decompilation, ELF/PE/Mach-O symbol recovery, control-flow graph (CFG) inspection, and automated vulnerability signature triage.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
+
+### 61. shodan-surface-sentinel (Shodan Attack Surface Sentinel)
+- **Live Studio:** https://shodan-sentinel.nullai.tech • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/shodan-surface-sentinel)
+- **GitHub:** https://github.com/1nc0gn30/shodan-surface-sentinel
+- **Category:** Security & Recon
+- **Execution Mode:** BROWSER / LOCAL_CLI (`127.0.0.1:8123`)
+- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Operational Value:** Autonomous external attack surface discovery, ASN & CIDR banner intelligence, exposed service & CVE correlation, and MCP reconnaissance server with zero third-party telemetry.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════

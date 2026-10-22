@@ -1,0 +1,23 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Lock
+GenericName=Stay-running screen lock
+Comment=Lock the screen with your Zoth password. Agents and servers keep running.
+Exec=/usr/local/bin/zoth-lock
+Icon=zoth-quicklock
+Terminal=false
+Categories=Security;System;
+Keywords=lock;screen;password;zoth;quicklock;walk-away;
+StartupNotify=false
+Actions=SetPassword;Status;
+
+[Desktop Action SetPassword]
+Name=Set lock password
+Exec=/usr/local/bin/zoth-lock --set-password
+Icon=zoth-quicklock
+
+[Desktop Action Status]
+Name=Lock status
+Exec=/usr/local/bin/zoth-lock --status
+Icon=zoth-quicklock

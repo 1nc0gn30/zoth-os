@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Zoth Relay Pair
+Comment=Show the QR code that pairs Zoth Live / Zoth Guide on the Pixel with this machine
+Exec=xdg-open ${ZOTH_HOME}/.config/zoth-relay/pixel-pair.png
+Icon=zoth-relay
+Terminal=false
+Categories=Utility;

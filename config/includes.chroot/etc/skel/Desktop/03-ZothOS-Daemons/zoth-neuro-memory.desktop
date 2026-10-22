@@ -1,0 +1,31 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Memory
+GenericName=Everywhere memory ledger
+Comment=See Grok, Hermes, Zoth Bot, AGY, and Neuro substrate memories
+Exec=xdg-open "http://127.0.0.1:8094/#everywhere"
+TryExec=/usr/bin/xdg-open
+Icon=zoth-neuro-memory
+Terminal=false
+Categories=Utility;X-ZothOS-AI;
+Keywords=memory;everywhere;neuro;grok;hermes;zoth;agy;engram;substrate;stdp;synaptic;
+StartupNotify=true
+Actions=Everywhere;Stream;Graph;Doctor;
+
+[Desktop Action Everywhere]
+Name=Everywhere ledger
+Exec=xdg-open "http://127.0.0.1:8094/#everywhere"
+
+[Desktop Action Stream]
+Name=Memory Stream
+Exec=xdg-open "http://127.0.0.1:8094/#stream"
+
+[Desktop Action Graph]
+Name=3D Neural Nebula
+Exec=xdg-open "http://127.0.0.1:8094/#graph"
+
+[Desktop Action Doctor]
+Name=Substrate Diagnostics & Health
+Exec=/usr/local/bin/zoth-konsole --pause --title "Neuro-Memory Diagnostics" -- /usr/local/bin/neuro-memory doctor
+TryExec=/usr/local/bin/neuro-memory
