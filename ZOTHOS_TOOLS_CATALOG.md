@@ -59,10 +59,11 @@
 - **Operational Value:** Archon Orchestrator core agent for local zero-telemetry task dispatching and subagent delegation.
 
 ### 3. sovereign-agent-bridge (Sovereign Agent Signal Bridge)
-- **GitHub:** https://github.com/NullAITech/sovereign-agent-bridge
+- **Live Studio:** https://sovereign-agent-bridge.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/sovereign-agent-bridge)
+- **GitHub:** https://github.com/1nc0gn30/sovereign-agent-bridge
 - **Category:** Swarm & Core
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** E2EE WebSocket signal protocol and Simplex peer mesh IPC communicator.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`SovereignBridgeGodModeTool` 60fps Multi-Channel Relay Workstation)
+- **Operational Value:** E2EE Signal (`ZOTH_SIGNAL_NUMBER`), SimpleX SMP stealth relay, Matrix federated homeserver, Telegram Bot API, HMAC-SHA256 webhook pipe, and 3-way Byzantine dialectic consensus engine.
 
 ### 5. vector-search-engine (Vector Search Engine & Studio)
 - **Live Studio:** https://vectorsearch.nullai.tech
@@ -91,10 +92,11 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 4. neuro-memory-daemon (Neuro-Memory Daemon)
-- **GitHub:** https://github.com/NullAITech/neuro-memory-daemon
+- **Live Studio:** https://neuro-memory-daemon.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/neuro-memory-daemon)
+- **GitHub:** https://github.com/1nc0gn30/neuro-memory-daemon
 - **Category:** Memory & Brain
-- **Execution Mode:** LOCAL_CLI • [Live App](https://neuro-memory.nullai.tech)
-- **Operational Value:** Biological-fidelity memory substrate with 3D Cosmic Nebula.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`NeuroMemoryGodModeTool` 60fps STDP Synaptic Nebula Workstation)
+- **Operational Value:** Biological-fidelity memory substrate with interactive Cosine Vector + BM25 + Ebbinghaus STDP retention recall engine and 60fps Synaptic Consolidation Lattice.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -131,16 +133,18 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 8. hexstrike-arsenal (HexStrike Security Arsenal)
-- **GitHub:** https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal
+- **Live Studio:** [Zoth Studio Workstation](https://zoth.nullai.tech/tools/hexstrike-arsenal)
+- **GitHub:** https://github.com/1nc0gn30/NullAI-HexStrike-AI-Terminal
 - **Category:** Security & Recon
-- **Execution Mode:** LOCAL_CLI
-- **Operational Value:** Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`HexStrikeGodModeTool` Tactical Cybersec Workstation)
+- **Operational Value:** Autonomous penetration audit suite, CVE matrix inspector, interactive command shell, and exploit payload lab.
 
 ### 9. envguard-secrets-vault (EnvGuard Secrets Vault)
-- **GitHub:** https://github.com/NullAITech/envguard-secrets-vault
+- **Live Studio:** https://envguard-vault.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/envguard-secrets-vault)
+- **GitHub:** https://github.com/1nc0gn30/envguard-secrets-vault
 - **Category:** Security & Recon
-- **Execution Mode:** LOCAL_CLI • [Live App](https://envguard-vault.netlify.app)
-- **Operational Value:** Argon2id + AES-256-GCM hardware vault for zero-cloud secret storage and leak scanning. Live app is $29.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`EnvGuardVaultGodModeTool` WebCrypto AES-256-GCM Workstation)
+- **Operational Value:** Argon2id + AES-256-GCM hardware vault for zero-cloud secret storage, AST credential leak scrubbing, and Kubernetes/Docker secret export.
 
 ### 10. jwt-inspector-guard (JWT Inspector Guard)
 - **GitHub:** https://github.com/NullAITech/jwt-inspector-guard
