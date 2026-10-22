@@ -382,24 +382,27 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 31. agent-egress-sentinel (Agent Egress Sentinel)
+- **Live Studio:** https://agent-egress-sentinel.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-egress-sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-egress-sentinel
 - **Category:** Security & Network
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-egress.nullai.tech)
-- **Operational Value:** Autonomous zero-dependency network interceptor, TLS SNI sniffer, kinetic egress radar, and kernel quarantine with dual Stripe + Solana rails.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`AgentEgressSentinelGodModeTool` 60fps Perimeter Radar Workstation)
+- **Operational Value:** Autonomous zero-dependency network interceptor, Shannon entropy DNS-tunneling blocker, 169.254.169.254 SSRF shield, 60fps egress radar canvas, and deterministic `nftables` kernel policy compiler.
 - **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) • [DePay Solana](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19)
 
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)
+- **Live Studio:** https://agent-prompt-firewall.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-prompt-firewall)
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
 - **Category:** Security & Network
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://firewall.nullai.tech)
+- **Execution Mode:** BROWSER / LOCAL_CLI (`AgentPromptFirewallGodModeTool` 60fps AST Salience Spectrum Workstation)
 - **Monetization Rails:** Stripe ($19) • DePay Solana Web3
-- **Operational Value:** Autonomous inline prompt injection defense, secret/PII redactor, and kinetic threat radar for AI agents with real-time AST/semantic inspection and SOC-2 audit export.
+- **Operational Value:** Autonomous inline prompt injection defense, indirect HTML/Markdown tool-poisoning sanitizer, and 60fps token attention salience spectrum canvas.
 
 ### 40. agent-budget-sentinel (Agent Budget Sentinel)
+- **Live Studio:** https://agent-budget-sentinel.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-budget-sentinel)
 - **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
 - **Category:** Security & Network
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-budget-sentinel.nullai.tech)
-- **Operational Value:** Autonomous zero-dependency spending guardrail, real-time token cost circuit breaker, and runaway loop interceptor.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`AgentBudgetSentinelGodModeTool` 60fps FinOps Circuit-Breaker Workstation)
+- **Operational Value:** Autonomous zero-dependency spending guardrail, real-time token burn-rate circuit breaker, and ZothOS local loopback offload optimizer.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -425,11 +428,12 @@
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 34. agent-flight-recorder (Agent Flight Recorder)
+- **Live Studio:** [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-flight-recorder)
 - **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
 - **Category:** Forensics & Telemetry
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://flight.nullai.tech)
+- **Execution Mode:** BROWSER / LOCAL_CLI (`AgentFlightRecorderGodModeTool` 60fps Merkle Trajectory DAG Workstation)
 - **Monetization Rails:** Stripe ($19) • DePay Solana Web3
-- **Operational Value:** Autonomous black box flight recorder & time-scrubbing telemetry forensics hub for AI agents with synchronized terminal playback, network egress graph, and offline single-file bundles.
+- **Operational Value:** Cryptographic FNV-1a/Merkle-chained trajectory blackbox recorder with interactive block sealing and 60fps Merkle chain topology canvas.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -497,10 +501,11 @@
 - **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 46. pod-smart-router (POD Smart Router)
+- **Live Studio:** https://pod-smart-router.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/pod-smart-router)
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://pod-smart-router.nullai.tech)
-- **Operational Value:** Multi-channel POD order router dynamically comparing Printify (:8115) and Gelato (:8116) on landed cost, domestic proximity, delivery speed, and tariff avoidance.
+- **Execution Mode:** BROWSER / LOCAL_CLI (`PodCommerceGodModeTool` 60fps Fulfillment Arbitrage Waterfall Workstation)
+- **Operational Value:** Multi-channel POD order router dynamically comparing Printify, Gelato, Shopify, and Etsy on landed cost, domestic proximity, delivery speed, and net profit margin with verified dispatch metadata (`ZOTH_SIGNAL_NUMBER`).
 
 ### 47. digital-asset-forge (Digital Asset Forge)
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
