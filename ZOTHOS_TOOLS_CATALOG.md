@@ -8,8 +8,9 @@
 #   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 62 tools.
 #   Every tool features a dedicated interactive God-Mode Workstation, a deterministic
 #   60fps 15-second Code-First Motion Edit showcase (6-scene Claude Motion / Revid.ai
-#   blueprint + Fullscreen Cinema Cut), validated JSON-Schema contracts, and dual payment
-#   rails (Stripe + Solana DePay).
+#   blueprint + 3 live shader modes: Hybrid Braille+Vector, Pure ASCII Matrix, and Vector Cinema
+#   + 1-Click ASCII Frame export), interactive ASCII & Braille Motion Synth (`AsciiMotionGodModeTool`),
+#   validated JSON-Schema contracts, and dual payment rails (Stripe + Solana DePay).
 #
 # Desktop Consolidation Architecture (10 Root Flagships + 4 Pillars):
 #   ~/Desktop/ (10 Flagship Launchers)
