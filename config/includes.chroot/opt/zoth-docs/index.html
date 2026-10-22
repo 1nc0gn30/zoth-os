@@ -351,6 +351,22 @@
       <h2>The Sovereign Manifesto</h2>
       <p class="section-subtitle">Core tenets of alchemical computing, cryptographic sovereignty, and zero-telemetry operations.</p>
       <p><strong>ZothOS</strong> is built upon the premise that true digital sovereignty requires absolute autonomy over four fundamental pillars: <strong>Execution</strong>, <strong>Cryptographic Secrets</strong>, <strong>Intelligence</strong>, and <strong>Communication</strong>.</p>
+
+      <!-- Live 60FPS ASCII & Braille Sovereign Kernel Shader -->
+      <div class="card" style="margin: 20px 0; padding: 18px; background: #06080d; border: 1px solid rgba(212, 175, 55, 0.42);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <span class="badge badge-gold">60 FPS ASCII &amp; BRAILLE KERNEL SYNTH</span>
+            <span class="badge badge-emerald" style="margin-left:6px;">62 GOD-MODE WORKSTATIONS READY</span>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button onclick="window.setZothAsciiMode('braille')" style="background:rgba(212,175,55,0.18); border:1px solid var(--gold); color:var(--gold-bright); padding:4px 10px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:700;">Braille Matrix</button>
+            <button onclick="window.setZothAsciiMode('ascii')" style="background:rgba(0,255,157,0.12); border:1px solid var(--emerald); color:var(--emerald); padding:4px 10px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:700;">ASCII Torus</button>
+            <button onclick="window.copyZothAsciiFrame(this)" style="background:rgba(0,229,255,0.12); border:1px solid var(--cyan); color:var(--cyan); padding:4px 10px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:700;">Copy ASCII Frame</button>
+          </div>
+        </div>
+        <pre id="zothCodexAsciiStage" style="margin:0; padding:12px; background:#030508; border:1px solid rgba(255,255,255,0.08); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:10px; line-height:1.15; color:var(--gold-bright); overflow:hidden; user-select:all;"></pre>
+      </div>
       
       <div class="grid">
         <div class="card">
@@ -485,23 +501,23 @@ zoth-studio --update</code>
         <button class="copy-btn" onclick="copy('zoth-studio')">Copy</button>
       </div>
 
-      <h3>Key Workstations & Capabilities</h3>
+      <h3>Key Workstations & Capabilities (62/62 God-Mode Coverage)</h3>
       <div class="grid">
         <div class="card">
-          <h4>🤖 Autonomous Swarm Cockpit</h4>
-          <p>Coordinated multi-agent pipeline featuring <strong>Proponent</strong>, <strong>Skeptic</strong>, and <strong>Arbitrator</strong> roles. Synthesizes architectural plans and verifies code changes before execution.</p>
+          <h4>🤖 Autonomous Swarm & AZOTH Archon</h4>
+          <p>60fps orbital multi-agent DAG dispatcher for Hermes, Grok CLI, and local Ollama (`127.0.0.1:11434`) alongside Proponent, Skeptic, and Arbitrator consensus rings.</p>
         </div>
         <div class="card">
-          <h4>🎨 WebGen Generative Studio</h4>
-          <p>Instant visual web generator powered by Tailwind and modular UI components. Live side-by-side preview with one-click export.</p>
+          <h4>🎨 60FPS ASCII & Braille Motion Synth</h4>
+          <p>Deterministic mathematical field synthesizer (4D Torus, Lorenz Attractor, Hermetic Tree-of-Life, WebGPU Wavefront) with 15s code-first showreels across all 62 tools.</p>
         </div>
         <div class="card">
-          <h4>🔐 Integrated Vault Console</h4>
-          <p>Direct GUI bridge to the local Rust Vault daemon (<code>:8787</code>). Manage API keys, inspect Shannon entropy, test leak security, and export to <code>.env</code> with 15-second clipboard auto-clear.</p>
+          <h4>🔐 Integrated Vault & Enclave Console</h4>
+          <p>Direct GUI bridge to the local Rust Vault daemon (<code>:8787</code>), Adytum 22-Key Hermetic Rite Planner, and Agent Voice Call acoustic spectrogram.</p>
         </div>
         <div class="card">
-          <h4>🎬 Maya Video Studio Integration</h4>
-          <p>Native integration with Maya Video Editor (<code>/opt/maya-linux</code>) for device frame wraps, typing overlays, speed ramping, and CapCut project export.</p>
+          <h4>🎬 Maya Video & Glitch Foundry</h4>
+          <p>Native integration with Maya Video Editor (<code>/opt/maya-linux</code>) and Datamosh Glitch Studio for P-frame motion vector synthesis and CapCut export.</p>
         </div>
       </div>
 
@@ -529,7 +545,7 @@ npm run build && npm run test:routes</code>
         </thead>
         <tbody>
           <tr><td><strong>Zoth OS site</strong></td><td><code>https://zothos.nullai.tech</code></td><td>Netlify. Website repo production branch <code>main</code>.</td></tr>
-          <tr><td><strong>Zoth Studio</strong></td><td><code>https://zoth.nullai.tech</code></td><td>Catalog website. Tools need a local node.</td></tr>
+          <tr><td><strong>Zoth Studio</strong></td><td><code>https://zoth.nullai.tech</code></td><td>62/62 in-browser 60fps God-Mode workstations + ASCII/Braille motion showreels.</td></tr>
           <tr><td><strong>Product Hunt</strong></td><td><code>https://www.producthunt.com/products/zothos</code></td><td>Featured post 1276873. Review product 1333989.</td></tr>
           <tr><td><strong>GitHub OS</strong></td><td><code>https://github.com/NullAITech/zoth-os</code></td><td>homepageUrl still nullai.tech until admin sets it.</td></tr>
           <tr><td><strong>WebGen foundry</strong></td><td><code>https://github.com/1nc0gn30/zoth-webgen</code></td><td>Local folder remains <code>~/NullAITech/bolt.diy</code>.</td></tr>
@@ -923,6 +939,45 @@ npm run build && npm run test:routes</code>
         item.style.display = text.includes(q) ? 'flex' : 'none';
       });
     });
+
+    // 60FPS Deterministic ASCII & Braille Sovereign Kernel Synth
+    (function() {
+      const stage = document.getElementById('zothCodexAsciiStage');
+      if (!stage) return;
+      const ramps = {
+        braille: ' \u2801\u2803\u2807\u280f\u281f\u283f\u287f\u28ff',
+        ascii: ' .,:;+*?%S#@'
+      };
+      let mode = 'braille';
+      let t = 0;
+      window.setZothAsciiMode = function(m) { mode = m; };
+      window.copyZothAsciiFrame = function(btn) {
+        navigator.clipboard.writeText(stage.textContent);
+        const orig = btn.textContent;
+        btn.textContent = 'Frame Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1400);
+      };
+      function tick() {
+        t += 0.04;
+        const ramp = ramps[mode] || ramps.braille;
+        const cols = 76, rows = 14;
+        let out = 'ZOTHOS v3.2 // 60FPS SOVEREIGN KERNEL MATRIX // MODE=' + mode.toUpperCase() + ' // t=' + t.toFixed(2) + 's\n';
+        for (let r = 0; r < rows; r++) {
+          const ny = (r / (rows - 1)) * 2 - 1;
+          for (let c = 0; c < cols; c++) {
+            const nx = ((c / (cols - 1)) * 2 - 1) * 1.9;
+            const d = Math.hypot(nx, ny);
+            const ang = Math.atan2(ny, nx);
+            const v = Math.max(0, Math.min(0.99, 0.5 + 0.35 * Math.cos(d * 8 - t * 2.6 + Math.sin(ang * 4)) + 0.15 * Math.sin(nx * 5 + t)));
+            out += ramp[Math.floor(v * ramp.length)];
+          }
+          if (r < rows - 1) out += '\n';
+        }
+        stage.textContent = out;
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
   </script>
 </body>
 </html>
