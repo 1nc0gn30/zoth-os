@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""
+zoth-swarm-quorum — 21-Agent Pantheon Byzantine Fault Tolerance (3f+1) Quorum Verifier for ZothOS v3.2
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import hashlib
+import json
+
+RINGS = {
+    "Inner Ring I (Archons)": ["AZOTH", "HERMES", "ATHENA", "APOLLO", "ARES", "HEPHAESTUS", "THOTH"],
+    "Middle Ring II (Strategists)": ["CHRONOS", "ORION", "NYX", "IRIS", "PROMETHEUS", "NEMESIS", "JANUS"],
+    "Outer Ring III (Artisans)": ["DAEDALUS", "ARGUS", "VULCAN", "ECHO", "MORPHEUS", "HELIOS", "AETHER"],
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS 21-Agent Pantheon BFT Quorum Verifier")
+    parser.add_argument("--faults", type=int, default=0, help="Simulated Byzantine faults f (0..10)")
+    parser.add_argument("--json", action="store_true", help="Output quorum telemetry as JSON")
+    args = parser.parse_args()
+
+    total = 21
+    f = max(0, min(total, args.faults))
+    honest = total - f
+    bft_safe = f <= 6
+    merkle = "0x" + hashlib.sha256(f"zothos-21-{honest}-{f}".encode()).hexdigest()[:16]
+
+    payload = {
+        "engine": "zoth-swarm-quorum v3.2.0",
+        "total_agents": total,
+        "honest_nodes": honest,
+        "byzantine_faults_f": f,
+        "max_tolerable_f": 6,
+        "bft_quorum_sealed": bft_safe,
+        "merkle_epoch_root": merkle,
+        "rings": RINGS,
+    }
+
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        status = "SEALED (3f+1 OK)" if bft_safe else "DEGRADED (f > 6)"
+        print(f"╔══ ZOTH 21-AGENT PANTHEON QUORUM // STATUS: {status} ══╗")
+        print(f"║ Honest: {honest}/21 | Faults (f): {f} (Max 6) | Merkle: {merkle}")
+        for rname, agents in RINGS.items():
+            print(f"║ • {rname:<30}: {', '.join(agents)}")
+        print("╚═════════════════════════════════════════════════════════════════════╝")
+
+
+if __name__ == "__main__":
+    main()
