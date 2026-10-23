@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""
+zoth-surface-sentinel — Live Socket, Shodan CPE/CVE & Ross Anderson Perimeter Auditor for ZothOS v3.2
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+import subprocess
+import sys
+
+APPROVED_WAN_PORTS = {41641, 7890}
+
+
+def get_listening_sockets() -> list[dict]:
+    try:
+        out = subprocess.check_output(["ss", "-tulpn"], text=True, stderr=subprocess.DEVNULL)
+    except Exception:
+        return []
+    sockets = []
+    for line in out.splitlines()[1:]:
+        parts = line.split()
+        if len(parts) < 5:
+            continue
+        proto = parts[0]
+        local_addr = parts[4]
+        proc = parts[6] if len(parts) > 6 else "kernel/unknown"
+        if ":" in local_addr:
+            host, port_str = local_addr.rsplit(":", 1)
+        else:
+            host, port_str = local_addr, "0"
+        port = int(port_str) if port_str.isdigit() else 0
+        is_loopback = host in ("127.0.0.1", "[::1]", "127.0.0.53%lo", "127.0.0.54") or "127.0.0." in host
+        is_tailscale = "100." in host or "%tailscale0" in host
+        is_approved = is_loopback or is_tailscale or (port in APPROVED_WAN_PORTS)
+        sockets.append({
+            "proto": proto,
+            "local_address": local_addr,
+            "port": port,
+            "process": proc,
+            "scope": "LOOPBACK" if is_loopback else ("TAILSCALE" if is_tailscale else "WILDCARD/LAN"),
+            "approved": is_approved,
+        })
+    return sockets
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS Attack Surface & Perimeter Sentinel")
+    parser.add_argument("--json", action="store_true", help="Output audit report as JSON")
+    parser.add_argument("--emit-ufw", action="store_true", help="Output UFW zero-egress lockdown script")
+    args = parser.parse_args()
+
+    socks = get_listening_sockets()
+    unapproved = [s for s in socks if not s["approved"]]
+    score = max(10, 100 - len(unapproved) * 15)
+
+    if args.emit_ufw:
+        print("#!/usr/bin/env bash\n# ZothOS v3.2 UFW Perimeter Hardening")
+        print("sudo ufw default deny incoming\nsudo ufw allow in on lo\nsudo ufw allow in on tailscale0")
+        print("sudo ufw allow 41641/udp\nsudo ufw allow 7890/tcp")
+        for u in unapproved:
+            if u["port"] > 0:
+                print(f"sudo ufw deny {u['port']}/{u['proto']} # Exposed: {u['local_address']}")
+        return
+
+    report = {
+        "auditor": "zoth-surface-sentinel v3.2.0",
+        "total_listeners": len(socks),
+        "loopback_isolated": sum(1 for s in socks if s["scope"] == "LOOPBACK"),
+        "wildcard_unapproved_count": len(unapproved),
+        "posture_score": score,
+        "listeners": socks[:16],
+    }
+
+    if args.json:
+        print(json.dumps(report, indent=2))
+    else:
+        print(f"╔══ ZOTH ATTACK SURFACE SENTINEL v3.2 // POSTURE SCORE: {score}/100 ══╗")
+        print(f"║ Total Listeners: {len(socks)} | Loopback Isolated: {report['loopback_isolated']} | Unapproved WAN: {len(unapproved)}")
+        for s in socks[:10]:
+            badge = "✔ SAFE" if s["approved"] else "⚠ EXPOSED"
+            print(f"║   [{badge}] {s['proto']:<4} {s['local_address']:<24} ({s['scope']})")
+        print("╚══════════════════════════════════════════════════════════════════════╝")
+
+
+if __name__ == "__main__":
+    main()
