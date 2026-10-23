@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""
+zoth-city-desk — Municipal RFP, Virginia eVA Quick-Quote & VFOIA Capability Statement CLI for ZothOS v3.2
+Engineered by Neal Frazier Tech (@1nc0gn30) • 757 Tech Pro / NullAI Platform
+"""
+import argparse
+import json
+
+RFPS = [
+    {"sol": "RFP-757-2026-CYBER-09", "region": "Hampton Roads (757)", "ceiling_usd": 185000, "naics": "541512"},
+    {"sol": "QQ-EVA-2026-8841", "region": "Virginia eVA Quick-Quote", "ceiling_usd": 48500, "naics": "541511"},
+    {"sol": "N261-042-SBIR", "region": "DoD / Navy NSWC Norfolk", "ceiling_usd": 250000, "naics": "541715"},
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS City Desk Municipal RFP & GovTech Bid Calculator")
+    parser.add_argument("--hours", type=int, default=420, help="Engineering hours")
+    parser.add_argument("--rate", type=int, default=165, help="Hourly rate USD")
+    parser.add_argument("--json", action="store_true", help="Output JSON")
+    args = parser.parse_args()
+
+    bid = args.hours * args.rate + 8500
+    cost = args.hours * 58 + 4250
+    margin = bid - cost
+    margin_pct = round((margin / max(1, bid)) * 100, 1)
+
+    if args.json:
+        print(json.dumps({"bid_usd": bid, "net_margin_usd": margin, "margin_pct": margin_pct, "rfps": RFPS}, indent=2))
+    else:
+        print(f"╔══ ZOTH CITY DESK // GOVTECH FFP BID: ${bid:,} (MARGIN: ${margin:,} / {margin_pct}%) ══╗")
+        for r in RFPS:
+            status = "UNDER CEILING" if bid <= r["ceiling_usd"] else "EXCEEDS CEILING"
+            print(f"║ • {r['sol']:<22} | {r['region']:<25} | Ceiling: ${r['ceiling_usd']:,} ({status})")
+        print("╚════════════════════════════════════════════════════════════════════════════════════╝")
+
+
+if __name__ == "__main__":
+    main()
