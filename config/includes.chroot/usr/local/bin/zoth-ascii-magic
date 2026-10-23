@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""
+Zoth ASCII Magic CLI (zoth-ascii-magic v2.6.0)
+Sovereign Image & 3D SDF to 24-Bit TrueColor ASCII, Unicode Braille & Sobel Edge Synthesizer.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import http.server
+import math
+import os
+import socketserver
+import sys
+
+RAMPS = {
+    "ascii": " ·,:;+*?%S#@",
+    "braille": " ⠁⠃⠇⠏⠟⠿⣿",
+    "blocks": " ·░▒▓█",
+    "hex": " .01379ACEF#",
+}
+
+
+def eval_sdf(nx: float, ny: float, preset: str) -> tuple[float, tuple[int, int, int]]:
+    r = math.hypot(nx * 1.25, ny * 1.25)
+    a = math.atan2(ny, nx)
+    if preset == "torus4d":
+        v = 0.5 + 0.35 * math.cos((r - 0.52 - 0.14 * math.sin(3 * a)) * 13) + 0.25 * math.sin(4 * a + r * 6)
+        rgb = (212, 175, 55)
+    elif preset == "merkaba":
+        t1 = math.cos(3 * a) * math.exp(-abs(r - 0.55) * 4.5)
+        t2 = math.cos(3 * (a + math.pi / 3)) * math.exp(-abs(r - 0.55) * 4.5)
+        v = 0.48 + 0.45 * (t1 + t2) + 0.35 * math.exp(-r * 3.8)
+        rgb = (192, 132, 252)
+    else:
+        # cyberBust default
+        head_r = 0.68
+        d_head = math.hypot(nx, ny * 0.92 + 0.05)
+        halo = math.exp(-abs(r - 0.88) * 14) * 0.8
+        if d_head < head_r:
+            nz = math.sqrt(max(0.001, head_r * head_r - d_head * d_head)) / head_r
+            lx, ly, lz = -0.35 - nx, -0.35 - ny, 0.85
+            llen = math.hypot(lx, ly, lz)
+            v = max(0.08, (nx * lx + ny * ly + nz * lz) / llen)
+        else:
+            v = halo
+        rgb = (56, 189, 248)
+    v = max(0.0, min(1.0, v))
+    cr = min(255, int(rgb[0] * (0.35 + 0.65 * v)))
+    cg = min(255, int(rgb[1] * (0.35 + 0.65 * v)))
+    cb = min(255, int(rgb[2] * (0.35 + 0.65 * v)))
+    return v, (cr, cg, cb)
+
+
+def load_image_grid(path: str, cols: int, rows: int):
+    try:
+        from PIL import Image
+    except ImportError:
+        sys.stderr.write("Pillow not installed; falling back to procedural SDF.\n")
+        return None
+    img = Image.open(path).convert("RGB").resize((cols, rows))
+    pixels = list(img.getdata())
+    lum = []
+    rgb = []
+    for (r, g, b) in pixels:
+        v = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
+        lum.append(v)
+        rgb.append((r, g, b))
+    return lum, rgb
+
+
+def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edge: bool, color: bool, html: bool) -> str:
+    rows = max(12, int(cols * 0.48))
+    ramp = RAMPS.get(mode, RAMPS["ascii"])
+    lum = [0.0] * (rows * cols)
+    rgb = [(212, 175, 55)] * (rows * cols)
+
+    loaded = load_image_grid(image_path, cols, rows) if image_path else None
+    if loaded:
+        lum, rgb = loaded
+    else:
+        for r in range(rows):
+            ny = (r / max(1, rows - 1)) * 2.0 - 1.0
+            for c in range(cols):
+                nx = ((c / max(1, cols - 1)) * 2.0 - 1.0) * 1.35
+                v, cell_rgb = eval_sdf(nx, ny, preset)
+                lum[r * cols + c] = v
+                rgb[r * cols + c] = cell_rgb
+
+    out_lines = []
+    for r in range(rows):
+        line_parts = []
+        for c in range(cols):
+            idx = r * cols + c
+            v = lum[idx]
+            ch = ramp[min(len(ramp) - 1, max(0, int(v * len(ramp))))]
+
+            if edge and 0 < r < rows - 1 and 0 < c < cols - 1:
+                gx = (
+                    -lum[(r - 1) * cols + (c - 1)] + lum[(r - 1) * cols + (c + 1)]
+                    - 2 * lum[r * cols + (c - 1)] + 2 * lum[r * cols + (c + 1)]
+                    - lum[(r + 1) * cols + (c - 1)] + lum[(r + 1) * cols + (c + 1)]
+                )
+                gy = (
+                    -lum[(r - 1) * cols + (c - 1)] - 2 * lum[(r - 1) * cols + c] - lum[(r - 1) * cols + (c + 1)]
+                    + lum[(r + 1) * cols + (c - 1)] + 2 * lum[(r + 1) * cols + c] + lum[(r + 1) * cols + (c + 1)]
+                )
+                if math.hypot(gx, gy) > 0.34:
+                    deg = (math.degrees(math.atan2(gy, gx)) + 180.0) % 180.0
+                    if deg < 22.5 or deg >= 157.5:
+                        ch = "|"
+                    elif deg < 67.5:
+                        ch = "/"
+                    elif deg < 112.5:
+                        ch = "-"
+                    else:
+                        ch = "\\"
+
+            cr, cg, cb = rgb[idx]
+            if html:
+                safe_ch = "&amp;" if ch == "&" else ("&lt;" if ch == "<" else ("&gt;" if ch == ">" else ch))
+                line_parts.append(f'<span style="color:rgb({cr},{cg},{cb})">{safe_ch}</span>')
+            elif color:
+                line_parts.append(f"\x1b[38;2;{cr};{cg};{cb}m{ch}")
+            else:
+                line_parts.append(ch)
+        if color and not html:
+            line_parts.append("\x1b[0m")
+        out_lines.append("".join(line_parts))
+
+    body = "\n".join(out_lines)
+    if html:
+        return f'<pre style="background:#050508;font:600 10px/1.15 monospace;padding:16px;border-radius:12px;">\n{body}\n</pre>'
+    return body
+
+
+def serve_web(port: int):
+    web_dir = "${ZOTH_SRC_ROOT}/zoth-ascii-magic/public"
+    if not os.path.isdir(web_dir):
+        web_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
+    os.chdir(web_dir)
+    handler = http.server.SimpleHTTPRequestHandler
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("127.0.0.1", port), handler) as httpd:
+        print(f"⚡ Zoth ASCII Magic Studio serving on http://127.0.0.1:{port} (Zero-Egress Loopback)")
+        httpd.serve_forever()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Zoth ASCII Magic CLI — Image & 3D to TrueColor ASCII/Braille/HTML")
+    parser.add_argument("-i", "--image", help="Path to input image (PNG/JPG/WebP)")
+    parser.add_argument("-p", "--preset", default="cyberBust", choices=["cyberBust", "torus4d", "merkaba"], help="Procedural 3D SDF preset")
+    parser.add_argument("-m", "--mode", default="ascii", choices=["ascii", "braille", "blocks", "hex"], help="Glyph quantizer ramp")
+    parser.add_argument("-c", "--cols", type=int, default=68, help="Output matrix width in columns")
+    parser.add_argument("--no-edge", action="store_true", help="Disable Sobel directional edge glyphs")
+    parser.add_argument("--no-color", action="store_true", help="Disable 24-bit TrueColor ANSI escape codes")
+    parser.add_argument("--html", action="store_true", help="Output standalone HTML <pre> block")
+    parser.add_argument("--serve", type=int, metavar="PORT", help="Launch local Zoth ASCII Magic Web Studio on 127.0.0.1:PORT")
+    args = parser.parse_args()
+
+    if args.serve:
+        serve_web(args.serve)
+        return
+
+    print(
+        render_matrix(
+            cols=args.cols,
+            mode=args.mode,
+            preset=args.preset,
+            image_path=args.image,
+            edge=not args.no_edge,
+            color=not args.no_color,
+            html=args.html,
+        )
+    )
+
+
+if __name__ == "__main__":
+    main()
