@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""
+zoth-gesture-map — 21-Joint Hand Gesture & 68-Point Facial Viseme KWin Dispatcher Map for ZothOS v3.2
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+
+GESTURE_BINDINGS = [
+    {"gesture": "PINCH_INDEX_THUMB (< 0.045m)", "command": "zoth-mode --cycle-reality", "ring": 2},
+    {"gesture": "SWIPE_LEFT_TWO_FINGER", "command": "qdbus org.kde.KWin /KWin nextDesktop", "ring": 1},
+    {"gesture": "FIST_HOLD_800MS", "command": "zoth-amnesia --lock-vault", "ring": 0},
+    {"gesture": "OPEN_PALM_SPREAD", "command": "zoth-voice-call --ptt-toggle", "ring": 2},
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS Vision Gesture & Viseme Kinematics Map")
+    parser.add_argument("--json", action="store_true", help="Output gesture bindings as JSON")
+    args = parser.parse_args()
+
+    if args.json:
+        print(json.dumps({"engine": "zoth-gesture-map v3.2.0", "bindings": GESTURE_BINDINGS}, indent=2))
+    else:
+        print("╔══ ZOTH VISION GESTURE & VISEME DISPATCH MAP v3.2 ══╗")
+        for b in GESTURE_BINDINGS:
+            print(f"║ [Ring {b['ring']}] {b['gesture']:<28} -> {b['command']}")
+        print("╚════════════════════════════════════════════════════╝")
+
+
+if __name__ == "__main__":
+    main()
