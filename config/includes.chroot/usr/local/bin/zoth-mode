@@ -91,6 +91,13 @@ save_mode() {
     local m="$1"
     echo "$m" > "$STATE_FILE"
     echo "$m" > "$LEGACY_STATE" 2>/dev/null || true
+    case "$m" in
+        gold)      echo "aquila"  > "$HOME/.config/zothos/pet.state" ;;
+        ghost)     echo "draco"   > "$HOME/.config/zothos/pet.state" ;;
+        matrix)    echo "eye"     > "$HOME/.config/zothos/pet.state" ;;
+        cyan)      echo "kitsune" > "$HOME/.config/zothos/pet.state" ;;
+        win11|incognito) echo "athena" > "$HOME/.config/zothos/pet.state" ;;
+    esac
 }
 
 MODE="${1:-}"
