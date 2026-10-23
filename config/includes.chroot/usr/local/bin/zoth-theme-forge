@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""
+zoth-theme-forge — Sovereign Reality Shader & Desktop Theme Compiler for ZothOS v3.2
+Generates KDE Plasma (.colors), Alacritty (.toml), and Studio Reality CSS tokens.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+import sys
+
+REALITIES = {
+    "gold": {
+        "name": "Sovereign Obsidian Gold",
+        "primary": "#D4AF37",
+        "secondary": "#F59E0B",
+        "void": "#070709",
+        "radius": 14,
+        "bot": "AURUM-IX",
+        "pet": "aquila",
+    },
+    "matrix": {
+        "name": "Matrix Phosphor Green",
+        "primary": "#10B981",
+        "secondary": "#34D399",
+        "void": "#030906",
+        "radius": 4,
+        "bot": "CIPHER-0x9D",
+        "pet": "draco",
+    },
+    "ghost": {
+        "name": "Crimson Ghost Protocol",
+        "primary": "#F43F5E",
+        "secondary": "#FB7185",
+        "void": "#090407",
+        "radius": 8,
+        "bot": "SPECTER-V",
+        "pet": "eye",
+    },
+    "cyan": {
+        "name": "Cyber Cyan Quantum",
+        "primary": "#00F0FF",
+        "secondary": "#A855F7",
+        "void": "#03080E",
+        "radius": 10,
+        "bot": "KITSUNE-Q9",
+        "pet": "kitsune",
+    },
+    "incognito": {
+        "name": "Covert Chameleon Guise",
+        "primary": "#38BDF8",
+        "secondary": "#6366F1",
+        "void": "#0B0F17",
+        "radius": 16,
+        "bot": "CORTEX-PRO",
+        "pet": "athena",
+    },
+}
+
+
+def hex_to_rgb(h: str) -> str:
+    clean = h.lstrip("#")
+    n = int(clean, 16)
+    return f"{(n >> 16) & 255},{(n >> 8) & 255},{n & 255}"
+
+
+def emit_kde_colors(r_id: str, r: dict) -> str:
+    return f"""[General]
+ColorScheme=Zoth{r_id.capitalize()}
+Name=ZothOS {r['name']}
+CompanionBot={r['bot']}
+
+[Colors:Window]
+BackgroundNormal={hex_to_rgb(r['void'])}
+DecorationFocus={hex_to_rgb(r['primary'])}
+DecorationHover={hex_to_rgb(r['secondary'])}
+ForegroundActive={hex_to_rgb(r['primary'])}
+ForegroundNormal=245,240,232
+
+[WM]
+activeBackground={hex_to_rgb(r['void'])}
+activeBlend={hex_to_rgb(r['primary'])}
+activeForeground=245,240,232"""
+
+
+def emit_alacritty(r_id: str, r: dict) -> str:
+    return f"""# ZothOS v3.2 Alacritty Reality Profile — {r['name']} ({r['bot']})
+[colors.primary]
+background = "{r['void']}"
+foreground = "#F5F0E8"
+
+[colors.cursor]
+text = "{r['void']}"
+cursor = "{r['primary']}"
+
+[colors.normal]
+yellow  = "{r['primary']}"
+magenta = "{r['secondary']}"
+"""
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS Reality Theme & Shader Compiler")
+    parser.add_argument("--reality", choices=list(REALITIES.keys()), default="gold", help="Reality profile ID")
+    parser.add_argument("--format", choices=["kde", "alacritty", "json"], default="kde", help="Output format")
+    parser.add_argument("--list", action="store_true", help="List all 5 Reality themes and Zoth Bots")
+    args = parser.parse_args()
+
+    if args.list:
+        for k, v in REALITIES.items():
+            print(f"• {k:<10} | {v['name']:<26} | Primary: {v['primary']} | Bot: {v['bot']} ({v['pet']})")
+        return
+
+    r = REALITIES[args.reality]
+    if args.format == "kde":
+        print(emit_kde_colors(args.reality, r))
+    elif args.format == "alacritty":
+        print(emit_alacritty(args.reality, r))
+    else:
+        print(json.dumps({"id": args.reality, **r}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
