@@ -1,35 +1,101 @@
 #!/usr/bin/env python3
 """
-Zoth ASCII Magic CLI (zoth-ascii-magic v2.6.0)
-Sovereign Image & 3D SDF to 24-Bit TrueColor ASCII, Unicode Braille & Sobel Edge Synthesizer.
+Zoth ASCII Magic CLI (zoth-ascii-magic v2.7.0)
+Avant-Garde Image & 3D SDF to 24-Bit TrueColor ASCII, Bayer Dither, Unicode Braille & SVG Vector Synthesizer.
 Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
 import argparse
 import http.server
+import json
 import math
 import os
 import socketserver
 import sys
 
+BAYER_4X4 = [
+    [0 / 16, 8 / 16, 2 / 16, 10 / 16],
+    [12 / 16, 4 / 16, 14 / 16, 6 / 16],
+    [3 / 16, 11 / 16, 1 / 16, 9 / 16],
+    [15 / 16, 7 / 16, 13 / 16, 5 / 16],
+]
+
+BAYER_8X8 = [
+    [0 / 64, 32 / 64, 8 / 64, 40 / 64, 2 / 64, 34 / 64, 10 / 64, 42 / 64],
+    [48 / 64, 16 / 64, 56 / 64, 24 / 64, 50 / 64, 18 / 64, 58 / 64, 26 / 64],
+    [12 / 64, 44 / 64, 4 / 64, 36 / 64, 14 / 64, 46 / 64, 6 / 64, 38 / 64],
+    [60 / 64, 28 / 64, 52 / 64, 20 / 64, 62 / 64, 30 / 64, 54 / 64, 22 / 64],
+    [3 / 64, 35 / 64, 11 / 64, 43 / 64, 1 / 64, 33 / 64, 9 / 64, 41 / 64],
+    [51 / 64, 19 / 64, 59 / 64, 27 / 64, 49 / 64, 17 / 64, 57 / 64, 25 / 64],
+    [15 / 64, 47 / 64, 7 / 64, 39 / 64, 13 / 64, 45 / 64, 5 / 64, 37 / 64],
+    [63 / 64, 31 / 64, 55 / 64, 23 / 64, 61 / 64, 29 / 64, 53 / 64, 21 / 64],
+]
+
 RAMPS = {
     "ascii": " ·,:;+*?%S#@",
     "braille": " ⠁⠃⠇⠏⠟⠿⣿",
+    "bayer4": " ·░▒▓█",
+    "bayer8": "  ▂▃▄▅▆▇█",
     "blocks": " ·░▒▓█",
+    "katakana": " ·:+=*ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ",
+    "newsprint": " ·•●⬤",
     "hex": " .01379ACEF#",
 }
 
+PALETTES = {
+    "gold": (212, 175, 55),
+    "amber": (245, 158, 11),
+    "emerald": (16, 185, 129),
+    "cyan": (0, 240, 255),
+    "crimson": (244, 63, 94),
+    "neon": (192, 132, 252),
+}
 
-def eval_sdf(nx: float, ny: float, preset: str) -> tuple[float, tuple[int, int, int]]:
+
+def eval_sdf(nx: float, ny: float, preset: str, time_t: float = 0.0) -> tuple[float, tuple[int, int, int]]:
     r = math.hypot(nx * 1.25, ny * 1.25)
     a = math.atan2(ny, nx)
-    if preset == "torus4d":
-        v = 0.5 + 0.35 * math.cos((r - 0.52 - 0.14 * math.sin(3 * a)) * 13) + 0.25 * math.sin(4 * a + r * 6)
+    lx, ly, lz = -0.35 - nx, -0.35 - ny, 0.85
+    llen = math.hypot(lx, ly, lz)
+
+    if preset == "liquidChrome":
+        dx = nx - (-0.35)
+        dy = ny - (-0.35)
+        d_light = math.hypot(dx, dy)
+        ripple = math.sin(d_light * 14.0 - time_t * 3.5) * math.exp(-d_light * 1.8)
+        sigil_r = math.hypot(nx, ny)
+        sigil_a = math.atan2(ny, nx)
+        crest = math.exp(-abs(sigil_r - 0.62) * 8.0) * (0.8 + 0.3 * math.cos(sigil_a * 6))
+        norm_x = nx + ripple * (dx / max(0.1, d_light)) + math.cos(sigil_a * 3) * 0.15
+        norm_y = ny + ripple * (dy / max(0.1, d_light)) + math.sin(sigil_a * 3) * 0.15
+        spec = math.pow(max(0.0, norm_x * math.cos(time_t * 0.8) + norm_y * math.sin(time_t * 0.8)), 5.0)
+        rim = math.pow(1.0 - min(1.0, math.hypot(norm_x, norm_y)), 2.2)
+        v = max(0.0, min(1.0, crest * 0.45 + spec * 0.65 + rim * 0.35 + 0.08))
+        rgb = (241, 245, 249)
+    elif preset == "torus4d":
+        v = 0.5 + 0.35 * math.cos((r - 0.52 - 0.14 * math.sin(3 * a + time_t * 2.1)) * 13) + 0.25 * math.sin(4 * a + r * 6)
         rgb = (212, 175, 55)
     elif preset == "merkaba":
-        t1 = math.cos(3 * a) * math.exp(-abs(r - 0.55) * 4.5)
-        t2 = math.cos(3 * (a + math.pi / 3)) * math.exp(-abs(r - 0.55) * 4.5)
+        t1 = math.cos(3 * (a + time_t * 0.9)) * math.exp(-abs(r - 0.55) * 4.5)
+        t2 = math.cos(3 * (a - time_t * 0.9 + math.pi / 3)) * math.exp(-abs(r - 0.55) * 4.5)
         v = 0.48 + 0.45 * (t1 + t2) + 0.35 * math.exp(-r * 3.8)
         rgb = (192, 132, 252)
+    elif preset == "datamosh":
+        shift = math.sin(math.floor((ny + 1) * 12) * 3.7 + math.floor(time_t * 6)) * 0.35
+        band = math.sin((nx * 1.25 + shift) * 8 - time_t * 5) * math.cos(ny * 14 + math.sin(time_t * 3) * 2)
+        v = max(0.0, min(1.0, 0.5 + band * 0.48))
+        rgb = (236, 72, 153)
+    elif preset == "radar":
+        sweep = (time_t * 2.2) % (math.pi * 2)
+        diff = (((a - sweep) % (math.pi * 2)) + math.pi * 2) % (math.pi * 2)
+        beam = math.exp(-diff * 3.2) * math.exp(-r * 0.9)
+        rings = math.pow(max(0.0, math.cos(r * 16)), 6) * 0.55
+        v = max(0.0, min(1.0, beam * 0.85 + rings))
+        rgb = (52, 211, 153)
+    elif preset == "sigil":
+        hex_wave = math.cos(6 * a + math.sin(r * 10 - time_t * 3) * 2.3)
+        seal = math.exp(-abs(r - 0.62) * 6.5) + math.exp(-abs(r - 0.32) * 7.5)
+        v = max(0.0, min(1.0, 0.25 + seal * 0.55 + hex_wave * 0.28))
+        rgb = (245, 158, 11)
     else:
         # cyberBust default
         head_r = 0.68
@@ -37,12 +103,13 @@ def eval_sdf(nx: float, ny: float, preset: str) -> tuple[float, tuple[int, int, 
         halo = math.exp(-abs(r - 0.88) * 14) * 0.8
         if d_head < head_r:
             nz = math.sqrt(max(0.001, head_r * head_r - d_head * d_head)) / head_r
-            lx, ly, lz = -0.35 - nx, -0.35 - ny, 0.85
-            llen = math.hypot(lx, ly, lz)
-            v = max(0.08, (nx * lx + ny * ly + nz * lz) / llen)
+            ndotl = max(0.08, (nx * lx + ny * ly + nz * lz) / llen)
+            visor = 0.45 if (abs(ny + 0.08) < 0.11 and abs(nx) < 0.48) else 0.0
+            v = min(1.0, ndotl * 0.85 + visor)
         else:
             v = halo
         rgb = (56, 189, 248)
+
     v = max(0.0, min(1.0, v))
     cr = min(255, int(rgb[0] * (0.35 + 0.65 * v)))
     cg = min(255, int(rgb[1] * (0.35 + 0.65 * v)))
@@ -67,11 +134,37 @@ def load_image_grid(path: str, cols: int, rows: int):
     return lum, rgb
 
 
-def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edge: bool, color: bool, html: bool) -> str:
-    rows = max(12, int(cols * 0.48))
+def generate_svg(lines: list[str], cols: int, rows: int, tube_rgb: tuple[int, int, int]) -> str:
+    line_height = 13
+    char_width = 7.6
+    svg_w = int(cols * char_width + 32)
+    svg_h = int(len(lines) * line_height + 36)
+    hex_color = f"rgb({tube_rgb[0]},{tube_rgb[1]},{tube_rgb[2]})"
+    escaped_nodes = []
+    for i, line in enumerate(lines):
+        safe_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+        escaped_nodes.append(f'    <text x="16" y="{(i + 1) * line_height + 18}" fill="{hex_color}">{safe_line}</text>')
+    nodes_xml = "\n".join(escaped_nodes)
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_w} {svg_h}" width="{svg_w}" height="{svg_h}">
+  <defs>
+    <style>
+      text {{ font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; font-variant-ligatures: none; }}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" rx="14" fill="#040508"/>
+  <rect width="100%" height="100%" rx="14" fill="none" stroke="{hex_color}" stroke-width="1.5" stroke-opacity="0.35"/>
+  <g>
+{nodes_xml}
+  </g>
+</svg>"""
+
+
+def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edge: bool, color: bool, html: bool, svg: bool, tube: str):
+    rows = max(14, int(cols * 0.48))
     ramp = RAMPS.get(mode, RAMPS["ascii"])
+    tube_rgb = PALETTES.get(tube, (212, 175, 55))
     lum = [0.0] * (rows * cols)
-    rgb = [(212, 175, 55)] * (rows * cols)
+    rgb = [tube_rgb] * (rows * cols)
 
     loaded = load_image_grid(image_path, cols, rows) if image_path else None
     if loaded:
@@ -85,14 +178,30 @@ def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edg
                 lum[r * cols + c] = v
                 rgb[r * cols + c] = cell_rgb
 
-    out_lines = []
+    raw_lines = []
+    ansi_lines = []
+    html_lines = []
+
     for r in range(rows):
-        line_parts = []
+        raw_parts = []
+        ansi_parts = []
+        html_parts = []
         for c in range(cols):
             idx = r * cols + c
             v = lum[idx]
             ch = ramp[min(len(ramp) - 1, max(0, int(v * len(ramp))))]
 
+            # Bayer dithering overrides
+            if mode == "bayer4":
+                threshold = BAYER_4X4[r % 4][c % 4]
+                dither_val = max(0.0, min(0.99, v + (threshold - 0.5) * 0.32))
+                ch = ramp[min(len(ramp) - 1, max(0, int(dither_val * len(ramp))))]
+            elif mode == "bayer8":
+                threshold = BAYER_8X8[r % 8][c % 8]
+                dither_val = max(0.0, min(0.99, v + (threshold - 0.5) * 0.36))
+                ch = ramp[min(len(ramp) - 1, max(0, int(dither_val * len(ramp))))]
+
+            # Sobel directional contours
             if edge and 0 < r < rows - 1 and 0 < c < cols - 1:
                 gx = (
                     -lum[(r - 1) * cols + (c - 1)] + lum[(r - 1) * cols + (c + 1)]
@@ -115,21 +224,22 @@ def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edg
                         ch = "\\"
 
             cr, cg, cb = rgb[idx]
-            if html:
-                safe_ch = "&amp;" if ch == "&" else ("&lt;" if ch == "<" else ("&gt;" if ch == ">" else ch))
-                line_parts.append(f'<span style="color:rgb({cr},{cg},{cb})">{safe_ch}</span>')
-            elif color:
-                line_parts.append(f"\x1b[38;2;{cr};{cg};{cb}m{ch}")
-            else:
-                line_parts.append(ch)
-        if color and not html:
-            line_parts.append("\x1b[0m")
-        out_lines.append("".join(line_parts))
+            raw_parts.append(ch)
+            ansi_parts.append(f"\x1b[38;2;{cr};{cg};{cb}m{ch}")
+            safe_ch = "&amp;" if ch == "&" else ("&lt;" if ch == "<" else ("&gt;" if ch == ">" else ch))
+            html_parts.append(f'<span style="color:rgb({cr},{cg},{cb})">{safe_ch}</span>')
 
-    body = "\n".join(out_lines)
+        raw_lines.append("".join(raw_parts))
+        ansi_lines.append("".join(ansi_parts) + "\x1b[0m")
+        html_lines.append("".join(html_parts))
+
+    if svg:
+        return generate_svg(raw_lines, cols, rows, tube_rgb)
     if html:
-        return f'<pre style="background:#050508;font:600 10px/1.15 monospace;padding:16px;border-radius:12px;">\n{body}\n</pre>'
-    return body
+        return f'<pre style="background:#040508;color:#D4AF37;font:600 11px/1.2 monospace;padding:20px;border-radius:14px;overflow:auto;">\n' + "\n".join(html_lines) + "\n</pre>"
+    if color:
+        return "\n".join(ansi_lines)
+    return "\n".join(raw_lines)
 
 
 def serve_web(port: int):
@@ -145,14 +255,17 @@ def serve_web(port: int):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zoth ASCII Magic CLI — Image & 3D to TrueColor ASCII/Braille/HTML")
+    parser = argparse.ArgumentParser(description="Zoth ASCII Magic CLI (v2.7.0) — Avant-Garde Image & 3D to TrueColor ASCII, Bayer Dither & SVG")
     parser.add_argument("-i", "--image", help="Path to input image (PNG/JPG/WebP)")
-    parser.add_argument("-p", "--preset", default="cyberBust", choices=["cyberBust", "torus4d", "merkaba"], help="Procedural 3D SDF preset")
-    parser.add_argument("-m", "--mode", default="ascii", choices=["ascii", "braille", "blocks", "hex"], help="Glyph quantizer ramp")
-    parser.add_argument("-c", "--cols", type=int, default=68, help="Output matrix width in columns")
+    parser.add_argument("-p", "--preset", default="cyberBust", choices=["cyberBust", "liquidChrome", "torus4d", "merkaba", "datamosh", "radar", "sigil"], help="Procedural 3D SDF shader preset")
+    parser.add_argument("-m", "--mode", default="ascii", choices=["ascii", "braille", "bayer4", "bayer8", "blocks", "katakana", "newsprint", "hex"], help="Glyph quantizer ramp")
+    parser.add_argument("-t", "--tube", default="gold", choices=["gold", "amber", "emerald", "cyan", "crimson", "neon"], help="CRT Phosphor tube palette")
+    parser.add_argument("-c", "--cols", type=int, default=72, help="Output matrix width in columns")
     parser.add_argument("--no-edge", action="store_true", help="Disable Sobel directional edge glyphs")
     parser.add_argument("--no-color", action="store_true", help="Disable 24-bit TrueColor ANSI escape codes")
     parser.add_argument("--html", action="store_true", help="Output standalone HTML <pre> block")
+    parser.add_argument("--svg", action="store_true", help="Output scalable vector SVG markup")
+    parser.add_argument("--json", action="store_true", help="Output JSON descriptor payload")
     parser.add_argument("--serve", type=int, metavar="PORT", help="Launch local Zoth ASCII Magic Web Studio on 127.0.0.1:PORT")
     args = parser.parse_args()
 
@@ -160,17 +273,40 @@ def main():
         serve_web(args.serve)
         return
 
-    print(
-        render_matrix(
-            cols=args.cols,
-            mode=args.mode,
-            preset=args.preset,
-            image_path=args.image,
-            edge=not args.no_edge,
-            color=not args.no_color,
-            html=args.html,
-        )
+    result = render_matrix(
+        cols=args.cols,
+        mode=args.mode,
+        preset=args.preset,
+        image_path=args.image,
+        edge=not args.no_edge,
+        color=not args.no_color,
+        html=args.html,
+        svg=args.svg,
+        tube=args.tube,
     )
+
+    if args.json:
+        rows = max(14, int(args.cols * 0.48))
+        print(
+            json.dumps(
+                {
+                    "generator": "zoth-ascii-magic",
+                    "version": "2.7.0",
+                    "preset": args.preset,
+                    "mode": args.mode,
+                    "tube": args.tube,
+                    "cols": args.cols,
+                    "rows": rows,
+                    "total_cells": args.cols * rows,
+                    "sobel_edges": not args.no_edge,
+                    "output_sample": result[:200] + "...",
+                },
+                indent=2,
+            )
+        )
+        return
+
+    print(result)
 
 
 if __name__ == "__main__":
