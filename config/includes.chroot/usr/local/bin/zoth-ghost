@@ -97,7 +97,7 @@ start_ghostmode() {
     for hf in ~/.bash_history ~/.zsh_history ~/.lesshst ~/.viminfo; do
         [[ -f "$hf" ]] && shred -u "$hf" 2>/dev/null || true
     done
-    rm -rf ~/.cache/thumbnails/* /tmp/* 2>/dev/null || true
+    rm -rf ~/.cache/thumbnails/* /tmp/zoth_* /tmp/*.tmp 2>/dev/null || true
     sudo sync 2>/dev/null || true
     echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1 || true
     echo -e "      ${GREEN}✓${RESET} RAM cleared and history shredded"
@@ -223,7 +223,7 @@ amnesic_scrub() {
     for hf in ~/.bash_history ~/.zsh_history ~/.lesshst ~/.viminfo; do
         [[ -f "$hf" ]] && shred -u "$hf" 2>/dev/null || true
     done
-    rm -rf ~/.cache/thumbnails/* /tmp/* 2>/dev/null || true
+    rm -rf ~/.cache/thumbnails/* /tmp/zoth_* /tmp/*.tmp 2>/dev/null || true
     sudo sync 2>/dev/null || true
     echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1 || true
     echo -e "${GREEN}[✓] Memory purged and forensic artifacts wiped.${RESET}"

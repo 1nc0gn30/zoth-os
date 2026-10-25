@@ -1,0 +1,3 @@
+#!/bin/sh
+export ZOTH_RELAY_CONFIG=${ZOTH_RELAY_CONFIG:-/etc/zoth-relay/config.yaml}
+exec /opt/zoth-relay/venv/bin/python -m zoth_relay "$@"

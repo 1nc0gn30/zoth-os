@@ -5,7 +5,7 @@
   <br />
   <br />
 
-  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 2 &nbsp; 🜄</h1>
+  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 3 &nbsp; 🜄</h1>
   <h3><em>The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System</em></h3>
 
   <p>
@@ -19,14 +19,14 @@
   <p>
     <strong>Site:</strong> <a href="https://zothos.nullai.tech">zothos.nullai.tech</a>
     &nbsp;&bull;&nbsp;
-    <strong>ISO:</strong> <a href="https://github.com/NullAITech/zoth-os/releases/tag/v3.2.0">v3.2.0</a>
+    <strong>ISO:</strong> <a href="https://github.com/NullAITech/zoth-os/releases/tag/v3.3.0">v3.3.0</a>
     &nbsp;&bull;&nbsp;
     <strong>Studio:</strong> <a href="https://zoth.nullai.tech">zoth.nullai.tech</a>
   </p>
 
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
-    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.2.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
+    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.3.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
     <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Reproducible%20builds-in%20progress-yellow.svg?style=for-the-badge" alt="Reproducible builds: in progress" /></a>
     <a href="https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os"><img src="https://api.scorecard.dev/projects/github.com/NullAITech/zoth-os/badge" alt="OpenSSF Scorecard" /></a>
     <a href="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml"><img src="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>

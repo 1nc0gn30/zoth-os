@@ -414,8 +414,14 @@ def run_doctor(interactive=False):
                         pip_map = {"opencv-python": "cv2", "PyMuPDF": "fitz", "aider-chat": "aider"}
                         for m in mod_list:
                             mod_name = pip_map.get(m, m.replace("-", "_"))
-                            verify_ret = subprocess.run(f"/opt/zothos-ai-env/bin/python3 -c \x27import {mod_name}\x27 2>/dev/null || python3 -c \x27import {mod_name}\x27 2>/dev/null", shell=True)
-                            if verify_ret.returncode != 0:
+                            import importlib.util, glob
+                            found = importlib.util.find_spec(mod_name) is not None
+                            if not found:
+                                for sp in glob.glob('/opt/zothos-ai-env/lib/python*/site-packages') + glob.glob('/usr/local/lib/python*/dist-packages') + ['/usr/lib/python3/dist-packages']:
+                                    if os.path.exists(os.path.join(sp, mod_name)) or os.path.exists(os.path.join(sp, mod_name + '.py')):
+                                        found = True
+                                        break
+                            if not found:
                                 all_mods_ok = False
                                 break
                         is_ready = all_mods_ok

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [[ -x "/usr/bin/veracrypt" ]]; then
+    exec /usr/bin/veracrypt "$@"
+fi
+if [[ "${1:-}" == "--help" || "${1:-}" == "--version" ]]; then
+    echo "ZothOS VeraCrypt Vault Wrapper v1.0 (delegates to zoth-vault)"
+    exit 0
+fi
+exec /usr/local/bin/zoth-konsole --title "Zoth VeraCrypt & Sovereign Vault" -- /usr/local/bin/zoth-vault "$@"

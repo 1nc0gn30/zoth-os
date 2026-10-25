@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  🜂 ZOTHOS NATIVE KDE PLASMA 3D INTERACTIVE OS WALLPAPER ACTIVATOR 🜄
+# ==============================================================================
+if [[ -n "${1:-}" ]]; then
+    exec /usr/local/bin/zoth-mode "$1"
+else
+    exec /usr/local/bin/zoth-mode wallpaper
+fi

@@ -252,19 +252,21 @@ cmd_status() {
         return
     fi
 
-    local servers
-    servers=$(jq -r '.mcpServers | keys[]' "$cfg")
-    for s in $servers; do
-        local cmd
-        cmd=$(jq -r ".mcpServers[\"$s\"].command" "$cfg")
-        local desc
-        desc=$(jq -r ".mcpServers[\"$s\"].description // \"N/A\"" "$cfg")
-        local stat="${GREEN}[READY]${RESET}"
-        if ! command -v "$cmd" >/dev/null 2>&1; then
-            stat="${YELLOW}[STANDBY]${RESET}"
-        fi
-        printf "  %-24s %-20b %s\n" "$s" "$stat" "${GRAY}$desc${RESET}"
-    done
+    python3 - "$cfg" << 'PYSTATUS'
+import json, shutil, sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    servers = (json.load(f).get("mcpServers") or {})
+G = "\033[38;2;0;255;157m"
+Y = "\033[38;2;255;184;0m"
+GR = "\033[38;2;120;140;160m"
+R = "\033[0m"
+for s in sorted(servers):
+    spec = servers[s] or {}
+    cmd = spec.get("command") or ""
+    desc = spec.get("description") or "N/A"
+    stat = f"{G}[READY]{R}" if (cmd and shutil.which(cmd)) else f"{Y}[STANDBY]{R}"
+    print(f"  {s:<24} {stat:<29} {GR}{desc}{R}")
+PYSTATUS
     echo ""
 }
 

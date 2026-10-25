@@ -1,32 +1,42 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS ENVIRONMENT & STEALTH MODE SWITCHER v3.0
+#  🜂 ZOTHOS REALITY & ENVIRONMENT CONTROLLER v4.1 (STABLE & HARDENED) 🜄
 # ==============================================================================
-#  Instantly switch between Sovereign Default and Ghostmode Stealth,
-#  or select specialized desktop profiles:
-#    1. gold      - Sovereign Gold Master (Default, 24K Alchemical Gold)
-#    2. ghost     - NullAI Ghostmode (Amnesic Stealth, Tor-Cloaked)
-#    3. matrix    - Hermetic Matrix (Digital Rain, Phosphor Emerald)
-#    4. incognito - Chameleon Disguise (Covert Fluent Guise)
+#  Full OS-Level Reality Transformer:
+#   1. gold      - Sovereign Gold Master (24K Gold, Azoth Prime, Astrolabe 3D)
+#   2. ghost     - NullAI Ghostmode Stealth (Crimson Void, Ghostbyte, Torus 3D)
+#   3. matrix    - Hermetic Matrix Emerald (Phosphor CRT, Lucy Oracle, Rain 3D)
+#   4. incognito - Covert Chameleon Disguise (Windows 11 Fluent, Chameleon 11)
 # ==============================================================================
 
-set -euo pipefail
+set -uo pipefail
 
-STATE_FILE="$HOME/.config/zothos/profile.state"
-LEGACY_STATE="$HOME/.config/zothos/reality.state"
-mkdir -p "$HOME/.config/zothos"
+USER_HOME="${HOME:-${ZOTH_HOME}}"
+CFG_DIR="$USER_HOME/.config/zothos"
+STATE_FILE="$CFG_DIR/profile.state"
+CURRENT_MODE_FILE="$CFG_DIR/current_mode"
+LEGACY_STATE="$CFG_DIR/reality.state"
+ACTIVE_CHAR_FILE="$CFG_DIR/active_character.json"
+mkdir -p "$CFG_DIR"
 
+WP_DIR="/usr/share/backgrounds/zothos"
+SOUND_DIR="/usr/share/sounds/zothos"
+
+# ANSI Colors
 GOLD="\033[38;2;255;215;0m"
+AMBER="\033[38;2;212;175;55m"
 CYAN="\033[38;2;0;229;255m"
 GREEN="\033[38;2;0;255;157m"
-YELLOW="\033[38;2;255;204m"
 RED="\033[38;2;255;51;85m"
-GRAY="\033[38;2;120;140;160m"
+BLUE="\033[38;2;56;189;248m"
+DIM="\033[38;2;120;140;160m"
 BOLD="\033[1m"
 RESET="\033[0m"
 
 get_current_mode() {
-    if [[ -f "$STATE_FILE" ]]; then
+    if [[ -f "$CURRENT_MODE_FILE" ]]; then
+        cat "$CURRENT_MODE_FILE"
+    elif [[ -f "$STATE_FILE" ]]; then
         cat "$STATE_FILE"
     elif [[ -f "$LEGACY_STATE" ]]; then
         cat "$LEGACY_STATE"
@@ -35,152 +45,300 @@ get_current_mode() {
     fi
 }
 
-WP_DIR="/usr/share/backgrounds/zothos"
-SOUND_DIR="/usr/share/sounds/zothos"
+apply_plasma_colorscheme() {
+    local scheme="$1"
+    if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
+        plasma-apply-colorscheme "$scheme" >/dev/null 2>&1 || true
+    fi
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file kdeglobals --group General --key ColorScheme "$scheme" 2>/dev/null || true
+    fi
+}
+
+apply_icons_and_cursors() {
+    local icon_theme="breeze-dark"
+    local cursor_theme="$1"
+    local gtk_theme="$2"
+
+    # Always ensure complete, non-broken icon suite for Plasma panel & desktop
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file kdeglobals --group Icons --key Theme "$icon_theme" 2>/dev/null || true
+        kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme "$cursor_theme" 2>/dev/null || true
+    fi
+
+    # Update GTK 3 & 4 settings
+    local gtk3_dir="$USER_HOME/.config/gtk-3.0"
+    local gtk4_dir="$USER_HOME/.config/gtk-4.0"
+    mkdir -p "$gtk3_dir" "$gtk4_dir"
+
+    for d in "$gtk3_dir" "$gtk4_dir"; do
+        cat << GEOF > "$d/settings.ini"
+[Settings]
+gtk-theme-name=$gtk_theme
+gtk-icon-theme-name=$icon_theme
+gtk-font-name=Inter 10
+gtk-cursor-theme-name=$cursor_theme
+gtk-application-prefer-dark-theme=1
+GEOF
+    done
+
+    cat << GEOF2 > "$USER_HOME/.gtkrc-2.0"
+gtk-theme-name="$gtk_theme"
+gtk-icon-theme-name="$icon_theme"
+GEOF2
+
+    # Ensure plasmashell is alive and healthy
+    if ! pgrep -x plasmashell >/dev/null 2>&1; then
+        systemctl --user start plasma-plasmashell.service 2>/dev/null || true
+    fi
+}
 
 apply_wallpaper() {
     local wp="$1"
-    if [[ ! -f "$wp" ]]; then
-        return 0
-    fi
+    # Always preserve & activate the native KDE Plasma 6 3D Interactive Wallpaper (org.zothos.interactive)
+    # Never overwrite the OS desktop with a flat static org.kde.image wallpaper or browser window.
+    systemctl --user start zoth-cursor-daemon.service 2>/dev/null || true
 
-    # KDE Plasma CLI
-    if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
-        plasma-apply-wallpaperimage "$wp" 2>/dev/null || true
-    fi
-
-    # KDE Plasma Live DBus Script
-    if command -v qdbus >/dev/null 2>&1; then
-        qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+    if command -v qdbus6 >/dev/null 2>&1; then
+        qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
         var allDesktops = desktops();
         for (var i = 0; i < allDesktops.length; i++) {
             var d = allDesktops[i];
-            d.wallpaperPlugin = 'org.kde.image';
-            d.currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];
-            d.writeConfig('Image', 'file://${wp}');
-            if (typeof d.reloadConfig === 'function') {
-                d.reloadConfig();
-            }
+            d.wallpaperPlugin = 'org.zothos.interactive';
+            if (typeof d.reloadConfig === 'function') d.reloadConfig();
         }
-        " 2>/dev/null || true
+        " >/dev/null 2>&1 || true
     fi
 
-    # XFCE4
-    if command -v xfconf-query >/dev/null 2>&1; then
-        for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep "last-image" || true); do
-            xfconf-query -c xfce4-desktop -p "$prop" -s "$wp" 2>/dev/null || true
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        for cid in 1 19 24; do
+            kwriteconfig6 --file "$USER_HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" \
+                --group Containments --group "$cid" \
+                --key wallpaperplugin "org.zothos.interactive" 2>/dev/null || true
+        done
+    fi
+}
+
+apply_konsole_profile() {
+    local profile_name="$1"
+    local color_bg="$2"
+    local color_fg="$3"
+
+    # Default profile for future Konsole sessions
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile "${profile_name}.profile" 2>/dev/null || true
+    fi
+
+    # Update all running Konsole windows & tabs via qdbus6
+    if command -v qdbus6 >/dev/null 2>&1; then
+        for svc in $(qdbus6 2>/dev/null | grep -E 'org\.kde\.konsole' || true); do
+            for sess in $(qdbus6 "$svc" 2>/dev/null | grep -E '/Sessions/[0-9]+' || true); do
+                qdbus6 "$svc" "$sess" org.kde.konsole.Session.setProfile "$profile_name" >/dev/null 2>&1 || true
+            done
         done
     fi
 
-    # Feh / X11 fallback
-    if command -v feh >/dev/null 2>&1 && [[ -n "${DISPLAY:-}" ]]; then
-        feh --bg-fill "$wp" 2>/dev/null || true
-    fi
+    # Send OSC 10/11 color sequence to interactive pts to dynamically shift terminal palette
+    for pt in /dev/pts/*; do
+        if [[ -w "$pt" && "$pt" != "/dev/pts/ptmx" ]]; then
+            printf "\033]10;%s\007\033]11;%s\007" "$color_fg" "$color_bg" > "$pt" 2>/dev/null || true
+        fi
+    done
 }
 
 play_cue() {
     local cue="$1"
-    if [[ -f "$cue" ]] && command -v paplay >/dev/null 2>&1; then
-        paplay "$cue" 2>/dev/null &
-    elif [[ -f "$cue" ]] && command -v aplay >/dev/null 2>&1; then
-        aplay -q "$cue" 2>/dev/null &
+    if [[ -f "$cue" ]] && command -v aplay >/dev/null 2>&1; then
+        aplay -q "$cue" >/dev/null 2>&1 &
     fi
 }
 
-save_mode() {
-    local m="$1"
-    echo "$m" > "$STATE_FILE"
-    echo "$m" > "$LEGACY_STATE" 2>/dev/null || true
-    case "$m" in
-        gold)      echo "aquila"  > "$HOME/.config/zothos/pet.state" ;;
-        ghost)     echo "draco"   > "$HOME/.config/zothos/pet.state" ;;
-        matrix)    echo "eye"     > "$HOME/.config/zothos/pet.state" ;;
-        cyan)      echo "kitsune" > "$HOME/.config/zothos/pet.state" ;;
-        win11|incognito) echo "athena" > "$HOME/.config/zothos/pet.state" ;;
+save_mode_and_character() {
+    local mode="$1"
+    echo "$mode" > "$CURRENT_MODE_FILE"
+    echo "$mode" > "$STATE_FILE"
+    echo "$mode" > "$LEGACY_STATE" 2>/dev/null || true
+
+    local char_id="azoth"
+    local char_name="Azoth Prime"
+    local char_title="The Alchemical Sovereign & Prime Architect"
+    local char_glyph="☿"
+    local char_voice="am_michael"
+    local char_color="#FFD700"
+
+    case "$mode" in
+        gold)
+            char_id="azoth"
+            char_name="Azoth Prime"
+            char_title="The Alchemical Sovereign & Prime Architect"
+            char_glyph="☿"
+            char_voice="am_michael"
+            char_color="#FFD700"
+            ;;
+        ghost)
+            char_id="ghostbyte"
+            char_name="Ghostbyte"
+            char_title="Imperator & Amnesic Enclave Commander"
+            char_glyph="👻"
+            char_voice="am_onyx"
+            char_color="#FF3355"
+            ;;
+        matrix)
+            char_id="lucy"
+            char_name="Lucy Netrunner"
+            char_title="Cognitive STDP Memory Oracle // Deep-Net Infiltrator"
+            char_glyph="🜂"
+            char_voice="bf_emma"
+            char_color="#00FF9D"
+            ;;
+        incognito)
+            char_id="chameleon"
+            char_name="Chameleon 11"
+            char_title="Covert Fluent Executive & Enterprise Disguise"
+            char_glyph="🪟"
+            char_voice="bm_daniel"
+            char_color="#0078D4"
+            ;;
     esac
+
+    cat << CJEOF > "$ACTIVE_CHAR_FILE"
+{
+  "mode": "$mode",
+  "id": "$char_id",
+  "name": "$char_name",
+  "title": "$char_title",
+  "glyph": "$char_glyph",
+  "voice": "$char_voice",
+  "color": "$char_color"
+}
+CJEOF
 }
 
 MODE="${1:-}"
 
-# If no argument given or 'toggle', toggle between default (gold) and ghostmode
+# Interactive Menu if no arguments
 if [[ -z "$MODE" ]]; then
     CUR=$(get_current_mode)
-    echo -e "${GOLD}${BOLD}ZOTHOS ENVIRONMENT & STEALTH CONTROLLER${RESET}"
-    echo -e "Active Profile: ${CYAN}${CUR}${RESET}\n"
-    echo -e "  ${GOLD}[1] gold / default${RESET}  - Return to Sovereign Gold Master (Default)"
-    echo -e "  ${RED}[2] ghost / stealth${RESET} - Engage NullAI Ghostmode & Amnesic Tor"
-    echo -e "  ${GREEN}[3] matrix${RESET}          - Hermetic Matrix & Emerald Phosphor"
-    echo -e "  ${YELLOW}[4] incognito / win11${RESET}   - Covert Chameleon Disguise"
-    echo -e "  ${CYAN}[t] toggle${RESET}          - Instant Toggle (Default <-> Ghostmode)\n"
-    read -rp "Select mode [1-4, t]: " choice
+    echo -e "${GOLD}${BOLD}╔══════════════════════════════════════════════════════════════════╗${RESET}"
+    echo -e "${GOLD}${BOLD}║       🜂 ZOTHOS SOVEREIGN REALITY & ENVIRONMENT CONTROLLER 🜄      ║${RESET}"
+    echo -e "${GOLD}${BOLD}╚══════════════════════════════════════════════════════════════════╝${RESET}"
+    echo -e "  Active Reality: ${CYAN}${BOLD}${CUR}${RESET}\n"
+    echo -e "  ${GOLD}[1] gold      - Sovereign Gold Master (24K Gold, Azoth Prime, Astrolabe 3D)${RESET}"
+    echo -e "  ${RED}[2] ghost     - NullAI Ghostmode Stealth (Crimson Void, Ghostbyte, Torus 3D)${RESET}"
+    echo -e "  ${GREEN}[3] matrix    - Hermetic Matrix Emerald (Phosphor CRT, Lucy Oracle, Rain 3D)${RESET}"
+    echo -e "  ${BLUE}[4] incognito - Covert Chameleon Disguise (Windows 11 Fluent, Chameleon 11)${RESET}"
+    echo -e "  ${CYAN}[t] toggle    - Instant Toggle (Default Gold <-> Ghostmode Stealth)${RESET}\n"
+    read -rp "Select Reality Mode [1-4, t]: " choice
     case "$choice" in
-        1|gold|default) MODE="gold" ;;
-        2|ghost|stealth) MODE="ghost" ;;
-        3|matrix) MODE="matrix" ;;
-        4|incognito|win11) MODE="incognito" ;;
+        1|gold|default|sanctum) MODE="gold" ;;
+        2|ghost|stealth|amnesic) MODE="ghost" ;;
+        3|matrix|hacker|green) MODE="matrix" ;;
+        4|incognito|win11|windows|undercover) MODE="incognito" ;;
         t|toggle|"")
-            if [[ "$CUR" == "ghost" ]]; then
-                MODE="gold"
-            else
-                MODE="ghost"
-            fi
+            if [[ "$CUR" == "ghost" ]]; then MODE="gold"; else MODE="ghost"; fi
             ;;
-        *) echo -e "${RED}[!] Invalid choice.${RESET}"; exit 1 ;;
+        *) echo -e "${RED}[!] Invalid selection.${RESET}"; exit 1 ;;
     esac
 fi
 
 if [[ "$MODE" == "toggle" ]]; then
     CUR=$(get_current_mode)
-    if [[ "$CUR" == "ghost" ]]; then
-        MODE="gold"
-    else
-        MODE="ghost"
-    fi
+    if [[ "$CUR" == "ghost" ]]; then MODE="gold"; else MODE="ghost"; fi
 fi
 
 case "$MODE" in
     gold|default|sanctum)
-        echo -e "${GOLD}[+] Restoring Sovereign Gold Master Profile (Default)...${RESET}"
-        apply_wallpaper "$WP_DIR/zoth-gold-master.png"
+        echo -e "${GOLD}${BOLD}[+] ENGAGING REALITY: SOVEREIGN GOLD MASTER (24K SANCTUM)...${RESET}"
+        apply_plasma_colorscheme "ZothHermeticGold"
+        apply_icons_and_cursors "Zoth-Azoth-Gold" "Zoth-Azoth-Gold"
+        apply_wallpaper "$WP_DIR/zoth-gold-master.jpg"
+        apply_konsole_profile "Zoth-Gold" "#0A0804" "#FFD700"
+        save_mode_and_character "gold"
         play_cue "$SOUND_DIR/gold-sanctum.wav"
-        save_mode "gold"
-        # Disengage ghostmode transparent proxy if running
-        if [[ -f "/run/zoth_ghostmode.state" ]] && command -v zoth-ghost >/dev/null 2>&1; then
-            zoth-ghost stop 2>/dev/null || true
-        fi
-        echo -e "${GOLD}[✓] Active Profile: Sovereign Gold Master (Default Engaged).${RESET}"
+
+        echo -e "  ${AMBER}◈ Theme:${RESET}      ZothHermeticGold (24K Gold & Obsidian Glass)"
+        echo -e "  ${AMBER}◈ App Icons:${RESET}  breeze-dark (Full system panel & desktop suite)"
+        echo -e "  ${AMBER}◈ Cursor:${RESET}     Zoth-Azoth-Gold (24K Animated Cursor Suite)"
+        echo -e "  ${AMBER}◈ Terminal:${RESET}   Zoth-Gold Konsole Profile & Gold OSC Palette"
+        echo -e "  ${AMBER}◈ Wallpaper:${RESET}  zoth-gold-master.jpg + 3D Alchemical Astrolabe (org.zothos.interactive Native Plasma QML + Cursor Trail :9989)"
+        echo -e "  ${AMBER}◈ Bot Active:${RESET} ${GOLD}Azoth Prime [☿]${RESET} (The Alchemical Sovereign & Prime Architect)"
+        echo -e "${GOLD}${BOLD}[✓] REALITY TRANSFORM COMPLETE: Sovereign Gold Master Active.${RESET}\n"
         ;;
+
     ghost|stealth|amnesic)
-        echo -e "${RED}[+] Engaging NullAI Ghostmode Stealth Profile...${RESET}"
+        echo -e "${RED}${BOLD}[+] ENGAGING REALITY: NULLAI GHOSTMODE STEALTH (CRIMSON VOID)...${RESET}"
+        apply_plasma_colorscheme "ZothGhostNullAI"
+        apply_icons_and_cursors "Zoth-Ghost-NullAI" "Zoth-Ghost-NullAI"
         apply_wallpaper "$WP_DIR/ghostmode-nullai.png"
+        apply_konsole_profile "Zoth-Ghost" "#080B10" "#FF3355"
+        save_mode_and_character "ghost"
         play_cue "$SOUND_DIR/ghost-vapor.wav"
-        save_mode "ghost"
-        # Trigger transparent Tor & MAC cloaking if available
-        if command -v zoth-ghost >/dev/null 2>&1; then
-            zoth-ghost start 2>/dev/null || true
-        fi
-        echo -e "${RED}[✓] Active Profile: NullAI Ghostmode Stealth Engaged.${RESET}"
+
+        echo -e "  ${RED}◈ Theme:${RESET}      ZothGhostNullAI (Amnesic Crimson & Dark Charcoal)"
+        echo -e "  ${RED}◈ App Icons:${RESET}  breeze-dark (Full system panel & desktop suite)"
+        echo -e "  ${RED}◈ Cursor:${RESET}     Zoth-Ghost-NullAI (Crimson Animated Cursor Suite)"
+        echo -e "  ${RED}◈ Terminal:${RESET}   Zoth-Ghost Konsole Profile & Crimson OSC Palette"
+        echo -e "  ${RED}◈ Wallpaper:${RESET}  ghostmode-nullai.png + 3D Tor Onion Routing Mesh (org.zothos.interactive Native Plasma QML + Cursor Trail :9989)"
+        echo -e "  ${RED}◈ Bot Active:${RESET} ${RED}Ghostbyte [👻]${RESET} (Imperator & Amnesic Enclave Commander)"
+        echo -e "${RED}${BOLD}[✓] REALITY TRANSFORM COMPLETE: NullAI Ghostmode Engaged.${RESET}\n"
         ;;
+
     matrix|hacker|green)
-        echo -e "${GREEN}[+] Switching to Hermetic Matrix Emerald Profile...${RESET}"
+        echo -e "${GREEN}${BOLD}[+] ENGAGING REALITY: HERMETIC MATRIX EMERALD (PHOSPHOR CRT)...${RESET}"
+        apply_plasma_colorscheme "ZothHermeticMatrix"
+        apply_icons_and_cursors "Zoth-Hermetic-Matrix" "Zoth-Hermetic-Matrix"
         apply_wallpaper "$WP_DIR/hermetic-matrix.png"
+        apply_konsole_profile "Zoth-Matrix" "#040806" "#00FF9D"
+        save_mode_and_character "matrix"
         play_cue "$SOUND_DIR/matrix-chirp.wav"
-        save_mode "matrix"
-        echo -e "${GREEN}[✓] Active Profile: Hermetic Matrix Engaged.${RESET}"
+
+        echo -e "  ${GREEN}◈ Theme:${RESET}      ZothHermeticMatrix (P39 Phosphor CRT & Deep Obsidian)"
+        echo -e "  ${GREEN}◈ App Icons:${RESET}  breeze-dark (Full system panel & desktop suite)"
+        echo -e "  ${GREEN}◈ Cursor:${RESET}     Zoth-Hermetic-Matrix (Emerald Animated Cursor Suite)"
+        echo -e "  ${GREEN}◈ Terminal:${RESET}   Zoth-Matrix Konsole Profile & Phosphor Emerald OSC Palette"
+        echo -e "  ${GREEN}◈ Wallpaper:${RESET}  hermetic-matrix.png + 3D Cascading Digital Rain (org.zothos.interactive Native Plasma QML + Cursor Trail :9989)"
+        echo -e "  ${GREEN}◈ Bot Active:${RESET} ${GREEN}Lucy Netrunner [🜂]${RESET} (Cognitive STDP Memory Oracle // Deep-Net Infiltrator)"
+        echo -e "${GREEN}${BOLD}[✓] REALITY TRANSFORM COMPLETE: Hermetic Matrix Engaged.${RESET}\n"
         ;;
+
     incognito|win11|windows|undercover)
-        echo -e "${YELLOW}[+] Switching to Covert Chameleon Profile...${RESET}"
+        echo -e "${BLUE}${BOLD}[+] ENGAGING REALITY: COVERT CHAMELEON (WINDOWS 11 FLUENT)...${RESET}"
+        apply_plasma_colorscheme "ZothIncognitoWin11"
+        apply_icons_and_cursors "breeze_cursors" "Zoth-Incognito-Win11"
         apply_wallpaper "$WP_DIR/win11-bloom.jpg"
+        apply_konsole_profile "Zoth-Win11" "#0B1329" "#F3F4F6"
+        save_mode_and_character "incognito"
         play_cue "$SOUND_DIR/win11-fluent.wav"
-        save_mode "win11"
-        echo -e "${YELLOW}[✓] Active Profile: Covert Chameleon Engaged.${RESET}"
+
+        echo -e "  ${BLUE}◈ Theme:${RESET}      ZothIncognitoWin11 (Windows 11 Fluent Azure & Neutral Chrome)"
+        echo -e "  ${BLUE}◈ App Icons:${RESET}  breeze-dark (Full system panel & desktop suite)"
+        echo -e "  ${BLUE}◈ Cursor:${RESET}     breeze_cursors (Standard Fluent Cursors)"
+        echo -e "  ${BLUE}◈ Terminal:${RESET}   Zoth-Win11 Konsole Profile & Azure Fluent OSC Palette"
+        echo -e "  ${BLUE}◈ Wallpaper:${RESET}  win11-bloom.jpg + 3D Fluent Bloom Silk Wave (org.zothos.interactive Native Plasma QML + Cursor Trail :9989)"
+        echo -e "  ${BLUE}◈ Bot Active:${RESET} ${BLUE}Chameleon 11 [🪟]${RESET} (Covert Fluent Executive & Enterprise Disguise)"
+        echo -e "${BLUE}${BOLD}[✓] REALITY TRANSFORM COMPLETE: Covert Chameleon Engaged.${RESET}\n"
         ;;
+
     status)
         echo "$(get_current_mode)"
         ;;
+
+    bot)
+        if [[ -f "$ACTIVE_CHAR_FILE" ]]; then
+            cat "$ACTIVE_CHAR_FILE"
+        else
+            echo '{"name":"Azoth Prime","glyph":"☿"}'
+        fi
+        ;;
+
+    wallpaper|interactive-bg|bg)
+        apply_wallpaper "$WP_DIR/zoth-gold-master.jpg"
+        echo -e "${GOLD}[+] Native KDE Plasma 3D Interactive OS Wallpaper (org.zothos.interactive) & Cursor Trail (:9989) Active.${RESET}"
+        ;;
+
     *)
         echo -e "${RED}[!] Unknown mode: $MODE${RESET}"
-        echo -e "Supported modes: gold (default), ghost (stealth), matrix, incognito, toggle"
+        echo -e "Usage: zoth-mode [gold | ghost | matrix | incognito | toggle | status | bot | wallpaper]"
         exit 1
         ;;
 esac

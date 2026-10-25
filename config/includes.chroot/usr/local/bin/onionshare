@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+if [[ -x "/usr/bin/onionshare" ]]; then
+    exec /usr/bin/onionshare "$@"
+elif command -v flatpak >/dev/null 2>&1 && flatpak info org.onionshare.OnionShare >/dev/null 2>&1; then
+    exec flatpak run org.onionshare.OnionShare "$@"
+fi
+if [[ "${1:-}" == "--help" || "${1:-}" == "--version" ]]; then
+    echo "ZothOS OnionShare Wrapper v1.0 (Provision via: sudo apt install onionshare)"
+    exit 0
+fi
+exec /usr/local/bin/zoth-konsole --pause --title "Zoth OnionShare Privacy" -- bash -c "echo -e '\033[1;33m[ZothOS OnionShare]\033[0m Checking OnionShare installation...'; sudo apt-get update && sudo apt-get install -y onionshare && onionshare"
