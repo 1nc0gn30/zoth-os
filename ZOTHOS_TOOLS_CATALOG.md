@@ -237,7 +237,7 @@
 - **Execution Mode:** BROWSER • [Live App](https://schemaillustrator.nullai.tech)
 - **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Dual Stripe + Solana rails ($19).
 
-### 24. zoth-webgen (Zoth WebGen Foundry)
+### 24. zoth-webgen (Zoth QuickSite Starter)
 - **GitHub:** https://github.com/NullAITech/zoth-webgen
 - **Category:** Autonomous Web
 - **Execution Mode:** LOCAL_CLI
@@ -542,4 +542,53 @@
 - **Category:** Voice & Real-Time
 - **Execution Mode:** LOCAL_CLI
 - **Operational Value:** Local video double on GPU; Chatterbox Turbo voice cloning and Wav2Lip photorealistic mouth animation on Quadro P1000 with zero cloud leakage.
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE — MACHINE SYNC ADDITIONS (2026-10-25)
+##  Mirrored into Zoth Studio v2 catalog (QuickSite :8092 + Zoth Bolt :5173)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### producthunt-connector (zoth-ph)
+- **GitHub:** https://github.com/1nc0gn30/producthunt-connector
+- **Category:** Commerce & POD
+- **Execution Mode:** LOCAL_CLI (`zoth-ph serve` → http://127.0.0.1:8121)
+- **Operational Value:** Diffs ZOTHOS Product Hunt listing vs live website/GitHub; token stays in `~/.config/zothos/producthunt.secret.json`.
+
+### zoth-relay (MCP Agent Bridge)
+- **GitHub:** https://github.com/1nc0gn30/zoth-relay
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI (dashboard http://127.0.0.1:8765/dashboard)
+- **Operational Value:** Hardened per-agent MCP/HTTP bridge with path sandbox, blocklist, rate limits, audit trail.
+
+### zela-glasses-guide (Zela · Zoth Guide)
+- **Live:** https://zela-glasses-guide.netlify.app
+- **GitHub:** https://github.com/1nc0gn30/zoth-relay
+- **Category:** Swarm & Core
+- **Execution Mode:** BROWSER / LOCAL (zoth-relay-mobile + Moondream + AGY + Kokoro)
+- **Operational Value:** Wearable AI mission coach for Ray-Ban Meta glasses over Tailscale.
+
+### zoth-bot (Desktop Companion)
+- **GitHub:** https://github.com/1nc0gn30/zoth-bot
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI (`zoth-bot-launch` / `npm start`, Ctrl+Shift+Space)
+- **Operational Value:** Always-on 3D WebGL desk companion with multi-harness neural engine and Security Ring authority.
+
+### zoth-bounty (Research Hub)
+- **GitHub:** https://github.com/1nc0gn30/zoth-bounty
+- **Category:** Security & Enclave
+- **Execution Mode:** LOCAL_CLI (`zoth-bounty-launch` → http://127.0.0.1:9494)
+- **Operational Value:** Zero-false-positive responsible disclosure tracker (Ongoing / Pending / Completed).
+
+### zoth-scene-foundry (ASCII Scene Engine)
+- **GitHub:** https://github.com/1nc0gn30/zoth-scene-foundry
+- **Category:** Media & 3D
+- **Execution Mode:** BROWSER (`zoth-scene-foundry` → http://127.0.0.1:8823/gallery.html)
+- **Operational Value:** 1000 deterministic ZothOS-style ASCII + pixel-art scenes with Bayer dither and AsciiEffect stage.
+
+### zoth-webgen → Zoth QuickSite Starter (:8092)
+- Lightweight static template + 1-click Netlify launcher. Launcher: `zoth-webgen`.
+
+### bolt.diy → Zoth Bolt (:5173)
+- Flagship full-stack AI web & motion architect (bolt.diy wrapper). Launcher: `bolt-diy`.
 

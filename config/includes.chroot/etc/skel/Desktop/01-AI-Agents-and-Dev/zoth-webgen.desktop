@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth WebGen Foundry
-Comment=Autonomous sovereign website generator and multi-model AST engine
-Exec=/usr/local/bin/zoth-konsole --title 'Zoth WebGen Foundry' -- /usr/local/bin/zoth-webgen
+Name=Zoth QuickSite Starter
+Comment=Simple 3-step static template and 1-click Netlify launcher on :8092
+Exec=/usr/local/bin/zoth-konsole --title 'Zoth QuickSite Starter' -- /usr/local/bin/zoth-webgen
 Icon=zoth-webgen
 Terminal=false
 Categories=Development;ArtificialIntelligence;Utility;

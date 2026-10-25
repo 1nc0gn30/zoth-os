@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+for c in "${HOME}/NullAITech/zoth-bot" "/opt/zoth-bot"; do
+  if [[ -d "$c" && -f "$c/package.json" ]]; then
+    if [[ -x "$c/bin/zoth-bot" ]]; then
+      exec "$c/bin/zoth-bot" "$@"
+    fi
+    cd "$c" && exec npm start
+  fi
+done
+echo "[!] zoth-bot not found under ~/NullAITech or /opt" >&2
+exit 1

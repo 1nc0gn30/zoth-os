@@ -2,12 +2,10 @@
 Version=1.0
 Type=Application
 Name=Zoth Bot
-GenericName=Local-first desk companion
-Comment=Named teammate on this laptop. Always-on orb, local model, host tools.
-Exec=${ZOTH_SRC_ROOT}/zoth-bot/bin/zoth-bot
-Icon=${ZOTH_SRC_ROOT}/zoth-bot/assets/icon-256.png
+Comment=Always-on 3D desk companion for Zoth OS
+Exec=/usr/local/bin/zoth-bot-launch
+Icon=applications-system
 Terminal=false
 Categories=Utility;ArtificialIntelligence;
-Keywords=zoth;bot;companion;agent;
-StartupNotify=false
+StartupNotify=true
 StartupWMClass=zoth-bot

@@ -10,7 +10,7 @@ import sys
 
 SERVICES = [
     ("Zoth Studio v2 (zoth.nullai.tech)", 3000, "/", "systemctl --user start zoth-control-center.service 2>/dev/null || (cd ~/NullAITech/zoth-studio-v2 && nohup npm run dev -- --port 3000 >/tmp/zoth-studio.log 2>&1 &)"),
-    ("Zoth WebGen Foundry (One-Shot + Netlify)", 8092, "/api/health", "systemctl --user start zoth-webgen.service 2>/dev/null || (nohup python3 ~/NullAITech/zoth-webgen/server.py --port 8092 >/tmp/zoth-webgen-server.log 2>&1 &)"),
+    ("Zoth QuickSite Starter (One-Shot + Netlify)", 8092, "/api/health", "systemctl --user start zoth-webgen.service 2>/dev/null || (nohup python3 ~/NullAITech/zoth-webgen/server.py --port 8092 >/tmp/zoth-webgen-server.log 2>&1 &)"),
     ("Zoth Civilization (3D World)", 9393, "/api/status", "nohup node ~/NullAITech/zoth-civilization/server.js >/tmp/zoth-civ.log 2>&1 &"),
     ("Sovereign Agent Bridge (Signal/SimpleX/Matrix)", 8102, "/api/health", "systemctl --user start sovereign-agent-bridge.service"),
     ("Zoth Signal Bridge Dispatcher", 8768, "/health", "systemctl --user start zoth-signal-bridge.service"),

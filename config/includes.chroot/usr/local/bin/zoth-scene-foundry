@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+for c in "${HOME}/NullAITech/zoth-scene-foundry" "/opt/zoth-scene-foundry"; do
+  if [[ -d "$c" ]]; then
+    cd "$c"
+    echo "[*] Scene Foundry gallery → http://127.0.0.1:8823/gallery.html"
+    exec python3 -m http.server 8823
+  fi
+done
+echo "[!] zoth-scene-foundry not found" >&2
+exit 1

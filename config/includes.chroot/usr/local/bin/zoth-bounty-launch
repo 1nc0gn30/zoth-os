@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+for c in "${HOME}/NullAITech/zoth-bounty" "/opt/zoth-bounty"; do
+  [[ -d "$c" && -f "$c/server.js" ]] && cd "$c" && exec node server.js "$@"
+done
+echo "[!] zoth-bounty not found" >&2
+exit 1

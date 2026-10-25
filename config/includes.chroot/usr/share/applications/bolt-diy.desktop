@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth WebGen
-Comment=Local full-stack site foundry for scaffolding and running web apps
-Exec=/usr/local/bin/zoth-konsole --title 'Zoth WebGen' -- /usr/local/bin/bolt-diy
+Name=Zoth Bolt
+Comment=Flagship full-stack AI web and motion architect on :5173 (bolt.diy)
+Exec=/usr/local/bin/zoth-konsole --title 'Zoth Bolt' -- /usr/local/bin/bolt-diy
 Icon=bolt-diy
 Terminal=false
 Categories=Development;ArtificialIntelligence;Utility;

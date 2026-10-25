@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  Zoth WebGen — localized full-stack site foundry
+#  Zoth Bolt — flagship full-stack AI web & motion architect
 # ==============================================================================
 #  Platform: ZothOS • NullAI
 #  Author: Neal Frazier Tech (@1nc0gn30)

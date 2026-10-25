@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ZothOS Product Hunt connector. Read listing, diff website/GitHub. Never auto-post.
 set -euo pipefail
-REPO_DIR="${ZOTH_PH_REPO:-${ZOTH_SRC_ROOT}/producthunt-connector}"
+REPO_DIR="${ZOTH_PH_REPO:-${HOME}/NullAITech/producthunt-connector}"
 BIN="$REPO_DIR/bin/zoth-ph"
 if [[ -x "$BIN" ]]; then
   exec "$BIN" "$@"

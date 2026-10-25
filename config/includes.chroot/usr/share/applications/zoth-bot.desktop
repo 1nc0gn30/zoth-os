@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Bot
+Comment=Always-on 3D desk companion for Zoth OS
+Exec=/usr/local/bin/zoth-bot-launch
+Icon=applications-system
+Terminal=false
+Categories=Utility;ArtificialIntelligence;
+StartupNotify=true
+StartupWMClass=zoth-bot

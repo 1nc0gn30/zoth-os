@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  Zoth WebGen Foundry — One-Shot Idea to Live Netlify Deploy & Template Engine
+#  Zoth QuickSite Starter — One-Shot Idea to Live Netlify Deploy & Template Engine
 # ==============================================================================
 set -eo pipefail
 
