@@ -328,6 +328,179 @@ def cmd_search(args):
     print(f" {GREEN}✔ Found {total_found} unified results in {elapsed_ms:.1f}ms{RESET}\n")
 
 
+def cmd_ingest(args):
+    if not args:
+        print(f"{RED}✖ Usage:{RESET} zoth-second-brain ingest <path-or-url> [--title \"...\"] [--tags \"a,b\"]")
+        sys.exit(1)
+
+    target_src = args[0].strip()
+    title = None
+    custom_tags = []
+
+    # Parse flags
+    i = 1
+    while i < len(args):
+        if args[i] == "--title" and i + 1 < len(args):
+            title = args[i + 1].strip()
+            i += 2
+        elif args[i] == "--tags" and i + 1 < len(args):
+            custom_tags = [t.strip().lower() for t in args[i + 1].split(",") if t.strip()]
+            i += 2
+        else:
+            i += 1
+
+    ingest_dir = VAULT_DIR / "04-Ingested"
+    ingest_dir.mkdir(parents=True, exist_ok=True)
+
+    content_md = ""
+    source_label = target_src
+
+    # Case A: URL
+    if target_src.startswith("http://") or target_src.startswith("https://"):
+        print(f"\n{CYAN}{BOLD}🌐 Ingesting remote URL:{RESET} {target_src}")
+        defuddle_bin = "/usr/bin/defuddle" if os.path.exists("/usr/bin/defuddle") else None
+        extracted = False
+
+        if defuddle_bin:
+            import subprocess
+            try:
+                proc = subprocess.run([defuddle_bin, "parse", target_src, "--md"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=15)
+                if proc.returncode == 0 and proc.stdout.strip():
+                    content_md = proc.stdout.strip()
+                    extracted = True
+                    print(f" {GREEN}✔ Extracted markdown via Defuddle CLI{RESET}")
+            except Exception:
+                pass
+
+        if not extracted:
+            try:
+                import urllib.parse
+                req = urllib.request.Request(target_src, headers={"User-Agent": "Mozilla/5.0 (ZothOS-SecondBrain/1.0)"})
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    html = resp.read().decode("utf-8", errors="ignore")
+
+                if not title:
+                    title_m = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
+                    if title_m:
+                        title = title_m.group(1).strip()
+
+                clean = re.sub(r"<(script|style|nav|footer|header|aside)[^>]*>.*?</\1>", "", html, flags=re.IGNORECASE | re.DOTALL)
+                clean = re.sub(r"<h1[^>]*>(.*?)</h1>", r"\n# \1\n", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<h2[^>]*>(.*?)</h2>", r"\n## \1\n", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<h3[^>]*>(.*?)</h3>", r"\n### \1\n", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<p[^>]*>(.*?)</p>", r"\n\1\n", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<li[^>]*>(.*?)</li>", r"\n- \1", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<a\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>", r"[\2](\1)", clean, flags=re.IGNORECASE)
+                clean = re.sub(r"<[^>]+>", " ", clean)
+                clean = re.sub(r"\n\s*\n+", "\n\n", clean)
+                content_md = clean.strip()[:10000]
+                print(f" {GREEN}✔ Extracted clean text via Python HTML parser{RESET}")
+            except Exception as e:
+                print(f"{RED}✖ Failed to fetch URL:{RESET} {e}")
+                sys.exit(1)
+
+        if not title:
+            domain = urllib.parse.urlparse(target_src).netloc or "web-capture"
+            title = f"Web Ingest - {domain}"
+
+    # Case B: Local file
+    else:
+        local_p = Path(target_src).resolve()
+        if not local_p.exists() or not local_p.is_file():
+            print(f"{RED}✖ Local file not found:{RESET} {local_p}")
+            sys.exit(1)
+
+        print(f"\n{CYAN}{BOLD}📄 Ingesting local file:{RESET} {local_p}")
+        content_md = local_p.read_text(encoding="utf-8", errors="ignore").strip()
+
+        if not title:
+            h1_m = re.search(r"^#\s+(.+)$", content_md, re.MULTILINE)
+            if h1_m:
+                title = h1_m.group(1).strip()
+            else:
+                title = local_p.stem.replace("-", " ").replace("_", " ").title()
+
+    slug = re.sub(r"[^a-zA-Z0-9_-]+", "-", title.lower()).strip("-")
+    if not slug:
+        slug = f"ingest-{int(time.time())}"
+    dest_file = ingest_dir / f"{slug}.md"
+
+    now_date = time.strftime("%Y-%m-%d")
+    now_time = time.strftime("%Y-%m-%d %H:%M:%S")
+
+    all_tags = list(dict.fromkeys(["ingested", "second-brain"] + custom_tags))
+    tags_yaml = "\n".join([f"  - {t}" for t in all_tags])
+
+    body_content = content_md
+    fm_match = re.match(r"^---\n(.*?)\n---\n(.*)$", content_md, re.DOTALL)
+    if fm_match:
+        body_content = fm_match.group(2).strip()
+
+    note_text = f"""---
+title: "{title}"
+date: {now_date}
+created: "{now_time}"
+source: "{source_label}"
+tags:
+{tags_yaml}
+aliases:
+  - "{title}"
+  - "{slug}"
+cluster: Ingested
+stdp_weight: 0.95
+---
+
+# {title}
+
+> [!note] Second Brain Ingested Artifact
+> **Source:** `{source_label}`
+> **Ingested on:** `{now_time}`
+
+{body_content}
+
+## See also
+
+[[00 Home]] · [[Zoth OS]] · [[Zoth Memory]]
+"""
+
+    dest_file.write_text(note_text, encoding="utf-8")
+    print(f" {GREEN}✔ Obsidian Note Created:{RESET} {BOLD}{dest_file.relative_to(VAULT_DIR)}{RESET}")
+
+    # Memory Substrate Ingestion (:8094)
+    print(f" {PURPLE}⚡ Ingesting into STDP Memory Substrate (:8094)...{RESET}")
+    snippet = body_content[:350].replace("\n", " ").strip()
+    mem_text = f"[Ingested Second Brain · [[{dest_file.stem}]]] {title} - {snippet}"
+    mem_res = post_json(
+        f"{NEURO_MEMORY_URL}/api/remember",
+        {
+            "text": mem_text,
+            "tags": all_tags,
+            "importance": 0.95,
+            "category": "semantic",
+            "agent_id": "zoth-second-brain-cli",
+            "metadata": {
+                "vault_file": str(dest_file),
+                "source": source_label,
+                "slug": slug,
+            },
+        },
+        timeout=15.0,
+    )
+
+    if mem_res and "id" in mem_res:
+        print(f" {GREEN}✔ STDP Synaptic Engram Stored:{RESET} ID {CYAN}{mem_res['id'][:8]}{RESET} (imp: 0.95)")
+    else:
+        print(f" {GOLD}⚠ Memory store warning:{RESET} {mem_res}")
+
+    # Trigger Sync
+    print(f" {PURPLE}⚡ Synchronizing Vault with Daemon...{RESET}")
+    sync_res = post_json(f"{NEURO_MEMORY_URL}/api/obsidian/sync", {}, timeout=45.0)
+    if sync_res and sync_res.get("ok"):
+        print(f" {GREEN}✔ Substrate Synced:{RESET} {BOLD}{sync_res.get('totalMemories', 'unknown')}{RESET} total memories")
+
+    print(f"\n{GOLD}✦ Successfully ingested '{title}' into Obsidian Second Brain & STDP Cortex!{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -336,12 +509,13 @@ def print_help():
     zoth-second-brain <command> [arguments]
 
 {BOLD}COMMANDS:{RESET}
-    {GREEN}status{RESET}          Show live status of Obsidian Vault, daemons (:8094, :8140, :3000, :5173, :9393), and STDP cortex
-    {GREEN}sync{RESET}            Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
-    {GREEN}search <query>{RESET}  Simultaneously search all 1,697+ Vault notes and :8094 STDP memories
-    {GREEN}moc{RESET}             List all Maps of Content (MOC) with link counts and sizes
-    {GREEN}moc <name>{RESET}      Inspect a specific MOC note and its wikilinks
-    {GREEN}help{RESET}            Print this help message
+    {GREEN}status{RESET}                 Show live status of Obsidian Vault, daemons (:8094, :8140, :3000, :5173, :9393), and STDP cortex
+    {GREEN}sync{RESET}                   Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
+    {GREEN}search <query>{RESET}         Simultaneously search all 1,697+ Vault notes and :8094 STDP memories
+    {GREEN}ingest <path-or-url>{RESET}   Ingest local file or URL into 04-Ingested/<slug>.md and :8094 STDP cortex
+    {GREEN}moc{RESET}                    List all Maps of Content (MOC) with link counts and sizes
+    {GREEN}moc <name>{RESET}             Inspect a specific MOC note and its wikilinks
+    {GREEN}help{RESET}                   Print this help message
 
 {BOLD}VAULT PATH:{RESET}
     {VAULT_DIR}
@@ -360,6 +534,8 @@ def main():
         cmd_sync()
     elif cmd in ("search", "find", "q"):
         cmd_search(sys.argv[2:])
+    elif cmd in ("ingest", "in", "add"):
+        cmd_ingest(sys.argv[2:])
     elif cmd == "moc":
         cmd_moc(sys.argv[2:])
     elif cmd in ("help", "--help", "-h"):
