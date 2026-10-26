@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Zoth Bot
+Comment=Pocket companion — Hermes on this laptop
+Exec=/home/zoth/NullAITech/zoth-bot/bin/zoth-bot
+Icon=/home/zoth/NullAITech/zoth-bot/assets/icon-256.png
+Terminal=false
+X-GNOME-Autostart-enabled=true
+StartupNotify=false

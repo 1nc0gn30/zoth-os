@@ -61,9 +61,9 @@ export PATH="/usr/local/bin:/opt/zothos-ai-env/bin:$HOME/.local/bin:$HOME/.cargo
 
 # ── Reality Mode Detection & Palette ───────────────────────────────────────
 get_zoth_mode() {
-    local m="matrix"
+    local m="gold"
     if [[ -f "$HOME/.config/zothos/current_mode" ]]; then
-        m=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "matrix")
+        m=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "gold")
     fi
     echo "$m"
 }

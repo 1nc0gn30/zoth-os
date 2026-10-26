@@ -9,9 +9,9 @@ set -euo pipefail
 
 # ── Mode-aware Color Palette ────────────────────────────────────────────────
 get_mode() {
-    local mode="matrix"
+    local mode="gold"
     if [[ -f "$HOME/.config/zothos/current_mode" ]]; then
-        mode=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "matrix")
+        mode=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "gold")
     fi
     echo "$mode"
 }

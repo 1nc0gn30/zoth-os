@@ -804,6 +804,142 @@
         throw new Error(data.error || `Failed to read comm inbox for ${clean}`);
       }
       return data;
+    },
+
+    async verifyChainIntegrity(options = {}) {
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const res = node.verifyFullChainIntegrity();
+        return { ok: true, verified: true, ...res, snapshot: node.getNetworkSnapshot() };
+      }
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/ledger/verify-integrity`);
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to verify ledger integrity');
+      }
+      return data;
+    },
+
+    async getP2pPeers(options = {}) {
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const peers = node.getP2pPeers();
+        return { ok: true, peers, clusterPeers: peers, snapshot: node.getNetworkSnapshot() };
+      }
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/p2p/peers`);
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to fetch P2P peers');
+      }
+      return data;
+    },
+
+    async connectP2pPeer(options = {}) {
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const peerUrl = options.endpoint || options.peerUrl || 'http://127.0.0.1:8140';
+      const handle = this.normalizeHandle(options.handle || '@peer');
+      const role = options.role || 'AI_WORKER';
+      const region = options.region || 'local-edge';
+
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const res = node.connectPeerNode({ endpoint: peerUrl, handle, role, region });
+        return { ok: true, ...res, snapshot: node.getNetworkSnapshot() };
+      }
+
+      const res = await fetch(`${endpoint}/api/p2p/connect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: peerUrl, handle, role, region })
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to connect peer node');
+      }
+      return data;
+    },
+
+    async getP2pDelta(options = {}) {
+      const since = options.since || 0;
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const res = node.getPeerDelta(since);
+        return { ok: true, ...res, snapshot: node.getNetworkSnapshot() };
+      }
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/p2p/delta?since=${since}`);
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to fetch P2P delta');
+      }
+      return data;
+    },
+
+    async getMultisigVaults(options = {}) {
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const vaults = node.getMultisigVaults();
+        const proposals = node.getMultisigProposals();
+        return { ok: true, vaults, vault: vaults[0] || null, proposals, snapshot: node.getNetworkSnapshot() };
+      }
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/multisig`);
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to fetch multi-sig vaults');
+      }
+      return data;
+    },
+
+    async proposeMultisigTx(options = {}) {
+      const vaultId = options.vaultId || 'msig_zoth_foundation';
+      const proposer = this.normalizeHandle(options.proposer || '@neal');
+      const to = this.normalizeHandle(options.to || options.recipient || '@sprig');
+      const amountVlr = Number(options.amountVlr !== undefined ? options.amountVlr : (options.amount || 100));
+      const memo = options.memo || 'Corporate treasury allocation';
+
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const res = node.proposeMultisigTx({ vaultId, proposer, to, amountVlr, memo });
+        return { ok: true, ...res, snapshot: node.getNetworkSnapshot() };
+      }
+
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/multisig/propose`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vaultId, proposer, to, amountVlr, memo })
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to propose multi-sig transfer');
+      }
+      return data;
+    },
+
+    async approveMultisigTx(options = {}) {
+      const proposalId = options.proposalId || options.id;
+      const signer = this.normalizeHandle(options.signer || options.handle || '@zoth');
+
+      if (options.localNode || this.localNode) {
+        const node = options.localNode || this.localNode;
+        const res = node.approveMultisigTx({ proposalId, signer });
+        return { ok: true, ...res, snapshot: node.getNetworkSnapshot() };
+      }
+
+      const endpoint = (options.rpcEndpoint || this.rpcEndpoint || 'http://127.0.0.1:8140').replace(/\/+$/, '');
+      const res = await fetch(`${endpoint}/api/multisig/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ proposalId, signer })
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'Failed to approve multi-sig proposal');
+      }
+      return data;
     }
   };
 

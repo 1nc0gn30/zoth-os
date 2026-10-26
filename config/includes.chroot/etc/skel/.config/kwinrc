@@ -1,3 +1,6 @@
+[Activities][LastVirtualDesktop]
+ec88abcf-9225-45d9-96f6-e8727040cf71=0e247f32-20c9-4676-bce5-64383b2d1bee
+
 [Compositing]
 Backend=OpenGL
 GLCore=true
@@ -5,8 +8,14 @@ HiddenWindowsPreview=2
 WindowsBlockCompositing=false
 
 [Desktops]
-Number=8
-Rows=2
+Id_1=0e247f32-20c9-4676-bce5-64383b2d1bee
+Id_2=95601a2a-47ad-4537-8d8d-d39904eb6243
+Id_3=762b16b9-3c74-46a8-be62-3a0510924be9
+Id_4=7735262f-74d1-448a-9b1b-dcb16c127b3a
+Id_5=f9599fe2-ffa9-4c04-b27e-fc596fe33533
+Id_6=6b2786b6-72d4-49a4-839a-575ba333a0e1
+Id_7=55f0c4f1-14dd-42cb-8627-b54bc4bcff89
+Id_8=3502e2d7-cd08-4f75-9077-8d16e1e64220
 Name_1=Forge
 Name_2=Studio
 Name_3=WebGen
@@ -15,11 +24,16 @@ Name_5=Agents
 Name_6=Comms
 Name_7=Ops
 Name_8=Sanctum
+Number=8
+Rows=2
 
 [Effect-Blur]
 BlurRadius=14
 CacheTexture=true
 NoiseStrength=0
+
+[Effect-TrackMouse]
+Modifiers=0
 
 [Effect-Translucency]
 Inactive=92
@@ -29,13 +43,11 @@ MoveResize=85
 Drag=80
 Stiffness=10
 
-[Effect-TrackMouse]
-Modifiers=0
-
 [Plugins]
 blurEnabled=true
 contrastEnabled=true
 coverswitchEnabled=false
+desktopchangeosdEnabled=true
 desktopgridEnabled=true
 diminactiveEnabled=false
 fadeEnabled=true
@@ -46,16 +58,19 @@ presentwindowsEnabled=true
 scaleEnabled=true
 slidingpopupsEnabled=true
 squashEnabled=true
+trackmouseEnabled=true
 translucencyEnabled=true
 windowapertureEnabled=true
 wobblywindowsEnabled=true
-trackmouseEnabled=true
 
-[Windows]
-BorderColor=255,215,0
-TitlebarFont=JetBrains Mono,10,-1,5,75,0,0,0,0,0
-SeparateScreenFocus=true
-RollOverDesktops=true
+[Tiling]
+padding=4
+
+[Tiling][82bc4a3d-0bdc-5c3e-ac08-100cb16cadd6]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][b0ee5b1d-2201-514d-b251-47645b8eb884]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [WM]
 activeBackground=255,215,0
@@ -63,3 +78,12 @@ activeBlend=218,165,32
 activeForeground=8,10,14
 inactiveBackground=14,18,26
 inactiveForeground=136,153,170
+
+[Windows]
+BorderColor=255,215,0
+RollOverDesktops=true
+SeparateScreenFocus=true
+TitlebarFont=JetBrains Mono,10,-1,5,75,0,0,0,0,0
+
+[Xwayland]
+Scale=1

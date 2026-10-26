@@ -26,73 +26,45 @@
     }
 
     /* Reality Theme Morphing Classes */
-    :root {
-      --card-radius: 8px;
-    }
-
     body.theme-matrix {
       --bg: #020703;
-      --bg-card: rgba(4, 20, 8, 0.84);
-      --bg-card-hover: rgba(8, 30, 14, 0.92);
-      --border: rgba(0, 255, 157, 0.38);
-      --border-glow: rgba(0, 255, 157, 0.75);
+      --bg-card: rgba(4, 20, 8, 0.8);
+      --bg-card-hover: rgba(8, 30, 14, 0.9);
+      --border: rgba(0, 255, 157, 0.3);
+      --border-glow: rgba(0, 255, 157, 0.7);
       --accent: #00ff9d;
       --gold: #00ff9d;
       --cyan: #00e5ff;
-      --card-radius: 2px;
     }
 
     body.theme-ghost {
       --bg: #080306;
-      --bg-card: rgba(24, 8, 16, 0.84);
-      --bg-card-hover: rgba(36, 12, 24, 0.92);
-      --border: rgba(244, 63, 94, 0.38);
-      --border-glow: rgba(244, 63, 94, 0.75);
+      --bg-card: rgba(24, 8, 16, 0.8);
+      --bg-card-hover: rgba(36, 12, 24, 0.9);
+      --border: rgba(244, 63, 94, 0.3);
+      --border-glow: rgba(244, 63, 94, 0.7);
       --accent: #f43f5e;
       --gold: #f43f5e;
-      --card-radius: 6px;
     }
 
     body.theme-cyan {
       --bg: #02070e;
-      --bg-card: rgba(6, 18, 32, 0.84);
-      --bg-card-hover: rgba(10, 28, 48, 0.92);
-      --border: rgba(0, 229, 255, 0.38);
-      --border-glow: rgba(0, 229, 255, 0.75);
+      --bg-card: rgba(6, 18, 32, 0.8);
+      --bg-card-hover: rgba(10, 28, 48, 0.9);
+      --border: rgba(0, 229, 255, 0.3);
+      --border-glow: rgba(0, 229, 255, 0.7);
       --accent: #00e5ff;
       --gold: #00e5ff;
-      --card-radius: 10px;
     }
 
     body.theme-incognito {
       --bg: #0b1118;
-      --bg-card: rgba(18, 26, 36, 0.88);
-      --bg-card-hover: rgba(26, 38, 52, 0.94);
-      --border: rgba(56, 189, 248, 0.32);
-      --border-glow: rgba(56, 189, 248, 0.65);
-      --accent: #38bdf8;
+      --bg-card: rgba(18, 26, 36, 0.85);
+      --bg-card-hover: rgba(26, 38, 52, 0.9);
+      --border: rgba(0, 120, 212, 0.3);
+      --border-glow: rgba(0, 120, 212, 0.7);
+      --accent: #0078d4;
       --gold: #38bdf8;
-      --card-radius: 14px;
-      --font-mono: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    }
-
-    .card, .dial-card, .reality-card, .tool-tile, .agent-card, .daemon-card {
-      border-radius: var(--card-radius) !important;
-      transition: border-radius 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-    }
-
-    #reality-bg-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    #titlebar, #nav-tabs, #viewport {
-      position: relative;
-      z-index: 2;
     }
 
     * {
@@ -1211,23 +1183,22 @@
   </style>
 </head>
 <body>
-  <canvas id="reality-bg-canvas"></canvas>
 
   <!-- ── Frameless Custom Header ── -->
   <header id="titlebar">
     <div class="titlebar-left">
-      <canvas id="cockpit-logo-canvas" width="32" height="32" style="width:32px;height:32px;display:block;"></canvas>
+      <img src="assets/icon.png" alt="Zoth Cockpit" class="app-icon" />
       <div class="app-title-group">
-        <span class="app-title" id="cockpit-brand-title">ZOTHOS COCKPIT PRO</span>
-        <span class="app-badge" id="cockpit-brand-badge">v3.2-SANCTUM</span>
-        <span class="hermetic-motto" id="cockpit-brand-motto">— Like code, like mind.</span>
+        <span class="app-title">ZOTHOS COCKPIT PRO</span>
+        <span class="app-badge">v2.5.0-AZOTH</span>
+        <span class="hermetic-motto">— Like code, like mind.</span>
       </div>
     </div>
 
     <div class="titlebar-center">
-      <div class="head-pill gold" id="pill-profile" style="cursor:pointer;" onclick="cycleCockpitReality()" title="Click to Cycle Reality Theme">
-        <canvas id="cockpit-bot-mini" width="22" height="22" style="width:22px;height:22px;"></canvas>
-        <span id="txt-profile">REALITY: GOLD (AURUM-IX)</span>
+      <div class="head-pill gold" id="pill-profile">
+        <span class="pulse-dot"></span>
+        <span id="txt-profile">PROFILE: GOLD</span>
       </div>
       <div class="head-pill emerald" id="pill-tor">
         <span class="pulse-dot"></span>
@@ -1264,19 +1235,19 @@
   <!-- ── Navigation Tabs ── -->
   <nav id="nav-tabs">
     <button class="tab-btn active" data-tab="tab-telemetry">
-      <span id="nav-icon-telemetry">⚡</span> TELEMETRY &amp; VITALS
+      <span>⚡</span> TELEMETRY &amp; VITALS
     </button>
     <button class="tab-btn" data-tab="tab-swarm">
-      <span id="nav-icon-swarm">🤖</span> 21-AGENT SWARM DECK
+      <span>🤖</span> 21-AGENT SWARM DECK
     </button>
     <button class="tab-btn" data-tab="tab-daemons">
-      <span id="nav-icon-daemons">⚙️</span> DAEMON SUPERVISOR
+      <span>⚙️</span> DAEMON SUPERVISOR
     </button>
     <button class="tab-btn" data-tab="tab-reality">
-      <span id="nav-icon-reality">🔮</span> REALITY MATRIX
+      <span>🔮</span> REALITY MATRIX
     </button>
     <button class="tab-btn" data-tab="tab-arsenal">
-      <span id="nav-icon-arsenal">🚀</span> ARSENAL &amp; TOOLS
+      <span>🚀</span> ARSENAL &amp; TOOLS
     </button>
   </nav>
 
@@ -1490,25 +1461,25 @@
 
     <!-- ── TAB 4: REALITY MATRIX ── -->
     <section class="tab-pane" id="tab-reality">
-      <div class="section-title">Instant Reality Mode, Interactive Backgrounds &amp; Zoth Bot Switcher</div>
+      <div class="section-title">Instant Reality Mode &amp; Stealth Profile Switcher</div>
       
       <div class="reality-grid">
         <!-- 1. Gold Master -->
         <div class="reality-card gold-theme" id="rcard-gold">
           <div class="reality-header">
-            <canvas class="rcard-bot" data-bot-mode="gold" width="46" height="46" style="width:46px;height:46px;"></canvas>
+            <span class="reality-icon">🌟</span>
             <div>
               <div class="reality-name">Sovereign Gold Master</div>
-              <span class="app-badge" style="font-size: 8px;">AURUM-IX // 24K SANCTUM</span>
+              <span class="app-badge" style="font-size: 8px;">DEFAULT 24K</span>
             </div>
           </div>
           <div class="reality-desc">
-            The canonical 24K Alchemical Gold profile. Interactive 21-Agent Sacred Orbital background, 3D Extruded Gold Z Logo, and Crowned Archon Bot (AURUM-IX).
+            The canonical 24K Alchemical Gold profile. Maximum performance, full sovereign tool arsenal, interactive HUDs, and sacred geometry desktop environment.
           </div>
           <ul class="reality-features">
-            <li>Interactive 21-Agent Orbital Constellation Background</li>
-            <li>24K Gold Extruded Emblem &amp; Alchemical Icons</li>
-            <li>Zoth Bot: AURUM-IX (Crowned Solar Archon)</li>
+            <li>24K Gold Celtic &amp; Hermetic Accents</li>
+            <li>Full 158-Tool Arsenal Enabled</li>
+            <li>Alchemical Audio Cues &amp; Sanctum Soundscapes</li>
           </ul>
           <button class="btn-engage-mode" onclick="switchMode('gold')">Engage Gold Master</button>
         </div>
@@ -1516,19 +1487,19 @@
         <!-- 2. Ghostmode -->
         <div class="reality-card ghost-theme" id="rcard-ghost">
           <div class="reality-header">
-            <canvas class="rcard-bot" data-bot-mode="ghost" width="46" height="46" style="width:46px;height:46px;"></canvas>
+            <span class="reality-icon">👻</span>
             <div>
               <div class="reality-name">NullAI Ghostmode Stealth</div>
-              <span class="app-badge" style="border-color: var(--crimson); color: var(--crimson); font-size: 8px;">SPECTER-V // AMNESIC TOR</span>
+              <span class="app-badge" style="border-color: var(--crimson); color: var(--crimson); font-size: 8px;">AMNESIC STEALTH</span>
             </div>
           </div>
           <div class="reality-desc">
-            Amnesic RAM-only stealth mode. Interactive Crimson Sonar Sweep background, Cloaked Tor Reticle Logo, and Crimson Stealth Wraith Bot (SPECTER-V).
+            Amnesic RAM-only stealth mode. Tor-cloaked egress, randomized MAC addresses, iptables zero-leak policy, and amnesic volatile memory wiping on shutdown.
           </div>
           <ul class="reality-features">
-            <li>Interactive Crimson Sonar &amp; Cloaked Relay Background</li>
-            <li>Chamfered Stealth Reticle Logo &amp; Tactical Icons</li>
-            <li>Zoth Bot: SPECTER-V (Amnesic Stealth Wraith)</li>
+            <li>Strict Tor SOCKS5 Transparent Proxy</li>
+            <li>MAC Address Randomization &amp; Anti-Fingerprint</li>
+            <li>Crimson Stealth Visual &amp; Vapor Cues</li>
           </ul>
           <button class="btn-engage-mode" style="border-color: var(--crimson); color: var(--crimson);" onclick="switchMode('ghost')">Engage Ghostmode</button>
         </div>
@@ -1536,19 +1507,19 @@
         <!-- 3. Matrix -->
         <div class="reality-card matrix-theme" id="rcard-matrix">
           <div class="reality-header">
-            <canvas class="rcard-bot" data-bot-mode="matrix" width="46" height="46" style="width:46px;height:46px;"></canvas>
+            <span class="reality-icon">🟢</span>
             <div>
               <div class="reality-name">Hermetic Matrix Emerald</div>
-              <span class="app-badge" style="border-color: var(--emerald); color: var(--emerald); font-size: 8px;">CIPHER-0x9D // P39 CRT</span>
+              <span class="app-badge" style="border-color: var(--emerald); color: var(--emerald); font-size: 8px;">DIGITAL RAIN</span>
             </div>
           </div>
           <div class="reality-desc">
-            Phosphor emerald cyber terminal aesthetics. Interactive cursor-parting Katakana Digital Rain background, Hex-Grid Glitch Z Logo, and Terminal Construct Bot (CIPHER-0x9D).
+            Phosphor emerald cyber terminal aesthetics. High-contrast digital rain matrix designed for deep offensive operations and uninterrupted code synthesis.
           </div>
           <ul class="reality-features">
-            <li>Interactive Katakana Digital Rain Background</li>
-            <li>2px Sharp Terminal Chrome &amp; Hex-Grid Glitch Logo</li>
-            <li>Zoth Bot: CIPHER-0x9D (Phosphor Kernel Construct)</li>
+            <li>P39 Emerald Phosphor CRT Look</li>
+            <li>Digital Rain Live Wallpaper Sync</li>
+            <li>Low-Fatigue Darkroom Operations</li>
           </ul>
           <button class="btn-engage-mode" style="border-color: var(--emerald); color: var(--emerald);" onclick="switchMode('matrix')">Engage Matrix</button>
         </div>
@@ -1556,19 +1527,19 @@
         <!-- 4. Cyber Cyan -->
         <div class="reality-card cyan-theme" id="rcard-cyan">
           <div class="reality-header">
-            <canvas class="rcard-bot" data-bot-mode="cyan" width="46" height="46" style="width:46px;height:46px;"></canvas>
+            <span class="reality-icon">🔷</span>
             <div>
-              <div class="reality-name">Cyber Cyan Quantum</div>
-              <span class="app-badge" style="border-color: var(--cyan); color: var(--cyan); font-size: 8px;">KITSUNE-Q9 // 4D TENSOR</span>
+              <div class="reality-name">Cyber Cyan Alchemical</div>
+              <span class="app-badge" style="border-color: var(--cyan); color: var(--cyan); font-size: 8px;">HIGH FREQUENCY</span>
             </div>
           </div>
           <div class="reality-desc">
-            High-frequency quantum cyan styling. Interactive 4D Tesseract &amp; STDP Synapse Mesh background, Hypercube Z Logo, and Quantum Fox Mecha Bot (KITSUNE-Q9).
+            High-frequency alchemical neon cyan styling. Calibrated for quantum simulation, neural vector memory navigation, and high-speed multi-model consensus.
           </div>
           <ul class="reality-features">
-            <li>Interactive 4D Hypercube &amp; STDP Synapse Background</li>
-            <li>Holographic Tesseract Logo &amp; Vector HUD Icons</li>
-            <li>Zoth Bot: KITSUNE-Q9 (Quantum Tensor Familiar)</li>
+            <li>Deep Blue &amp; Neon Cyan Palette</li>
+            <li>WebGL Quantum Shader Accelerators</li>
+            <li>Harmonic Synthesizer Sound Cues</li>
           </ul>
           <button class="btn-engage-mode" style="border-color: var(--cyan); color: var(--cyan);" onclick="switchMode('cyan')">Engage Cyan Matrix</button>
         </div>
@@ -1576,19 +1547,19 @@
         <!-- 5. Win11 Chameleon -->
         <div class="reality-card win-theme" id="rcard-incognito">
           <div class="reality-header">
-            <canvas class="rcard-bot" data-bot-mode="incognito" width="46" height="46" style="width:46px;height:46px;"></canvas>
+            <span class="reality-icon">🪟</span>
             <div>
               <div class="reality-name">Covert Chameleon Guise</div>
-              <span class="app-badge" style="border-color: var(--text-dim); color: var(--text-dim); font-size: 8px;">CORTEX-PRO // FLUENT</span>
+              <span class="app-badge" style="border-color: var(--text-dim); color: var(--text-dim); font-size: 8px;">UNDERCOVER</span>
             </div>
           </div>
           <div class="reality-desc">
-            Covert corporate disguise mimicking modern Fluent enterprise workspace. Interactive Fluent Mica Aurora background, 4-Pane Window Emblem, and Executive Drone Bot (CORTEX-PRO).
+            Covert corporate disguise mimicking modern Windows 11 Fluent environment. Hides sovereign alchemical markings for covert operations in corporate facilities.
           </div>
           <ul class="reality-features">
-            <li>Interactive Fluent Mica Aurora &amp; Clean Grid Background</li>
-            <li>14px Rounded Fluent Chrome &amp; 4-Pane Window Logo</li>
-            <li>Zoth Bot: CORTEX-PRO (Covert Enterprise Assistant)</li>
+            <li>Fluent Bloom Wallpaper &amp; Subtle Icons</li>
+            <li>Corporate Deceptive Appearance</li>
+            <li>Silent Discreet Mode Switching</li>
           </ul>
           <button class="btn-engage-mode" style="border-color: var(--text-dim); color: var(--text-dim);" onclick="switchMode('incognito')">Engage Chameleon</button>
         </div>

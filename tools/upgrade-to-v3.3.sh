@@ -30,16 +30,22 @@ NULLAI_DIR="$HOME/NullAITech"
 mkdir -p "$NULLAI_DIR" "$HOME/.local/bin"
 
 # ------------------------------------------------------------------------------
-# STEP 1: Pull latest ZothOS 3.3.0 commits
+# STEP 1: Pull latest ZothOS 3.3.0 commits (with hard reset & cache-bust re-exec)
 # ------------------------------------------------------------------------------
-if [ ! -d "$REPO_DIR/.git" ]; then
-  echo -e "${CYAN}[1/6] Cloning latest NullAITech/zoth-os repository to $REPO_DIR ...${RESET}"
-  mkdir -p "$(dirname "$REPO_DIR")"
-  git clone https://github.com/NullAITech/zoth-os.git "$REPO_DIR"
-else
-  echo -e "${CYAN}[1/6] Pulling latest ZothOS v3.3.0 commits in $REPO_DIR ...${RESET}"
-  git -C "$REPO_DIR" fetch origin main && git -C "$REPO_DIR" checkout main && git -C "$REPO_DIR" pull --ff-only origin main || true
+if [ "${1:-}" != "--from-git" ]; then
+  if [ ! -d "$REPO_DIR/.git" ]; then
+    echo -e "${CYAN}[1/7] Cloning latest NullAITech/zoth-os repository to $REPO_DIR ...${RESET}"
+    mkdir -p "$(dirname "$REPO_DIR")"
+    git clone https://github.com/NullAITech/zoth-os.git "$REPO_DIR"
+  else
+    echo -e "${CYAN}[1/7] Synchronizing $REPO_DIR to latest origin/main (v3.3.0) ...${RESET}"
+    git -C "$REPO_DIR" fetch origin main
+    git -C "$REPO_DIR" checkout -f main
+    git -C "$REPO_DIR" reset --hard origin/main
+  fi
+  exec bash "$REPO_DIR/tools/upgrade-to-v3.3.sh" --from-git
 fi
+echo -e "${CYAN}[1/7] Running latest ZothOS v3.3.0 Upgrader from $(git -C "$REPO_DIR" rev-parse --short HEAD) ...${RESET}"
 
 # ------------------------------------------------------------------------------
 # STEP 2: Upgrade CLI Arsenal in /usr/local/bin and ~/.local/bin
@@ -99,9 +105,9 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# STEP 4: Upgrade /etc Configuration, OS Branding & Desktop Profiles
+# STEP 4: Upgrade /etc Configuration, OS Branding, Shell & Desktop Profiles
 # ------------------------------------------------------------------------------
-echo -e "${CYAN}[4/6] Upgrading /etc Configuration, OS Release & Desktop Profiles ...${RESET}"
+echo -e "${CYAN}[4/7] Upgrading /etc Configuration, OS Release, .bashrc & Desktop Profiles ...${RESET}"
 sudo mkdir -p /etc/zothos
 if [ -d "$REPO_DIR/config/includes.chroot/etc" ]; then
   sudo cp -rf "$REPO_DIR/config/includes.chroot/etc/"* /etc/ 2>/dev/null || true
@@ -112,33 +118,53 @@ echo "3.3.0" | sudo tee /etc/zothos/version >/dev/null
 sudo sed -i 's/VERSION_ID=.*/VERSION_ID="3.3.0"/' /etc/os-release 2>/dev/null || true
 sudo sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="ZothOS 3.3.0 Sovereign Neural & Account-Lattice Edition"/' /etc/os-release 2>/dev/null || true
 
-# Deploy skel configurations to user home
+# Deploy 3.3 .bashrc and skel configurations to user home
+if [ -f "$REPO_DIR/config/includes.chroot/etc/skel/.bashrc" ]; then
+  cp -f "$REPO_DIR/config/includes.chroot/etc/skel/.bashrc" "$HOME/.bashrc" 2>/dev/null || true
+fi
 if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/.config" ]; then
-  mkdir -p "$HOME/.config"
+  mkdir -p "$HOME/.config/zothos" "$HOME/.config/autostart"
   cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/.config/"* "$HOME/.config/" 2>/dev/null || true
+  echo -n "gold" > "$HOME/.config/zothos/current_mode"
+  echo -n "gold" > "$HOME/.config/zothos/profile.state"
+  echo -n "gold" > "$HOME/.config/zothos/reality.state"
 fi
 
 # ------------------------------------------------------------------------------
-# STEP 5: Deploy Wallpapers, GTK Themes & Application Launchers
+# STEP 5: Deploy Full /usr/share Assets & Clean 3.3 4-Folder Desktop Layout
 # ------------------------------------------------------------------------------
-echo -e "${CYAN}[5/6] Deploying Wallpapers, Plasma/GTK Themes & Desktop Launchers ...${RESET}"
-sudo mkdir -p /usr/share/backgrounds/zothos /usr/share/themes /usr/share/applications "$HOME/Desktop"
-if [ -d "$REPO_DIR/config/includes.chroot/usr/share/backgrounds/zothos" ]; then
-  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/share/backgrounds/zothos/"* /usr/share/backgrounds/zothos/ 2>/dev/null || true
+echo -e "${CYAN}[5/7] Deploying Full 3.3 /usr/share (Plasma 3D Wallpaper, Sounds, Icons, Themes) & 4-Folder Desktop ...${RESET}"
+sudo mkdir -p /usr/share/backgrounds/zothos /usr/share/themes /usr/share/applications /usr/share/sounds/zothos "$HOME/Desktop"
+if [ -d "$REPO_DIR/config/includes.chroot/usr/share" ]; then
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/share/"* /usr/share/ 2>/dev/null || true
 fi
-if [ -d "$REPO_DIR/config/includes.chroot/usr/share/themes" ]; then
-  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/share/themes/"* /usr/share/themes/ 2>/dev/null || true
-fi
-if [ -d "$REPO_DIR/config/includes.chroot/usr/share/applications" ]; then
-  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/share/applications/zoth-"*.desktop /usr/share/applications/ 2>/dev/null || true
-  cp -rf "$REPO_DIR/config/includes.chroot/usr/share/applications/zoth-"*.desktop "$HOME/Desktop/" 2>/dev/null || true
-  chmod +x "$HOME/Desktop/zoth-"*.desktop 2>/dev/null || true
+
+# Clean legacy 3.0 top-level .desktop clutter and install clean 3.3 4-Folder Desktop
+rm -f "$HOME/Desktop/"*.desktop 2>/dev/null || true
+if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/Desktop" ]; then
+  cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/Desktop/"* "$HOME/Desktop/" 2>/dev/null || true
+  chmod +x "$HOME/Desktop/"*.desktop "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
 fi
 
 # ------------------------------------------------------------------------------
-# STEP 6: Verification of ZothOS v3.3.0 Sovereign Arsenal
+# STEP 6: Activate Live ZothOS 3.3 Sovereign Gold Mode, 3D Wallpaper & Zoth-Bot
 # ------------------------------------------------------------------------------
-echo -e "\n${CYAN}[6/6] Verifying ZothOS v3.3.0 Sovereign Utilities ...${RESET}"
+echo -e "${CYAN}[6/7] Activating Live ZothOS 3.3 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
+export DISPLAY="${DISPLAY:-:0}"
+if [ -x /usr/local/bin/zoth-mode ]; then
+  /usr/local/bin/zoth-mode gold || true
+fi
+if [ -x /usr/local/bin/zoth-plasma-setup ]; then
+  /usr/local/bin/zoth-plasma-setup || true
+fi
+if [ -x /usr/local/bin/zoth-bot ] && ! pgrep -f "/usr/local/bin/zoth-bot" >/dev/null 2>&1; then
+  nohup /usr/local/bin/zoth-bot >/dev/null 2>&1 &
+fi
+
+# ------------------------------------------------------------------------------
+# STEP 7: Verification of ZothOS v3.3.0 Sovereign Arsenal
+# ------------------------------------------------------------------------------
+echo -e "\n${CYAN}[7/7] Verifying ZothOS v3.3.0 Sovereign Utilities ...${RESET}"
 CORE_CMDS=(
   "zoth-os"
   "zoth-node"

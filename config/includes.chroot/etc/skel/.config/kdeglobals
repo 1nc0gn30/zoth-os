@@ -1,75 +1,175 @@
-[KDE]
-ColorScheme=ZothHermeticGold
-widgetStyle=Breeze
-LookAndFeelPackage=org.kde.breezedark.desktop
-SingleClick=false
+[ColorEffects:Disabled]
+ChangeSelectionColor=
+Color=56,56,56
+ColorAmount=0
+ColorEffect=0
+ContrastAmount=0.65
+ContrastEffect=1
+Enable=
+IntensityAmount=0.1
+IntensityEffect=2
 
-[Colors:Window]
-BackgroundNormal=5,7,10
-BackgroundAlternate=10,14,20
-ForegroundNormal=241,245,249
-ForegroundInactive=136,153,170
-ForegroundActive=255,215,0
-ForegroundLink=255,200,50
-
-[Colors:View]
-BackgroundNormal=6,9,14
-BackgroundAlternate=12,16,24
-ForegroundNormal=241,245,249
-ForegroundInactive=136,153,170
-ForegroundActive=255,215,0
-ForegroundLink=255,200,50
-DecorationFocus=255,215,0
-DecorationHover=255,215,0
+[ColorEffects:Inactive]
+ChangeSelectionColor=true
+Color=112,111,110
+ColorAmount=0.025
+ColorEffect=2
+ContrastAmount=0.1
+ContrastEffect=2
+Enable=false
+IntensityAmount=0
+IntensityEffect=0
 
 [Colors:Button]
-BackgroundNormal=12,16,24
-BackgroundAlternate=18,24,36
-ForegroundNormal=255,215,0
-ForegroundInactive=140,140,140
-ForegroundActive=255,230,100
-
-[Colors:Selection]
-BackgroundNormal=255,215,0
-BackgroundAlternate=218,165,32
-ForegroundNormal=5,7,10
-ForegroundActive=255,255,255
+BackgroundAlternate=183,155,2
+BackgroundNormal=18,15,8
 DecorationFocus=255,215,0
-[Colors:Tooltip]
-BackgroundNormal=6,8,12
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
 ForegroundNormal=255,215,0
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
 
 [Colors:Complementary]
-BackgroundNormal=8,10,14
-BackgroundAlternate=16,20,28
-ForegroundNormal=241,245,249
-ForegroundInactive=136,153,170
-ForegroundActive=255,215,0
-ForegroundLink=255,215,0
-ForegroundNegative=239,68,68
-ForegroundNeutral=245,158,11
-ForegroundPositive=16,185,129
-ForegroundVisited=255,200,50
+BackgroundAlternate=20,16,10
+BackgroundNormal=10,8,4
 DecorationFocus=255,215,0
-DecorationHover=255,225,80
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
+ForegroundNormal=255,215,0
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
 
-[WM]
-activeBackground=255,215,0
-activeForeground=5,7,10
-inactiveBackground=12,16,24
-inactiveForeground=136,153,170
+[Colors:Header]
+BackgroundAlternate=20,16,10
+BackgroundNormal=10,8,4
+DecorationFocus=255,215,0
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
+ForegroundNormal=255,215,0
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
 
-[Icons]
-Theme=Zoth-Hermetic
+[Colors:Selection]
+BackgroundAlternate=181,152,1
+BackgroundNormal=181,152,1
+DecorationFocus=255,215,0
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=0,0,0
+ForegroundLink=186,157,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=200,140,0
+ForegroundNormal=0,0,0
+ForegroundPositive=0,150,80
+ForegroundVisited=10,8,4
+
+[Colors:Tooltip]
+BackgroundAlternate=24,20,12
+BackgroundNormal=12,10,6
+DecorationFocus=255,215,0
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
+ForegroundNormal=255,235,160
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
+
+[Colors:View]
+BackgroundAlternate=16,14,8
+BackgroundNormal=10,8,4
+DecorationFocus=255,215,0
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
+ForegroundNormal=245,235,210
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
+
+[Colors:Window]
+BackgroundAlternate=16,14,8
+BackgroundNormal=10,8,4
+DecorationFocus=255,215,0
+DecorationHover=255,215,0
+ForegroundActive=255,215,0
+ForegroundInactive=140,130,100
+ForegroundLink=255,215,0
+ForegroundNegative=255,60,60
+ForegroundNeutral=255,180,20
+ForegroundNormal=245,235,210
+ForegroundPositive=0,255,157
+ForegroundVisited=220,180,30
+
+[DirSelect Dialog]
+DirSelectDialog Size=837,582
+History Items[$e]=file:$HOME/NullAITech
+Splitter State=\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x9d\x00\x00\x02\xa8\x00\xff\xff\xff\xff\x01\x00\x00\x00\x01\x00
 
 [General]
+AccentColor=255,215,0
+BrowserApplication=google-chrome.desktop
 ColorScheme=ZothHermeticGold
+ColorSchemeHash=bd7de53fd1cdfff8265fc892be6cf819727ff00c
+LastUsedCustomAccentColor=255,215,0
 Name=Zoth Hermetic Cyber Gold
 accentColor=#ffd700
-AccentColor=255,215,0
-LastUsedCustomAccentColor=255,215,0
-font=JetBrains Mono,10,-1,5,50,0,0,0,0,0
 fixed=JetBrains Mono,10,-1,5,50,0,0,0,0,0
-toolBarFont=JetBrains Mono,9,-1,5,50,0,0,0,0,0
+font=JetBrains Mono,10,-1,5,50,0,0,0,0,0
 menuFont=JetBrains Mono,9.5,-1,5,50,0,0,0,0,0
+toolBarFont=JetBrains Mono,9,-1,5,50,0,0,0,0,0
 windowTitleFont=JetBrains Mono,10,-1,5,75,0,0,0,0,0
+
+[Icons]
+Theme=breeze-dark
+
+[KDE]
+ColorScheme=ZothHermeticGold
+LookAndFeelPackage=org.kde.breezedark.desktop
+SingleClick=false
+widgetStyle=Breeze
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=true
+Decoration position=2
+LocationCombo Completionmode=5
+PathCombo Completionmode=5
+Show Bookmarks=false
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort hidden files last=false
+Sort reversed=false
+Speedbar Width=157
+View Style=DetailTree
+
+[WM]
+activeBackground=10,8,4
+activeBlend=10,8,4
+activeForeground=255,215,0
+inactiveBackground=10,8,4
+inactiveBlend=10,8,4
+inactiveForeground=255,215,0

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const { VaelorLatticeNode, levenshteinDistance, normalizeHomoglyphs } = require('../src/core/lattice');
+const { VaelorLatticeNode, VAEL_PER_VLR, levenshteinDistance, normalizeHomoglyphs } = require('../src/core/lattice');
 
 const tmpFile = path.join('/tmp', `vaelor_test_${Date.now()}.json`);
 const node = new VaelorLatticeNode(tmpFile);
@@ -2845,8 +2845,225 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert(cliHelpComm.includes('comm'), 'CLI help must include comm command');
   assert(cliHelpComm.includes('ZothOS passphrase-gated P2P encrypted messenger'), 'CLI help must describe comm');
 
+  // =========================================================================
+  // Feature 32: Enterprise Institutional Core — Merkle State Root, Append-Only WAL & P2P Cluster
+  // =========================================================================
+  console.log('Testing Feature #32: Enterprise Genesis-to-Head Merkle State Root, Append-Only WAL & P2P Cluster Mesh...');
+
+  // 1. computeMerkleStateRoot()
+  const merkleResult = nodeReloaded.computeMerkleStateRoot();
+  assert.strictEqual(typeof merkleResult.merkleRoot, 'string');
+  assert.strictEqual(merkleResult.merkleRoot.length, 64, 'Merkle state root must be SHA-256 hex 64 chars');
+  assert(merkleResult.leafCount >= 4, 'Must have at least 4 account leaves');
+  assert(merkleResult.treeDepth >= 2, 'Tree depth must be >= 2');
+
+  // Determinism check: computing again without state change must yield identical root
+  const merkleResult2 = nodeReloaded.computeMerkleStateRoot();
+  assert.strictEqual(merkleResult.merkleRoot, merkleResult2.merkleRoot, 'Merkle state root must be 100% deterministic');
+
+  // 2. Append-Only WAL verification
+  assert(nodeReloaded.walFile, 'Node must define walFile path');
+  assert(fs.existsSync(nodeReloaded.walFile), 'Append-only WAL file vaelor_blocks.wal.jsonl must exist on disk');
+  const walContent = fs.readFileSync(nodeReloaded.walFile, 'utf8').trim();
+  const walLines = walContent.split('\n').filter(Boolean);
+  assert(walLines.length >= 10, 'WAL file must contain serialized JSONL blocks');
+  const firstWalBlock = JSON.parse(walLines[0]);
+  assert(firstWalBlock.hash, 'WAL lines must be valid blocks with block hash');
+
+  // 3. verifyFullChainIntegrity()
+  const integrityResult = nodeReloaded.verifyFullChainIntegrity();
+  assert.strictEqual(integrityResult.ok, true);
+  assert.strictEqual(integrityResult.status, 'ENTERPRISE_VERIFIED');
+  assert.strictEqual(integrityResult.merkleStateRoot, merkleResult.merkleRoot);
+  assert(integrityResult.totalBlocksVerified >= 10);
+  assert(integrityResult.bftQuorumVerifiedCount >= 5);
+  assert.strictEqual(typeof integrityResult.totalCirculatingVlr, 'number');
+  assert(integrityResult.auditDurationMs >= 0);
+
+  // 4. P2P Peer Registry & Cluster Delta
+  const p2pPeers = nodeReloaded.getP2pPeers();
+  assert(p2pPeers.length >= 6, 'Must have at least 6 seeded P2P peers (rig2 + 5 validators)');
+  const rig2Peer = p2pPeers.find(p => p.handle === '@zoth-rig2');
+  assert(rig2Peer, '@zoth-rig2 peer must exist in registry');
+  assert.strictEqual(rig2Peer.role, 'AI_WORKER');
+
+  // Connect new peer
+  const connRes = nodeReloaded.connectPeerNode({
+    endpoint: 'http://192.168.1.150:8140',
+    handle: '@zoth-worker-3',
+    role: 'AI_WORKER',
+    region: 'us-east-edge'
+  });
+  assert.strictEqual(connRes.ok, true);
+  assert.strictEqual(connRes.peer.handle, '@zoth-worker-3');
+
+  // Delta Sync
+  const deltaRes = nodeReloaded.getPeerDelta(0);
+  assert.strictEqual(deltaRes.ok, true);
+  assert(deltaRes.deltaCount >= 10, 'Delta blocks count must be >= 10');
+  assert.strictEqual(deltaRes.merkleStateRoot, merkleResult.merkleRoot);
+
+  // Ingest Gossip Block
+  const sampleBlock = {
+    height: 999,
+    account: '@zoth-rig2',
+    type: 'AI_TASK_RESULT',
+    hash: 'a'.repeat(64),
+    previousHash: '0'.repeat(64),
+    timestamp: new Date().toISOString(),
+    quorumCertificate: {
+      status: 'FINALIZED_BFT',
+      approvals: 5,
+      threshold: 4,
+      validators: ['val-alpha', 'val-beta', 'val-gamma', 'val-delta', 'val-epsilon']
+    }
+  };
+  const gossipRes = nodeReloaded.ingestPeerGossipBlock(sampleBlock, 'peer_zoth_rig2');
+  assert.strictEqual(gossipRes.ok, true);
+  assert.strictEqual(gossipRes.accepted, true);
+
+  // Gossip rejection on invalid / sub-threshold quorum
+  assert.throws(() => {
+    nodeReloaded.ingestPeerGossipBlock({
+      height: 1000,
+      account: '@attacker',
+      type: 'INVALID',
+      hash: 'b'.repeat(64),
+      quorumCertificate: { status: 'PENDING', approvals: 2, threshold: 4 }
+    });
+  }, /BFT quorum certificate unverified or sub-threshold/);
+
+  // 5. MCP Tool #16 execution
+  const mcpAuditRes = executeTool(nodeReloaded, 'vaelor_enterprise_audit_and_p2p', { mode: 'audit_and_sync' });
+  assert.strictEqual(mcpAuditRes.ok, true);
+  assert(mcpAuditRes.audit || mcpAuditRes.merkleStateRoot);
+
+  // 6. CLI audit & peer commands
+  const cliAuditRaw = execSync(`node "${cliBin}" --offline --json audit`, execOpts).toString();
+  const cliAudit = JSON.parse(cliAuditRaw);
+  assert.strictEqual(cliAudit.ok, true);
+  assert(cliAudit.merkleStateRoot);
+
+  const cliPeerRaw = execSync(`node "${cliBin}" --offline --json peer list`, execOpts).toString();
+  const cliPeer = JSON.parse(cliPeerRaw);
+  assert.strictEqual(cliPeer.ok, true);
+  assert(cliPeer.peers.length >= 6);
+
+  // =========================================================================
+  // Feature 33: M-of-N Corporate Multi-Sig Treasury, Idempotency & HMAC Webhooks
+  // =========================================================================
+  console.log('Testing Feature #33: M-of-N Corporate Multi-Sig Treasury, Idempotency & HMAC Webhooks...');
+
+  // 1. Multi-Sig Vault Registry
+  const msigVaults = nodeReloaded.getMultisigVaults();
+  assert(msigVaults.length >= 1, 'At least 1 corporate multi-sig vault must exist');
+  const zothVault = msigVaults.find(v => v.id === 'msig_zoth_foundation');
+  assert(zothVault, 'msig_zoth_foundation vault must exist');
+  assert.strictEqual(zothVault.threshold, 2, 'Default corporate vault must be 2-of-3 threshold');
+  assert.deepStrictEqual(zothVault.signers, ['@neal', '@zoth', '@sprig']);
+  assert(zothVault.balanceVlr >= 500, 'Corporate treasury must have pre-funded VLR');
+
+  // 2. Propose Multi-Sig Transfer
+  const propRes = nodeReloaded.proposeMultisigTx({
+    vaultId: 'msig_zoth_foundation',
+    proposer: '@neal',
+    to: '@sprig',
+    amountVlr: 50.0,
+    memo: 'Q4 Open Source Ecosystem Grant'
+  });
+  assert.strictEqual(propRes.ok, true);
+  assert(propRes.proposal.id.startsWith('prop_'));
+  assert.strictEqual(propRes.proposal.status, 'PENDING');
+  assert.deepStrictEqual(propRes.proposal.approvals, ['@neal']);
+  assert.strictEqual(propRes.executed, false);
+
+  // Unauthorized proposer check
+  assert.throws(() => {
+    nodeReloaded.proposeMultisigTx({
+      vaultId: 'msig_zoth_foundation',
+      proposer: '@unauthorized',
+      to: '@sprig',
+      amountVlr: 10.0
+    });
+  }, /not an authorized signer/);
+
+  // Duplicate approval check from same signer
+  assert.throws(() => {
+    nodeReloaded.approveMultisigTx({
+      proposalId: propRes.proposal.id,
+      signer: '@neal'
+    });
+  }, /has already approved proposal/);
+
+  // 3. Second Co-Signature & Quorum Execution
+  const sprigBalBeforeMsig = nodeReloaded.resolveAccount('@sprig').balanceVael;
+  const approveRes = nodeReloaded.approveMultisigTx({
+    proposalId: propRes.proposal.id,
+    signer: '@zoth'
+  });
+  assert.strictEqual(approveRes.ok, true);
+  assert.strictEqual(approveRes.executed, true, 'Threshold reached (2/2) -> auto executed');
+  assert.strictEqual(approveRes.proposal.status, 'EXECUTED');
+  assert.strictEqual(approveRes.execBlock.type, 'MULTISIG_EXEC');
+  assert.strictEqual(approveRes.execBlock.quorumCertificate.status, 'FINALIZED_BFT');
+  assert.strictEqual(approveRes.receiveBlock.type, 'RECEIVE');
+
+  // Recipient balance verification
+  const sprigBalAfterMsig = nodeReloaded.resolveAccount('@sprig').balanceVael;
+  assert.strictEqual(sprigBalAfterMsig, sprigBalBeforeMsig + 50 * VAEL_PER_VLR);
+
+  // Re-approval of already executed proposal must throw
+  assert.throws(() => {
+    nodeReloaded.approveMultisigTx({
+      proposalId: propRes.proposal.id,
+      signer: '@sprig'
+    });
+  }, /has already been executed/);
+
+  // 4. HMAC-SHA256 Signed Webhook Event Generation
+  const hookEvent = nodeReloaded.generateWebhookEvent('treasury.disbursement.completed', {
+    proposalId: propRes.proposal.id,
+    amountVlr: 50.0,
+    to: '@sprig'
+  });
+  assert.strictEqual(hookEvent.ok, true);
+  assert(hookEvent.signatureHeader.includes('t=') && hookEvent.signatureHeader.includes('v1='));
+  assert.strictEqual(hookEvent.signatureValid, true, 'HMAC signature must verify against secret');
+
+  const hookDeliveries = nodeReloaded.getWebhookDeliveries();
+  assert(hookDeliveries.length >= 1, 'Webhook deliveries must be logged in state');
+
+  // 5. MCP Tool #17 execution
+  const mcpMsigRes = executeTool(nodeReloaded, 'vaelor_multisig_treasury', {
+    proposalId: propRes.proposal.id,
+    signerHandle: '@zoth',
+    idempotencyKey: 'idem_test_123'
+  });
+  assert.strictEqual(mcpMsigRes.ok, true);
+  assert.strictEqual(mcpMsigRes.thresholdReached, true);
+
+  // 6. CLI multisig commands
+  const cliMsigRaw = execSync(`node "${cliBin}" --offline --json multisig list`, execOpts).toString();
+  const cliMsig = JSON.parse(cliMsigRaw);
+  assert.strictEqual(cliMsig.ok, true);
+  assert(cliMsig.vaults.length >= 1);
+
+  // 7. SDK helper methods
+  VaelorPay.setLocalNode(nodeReloaded);
+  const sdkIntegrity = await VaelorPay.verifyChainIntegrity();
+  assert.strictEqual(sdkIntegrity.ok, true);
+  assert(sdkIntegrity.merkleStateRoot);
+
+  const sdkPeers = await VaelorPay.getP2pPeers();
+  assert.strictEqual(sdkPeers.ok, true);
+  assert(sdkPeers.peers.length >= 6);
+
+  const sdkVaults = await VaelorPay.getMultisigVaults();
+  assert.strictEqual(sdkVaults.ok, true);
+  assert(sdkVaults.vaults.length >= 1);
+
   if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
-  console.log('✅ All Vaelor (VLR) Account-Lattice DAG, Ed25519, Invoices, Subscriptions, Bridge, 5-Validator Quorum, Guardian Recovery, Money Streaming, Split Cashback, Offline Tap Vouchers, PoUW Savings Vault (8.5% APY), Itemized Smart Receipts, AI Agent M2M Bounties, Verified Merchant Directory, Delegated Sub-Accounts, Privacy Shielded Transfers, Social Group Tabs, Sovereign Inheritance, 0% APR Revolving Credit Line, Drop-In Merchant POS SDK, 15-Tool MCP Server, vaelor-cli, Creator Feeless Tip Jars, Loyalty Multiplier Tiers, Multi-Currency Merchant FX, Zero-Penalty Protected Escrows, 28-Feature SDK DAG Stress Benchmark, Sovereign CPA Tax Exporter & ZothOS Passphrase-Gated P2P Messenger tests PASSED (31/31)!');
+  console.log('✅ All Vaelor (VLR) Account-Lattice DAG, Ed25519, Invoices, Subscriptions, Bridge, 5-Validator Quorum, Guardian Recovery, Money Streaming, Split Cashback, Offline Tap Vouchers, PoUW Savings Vault (8.5% APY), Itemized Smart Receipts, AI Agent M2M Bounties, Verified Merchant Directory, Delegated Sub-Accounts, Privacy Shielded Transfers, Social Group Tabs, Sovereign Inheritance, 0% APR Revolving Credit Line, Drop-In Merchant POS SDK, 17-Tool MCP Server, vaelor-cli, Creator Feeless Tip Jars, Loyalty Multiplier Tiers, Multi-Currency Merchant FX, Zero-Penalty Protected Escrows, 28-Feature SDK DAG Stress Benchmark, Sovereign CPA Tax Exporter, ZothOS Passphrase-Gated P2P Messenger, Enterprise Merkle State Root & Corporate Multi-Sig Treasury tests PASSED (33/33)!');
 })().catch((err) => {
   console.error('Test Suite Failed:', err);
   if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);

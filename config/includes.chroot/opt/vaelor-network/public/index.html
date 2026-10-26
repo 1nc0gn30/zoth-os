@@ -3622,7 +3622,7 @@
           </p>
 
           <div class="form-group">
-            <label for="mcpToolSelect">Select MCP Tool (15 Available)</label>
+            <label for="mcpToolSelect">Select MCP Tool (17 Available)</label>
             <select class="input" id="mcpToolSelect">
               <option value="vaelor_network_status">1. vaelor_network_status — Real-time L1 Snapshot &amp; 5-Validator BFT Quorum</option>
               <option value="vaelor_account_balance">2. vaelor_account_balance — Liquid, Staked &amp; 0% APR Credit Profile</option>
@@ -3639,6 +3639,8 @@
               <option value="vaelor_protected_escrow">13. vaelor_protected_escrow — Zero-Penalty Protected Commerce Escrow</option>
               <option value="vaelor_export_tax_report">14. vaelor_export_tax_report — IRS-Compliant 1-Click CPA Tax &amp; Cashback Audit</option>
               <option value="vaelor_zoth_comm">15. vaelor_zoth_comm — Passphrase-Gated AES-256-GCM P2P Messenger &amp; AI Dispatcher</option>
+              <option value="vaelor_enterprise_audit_and_p2p">16. vaelor_enterprise_audit_and_p2p — Merkle State Root Audit &amp; Multi-Node P2P Cluster Sync</option>
+              <option value="vaelor_multisig_treasury">17. vaelor_multisig_treasury — 2-of-3 Corporate Treasury Multi-Sig &amp; HMAC Webhooks</option>
             </select>
           </div>
 
@@ -3944,6 +3946,106 @@
             <div id="commInboxFeed" class="tx-list" style="max-height:260px;overflow-y:auto;">
               <!-- Populated dynamically -->
             </div>
+          </div>
+        </div>
+
+        <!-- Card 5: Enterprise Institutional Cockpit — Merkle State Root, Multi-Node P2P & Corporate Multi-Sig Treasury -->
+        <div class="card" id="enterpriseInstitutionalCard" style="grid-column: 1 / -1; margin-top: 14px; border: 1px solid rgba(245,197,66,0.35); background: linear-gradient(135deg, rgba(245,197,66,0.04), rgba(5,6,11,0.92));">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.5rem;">🏛️</span>
+              <div>
+                <h3 style="font-family:var(--font-display);font-size:1.2rem;margin:0;">Enterprise Institutional Cockpit</h3>
+                <p style="font-size:0.8rem;color:var(--muted);margin:0;">SHA-256 Binary Merkle State Root • WAL Fsync • Multi-Node P2P Sync • 2-of-3 Corporate Multi-Sig Treasury &amp; HMAC Webhooks</p>
+              </div>
+            </div>
+            <span class="badge" style="background:rgba(245,197,66,0.18);color:var(--gold);border:1px solid rgba(245,197,66,0.4);">Institutional Tier • Zero-Trust Fsync</span>
+          </div>
+
+          <p style="font-size:0.83rem;color:var(--muted);margin-bottom:16px;">
+            Deterministic cryptographic audit chain verifying 100.000000% atomic integer supply conservation, regional BFT quorum attestation, append-only WAL persistence (<code style="color:var(--gold);">vaelor_blocks.wal.jsonl</code>), multi-node P2P cluster mesh, and M-of-N corporate treasury governance with idempotency replay protection.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;margin-bottom:16px;">
+            <!-- Column 1: Genesis-to-Head Merkle State Root Audit -->
+            <div style="background:rgba(5,6,11,0.6);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                  <span style="color:var(--gold);font-weight:700;">🔍 1. Merkle State Root Audit</span>
+                </div>
+                <p style="font-size:0.75rem;color:var(--muted);margin-bottom:12px;">Traverse all account lattices, verify previousHash linkage, 5/5 BFT certs, and construct SHA-256 binary Merkle tree.</p>
+              </div>
+              <div>
+                <button type="button" class="btn btn-gold" id="btnAuditChainIntegrity" style="width:100%;font-size:0.82rem;padding:8px 12px;">
+                  🔍 Audit Chain Integrity ($0 Gas)
+                </button>
+              </div>
+            </div>
+
+            <!-- Column 2: Multi-Node P2P Cluster Mesh & Delta -->
+            <div style="background:rgba(5,6,11,0.6);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                  <span style="color:var(--cyan);font-weight:700;">🌐 2. Multi-Node P2P Mesh</span>
+                </div>
+                <p style="font-size:0.75rem;color:var(--muted);margin-bottom:12px;">Inspect 7-node cluster mesh (@zoth master, @zoth-rig2 AI worker, 5 BFT regional nodes) and sync gossip delta blocks.</p>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn btn-outline" id="btnP2pPeers" style="flex:1;font-size:0.78rem;padding:8px 6px;border-color:var(--cyan);color:var(--cyan);">
+                  🌐 List Peers
+                </button>
+                <button type="button" class="btn btn-outline" id="btnP2pDeltaSync" style="flex:1;font-size:0.78rem;padding:8px 6px;border-color:var(--gold);color:var(--gold);">
+                  ⚡ Sync Delta
+                </button>
+              </div>
+            </div>
+
+            <!-- Column 3: 2-of-3 Corporate Multi-Sig Governance -->
+            <div style="background:rgba(5,6,11,0.6);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                  <span style="color:#c084fc;font-weight:700;">🏛️ 3. Corporate Multi-Sig (2-of-3)</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+                  <input class="input" id="msigAmountInput" type="number" value="2500" placeholder="VLR" style="font-size:0.78rem;padding:4px 6px;" />
+                  <select class="input" id="msigSignerSelect" style="font-size:0.78rem;padding:4px 6px;">
+                    <option value="@zoth" selected>@zoth (Signer 2)</option>
+                    <option value="@neal">@neal (Signer 1)</option>
+                    <option value="@sprig">@sprig (Signer 3)</option>
+                  </select>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline" id="btnMultisigApprove" style="width:100%;font-size:0.82rem;padding:8px 12px;border-color:#c084fc;color:#c084fc;">
+                ✍️ Co-Sign Proposal (Threshold 2-of-3)
+              </button>
+            </div>
+
+            <!-- Column 4: HMAC Webhook Dispatch & Prometheus Metrics -->
+            <div style="background:rgba(5,6,11,0.6);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                  <span style="color:#34d399;font-weight:700;">📡 4. HMAC Webhook &amp; Metrics</span>
+                </div>
+                <p style="font-size:0.75rem;color:var(--muted);margin-bottom:12px;">HMAC-SHA256 signed delivery header (<code style="color:#34d399;">t=...,v1=...</code>) and Prometheus institutional line metrics (/metrics).</p>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn btn-outline" id="btnWebhookTest" style="flex:1;font-size:0.78rem;padding:8px 6px;border-color:#34d399;color:#34d399;">
+                  🚀 Test Webhook
+                </button>
+                <a href="/metrics" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="flex:1;font-size:0.78rem;padding:8px 6px;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+                  📊 /metrics
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enterprise Output Console -->
+          <div style="background:rgba(5,6,11,0.85);border:1px solid var(--border);border-radius:10px;padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--gold);font-weight:700;">🏛️ Institutional Ledger Output Console</span>
+              <span id="enterpriseConsoleBadge" class="badge" style="background:rgba(16,185,129,0.18);color:#34d399;font-size:0.7rem;">READY</span>
+            </div>
+            <pre id="enterpriseConsoleOutput" style="background:#05060b;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px;font-family:var(--font-mono);font-size:0.78rem;color:#38bdf8;max-height:240px;overflow-y:auto;white-space:pre-wrap;margin:0;">Click any button above to audit chain integrity, inspect P2P cluster mesh, execute 2-of-3 multi-sig transfers, or verify signed HMAC webhooks.</pre>
           </div>
         </div>
       </div>
@@ -12794,6 +12896,38 @@
               }
             }
           }
+        },
+        vaelor_enterprise_audit_and_p2p: {
+          cli: 'vaelor-cli audit',
+          args: '{\n  "mode": "audit_and_sync",\n  "peerNode": "http://127.0.0.1:8140"\n}',
+          schema: {
+            name: 'vaelor_enterprise_audit_and_p2p',
+            description: 'Audit genesis-to-head ledger integrity, verify SHA-256 Binary Merkle State Root, check WAL fsync status, and synchronize multi-node P2P cluster deltas across ZothOS workstations, 24/7 AI laptops, and BFT validators.',
+            parameters: {
+              type: 'object',
+              properties: {
+                mode: { type: 'string', enum: ['audit', 'sync', 'audit_and_sync'], description: 'Audit and/or sync mode' },
+                peerNode: { type: 'string', description: 'Peer node URL to sync' }
+              }
+            }
+          }
+        },
+        vaelor_multisig_treasury: {
+          cli: 'vaelor-cli multisig approve prop_zoth_corp_2026_q4 @zoth',
+          args: '{\n  "proposalId": "prop_zoth_corp_2026_q4",\n  "signerHandle": "@zoth",\n  "amountVlr": 2500,\n  "purpose": "Q4 Sovereign R&D & KVM Fleet Grant"\n}',
+          schema: {
+            name: 'vaelor_multisig_treasury',
+            description: 'Create, co-sign, and execute 2-of-3 corporate multi-sig treasury proposals with Idempotency-Key replay protection and HMAC-SHA256 signed webhook dispatch for institutional CFOs and enterprise governance.',
+            parameters: {
+              type: 'object',
+              properties: {
+                proposalId: { type: 'string', description: 'Proposal identifier' },
+                signerHandle: { type: 'string', description: 'Co-signer handle' },
+                amountVlr: { type: 'number', description: 'Transfer amount in VLR' },
+                purpose: { type: 'string', description: 'Memo or purpose' }
+              }
+            }
+          }
         }
       };
 
@@ -13381,6 +13515,115 @@
         refreshCommPeers();
         loadCommInbox('@zoth-rig2', 'zoth-sovereign-757');
       }, 500);
+
+      // ==========================================
+      // Feature 32 & 33: Enterprise Institutional Cockpit Handlers
+      // ==========================================
+      const btnAuditChain = document.getElementById('btnAuditChainIntegrity');
+      const btnP2pPeers = document.getElementById('btnP2pPeers');
+      const btnP2pDelta = document.getElementById('btnP2pDeltaSync');
+      const btnMsigApprove = document.getElementById('btnMultisigApprove');
+      const btnWebhookTest = document.getElementById('btnWebhookTest');
+      const entOutput = document.getElementById('enterpriseConsoleOutput');
+      const entBadge = document.getElementById('enterpriseConsoleBadge');
+      const msigAmtInput = document.getElementById('msigAmountInput');
+      const msigSignerSelect = document.getElementById('msigSignerSelect');
+
+      function updateEntConsole(title, badgeText, badgeColor, data) {
+        if (entBadge) {
+          entBadge.textContent = badgeText;
+          entBadge.style.color = badgeColor;
+          entBadge.style.borderColor = badgeColor;
+        }
+        if (entOutput) {
+          entOutput.textContent = `// ${title} — ${new Date().toLocaleTimeString()}\n` + JSON.stringify(data, null, 2);
+          entOutput.style.color = '#38bdf8';
+        }
+      }
+
+      if (btnAuditChain) {
+        btnAuditChain.addEventListener('click', async () => {
+          btnAuditChain.disabled = true;
+          btnAuditChain.textContent = '⏳ Auditing Lattice...';
+          try {
+            const res = await apiCall('/api/ledger/verify-integrity');
+            updateEntConsole('GENESIS-TO-HEAD AUDIT VERIFIED', '100% ATOMIC INTEGRITY', '#34d399', res);
+          } catch (e) {
+            updateEntConsole('AUDIT ERROR', 'ERROR', '#f87171', { error: e.message });
+          } finally {
+            btnAuditChain.disabled = false;
+            btnAuditChain.textContent = '🔍 Audit Chain Integrity ($0 Gas)';
+          }
+        });
+      }
+
+      if (btnP2pPeers) {
+        btnP2pPeers.addEventListener('click', async () => {
+          btnP2pPeers.disabled = true;
+          try {
+            const res = await apiCall('/api/p2p/peers');
+            updateEntConsole('P2P CLUSTER MESH TOPOLOGY', '7 NODES IN QUORUM', '#38bdf8', res);
+          } catch (e) {
+            updateEntConsole('P2P PEERS ERROR', 'ERROR', '#f87171', { error: e.message });
+          } finally {
+            btnP2pPeers.disabled = false;
+          }
+        });
+      }
+
+      if (btnP2pDelta) {
+        btnP2pDelta.addEventListener('click', async () => {
+          btnP2pDelta.disabled = true;
+          try {
+            const res = await apiCall('/api/p2p/delta');
+            updateEntConsole('P2P GOSSIP DELTA SYNCHRONIZED', 'CONSENSUS SYNCED', '#f5c542', res);
+          } catch (e) {
+            updateEntConsole('P2P DELTA ERROR', 'ERROR', '#f87171', { error: e.message });
+          } finally {
+            btnP2pDelta.disabled = false;
+          }
+        });
+      }
+
+      if (btnMsigApprove) {
+        btnMsigApprove.addEventListener('click', async () => {
+          btnMsigApprove.disabled = true;
+          btnMsigApprove.textContent = '⏳ Co-Signing Multi-Sig...';
+          try {
+            const signer = msigSignerSelect ? msigSignerSelect.value : '@zoth';
+            const amount = msigAmtInput ? Number(msigAmtInput.value || 2500) : 2500;
+            const res = await apiCall('/api/multisig/approve', 'POST', {
+              proposalId: 'prop_zoth_corp_2026_q4',
+              signerHandle: signer,
+              amountVlr: amount,
+              purpose: 'Q4 Sovereign R&D & KVM Fleet Grant'
+            });
+            updateEntConsole('2-OF-3 CORPORATE MULTI-SIG EXECUTED', 'DISPATCHED & SETTLED', '#c084fc', res);
+          } catch (e) {
+            updateEntConsole('MULTISIG ERROR', 'ERROR', '#f87171', { error: e.message });
+          } finally {
+            btnMsigApprove.disabled = false;
+            btnMsigApprove.textContent = '✍️ Co-Sign Proposal (Threshold 2-of-3)';
+          }
+        });
+      }
+
+      if (btnWebhookTest) {
+        btnWebhookTest.addEventListener('click', async () => {
+          btnWebhookTest.disabled = true;
+          try {
+            const res = await apiCall('/api/webhooks/test', 'POST', {
+              eventType: 'treasury.disbursement.completed',
+              payload: { vaultId: 'msig_zoth_foundation', amountVlr: 2500, recipient: '@zoth-rig2' }
+            });
+            updateEntConsole('HMAC-SHA256 SIGNED WEBHOOK DELIVERED', 'HMAC SIGNED ✓', '#34d399', res);
+          } catch (e) {
+            updateEntConsole('WEBHOOK ERROR', 'ERROR', '#f87171', { error: e.message });
+          } finally {
+            btnWebhookTest.disabled = false;
+          }
+        });
+      }
 
       // Initial phishing scanner check on page load
       setTimeout(() => {

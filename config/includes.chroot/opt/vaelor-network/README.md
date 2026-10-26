@@ -5,7 +5,7 @@
   ### The Feeless, Consumer-Grade Account-Lattice Layer-1 Cryptocurrency
   **Sub-20ms Finality • $0.00 Gas Forever • Native Protected-Pay Escrow • Human @Handles • Proof-of-Useful-Work**
 
-  [![Cryptographic Test Suite](https://img.shields.io/badge/Verification-31%2F31%20Suites%20Passing%20(100%25)-10b981?style=for-the-badge&logo=checkmarx&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/test/verify_lattice.js)
+  [![Cryptographic Test Suite](https://img.shields.io/badge/Verification-33%2F33%20Suites%20Passing%20(100%25)-10b981?style=for-the-badge&logo=checkmarx&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/test/verify_lattice.js)
   [![Consensus](https://img.shields.io/badge/Consensus-5--Validator%20BFT%20Quorum-f59e0b?style=for-the-badge&logo=diagram-next&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/src/core/lattice.js)
   [![Zero Gas](https://img.shields.io/badge/Gas%20Fees-%240.00%20Feeless%20Forever-06b6d4?style=for-the-badge&logo=ethereum&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/public/index.html)
   [![Cryptography](https://img.shields.io/badge/Crypto-Ed25519%20%E2%80%A2%20Pedersen%20%E2%80%A2%20SHA--256-8b5cf6?style=for-the-badge&logo=shield&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/src/core/lattice.js)
@@ -342,7 +342,18 @@ The Vaelor daemon exposes a high-performance, JSON-over-HTTP REST RPC interface:
 | `POST` | `/api/comm/handshake` | Authorize cryptographic comm handshake (`COMM_HANDSHAKE` block) | `{ from, to, passphrase, introNote }` |
 | `POST` | `/api/comm/send` | Send AES-256-GCM encrypted message + attached feeless VLR & AI prompt | `{ from, to, passphrase, message, attachedVlr, aiTaskPrompt }` |
 | `POST` | `/api/comm/inbox` | Decrypt inbox messages and AI prompts using PBKDF2 passphrase key | `{ handle, passphrase }` |
-| `GET` | `/api/mcp/tools` | List all 15 Vaelor Layer-1 MCP tools & schemas | None |
+| `GET` | `/api/ledger/verify-integrity` | Audit full genesis-to-head ledger integrity, Merkle state root, WAL fsync | None |
+| `GET` | `/api/p2p/peers` | Discover active P2P cluster mesh and 5 BFT regional validators | None |
+| `POST` | `/api/p2p/connect` | Connect peer node to P2P cluster mesh with idempotency protection | `{ endpoint, handle, role, region }` |
+| `GET` | `/api/p2p/delta` | Fetch delta block synchronization stream since timestamp | Query param `?since=1793000000` |
+| `POST` | `/api/p2p/gossip` | Ingest peer gossip block with BFT quorum certificate verification | `{ block, sourcePeer }` |
+| `GET` | `/api/multisig` | Inspect M-of-N corporate treasury vaults and active governance proposals | Optional query `?vaultId=...` |
+| `POST` | `/api/multisig/propose` | Propose multi-sig treasury disbursement with Idempotency-Key | `{ vaultId, proposer, to, amountVlr, memo }` |
+| `POST` | `/api/multisig/approve` | Co-sign and execute multi-sig transfer with HMAC-SHA256 webhook | `{ proposalId, signerHandle }` |
+| `GET` | `/api/webhooks` | List institutional webhook delivery logs and verification status | None |
+| `POST` | `/api/webhooks/test` | Dispatch signed HMAC-SHA256 test webhook event (`t=...,v1=...`) | `{ eventType, payload }` |
+| `GET` | `/metrics` | Standard Prometheus line-format institutional monitoring metrics | None |
+| `GET` | `/api/mcp/tools` | List all 17 Vaelor Layer-1 MCP tools & schemas | None |
 | `POST` | `/api/mcp/call` | Call Vaelor MCP tool (supports REST & JSON-RPC 2.0) | `{ tool, arguments }` or JSON-RPC format |
 
 ---
@@ -379,6 +390,24 @@ vaelor-cli tax @citizen 2026
 # Export audit-grade CSV directly for CPA / TurboTax import
 vaelor-cli tax @citizen 2026 --csv > vaelor_2026_tax.csv
 
+# Run enterprise genesis-to-head Merkle state root & WAL chain integrity audit
+vaelor-cli audit
+
+# Inspect multi-node P2P cluster mesh & gossip topology
+vaelor-cli peer list
+
+# Query P2P gossip delta block stream
+vaelor-cli peer delta
+
+# Inspect corporate M-of-N multi-sig treasury vaults & proposals
+vaelor-cli multisig list
+
+# Propose corporate multi-sig transfer
+vaelor-cli multisig propose @sprig 2500 "Q4 Sovereign R&D & KVM Fleet Grant" @neal
+
+# Co-sign and execute 2-of-3 corporate proposal with HMAC webhook dispatch
+vaelor-cli multisig approve prop_zoth_corp_2026_q4 @zoth
+
 # Mine a Proof-of-Useful-Work (PoUW) computational audit block
 vaelor-cli mine @neal SECURITY_ENTROPY_SCAN
 
@@ -391,9 +420,9 @@ vaelor-cli --json balance @sprig
 
 ---
 
-## 🤖 10-Tool Vaelor Layer-1 MCP Server (`src/mcp/vaelor_mcp.js`)
+## 🤖 17-Tool Vaelor Layer-1 MCP Server (`src/mcp/vaelor_mcp.js`)
 
-Vaelor exposes 10 native Layer-1 Model Context Protocol (MCP) tools for Claude Desktop, Cursor, Hermes Agent, and Grok Bot:
+Vaelor exposes 17 native Layer-1 Model Context Protocol (MCP) tools for Claude Desktop, Cursor, Hermes Agent, and Grok Bot:
 
 1. `vaelor_network_status`: Real-time network metrics, circulating supply, BFT quorum finality, TVL, and total gas saved.
 2. `vaelor_account_balance`: Liquid balance, staked savings, 0% APR revolving credit profile, and recent micro-blocks.
@@ -405,6 +434,13 @@ Vaelor exposes 10 native Layer-1 Model Context Protocol (MCP) tools for Claude D
 8. `vaelor_draw_credit_bnpl`: 30-day 0% APR revolving credit draw / BNPL merchant point-of-sale checkout.
 9. `vaelor_post_agent_bounty`: Autonomous AI agent Machine-to-Machine (M2M) micro-contract task escrow.
 10. `vaelor_send_shielded`: Confidential transfer with Pedersen Commitments and selective auditor view-key disclosure.
+11. `vaelor_send_creator_tip`: Instant feeless micro-patronage tip with dynamic cashback and Patron badge.
+12. `vaelor_merchant_fx_checkout`: Multi-currency treasury auto-sweep, split allocation, and buyer cashback.
+13. `vaelor_protected_escrow`: Zero-penalty buyer/seller commerce escrow (create, release, refund, split).
+14. `vaelor_export_tax_report`: IRS Rev. Rul. 76-96 compliant sovereign 1-click CPA Tax & Cashback Audit Report.
+15. `vaelor_zoth_comm`: Passphrase-gated AES-256-GCM P2P messenger & 24/7 AI fleet prompt dispatcher.
+16. `vaelor_enterprise_audit_and_p2p`: Genesis-to-head Merkle state root audit, WAL fsync status, and multi-node P2P cluster sync.
+17. `vaelor_multisig_treasury`: 2-of-3 corporate multi-sig governance, idempotency replay protection, and HMAC-SHA256 signed webhooks.
 
 ### Connecting to Claude Desktop / Cursor (`claude_desktop_config.json`)
 
@@ -569,11 +605,64 @@ Vaelor Wave 22 introduces a high-throughput multi-account stress benchmark in `t
 
 ---
 
+## 🏛️ Enterprise Institutional Core — Binary Merkle State Root & Append-Only WAL Audit Chain
+
+Wave 25 introduces enterprise institutional capabilities engineered for corporate treasuries, institutional CFOs, high-frequency AI fleet orchestration, and regulatory compliance:
+
+### 1. Deterministic Binary SHA-256 Merkle State Root (`computeMerkleStateRoot`)
+- **Canonical Leaf Formulation**: Deterministically sorts all active account lattices by `@handle` and computes leaf preimages formatted as `${handle}:${publicKey}:${balanceVael}:${stakedBalanceVael}:${headHash}:${blockCount}`.
+- **Binary Tree Folding**: Odd leaves are duplicated at each depth level and folded pairwise through SHA-256 to yield a single 64-character Merkle State Root (`0x...`). Any mutation, block height discontinuity, or double-spend instantly alters the root.
+- **REST & CLI Audits**: Real-time verification via `GET /api/ledger/verify-integrity` and `vaelor-cli audit`.
+
+### 2. Append-Only Write-Ahead Log (WAL) Audit Chain (`data/vaelor_blocks.wal.jsonl`)
+- **Synchronous Persistence**: Every minted or received micro-block across all account lattices is appended as atomic JSONL to `data/vaelor_blocks.wal.jsonl`.
+- **Fsync & Crash Recovery**: Ensures zero data loss across power interruptions, machine reboots, or host failovers.
+- **Zero-Dependency Git Hygiene**: Gitignored runtime WAL prevents git repo bloat while maintaining institutional compliance.
+
+---
+
+## 👥 Multi-Node P2P Cluster Mesh & Gossip Delta Synchronization
+
+Vaelor coordinates real-time synchronization between regional BFT validators, dedicated AI worker nodes, and master operator cockpits:
+
+- **Cluster Mesh Topology**: Pre-seeded with 7 high-availability nodes:
+  - `@zoth`: Master Cockpit & Orchestrator (`http://192.168.1.100:8140`)
+  - `@zoth-rig2`: Dedicated 24/7 AI Worker Laptop (`http://192.168.1.102:8140`)
+  - `val-alpha-us-east`: US-East Regional BFT Validator
+  - `val-bravo-eu-central`: EU-Central Regional BFT Validator
+  - `val-charlie-asia-east`: Asia-East Regional BFT Validator
+  - `val-delta-zothos-local`: Local Edge Micro-Validator
+  - `val-echo-nullai-core`: NullAI Sovereign Genesis Core
+- **Gossip Delta Stream (`GET /api/p2p/delta`)**: Queries all blocks minted since a given timestamp with binary Merkle state root proofs.
+- **Gossip Ingestion (`POST /api/p2p/gossip`)**: Ingests incoming P2P blocks, validating that each block carries a valid 5/5 BFT Quorum Certificate (`FINALIZED_BFT`) before committing to the local DAG.
+
+---
+
+## 💼 M-of-N Corporate Multi-Sig Treasury & HMAC-SHA256 Signed Webhooks
+
+Solves enterprise CFO governance requirements where capital disbursements cannot depend on single-key wallets:
+
+- **Corporate Treasury Vault (`msig_zoth_foundation`)**:
+  - Pre-seeded with **`50,000 ◈ VLR`** corporate treasury balance.
+  - Policy: **2-of-3 Multi-Sig Threshold** (`@neal`, `@zoth`, `@sprig`).
+- **Proposal Lifecycle (`PROPOSAL_CREATED` $\rightarrow$ `PENDING` $\rightarrow$ `EXECUTED_AND_DISPATCHED`)**:
+  - Proposers submit transfers via `POST /api/multisig/propose` or `vaelor-cli multisig propose`.
+  - Authorized signers co-sign via `POST /api/multisig/approve` or `vaelor-cli multisig approve`.
+  - When the threshold is met (e.g. 2 of 3), the lattice automatically executes the payout, minting `MULTISIG_EXEC` on the vault lattice and `RECEIVE` on the recipient lattice with a 5/5 BFT Quorum Certificate.
+- **Idempotency-Key Replay Protection**:
+  - All `POST` mutating endpoints support `Idempotency-Key` headers. Duplicate requests return cached responses with `"idempotentReplay": true` preventing double disbursements.
+- **HMAC-SHA256 Signed Webhooks**:
+  - Every corporate governance event dispatches a signed webhook payload with header `t=<timestamp>,v1=<hmac_hex>`.
+- **Institutional Prometheus Monitoring (`GET /metrics`)**:
+  - Exposes standard line-format metrics (`vaelor_blocks_total`, `vaelor_accounts_total`, `vaelor_circulating_supply_vlr`, `vaelor_bft_validators_online`, `vaelor_p2p_peers_total`, `vaelor_chain_integrity_verified`, `vaelor_multisig_vaults_total`) for Grafana and Prometheus scrapers.
+
+---
+
 ## 🛠️ Verification, Testing & Quickstart
 
 ### 1. Run the Cryptographic & DAG Verification Suite
 
-The comprehensive automated test suite validates all 31 features, including Ed25519 signatures, Pedersen commitments, 5-Validator BFT Quorum certificates, credit line underwriting, 28-feature drop-in SDK (`vaelor-pay.js`), 15 MCP tools, `vaelor-cli`, creator feeless tip jars, dynamic loyalty cashback tiers, multi-currency merchant FX treasury auto-sweep, zero-penalty protected commerce escrows, high-throughput multi-account DAG stress benchmark, sovereign 1-click CPA tax exporter, and ZothOS passphrase-gated P2P encrypted messenger:
+The comprehensive automated test suite validates all 33 features, including Ed25519 signatures, Pedersen commitments, 5-Validator BFT Quorum certificates, credit line underwriting, 28-feature drop-in SDK (`vaelor-pay.js`), 17 MCP tools, `vaelor-cli`, creator feeless tip jars, dynamic loyalty cashback tiers, multi-currency merchant FX treasury auto-sweep, zero-penalty protected commerce escrows, high-throughput multi-account DAG stress benchmark, sovereign 1-click CPA tax exporter, ZothOS passphrase-gated P2P encrypted messenger, binary Merkle state root integrity audit, and 2-of-3 corporate multi-sig treasury:
 
 ```bash
 cd /home/zoth/NullAITech/vaelor-network
@@ -607,15 +696,17 @@ Testing Feature 24: 10-Tool Vaelor L1 MCP Server & Sovereign Terminal CLI...
 Executing 50-operation multi-account DAG stress benchmark across 5 accounts...
 Stress Benchmark Results:
   - Total Blocks Attested: 85
-  - Average Block Finality: 7.38 ms (SLA requirement: < 20.0 ms)
-  - Average BFT Quorum Latency: 8.11 ms (SLA requirement: < 20.0 ms)
+  - Average Block Finality: 7.90 ms (SLA requirement: < 20.0 ms)
+  - Average BFT Quorum Latency: 8.12 ms (SLA requirement: < 20.0 ms)
   - Quorum Approval Rate: 100% (5/5 validators on every single block)
   - Feeless Transfer Balance Conservation: 100.000000% exact atomic integer precision
 
 --- Running Feature 30: Sovereign 1-Click CPA Tax & Cashback Audit Exporter ---
 
 --- Running Feature 31: ZothOS Sovereign Passphrase-Gated P2P Messenger & 24/7 AI Dispatcher ---
-✅ All Vaelor (VLR) Account-Lattice DAG, Ed25519, Invoices, Subscriptions, Bridge, 5-Validator Quorum, Guardian Recovery, Money Streaming, Split Cashback, Offline Tap Vouchers, PoUW Savings Vault (8.5% APY), Itemized Smart Receipts, AI Agent M2M Bounties, Verified Merchant Directory, Delegated Sub-Accounts, Privacy Shielded Transfers, Social Group Tabs, Sovereign Inheritance, 0% APR Revolving Credit Line, Drop-In Merchant POS SDK, 15-Tool MCP Server, vaelor-cli, Creator Feeless Tip Jars, Loyalty Multiplier Tiers, Multi-Currency Merchant FX, Zero-Penalty Protected Escrows, 28-Feature SDK DAG Stress Benchmark, Sovereign CPA Tax Exporter & ZothOS Passphrase-Gated P2P Messenger tests PASSED (31/31)!
+Testing Feature #32: Enterprise Genesis-to-Head Merkle State Root, Append-Only WAL & P2P Cluster Mesh...
+Testing Feature #33: M-of-N Corporate Multi-Sig Treasury, Idempotency & HMAC Webhooks...
+✅ All Vaelor (VLR) Account-Lattice DAG, Ed25519, Invoices, Subscriptions, Bridge, 5-Validator Quorum, Guardian Recovery, Money Streaming, Split Cashback, Offline Tap Vouchers, PoUW Savings Vault (8.5% APY), Itemized Smart Receipts, AI Agent M2M Bounties, Verified Merchant Directory, Delegated Sub-Accounts, Privacy Shielded Transfers, Social Group Tabs, Sovereign Inheritance, 0% APR Revolving Credit Line, Drop-In Merchant POS SDK, 17-Tool MCP Server, vaelor-cli, Creator Feeless Tip Jars, Loyalty Multiplier Tiers, Multi-Currency Merchant FX, Zero-Penalty Protected Escrows, 28-Feature SDK DAG Stress Benchmark, Sovereign CPA Tax Exporter, ZothOS Passphrase-Gated P2P Messenger, Enterprise Merkle State Root & Corporate Multi-Sig Treasury tests PASSED (33/33)!
 ```
 
 ### 2. Launch the Vaelor Sovereign Node & Explorer

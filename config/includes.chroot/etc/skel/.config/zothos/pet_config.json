@@ -1,0 +1,47 @@
+{
+  "petId": "eye",
+  "alwaysOnTop": true,
+  "compact": false,
+  "voice": true,
+  "sound": true,
+  "petsData": {
+    "eye": {
+      "affinity": 7,
+      "level": 5,
+      "energy": 100,
+      "interactions": 72
+    },
+    "aquila": {
+      "affinity": 20,
+      "level": 1,
+      "energy": 100,
+      "interactions": 0
+    },
+    "workbot": {
+      "affinity": 50,
+      "level": 1,
+      "energy": 100,
+      "interactions": 8
+    },
+    "kitsune": {
+      "affinity": 25,
+      "level": 1,
+      "energy": 100,
+      "interactions": 1
+    },
+    "ghostbyte": {
+      "affinity": 27,
+      "level": 1,
+      "energy": 97,
+      "interactions": 2
+    },
+    "athena": {
+      "affinity": 22,
+      "level": 1,
+      "energy": 97,
+      "interactions": 3
+    }
+  },
+  "x": 2581,
+  "y": 367
+}

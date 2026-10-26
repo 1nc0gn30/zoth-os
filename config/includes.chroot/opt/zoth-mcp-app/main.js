@@ -17,21 +17,6 @@ app.on('child-process-gone', (event, details) => {
 
 let mainWindow = null;
 
-function expandZothTree(value) {
-  const home = process.env.ZOTH_ACTIVE_HOME || process.env.ZOTH_HOME || os.homedir();
-  const src = process.env.ZOTH_SRC_ROOT || path.join(home, 'NullAITech');
-  if (typeof value === 'string') {
-    return value.split('${ZOTH_HOME}').join(home).split('${ZOTH_SRC_ROOT}').join(src);
-  }
-  if (Array.isArray(value)) return value.map(expandZothTree);
-  if (value && typeof value === 'object') {
-    const out = {};
-    for (const [key, item] of Object.entries(value)) out[key] = expandZothTree(item);
-    return out;
-  }
-  return value;
-}
-
 function getConfigPath() {
   const userPath = path.join(os.homedir(), '.config/zothos/mcp-servers.json');
   const sysPath = '/etc/zothos/mcp-servers.json';
@@ -155,8 +140,7 @@ ipcMain.on('sync-mcp-config', (event) => {
         try {
           const dir = path.dirname(t);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-          const raw = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
-          fs.writeFileSync(t, JSON.stringify(expandZothTree(raw), null, 2) + '\n');
+          fs.copyFileSync(cfgPath, t);
         } catch (e) {}
       });
     }
@@ -200,8 +184,8 @@ ipcMain.on('health-mcp-check', (event) => {
           securityRing: srv.securityRing || 'RING_2_TOOLMASTER',
           ringLevel: srv.ring_level ?? 2,
           offline: srv.offline ?? true,
-          sandbox: expandZothTree(srv.sandbox || '/tmp'),
-          fallbackHandler: expandZothTree(srv.fallbackHandler || 'none'),
+          sandbox: srv.sandbox || '/tmp',
+          fallbackHandler: srv.fallbackHandler || 'none',
           healthy: !!binaryResolved,
           binaryPath: binaryResolved
         });
