@@ -62,7 +62,7 @@
       "args": [
         "${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"
       ],
-      "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and financial tools.",
+      "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and 13 financial tools.",
       "offline": true,
       "enabled": true,
       "securityRing": "RING_0_SOVEREIGN",
@@ -70,7 +70,36 @@
       "sandbox": "${ZOTH_HOME}/NullAITech/vaelor-network",
       "fallbackHandler": "node ${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js --status",
       "timeout": 60,
-      "alwaysAllow": []
+      "tools": [
+        "vaelor_network_status",
+        "vaelor_account_balance",
+        "vaelor_send_feeless",
+        "vaelor_verify_handle_safety",
+        "vaelor_create_smart_receipt",
+        "vaelor_mine_pouw",
+        "vaelor_stake_savings",
+        "vaelor_draw_credit_bnpl",
+        "vaelor_post_agent_bounty",
+        "vaelor_send_shielded",
+        "vaelor_send_creator_tip",
+        "vaelor_merchant_fx_checkout",
+        "vaelor_protected_escrow"
+      ],
+      "alwaysAllow": [
+        "vaelor_network_status",
+        "vaelor_account_balance",
+        "vaelor_send_feeless",
+        "vaelor_verify_handle_safety",
+        "vaelor_create_smart_receipt",
+        "vaelor_mine_pouw",
+        "vaelor_stake_savings",
+        "vaelor_draw_credit_bnpl",
+        "vaelor_post_agent_bounty",
+        "vaelor_send_shielded",
+        "vaelor_send_creator_tip",
+        "vaelor_merchant_fx_checkout",
+        "vaelor_protected_escrow"
+      ]
     },
     "sequential-thinking": {
       "command": "npx",

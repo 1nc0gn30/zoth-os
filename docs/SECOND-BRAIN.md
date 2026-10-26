@@ -33,9 +33,9 @@
    - [Command 13: `vaelor` (`mine`, `l1`, `vlr`)](#13-vaelor-mine-l1-vlr)
 4. [The 18 JSON Canvas 1.0 Visual Architecture Maps](#-the-18-json-canvas-10-visual-architecture-maps)
 5. [The 20 Obsidian Bases (`.base`) Databases](#-the-20-obsidian-bases-base-databases)
-6. [The 13 Canonical Karpathy LLM Wiki Articles](#-the-13-canonical-karpathy-llm-wiki-articles)
+6. [The 14 Canonical Karpathy LLM Wiki Articles](#-the-14-canonical-karpathy-llm-wiki-articles)
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
-8. [The 21-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-21-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
+8. [The Sovereign 34-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-sovereign-34-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
 
 ---
 
@@ -389,11 +389,11 @@ Obsidian Bases provide structured, database-like querying over markdown files wi
 | **17**| `Maps/Studio Tools.base` | Table, Cards | In-browser micro-SaaS utilities, client-side AST parsers, and conversion tools. |
 | **18**| `Maps/Rooms.base` | Table, Cards | Virtual collaborative rooms, chat sessions, and multi-agent workspaces. |
 | **19**| `Vaelor Ecosystem & Patronage Ledger.base` | Table, Cards, Rewards | `file.hasTag("vaelor")` · Feeless transfers, 5/5 BFT quorum, 8.5% compute vaults, and PoUW patronage ledger. |
-| **20**| `Sovereign MCP Tools & Agent Catalog.base` | Table, Cards, Substrates | `file.hasTag("mcp")` · Master catalog indexing 21 Neuro-Memory + 12 Vaelor L1 tools in zoth-mcp Ring-0. |
+| **20**| `Sovereign MCP Tools & Agent Catalog.base` | Table, Cards, Substrates | `file.hasTag("mcp")` · Master catalog indexing 21 Neuro-Memory + 13 Vaelor L1 tools in zoth-mcp Ring-0. |
 
 ---
 
-## 📚 The 13 Canonical Karpathy LLM Wiki Articles
+## 📚 The 14 Canonical Karpathy LLM Wiki Articles
 
 Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` represents an encyclopedic synthesis of a core architectural pillar, complete with verified wikilinks and STDP memory groundings:
 
@@ -411,7 +411,8 @@ Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` r
 | **10**| `Zero-Trust Supply Chain, Cosign & VirusTotal Verification.md` | Zero-Trust Supply Chain, Cosign & VirusTotal Verification | `LLM-Wiki` | `CANONICAL` | `98%` | Sigstore Cosign image signing, in-toto attestation, automated VirusTotal scanning, and SBOMs. |
 | **11**| `Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools.md` | Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools | `LLM-Wiki` | `CANONICAL` | `99%` | Material 3 glassmorphic Web IDE, 71 client-side micro-tools, dual Stripe/Solana monetization. |
 | **12**| `ZothOS Sovereign Linux & Kernel Architecture.md` | ZothOS Sovereign Linux & Kernel Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Hardened Linux 6.x kernel, cgroups v2 resource isolation, hardware thermals (<60°C target), and immutable roots. |
-| **13**| `05 - Knowledge Base/Karpathy LLM Wiki/Vaelor-Layer1-Complete-Reference.md` | Vaelor Layer-1 Complete Reference | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Account-Lattice DAG, 5-validator BFT, PoUW cognitive mining, 8.5% vaults, BNPL credit, Smart Receipts & 10-tool MCP server. |
+| **13**| `05 - Knowledge Base/Karpathy LLM Wiki/Vaelor-Layer1-Complete-Reference.md` | Vaelor Layer-1 Complete Reference | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Account-Lattice DAG, 5-validator BFT, PoUW cognitive mining, 8.5% vaults, BNPL credit, Smart Receipts & 13-tool MCP server. |
+| **14**| `05 - Knowledge Base/Karpathy LLM Wiki/Sovereign-MCP-34-Tool-Agent-Protocol.md` | Sovereign 34-Tool MCP Protocol: Neuro-Memory & Vaelor Layer-1 Ecosystem | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Ring-0 34-tool JSON-RPC suite, 21 Neuro-Memory & 13 Vaelor Layer-1 financial tools, feeless micro-tips, FX checkout & protected escrow. |
 
 ---
 
@@ -438,9 +439,9 @@ The `zoth-second-brain audit` engine executes a rigorous verification pass acros
 
 ---
 
-## 🔌 The 21-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration
+## 🔌 The Sovereign 34-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration
 
-The Neuro-Memory Daemon (`:8094`) and Vaelor Layer-1 Network are integrated directly into the sovereign ZothOS MCP subsystem governed by `zoth-mcp` (`/etc/zothos/mcp-servers.json`). Both servers operate in **`RING_0_SOVEREIGN`** (kernel-adjacent privilege level), providing zero-latency cognitive memory recall and financial rails to autonomous AI coding agents (Claude, Cursor, Grok, Hermes, Antigravity).
+The Neuro-Memory Daemon (`:8094`) and Vaelor Layer-1 Network (`:8140`) form the unified 34-tool Ring-0 MCP ecosystem governed by `zoth-mcp` (`/etc/zothos/mcp-servers.json`). Both servers operate in **`RING_0_SOVEREIGN`** (kernel-adjacent privilege level), providing zero-latency cognitive memory recall and financial rails to autonomous AI coding agents (Claude, Cursor, Grok, Hermes, Antigravity) with 100% offline air-gapping and zero external cloud API keys.
 
 ### Neuro-Memory 21-Tool Master Catalog
 
@@ -457,7 +458,7 @@ The Neuro-Memory Daemon (`:8094`) and Vaelor Layer-1 Network are integrated dire
 | **9** | `neuro_neuromodulator_status`| Cognitive | `complexity` (`float`) | Queries current Norepinephrine, Dopamine, Acetylcholine, Serotonin levels and Yerkes-Dodson efficiency. |
 | **10**| `neuro_neuromodulate_pulse` | Cognitive | `ne_delta`, `da_delta`, `ach_delta`, `serotonin_delta`, `reason` | Injects neurochemical pulse into substrate to shift arousal, reward error, or encoding mode. |
 | **11**| `neuro_flashbulb_tag` | Cognitive | `memory_id`, `salience`, `reason` | Permanently locks critical engram as an immutable flashbulb memory (`decay_factor=0.05`, `immutable=True`). |
-| **12**| `obsidian_vault_search` | Second Brain | `query`, `folder`, `limit` | Searches all 1,732 markdown notes in the Obsidian Second Brain vault. |
+| **12**| `obsidian_vault_search` | Second Brain | `query`, `folder`, `limit` | Searches all 1,733 markdown notes in the Obsidian Second Brain vault. |
 | **13**| `obsidian_wiki_synthesize` | Second Brain | `topic`, `folder`, `title` | Synthesizes a Karpathy-style canonical LLM Wiki article in `06-Wiki/` linking vault notes and STDP engrams. |
 | **14**| `obsidian_canvas_generate` | Second Brain | `topic`, `max_nodes`, `filename` | Procedurally generates an official JSON Canvas 1.0 (`.canvas`) visual architecture map. |
 | **15**| `obsidian_doctor_audit` | Second Brain | _None_ | Audits 100% of `.canvas`, `.base`, and notes, verifying spec compliance and wikilink graph connectivity. |
@@ -467,6 +468,24 @@ The Neuro-Memory Daemon (`:8094`) and Vaelor Layer-1 Network are integrated dire
 | **19**| `obsidian_note_read` | Second Brain | `path` | Safely reads markdown note content from the Obsidian Second Brain vault with fixed-root path confinement. |
 | **20**| `obsidian_note_write` | Second Brain | `relPath`, `content` | Safely writes or updates markdown notes in the Obsidian Second Brain vault with path confinement and engram synchronization. |
 | **21**| `obsidian_vaelor_pouw` | Second Brain / L1 | `action` (`status` \| `mine`), `miner`, `task_type` | Queries Vaelor Layer-1 status and consensus telemetry or triggers Proof-of-Useful-Work (PoUW) cognitive mining with STDP vector indexing, minting ◈ VLR coin rewards and anchoring memory engrams. |
+
+### Vaelor Layer-1 13-Tool Financial & Compute Catalog
+
+| # | MCP Tool Name | Domain / Subsystem | Parameters | Operational Purpose |
+| :-: | :--- | :--- | :--- | :--- |
+| **22**| `vaelor_network_status` | L1 Consensus | _None_ | Queries circulating supply, 5-validator BFT quorum, gas fees saved ($0.00), and block heights. |
+| **23**| `vaelor_account_balance` | Account Lattice | `account` | Queries liquid ◈ VLR balance, staked savings, BNPL credit line, and micro-block sequence. |
+| **24**| `vaelor_send_feeless` | Asynchronous DAG | `to`, `amount`, `memo` | Dispatches instant feeless transfer (<20ms finality, 0 Gwei gas) with dual-block settlement. |
+| **25**| `vaelor_verify_handle_safety`| Anti-Phishing | `handle` | Audits merchant/creator handle for typosquatting, Levenshtein distance, and unicode homoglyphs. |
+| **26**| `vaelor_create_smart_receipt`| Smart Receipts | `merchant`, `items`, `total`, `tax` | Issues immutable cryptographic smart receipt with SHA-256 itemized proofs & 2.5% cashback. |
+| **27**| `vaelor_mine_pouw` | Cognitive Mining | `difficulty`, `taskType` | Mints fresh ◈ VLR (+15.9 reward) by submitting verified STDP neural vector compute proofs. |
+| **28**| `vaelor_stake_savings` | High-Yield Vault | `amount`, `action` (`deposit` \| `withdraw`) | Interacts with the 8.5% APY Zero-Lockup Compute Savings Vault with auto-compounding interest. |
+| **29**| `vaelor_draw_credit_bnpl` | Micro-Credit | `amount`, `merchant` | Draws against 30-day 0% APR revolving installment lines backed by account reputation score. |
+| **30**| `vaelor_post_agent_bounty` | M2M Escrow | `task`, `reward`, `deadlineHours` | Escrows task bounty for autonomous AI agents with verified code output completion criteria. |
+| **31**| `vaelor_send_shielded` | Zero-Knowledge | `to`, `amount`, `viewKey` | Confidential transfer using Pedersen Commitments obscuring balances while proving solvency. |
+| **32**| `vaelor_send_creator_tip` | Micro-Patronage | `recipient`, `amount`, `message` | Instant feeless creator micro-tipping with dynamic Patronage Badge issuance & 2.5% treasury cashback. |
+| **33**| `vaelor_merchant_fx_checkout`| Treasury Liquidity | `fiatAmountUSD`, `targetCurrency`, `maxSlippagePct` | Real-time multi-currency treasury conversion between fiat USD reserves, savings, and ◈ VLR. |
+| **34**| `vaelor_protected_escrow` | Protected Commerce | `operation` (`create` \| `release` \| `refund` \| `split`), `escrowId`, `amount` | Non-custodial 4-operation commercial escrow for autonomous agent and human gig milestone settlements. |
 
 ### ZothOS `zoth-mcp` Ring-0 Server Registration
 
@@ -494,17 +513,46 @@ In `/etc/zothos/mcp-servers.json` (and `config/includes.chroot/etc/zothos/mcp-se
   "vaelor-l1": {
     "command": "node",
     "args": [
-      "/home/zoth/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"
+      "${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"
     ],
-    "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and financial tools.",
+    "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and 13 financial tools.",
     "offline": true,
     "enabled": true,
     "securityRing": "RING_0_SOVEREIGN",
     "ring_level": 0,
-    "sandbox": "/home/zoth/NullAITech/vaelor-network",
-    "fallbackHandler": "node /home/zoth/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js --status",
+    "sandbox": "${ZOTH_HOME}/NullAITech/vaelor-network",
+    "fallbackHandler": "node ${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js --status",
     "timeout": 60,
-    "alwaysAllow": []
+    "tools": [
+      "vaelor_network_status",
+      "vaelor_account_balance",
+      "vaelor_send_feeless",
+      "vaelor_verify_handle_safety",
+      "vaelor_create_smart_receipt",
+      "vaelor_mine_pouw",
+      "vaelor_stake_savings",
+      "vaelor_draw_credit_bnpl",
+      "vaelor_post_agent_bounty",
+      "vaelor_send_shielded",
+      "vaelor_send_creator_tip",
+      "vaelor_merchant_fx_checkout",
+      "vaelor_protected_escrow"
+    ],
+    "alwaysAllow": [
+      "vaelor_network_status",
+      "vaelor_account_balance",
+      "vaelor_send_feeless",
+      "vaelor_verify_handle_safety",
+      "vaelor_create_smart_receipt",
+      "vaelor_mine_pouw",
+      "vaelor_stake_savings",
+      "vaelor_draw_credit_bnpl",
+      "vaelor_post_agent_bounty",
+      "vaelor_send_shielded",
+      "vaelor_send_creator_tip",
+      "vaelor_merchant_fx_checkout",
+      "vaelor_protected_escrow"
+    ]
   }
 }
 ```
