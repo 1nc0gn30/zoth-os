@@ -35,22 +35,17 @@ chmod 640 /etc/shadow /etc/gshadow 2>/dev/null || true
 chown root:shadow /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 chmod 2755 /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 
-# Populate homes from /etc/skel if needed. Account names stay zoth/azoth;
-# the directories follow ZOTH_HOME / AZOTH_HOME so they are not a fixed machine path.
-ZOTH_USER="${ZOTH_USER:-zoth}"
-AZOTH_USER="${AZOTH_USER:-azoth}"
-ZOTH_HOME="${ZOTH_HOME:-/home/${ZOTH_USER}}"
-AZOTH_HOME="${AZOTH_HOME:-/home/${AZOTH_USER}}"
+# Populate homes from /etc/skel if needed
 if [ -d /etc/skel ]; then
-    cp -a /etc/skel/. "${ZOTH_HOME}/" 2>/dev/null || true
-    cp -a /etc/skel/. "${AZOTH_HOME}/" 2>/dev/null || true
+    cp -a /etc/skel/. /home/zoth/ 2>/dev/null || true
+    cp -a /etc/skel/. /home/azoth/ 2>/dev/null || true
 fi
-chown -R "${ZOTH_USER}:${ZOTH_USER}" "${ZOTH_HOME}" 2>/dev/null || true
-chown -R "${AZOTH_USER}:${AZOTH_USER}" "${AZOTH_HOME}" 2>/dev/null || true
+chown -R zoth:zoth /home/zoth 2>/dev/null || true
+chown -R azoth:azoth /home/azoth 2>/dev/null || true
 
 # Remove any stray Debian installer desktop icon
-rm -f "${ZOTH_HOME}/Desktop/calamares-install-debian.desktop" 2>/dev/null || true
-rm -f "${AZOTH_HOME}/Desktop/calamares-install-debian.desktop" 2>/dev/null || true
+rm -f /home/zoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /home/azoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 
 # Ensure sudoers
@@ -70,3 +65,29 @@ if [ -f /etc/sddm.conf ] && grep -q '^Session=[[:space:]]*$' /etc/sddm.conf; the
 fi
 
 exit 0
+
+# Enforce SDDM & KDE Plasma 6 X11 Session (never LightDM / XFCE4)
+echo "/usr/bin/sddm" > /etc/X11/default-display-manager
+ln -sfn /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
+ln -sfn /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager
+rm -f /usr/share/xsessions/xfce.desktop /usr/share/xsessions/lightdm-xsession.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
+rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 2>/dev/null || true
+systemctl disable lightdm.service 2>/dev/null || true
+systemctl mask lightdm.service 2>/dev/null || true
+systemctl enable sddm.service 2>/dev/null || true
+
+cat > /etc/sddm.conf << 'SDDMEOF'
+[General]
+DisplayServer=x11
+Numlock=on
+
+[Autologin]
+User=zoth
+Session=plasmax11.desktop
+Relogin=false
+
+[Theme]
+Current=zothos
+CursorTheme=breeze_cursors
+SDDMEOF
+cp -f /etc/sddm.conf /etc/sddm.conf.d/autologin.conf 2>/dev/null || true

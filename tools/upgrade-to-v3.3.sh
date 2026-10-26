@@ -176,9 +176,33 @@ fi
 echo -e "${CYAN}[6/7] Activating Live ZothOS 3.3 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
 export DISPLAY="${DISPLAY:-:0}"
 
-# Eliminate legacy XFCE4 binaries & processes so zoth-sentinel / x-session-manager never launch xfce4-panel over KDE Plasma 6
-sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
-sudo ln -sf /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
+# Eliminate legacy XFCE4 / LightDM binaries & configs so system boots pure SDDM + KDE Plasma 6
+echo "/usr/bin/sddm" | sudo tee /etc/X11/default-display-manager >/dev/null
+sudo ln -sfn /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service 2>/dev/null || true
+sudo ln -sfn /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
+sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/xsessions/lightdm-xsession.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
+sudo systemctl disable lightdm.service 2>/dev/null || true
+sudo systemctl mask lightdm.service 2>/dev/null || true
+sudo systemctl enable sddm.service 2>/dev/null || true
+
+TARGET_USER="${SUDO_USER:-$(whoami)}"
+sudo mkdir -p /etc/sddm.conf.d
+sudo tee /etc/sddm.conf >/dev/null << EOF
+[General]
+DisplayServer=x11
+Numlock=on
+
+[Autologin]
+User=${TARGET_USER}
+Session=plasmax11.desktop
+Relogin=false
+
+[Theme]
+Current=zothos
+CursorTheme=breeze_cursors
+EOF
+sudo cp -f /etc/sddm.conf /etc/sddm.conf.d/autologin.conf 2>/dev/null || true
+
 killall -9 xfce4-panel xfdesktop xfwm4 picom 2>/dev/null || true
 sudo systemctl restart zoth-sentinel.service 2>/dev/null || true
 
@@ -233,3 +257,9 @@ echo -e "  • Run ${GOLD}zoth-node status${RESET} to inspect your node, Merkle 
 echo -e "  • Run ${GOLD}zoth-comm peers${RESET} to discover lattice nodes across your local and mesh fleet."
 echo -e "  • Run ${GOLD}zoth-second-brain status${RESET} to inspect your Second Brain & STDP Memory."
 echo -e "  • Run ${GOLD}zoth-mcp list${RESET} to inspect the 36-Tool Ring-0 MCP Registry.\n"
+
+# If currently running inside legacy LightDM / XFCE4 session, hand off cleanly to SDDM (KDE Plasma 6)
+if systemctl is-active --quiet lightdm.service 2>/dev/null || pgrep -x xfce4-session >/dev/null 2>&1; then
+  echo -e "${GOLD}✦ Switching active display manager from legacy LightDM/XFCE4 to SDDM + KDE Plasma 6 ...${RESET}"
+  nohup sudo sh -c 'sleep 1; systemctl stop lightdm.service 2>/dev/null || killall -9 lightdm xfce4-session 2>/dev/null; systemctl unmask sddm.service 2>/dev/null; systemctl restart sddm.service' >/dev/null 2>&1 &
+fi
