@@ -180,13 +180,11 @@ def sweep_zombies(reap: bool = False) -> List[Dict[str, Any]]:
 
 
 def check_compositor_and_desktop_health() -> Dict[str, Any]:
-    """Inspects X11 window manager, compositor, and panel daemons."""
+    """Inspects KDE Plasma 6 window manager and shell daemons."""
     status = {
         "x11_active": False,
-        "picom_running": False,
-        "xfwm4_running": False,
-        "xfdesktop_running": False,
-        "xfce4_panel_running": False
+        "kwin_running": False,
+        "plasmashell_running": False
     }
     disp = os.environ.get("DISPLAY", ":0")
     try:
@@ -196,10 +194,11 @@ def check_compositor_and_desktop_health() -> Dict[str, Any]:
         status["x11_active"] = False
 
     if status["x11_active"]:
-        status["picom_running"] = (subprocess.run(["pgrep", "-x", "picom"], capture_output=True).returncode == 0)
-        status["xfwm4_running"] = (subprocess.run(["pgrep", "-x", "xfwm4"], capture_output=True).returncode == 0)
-        status["xfdesktop_running"] = (subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode == 0)
-        status["xfce4_panel_running"] = (subprocess.run(["pgrep", "-x", "xfce4-panel"], capture_output=True).returncode == 0)
+        status["kwin_running"] = (
+            subprocess.run(["pgrep", "-x", "kwin_x11"], capture_output=True).returncode == 0 or
+            subprocess.run(["pgrep", "-x", "kwin_wayland"], capture_output=True).returncode == 0
+        )
+        status["plasmashell_running"] = (subprocess.run(["pgrep", "-x", "plasmashell"], capture_output=True).returncode == 0)
 
     return status
 
@@ -497,8 +496,8 @@ async def telemetry_monitor_loop():
             # Check Desktop & Compositor crashes
             dh = telem.get("desktop_health", {})
             if dh.get("x11_active"):
-                if not dh.get("picom_running") or not dh.get("xfwm4_running") or not dh.get("xfce4_panel_running"):
-                    anomalies.append("Desktop/Compositor components offline")
+                if not dh.get("kwin_running") or not dh.get("plasmashell_running"):
+                    anomalies.append("KDE Plasma 6 components offline")
                     if auto_remediate:
                         trigger_auto_healing("display")
 

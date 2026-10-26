@@ -7,6 +7,17 @@ set -u
 WALLPAPER="/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
 QDBUS=$(command -v qdbus6 2>/dev/null || command -v qdbus 2>/dev/null || echo "qdbus6")
 
+# 0. Eliminate any legacy XFCE4 / Picom binaries & processes that conflict with KDE Plasma 6
+sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
+sudo ln -sf /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
+killall -9 xfce4-panel xfdesktop xfwm4 picom 2>/dev/null || true
+if ! pgrep -x kwin_x11 >/dev/null 2>&1 && ! pgrep -x kwin_wayland >/dev/null 2>&1; then
+    nohup kwin_x11 --replace >/dev/null 2>&1 &
+fi
+if ! pgrep -x plasmashell >/dev/null 2>&1; then
+    nohup plasmashell --replace >/dev/null 2>&1 &
+fi
+
 # 1. Clean legacy unorganized 3.0 top-level .desktop clutter if layered over an older rootfs
 if [ -d "$HOME/Desktop" ] && [ -d "$HOME/Desktop/01-AI-Agents-and-Dev" ]; then
     for f in "$HOME/Desktop/"*.desktop; do

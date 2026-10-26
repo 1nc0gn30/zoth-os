@@ -175,6 +175,16 @@ fi
 # ------------------------------------------------------------------------------
 echo -e "${CYAN}[6/7] Activating Live ZothOS 3.3 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
 export DISPLAY="${DISPLAY:-:0}"
+
+# Eliminate legacy XFCE4 binaries & processes so zoth-sentinel / x-session-manager never launch xfce4-panel over KDE Plasma 6
+sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
+sudo ln -sf /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
+killall -9 xfce4-panel xfdesktop xfwm4 picom 2>/dev/null || true
+sudo systemctl restart zoth-sentinel.service 2>/dev/null || true
+
+if ! pgrep -x kwin_x11 >/dev/null 2>&1 && ! pgrep -x kwin_wayland >/dev/null 2>&1; then
+  nohup kwin_x11 --replace >/dev/null 2>&1 &
+fi
 if [ -x /usr/local/bin/zoth-mode ]; then
   /usr/local/bin/zoth-mode gold || true
 fi
@@ -185,6 +195,8 @@ if pgrep -x plasmashell >/dev/null 2>&1; then
   kquitapp6 plasmashell 2>/dev/null || killall plasmashell 2>/dev/null || true
   sleep 1
   nohup kstart plasmashell >/dev/null 2>&1 &
+else
+  nohup plasmashell --replace >/dev/null 2>&1 &
 fi
 if [ -x /opt/zoth-bot/bin/zoth-bot ] && ! pgrep -f "/opt/zoth-bot" >/dev/null 2>&1; then
   nohup /opt/zoth-bot/bin/zoth-bot >/dev/null 2>&1 &

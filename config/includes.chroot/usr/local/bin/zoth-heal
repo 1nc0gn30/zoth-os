@@ -255,70 +255,40 @@ heal_display() {
         fi
     fi
 
-    # 2. Compositor (picom) health & fallback
-    if command -v picom >/dev/null 2>&1; then
-        if ! pgrep -x picom >/dev/null 2>&1; then
-            log_warn "Compositor (picom) is not running; attempting clean restart..."
-            local pconf="/etc/xdg/picom/picom-matrix.conf"
-            [[ -f "$HOME/.config/picom/picom.conf" ]] && pconf="$HOME/.config/picom/picom.conf"
-            [[ -f "$HOME/.config/picom.conf" ]] && pconf="$HOME/.config/picom.conf"
-
-            # Attempt launch with config; if fails, fallback to clean xrender backend
-            if DISPLAY="$disp" picom --config "$pconf" -b >/dev/null 2>&1; then
-                log_fixed "Started Picom compositor daemon with profile ($pconf)"
-                mod_healed=$((mod_healed + 1))
-                record_action "display" "healed" "Started Picom with $pconf"
-            else
-                log_warn "GLX Picom failed; falling back to fail-safe XRender backend..."
-                DISPLAY="$disp" picom --backend xrender --no-vsync -b >/dev/null 2>&1 || true
-                log_fixed "Started Picom compositor with fail-safe XRender engine"
-                mod_healed=$((mod_healed + 1))
-                record_action "display" "healed" "Picom started with fail-safe xrender"
-            fi
-        else
-            log_pass "Picom compositor running normally"
+    # 2. Terminate any stray legacy XFCE / Picom processes that conflict with KDE Plasma 6
+    for legacy_proc in xfce4-panel xfdesktop xfwm4 picom; do
+        if pgrep -x "$legacy_proc" >/dev/null 2>&1; then
+            killall -9 "$legacy_proc" 2>/dev/null || true
+            log_fixed "Terminated conflicting legacy process ($legacy_proc)"
+            mod_healed=$((mod_healed + 1))
         fi
-    fi
+    done
 
-    # 3. Window Manager (xfwm4) health
-    if command -v xfwm4 >/dev/null 2>&1; then
-        if ! pgrep -x xfwm4 >/dev/null 2>&1; then
-            log_warn "XFCE Window Manager (xfwm4) is dead or crashed; reviving..."
-            DISPLAY="$disp" nohup xfwm4 --replace >/dev/null 2>&1 &
+    # 3. KDE Plasma 6 Window Manager (kwin_x11 / kwin_wayland) health
+    if command -v kwin_x11 >/dev/null 2>&1; then
+        if ! pgrep -x kwin_x11 >/dev/null 2>&1 && ! pgrep -x kwin_wayland >/dev/null 2>&1; then
+            log_warn "KDE Window Manager (kwin_x11) is not running; reviving..."
+            DISPLAY="$disp" nohup kwin_x11 --replace >/dev/null 2>&1 &
             sleep 1
-            if pgrep -x xfwm4 >/dev/null 2>&1; then
-                log_fixed "Restored and replaced XFCE Window Manager (xfwm4)"
+            if pgrep -x kwin_x11 >/dev/null 2>&1; then
+                log_fixed "Restored KDE Window Manager (kwin_x11)"
                 mod_healed=$((mod_healed + 1))
-                record_action "display" "healed" "Restarted xfwm4"
-            else
-                log_fail "Failed to revive xfwm4 window manager"
-                FAIL_COUNT=$((FAIL_COUNT + 1))
+                record_action "display" "healed" "Restarted kwin_x11"
             fi
         else
-            log_pass "Window Manager (xfwm4) operational"
+            log_pass "KDE Window Manager (kwin) operational"
         fi
     fi
 
-    # 4. XFCE Desktop Shell & Panel
-    if command -v xfce4-panel >/dev/null 2>&1; then
-        if ! pgrep -x xfce4-panel >/dev/null 2>&1; then
-            log_warn "xfce4-panel not detected; reviving desktop panels..."
-            DISPLAY="$disp" nohup xfce4-panel >/dev/null 2>&1 &
+    # 4. KDE Plasma 6 Shell (plasmashell) health
+    if command -v plasmashell >/dev/null 2>&1; then
+        if ! pgrep -x plasmashell >/dev/null 2>&1; then
+            log_warn "plasmashell not detected; reviving KDE Plasma 6 shell..."
+            DISPLAY="$disp" nohup plasmashell --replace >/dev/null 2>&1 &
             mod_healed=$((mod_healed + 1))
-            record_action "display" "healed" "Restarted xfce4-panel"
+            record_action "display" "healed" "Restarted plasmashell"
         else
-            log_pass "XFCE Desktop Panel active"
-        fi
-    fi
-
-    if command -v xfdesktop >/dev/null 2>&1; then
-        if ! pgrep -x xfdesktop >/dev/null 2>&1; then
-            log_warn "xfdesktop not detected; launching desktop icons/background manager..."
-            DISPLAY="$disp" nohup xfdesktop >/dev/null 2>&1 &
-            mod_healed=$((mod_healed + 1))
-            record_action "display" "healed" "Restarted xfdesktop"
-        else
-            log_pass "XFCE Desktop Manager active"
+            log_pass "KDE Plasma 6 Desktop Shell active"
         fi
     fi
 
