@@ -7,6 +7,17 @@
 # =============================================================================
 set -euo pipefail
 
+if [ -f /etc/zothos/paths.sh ]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${AZOTH_USER:=azoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+
 MARKER="/var/lib/zothos/.bootstrap-done"
 LOG="/var/log/zothos-bootstrap.log"
 VENV="/opt/zothos-ai-env"
@@ -169,7 +180,7 @@ gtk-update-icon-cache -f -q /usr/share/icons/hicolor 2>/dev/null || true
 gtk-update-icon-cache -f -q /usr/share/icons/Zoth-Hermetic 2>/dev/null || true
 
 # Set GTK theme via gsettings for all users
-for home_dir in /root ${ZOTH_HOME} /home/azoth /etc/skel; do
+for home_dir in /root "${ZOTH_HOME}" "${AZOTH_HOME}" /etc/skel; do
     if [[ -d "$home_dir" ]]; then
         mkdir -p "$home_dir/.config/xfce4/xfconf/xfce-perchannel-xml" 2>/dev/null || true
     fi

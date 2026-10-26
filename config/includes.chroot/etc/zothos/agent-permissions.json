@@ -1,5 +1,6 @@
 {
   "version": "3.0.0",
+  "path_tokens": "Expand ${ZOTH_HOME} to the active user home before enforcing filesystem_policy.",
   "name": "ZOTHOS Autonomous OS Agent Permission & Security Ring Architecture",
   "active_ring": 2,
   "active_layer": 2,

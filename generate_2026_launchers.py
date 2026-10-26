@@ -411,7 +411,7 @@ exec bash
 #  Zoth WebGen Foundry — Autonomous Website Generator & AST Engine
 # ==============================================================================
 CANDIDATES=(
-  "${ZOTH_SRC_ROOT}/zoth-webgen"
+  "${ZOTH_SRC_ROOT:-${HOME}/NullAITech}/zoth-webgen"
   "${HOME}/NullAITech/zoth-webgen"
   "/opt/zoth-webgen"
   "${HOME}/zoth-webgen"
@@ -445,7 +445,7 @@ fi
 #  Zoth WebGen — localized full-stack site foundry
 # ==============================================================================
 CANDIDATES=(
-  "${ZOTH_SRC_ROOT}/bolt.diy"
+  "${ZOTH_SRC_ROOT:-${HOME}/NullAITech}/bolt.diy"
   "${HOME}/NullAITech/bolt.diy"
   "/opt/bolt.diy"
   "${HOME}/bolt.diy"

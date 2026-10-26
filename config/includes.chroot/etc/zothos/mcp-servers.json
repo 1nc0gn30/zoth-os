@@ -1,5 +1,5 @@
 {
-  "description": "ZOTHOS Master Model Context Protocol (MCP) Server Registry. Servers with enabled true are started by coding agents. The others are installed in the catalog and stay off until zoth-mcp enable <name>.",
+  "description": "ZOTHOS Master Model Context Protocol (MCP) Server Registry. Servers with enabled true are started by coding agents. The others are installed in the catalog and stay off until zoth-mcp enable <name>. Path tokens ${ZOTH_HOME} and ${ZOTH_SRC_ROOT} are expanded by zoth-mcp sync to the active home and checkout root.",
   "version": "3.1.0",
   "updated": "2026-10-08",
   "mcpServers": {

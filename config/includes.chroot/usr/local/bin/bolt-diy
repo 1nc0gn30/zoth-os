@@ -8,6 +8,17 @@
 # ==============================================================================
 set -euo pipefail
 
+if [ -f /etc/zothos/paths.sh ]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${AZOTH_USER:=azoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+
 GOLD='\033[38;2;212;175;55m'
 CYAN='\033[38;2;56;189;248m'
 GREEN='\033[38;2;34;197;94m'

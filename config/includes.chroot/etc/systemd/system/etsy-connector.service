@@ -6,15 +6,15 @@ Wants=network.target
 [Service]
 Type=simple
 User=zoth
-WorkingDirectory=${ZOTH_SRC_ROOT}/etsy-connector
-ExecStart=/usr/bin/python3 -m etsy_connector.web_cockpit --host 127.0.0.1 --port 8108
+EnvironmentFile=-/etc/zothos/paths.conf
+WorkingDirectory=%h
+ExecStart=/usr/local/bin/zoth-run-repo etsy-connector /usr/bin/python3 -m etsy_connector.web_cockpit --host 127.0.0.1 --port 8108
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
-Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/etsy-connector/src
 
 [Install]
 WantedBy=multi-user.target

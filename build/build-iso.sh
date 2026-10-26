@@ -215,11 +215,15 @@ if command -v plymouth-set-default-theme >/dev/null 2>&1; then
 fi
 
 # Setup Fastfetch / Bash defaults
-cp -rf /etc/skel/. ${ZOTH_HOME}/ 2>/dev/null || true
-cp -rf /etc/skel/. /home/azoth/ 2>/dev/null || true
-chown -R zoth:zoth ${ZOTH_HOME} 2>/dev/null || true
-chown -R azoth:azoth /home/azoth 2>/dev/null || true
-chmod 750 ${ZOTH_HOME} /home/azoth 2>/dev/null || true
+ZOTH_USER="${ZOTH_USER:-zoth}"
+AZOTH_USER="${AZOTH_USER:-azoth}"
+ZOTH_HOME="${ZOTH_HOME:-/home/${ZOTH_USER}}"
+AZOTH_HOME="${AZOTH_HOME:-/home/${AZOTH_USER}}"
+cp -rf /etc/skel/. "${ZOTH_HOME}/" 2>/dev/null || true
+cp -rf /etc/skel/. "${AZOTH_HOME}/" 2>/dev/null || true
+chown -R "${ZOTH_USER}:${ZOTH_USER}" "${ZOTH_HOME}" 2>/dev/null || true
+chown -R "${AZOTH_USER}:${AZOTH_USER}" "${AZOTH_HOME}" 2>/dev/null || true
+chmod 750 "${ZOTH_HOME}" "${AZOTH_HOME}" 2>/dev/null || true
 
 echo "[ZOTHOS HOOK] Complete."
 EOF

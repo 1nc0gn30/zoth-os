@@ -35,17 +35,22 @@ chmod 640 /etc/shadow /etc/gshadow 2>/dev/null || true
 chown root:shadow /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 chmod 2755 /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 
-# Populate homes from /etc/skel if needed
+# Populate homes from /etc/skel if needed. Account names stay zoth/azoth;
+# the directories follow ZOTH_HOME / AZOTH_HOME so they are not a fixed machine path.
+ZOTH_USER="${ZOTH_USER:-zoth}"
+AZOTH_USER="${AZOTH_USER:-azoth}"
+ZOTH_HOME="${ZOTH_HOME:-/home/${ZOTH_USER}}"
+AZOTH_HOME="${AZOTH_HOME:-/home/${AZOTH_USER}}"
 if [ -d /etc/skel ]; then
-    cp -a /etc/skel/. ${ZOTH_HOME}/ 2>/dev/null || true
-    cp -a /etc/skel/. /home/azoth/ 2>/dev/null || true
+    cp -a /etc/skel/. "${ZOTH_HOME}/" 2>/dev/null || true
+    cp -a /etc/skel/. "${AZOTH_HOME}/" 2>/dev/null || true
 fi
-chown -R zoth:zoth ${ZOTH_HOME} 2>/dev/null || true
-chown -R azoth:azoth /home/azoth 2>/dev/null || true
+chown -R "${ZOTH_USER}:${ZOTH_USER}" "${ZOTH_HOME}" 2>/dev/null || true
+chown -R "${AZOTH_USER}:${AZOTH_USER}" "${AZOTH_HOME}" 2>/dev/null || true
 
 # Remove any stray Debian installer desktop icon
-rm -f ${ZOTH_HOME}/Desktop/calamares-install-debian.desktop 2>/dev/null || true
-rm -f /home/azoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f "${ZOTH_HOME}/Desktop/calamares-install-debian.desktop" 2>/dev/null || true
+rm -f "${AZOTH_HOME}/Desktop/calamares-install-debian.desktop" 2>/dev/null || true
 rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 
 # Ensure sudoers

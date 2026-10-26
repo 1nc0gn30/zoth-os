@@ -2,7 +2,7 @@
 Name=Zoth Civilization
 GenericName=21-Agent Sovereign Living Civilization
 Comment=GameBoy Top-Down Pixel Civilization & Adytum Hermetic Initiation Chamber
-Exec=${ZOTH_SRC_ROOT}/zoth-civilization/bin/zoth-civ
+Exec=sh -c 'exec "${ZOTH_SRC_ROOT:-$HOME/NullAITech}/zoth-civilization/bin/zoth-civ"'
 Icon=icon
 Terminal=false
 Type=Application

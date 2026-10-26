@@ -284,14 +284,14 @@ Follows standard ZothOS self-bootstrapping pattern:
 # ==============================================================================
 set -euo pipefail
 
-if ! command -v goose >/dev/null 2>&1 && [[ ! -f ${ZOTH_HOME}/.local/bin/goose ]]; then
+if ! command -v goose >/dev/null 2>&1 && [[ ! -f "${HOME}/.local/bin/goose" ]]; then
     echo -e "\e[38;2;255;215;0m[*] Provisioning AAIF Goose AI Agent CLI...\e[0m"
-    mkdir -p ${ZOTH_HOME}/.local/bin
+    mkdir -p "${HOME}/.local/bin"
     curl -fsSL https://github.com/aaif-goose/goose/releases/download/stable/download_cli.sh | bash
 fi
 
-if [[ -f ${ZOTH_HOME}/.local/bin/goose ]]; then
-    exec ${ZOTH_HOME}/.local/bin/goose "$@"
+if [[ -f "${HOME}/.local/bin/goose" ]]; then
+    exec "${HOME}/.local/bin/goose" "$@"
 elif command -v goose >/dev/null 2>&1; then
     exec goose "$@"
 else

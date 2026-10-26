@@ -6,15 +6,15 @@ Wants=network.target
 [Service]
 Type=simple
 User=zoth
-WorkingDirectory=${ZOTH_SRC_ROOT}/agent-policy-auditor
-ExecStart=/opt/zothos-ai-env/bin/python3 -m agent_policy_auditor.cli serve --host 127.0.0.1 --port 8106
+EnvironmentFile=-/etc/zothos/paths.conf
+WorkingDirectory=%h
+ExecStart=/usr/local/bin/zoth-run-repo agent-policy-auditor /opt/zothos-ai-env/bin/python3 -m agent_policy_auditor.cli serve --host 127.0.0.1 --port 8106
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
-Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-policy-auditor/src
 
 [Install]
 WantedBy=multi-user.target

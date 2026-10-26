@@ -7,18 +7,17 @@ This eliminates the need to reboot or shut down your host system to do work in P
 
 ---
 
-## 1. Verified Hardware & Architecture Profile
+## 1. Hardware Profile
 
-The system configuration inspected on this machine:
+Resolve the host disk and the Parrot disk on the machine you are using. Do not commit serial numbers, filesystem UUIDs, or `/dev/disk/by-id` paths.
 
 | Component | Host (ZothOS) | Work Drive (Parrot OS) |
 | :--- | :--- | :--- |
-| **Drive / Bus** | `/dev/nvme0n1` (NVMe PCIe) | `/dev/sda` (SATA 6Gb/s) |
-| **Model** | disk named by ZOTH_HOST_DISK | disk named by ZOTH_PARROT_DISK |
-| **Serial / ID** | Host NVMe | Secondary SATA. Resolve live with `ls /dev/disk/by-id/ZOTH_PARROT_DISK` — do not publish the serial. |
-| **Partition Table** | GPT (`nvme0n1p1` ext4 root, `p2` EFI) | DOS/MBR (`sda1` bootable Btrfs root, `sda2` swap) |
-| **Host CPU & RAM** | 24 vCPU Threads | 32 GB Physical RAM (~22 GB available) |
-| **Acceleration** | Intel KVM active (`/dev/kvm`) | `qemu-system-x86_64` (v10.0.13) installed |
+| **Drive** | `ZOTH_HOST_DISK`, or discover with `lsblk` | `ZOTH_PARROT_DISK` — a `/dev/disk/by-id/...` path |
+| **Model / serial** | `lsblk -d -o NAME,MODEL,TRAN,SERIAL` | Same command. Keep the model and serial out of git. |
+| **Partition table** | Confirm with `lsblk -o NAME,FSTYPE,PTTYPE` | Confirm before passthrough. A DOS/MBR disk needs BIOS boot in the VM. |
+| **CPU & RAM** | `nproc` and `free -h` | Size the VM with `ZOTH_PARROT_RAM` (default `12G`) and `ZOTH_PARROT_CPUS` (default `8`). |
+| **Acceleration** | KVM via `/dev/kvm` | `qemu-system-x86_64` |
 
 ---
 
@@ -37,17 +36,17 @@ flowchart TD
 ### Phase 1: Hardware Safety & Drive Access Configuration
 
 > [!CAUTION]
-> **Data Integrity Rule**: Never mount `/dev/sda1` on ZothOS while the Parrot VM is running. Simultaneous write access by two independent kernels will corrupt the Btrfs filesystem.
+> **Data Integrity Rule**: Never mount the Parrot disk on ZothOS while the Parrot VM is running. Simultaneous write access by two independent kernels will corrupt the filesystem.
 
 #### Step 1.1: Automatic Unmount Safety
-Ensure ZothOS's desktop file manager (Nautilus/Thunar/Dolphin) does not auto-mount `/dev/sda1`. The launcher script will automatically enforce this check before booting.
+Ensure ZothOS's desktop file manager (Nautilus/Thunar/Dolphin) does not auto-mount the Parrot disk. The launcher script checks that the resolved disk is not mounted before booting.
 
 #### Step 1.2: Grant Non-Root Disk Access to User `zoth`
 To launch Parrot OS without needing `sudo` every time (which preserves native Wayland display, audio, and clipboard integration), create a persistent udev rule:
 
 ```bash
 # File: /etc/udev/rules.d/99-parrot-disk.rules
-KERNEL=="sda*", SUBSYSTEM=="block", ENV{ID_SERIAL_SHORT}=="<ID_SERIAL_SHORT from udevadm info /dev/sda>", GROUP="kvm", MODE="0660"
+KERNEL=="sd*", SUBSYSTEM=="block", ENV{ID_SERIAL_SHORT}=="<ID_SERIAL_SHORT from udevadm info>", GROUP="kvm", MODE="0660"
 ```
 
 Apply the rule:
@@ -66,9 +65,14 @@ Create the launcher script at `~/bin/launch-parrot.sh` or `~/.local/bin/launch-p
 #!/usr/bin/env bash
 set -euo pipefail
 
-DISK_ID="${ZOTH_PARROT_DISK}"
-RAM_SIZE="12G"      # Allocates 12GB of your 32GB
-CPU_CORES="8"       # Allocates 8 of your 24 CPU threads
+DISK_ID="${ZOTH_PARROT_DISK:-}"
+RAM_SIZE="${ZOTH_PARROT_RAM:-12G}"
+CPU_CORES="${ZOTH_PARROT_CPUS:-8}"
+if [[ -z "$DISK_ID" ]]; then
+    echo "Set ZOTH_PARROT_DISK to the /dev/disk/by-id path of the Parrot SSD."
+    echo "List candidates with: ls -l /dev/disk/by-id/"
+    exit 1
+fi
 
 echo "🔍 Checking safety invariants for Parrot OS physical SSD..."
 
@@ -78,11 +82,14 @@ if [ ! -b "$DISK_ID" ]; then
     exit 1
 fi
 
-# 2. Invariant Check: Verify NO partition on /dev/sda is mounted on the host
-if mount | grep -q "^/dev/sda"; then
-    echo "❌ SAFETY HALT: A partition on /dev/sda is currently mounted in ZothOS!"
-    echo "Unmounting /dev/sda partitions before proceeding..."
-    sudo umount /dev/sda* 2>/dev/null || { echo "Failed to unmount. Aborting."; exit 1; }
+# 2. Invariant Check: the resolved disk (or its parent) must not be mounted
+DISK_REAL="$(readlink -f "$DISK_ID")"
+DISK_BASE="$(lsblk -no PKNAME "$DISK_REAL" 2>/dev/null | head -1 || true)"
+DISK_BASE="${DISK_BASE:-$(basename "$DISK_REAL")}"
+if findmnt -rn -S "/dev/${DISK_BASE}" >/dev/null 2>&1 || mount | grep -q "^/dev/${DISK_BASE}"; then
+    echo "❌ SAFETY HALT: /dev/${DISK_BASE} is currently mounted in ZothOS!"
+    echo "Unmount it before proceeding."
+    sudo umount "/dev/${DISK_BASE}"* 2>/dev/null || { echo "Failed to unmount. Aborting."; exit 1; }
 fi
 
 echo "🚀 Booting Parrot OS physical drive in KVM accelerated window..."
@@ -129,7 +136,7 @@ Create a standard desktop launcher so you can launch Parrot OS directly from you
 [Desktop Entry]
 Name=Parrot OS (Physical Work Drive)
 Comment=Boot Parrot OS physical SSD inside KVM
-Exec=${ZOTH_HOME}/.local/bin/launch-parrot.sh
+Exec=sh -c 'exec "${HOME}/.local/bin/launch-parrot.sh"'
 Icon=utilities-terminal
 Terminal=false
 Type=Application
@@ -148,11 +155,11 @@ If you prefer a full graphical hypervisor interface to adjust settings:
    ```
 2. In `virt-manager`:
    - Click **Create New Virtual Machine** -> **Import existing disk image**.
-   - Browse to the live `ZOTH_PARROT_DISK` by-id path from `ls /dev/disk/by-id/`.
+   - Browse to the `$ZOTH_PARROT_DISK` by-id path from `ls /dev/disk/by-id/`. Do not commit that path.
    - Set OS Type: **Debian 12** or **Linux**.
    - Configure CPU: 8 cores, Memory: 12288 MB.
    - Check **Customize configuration before install**:
-     - Ensure Boot Mode is **BIOS** (since `/dev/sda` uses DOS/MBR partition table).
+     - Ensure Boot Mode matches the disk partition table (**BIOS** for DOS/MBR, **UEFI** for GPT).
      - Set Disk bus to **SATA** or **VirtIO** (if virtio drivers are in Parrot's initramfs).
    - Click **Begin Installation**.
 
@@ -164,7 +171,7 @@ If you prefer a full graphical hypervisor interface to adjust settings:
 | :--- | :--- |
 | **Shutting Down** | Always shut down Parrot OS cleanly from inside Parrot (`Power Off` menu or `sudo shutdown -h now`). Avoid force-killing the QEMU window to protect the physical filesystem. |
 | **Bare-Metal Boot** | If you ever choose to restart your machine and boot directly into Parrot OS from your BIOS/UEFI boot menu, you can still do so at any time. |
-| **Filesystem Snapshots** | Since `/dev/sda1` is formatted as Btrfs, you can take native subvolume snapshots inside Parrot OS before running updates. |
+| **Filesystem Snapshots** | If the Parrot root is Btrfs, take a native subvolume snapshot inside Parrot OS before running updates. |
 | **Shared Folders** | For transferring files between ZothOS and Parrot OS, use standard local SSH (`ssh zoth@localhost -p ...`) or setup a 9p virtfs shared folder. |
 
 ---
@@ -174,6 +181,6 @@ If you prefer a full graphical hypervisor interface to adjust settings:
 | Task | Command |
 | :--- | :--- |
 | **Launch Parrot VM** | `launch-parrot.sh` (or click app icon) |
-| **Check Disk Status** | `lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT /dev/sda` |
+| **Check Disk Status** | `lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT` |
 | **Verify Acceleration** | `kvm-ok` or `cat /sys/module/kvm_intel/parameters/nested` |
 | **Kill Process (Emergency Only)** | `pkill -f "parrot-vm"` |

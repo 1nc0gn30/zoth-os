@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Run a command with cwd and PYTHONPATH rooted at $ZOTH_SRC_ROOT/<repo>.
+# Usage: zoth-run-repo <repo-subdir> <command> [args...]
+set -euo pipefail
+
+if [[ $# -lt 2 ]]; then
+  echo "usage: zoth-run-repo <repo-subdir> <command> [args...]" >&2
+  exit 2
+fi
+
+repo_name="$1"
+shift
+
+if [[ -f /etc/zothos/paths.sh ]]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+
+repo="${ZOTH_SRC_ROOT}/${repo_name}"
+if [[ ! -d "$repo" ]]; then
+  echo "zoth-run-repo: repo not found: ${repo} (set ZOTH_SRC_ROOT)" >&2
+  exit 1
+fi
+
+cd "$repo"
+export PYTHONPATH="${repo}/src${PYTHONPATH:+:${PYTHONPATH}}"
+exec "$@"

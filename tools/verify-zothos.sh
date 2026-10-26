@@ -91,6 +91,7 @@ SCRIPTS=(
     "$CHROOT/usr/local/bin/zoth-agent-layer"
     "$CHROOT/usr/local/bin/zoth-live-wallpaper"
     "$CHROOT/usr/local/bin/zoth-agent-conductor"
+    "$CHROOT/usr/local/bin/zoth-run-repo"
     "$CHROOT/usr/local/bin/zoth-ph"
     "$CHROOT/usr/local/bin/zoth-lock"
     "$CHROOT/usr/local/bin/zoth-thermal"

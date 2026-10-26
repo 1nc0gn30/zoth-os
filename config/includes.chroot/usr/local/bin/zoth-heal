@@ -7,6 +7,17 @@
 # ==============================================================================
 
 set -uo pipefail
+
+if [ -f /etc/zothos/paths.sh ]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${AZOTH_USER:=azoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
 HOME="${HOME:-/root}"
 
 # ANSI Cyber-Alchemical Palette
@@ -599,7 +610,7 @@ EOF
 heal_desktop() {
     log_info "Auditing Desktop Config Integrity against /etc/skel Templates..."
     local mod_healed=0
-    local target_home="${HOME:-${ZOTH_HOME}}"
+    local target_home="${ZOTH_ACTIVE_HOME}"
     local skel_dir="/etc/skel"
 
     if [[ ! -d "$skel_dir" ]]; then

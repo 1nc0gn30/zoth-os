@@ -64,7 +64,7 @@
 - **GitHub:** https://github.com/1nc0gn30/sovereign-agent-bridge
 - **Category:** Swarm & Core
 - **Execution Mode:** BROWSER / LOCAL_CLI (`SovereignBridgeGodModeTool` 60fps Multi-Channel Relay Workstation)
-- **Operational Value:** E2EE Signal (`ZOTH_SIGNAL_NUMBER`), SimpleX SMP stealth relay, Matrix federated homeserver, Telegram Bot API, HMAC-SHA256 webhook pipe, and 3-way Byzantine dialectic consensus engine.
+- **Operational Value:** E2EE Signal (operator number from `ZOTH_SIGNAL_NUMBER`), SimpleX SMP stealth relay, Matrix federated homeserver, Telegram Bot API, HMAC-SHA256 webhook pipe, and 3-way Byzantine dialectic consensus engine.
 
 ### 5. vector-search-engine (Vector Search Engine & Studio)
 - **Live Studio:** https://vectorsearch.nullai.tech
@@ -506,7 +506,7 @@
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
 - **Category:** Commerce & MCP
 - **Execution Mode:** BROWSER / LOCAL_CLI (`PodCommerceGodModeTool` 60fps Fulfillment Arbitrage Waterfall Workstation)
-- **Operational Value:** Multi-channel POD order router dynamically comparing Printify, Gelato, Shopify, and Etsy on landed cost, domestic proximity, delivery speed, and net profit margin with verified dispatch metadata (`ZOTH_SIGNAL_NUMBER`).
+- **Operational Value:** Multi-channel POD order router dynamically comparing Printify, Gelato, Shopify, and Etsy on landed cost, domestic proximity, delivery speed, and net profit margin with verified dispatch metadata (operator contact from `ZOTH_SIGNAL_NUMBER`).
 
 ### 47. digital-asset-forge (Digital Asset Forge)
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge

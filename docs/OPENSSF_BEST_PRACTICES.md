@@ -10,9 +10,9 @@
 
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
-| **Open Source License** | **PASS** | Licensed under the MIT License ([`LICENSE`](file://${ZOTH_SRC_ROOT}/zoth-os/LICENSE)). |
+| **Open Source License** | **PASS** | Licensed under the MIT License ([`LICENSE`](../LICENSE)). |
 | **Project Website / Hub** | **PASS** | [`https://zothos.nullai.tech`](https://zothos.nullai.tech) and [`https://github.com/NullAITech/zoth-os`](https://github.com/NullAITech/zoth-os). |
-| **Documentation** | **PASS** | Complete architectural and operational guides in [`docs/`](file://${ZOTH_SRC_ROOT}/zoth-os/docs/) and [`README.md`](file://${ZOTH_SRC_ROOT}/zoth-os/README.md). |
+| **Documentation** | **PASS** | Complete architectural and operational guides in [`docs/`](./) and [`README.md`](../README.md). |
 | **English Language** | **PASS** | All documentation, source comments, and error messages are written in clear, technical English. |
 
 ---
@@ -32,7 +32,7 @@
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
 | **Bug Reporting Process** | **PASS** | Public GitHub Issues with bug and feature request templates. |
-| **Coordinated Vulnerability Disclosure** | **PASS** | Comprehensive [`SECURITY.md`](file://${ZOTH_SRC_ROOT}/zoth-os/SECURITY.md) detailing: SLA response within 24h, triage within 72h, contact `neal@nealfrazier.tech`. |
+| **Coordinated Vulnerability Disclosure** | **PASS** | Comprehensive [`SECURITY.md`](../SECURITY.md) detailing: SLA response within 24h, triage within 72h, contact `neal@nealfrazier.tech`. |
 | **Non-Public Vulnerability Reporting** | **PASS** | Private vulnerability reporting enabled via GitHub Security Advisories. |
 
 ---
@@ -41,9 +41,9 @@
 
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
-| **Working Build System** | **PASS** | Standardized, non-interactive build scripts ([`build/pack-iso.sh`](file://${ZOTH_SRC_ROOT}/zoth-os/build/pack-iso.sh), [`build/build-iso.sh`](file://${ZOTH_SRC_ROOT}/zoth-os/build/build-iso.sh)). |
-| **Automated Test Suite** | **PASS** | Comprehensive integrity test suite ([`tools/verify-zothos.sh`](file://${ZOTH_SRC_ROOT}/zoth-os/tools/verify-zothos.sh)). |
-| **Reproducible Builds** | **PASS** | Full deterministic build documentation ([`REPRODUCIBLE_BUILDS.md`](file://${ZOTH_SRC_ROOT}/zoth-os/REPRODUCIBLE_BUILDS.md)) and verification tool ([`tools/diff-reproducible.sh`](file://${ZOTH_SRC_ROOT}/zoth-os/tools/diff-reproducible.sh)). |
+| **Working Build System** | **PASS** | Standardized, non-interactive build scripts ([`build/pack-iso.sh`](../build/pack-iso.sh), [`build/build-iso.sh`](../build/build-iso.sh)). |
+| **Automated Test Suite** | **PASS** | Comprehensive integrity test suite ([`tools/verify-zothos.sh`](../tools/verify-zothos.sh)). |
+| **Reproducible Builds** | **PASS** | Full deterministic build documentation ([`REPRODUCIBLE_BUILDS.md`](../REPRODUCIBLE_BUILDS.md)) and verification tool ([`tools/diff-reproducible.sh`](../tools/diff-reproducible.sh)). |
 | **Continuous Integration** | **PASS** | Automated GitHub Actions CI for security, static analysis, and releases. |
 
 ---
@@ -52,7 +52,7 @@
 
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
-| **Cryptographic Signatures** | **PASS** | Releases signed with **Sigstore (`cosign`)** and logged to public **Rekor Transparency Log**. Verifiable with [`tools/verify-iso.sh`](file://${ZOTH_SRC_ROOT}/zoth-os/tools/verify-iso.sh). |
+| **Cryptographic Signatures** | **PASS** | Releases signed with **Sigstore (`cosign`)** and logged to public **Rekor Transparency Log**. Verifiable with [`tools/verify-iso.sh`](../tools/verify-iso.sh). |
 | **Software Bill of Materials (SBOM)** | **PASS** | Machine-readable **SPDX 2.3** and **CycloneDX** SBOMs generated with **Syft** for every release. |
 | **Vulnerability Scanning** | **PASS** | Automated vulnerability auditing against NVD/Debian trackers via **Grype**. |
 | **Third-Party Antivirus Verification** | **PASS** | SHA-256 published and tracked across 70+ AV engines on **VirusTotal**. |
@@ -64,6 +64,6 @@
 
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
-| **OpenSSF Scorecard** | **PASS** | Automated weekly Scorecard evaluation ([`.github/workflows/scorecard.yml`](file://${ZOTH_SRC_ROOT}/zoth-os/.github/workflows/scorecard.yml)) published to [scorecard.dev](https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os). |
-| **Static Code Analysis (SAST)** | **PASS** | **GitHub CodeQL** deep analysis ([`.github/workflows/codeql.yml`](file://${ZOTH_SRC_ROOT}/zoth-os/.github/workflows/codeql.yml)) running on Python and Actions. |
-| **Dependency Management** | **PASS** | Automated dependency security updates via [`.github/dependabot.yml`](file://${ZOTH_SRC_ROOT}/zoth-os/.github/dependabot.yml). |
+| **OpenSSF Scorecard** | **PASS** | Automated weekly Scorecard evaluation ([`.github/workflows/scorecard.yml`](../.github/workflows/scorecard.yml)) published to [scorecard.dev](https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os). |
+| **Static Code Analysis (SAST)** | **PASS** | **GitHub CodeQL** deep analysis ([`.github/workflows/codeql.yml`](../.github/workflows/codeql.yml)) running on Python and Actions. |
+| **Dependency Management** | **PASS** | Automated dependency security updates via [`.github/dependabot.yml`](../.github/dependabot.yml). |

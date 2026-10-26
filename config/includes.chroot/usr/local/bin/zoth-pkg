@@ -23,6 +23,22 @@ RESET = "\033[0m"
 
 MANIFEST_PATH = "/usr/share/zothos/tool-lists/zoth-verified-tools.json"
 
+def _account_home(user_var, default_user):
+    """Home of an OS account. Override with ZOTH_HOME / AZOTH_HOME. No hardcoded path."""
+    explicit = os.environ.get(user_var)
+    if explicit:
+        return explicit
+    user = os.environ.get("ZOTH_USER" if user_var == "ZOTH_HOME" else "AZOTH_USER", default_user)
+    return os.path.join("/home", user)
+
+def _tool_paths(*parts):
+    homes = [
+        os.path.expanduser("~"),
+        "/root",
+        _account_home("ZOTH_HOME", "zoth"),
+    ]
+    return [os.path.join(home, *parts) for home in homes]
+
 def banner():
     print(f"{GOLD}{BOLD}")
     print(r"  ███████╗ ██████╗ ████████╗██╗  ██╗   ██████╗ ██╗  ██╗ ██████╗ ")
@@ -47,8 +63,8 @@ def is_tool_installed(tool_id, pkg_name):
     # Alternate known binaries
     alts = {
         "imagemagick": ["convert", "magick"],
-        "foundry": ["forge", "cast", "anvil", "/usr/local/bin/forge", os.path.expanduser("~/.foundry/bin/forge"), "/root/.foundry/bin/forge", "${ZOTH_HOME}/.foundry/bin/forge"],
-        "foundryup": ["foundryup", "/usr/local/bin/foundryup", os.path.expanduser("~/.foundry/bin/foundryup"), "/root/.foundry/bin/foundryup", "${ZOTH_HOME}/.foundry/bin/foundryup"],
+        "foundry": ["forge", "cast", "anvil", "/usr/local/bin/forge", *_tool_paths(".foundry", "bin", "forge")],
+        "foundryup": ["foundryup", "/usr/local/bin/foundryup", *_tool_paths(".foundry", "bin", "foundryup")],
         "mythril": ["myth"],
         "theharvester": ["theHarvester"],
         "bitwarden": ["bw"],
@@ -59,8 +75,8 @@ def is_tool_installed(tool_id, pkg_name):
         "podman": ["podman", "docker"],
         "docker": ["docker", "podman", "/usr/bin/docker", "/usr/bin/podman"],
         "cdocker": ["docker", "podman", "/usr/bin/docker", "/usr/bin/podman"],
-        "rustc": ["rustc", os.path.expanduser("~/.cargo/bin/rustc"), "/root/.cargo/bin/rustc", "${ZOTH_HOME}/.cargo/bin/rustc"],
-        "go": ["go", "/usr/local/go/bin/go", "/usr/bin/go", os.path.expanduser("~/go/bin/go"), "/root/go/bin/go", "${ZOTH_HOME}/go/bin/go"],
+        "rustc": ["rustc", *_tool_paths(".cargo", "bin", "rustc")],
+        "go": ["go", "/usr/local/go/bin/go", "/usr/bin/go", *_tool_paths("go", "bin", "go")],
         "clang": ["clang", "/usr/bin/clang", "clang-19", "clang-18", "clang-16"],
         "sqlite": ["sqlite3", "sqlite", "/usr/bin/sqlite3"],
         "sqlite3": ["sqlite3", "sqlite", "/usr/bin/sqlite3"],

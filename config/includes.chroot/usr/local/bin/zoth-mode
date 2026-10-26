@@ -11,7 +11,18 @@
 
 set -uo pipefail
 
-USER_HOME="${HOME:-${ZOTH_HOME}}"
+if [ -f /etc/zothos/paths.sh ]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${AZOTH_USER:=azoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+
+USER_HOME="${ZOTH_ACTIVE_HOME}"
 CFG_DIR="$USER_HOME/.config/zothos"
 STATE_FILE="$CFG_DIR/profile.state"
 CURRENT_MODE_FILE="$CFG_DIR/current_mode"

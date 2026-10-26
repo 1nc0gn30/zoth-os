@@ -5,6 +5,40 @@
 # ==============================================================================
 
 set -euo pipefail
+
+if [ -f /etc/zothos/paths.sh ]; then
+  # shellcheck disable=SC1091
+  . /etc/zothos/paths.sh
+fi
+: "${ZOTH_USER:=zoth}"
+: "${AZOTH_USER:=azoth}"
+: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
+: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
+: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
+: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+
+# Expand ${ZOTH_HOME} / ${ZOTH_SRC_ROOT}. Bash pattern replacement cannot
+# carry a home path because that path contains slashes, so use a sentinel.
+zoth_expand() {
+  local s="$1"
+  local token=$'\x1f'
+  local out="" pre kind
+  s="${s//\$\{ZOTH_HOME\}/${token}H${token}}"
+  s="${s//\$\{ZOTH_SRC_ROOT\}/${token}S${token}}"
+  while [[ "$s" == *"${token}"* ]]; do
+    pre="${s%%"${token}"*}"
+    s="${s#*"${token}"}"
+    kind="${s%%"${token}"*}"
+    s="${s#*"${token}"}"
+    case "$kind" in
+      H) out="${out}${pre}${ZOTH_ACTIVE_HOME}" ;;
+      S) out="${out}${pre}${ZOTH_SRC_ROOT}" ;;
+      *) out="${out}${pre}" ;;
+    esac
+  done
+  printf '%s' "${out}${s}"
+}
+
 trap 'exit 130' INT
 
 GREEN="\e[38;2;0;255;157m"
@@ -18,9 +52,9 @@ BOLD="\e[1m"
 RESET="\e[0m"
 
 MCP_CONFIG="/etc/zothos/mcp-servers.json"
-USER_MCP_CONFIG="${HOME:-${ZOTH_HOME}}/.config/zothos/mcp-servers.json"
-MCP_RUN_DIR="${HOME:-${ZOTH_HOME}}/.zothos/mcp/run"
-MCP_LOG_DIR="${HOME:-${ZOTH_HOME}}/.zothos/mcp/logs"
+USER_MCP_CONFIG="${ZOTH_ACTIVE_HOME}/.config/zothos/mcp-servers.json"
+MCP_RUN_DIR="${ZOTH_ACTIVE_HOME}/.zothos/mcp/run"
+MCP_LOG_DIR="${ZOTH_ACTIVE_HOME}/.zothos/mcp/logs"
 
 # Resolve active config path
 get_config_path() {
@@ -89,7 +123,7 @@ cmd_list() {
             local offline
             offline=$(jq -r ".mcpServers[\"$s\"].offline // false" "$cfg")
             local sandbox
-            sandbox=$(jq -r ".mcpServers[\"$s\"].sandbox // \"/tmp\"" "$cfg")
+            sandbox=$(zoth_expand "$(jq -r ".mcpServers[\"$s\"].sandbox // \"/tmp\"" "$cfg")")
             local desc
             desc=$(jq -r ".mcpServers[\"$s\"].description // \"N/A\"" "$cfg")
 
@@ -155,9 +189,9 @@ cmd_health() {
         local offline
         offline=$(jq -r ".mcpServers[\"$s\"].offline // false" "$cfg")
         local fallback
-        fallback=$(jq -r ".mcpServers[\"$s\"].fallbackHandler // \"none\"" "$cfg")
+        fallback=$(zoth_expand "$(jq -r ".mcpServers[\"$s\"].fallbackHandler // \"none\"" "$cfg")")
         local sandbox
-        sandbox=$(jq -r ".mcpServers[\"$s\"].sandbox // \"${HOME:-${ZOTH_HOME}}\"" "$cfg")
+        sandbox=$(zoth_expand "$(jq -r ".mcpServers[\"$s\"].sandbox // \"${ZOTH_ACTIVE_HOME}\"" "$cfg")")
 
         echo -e "${BOLD}▶ [${s}]${RESET} (${ring})"
         
@@ -304,7 +338,7 @@ cmd_sync() {
         return 1
     fi
 
-    local USER_HOME="${HOME:-${ZOTH_HOME}}"
+    local USER_HOME="${ZOTH_ACTIVE_HOME}"
     mkdir -p "${USER_HOME}/.zothos/mcp" "${USER_HOME}/.grok" "${USER_HOME}/.gemini/config" \
         "${USER_HOME}/.config/claude-code" "${USER_HOME}/.hermes" "${USER_HOME}/.config/codex" \
         "${USER_HOME}/.config/opencode" "${USER_HOME}/.cursor" "${USER_HOME}/.aider"
@@ -315,6 +349,19 @@ cfg_path, home = sys.argv[1], sys.argv[2]
 with open(cfg_path) as f:
     registry = json.load(f)
 servers = registry.get("mcpServers") or {}
+
+def expand(value):
+    home = os.environ.get("ZOTH_ACTIVE_HOME") or os.environ.get("HOME") or os.environ.get("ZOTH_HOME") or ""
+    src = os.environ.get("ZOTH_SRC_ROOT") or (os.path.join(home, "NullAITech") if home else "")
+    if isinstance(value, str):
+        return value.replace("${ZOTH_HOME}", home).replace("${ZOTH_SRC_ROOT}", src)
+    if isinstance(value, list):
+        return [expand(item) for item in value]
+    if isinstance(value, dict):
+        return {key: expand(item) for key, item in value.items()}
+    return value
+
+servers = {name: expand(spec) for name, spec in servers.items()}
 
 def client_entry(spec):
     entry = {
@@ -478,7 +525,7 @@ cmd_test() {
     local cmd
     cmd=$(jq -r ".mcpServers[\"$server\"].command" "$cfg")
     local args
-    args=$(jq -r ".mcpServers[\"$server\"].args // [] | join(\" \")" "$cfg")
+    args=$(zoth_expand "$(jq -r ".mcpServers[\"$server\"].args // [] | join(\" \")" "$cfg")")
     local desc
     desc=$(jq -r ".mcpServers[\"$server\"].description // \"N/A\"" "$cfg")
     local ring

@@ -6,15 +6,15 @@ Wants=network.target
 [Service]
 Type=simple
 User=zoth
-WorkingDirectory=${ZOTH_SRC_ROOT}/agent-egress-sentinel
-ExecStart=/opt/zothos-ai-env/bin/python3 -m agent_egress_sentinel.cli serve --web-host 127.0.0.1 --web-port 8095 --proxy-host 127.0.0.1 --proxy-port 8096
+EnvironmentFile=-/etc/zothos/paths.conf
+WorkingDirectory=%h
+ExecStart=/usr/local/bin/zoth-run-repo agent-egress-sentinel /opt/zothos-ai-env/bin/python3 -m agent_egress_sentinel.cli serve --web-host 127.0.0.1 --web-port 8095 --proxy-host 127.0.0.1 --proxy-port 8096
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
-Environment=PYTHONPATH=${ZOTH_SRC_ROOT}/agent-egress-sentinel/src
 
 [Install]
 WantedBy=multi-user.target
