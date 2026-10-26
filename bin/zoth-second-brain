@@ -1744,6 +1744,132 @@ flowchart LR
     print(f"{GOLD}✦ Dream consolidation complete! Synaptic bridges report written to 05-Telemetry/{RESET}\n")
 
 
+def cmd_graph():
+    print(f"\n{GOLD}{BOLD}🕸️ Obsidian Knowledge Graph Degree Centrality & Topology Analyzer{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+
+    if not VAULT_DIR.exists():
+        print(f" {RED}✖ Vault directory missing:{RESET} {VAULT_DIR}")
+        return
+
+    t0 = time.time()
+    nodes = {}
+    in_degrees = {}
+    out_degrees = {}
+    edges = set()
+    cluster_counts = {}
+
+    for p in sorted(VAULT_DIR.rglob("*")):
+        if not p.is_file() or any(part.startswith(".") for part in p.parts):
+            continue
+        suf = p.suffix.lower()
+        if suf not in (".md", ".canvas", ".base"):
+            continue
+
+        rel = str(p.relative_to(VAULT_DIR))
+        stem = p.stem
+        nodes[stem] = rel
+
+        parts = p.relative_to(VAULT_DIR).parts
+        if len(parts) > 1:
+            cl = parts[0]
+            if cl == "06-Wiki": cl = "Wiki"
+            elif cl == "05-Telemetry": cl = "Telemetry"
+            elif cl == "04-Ingested": cl = "Ingested"
+        elif suf == ".canvas":
+            cl = "Canvases"
+        elif suf == ".base":
+            cl = "Bases"
+        else:
+            cl = "Root"
+
+        cluster_counts[cl] = cluster_counts.get(cl, 0) + 1
+
+        try:
+            content = p.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            content = ""
+
+        links = re.findall(r"\[\[([^\]|#]+)", content)
+        unique_links = set(l.strip() for l in links if l.strip())
+        out_degrees[stem] = len(unique_links)
+        for target in unique_links:
+            in_degrees[target] = in_degrees.get(target, 0) + 1
+            edges.add((stem, target))
+
+    top_hubs = []
+    for title, rel in nodes.items():
+        ind = in_degrees.get(title, 0)
+        outd = out_degrees.get(title, 0)
+        tot = ind + outd
+        parts = Path(rel).parts
+        if len(parts) > 1:
+            cl = parts[0]
+            if cl == "06-Wiki": cl = "Wiki"
+            elif cl == "05-Telemetry": cl = "Telemetry"
+            elif cl == "04-Ingested": cl = "Ingested"
+        elif rel.endswith(".canvas"):
+            cl = "Canvases"
+        elif rel.endswith(".base"):
+            cl = "Bases"
+        else:
+            cl = "Root"
+
+        top_hubs.append({
+            "title": title,
+            "relPath": rel,
+            "inDegree": ind,
+            "outDegree": outd,
+            "totalDegree": tot,
+            "cluster": cl
+        })
+
+    top_hubs.sort(key=lambda x: (x["totalDegree"], x["inDegree"]), reverse=True)
+    duration = time.time() - t0
+
+    telemetry_dir = VAULT_DIR / "05-Telemetry"
+    telemetry_dir.mkdir(parents=True, exist_ok=True)
+    topology_file = telemetry_dir / "obsidian_graph_topology.json"
+
+    topology_data = {
+        "ok": True,
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "totalNodes": len(nodes),
+        "totalEdges": len(edges),
+        "clusterDistribution": cluster_counts,
+        "clusters": cluster_counts,
+        "topHubs": top_hubs[:25]
+    }
+
+    topology_file.write_text(json.dumps(topology_data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    print(f" {GREEN}✔ Graph Analyzed in {duration:.3f}s:{RESET} {BOLD}{len(nodes)}{RESET} Nodes · {BOLD}{len(edges)}{RESET} Wikilink Edges")
+    print(f" {CYAN}📁 Saved Topology:{RESET} {topology_file.relative_to(VAULT_DIR)}\n")
+
+    print(f"{BOLD}Top 15 Knowledge Graph Hubs (Degree Centrality):{RESET}")
+    print(f"{DIM}┌─────┬─────────────────────────────────────┬──────────────┬────────┬────────┬────────┐{RESET}")
+    print(f"{DIM}│{RESET} {BOLD}Rank{RESET} {DIM}│{RESET} {BOLD}Hub Note Title{RESET}                        {DIM}│{RESET} {BOLD}Cluster{RESET}      {DIM}│{RESET}  {BOLD}In{RESET}    {DIM}│{RESET}  {BOLD}Out{RESET}   {DIM}│{RESET} {BOLD}Total{RESET}  {DIM}│{RESET}")
+    print(f"{DIM}├─────┼─────────────────────────────────────┼──────────────┼────────┼────────┼────────┤{RESET}")
+
+    for idx, hub in enumerate(top_hubs[:15], 1):
+        title = hub["title"][:35]
+        cluster = hub["cluster"][:12]
+        in_d = hub["inDegree"]
+        out_d = hub["outDegree"]
+        tot_d = hub["totalDegree"]
+        print(f"{DIM}│{RESET} {idx:>3} {DIM}│{RESET} {title:<35} {DIM}│{RESET} {CYAN}{cluster:<12}{RESET} {DIM}│{RESET} {GREEN}{in_d:>6}{RESET} {DIM}│{RESET} {GOLD}{out_d:>6}{RESET} {DIM}│{RESET} {BOLD}{tot_d:>6}{RESET} {DIM}│{RESET}")
+
+    print(f"{DIM}└─────┴─────────────────────────────────────┴──────────────┴────────┴────────┴────────┘{RESET}\n")
+
+    print(f"{BOLD}Knowledge Cluster Distribution:{RESET}")
+    for cl, count in sorted(cluster_counts.items(), key=lambda x: x[1], reverse=True):
+        bar_len = min(30, int(count / max(cluster_counts.values()) * 30))
+        bar = "█" * bar_len
+        print(f"  • {cl:<12} {count:>5} notes  {CYAN}{bar}{RESET}")
+
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -1761,6 +1887,7 @@ def print_help():
     {GREEN}render [target]{RESET}        Knap-style Structured Data-to-Obsidian Note Compiler (vaelor, memory, all)
     {GREEN}wiki <topic>{RESET}           Synthesize a Karpathy-style canonical LLM Wiki page in 06-Wiki/
     {GREEN}dream{RESET}                  Trigger hippocampal sleep consolidation (:8094) & discover cross-cluster links
+    {GREEN}graph{RESET}                  Analyze wikilink degree centrality & export 05-Telemetry/obsidian_graph_topology.json
     {GREEN}moc{RESET}                    List all Maps of Content (MOC) with link counts and sizes
     {GREEN}moc <name>{RESET}             Inspect a specific MOC note and its wikilinks
     {GREEN}help{RESET}                   Print this help message
@@ -1794,6 +1921,8 @@ def main():
         cmd_wiki(sys.argv[2:])
     elif cmd in ("dream", "sleep", "consolidate"):
         cmd_dream()
+    elif cmd in ("graph", "topology", "hubs"):
+        cmd_graph()
     elif cmd == "moc":
         cmd_moc(sys.argv[2:])
     elif cmd in ("help", "--help", "-h"):
