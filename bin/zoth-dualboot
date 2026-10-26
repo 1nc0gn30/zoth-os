@@ -20,6 +20,28 @@ PREP_ONLY=0
 if [ "${1:-}" = "--prep-only" ]; then
   PREP_ONLY=1
   shift
+elif [ "${1:-}" = "wake" ] || [ "${1:-}" = "--wake" ]; then
+  echo "⚡ Sending wakeup & DPMS unblank signals to Zoth-DualBoot..."
+  if [ -S /tmp/zoth-dualboot-monitor.sock ]; then
+    {
+      echo "system_wakeup"
+      echo "sendkey shift"
+      echo "sendkey ctrl-alt-f1"
+      sleep 0.5
+      echo "sendkey ctrl-alt-f7"
+    } | sudo socat - UNIX-CONNECT:/tmp/zoth-dualboot-monitor.sock >/dev/null 2>&1 || true
+  fi
+  WIN_ID=$(DISPLAY="${DISPLAY:-:0}" xdotool search --name "Zoth-DualBoot" 2>/dev/null | head -n 1 || true)
+  if [ -n "$WIN_ID" ]; then
+    DISPLAY="${DISPLAY:-:0}" xdotool key --window "$WIN_ID" shift Return space 2>/dev/null || true
+    echo "✅ Wake signal sent to window $WIN_ID!"
+  fi
+  echo "💡 Tip: Inside the QEMU window, you can also click 'View -> compatmonitor0' (or press Ctrl+Alt+2), type:"
+  echo "     system_wakeup"
+  echo "     sendkey ctrl-alt-f1"
+  echo "     sendkey ctrl-alt-f7"
+  echo "   and then switch back via 'View -> virtio-vga' (or Ctrl+Alt+1)."
+  exit 0
 fi
 
 TARGET_DISK="${1:-/dev/sda}"
@@ -108,6 +130,8 @@ exec sudo qemu-system-x86_64 \
   -name "Zoth-DualBoot ($TARGET_DISK)" \
   -enable-kvm \
   -machine q35,accel=kvm \
+  -global ICH9-LPC.disable_s3=1 \
+  -global ICH9-LPC.disable_s4=1 \
   -cpu host,kvm=on \
   -smp "cpus=$CORES,cores=$CORES,threads=1" \
   -m "$RAM_MB" \
@@ -117,6 +141,7 @@ exec sudo qemu-system-x86_64 \
   -drive file="$TARGET_DISK",format=raw,if=virtio,cache=none,aio=native,index=1 \
   -vga virtio \
   -display gtk,gl=off,grab-on-hover=off \
-  -usb -device usb-tablet \
+  -usb -device usb-tablet -device usb-kbd \
+  -monitor unix:/tmp/zoth-dualboot-monitor.sock,server,nowait \
   -netdev user,id=net0,hostfwd=tcp::2222-:22 \
   -device virtio-net-pci,netdev=net0

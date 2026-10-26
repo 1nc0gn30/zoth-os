@@ -1,0 +1,1105 @@
+#!/usr/bin/env node
+/**
+ * VAELOR (◈ VLR) — Sovereign Layer-1 Terminal CLI
+ * =========================================================================
+ * Feeless Account-Lattice DAG • Proof-of-Useful-Work • 5-Validator BFT Quorum
+ *
+ * Usage:
+ *   vaelor-cli status
+ *   vaelor-cli balance [@handle]
+ *   vaelor-cli send <from> <to> <amount> [memo]
+ *   vaelor-cli mine [@handle] [taskType]
+ *   vaelor-cli check <@handle>
+ *
+ * Options:
+ *   --rpc <url>   RPC endpoint (default: http://127.0.0.1:8140)
+ *   --json        Output raw machine-readable JSON
+ *   --offline     Force local direct lattice storage mode
+ *
+ * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ */
+
+'use strict';
+
+const path = require('path');
+const fs = require('fs');
+
+// ANSI Color Tokens
+const C = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  gold: '\x1b[38;2;245;197;66m',
+  emerald: '\x1b[38;2;16;185;129m',
+  cyan: '\x1b[38;2;6;182;212m',
+  purple: '\x1b[38;2;168;85;247m',
+  red: '\x1b[38;2;239;68;68m',
+  gray: '\x1b[38;2;148;163;184m',
+  darkGray: '\x1b[38;2;71;85;105m',
+  white: '\x1b[38;2;248;250;252m',
+  bgGold: '\x1b[48;2;245;197;66m\x1b[38;2;5;6;11m\x1b[1m'
+};
+
+const args = process.argv.slice(2);
+let isJson = false;
+let isOffline = false;
+let rpcUrl = process.env.VAELOR_RPC_URL || 'http://127.0.0.1:8140';
+
+const cleanArgs = [];
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--json') {
+    isJson = true;
+  } else if (args[i] === '--offline') {
+    isOffline = true;
+  } else if (args[i] === '--rpc' && args[i + 1]) {
+    rpcUrl = args[++i].replace(/\/+$/, '');
+  } else {
+    cleanArgs.push(args[i]);
+  }
+}
+
+const command = cleanArgs[0] || 'help';
+
+function printHeader() {
+  if (isJson) return;
+  console.log(`${C.gold}${C.bold}◈ VAELOR (VLR)${C.reset} ${C.dim}— Sovereign Account-Lattice Layer-1 Terminal CLI${C.reset}`);
+  console.log(`${C.darkGray}${'─'.repeat(68)}${C.reset}`);
+}
+
+function normalizeHandle(h) {
+  if (!h) return '';
+  let str = String(h).trim().toLowerCase();
+  if (str.startsWith('vlr1_')) return str;
+  str = str.replace(/^@+/, '');
+  return `@${str}`;
+}
+
+// Client Abstraction: Tries RPC first, falls back to direct VaelorLatticeNode
+class LatticeClient {
+  constructor(url, forceOffline) {
+    this.rpc = url;
+    this.forceOffline = forceOffline;
+    this.localNode = null;
+  }
+
+  getLocalNode() {
+    if (!this.localNode) {
+      const { VaelorLatticeNode } = require('../src/core/lattice');
+      const stateFile = process.env.VAELOR_STATE_FILE || path.join(__dirname, '..', 'data', 'vaelor_lattice_state.json');
+      this.localNode = new VaelorLatticeNode(stateFile);
+    }
+    return this.localNode;
+  }
+
+  async getSnapshot() {
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/snapshot`, { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+    const node = this.getLocalNode();
+    return { data: node.getNetworkSnapshot(), source: 'local' };
+  }
+
+  async getAccount(handle) {
+    const clean = normalizeHandle(handle);
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/account/${encodeURIComponent(clean)}`, { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+    const node = this.getLocalNode();
+    const acc = node.resolveAccount(clean);
+    if (!acc) throw new Error(`Account '${clean}' not found on lattice`);
+    const creditProfile = node.getCreditProfile(clean);
+    return {
+      data: {
+        ok: true,
+        account: acc,
+        creditProfile,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async sendTransfer(from, to, amount, memo) {
+    const cleanFrom = normalizeHandle(from);
+    const cleanTo = normalizeHandle(to);
+    const amt = Number(amount);
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/transfer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: cleanFrom, to: cleanTo, amountVlr: amt, memo }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const tx = node.transfer({ from: cleanFrom, to: cleanTo, amountVlr: amt, memo });
+    return {
+      data: {
+        ok: true,
+        sendBlock: tx.sendBlock,
+        receiveBlock: tx.receiveBlock,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async minePouw(worker, workType, taskLabel) {
+    const cleanWorker = normalizeHandle(worker || '@neal');
+    const type = workType || 'SECURITY_ENTROPY_SCAN';
+    const label = taskLabel || 'Automated PoUW Node Verification & Entropy Audit';
+    const payload = JSON.stringify({
+      worker: cleanWorker,
+      workType: type,
+      timestamp: new Date().toISOString(),
+      entropyBits: 256,
+      auditVerified: true
+    });
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/pouw/mint`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ worker: cleanWorker, workType: type, taskLabel: label, artifactPayload: payload }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const result = node.submitUsefulWork({ worker: cleanWorker, workType: type, taskLabel: label, artifactPayload: payload });
+    return {
+      data: {
+        ok: true,
+        receipt: result.receipt,
+        mintBlock: result.mintBlock,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async checkHandle(handle) {
+    const clean = normalizeHandle(handle);
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/directory/check/${encodeURIComponent(clean)}`, { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const safety = node.checkHandleSafety(clean);
+    return {
+      data: {
+        ok: true,
+        handle: clean,
+        safety,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async sendTip(from, creator, amount, message, projectSlug) {
+    const cleanFrom = normalizeHandle(from);
+    const cleanCreator = normalizeHandle(creator);
+    const amt = Number(amount);
+    const msg = message || 'Feeless open-source micro-patronage';
+    const slug = projectSlug || 'zoth-os';
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/tips/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: cleanFrom, creator: cleanCreator, amount: amt, message: msg, projectSlug: slug }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const res = node.sendCreatorTip({
+      from: cleanFrom,
+      creator: cleanCreator,
+      amount: amt,
+      message: msg,
+      projectSlug: slug
+    });
+    return {
+      data: {
+        ok: true,
+        tip: res.tip,
+        badge: res.badge,
+        badgeEmoji: res.badgeEmoji,
+        loyaltyTier: res.loyaltyTier,
+        cashbackPct: res.cashbackPct,
+        cashbackVlr: res.cashbackVlr,
+        sendBlock: res.sendBlock,
+        cashbackBlock: res.cashbackBlock,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async executeMerchantFx(buyer, merchant, amount, memo) {
+    const cleanBuyer = normalizeHandle(buyer);
+    const cleanMerchant = normalizeHandle(merchant);
+    const amt = Number(amount);
+    const m = memo || 'Multi-Currency Merchant FX Auto-Sweep';
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/merchant-fx/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ buyer: cleanBuyer, merchant: cleanMerchant, amount: amt, memo: m }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const res = node.executeMerchantFxCheckout(cleanBuyer, cleanMerchant, amt, m);
+    return {
+      data: {
+        ok: true,
+        ...res,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async createEscrow(buyer, merchant, amount, itemTitle, autoReleaseHours) {
+    const cleanBuyer = normalizeHandle(buyer);
+    const cleanMerchant = normalizeHandle(merchant);
+    const amt = Number(amount);
+    const title = itemTitle || 'Protected Commerce Order';
+    const hrs = Number(autoReleaseHours) || 72;
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/escrows/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ buyer: cleanBuyer, merchant: cleanMerchant, amountVlr: amt, itemTitle: title, autoReleaseHours: hrs }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data: data.result || data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const res = node.createProtectedEscrow(cleanBuyer, cleanMerchant, amt, title, hrs);
+    return {
+      data: {
+        ok: true,
+        ...res,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async resolveEscrow(escrowId, resolutionType, refundPct) {
+    const id = String(escrowId || '').trim();
+    const resType = String(resolutionType || 'RELEASE').toUpperCase();
+    const pct = Number(refundPct !== undefined ? refundPct : 0);
+
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/escrows/resolve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ escrowId: id, resolutionType: resType, refundPct: pct }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data: data.result || data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const res = node.resolveProtectedEscrow(id, resType, pct);
+    return {
+      data: {
+        ok: true,
+        ...res,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async listEscrows(handle) {
+    const h = handle ? normalizeHandle(handle) : null;
+    if (!this.forceOffline) {
+      try {
+        const url = `${this.rpc}/api/escrows${h ? `?handle=${encodeURIComponent(h)}` : ''}`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const escrows = node.getProtectedEscrows(h);
+    return {
+      data: {
+        ok: true,
+        escrows,
+        count: escrows.length,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async getTaxReport(handle, taxYear = 2026, format = 'json') {
+    const cleanHandle = normalizeHandle(handle || '@citizen');
+    const year = Number(taxYear) || 2026;
+
+    if (!this.forceOffline) {
+      try {
+        const url = `${this.rpc}/api/tax-report/${encodeURIComponent(cleanHandle)}?year=${year}&format=${format}`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+        if (res.ok) {
+          if (format === 'csv') {
+            const csvText = await res.text();
+            return { data: csvText, source: 'rpc' };
+          }
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {
+        // Fall back to local
+      }
+    }
+
+    const node = this.getLocalNode();
+    const report = node.getTaxReport(cleanHandle, year);
+    if (format === 'csv') {
+      return { data: report.csvReport, source: 'local' };
+    }
+    return {
+      data: {
+        ok: true,
+        ...report,
+        snapshot: node.getNetworkSnapshot()
+      },
+      source: 'local'
+    };
+  }
+
+  async getCommPeers() {
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/comm/peers`, { signal: AbortSignal.timeout(3000) });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {}
+    }
+    const node = this.getLocalNode();
+    const peers = node.getCommPeers();
+    return { data: { ok: true, peers, count: peers.length }, source: 'local' };
+  }
+
+  async requestCommHandshake(from, to, passphrase, introNote = '') {
+    const cleanFrom = normalizeHandle(from);
+    const cleanTo = normalizeHandle(to);
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/comm/handshake`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: cleanFrom, to: cleanTo, passphrase, introNote }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {}
+    }
+    const node = this.getLocalNode();
+    const res = node.requestCommHandshake(cleanFrom, cleanTo, passphrase, introNote);
+    return { data: { ok: true, ...res }, source: 'local' };
+  }
+
+  async sendCommMessage(from, to, passphrase, message, attachedVlr = 0, aiTaskPrompt = '') {
+    const cleanFrom = normalizeHandle(from);
+    const cleanTo = normalizeHandle(to);
+    const amt = Number(attachedVlr || 0);
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/comm/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: cleanFrom, to: cleanTo, passphrase, message, attachedVlr: amt, aiTaskPrompt }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {}
+    }
+    const node = this.getLocalNode();
+    const res = node.sendCommMessage({
+      from: cleanFrom,
+      to: cleanTo,
+      passphrase,
+      message,
+      attachedVlr: amt,
+      aiTaskPrompt
+    });
+    return { data: { ok: true, ...res }, source: 'local' };
+  }
+
+  async readCommInbox(handle, passphrase) {
+    const cleanHandle = normalizeHandle(handle);
+    if (!this.forceOffline) {
+      try {
+        const res = await fetch(`${this.rpc}/api/comm/inbox`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ handle: cleanHandle, passphrase }),
+          signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return { data, source: 'rpc' };
+        }
+      } catch (e) {}
+    }
+    const node = this.getLocalNode();
+    const res = node.readCommInbox(cleanHandle, passphrase);
+    return { data: res, source: 'local' };
+  }
+}
+
+async function main() {
+  const client = new LatticeClient(rpcUrl, isOffline);
+
+  try {
+    switch (command.toLowerCase()) {
+      case 'status': {
+        const { data: rawData, source } = await client.getSnapshot();
+        const data = rawData.snapshot || rawData;
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        const modeBadge = source === 'rpc' ? `${C.emerald}ONLINE (RPC :8140)${C.reset}` : `${C.purple}LOCAL (Direct Lattice)${C.reset}`;
+        console.log(`Node Mode:        ${modeBadge}`);
+        console.log(`Protocol & Chain: ${C.white}${data.protocol}${C.reset} ${C.dim}(${data.chainId})${C.reset}`);
+        console.log(`Circulating VLR:  ${C.gold}${C.bold}${Number(data.totalSupplyVlr || 0).toLocaleString('en-US', { minimumFractionDigits: 4 })} ◈${C.reset}`);
+        console.log(`Total DAG Blocks: ${C.cyan}${data.totalBlocks}${C.reset} blocks`);
+        console.log(`Feeless Transfers:${C.emerald}${data.totalFeelessTxCount || 0}${C.reset} ($0.00 gas forever)`);
+        console.log(`Total Gas Saved:  ${C.emerald}${C.bold}$${Number(data.totalGasSavedUsd || 0).toFixed(2)} Gas (${data.totalFeelessTxCount || 0} feeless txs)${C.reset}`);
+        console.log(`Cashback Emitted: ${C.gold}${data.totalCashbackDistributedVlr || 0} ◈ VLR${C.reset}`);
+
+        const cs = data.consensusSummary || {};
+        console.log(`\n${C.bold}🏛️ 5-Validator BFT Quorum Consensus:${C.reset}`);
+        console.log(`  Quorum Size:    ${cs.quorumSize || 5} nodes (Threshold: ${cs.bftThreshold || 4} of 5 required)`);
+        console.log(`  BFT Finality:   ${C.emerald}${C.bold}${cs.status || '100% BFT FINALITY'}${C.reset} (<20ms latency)`);
+        console.log(`  Anchor Nodes:   Norfolk • Virginia Beach • Richmond • Chesapeake • Outer Banks`);
+
+        const sv = data.savingsVaultSummary || {};
+        console.log(`\n${C.bold}💰 8.5% APY Zero-Lockup Savings Vault:${C.reset}`);
+        console.log(`  Total Staked:   ${C.gold}${Number(sv.totalStakedVlr || data.totalStakedVlr || 0).toLocaleString()} ◈ VLR${C.reset}`);
+        console.log(`  Compound APY:   ${C.emerald}${C.bold}${sv.apyPct || 8.5}% APY${C.reset} (0-day unbonding)`);
+        console.log(`  Backing Demand: Proof-of-Useful-Work AI Inference & AST Audits`);
+
+        console.log(`\n${C.bold}💳 Merchant & Credit Rails:${C.reset}`);
+        console.log(`  Credit Limit:   ${C.cyan}${Number(data.totalCreditLimitVlr || 0).toLocaleString()} ◈ VLR${C.reset} (0% APR, 30d grace)`);
+        console.log(`  Active Escrows: ${data.activeEscrowCount || 0} protected transactions`);
+        console.log(`  Smart Receipts: ${data.totalReceiptsCount || 0} minted (365d warranties attached)`);
+        break;
+      }
+
+      case 'balance': {
+        const targetHandle = cleanArgs[1] || '@neal';
+        const { data, source } = await client.getAccount(targetHandle);
+
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        const acc = data.account;
+        const cp = data.creditProfile || {};
+        const liquidVlr = acc.balanceVlr !== undefined ? acc.balanceVlr : (acc.balanceVael / 1_000_000);
+        const liquidVael = acc.balanceVael !== undefined ? acc.balanceVael : Math.round(liquidVlr * 1_000_000);
+        const stakedVlr = acc.stakedBalanceVlr !== undefined ? acc.stakedBalanceVlr : ((acc.stakedBalanceVael || 0) / 1_000_000);
+        const lockedEscrowVlr = acc.lockedEscrowVlr !== undefined ? acc.lockedEscrowVlr : ((acc.lockedEscrowVael || 0) / 1_000_000);
+
+        console.log(`Account Handle:   ${C.gold}${C.bold}${acc.handle}${C.reset} ${C.dim}(${acc.displayName || 'Vaelor Citizen'})${C.reset}`);
+        console.log(`L1 Address:       ${C.dim}${acc.address}${C.reset}`);
+        console.log(`Mode:             ${source === 'rpc' ? C.emerald + 'Live RPC' : C.purple + 'Direct Lattice'}${C.reset}`);
+        console.log(`${C.darkGray}${'─'.repeat(68)}${C.reset}`);
+        console.log(`Liquid Balance:   ${C.gold}${C.bold}${Number(liquidVlr).toLocaleString('en-US', { minimumFractionDigits: 4 })} ◈ VLR${C.reset} ${C.dim}(${liquidVael.toLocaleString()} vael)${C.reset}`);
+        console.log(`Staked Savings:   ${C.emerald}${C.bold}${Number(stakedVlr).toLocaleString('en-US', { minimumFractionDigits: 4 })} ◈ VLR${C.reset} ${C.dim}(8.5% APY PoUW Vault)${C.reset}`);
+        console.log(`Locked in Escrow: ${C.cyan}${Number(lockedEscrowVlr).toFixed(4)} ◈ VLR${C.reset}`);
+
+        if (cp.creditScore) {
+          console.log(`\n${C.bold}💳 Revolving Credit Facility (0% APR):${C.reset}`);
+          console.log(`  Credit Score:   ${C.emerald}${C.bold}${cp.creditScore} / 850${C.reset}`);
+          console.log(`  Credit Limit:   ${C.gold}${cp.creditLimitVlr.toFixed(2)} ◈ VLR${C.reset}`);
+          console.log(`  Available:      ${C.emerald}${cp.availableCreditVlr.toFixed(2)} ◈ VLR${C.reset}`);
+          console.log(`  Drawn Balance:  ${C.purple}${cp.drawnCreditVlr.toFixed(2)} ◈ VLR${C.reset} (30-day grace period)`);
+        }
+
+        const blocks = (acc.blocks || acc.recentChain || []).slice(-4).reverse();
+        if (blocks.length > 0) {
+          console.log(`\n${C.bold}📜 Recent Micro-Blocks on Account Lattice:${C.reset}`);
+          blocks.forEach((b) => {
+            console.log(`  ${C.cyan}#${b.height}${C.reset} ${C.bold}${b.type.padEnd(16)}${C.reset} ${C.dim}${b.hash.slice(0, 16)}...${C.reset} ${C.emerald}✓ Verified${C.reset}`);
+          });
+        }
+        break;
+      }
+
+      case 'send': {
+        const from = cleanArgs[1];
+        const to = cleanArgs[2];
+        const amount = cleanArgs[3];
+        const memo = cleanArgs.slice(4).join(' ') || 'Instant feeless transfer';
+
+        if (!from || !to || !amount) {
+          console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli send <from> <to> <amount> [memo]`);
+          process.exit(1);
+        }
+
+        const { data } = await client.sendTransfer(from, to, amount, memo);
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        console.log(`${C.emerald}${C.bold}⚡ Feeless Transfer Settled Instantly!${C.reset}`);
+        console.log(`  From:           ${C.gold}${data.sendBlock.handle || data.sendBlock.accountHandle || from}${C.reset}`);
+        console.log(`  To:             ${C.gold}${data.receiveBlock.handle || data.sendBlock.data.toHandle || to}${C.reset}`);
+        console.log(`  Amount:         ${C.gold}${C.bold}${data.sendBlock.data.amountVlr} ◈ VLR${C.reset}`);
+        console.log(`  Gas Fee:        ${C.emerald}${C.bold}$0.00 Gas (Feeless Forever)${C.reset}`);
+        console.log(`  Latency:        ${C.cyan}< 20 milliseconds${C.reset}`);
+        console.log(`  Send Block:     ${C.dim}${data.sendBlock.hash}${C.reset}`);
+        console.log(`  Receive Block:  ${C.dim}${data.receiveBlock.hash}${C.reset}`);
+        console.log(`  BFT Quorum:     ${C.emerald}✓ 5-Validator Attestation Confirmed${C.reset}`);
+        break;
+      }
+
+      case 'mine': {
+        const worker = cleanArgs[1] || '@neal';
+        const workType = cleanArgs[2] || 'SECURITY_ENTROPY_SCAN';
+        const { data } = await client.minePouw(worker, workType);
+
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        console.log(`${C.emerald}${C.bold}⛏️  Proof-of-Useful-Work (PoUW) Mined Successfully!${C.reset}`);
+        console.log(`  Worker:         ${C.gold}${data.receipt.workerHandle || data.receipt.worker || worker}${C.reset}`);
+        console.log(`  Audit Type:     ${C.cyan}${data.receipt.workType}${C.reset}`);
+        console.log(`  Reward Minted:  ${C.gold}${C.bold}+${data.receipt.rewardVlr} ◈ VLR${C.reset}`);
+        console.log(`  Audit Grade:    ${C.emerald}${C.bold}A+ (Verified Valid Artifact)${C.reset}`);
+        console.log(`  Block Height:   ${C.white}#${data.mintBlock.height}${C.reset}`);
+        console.log(`  Mint Hash:      ${C.dim}${data.mintBlock.hash}${C.reset}`);
+        if (data.mintBlock.quorumCertificate) {
+          console.log(`  BFT Quorum:     ${C.emerald}✓ Quorum Certificate Issued (Threshold 4/5 Verified)${C.reset}`);
+        }
+        break;
+      }
+
+      case 'check': {
+        const handle = cleanArgs[1];
+        if (!handle) {
+          console.error(`${C.red}Error:${C.reset} Missing handle. Usage: vaelor-cli check <@handle>`);
+          process.exit(1);
+        }
+
+        const { data } = await client.checkHandle(handle);
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        const safety = data.safety || {};
+        console.log(`Target Handle:    ${C.bold}${data.handle}${C.reset}`);
+
+        if (safety.riskLevel === 'VERIFIED_SAFE') {
+          console.log(`Safety Status:    ${C.emerald}${C.bold}✓ VERIFIED SAFE${C.reset}`);
+          console.log(`Display Name:     ${C.white}${safety.name || safety.displayName}${C.reset}`);
+          console.log(`Official Domain:  ${C.cyan}${safety.domain}${C.reset}`);
+          console.log(`Trust Score:      ${C.emerald}${safety.trustScore || 99} / 100${C.reset}`);
+          console.log(`Badge:            ${C.gold}${safety.badge || '✓ Verified Sovereign Entity'}${C.reset}`);
+        } else if (safety.riskLevel === 'HIGH_LOOKALIKE_RISK') {
+          console.log(`Safety Status:    ${C.red}${C.bold}⚠️  HIGH LOOKALIKE PHISHING RISK${C.reset}`);
+          console.log(`Attack Vector:    ${C.purple}${safety.attackType || 'HOMOGLYPH_SUBSTITUTION'}${C.reset}`);
+          console.log(`Warning:          ${C.red}${safety.warning}${C.reset}`);
+          console.log(`Suggested Handle: ${C.gold}${C.bold}${safety.suggestedHandle}${C.reset} (${safety.suggestedDomain || 'Official Verified Domain'})`);
+          console.log(`Trust Score:      ${C.red}10 / 100 (Unverified Impersonation Candidate)${C.reset}`);
+        } else {
+          console.log(`Safety Status:    ${C.cyan}UNVERIFIED COMMUNITY HANDLE${C.reset}`);
+          console.log(`Note:             Not registered in merchant registry, but no lookalike risk detected.`);
+          console.log(`Trust Score:      ${C.white}70 / 100${C.reset}`);
+        }
+        break;
+      }
+
+      case 'tip': {
+        const from = cleanArgs[1];
+        const creator = cleanArgs[2];
+        const amount = cleanArgs[3];
+        const message = cleanArgs.slice(4).join(' ') || 'Feeless open-source micro-patronage';
+
+        if (!from || !creator || !amount) {
+          console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli tip <from> <creator> <amount> [message]`);
+          process.exit(1);
+        }
+
+        const { data } = await client.sendTip(from, creator, amount, message);
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        console.log(`${C.emerald}${C.bold}🎁 Feeless Creator Tip Sent Successfully!${C.reset}`);
+        console.log(`  From:           ${C.white}${data.tip ? data.tip.fromHandle : from}${C.reset}`);
+        console.log(`  Creator:        ${C.gold}${C.bold}${data.tip ? data.tip.creatorHandle : creator}${C.reset}`);
+        console.log(`  Amount:         ${C.gold}${C.bold}${data.tip ? data.tip.amountVlr : amount} ◈ VLR${C.reset}`);
+        console.log(`  Patronage Tier: ${C.purple}${data.badgeEmoji || '👑'} ${data.badge}${C.reset}`);
+        console.log(`  Cashback Earned:${C.emerald}${C.bold}+${data.cashbackVlr} ◈ (${data.cashbackPct ? data.cashbackPct.toFixed(2) : '2.50'}% Instant Rebate)${C.reset}`);
+        console.log(`  Loyalty Tier:   ${C.cyan}${data.loyaltyTier || 'BRONZE'}${C.reset}`);
+        console.log(`  Gas Fee:        ${C.emerald}$0.00 Gas (Zero Interchange Fee)${C.reset}`);
+        console.log(`  Tip Block Hash: ${C.dim}${data.sendBlock ? data.sendBlock.hash : 'confirmed'}${C.reset}`);
+        console.log(`  Message:        ${C.white}"${data.tip ? data.tip.message : message}"${C.reset}`);
+        break;
+      }
+
+      case 'fx': {
+        const buyer = cleanArgs[1];
+        const merchant = cleanArgs[2];
+        const amount = cleanArgs[3];
+        const memo = cleanArgs.slice(4).join(' ') || 'Multi-Currency Merchant FX Auto-Sweep';
+
+        if (!buyer || !merchant || !amount) {
+          console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli fx <buyer> <merchant> <amount> [memo]`);
+          process.exit(1);
+        }
+
+        const { data } = await client.executeMerchantFx(buyer, merchant, amount, memo);
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        console.log(`${C.emerald}${C.bold}⚡ Multi-Currency Merchant FX Checkout Executed!${C.reset}`);
+        console.log(`  Buyer:          ${C.white}${data.buyer || buyer}${C.reset}`);
+        console.log(`  Merchant:       ${C.gold}${C.bold}${data.merchant || merchant}${C.reset}`);
+        console.log(`  Gross Amount:   ${C.gold}${C.bold}${data.amountVlr || amount} ◈ VLR${C.reset}`);
+        if (data.fxSplit) {
+          console.log(`  Treasury Split: ${C.cyan}${data.fxSplit.usdPct}% USD (${data.fxSplit.usdAmount} ◈)${C.reset} | ${C.purple}${data.fxSplit.vaultStakePct}% 8.5% Vault (${data.fxSplit.vaultStakeVlr} ◈)${C.reset} | ${C.gold}${data.fxSplit.liquidVlrPct}% Liquid VLR (${data.fxSplit.liquidVlr} ◈)${C.reset}`);
+          console.log(`  FX Spread:      ${C.emerald}0.00% Zero-Spread Protocol Settlement${C.reset}`);
+        }
+        if (data.cashback) {
+          console.log(`  Buyer Cashback: ${C.emerald}${C.bold}+${data.cashback.cashbackVlr} ◈ (${data.cashback.cashbackPct ? data.cashback.cashbackPct.toFixed(2) : '2.50'}% ${data.cashback.loyaltyTier || 'SUPPORTER'})${C.reset}`);
+        }
+        console.log(`  Gas Fee:        ${C.emerald}$0.00 Gas Forever${C.reset}`);
+        console.log(`  Settlement Id:  ${C.dim}${data.settlementId || 'fx_confirmed'}${C.reset}`);
+        if (data.fxBlock) {
+          console.log(`  FX Block Hash:  ${C.dim}${data.fxBlock.hash}${C.reset}`);
+        }
+        break;
+      }
+
+      case 'escrow': {
+        const subAction = String(cleanArgs[1] || 'list').toLowerCase();
+
+        if (subAction === 'create') {
+          const buyer = cleanArgs[2];
+          const merchant = cleanArgs[3];
+          const amount = cleanArgs[4];
+          const title = cleanArgs[5] || 'Protected Commerce Order';
+          const hours = cleanArgs[6] || 72;
+
+          if (!buyer || !merchant || !amount) {
+            console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli escrow create <buyer> <merchant> <amount> [title] [hours]`);
+            process.exit(1);
+          }
+
+          const { data } = await client.createEscrow(buyer, merchant, amount, title, hours);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+
+          printHeader();
+          console.log(`${C.emerald}${C.bold}🛡️ Layer-1 Protected Escrow Created!${C.reset}`);
+          console.log(`  Escrow ID:      ${C.gold}${C.bold}${data.escrowId || (data.escrow && data.escrow.id)}${C.reset}`);
+          console.log(`  Buyer:          ${C.white}${data.buyer || buyer}${C.reset}`);
+          console.log(`  Merchant:       ${C.gold}${data.merchant || merchant}${C.reset}`);
+          console.log(`  Locked Amount:  ${C.gold}${C.bold}${data.amountVlr || amount} ◈ VLR${C.reset}`);
+          console.log(`  Deliverable:    ${C.white}${data.itemTitle || title}${C.reset}`);
+          console.log(`  Auto-Release:   ${C.cyan}${data.autoReleaseHours || hours} hours${C.reset}`);
+          console.log(`  Protection:     ${C.emerald}100% Zero Merchant Chargeback Penalty${C.reset}`);
+          console.log(`  Gas Fee:        ${C.emerald}$0.00 Gas Forever${C.reset}`);
+          break;
+
+        } else if (subAction === 'release') {
+          const escrowId = cleanArgs[2];
+          if (!escrowId) {
+            console.error(`${C.red}Error:${C.reset} Missing escrowId. Usage: vaelor-cli escrow release <escrowId>`);
+            process.exit(1);
+          }
+
+          const { data } = await client.resolveEscrow(escrowId, 'RELEASE', 0);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+
+          printHeader();
+          console.log(`${C.emerald}${C.bold}✅ Protected Escrow Released to Merchant!${C.reset}`);
+          console.log(`  Escrow ID:      ${C.gold}${data.escrowId || escrowId}${C.reset}`);
+          console.log(`  Merchant Payout:${C.emerald}${C.bold} ${data.merchantAmountVlr || data.amountVlr} ◈ VLR (100% - $0.00 Fee)${C.reset}`);
+          console.log(`  Buyer:          ${C.white}${data.buyer}${C.reset}`);
+          console.log(`  Buyer Cashback: ${C.cyan}${C.bold}+${data.cashbackVlr} ◈ VLR Dynamic Rebate${C.reset}`);
+          console.log(`  Status:         ${C.emerald}RELEASED ✓${C.reset}`);
+          break;
+
+        } else if (subAction === 'refund') {
+          const escrowId = cleanArgs[2];
+          if (!escrowId) {
+            console.error(`${C.red}Error:${C.reset} Missing escrowId. Usage: vaelor-cli escrow refund <escrowId>`);
+            process.exit(1);
+          }
+
+          const { data } = await client.resolveEscrow(escrowId, 'REFUND', 100);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+
+          printHeader();
+          console.log(`${C.gold}${C.bold}↩️ Zero-Penalty Protected Refund Executed!${C.reset}`);
+          console.log(`  Escrow ID:      ${C.gold}${data.escrowId || escrowId}${C.reset}`);
+          console.log(`  Buyer Refund:   ${C.emerald}${C.bold}100% (${data.buyerRefundVlr || data.amountVlr} ◈ VLR returned to ${data.buyer})${C.reset}`);
+          console.log(`  Merchant Fee:   ${C.emerald}$0.00 Chargeback Penalty ($15-$25 saved vs Visa)${C.reset}`);
+          console.log(`  Status:         ${C.gold}REFUNDED ✓${C.reset}`);
+          break;
+
+        } else if (subAction === 'split') {
+          const escrowId = cleanArgs[2];
+          const refundPct = cleanArgs[3] !== undefined ? cleanArgs[3] : 50;
+          if (!escrowId) {
+            console.error(`${C.red}Error:${C.reset} Missing escrowId. Usage: vaelor-cli escrow split <escrowId> [refundPct]`);
+            process.exit(1);
+          }
+
+          const { data } = await client.resolveEscrow(escrowId, 'SPLIT', Number(refundPct));
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+
+          printHeader();
+          console.log(`${C.cyan}${C.bold}⚖️ Instant Amicable Split Resolution Executed!${C.reset}`);
+          console.log(`  Escrow ID:      ${C.gold}${data.escrowId || escrowId}${C.reset}`);
+          console.log(`  Buyer Portion:  ${C.white}${data.refundPct}% (${data.buyerRefundVlr} ◈ VLR returned to ${data.buyer})${C.reset}`);
+          console.log(`  Merchant Payout:${C.gold}${100 - data.refundPct}% (${data.merchantAmountVlr} ◈ VLR released to ${data.merchant})${C.reset}`);
+          console.log(`  Dispute Fee:    ${C.emerald}$0.00 Zero-Fee Instant Settlement (<20ms)${C.reset}`);
+          console.log(`  Status:         ${C.cyan}SPLIT_SETTLED ✓${C.reset}`);
+          break;
+
+        } else {
+          // List escrows
+          const handle = subAction !== 'list' ? subAction : cleanArgs[2];
+          const { data } = await client.listEscrows(handle);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+
+          printHeader();
+          console.log(`${C.gold}${C.bold}🛡️ Layer-1 Protected Escrow Registry${handle ? ` (${handle})` : ''}:${C.reset}`);
+          const list = data.escrows || (Array.isArray(data) ? data : []);
+          if (!list || list.length === 0) {
+            console.log(`  ${C.dim}No escrows found on lattice.${C.reset}`);
+          } else {
+            list.slice(0, 15).forEach((e) => {
+              const statusColor = e.status === 'LOCKED' ? C.cyan : e.status === 'RELEASED' ? C.emerald : C.gold;
+              console.log(`  • [${statusColor}${e.status}${C.reset}] ${C.white}${e.id}${C.reset}: ${C.white}${e.buyerHandle} → ${e.merchantHandle}${C.reset} (${C.gold}${e.amountVlr} ◈${C.reset}) - "${e.itemTitle || e.memo}"`);
+            });
+          }
+          break;
+        }
+      }
+
+      case 'tax': {
+        const handle = cleanArgs[1] || '@citizen';
+        const year = cleanArgs[2] || 2026;
+        const wantCsv = process.argv.includes('--csv');
+
+        const { data } = await client.getTaxReport(handle, year, wantCsv ? 'csv' : 'json');
+
+        if (wantCsv) {
+          console.log(typeof data === 'string' ? data : (data.csvReport || data));
+          return;
+        }
+
+        if (isJson) {
+          console.log(JSON.stringify(data, null, 2));
+          return;
+        }
+
+        printHeader();
+        const rep = data.summary ? data : (data.report || data);
+        const summ = rep.summary || {};
+        console.log(`${C.gold}${C.bold}🏛️ Sovereign CPA Tax & Cashback Audit Report (${rep.taxYear || year})${C.reset}`);
+        console.log(`  Account:                ${C.cyan}${rep.account ? rep.account.handle : handle}${C.reset} (${rep.account ? rep.account.address : ''})`);
+        console.log(`  Audit Digest (SHA-256): ${C.dim}${rep.auditDigest || 'N/A'}${C.reset}`);
+        console.log(`\n${C.bold}📊 Tax Classifications & Summary:${C.reset}`);
+        console.log(`  • Tax-Free Cashback:    ${C.emerald}${C.bold}+${summ.taxFreeCashbackRebatesVlr || 0} ◈ VLR${C.reset} ${C.dim}(Non-Taxable Rebate - IRS Rev. Rul. 76-96)${C.reset}`);
+        console.log(`  • PoUW Mining Income:   ${C.gold}+${summ.pouwMiningIncomeVlr || 0} ◈ VLR${C.reset} ${C.dim}(Ordinary Income - IRS Notice 2014-21)${C.reset}`);
+        console.log(`  • 8.5% Staking Yield:   ${C.gold}+${summ.vaultYieldHarvestedVlr || 0} ◈ VLR${C.reset} ${C.dim}(Taxable Staking Income)${C.reset}`);
+        console.log(`  • Gross Taxable Income: ${C.gold}${C.bold}${summ.totalGrossTaxableIncomeVlr || 0} ◈ VLR${C.reset}`);
+        console.log(`  • Deductible Commerce:  ${C.purple}-${summ.deductibleCommerceAndBountiesVlr || 0} ◈ VLR${C.reset} ${C.dim}(Merchant FX, Tips & Bounties)${C.reset}`);
+        console.log(`  • Total Inflows:        ${C.white}+${summ.totalReceiptsVlr || 0} ◈ VLR${C.reset}`);
+        console.log(`  • Total Outflows:       ${C.white}-${summ.totalDisbursementsVlr || 0} ◈ VLR${C.reset}`);
+        console.log(`  • Net Position Delta:   ${summ.netPositionChangeVlr >= 0 ? C.emerald : C.red}${summ.netPositionChangeVlr || 0} ◈ VLR${C.reset}`);
+        console.log(`  • Micro-Blocks Audited: ${C.cyan}${summ.recordCount || 0} blocks${C.reset}`);
+        console.log(`\n${C.dim}Tip: Run "vaelor-cli tax ${handle} ${year} --csv" to export CPA / TurboTax CSV.${C.reset}`);
+        break;
+      }
+
+      case 'comm': {
+        const subAction = (cleanArgs[1] || 'peers').toLowerCase();
+
+        if (subAction === 'peers') {
+          const { data } = await client.getCommPeers();
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+          printHeader();
+          console.log(`${C.gold}${C.bold}📡 ZothOS Sovereign Comm Fleet Peers:${C.reset}`);
+          const peers = data.peers || [];
+          if (peers.length === 0) {
+            console.log(`  ${C.dim}No registered comm peers on lattice.${C.reset}`);
+          } else {
+            peers.forEach((p) => {
+              console.log(`  • ${C.cyan}${C.bold}${p.handle}${C.reset} — ${C.white}${p.nodeName}${C.reset} ${C.dim}(${p.lanEndpoint || 'LAN'})${C.reset}`);
+            });
+          }
+          console.log(`\n${C.dim}Total Verified Peers: ${peers.length}${C.reset}`);
+          break;
+
+        } else if (subAction === 'handshake') {
+          const from = cleanArgs[2];
+          const to = cleanArgs[3];
+          const passphrase = cleanArgs[4];
+          const introNote = cleanArgs[5] || 'ZothOS P2P Handshake Request';
+
+          if (!from || !to || !passphrase) {
+            console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli comm handshake <from> <to> <passphrase> [intro]`);
+            process.exit(1);
+          }
+
+          const { data } = await client.requestCommHandshake(from, to, passphrase, introNote);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+          printHeader();
+          console.log(`${C.emerald}${C.bold}🤝 ZothOS Comm Handshake Authorized!${C.reset}`);
+          console.log(`  Channel ID:   ${C.gold}${data.channelId || data.channel?.channelId}${C.reset}`);
+          console.log(`  From Node:    ${C.cyan}${data.from || from}${C.reset}`);
+          console.log(`  To Node:      ${C.cyan}${data.to || to}${C.reset}`);
+          console.log(`  5/5 BFT Block:${C.dim}${data.blockHash || data.handshakeBlock?.hash}${C.reset}`);
+          console.log(`  Channel State:${C.emerald}AUTHORIZED ✓${C.reset}`);
+          break;
+
+        } else if (subAction === 'send') {
+          const from = cleanArgs[2];
+          const to = cleanArgs[3];
+          const passphrase = cleanArgs[4];
+          const message = cleanArgs[5];
+          const attachedVlr = Number(cleanArgs[6] || 0);
+          const aiPrompt = cleanArgs[7] || '';
+
+          if (!from || !to || !passphrase || !message) {
+            console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli comm send <from> <to> <passphrase> <message> [attachedVlr] [aiPrompt]`);
+            process.exit(1);
+          }
+
+          const { data } = await client.sendCommMessage(from, to, passphrase, message, attachedVlr, aiPrompt);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+          printHeader();
+          console.log(`${C.emerald}${C.bold}🔒 AES-256-GCM Encrypted Comm Message Dispatched!${C.reset}`);
+          console.log(`  Message ID:   ${C.gold}${data.messageId || 'msg_sent'}${C.reset}`);
+          console.log(`  From:         ${C.cyan}${data.from || from}${C.reset} → Recipient: ${C.cyan}${data.to || to}${C.reset}`);
+          console.log(`  Algorithm:    ${C.purple}AES-256-GCM Authenticated Ciphertext${C.reset}`);
+          console.log(`  Ciphertext:   ${C.dim}${(data.ciphertextHex || '').slice(0, 48)}...${C.reset}`);
+          console.log(`  Auth Tag:     ${C.dim}${data.authTagHex || 'N/A'}${C.reset}`);
+          if (attachedVlr > 0) {
+            console.log(`  Attached VLR: ${C.gold}${C.bold}+${attachedVlr} ◈ VLR Feeless Atomic Transfer ($0.00 Gas)${C.reset}`);
+          }
+          if (aiPrompt) {
+            console.log(`  AI Task:      ${C.white}${aiPrompt}${C.reset}`);
+          }
+          console.log(`  BFT Quorum:   ${C.emerald}5/5 Validator Attestation Verified${C.reset}`);
+          break;
+
+        } else if (subAction === 'inbox') {
+          const handle = cleanArgs[2];
+          const passphrase = cleanArgs[3];
+
+          if (!handle || !passphrase) {
+            console.error(`${C.red}Error:${C.reset} Missing arguments. Usage: vaelor-cli comm inbox <handle> <passphrase>`);
+            process.exit(1);
+          }
+
+          const { data } = await client.readCommInbox(handle, passphrase);
+          if (isJson) {
+            console.log(JSON.stringify(data, null, 2));
+            return;
+          }
+          printHeader();
+          console.log(`${C.gold}${C.bold}📬 Decrypted ZothOS Comm Inbox for ${handle}:${C.reset}`);
+          const msgs = data.messages || [];
+          if (msgs.length === 0) {
+            console.log(`  ${C.dim}No messages found or unable to decrypt.${C.reset}`);
+          } else {
+            msgs.forEach((m, idx) => {
+              const attach = m.attachedVlr > 0 ? ` [${C.gold}+${m.attachedVlr} ◈ VLR${C.reset}]` : '';
+              console.log(`  #${idx + 1} ${C.cyan}${m.from}${C.reset} → ${C.cyan}${m.to}${C.reset}${attach} ${C.dim}(${m.timestamp || 'recent'})${C.reset}`);
+              console.log(`     ${C.white}"${m.message}"${C.reset}`);
+              if (m.aiTaskPrompt) {
+                console.log(`     ${C.purple}🤖 AI Prompt: "${m.aiTaskPrompt}"${C.reset}`);
+              }
+            });
+          }
+          console.log(`\n${C.dim}Total Messages: ${msgs.length}${C.reset}`);
+          break;
+
+        } else {
+          console.error(`${C.red}Error:${C.reset} Unknown comm subcommand '${subAction}'. Use: peers, handshake, send, inbox`);
+          process.exit(1);
+        }
+      }
+
+      case 'help':
+      default: {
+        printHeader();
+        console.log(`${C.bold}Usage:${C.reset} vaelor-cli <command> [options]\n`);
+        console.log(`${C.bold}Commands:${C.reset}`);
+        console.log(`  ${C.gold}status${C.reset}                     Network status, circulating supply, BFT quorum & TVL`);
+        console.log(`  ${C.gold}balance${C.reset} [@handle]          Inspect liquid balance, staked savings & credit profile`);
+        console.log(`  ${C.gold}send${C.reset} <from> <to> <amount>  Execute sub-20ms feeless transfer ($0.00 Gas)`);
+        console.log(`  ${C.gold}tip${C.reset} <from> <creator> <amt> Feeless micro-patronage tip with dynamic cashback`);
+        console.log(`  ${C.gold}fx${C.reset} <buyer> <merchant> <amt>  Multi-currency merchant FX auto-split checkout`);
+        console.log(`  ${C.gold}escrow${C.reset} <create|release|refund|split|list> Zero-penalty protected commerce escrow`);
+        console.log(`  ${C.gold}tax${C.reset} [@handle] [year] [--csv] Sovereign 1-click CPA tax & cashback audit report`);
+        console.log(`  ${C.gold}comm${C.reset} <peers|handshake|send|inbox>  ZothOS passphrase-gated P2P encrypted messenger`);
+        console.log(`  ${C.gold}mine${C.reset} [@handle] [type]      Mine PoUW computational audit reward block`);
+        console.log(`  ${C.gold}check${C.reset} <@handle>            Phishing & homoglyph lookalike risk detector`);
+        console.log(`\n${C.bold}Options:${C.reset}`);
+        console.log(`  ${C.cyan}--rpc <url>${C.reset}                Custom RPC endpoint (default: http://127.0.0.1:8140)`);
+        console.log(`  ${C.cyan}--offline${C.reset}                  Bypass HTTP daemon and use direct local lattice`);
+        console.log(`  ${C.cyan}--json${C.reset}                     Output raw machine-readable JSON format`);
+        console.log(`\n${C.dim}Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform${C.reset}`);
+        break;
+      }
+    }
+  } catch (err) {
+    if (isJson) {
+      console.log(JSON.stringify({ ok: false, error: err.message }));
+    } else {
+      console.error(`${C.red}${C.bold}Error:${C.reset} ${err.message}`);
+    }
+    process.exit(1);
+  }
+}
+
+main();

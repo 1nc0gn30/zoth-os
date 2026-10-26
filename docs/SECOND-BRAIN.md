@@ -37,6 +37,7 @@
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
 8. [The Sovereign 34-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-sovereign-34-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
 9. [Sovereign Node-to-Node Encrypted Messenger CLI (`zoth-comm`)](#-sovereign-node-to-node-encrypted-messenger-cli-zoth-comm)
+10. [ZothOS Enterprise Node & Cluster Controller (`zoth-node`)](#-zothos-enterprise-node--cluster-controller-zoth-node)
 
 ---
 
@@ -624,6 +625,49 @@ zoth-comm daemon @zoth-rig2 "zoth-sovereign-757" --once
 ```
 
 Telemetry note: `[[05-Telemetry/ZothNet Encrypted Comms|ZothNet Encrypted Comms]]`.
+
+---
+
+## 🏛️ ZothOS Enterprise Node & Cluster Controller (`zoth-node`)
+
+The `zoth-node` CLI utility (`bin/zoth-node`, symlinked to `~/.local/bin/zoth-node` and deployed to `/usr/local/bin/zoth-node`) serves as the executive controller for running, auditing, clustering, and monitoring enterprise Vaelor Layer-1 nodes and ZothNet clusters across multiple sovereign machines.
+
+### 💻 Subcommand Matrix
+
+| Command | Usage | Description & Cryptographic Security |
+| :--- | :--- | :--- |
+| `status` | `zoth-node status [--json]` | Queries `:8140/api/status`, `:8140/api/ledger/verify-integrity`, `:8140/api/p2p/peers`, and `:8094/api/obsidian/status` to render the executive dashboard. |
+| `audit` | `zoth-node audit [--json]` | Executes a full Genesis-to-Head cryptographic chain & Binary Merkle State Root audit verifying 100.000000% supply conservation and zero double-spend risks. |
+| `cluster` | `zoth-node cluster <list\|join\|sync> [peer_url]` | Discovers cluster peers, connects new ZothOS laptops (`POST /api/p2p/connect`), and pulls/verifies block deltas (`GET /api/p2p/delta`). |
+| `multisig` | `zoth-node multisig <list\|propose\|approve> ...` | Manages 2-of-3 institutional corporate treasury vaults (`/api/multisig`) across `@zoth`, `@neal`, and `@zoth-rig2`. |
+| `metrics` | `zoth-node metrics [--raw]` | Fetches live Prometheus / OpenTelemetry text exposition metrics from `GET http://127.0.0.1:8140/metrics`. |
+
+### 🛠️ Example Usage
+
+```bash
+# 1. Executive cluster and node status
+zoth-node status
+
+# 2. Genesis-to-Head ledger integrity audit
+zoth-node audit
+
+# 3. Connect another ZothOS node to cluster mesh
+zoth-node cluster join http://127.0.0.1:8140 --handle @zoth-rig2 --name "24/7 AI Laptop"
+
+# 4. Pull and verify block delta & Merkle State Root
+zoth-node cluster sync
+
+# 5. List multisig corporate treasury proposals
+zoth-node multisig list
+
+# 6. Propose compute grant from multisig vault
+zoth-node multisig propose "Seed Sovereign Staking Vault" @zoth-rig2 500 "Operational AI compute fuel"
+
+# 7. Fetch Prometheus metrics
+zoth-node metrics
+```
+
+Cross-wiki reference: `[[05-Telemetry/ZothNet Encrypted Comms|ZothNet Encrypted Comms]]`.
 
 ---
 

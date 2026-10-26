@@ -98,3 +98,11 @@ condition = "AND"
 paths = ['''(?:^|/)vendor/xterm/xterm\.js$''']
 regexTarget = "match"
 regexes = ['''FourKeyMap''']
+
+# Vendored sovereign daemon bundles in config/includes.chroot/opt/
+[[allowlists]]
+description = "Vendored sovereign daemons in config/includes.chroot/opt/."
+paths = [
+  '''(?:^|/)config/includes\.chroot/opt/vaelor-network/.*''',
+  '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*'''
+]

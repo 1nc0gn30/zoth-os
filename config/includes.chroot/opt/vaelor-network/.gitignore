@@ -1,0 +1,8 @@
+node_modules/
+.env*
+data/lattice_state.json
+data/vaelor_lattice_state.json
+data/*.json
+data/*.wal.jsonl
+*.wal.jsonl
+*.log

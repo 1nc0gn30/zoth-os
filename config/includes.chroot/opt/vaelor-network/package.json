@@ -1,0 +1,28 @@
+{
+  "name": "@nullaitech/vaelor-network",
+  "version": "1.0.0",
+  "description": "Vaelor (VLR) — Feeless Account-Lattice DAG Cryptocurrency with Native Protected-Pay Escrow, @Human Handles, Passkey Wallets, and Proof-of-Useful-Work (PoUW) Minting.",
+  "main": "server.js",
+  "bin": {
+    "vaelor-cli": "bin/vaelor-cli"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test/verify_lattice.js"
+  },
+  "keywords": [
+    "vaelor",
+    "vlr",
+    "cryptocurrency",
+    "block-lattice",
+    "dag",
+    "proof-of-useful-work",
+    "pouw",
+    "escrow",
+    "passkey-wallet",
+    "feeless"
+  ],
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "license": "MIT"
+}
