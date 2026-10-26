@@ -17,7 +17,7 @@ Thanks for helping. ZOTHOS is a live-build overlay on Debian 13 (trixie).
    python3 -m py_compile path/to.py  # python syntax
    node --check config/includes.chroot/opt/<app>/main.js
    ```
-4. Open a pull request. CI (syntax + policy guards), CodeQL and Semgrep must pass.
+4. Open a pull request. CI (syntax + policy guards), gitleaks, CodeQL and Semgrep must pass. Scan locally with `bash tools/scan-secrets.sh` ([docs/SECRET-HYGIENE.md](docs/SECRET-HYGIENE.md)).
 
 ## Rules for security-sensitive changes
 - Never bind new services to `0.0.0.0` by default; use `127.0.0.1` and document how to expose.
@@ -25,7 +25,7 @@ Thanks for helping. ZOTHOS is a live-build overlay on Debian 13 (trixie).
 - Local HTTP APIs that change state must check `Host`/`Origin` and, if they launch or execute anything, require a token.
 - No `[trusted=yes]` network apt sources and no `--apt-secure false`.
 - New Electron windows: `contextIsolation: true`, `nodeIntegration: false`, a preload with a minimal `contextBridge` API.
-- No secrets in the repo. Report vulnerabilities privately (see [SECURITY.md](SECURITY.md)).
+- No secrets, phone numbers, machine homes, or host disk serials in the repo. Use the placeholders in [docs/SECRET-HYGIENE.md](docs/SECRET-HYGIENE.md). Report vulnerabilities privately (see [SECURITY.md](SECURITY.md)).
 
 ## Claims
 Don't add marketing claims the code can't back up ("verified", "military-grade",

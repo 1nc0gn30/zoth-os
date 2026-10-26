@@ -1,0 +1,6 @@
+# Staged-diff secret scan. CI scans the full tree (tools/scan-secrets.sh).
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks

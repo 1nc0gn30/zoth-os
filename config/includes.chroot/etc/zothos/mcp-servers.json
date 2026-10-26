@@ -2650,9 +2650,9 @@
         "@burtthecoder/mcp-shodan"
       ],
       "env": {
-        "SHODAN_API_KEY": "1sz8U75omWYOn6ic7HEuv00K22YTmc4n"
+        "SHODAN_API_KEY": ""
       },
-      "description": "Shodan Internet Intelligence & OSINT MCP. IP lookups, open ports, CVE correlation, and DNS queries.",
+      "description": "Shodan Internet Intelligence & OSINT MCP. IP lookups, open ports, CVE correlation, and DNS queries. Set SHODAN_API_KEY outside git; InternetDB queries work with an empty key.",
       "offline": false,
       "enabled": true,
       "securityRing": "RING_2_TOOLMASTER",

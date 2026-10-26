@@ -388,6 +388,7 @@
 - **Category:** Security & Network
 - **Execution Mode:** BROWSER / LOCAL_CLI (`AgentEgressSentinelGodModeTool` 60fps Perimeter Radar Workstation)
 - **Operational Value:** Autonomous zero-dependency network interceptor, Shannon entropy DNS-tunneling blocker, 169.254.169.254 SSRF shield, 60fps egress radar canvas, and deterministic `nftables` kernel policy compiler.
+<!-- Intentional public Solana receive address on the DePay link below. Not key material. Allowlisted in .gitleaks.toml. -->
 - **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) • [DePay Solana](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19)
 
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)

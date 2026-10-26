@@ -66,4 +66,5 @@
 | :--- | :--- | :--- |
 | **OpenSSF Scorecard** | **PASS** | Automated weekly Scorecard evaluation ([`.github/workflows/scorecard.yml`](../.github/workflows/scorecard.yml)) published to [scorecard.dev](https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os). |
 | **Static Code Analysis (SAST)** | **PASS** | **GitHub CodeQL** deep analysis ([`.github/workflows/codeql.yml`](../.github/workflows/codeql.yml)) running on Python and Actions. |
+| **Secret and PII scanning** | **PASS** | **Gitleaks** on every pull request and push ([`.github/workflows/gitleaks.yml`](../.github/workflows/gitleaks.yml), [docs/SECRET-HYGIENE.md](./SECRET-HYGIENE.md)). |
 | **Dependency Management** | **PASS** | Automated dependency security updates via [`.github/dependabot.yml`](../.github/dependabot.yml). |

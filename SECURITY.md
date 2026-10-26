@@ -52,6 +52,7 @@ earlier are not signed**; only their checksums exist. See [docs/VERIFYING.md](do
 | Workflow | What it does |
 |---|---|
 | `ci.yml` | Shell/Python/JS syntax checks and guards against the audit regressions (apt-secure off, `trusted=yes`, Ollama on 0.0.0.0, `/api/exec`). |
+| `gitleaks.yml` | Gitleaks on every pull request and every push. Fails when tracked files contain secrets or operator PII (phones, machine homes, host disk serials). See [docs/SECRET-HYGIENE.md](docs/SECRET-HYGIENE.md). |
 | `codeql.yml` | CodeQL security-extended on JS/TS, Python and Actions. |
 | `semgrep.yml` | Semgrep security-audit + secrets rules (SARIF to code scanning). |
 | `scorecard.yml` | OpenSSF Scorecard, published. |

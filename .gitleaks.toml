@@ -1,0 +1,100 @@
+# ZothOS secret and PII rules.
+#
+# Extends the stock gitleaks rules, then adds the operator-PII checks that
+# stock rules do not cover. Banned literals are spelled with a one-character
+# class (zot[h], ne[o], LITEO[N], SOLANA_PRIVATE_KE[Y]) so this file does not
+# contain the strings it forbids. Keep that split.
+title = "ZothOS secret and PII hygiene"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "zoth-phone-e164"
+description = "E.164 phone digit string. Store the operator number in ZOTH_SIGNAL_NUMBER, not in git."
+regex = '''(?:^|[^A-Za-z0-9_])(\+[1-9][0-9]{7,14})(?:[^0-9]|$)'''
+secretGroup = 1
+tags = ["pii", "phone"]
+
+[[rules]]
+id = "zoth-phone-separated"
+description = "Separated phone digit form. The name ZOTH_SIGNAL_NUMBER and the +E164 placeholder are not numbers."
+regex = '''(?:^|[^A-Za-z0-9_])(\+[1-9][0-9]{0,2}(?:[\s.\-][0-9]{2,4}){2,4}|(?:\+1[\s.\-]?)?(?:\([0-9]{3}\)[\s.\-]?|[0-9]{3}[\s.\-])[0-9]{3}[\s.\-][0-9]{4})(?:[^0-9]|$)'''
+secretGroup = 1
+tags = ["pii", "phone"]
+
+# The stock global allowlist drops secrets that are absolute paths under /home
+# (and /usr, /var, and similar). Capture only the final segment so that
+# allowlist does not swallow the finding. The full match is what the
+# pack-iso allowlist below inspects.
+[[rules]]
+id = "zoth-machine-home-path"
+description = "Machine home or neo media path. Use ZOTH_HOME. build/pack-iso.sh may delete the nested chroot home."
+regex = '''/(?:home/(zot[h])|media/(ne[o])|home/(ne[o]))(?:/|[^A-Za-z0-9_]|$)'''
+tags = ["pii", "path"]
+
+  [[rules.allowlists]]
+  description = "live-build cleanup of the nested chroot home; not a host home directory"
+  condition = "AND"
+  paths = ['''(?:^|/)build/pack-iso\.sh$''']
+  regexTarget = "match"
+  regexes = ['''/home/ne[o](?:/|[^A-Za-z0-9_]|$)''']
+
+[[rules]]
+id = "zoth-host-disk-serial"
+description = "Disk vendor serial token or a concrete /dev/disk/by-id path. Set ZOTH_PARROT_DISK outside git."
+regex = '''(?i)(LITEO[N]|/dev/disk/by-id/[A-Za-z0-9][A-Za-z0-9._:-]{5,})'''
+secretGroup = 1
+tags = ["pii", "disk"]
+
+  [[rules.allowlists]]
+  description = "documented placeholder path, not a host serial"
+  regexTarget = "secret"
+  regexes = ['''^/dev/disk/by-id/your-parrot-disk$''']
+
+[[rules]]
+id = "zoth-solana-private-key-name"
+description = "Solana private-key variable name must not appear in tracked files."
+regex = '''(SOLANA_PRIVATE_KE[Y])'''
+secretGroup = 1
+tags = ["secret", "solana"]
+
+# Lines in the hygiene doc that name a banned literal are marked hygiene-example.
+[[allowlists]]
+description = "docs/SECRET-HYGIENE.md names the banned literals on marked lines."
+targetRules = [
+  "zoth-phone-e164",
+  "zoth-phone-separated",
+  "zoth-machine-home-path",
+  "zoth-host-disk-serial",
+  "zoth-solana-private-key-name",
+]
+condition = "AND"
+paths = ['''(?:^|/)docs/SECRET-HYGIENE\.md$''']
+regexTarget = "line"
+regexes = ['''hygiene-example''']
+
+# Public payment material. The allowlist is the exact string, not the whole file.
+[[allowlists]]
+description = "Intentional public Solana receive address on the DePay payment link. Not a private key."
+regexTarget = "secret"
+regexes = ['''GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK''']
+
+# Published archive signing fingerprints. These are public pins in build/build-iso.sh.
+[[allowlists]]
+description = "Published Kali and Parrot archive signing fingerprints pinned in the ISO build."
+targetRules = ["generic-api-key"]
+regexTarget = "secret"
+regexes = [
+  '''^827C8569F2518CC677FECA1AED65462EC8D5E4C5$''',
+  '''^B711822346552E4D92DA02DF7A8286AF0E81EE4A$''',
+]
+
+# Vendored xterm.js names a keyboard map FourKeyMap, which generic-api-key misreads.
+[[allowlists]]
+description = "xterm.js FourKeyMap is a keyboard map, not an API key."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''(?:^|/)vendor/xterm/xterm\.js$''']
+regexTarget = "match"
+regexes = ['''FourKeyMap''']
