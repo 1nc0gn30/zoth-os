@@ -189,6 +189,145 @@ def cmd_moc(args):
     print()
 
 
+def cmd_search(args):
+    if not args:
+        print(f"{RED}✖ Usage:{RESET} zoth-second-brain search <query>")
+        sys.exit(1)
+
+    query = " ".join(args).strip()
+    query_lower = query.lower()
+    start_time = time.time()
+
+    print(f"\n{GOLD}{BOLD}🔍 Searching Second Brain Vault & STDP Cortex for '{query}'...{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+
+    # 1. Fast search across local Vault notes
+    vault_matches = []
+    seen_paths = set()
+
+    # (a) Check file names first
+    for p in VAULT_DIR.rglob("*"):
+        if p.is_file() and p.suffix.lower() in (".md", ".canvas", ".base"):
+            if any(part.startswith(".") for part in p.parts):
+                continue
+            if query_lower in p.stem.lower():
+                rel = str(p.relative_to(VAULT_DIR))
+                seen_paths.add(p)
+                vault_matches.append({
+                    "path": rel,
+                    "name": p.stem,
+                    "score": 15,
+                    "line": 1,
+                    "snippet": f"Title & filename match: {p.name}",
+                })
+
+    # (b) Content search via ripgrep if available
+    rg_bin = "/usr/bin/rg" if os.path.exists("/usr/bin/rg") else None
+    if rg_bin:
+        import subprocess
+        try:
+            cmd = [rg_bin, "-i", "-n", "-m", "1", query, str(VAULT_DIR)]
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            for line in proc.stdout.splitlines():
+                if not line.strip() or ":" not in line:
+                    continue
+                parts = line.split(":", 2)
+                if len(parts) >= 3:
+                    f_path_str = parts[0].strip()
+                    try:
+                        l_num = int(parts[1])
+                        snip = parts[2].strip()
+                        current_file = Path(f_path_str)
+                        if current_file not in seen_paths:
+                            seen_paths.add(current_file)
+                            rel = str(current_file.relative_to(VAULT_DIR))
+                            vault_matches.append({
+                                "path": rel,
+                                "name": current_file.stem,
+                                "score": 8,
+                                "line": l_num,
+                                "snippet": snip[:120],
+                            })
+                    except (ValueError, Exception):
+                        pass
+        except Exception:
+            pass
+
+    # Fallback to python file scanning if ripgrep wasn't used or returned few
+    if len(vault_matches) < 3:
+        for p in VAULT_DIR.rglob("*.md"):
+            if p in seen_paths or any(part.startswith(".") for part in p.parts):
+                continue
+            try:
+                txt = p.read_text(encoding="utf-8", errors="ignore")
+                if query_lower in txt.lower():
+                    seen_paths.add(p)
+                    rel = str(p.relative_to(VAULT_DIR))
+                    lines = txt.splitlines()
+                    snip = ""
+                    l_no = 1
+                    for idx, l in enumerate(lines):
+                        if query_lower in l.lower():
+                            l_no = idx + 1
+                            snip = l.strip()[:120]
+                            break
+                    vault_matches.append({
+                        "path": rel,
+                        "name": p.stem,
+                        "score": 5,
+                        "line": l_no,
+                        "snippet": snip or f"Matched content in {p.name}",
+                    })
+                    if len(vault_matches) >= 15:
+                        break
+            except Exception:
+                continue
+
+    vault_matches.sort(key=lambda x: x["score"], reverse=True)
+    top_vault = vault_matches[:6]
+
+    print(f" {BOLD}💎 Obsidian Vault Notes{RESET} {GRAY}({len(vault_matches)} matches found){RESET}:")
+    if top_vault:
+        for idx, m in enumerate(top_vault, 1):
+            print(f"   {CYAN}{idx}. [[{m['name']}]]  {DIM}({m['path']}:{m['line']}){RESET}")
+            display_snip = re.sub(f"(?i)({re.escape(query)})", f"{GOLD}{BOLD}\\1{RESET}", m["snippet"])
+            print(f"      {GRAY}{display_snip}{RESET}")
+    else:
+        print(f"   {DIM}No direct note matches found.{RESET}")
+
+    # 2. Search STDP Neuro-Memory Daemon (:8094)
+    print(f"\n {BOLD}🧠 STDP Synaptic Engram Memories (:8094){RESET}:")
+    memory_results = []
+    daemon_search = post_json(f"{NEURO_MEMORY_URL}/api/search", {"query": query, "limit": 5}, timeout=4.0)
+    if daemon_search and "results" in daemon_search:
+        memory_results = daemon_search.get("results", [])
+
+    if not memory_results:
+        daemon_recall = post_json(f"{NEURO_MEMORY_URL}/api/recall", {"query": query, "top_k": 5}, timeout=4.0)
+        if daemon_recall and "results" in daemon_recall:
+            memory_results = daemon_recall.get("results", [])
+
+    if memory_results:
+        for idx, mem in enumerate(memory_results[:5], 1):
+            mem_id = mem.get("id", "engram")[:8]
+            tags = mem.get("tags", [])
+            tag_str = " ".join([f"#{t}" for t in tags[:4]])
+            txt = mem.get("text", "").replace("\n", " ").strip()
+            if len(txt) > 130:
+                txt = txt[:127] + "..."
+            display_txt = re.sub(f"(?i)({re.escape(query)})", f"{GOLD}{BOLD}\\1{RESET}", txt)
+            imp = mem.get("importance", 0.5)
+            print(f"   {PURPLE}{idx}. [engram:{mem_id}] {DIM}(imp: {imp:.2f}){RESET} {GREEN}{tag_str}{RESET}")
+            print(f"      {GRAY}{display_txt}{RESET}")
+    else:
+        print(f"   {DIM}No synaptic engrams matched cue in active substrate.{RESET}")
+
+    elapsed_ms = (time.time() - start_time) * 1000
+    total_found = len(vault_matches) + len(memory_results)
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+    print(f" {GREEN}✔ Found {total_found} unified results in {elapsed_ms:.1f}ms{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -197,11 +336,12 @@ def print_help():
     zoth-second-brain <command> [arguments]
 
 {BOLD}COMMANDS:{RESET}
-    {GREEN}status{RESET}       Show live status of Obsidian Vault, daemons (:8094, :8140, :3000, :5173, :9393), and STDP cortex
-    {GREEN}sync{RESET}         Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
-    {GREEN}moc{RESET}          List all Maps of Content (MOC) with link counts and sizes
-    {GREEN}moc <name>{RESET}   Inspect a specific MOC note and its wikilinks
-    {GREEN}help{RESET}         Print this help message
+    {GREEN}status{RESET}          Show live status of Obsidian Vault, daemons (:8094, :8140, :3000, :5173, :9393), and STDP cortex
+    {GREEN}sync{RESET}            Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
+    {GREEN}search <query>{RESET}  Simultaneously search all 1,697+ Vault notes and :8094 STDP memories
+    {GREEN}moc{RESET}             List all Maps of Content (MOC) with link counts and sizes
+    {GREEN}moc <name>{RESET}      Inspect a specific MOC note and its wikilinks
+    {GREEN}help{RESET}            Print this help message
 
 {BOLD}VAULT PATH:{RESET}
     {VAULT_DIR}
@@ -218,6 +358,8 @@ def main():
         cmd_status()
     elif cmd in ("sync", "s"):
         cmd_sync()
+    elif cmd in ("search", "find", "q"):
+        cmd_search(sys.argv[2:])
     elif cmd == "moc":
         cmd_moc(sys.argv[2:])
     elif cmd in ("help", "--help", "-h"):
