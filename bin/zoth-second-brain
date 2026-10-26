@@ -1,0 +1,232 @@
+#!/usr/bin/env python3
+"""
+zoth-second-brain - Sovereign Obsidian Second Brain & ZothOS Conductor Bridge CLI.
+Enables instant query, health tracking, MOC inspection, and bidirectional STDP sync
+between Obsidian Vault and the Neuro-Memory Daemon (:8094).
+"""
+
+import sys
+import os
+import json
+import time
+import re
+import urllib.request
+import urllib.error
+from pathlib import Path
+
+VAULT_DIR = Path.home() / "Documents" / "Obsidian Vault"
+NEURO_MEMORY_URL = "http://127.0.0.1:8094"
+VAELOR_URL = "http://127.0.0.1:8140"
+STUDIO_URL = "http://127.0.0.1:3000"
+BOLT_URL = "http://127.0.0.1:5173"
+CIVILIZATION_URL = "http://127.0.0.1:9393"
+
+# ANSI styling
+BOLD = "\033[1m"
+DIM = "\033[2m"
+RESET = "\033[0m"
+GREEN = "\033[38;2;16;185;129m"
+CYAN = "\033[38;2;6;182;212m"
+GOLD = "\033[38;2;245;158;11m"
+PURPLE = "\033[38;2;168;85;247m"
+RED = "\033[38;2;239;68;68m"
+GRAY = "\033[38;2;148;163;184m"
+
+
+def check_port(url: str, timeout: float = 1.0) -> bool:
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "zoth-second-brain/1.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status < 500
+    except Exception:
+        return False
+
+
+def get_json(url: str, timeout: float = 2.0):
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "zoth-second-brain/1.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+
+
+def post_json(url: str, payload: dict, timeout: float = 60.0):
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={
+                "User-Agent": "zoth-second-brain/1.0",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def cmd_status():
+    print(f"\n{GOLD}{BOLD}◈ ZothOS Second Brain & Daemon Substrate Status{RESET}")
+    print(f"{DIM}─────────────────────────────────────────────────────────────{RESET}")
+
+    # Vault stats
+    if not VAULT_DIR.exists():
+        print(f" {RED}✖ Vault directory missing:{RESET} {VAULT_DIR}")
+        return
+
+    notes = list(VAULT_DIR.rglob("*.md"))
+    canvases = list(VAULT_DIR.rglob("*.canvas"))
+    bases = list(VAULT_DIR.rglob("*.base"))
+    mocs = [p for p in notes if p.stem.startswith("MOC") or p.stem == "00 Home"]
+
+    print(f" {BOLD}💎 Obsidian Vault:{RESET} {CYAN}{VAULT_DIR}{RESET}")
+    print(f"    • Notes:     {BOLD}{len(notes)}{RESET} ({len(mocs)} Maps of Content)")
+    print(f"    • Canvases:  {BOLD}{len(canvases)}{RESET} (.canvas files)")
+    print(f"    • Bases:     {BOLD}{len(bases)}{RESET} (.base databases)")
+
+    print(f"\n {BOLD}⚡ Conductor & Fleet Daemons:{RESET}")
+
+    fleet = [
+        ("neuro-memory", ":8094", f"{NEURO_MEMORY_URL}/health", "Memory & STDP"),
+        ("vaelor-lattice", ":8140", f"{VAELOR_URL}/", "Consensus & Economy"),
+        ("zoth-studio-v2", ":3000", f"{STUDIO_URL}/", "Studio Web IDE"),
+        ("bolt-diy", ":5173", f"{BOLT_URL}/", "AI Code Engine"),
+        ("zoth-civilization", ":9393", f"{CIVILIZATION_URL}/api/status", "Agent Mesh"),
+    ]
+
+    for name, port, health_url, subsystem in fleet:
+        up = check_port(health_url)
+        status_badge = f"{GREEN}● ACTIVE{RESET}" if up else f"{RED}○ DOWN{RESET}"
+        print(f"    {status_badge}  {BOLD}{name:<18}{RESET} {CYAN}{port:<7}{RESET} {GRAY}[{subsystem}]{RESET}")
+
+    # Neuro-memory daemon vault stats
+    vault_api = get_json(f"{NEURO_MEMORY_URL}/api/obsidian/vault")
+    if vault_api:
+        api_notes = len(vault_api.get("notes", []))
+        api_edges = len(vault_api.get("wikilinkEdges", []))
+        print(f"\n {BOLD}🧠 STDP Synaptic Graph (:8094):{RESET}")
+        print(f"    • Indexed Notes:    {GREEN}{api_notes}{RESET}")
+        print(f"    • Wikilink Synapses: {PURPLE}{api_edges}{RESET}")
+    print(f"{DIM}─────────────────────────────────────────────────────────────{RESET}\n")
+
+
+def cmd_sync():
+    print(f"\n{PURPLE}{BOLD}⚡ Synchronizing Obsidian Vault with Neuro-Memory Daemon (:8094)...{RESET}")
+    start = time.time()
+    res = post_json(f"{NEURO_MEMORY_URL}/api/obsidian/sync", {})
+    elapsed = time.time() - start
+
+    if not res or "error" in res:
+        err = res.get("error", "Failed to connect to daemon") if res else "Unknown error"
+        print(f" {RED}✖ Sync failed:{RESET} {err}")
+        print(f"   Ensure `neuro-memory-daemon` is running on port 8094.")
+        sys.exit(1)
+
+    print(f" {GREEN}✔ Bidirectional STDP Sync Completed in {elapsed:.2f}s{RESET}")
+    print(f"    • Ingested Notes:  {BOLD}{res.get('ingestedFromVault', 0)}{RESET}")
+    print(f"    • Total Memories:  {CYAN}{res.get('totalMemories', 'unknown')}{RESET}")
+    print(f"    • Vault Substrate: {GRAY}{res.get('vaultPath', str(VAULT_DIR))}{RESET}")
+    print()
+
+
+def cmd_moc(args):
+    if not VAULT_DIR.exists():
+        print(f"{RED}✖ Vault directory missing:{RESET} {VAULT_DIR}")
+        return
+
+    mocs = sorted([p for p in VAULT_DIR.glob("*.md") if p.stem.startswith("MOC") or p.stem == "00 Home"])
+
+    if not args:
+        print(f"\n{CYAN}{BOLD}🗺️ Maps of Content (MOC) in Second Brain Vault:{RESET}")
+        print(f"{DIM}{'MOC Note':<30} {'Wikilinks':<12} {'Size':<10} {'Last Modified':<20}{RESET}")
+        print(f"{DIM}─" * 74 + f"{RESET}")
+        for p in mocs:
+            txt = p.read_text(encoding="utf-8", errors="ignore")
+            links = re.findall(r"\[\[([^\]|#]+)", txt)
+            unique_links = len(set(links))
+            mtime = time.strftime("%Y-%m-%d %H:%M", time.localtime(p.stat().st_mtime))
+            size_kb = f"{p.stat().st_size / 1024:.1f} KB"
+            name = p.stem
+            print(f" {BOLD}{name:<29}{RESET} {PURPLE}{unique_links:<12}{RESET} {GRAY}{size_kb:<10}{RESET} {DIM}{mtime:<20}{RESET}")
+        print(f"{DIM}─" * 74 + f"{RESET}")
+        print(f" Total: {BOLD}{len(mocs)}{RESET} Maps of Content. Run `zoth-second-brain moc <name>` to view.\n")
+        return
+
+    query = " ".join(args).strip().lower()
+    matches = [p for p in mocs if query in p.stem.lower()]
+
+    if not matches:
+        print(f"{RED}✖ No MOC matching '{query}' found.{RESET}")
+        return
+
+    target = matches[0]
+    txt = target.read_text(encoding="utf-8", errors="ignore")
+    links = re.findall(r"\[\[([^\]|#]+)", txt)
+    print(f"\n{GOLD}{BOLD}◈ {target.stem}{RESET} {GRAY}({len(links)} wikilinks){RESET}")
+    print(f"{DIM}Path: {target}{RESET}\n")
+
+    lines = txt.splitlines()
+    body_lines = []
+    in_fm = False
+    for i, line in enumerate(lines):
+        if i == 0 and line.strip() == "---":
+            in_fm = True
+            continue
+        if in_fm and line.strip() == "---":
+            in_fm = False
+            continue
+        if not in_fm:
+            body_lines.append(line)
+
+    preview = "\n".join(body_lines[:25])
+    print(preview)
+    if len(body_lines) > 25:
+        print(f"{DIM}... [+{len(body_lines) - 25} lines truncated]{RESET}")
+    print()
+
+
+def print_help():
+    print(f"""
+{GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
+
+{BOLD}USAGE:{RESET}
+    zoth-second-brain <command> [arguments]
+
+{BOLD}COMMANDS:{RESET}
+    {GREEN}status{RESET}       Show live status of Obsidian Vault, daemons (:8094, :8140, :3000, :5173, :9393), and STDP cortex
+    {GREEN}sync{RESET}         Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
+    {GREEN}moc{RESET}          List all Maps of Content (MOC) with link counts and sizes
+    {GREEN}moc <name>{RESET}   Inspect a specific MOC note and its wikilinks
+    {GREEN}help{RESET}         Print this help message
+
+{BOLD}VAULT PATH:{RESET}
+    {VAULT_DIR}
+""")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print_help()
+        sys.exit(0)
+
+    cmd = sys.argv[1].lower()
+    if cmd in ("status", "st"):
+        cmd_status()
+    elif cmd in ("sync", "s"):
+        cmd_sync()
+    elif cmd == "moc":
+        cmd_moc(sys.argv[2:])
+    elif cmd in ("help", "--help", "-h"):
+        print_help()
+    else:
+        print(f"{RED}Unknown command:{RESET} {cmd}")
+        print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
