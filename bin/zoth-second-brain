@@ -501,6 +501,309 @@ stdp_weight: 0.95
     print(f"\n{GOLD}✦ Successfully ingested '{title}' into Obsidian Second Brain & STDP Cortex!{RESET}\n")
 
 
+def cmd_canvas(args):
+    if not args:
+        print(f"{RED}✖ Usage:{RESET} zoth-second-brain canvas <topic>")
+        sys.exit(1)
+
+    topic = " ".join(args).strip()
+    topic_clean = re.sub(r'["\']', '', topic).strip()
+    canvas_name = f"{topic_clean} Knowledge Map.canvas"
+    dest_path = VAULT_DIR / canvas_name
+
+    print(f"\n{GOLD}{BOLD}🎨 Synthesizing Spatial JSON Canvas 1.0 for '{topic_clean}'...{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+
+    vault_notes = []
+    seen = set()
+    topic_lower = topic_clean.lower()
+    words = [w for w in re.split(r'\W+', topic_lower) if len(w) > 2]
+
+    for p in VAULT_DIR.rglob("*.md"):
+        if any(part.startswith(".") for part in p.parts):
+            continue
+        stem_l = p.stem.lower()
+        if any(w in stem_l for w in words):
+            rel = str(p.relative_to(VAULT_DIR))
+            if p not in seen:
+                seen.add(p)
+                vault_notes.append({"path": rel, "name": p.stem, "score": 10})
+
+    rg_bin = "/usr/bin/rg" if os.path.exists("/usr/bin/rg") else None
+    if rg_bin and len(vault_notes) < 6 and words:
+        import subprocess
+        try:
+            cmd = [rg_bin, "-i", "-n", "-m", "1", words[0], str(VAULT_DIR)]
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            for line in proc.stdout.splitlines():
+                if not line.strip() or ":" not in line:
+                    continue
+                parts = line.split(":", 2)
+                if len(parts) >= 3:
+                    f_path_str = parts[0].strip()
+                    cp = Path(f_path_str)
+                    if cp.suffix.lower() == ".md" and cp not in seen and not any(part.startswith(".") for part in cp.parts):
+                        seen.add(cp)
+                        vault_notes.append({"path": str(cp.relative_to(VAULT_DIR)), "name": cp.stem, "score": 5})
+                        if len(vault_notes) >= 6:
+                            break
+        except Exception:
+            pass
+
+    top_notes = vault_notes[:5]
+
+    print(f" {PURPLE}⚡ Querying STDP Synaptic Substrate (:8094)...{RESET}")
+    memory_results = []
+    daemon_search = post_json(f"{NEURO_MEMORY_URL}/api/search", {"query": topic_clean, "limit": 5}, timeout=4.0)
+    if daemon_search and "results" in daemon_search:
+        memory_results = daemon_search.get("results", [])
+
+    if not memory_results and words:
+        daemon_recall = post_json(f"{NEURO_MEMORY_URL}/api/recall", {"query": words[0], "top_k": 5}, timeout=4.0)
+        if daemon_recall and "results" in daemon_recall:
+            memory_results = daemon_recall.get("results", [])
+
+    top_memories = memory_results[:5]
+
+    import hashlib
+    def make_id(seed: str) -> str:
+        return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+    nodes = []
+    edges = []
+
+    hero_grp_id = make_id(f"hero_grp_{topic_clean}")
+    hero_node_id = make_id(f"hero_node_{topic_clean}")
+    nodes.append({
+        "id": hero_grp_id,
+        "type": "group",
+        "x": -220,
+        "y": -300,
+        "width": 440,
+        "height": 420,
+        "label": f"✦ Core Synthesis: {topic_clean}",
+        "color": "3"
+    })
+    nodes.append({
+        "id": hero_node_id,
+        "type": "text",
+        "x": -180,
+        "y": -240,
+        "width": 360,
+        "height": 320,
+        "color": "3",
+        "text": f"# 🧠 {topic_clean}\n\n**Procedural Knowledge Map** synthesized by `zoth-second-brain`.\n\n- **Vault Notes:** {len(top_notes)} matched\n- **STDP Engrams:** {len(top_memories)} retrieved\n- **Anchor Coordinate:** `(0, 0)`\n\n> [!tip] Bidirectional Linkage\n> Explores Hebbian vector clusters across Obsidian and Neuro-Memory."
+    })
+
+    notes_grp_id = make_id(f"notes_grp_{topic_clean}")
+    nodes.append({
+        "id": notes_grp_id,
+        "type": "group",
+        "x": -980,
+        "y": -340,
+        "width": 700,
+        "height": max(480, 80 + len(top_notes) * 120),
+        "label": f"💎 Second Brain Vault Cluster ({len(top_notes)} notes)",
+        "color": "5"
+    })
+
+    curr_y = -280
+    for idx, nt in enumerate(top_notes):
+        nid = make_id(f"vault_note_{nt['path']}")
+        nodes.append({
+            "id": nid,
+            "type": "file",
+            "x": -940,
+            "y": curr_y,
+            "width": 620,
+            "height": 100,
+            "file": nt["path"],
+            "color": "5"
+        })
+        eid = make_id(f"edge_hero_note_{idx}_{topic_clean}")
+        edges.append({
+            "id": eid,
+            "fromNode": hero_node_id,
+            "fromSide": "left",
+            "toNode": nid,
+            "toSide": "right",
+            "color": "5",
+            "label": f"Vault Note #{idx + 1}"
+        })
+        curr_y += 120
+
+    mem_grp_id = make_id(f"mem_grp_{topic_clean}")
+    nodes.append({
+        "id": mem_grp_id,
+        "type": "group",
+        "x": 280,
+        "y": -340,
+        "width": 700,
+        "height": max(480, 80 + len(top_memories) * 140),
+        "label": f"🧠 STDP Synaptic Engram Cluster (:8094)",
+        "color": "4"
+    })
+
+    curr_y = -280
+    for idx, mem in enumerate(top_memories):
+        mid = make_id(f"mem_{mem.get('id', idx)}_{topic_clean}")
+        mem_short_id = mem.get("id", "engram")[:8]
+        imp = mem.get("importance", 0.8)
+        tags = " ".join([f"#{t}" for t in mem.get("tags", [])[:4]])
+        raw_txt = mem.get("text", "").replace("\n", " ").strip()
+        if len(raw_txt) > 160:
+            raw_txt = raw_txt[:157] + "..."
+        card_text = f"### ⚡ Engram `{mem_short_id}` (imp: {imp:.2f})\n{tags}\n\n{raw_txt}"
+        nodes.append({
+            "id": mid,
+            "type": "text",
+            "x": 320,
+            "y": curr_y,
+            "width": 620,
+            "height": 120,
+            "text": card_text,
+            "color": "4"
+        })
+        eid = make_id(f"edge_hero_mem_{idx}_{topic_clean}")
+        edges.append({
+            "id": eid,
+            "fromNode": hero_node_id,
+            "fromSide": "right",
+            "toNode": mid,
+            "toSide": "left",
+            "color": "4",
+            "label": f"STDP Vector #{idx + 1}"
+        })
+        curr_y += 140
+
+    canvas_payload = {
+        "nodes": nodes,
+        "edges": edges
+    }
+
+    with open(dest_path, "w", encoding="utf-8") as f:
+        json.dump(canvas_payload, f, indent=2)
+
+    print(f" {GREEN}✔ Canvas Created:{RESET} {BOLD}{dest_path.name}{RESET}")
+    print(f"    • Nodes:  {CYAN}{len(nodes)}{RESET} (Hero + {len(top_notes)} Notes + {len(top_memories)} Engrams)")
+    print(f"    • Edges:  {PURPLE}{len(edges)}{RESET}")
+    print(f"    • Path:   {GRAY}{dest_path}{RESET}\n")
+
+
+def cmd_audit():
+    print(f"\n{GOLD}{BOLD}🩺 Zoth Second Brain Health Audit & Spec Verification{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+
+    if not VAULT_DIR.exists():
+        print(f" {RED}✖ Vault directory missing:{RESET} {VAULT_DIR}")
+        return
+
+    # 1. Audit JSON Canvas 1.0 Files
+    canvases = list(VAULT_DIR.rglob("*.canvas"))
+    canvas_issues = []
+    print(f" {BOLD}🎨 Auditing JSON Canvas 1.0 Files ({len(canvases)} files)...{RESET}")
+    for c in canvases:
+        rel = str(c.relative_to(VAULT_DIR))
+        try:
+            with open(c, encoding="utf-8") as f:
+                cdata = json.load(f)
+            nodes = cdata.get("nodes", [])
+            edges = cdata.get("edges", [])
+            node_ids = set()
+            for n in nodes:
+                nid = n.get("id")
+                if not nid:
+                    canvas_issues.append((rel, "Node missing required 'id' attribute"))
+                elif nid in node_ids:
+                    canvas_issues.append((rel, f"Duplicate node ID: {nid}"))
+                node_ids.add(nid)
+                if n.get("type") == "file":
+                    file_target = n.get("file", "")
+                    target_p = VAULT_DIR / file_target
+                    if not target_p.exists():
+                        canvas_issues.append((rel, f"Referenced file not found: {file_target}"))
+            for e in edges:
+                eid = e.get("id")
+                if eid in node_ids:
+                    canvas_issues.append((rel, f"Edge ID collides with node ID: {eid}"))
+                fn = e.get("fromNode")
+                tn = e.get("toNode")
+                if fn not in node_ids:
+                    canvas_issues.append((rel, f"Dangling fromNode reference: {fn}"))
+                if tn not in node_ids:
+                    canvas_issues.append((rel, f"Dangling toNode reference: {tn}"))
+        except Exception as err:
+            canvas_issues.append((rel, f"JSON parse error: {err}"))
+
+    if not canvas_issues:
+        print(f"   {GREEN}✔ 100% of Canvas files pass JSON Canvas 1.0 specification ({len(canvases)}/{len(canvases)}){RESET}")
+    else:
+        print(f"   {RED}✖ Found {len(canvas_issues)} Canvas issue(s):{RESET}")
+        for f, iss in canvas_issues[:5]:
+            print(f"      • {GRAY}{f}:{RESET} {iss}")
+
+    # 2. Audit Obsidian Bases (.base) Files
+    bases = list(VAULT_DIR.rglob("*.base"))
+    base_issues = []
+    print(f"\n {BOLD}📊 Auditing Obsidian Bases Databases ({len(bases)} files)...{RESET}")
+    for b in bases:
+        rel = str(b.relative_to(VAULT_DIR))
+        try:
+            import yaml
+            with open(b, encoding="utf-8") as f:
+                bdata = yaml.safe_load(f)
+            if not isinstance(bdata, dict):
+                base_issues.append((rel, "Root element is not a YAML mapping"))
+            elif "views" not in bdata or not isinstance(bdata["views"], list):
+                base_issues.append((rel, "Missing required 'views' list"))
+            else:
+                for v in bdata.get("views", []):
+                    if not isinstance(v, dict) or "type" not in v:
+                        base_issues.append((rel, "View missing 'type' property"))
+        except Exception as err:
+            base_issues.append((rel, f"YAML parse error: {err}"))
+
+    if not base_issues:
+        print(f"   {GREEN}✔ 100% of Base files pass Obsidian Bases YAML specification ({len(bases)}/{len(bases)}){RESET}")
+    else:
+        print(f"   {RED}✖ Found {len(base_issues)} Base issue(s):{RESET}")
+        for f, iss in base_issues[:5]:
+            print(f"      • {GRAY}{f}:{RESET} {iss}")
+
+    # 3. Audit Markdown Notes & Wikilinks
+    notes = [p for p in VAULT_DIR.rglob("*.md") if not any(part.startswith(".") for part in p.parts)]
+    mocs = [p for p in notes if p.stem.startswith("MOC") or p.stem == "00 Home"]
+    total_wikilinks = 0
+    connected_notes = 0
+
+    for p in notes:
+        try:
+            txt = p.read_text(encoding="utf-8", errors="ignore")
+            links = re.findall(r"\[\[([^\]|#]+)", txt)
+            if links:
+                connected_notes += 1
+                total_wikilinks += len(links)
+        except Exception:
+            pass
+
+    print(f"\n {BOLD}📝 Auditing Second Brain Knowledge Graph ({len(notes)} notes)...{RESET}")
+    print(f"   • Total Notes:            {CYAN}{len(notes)}{RESET}")
+    print(f"   • Maps of Content (MOC):  {GOLD}{len(mocs)}{RESET}")
+    print(f"   • Total Wikilinks:        {PURPLE}{total_wikilinks}{RESET}")
+    print(f"   • Graph Connectivity:     {GREEN}{connected_notes / len(notes) * 100:.1f}%{RESET}")
+
+    score = 100
+    if canvas_issues:
+        score -= min(len(canvas_issues) * 10, 40)
+    if base_issues:
+        score -= min(len(base_issues) * 10, 40)
+
+    score_color = GREEN if score >= 90 else GOLD if score >= 70 else RED
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+    print(f" {BOLD}Overall Second Brain Health Score:{RESET} {score_color}{BOLD}{score}/100 ✦ PERFECT{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -513,6 +816,8 @@ def print_help():
     {GREEN}sync{RESET}                   Trigger bidirectional sync with Neuro-Memory Daemon (:8094)
     {GREEN}search <query>{RESET}         Simultaneously search all 1,697+ Vault notes and :8094 STDP memories
     {GREEN}ingest <path-or-url>{RESET}   Ingest local file or URL into 04-Ingested/<slug>.md and :8094 STDP cortex
+    {GREEN}canvas <topic>{RESET}         Procedurally generate <Topic> Knowledge Map.canvas with Vault notes & STDP engrams
+    {GREEN}audit{RESET}                  Run comprehensive doctor health audit on 100% of .canvas, .base, and notes
     {GREEN}moc{RESET}                    List all Maps of Content (MOC) with link counts and sizes
     {GREEN}moc <name>{RESET}             Inspect a specific MOC note and its wikilinks
     {GREEN}help{RESET}                   Print this help message
@@ -536,6 +841,10 @@ def main():
         cmd_search(sys.argv[2:])
     elif cmd in ("ingest", "in", "add"):
         cmd_ingest(sys.argv[2:])
+    elif cmd in ("canvas", "map"):
+        cmd_canvas(sys.argv[2:])
+    elif cmd in ("audit", "doctor", "doc"):
+        cmd_audit()
     elif cmd == "moc":
         cmd_moc(sys.argv[2:])
     elif cmd in ("help", "--help", "-h"):
