@@ -116,8 +116,8 @@ Or via CLI:
 
 - **Founding Member License**: $19 lifetime access (regular $79).
 - **Dual Payment Rails**:
-  - **Stripe**: [Instant Stripe Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) (Credit Cards, Apple Pay, Google Pay)
-  - **Solana DePay**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`, BTC `bc1p2dr247zklh8pnffak0ew7m82u2w8gx25ys28x7aavr95z674ydzsfw500t`)
+  - **Stripe**: [Instant Stripe Checkout](https://github.com/1nc0gn30/zoth-os) (Credit Cards, Apple Pay, Google Pay)
+  - **Solana Tip**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`, BTC `bc1p2dr247zklh8pnffak0ew7m82u2w8gx25ys28x7aavr95z674ydzsfw500t`)
 - **Instant Client-Side Activation**:
   - Append `?licensed=true` in the URL or enter your receipt email/key into the Pro Modal to permanently unlock all high-res master exports.
 

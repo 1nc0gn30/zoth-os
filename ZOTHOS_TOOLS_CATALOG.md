@@ -10,7 +10,7 @@
 #   60fps 15-second Code-First Motion Edit showcase (6-scene Claude Motion / Revid.ai
 #   blueprint + 3 live shader modes: Hybrid Braille+Vector, Pure ASCII Matrix, and Vector Cinema
 #   + 1-Click ASCII Frame export), interactive ASCII & Braille Motion Synth (`AsciiMotionGodModeTool`),
-#   validated JSON-Schema contracts, and dual payment rails (Stripe + Solana DePay).
+#   validated JSON-Schema contracts, and dual payment rails (Stripe + Solana Tip).
 #
 # Desktop Consolidation Architecture (10 Root Flagships + 4 Pillars):
 #   ~/Desktop/ (10 Flagship Launchers)
@@ -49,7 +49,7 @@
 - **GitHub:** https://github.com/NullAITech/zoth-os
 - **Category:** Swarm & Core
 - **Execution Mode:** BROWSER / LOCAL_CLI (Debian 13 Trixie + KDE Plasma 6.3 Sovereign Distro & Interactive Cockpit)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Interactive Desktop Pillar Matrix (10 Root Flagships + 4 Consolidated Folders = 81 `.desktop` launchers), 22-daemon loopback telemetry inspector (`:8094`–`:8121`, `:9393`), 8-monitor `zoth-workspaces` visualizer, and custom Live-Build ISO & `zoth-control-center` bundle generator.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
 
@@ -71,7 +71,7 @@
 - **GitHub:** https://github.com/NullAITech/vector-search-engine
 - **Category:** Swarm & Core
 - **Execution Mode:** BROWSER (100% In-Browser Client Studio with Material 3 Design)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Pure client-side HNSW skip-graph vector database, IVF clustering, Okapi BM25 lexical engine, Reciprocal Rank Fusion (RRF) hybrid search simulator, 2D/3D projection explorer, and real-time benchmark suite (13K+ QPS) with zero external backend dependencies.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -109,7 +109,7 @@
 - **GitHub:** https://github.com/NullAITech/deepsearch-research-agent
 - **Category:** AI & Knowledge
 - **Execution Mode:** BROWSER (100% In-Browser Autonomous Deep Research & Consensus Synthesis)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Autonomous multi-source deep research agent with recursive Tree-of-Thought query decomposition, 5-stage research planner, empirical claims cross-corroboration consensus matrix, calibrated confidence mathematical scoring, interactive SVG visual benchmarks, and zero cloud telemetry.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -118,7 +118,7 @@
 - **GitHub:** https://github.com/1nc0gn30/promptmaster-studio
 - **Category:** AI & Knowledge
 - **Execution Mode:** BROWSER (100% In-Browser Prompt Engineering & Meta-Optimization Studio)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Real-time client-side AST prompt linter (negative constraints, vague directives, injection risks), multi-model rewrites (Claude XML, OpenAI, Gemini, CoT), live token cost estimator, side-by-side prompt diffing, and local Git-like version history with zero telemetry.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -175,7 +175,7 @@
 - **GitHub:** https://github.com/NullAITech/osint-scout-skill
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER • [Live App](https://osint-domain-scout.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Autonomous passive reconnaissance engine auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture with zero cloud telemetry and dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -184,7 +184,7 @@
 - **GitHub:** https://github.com/1nc0gn30/ghidra-mcp-bridge
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER / LOCAL_CLI (`127.0.0.1:8122`)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Zero-egress reverse engineering workstation & Model Context Protocol (MCP) server for Ghidra headless binary decompilation, ELF/PE/Mach-O symbol recovery, control-flow graph (CFG) inspection, and automated vulnerability signature triage.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
 
@@ -193,7 +193,7 @@
 - **GitHub:** https://github.com/1nc0gn30/shodan-surface-sentinel
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER / LOCAL_CLI (`127.0.0.1:8123`)
-- **Dual Monetization:** $19 Founding Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Autonomous external attack surface discovery, ASN & CIDR banner intelligence, exposed service & CVE correlation, and MCP reconnaissance server with zero third-party telemetry.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 375px, Tablet 768px, Desktop 1440px).
 
@@ -213,7 +213,7 @@
 - **GitHub:** https://github.com/1nc0gn30/aeo-graph-engine
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER (100% In-Browser Answer Engine Optimization Workbench)
-- **Dual Monetization:** $49 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser Answer Engine Optimization (AEO/GEO) workbench, Schema.org JSON-LD @graph linked data generator, multi-client MCP presets (Claude Desktop, Cursor, Windsurf), automated llms.txt & llms-full.txt generator, technical audit report generator, and client-side ZIP bundle packaging with zero cloud egress.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -221,7 +221,7 @@
 - **GitHub:** https://github.com/1nc0gn30/cwv-speed-engine
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://cwv-speed-studio.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser Core Web Vitals diagnostic engine, client AST HTML speed transformer, W3C PWA manifest builder, Service Worker caching architect, performance budget simulator, and multi-network latency analyzer running entirely in client silicon with zero backend egress.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -258,7 +258,7 @@
 - **GitHub:** https://github.com/1nc0gn30/vision-gesture-control
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://vision-gesture-control.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivity with sub-15ms client latency.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -266,7 +266,7 @@
 - **GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://badge3d-coin-studio.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders, watertight binary STL & Wavefront OBJ CAD export, manifold 2-mesh slicing, and precision precious metal weight estimation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -274,7 +274,7 @@
 - **GitHub:** https://github.com/1nc0gn30/cyber-turtle-studio
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://cyber-turtle-studio.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser L-System fractal synthesizer, turtle geometry studio, and physical CNC pen-plotter G-Code and SVG vector exporter.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -282,7 +282,7 @@
 - **GitHub:** https://github.com/1nc0gn30/datamosh-glitch-studio
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://datamosh-glitch-studio.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser parametric video datamosh synthesizer, H.264 I-frame drop corruption, CRT scanlines, and live camera mosh buffer with dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -290,7 +290,7 @@
 - **GitHub:** https://github.com/1nc0gn30/nexus-3d-scene-studio
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://nexus-3d-studio.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser WebGL mathematical 3D geometry engine, 4D Tesseract, parametric surfaces, FastMCP server, and precision OBJ/STL mesh exporters with dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -298,7 +298,7 @@
 - **GitHub:** https://github.com/1nc0gn30/ufo-sacred-geometry
 - **Category:** Media & 3D
 - **Execution Mode:** BROWSER • [Live App](https://ufo-sacred-geometry.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Sovereign browser-based vector CAD engine & agro-glyph synthesizer with 1-click AutoCAD DXF R12/2000, Wavefront OBJ 3D Meshes, scalable vector SVGs, and dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -346,7 +346,7 @@
 - **GitHub:** https://github.com/1nc0gn30/anderson-security-sentinel
 - **Category:** Security & OpSec
 - **Execution Mode:** BROWSER • [Live App](https://anderson-security-sentinel.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Autonomous biometric laptop perimeter defense, WiFi X-Ray RF tomography, USB Rubber Ducky tripwire guard, FLIR thermal optics, and forensic incident dossier air-gapped export.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -365,7 +365,7 @@
 - **GitHub:** https://github.com/1nc0gn30/robots-txt-auditor
 - **Category:** Growth & SEO
 - **Execution Mode:** BROWSER • [Live App](https://robots-txt-auditor.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** 100% in-browser RFC 9309 robots.txt parser, AI crawler simulator (Googlebot, GPTBot, ClaudeBot, PerplexityBot, Applebot), Pro Drift Shield, dynamic crawlability health scoring, and instant client-side license activation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -373,7 +373,7 @@
 - **GitHub:** https://github.com/1nc0gn30/city-desk
 - **Category:** Growth & SEO
 - **Execution Mode:** BROWSER • [Live App](https://city-desk.netlify.app)
-- **Dual Monetization:** $19 Lifetime (<del>$79 Regular</del>) | Dual Stripe + Solana DePay Rails
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
 - **Operational Value:** Programmatic local landing page generator constructing 1,000 localized service pages across 20 trades and 50 mid-size cities with live client customizer, instant Pro license activation (`CITY-PRO-2026`), and standalone HTML bundle export.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
@@ -389,7 +389,7 @@
 - **Execution Mode:** BROWSER / LOCAL_CLI (`AgentEgressSentinelGodModeTool` 60fps Perimeter Radar Workstation)
 - **Operational Value:** Autonomous zero-dependency network interceptor, Shannon entropy DNS-tunneling blocker, 169.254.169.254 SSRF shield, 60fps egress radar canvas, and deterministic `nftables` kernel policy compiler.
 <!-- Intentional public Solana receive address on the DePay link below. Not key material. Allowlisted in .gitleaks.toml. -->
-- **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://buy.stripe.com/fZu4gyaEleOsb9CdkIfw40K) • [DePay Solana](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19)
+- **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://github.com/1nc0gn30/zoth-os) • [DePay Solana](solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
 
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)
 - **Live Studio:** https://agent-prompt-firewall.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-prompt-firewall)

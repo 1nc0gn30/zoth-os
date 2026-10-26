@@ -140,8 +140,8 @@ pytest -v tests/test_capsule.py
 
 - **Founding Member License**: $19 lifetime access (regular $79).
 - **Dual Payment Rails**:
-  - **Stripe**: [Instant Stripe Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) (Credit Cards, Apple Pay, Google Pay)
-  - **Solana DePay**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+  - **Stripe**: [Instant Stripe Checkout](https://github.com/1nc0gn30/zoth-os) (Credit Cards, Apple Pay, Google Pay)
+  - **Solana Tip**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
 - **Instant Client-Side Activation**:
   - Pass `?licensed=true` in the URL or enter your receipt email/key into the Pro Modal to permanently unlock all advanced security forensic outputs.
 

@@ -79,8 +79,8 @@ pytest -v
 
 - **Founding Member License**: $19 lifetime access (regular $79).
 - **Payment Rails**:
-  - Stripe: [Instant Stripe Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
-  - Solana DePay: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
+  - Stripe: [Instant Stripe Checkout](https://github.com/1nc0gn30/zoth-os)
+  - Solana Tip: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 - **Instant Activation**: Pass `?licensed=true` in the browser or enter your receipt key in the Pro modal.
 
 ---

@@ -230,7 +230,7 @@ function drawSparkline(canvasId, data, rgb = [255, 215, 0], maxScale = 100) {
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
-    .replace(/&/g, '&amp;')
+    .replace(/&/g, '&')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')

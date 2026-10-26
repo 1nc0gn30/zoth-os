@@ -37,7 +37,7 @@ Split-second montage of hyper-realistic lifestyle composites:
 Camera snaps to centered heroic monolith. Glowing founding member card floats forward with pure CSS conic border beam:
 "ETSY POD FORGE • DAY 7 REVENUE ENGINE"
 "START YOUR AUTOMATED STORE TODAY — $19 LIFETIME FOUNDING ACCESS"
-Dual checkout badges pulse: Stripe Card & Solana DePay.
+Dual checkout badges pulse: Stripe Card & Solana Tip.
 Subtle attribution lockup: "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform".
 ```
 

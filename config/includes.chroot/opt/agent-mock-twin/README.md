@@ -145,8 +145,8 @@ Agent Mock Twin provides a complete try-before-you-buy experience with client-si
 
 - **Founding Member Lifetime**: **$19 one-time** (vs $79 regular).
 - **Dual Payment Rails**:
-  - **Stripe**: [Direct Checkout Link](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww) (Credit Cards, Apple Pay, Google Pay).
-  - **Solana DePay**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (SOL, USDC).
+  - **Stripe**: [Direct Checkout Link](https://github.com/1nc0gn30/zoth-os) (Credit Cards, Apple Pay, Google Pay).
+  - **Solana Tip**: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8` (SOL, USDC).
 - **Pro Features**:
   1. **Dynamic Chaos Fault Injection**: Simulate upstream HTTP 429 rate limit backoff and 500/503 provider outages to verify agent retry logic.
   2. **Fuzzy Semantic Drift Tolerance**: Configurable Jaccard similarity tolerance for evolving agent prompt payloads.

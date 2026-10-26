@@ -73,5 +73,5 @@ Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 verti
 1. **Act I (0-8s) — The Friction**: Modern agent swarms burn thousands of dollars in token egress just asserting basic logic in CI/CD. Rate limits drop connections, prompt drifts cause flaky test assertions, and staging environments break when LLM providers experience outages.
 2. **Act II (8-18s) — The Architecture**: Introduce `agent-mock-twin`. Zero external dependencies. Ingests standard HAR recordings from `agent-egress-sentinel` or OpenAPI specs. Multi-tier matching engine: Exact hash matching, fuzzy semantic JSON overlap, and automatic provider fallback synthesis (OpenAI, Anthropic, Gemini).
 3. **Act III (18-25s) — The Benchmark**: Demonstrate automated test suite execution: 1,400 agent turns executed in 4.2 seconds offline. Flawless simulation of latency jitter (20ms-120ms) and chaos injection (rate limit stress testing).
-4. **Act IV (25-30s) — The Sovereign Solution**: Founding Member lifetime access ($19 vs $79). Dual checkout via Stripe Credit Cards and Solana DePay. "Deploy autonomous agents without a leash."
+4. **Act IV (25-30s) — The Sovereign Solution**: Founding Member lifetime access ($19 vs $79). Dual checkout via Stripe Credit Cards and Solana Tip. "Deploy autonomous agents without a leash."
 ```

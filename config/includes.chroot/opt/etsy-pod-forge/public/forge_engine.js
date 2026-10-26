@@ -671,7 +671,7 @@
     });
     document.getElementById('closeModalBtn')?.addEventListener('click', closeProModal);
 
-    // Solana DePay Button Trigger
+    // Solana Tip Button Trigger
     document.querySelectorAll('.btn-solana-pay').forEach(btn => {
       btn.addEventListener('click', (e) => {
         if (e && e.preventDefault) e.preventDefault();

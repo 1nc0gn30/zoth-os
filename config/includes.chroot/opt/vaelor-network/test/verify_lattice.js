@@ -188,7 +188,7 @@ const qZoth = node.createBridgeQuote({
 assert.strictEqual(qZoth.spreadPct, 0.0, 'Zero protocol spread for @zoth');
 assert.strictEqual(qZoth.toAmount, 1.0, '180 VLR must convert to exactly 1.0 SOL with zero spread');
 
-// Execute atomic redemption swap: VLR -> SOL (Solana DePay)
+// Execute atomic redemption swap: VLR -> SOL (Solana Tip)
 const q2 = node.createBridgeQuote({
   fromAsset: 'VLR',
   toAsset: 'SOL',

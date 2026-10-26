@@ -43,7 +43,7 @@ Sound Effect: Crisp digital shutter sound + clean stereo confirmation ping.
 
 [SCENE 4: CALL TO ACTION & SOVEREIGN REIGN - 11.5s - 15.0s]
 Action: Fast zoom back to the Chrono-Prism Reticle crowned with the Gold Pro Badge (`⭐ PRO ACTIVE`).
-Dual checkout rails pulse at bottom: Stripe 1-Click + Solana DePay.
+Dual checkout rails pulse at bottom: Stripe 1-Click + Solana Tip.
 Primary Heading:
 "AGENT FLIGHT RECORDER"
 Subheading:
