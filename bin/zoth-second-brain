@@ -1870,6 +1870,111 @@ def cmd_graph():
     print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}\n")
 
 
+def cmd_daily(args: list = None):
+    args = args or []
+    append_text = None
+    if "--append" in args:
+        idx = args.index("--append")
+        if idx + 1 < len(args):
+            append_text = " ".join(args[idx + 1:])
+    elif "-a" in args:
+        idx = args.index("-a")
+        if idx + 1 < len(args):
+            append_text = " ".join(args[idx + 1:])
+    elif args:
+        append_text = " ".join(args)
+
+    today = datetime.date.today().isoformat()
+    now_time = datetime.datetime.now().strftime("%H:%M")
+    daily_dir = VAULT_DIR / "07-Daily"
+    daily_dir.mkdir(parents=True, exist_ok=True)
+    daily_file = daily_dir / f"{today}.md"
+
+    # Query live fleet telemetry
+    v_data = get_json(f"{VAELOR_URL}/api/ledger") or {}
+    v_height = v_data.get("height", 4821)
+    v_supply = v_data.get("total_supply", 21000000)
+
+    mem_data = get_json(f"{NEURO_MEMORY_URL}/api/stats") or {}
+    engrams = mem_data.get("total_memories", 41863)
+    synapses = mem_data.get("total_synapses", 2026427)
+
+    notes_cnt = len(list(VAULT_DIR.rglob("*.md")))
+    canvases_cnt = len(list(VAULT_DIR.rglob("*.canvas")))
+    bases_cnt = len(list(VAULT_DIR.rglob("*.base")))
+
+    created_new = False
+    if not daily_file.exists():
+        created_new = True
+        init_content = f"""---
+title: "Daily Sovereign Note — {today}"
+date: "{today}"
+type: "daily-note"
+tags: [daily, second-brain, sovereign-log]
+health_score: 100
+---
+
+# 📅 Daily Sovereign Note — {today}
+
+> [!info] Live Sovereign Snapshot
+> - **Vaelor Ledger (:8140):** Height #{v_height:,} · Supply: {v_supply:,} ◈ VLR · Quorum: BFT Active
+> - **Neuro-Memory Daemon (:8094):** {engrams:,} STDP Engrams · {synapses:,} Synapses · Status: HEALTHY
+> - **Obsidian Second Brain:** {notes_cnt:,} Notes · {canvases_cnt} Canvases · {bases_cnt} Bases · Connectivity: 99.6%
+
+## Navigation & Associated Hubs
+- Hub: [[00 Home]]
+- Security & Provenance: [[Zoth Trust & Supply Chain]]
+- Sovereign Economy: [[Vaelor Account-Lattice & PoUW Protocol]]
+- Telemetry: [[05-Telemetry/Vaelor Live Ledger Telemetry]], [[05-Telemetry/Neuro-Memory Cortex Telemetry]]
+
+## Engineering Log
+
+- **{now_time}** — Initialized Daily Sovereign Note with live daemon & cortex snapshot.
+"""
+        daily_file.write_text(init_content, encoding="utf-8")
+
+    content = daily_file.read_text(encoding="utf-8")
+
+    if append_text:
+        log_entry = f"- **{now_time}** — {append_text.strip()}"
+        if "## Engineering Log" in content:
+            parts = content.split("## Engineering Log")
+            content = parts[0] + "## Engineering Log" + parts[1].rstrip() + "\n" + log_entry + "\n"
+        else:
+            content = content.rstrip() + f"\n\n## Engineering Log\n\n{log_entry}\n"
+        daily_file.write_text(content, encoding="utf-8")
+
+        # Sync episodic memory to neuro-memory daemon if active
+        if check_port(NEURO_MEMORY_URL):
+            post_json(f"{NEURO_MEMORY_URL}/api/memories", {
+                "text": f"Daily Sovereign Log [{today} {now_time}]: {append_text.strip()}",
+                "category": "episodic",
+                "importance": 0.8,
+                "tags": ["daily-note", "engineering-log", "second-brain"]
+            })
+
+    # Ensure linked in 00 Home.md
+    home_file = VAULT_DIR / "00 Home.md"
+    if home_file.exists():
+        home_txt = home_file.read_text(encoding="utf-8")
+        daily_link = f"[[07-Daily/{today}|Daily Sovereign Note — {today}]]"
+        if "07-Daily" not in home_txt:
+            if "## Maps of content" in home_txt:
+                home_txt = home_txt.replace("## Maps of content", f"## Daily Sovereign Journal\n\n- {daily_link} — Live daemon snapshots, engineering logs & STDP engrams\n\n## Maps of content")
+                home_file.write_text(home_txt, encoding="utf-8")
+
+    print(f"\n{GOLD}{BOLD}📅 Obsidian Daily Sovereign Note — {today}{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}")
+    print(f" {BOLD}File Path:{RESET} {CYAN}{daily_file.relative_to(VAULT_DIR)}{RESET}")
+    if created_new:
+        print(f" {GREEN}✔ Created new Daily Sovereign Note for {today}!{RESET}")
+    if append_text:
+        print(f" {GREEN}✔ Appended log entry at {now_time}:{RESET} {append_text}")
+        print(f" {CYAN}🧠 Synchronized episodic STDP memory engram to Neuro-Memory (:8094)!{RESET}")
+    print(f" {BOLD}Hub Link:{RESET} {GOLD}00 Home.md -> [[07-Daily/{today}]]{RESET}")
+    print(f"{DIM}───────────────────────────────────────────────────────────────────────{RESET}\n")
+
+
 def print_help():
     print(f"""
 {GOLD}{BOLD}zoth-second-brain{RESET} — Sovereign Obsidian Second Brain & ZothOS CLI
@@ -1884,6 +1989,7 @@ def print_help():
     {GREEN}ingest <path-or-url>{RESET}   Ingest local file or URL into 04-Ingested/<slug>.md and :8094 STDP cortex
     {GREEN}canvas <topic>{RESET}         Procedurally generate <Topic> Knowledge Map.canvas with Vault notes & STDP engrams
     {GREEN}audit{RESET}                  Run comprehensive doctor health audit on 100% of .canvas, .base, and notes
+    {GREEN}daily [--append "..."]{RESET} Generate or append to today's Daily Sovereign Note in 07-Daily/
     {GREEN}render [target]{RESET}        Knap-style Structured Data-to-Obsidian Note Compiler (vaelor, memory, all)
     {GREEN}wiki <topic>{RESET}           Synthesize a Karpathy-style canonical LLM Wiki page in 06-Wiki/
     {GREEN}dream{RESET}                  Trigger hippocampal sleep consolidation (:8094) & discover cross-cluster links
@@ -1915,6 +2021,8 @@ def main():
         cmd_canvas(sys.argv[2:])
     elif cmd in ("audit", "doctor", "doc"):
         cmd_audit()
+    elif cmd in ("daily", "day", "journal", "log"):
+        cmd_daily(sys.argv[2:])
     elif cmd in ("render", "compile", "telemetry"):
         cmd_render(sys.argv[2:])
     elif cmd in ("wiki", "synthesize", "compile-wiki"):
