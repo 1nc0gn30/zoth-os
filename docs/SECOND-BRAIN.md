@@ -36,6 +36,7 @@
 6. [The 14 Canonical Karpathy LLM Wiki Articles](#-the-14-canonical-karpathy-llm-wiki-articles)
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
 8. [The Sovereign 34-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-sovereign-34-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
+9. [Sovereign Node-to-Node Encrypted Messenger CLI (`zoth-comm`)](#-sovereign-node-to-node-encrypted-messenger-cli-zoth-comm)
 
 ---
 
@@ -564,6 +565,65 @@ zoth-mcp list | grep -E "vaelor|neuro-memory"
 # neuro-memory     RING_0_SOVEREIGN   [ON]  /home/zoth/.neuro_memory
 # vaelor-l1        RING_0_SOVEREIGN   [ON]  /home/zoth/NullAITech/vaelor-network
 ```
+
+---
+
+## 🛰️ Sovereign Node-to-Node Encrypted Messenger CLI (`zoth-comm`)
+
+The `zoth-comm` CLI utility (`bin/zoth-comm`, symlinked to `~/.local/bin/zoth-comm`) provides decentralized, end-to-end encrypted node-to-node messaging and autonomous 24/7 AI task dispatching across the sovereign fleet. It anchors cryptographic handshakes and message routing directly onto the **Vaelor Layer-1 Lattice (`:8140`)** with a zero-dependency local store fallback (`~/.config/zoth-comm/`, file mode `0600`).
+
+### 🔐 Cryptographic Architecture & Flow
+
+```
+   🧑 Client Node (@neal)                                🤖 AI Agent Worker Node (@zoth-rig2)
+            │                                                              │
+            ├──── 1. Handshake Challenge (PBKDF2-SHA256 100k) ────────────►│
+            │     [Validates target passphrase verifier on :8140]         │
+            │                                                              │
+            ├──── 2. AES-256-GCM Encrypted Dispatch ───────────────────────►│
+            │     [Nonce 96-bit, Auth Tag 128-bit, Feeless ◈ VLR attached] │
+            │                                                              │
+            │                                                              ├──── 3. Decrypt In-Memory
+            │                                                              ├──── 4. Ingest STDP (:8094)
+            │                                                              ├──── 5. Log to Obsidian Vault
+            │◄─── 6. Dispatched Encrypted Receipt & 5/5 BFT ACK ───────────┴──── 6. Mark PROCESSED
+```
+
+### 💻 Subcommand Matrix
+
+| Command | Usage | Description & Cryptographic Security |
+| :--- | :--- | :--- |
+| `peers` | `zoth-comm peers [--json]` | Queries Vaelor Lattice `/api/comm/peers` to discover active nodes, handles, endpoints, and status. |
+| `register` | `zoth-comm register <@handle> <passphrase> [--name "..."]` | Generates 16-byte random salt, computes PBKDF2-SHA256 verifier, and anchors node profile. |
+| `connect` | `zoth-comm connect <@from> <@to> <passphrase>` | Validates recipient passphrase against registered verifier to establish authorized channel. |
+| `send` | `zoth-comm send <@from> <@to> <passphrase> "<msg>" [--vlr N] [--ai-task "..."]` | Encrypts payload with AES-256-GCM, attaches feeless `◈ VLR`, and stores on Lattice with 5/5 BFT quorum. |
+| `inbox` | `zoth-comm inbox <@handle> <passphrase> [--json]` | Authenticates node, retrieves inbound encrypted records, and decrypts messages and tasks. |
+| `daemon` | `zoth-comm daemon <@handle> <passphrase> [--interval 3.0] [--once]` | Autonomous 24/7 background worker: polls inbox, triggers STDP ingestion (:8094), writes Obsidian telemetry, and sends signed receipts. |
+
+### 🛠️ Example Usage
+
+```bash
+# 1. Discover active sovereign nodes
+zoth-comm peers
+
+# 2. Register node with PBKDF2-SHA256 verifier
+zoth-comm register @zoth-rig2 "zoth-sovereign-757" --name "24/7 AI Laptop"
+
+# 3. Test cryptographic handshake
+zoth-comm connect @neal @zoth-rig2 "zoth-sovereign-757"
+
+# 4. Dispatch encrypted message with feeless ◈ VLR & 24/7 AI task
+zoth-comm send @neal @zoth-rig2 "zoth-sovereign-757" "Execute continuous vector indexing" \
+  --vlr 5.0 --ai-task "Ingest supply chain trust stack"
+
+# 5. Read decrypted inbox
+zoth-comm inbox @zoth-rig2 "zoth-sovereign-757"
+
+# 6. Run autonomous worker daemon
+zoth-comm daemon @zoth-rig2 "zoth-sovereign-757" --once
+```
+
+Telemetry note: `[[05-Telemetry/ZothNet Encrypted Comms|ZothNet Encrypted Comms]]`.
 
 ---
 
