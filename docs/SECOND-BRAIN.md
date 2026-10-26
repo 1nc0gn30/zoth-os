@@ -6,7 +6,7 @@
 [![Karpathy LLM Wiki](https://img.shields.io/badge/Karpathy%20LLM%20Wiki-13%20canonical-gold.svg)](docs/SECOND-BRAIN.md)
 [![Vault Notes](https://img.shields.io/badge/vault%20notes-1%2C732%20indexed%20(99.6%25%20connected)-orange.svg)](docs/SECOND-BRAIN.md)
 [![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
-[![MCP Suite](https://img.shields.io/badge/MCP%20Tools-20%20native-cyan.svg)](docs/SECOND-BRAIN.md)
+[![MCP Suite](https://img.shields.io/badge/MCP%20Tools-21%20native-cyan.svg)](docs/SECOND-BRAIN.md)
 
 > **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`/home/zoth/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
 > Built strictly against the official **@kepano Obsidian specifications**: Obsidian Flavored Markdown (OFM), JSON Canvas 1.0 (`.canvas`), Obsidian Bases (`.base`), and Knap structured-data note synthesis.
@@ -34,6 +34,7 @@
 5. [The 18 Obsidian Bases (`.base`) Databases](#-the-18-obsidian-bases-base-databases)
 6. [The 13 Canonical Karpathy LLM Wiki Articles](#-the-13-canonical-karpathy-llm-wiki-articles)
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
+8. [The 21-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-21-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
 
 ---
 
@@ -73,8 +74,8 @@ The Zoth Second Brain bridges human knowledge management, biomorphic cognitive n
      │   └────────────────────────────────────┬─────────────────────────────────────┘   │
      │                                        │                                         │
      │   ┌────────────────────────────────────┴─────────────────────────────────────┐   │
-     │   │                    20-Tool Model Context Protocol (MCP)                  │   │
-     │   │        11 STDP Cognitive Tools  ·  9 Obsidian Second Brain Tools         │   │
+     │   │                    21-Tool Model Context Protocol (MCP)                  │   │
+     │   │    11 STDP Cognitive Tools  ·  10 Obsidian & Vaelor Second Brain Tools    │   │
      │   └──────────────────────────────────────────────────────────────────────────┘   │
      └────────────────────────────────────────┬─────────────────────────────────────────┘
                                               │
@@ -397,7 +398,7 @@ Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` r
 | **1** | `Biomorphic STDP & 3D Netrunner Cortex.md` | Biomorphic STDP & 3D Netrunner Cortex | `LLM-Wiki` | `CANONICAL` | `98%` | 3-factor Hebbian plasticity, curved Bezier synaptic filaments, 6-galaxy 3D cosmos, and action potential cascades. |
 | **2** | `Byzantine Quorum & Epistemic Consensus.md` | Byzantine Quorum & Epistemic Consensus | `LLM-Wiki` | `CANONICAL` | `97%` | Epistemic truth consensus, multi-agent voting rounds, and Byzantine fault tolerance mechanisms. |
 | **3** | `Hermes Agent & Multi-Provider MCP Connector Ecosystem.md` | Hermes Agent & Multi-Provider MCP Connector Ecosystem | `LLM-Wiki` | `CANONICAL` | `99%` | Multi-provider MCP orchestration, dynamic tool discovery, and autonomous agent routing. |
-| **4** | `Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol.md` | Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol | `LLM-Wiki` | `CANONICAL` | `100%` | Complete reference for all 20 MCP tools (11 Cognitive STDP + 9 Obsidian Second Brain). |
+| **4** | `Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol.md` | Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol | `LLM-Wiki` | `CANONICAL` | `100%` | Complete reference for all 21 MCP tools (11 Cognitive STDP + 10 Obsidian Second Brain & Vaelor L1). |
 | **5** | `Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md` | Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Kepano Obsidian standards, 17 canvases, 18 bases, Knap synthesis, and bidirectional vault sync. |
 | **6** | `STDP Synaptic Memory Consolidation & Hebbian Dream Wave.md` | STDP Synaptic Memory Consolidation & Hebbian Dream Wave | `LLM-Wiki` | `CANONICAL` | `98%` | Hippocampal SWR dream waves, Ebbinghaus forgetting curves, and long-term memory stabilization. |
 | **7** | `Vaelor Account-Lattice & PoUW Protocol.md` | Vaelor Account-Lattice & PoUW Protocol | `LLM-Wiki` | `CANONICAL` | `99%` | Nano-inspired block-lattice DAG, Proof-of-Useful-Work AI mining, and ◈ VLR economic rails. |
@@ -430,6 +431,87 @@ The `zoth-second-brain audit` engine executes a rigorous verification pass acros
    - Health score is computed as:
      $$\text{Score} = 100 - (\text{broken\_canvases} \times 20) - (\text{broken\_bases} \times 15) - (\text{dangling\_links} \times 0.05)$$
    - Must achieve **100/100 ✦ PERFECT** prior to any release or commit.
+
+---
+
+## 🔌 The 21-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration
+
+The Neuro-Memory Daemon (`:8094`) and Vaelor Layer-1 Network are integrated directly into the sovereign ZothOS MCP subsystem governed by `zoth-mcp` (`/etc/zothos/mcp-servers.json`). Both servers operate in **`RING_0_SOVEREIGN`** (kernel-adjacent privilege level), providing zero-latency cognitive memory recall and financial rails to autonomous AI coding agents (Claude, Cursor, Grok, Hermes, Antigravity).
+
+### Neuro-Memory 21-Tool Master Catalog
+
+| # | MCP Tool Name | Domain / Subsystem | Parameters | Operational Purpose |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | `memory_store` | Cognitive | `text`, `tags`, `importance`, `category`, `perspective`, `agent_id`, `metadata` | Encodes episodic, semantic, or procedural memory engram; calculates term weights and forms Hebbian synapses. |
+| **2** | `memory_recall` | Cognitive | `query`, `top_k`, `min_score` | Performs auto-associative pattern completion recall via CA3 spreading activation. |
+| **3** | `memory_search` | Cognitive | `query`, `category`, `tag`, `limit` | Full-text and tag-filtered search with sparse term weighting and recency ranking. |
+| **4** | `memory_graph` | Cognitive | `format` (`json` \| `mermaid` \| `ascii`), `min_weight`, `limit` | Exports synaptic adjacency graph of memory engrams and weighted associations. |
+| **5** | `memory_consolidate` | Cognitive | `decay_rate`, `prune_threshold` | Executes cognitive sleep consolidation pass: strengthens active synapses and prunes decayed traces. |
+| **6** | `memory_stats` | Cognitive | `detailed` (`bool`) | Retrieves cognitive telemetry, active node counts, synaptic density, and substrate health. |
+| **7** | `memory_diagnostics` | Cognitive | _None_ | Performs deep diagnostic audit of SQLite WAL database, index integrity, and table distributions. |
+| **8** | `memory_metacognition` | Cognitive | `query`, `top_k` | Computes Feeling-of-Knowing (FOK), Tip-of-the-Tongue (TOT), entropy, and ACC conflict detection. |
+| **9** | `neuro_neuromodulator_status`| Cognitive | `complexity` (`float`) | Queries current Norepinephrine, Dopamine, Acetylcholine, Serotonin levels and Yerkes-Dodson efficiency. |
+| **10**| `neuro_neuromodulate_pulse` | Cognitive | `ne_delta`, `da_delta`, `ach_delta`, `serotonin_delta`, `reason` | Injects neurochemical pulse into substrate to shift arousal, reward error, or encoding mode. |
+| **11**| `neuro_flashbulb_tag` | Cognitive | `memory_id`, `salience`, `reason` | Permanently locks critical engram as an immutable flashbulb memory (`decay_factor=0.05`, `immutable=True`). |
+| **12**| `obsidian_vault_search` | Second Brain | `query`, `folder`, `limit` | Searches all 1,732 markdown notes in the Obsidian Second Brain vault. |
+| **13**| `obsidian_wiki_synthesize` | Second Brain | `topic`, `folder`, `title` | Synthesizes a Karpathy-style canonical LLM Wiki article in `06-Wiki/` linking vault notes and STDP engrams. |
+| **14**| `obsidian_canvas_generate` | Second Brain | `topic`, `max_nodes`, `filename` | Procedurally generates an official JSON Canvas 1.0 (`.canvas`) visual architecture map. |
+| **15**| `obsidian_doctor_audit` | Second Brain | _None_ | Audits 100% of `.canvas`, `.base`, and notes, verifying spec compliance and wikilink graph connectivity. |
+| **16**| `obsidian_daily_log` | Second Brain | `content`, `tags`, `agent_id`, `subsystem`, `date` | Retrieves or appends structured, timestamped agent activities to daily sovereign notes in `07-Daily/`. |
+| **17**| `obsidian_backlinks_inspect`| Second Brain | `note_path`, `max_unlinked` | Inspects bidirectional backlink topology and scans vault for unlinked mentions of any note. |
+| **18**| `obsidian_bundle_export` | Second Brain | `output_format` (`json` \| `txt`), `include_wiki`, `include_canvases` | Compiles Karpathy LLM Wiki, canvases, bases, and daily notes into a portable SHA-256 prompt bundle. |
+| **19**| `obsidian_note_read` | Second Brain | `path` | Safely reads markdown note content from the Obsidian Second Brain vault with fixed-root path confinement. |
+| **20**| `obsidian_note_write` | Second Brain | `relPath`, `content` | Safely writes or updates markdown notes in the Obsidian Second Brain vault with path confinement and engram synchronization. |
+| **21**| `obsidian_vaelor_pouw` | Second Brain / L1 | `action` (`status` \| `mine`), `miner`, `task_type` | Queries Vaelor Layer-1 status and consensus telemetry or triggers Proof-of-Useful-Work (PoUW) cognitive mining with STDP vector indexing, minting ◈ VLR coin rewards and anchoring memory engrams. |
+
+### ZothOS `zoth-mcp` Ring-0 Server Registration
+
+In `/etc/zothos/mcp-servers.json` (and `config/includes.chroot/etc/zothos/mcp-servers.json`), both servers are registered as Ring-0 sovereign services:
+
+```json
+{
+  "neuro-memory": {
+    "command": "python3",
+    "args": [
+      "-m",
+      "neuro_memory_daemon.cli",
+      "mcp"
+    ],
+    "description": "Biological-fidelity neuro-memory substrate with STDP, 3-factor neuromodulation, spreading activation, and 21 Obsidian Second Brain tools.",
+    "offline": true,
+    "enabled": true,
+    "securityRing": "RING_0_SOVEREIGN",
+    "ring_level": 0,
+    "sandbox": "/home/zoth/.neuro_memory",
+    "fallbackHandler": "python3 -m neuro_memory_daemon.cli search ''",
+    "timeout": 60,
+    "alwaysAllow": []
+  },
+  "vaelor-l1": {
+    "command": "node",
+    "args": [
+      "/home/zoth/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"
+    ],
+    "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and financial tools.",
+    "offline": true,
+    "enabled": true,
+    "securityRing": "RING_0_SOVEREIGN",
+    "ring_level": 0,
+    "sandbox": "/home/zoth/NullAITech/vaelor-network",
+    "fallbackHandler": "node /home/zoth/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js --status",
+    "timeout": 60,
+    "alwaysAllow": []
+  }
+}
+```
+
+Agents can query status via `zoth-mcp list`:
+```bash
+zoth-mcp list | grep -E "vaelor|neuro-memory"
+# Output:
+# neuro-memory     RING_0_SOVEREIGN   [ON]  /home/zoth/.neuro_memory
+# vaelor-l1        RING_0_SOVEREIGN   [ON]  /home/zoth/NullAITech/vaelor-network
+```
 
 ---
 
