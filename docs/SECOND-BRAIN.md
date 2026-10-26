@@ -1,14 +1,14 @@
 # 💎 Zoth Second Brain & Sovereign Obsidian Integration Architecture
 
 [![Second Brain Health](https://img.shields.io/badge/audit-100%2F100%20%E2%9C%A6%20PERFECT-brightgreen.svg)](docs/SECOND-BRAIN.md)
-[![JSON Canvas 1.0](https://img.shields.io/badge/JSON%20Canvas%201.0-16%20verified-blue.svg)](https://jsoncanvas.org/)
+[![JSON Canvas 1.0](https://img.shields.io/badge/JSON%20Canvas%201.0-17%20verified-blue.svg)](https://jsoncanvas.org/)
 [![Obsidian Bases](https://img.shields.io/badge/Obsidian%20Bases-18%20active-purple.svg)](docs/SECOND-BRAIN.md)
-[![Karpathy LLM Wiki](https://img.shields.io/badge/Karpathy%20LLM%20Wiki-12%20canonical-gold.svg)](docs/SECOND-BRAIN.md)
-[![Vault Notes](https://img.shields.io/badge/vault%20notes-1%2C731%20indexed%20(99.6%25%20connected)-orange.svg)](docs/SECOND-BRAIN.md)
-[![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-12%20subcommands-green.svg)](bin/zoth-second-brain)
+[![Karpathy LLM Wiki](https://img.shields.io/badge/Karpathy%20LLM%20Wiki-13%20canonical-gold.svg)](docs/SECOND-BRAIN.md)
+[![Vault Notes](https://img.shields.io/badge/vault%20notes-1%2C732%20indexed%20(99.6%25%20connected)-orange.svg)](docs/SECOND-BRAIN.md)
+[![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
 [![MCP Suite](https://img.shields.io/badge/MCP%20Tools-20%20native-cyan.svg)](docs/SECOND-BRAIN.md)
 
-> **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`/home/zoth/Documents/Obsidian Vault/`), the 12-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
+> **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`/home/zoth/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
 > Built strictly against the official **@kepano Obsidian specifications**: Obsidian Flavored Markdown (OFM), JSON Canvas 1.0 (`.canvas`), Obsidian Bases (`.base`), and Knap structured-data note synthesis.
 
 ---
@@ -16,7 +16,7 @@
 ## 📑 Table of Contents
 1. [Architectural Overview & Karpathy LLM Wiki Paradigm](#-architectural-overview--karpathy-llm-wiki-paradigm)
 2. [End-to-End System Pipeline](#-end-to-end-system-pipeline)
-3. [The 12-Subcommand `zoth-second-brain` CLI Reference](#-the-12-subcommand-zoth-second-brain-cli-reference)
+3. [The 13-Subcommand `zoth-second-brain` CLI Reference](#-the-13-subcommand-zoth-second-brain-cli-reference)
    - [Command 1: `status` (`st`)](#1-status-st)
    - [Command 2: `sync` (`s`)](#2-sync-s)
    - [Command 3: `search` (`find`, `q`)](#3-search-find-q)
@@ -29,9 +29,10 @@
    - [Command 10: `graph` (`topology`, `hubs`)](#10-graph-topology-hubs)
    - [Command 11: `daily` (`day`, `journal`, `log`)](#11-daily-day-journal-log)
    - [Command 12: `bundle` (`export-bundle`, `export`)](#12-bundle-export-bundle-export)
-4. [The 16 JSON Canvas 1.0 Visual Architecture Maps](#-the-16-json-canvas-10-visual-architecture-maps)
+   - [Command 13: `vaelor` (`mine`, `l1`, `vlr`)](#13-vaelor-mine-l1-vlr)
+4. [The 17 JSON Canvas 1.0 Visual Architecture Maps](#-the-17-json-canvas-10-visual-architecture-maps)
 5. [The 18 Obsidian Bases (`.base`) Databases](#-the-18-obsidian-bases-base-databases)
-6. [The 12 Canonical Karpathy LLM Wiki Articles (`06-Wiki/`)](#-the-12-canonical-karpathy-llm-wiki-articles-06-wiki)
+6. [The 13 Canonical Karpathy LLM Wiki Articles](#-the-13-canonical-karpathy-llm-wiki-articles)
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
 
 ---
@@ -296,18 +297,47 @@ zoth-second-brain bundle
  Target Bundle:     05-Telemetry/zoth_second_brain_bundle.json (384.2 KB)
  Bundle SHA-256:    c8f2b3e7a0914...
  Health Score:      100/100 ✦ PERFECT
- Indexed Notes:     1,731 Notes · 12 Canonical Wiki Articles
- Spec Artifacts:    16 Canvases (JSON Canvas 1.0) · 18 Bases
+ Indexed Notes:     1,732 Notes · 13 Canonical Wiki Articles
+ Spec Artifacts:    17 Canvases (JSON Canvas 1.0) · 18 Bases
  Daily Note:        07-Daily/2026-10-26.md (8 entries)
  ✔ Successfully compiled and verified knowledge bundle!
 ───────────────────────────────────────────────────────────────────────
 ```
 
+### 13. `vaelor [--mine] [--json]` (`mine`, `l1`, `vlr`)
+Queries live Vaelor Layer-1 Account-Lattice DAG status, circulating `◈ VLR` supply, 5/5 BFT validator quorum, 8.5% APY compute vault yield, and active MCP agent tooling. When `--mine` is supplied, triggers the PoUW cognitive mining engine via `:8094` or `:8140` to compute an STDP neural vector indexing block, awarding `+15.9 ◈ VLR` and writing an immutable memory engram to the substrate. Supports `--json` for autonomous agent execution.
+
+```bash
+# Live L1 Telemetry Status
+zoth-second-brain vaelor
+
+# Machine-Readable JSON Output
+zoth-second-brain vaelor --json
+
+# Mine PoUW Cognitive Block (+15.9 ◈ VLR)
+zoth-second-brain vaelor --mine
+```
+**Sample Output:**
+```
+◈ Vaelor (◈ VLR) Layer-1 DAG & Consensus Status
+───────────────────────────────────────────────────────────────────────
+ Protocol:             Vaelor Account-Lattice L1 (vaelor-mainnet-1)
+ L1 Bridge Status:     ONLINE
+ Circulating Supply:   ◈ 191,726.78 VLR
+ Account-Lattice DAG:  171 Blocks Minted
+ BFT Consensus:        5/5 Regional Validators (80% Quorum)
+ Compute Vault Yield:  8.5% APY (flexible & locked tiers)
+ Merchant Cashback:    2.5% Protected-Pay Cashback
+ Network Gas Fee:      0 Gwei (Feeless Zero-Gas Transfers)
+ MCP Server Tooling:   10 Vaelor Agent Tools Active (:8140)
+───────────────────────────────────────────────────────────────────────
+```
+
 ---
 
-## 🎨 The 16 JSON Canvas 1.0 Visual Architecture Maps
+## 🎨 The 17 JSON Canvas 1.0 Visual Architecture Maps
 
-All 16 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](https://jsoncanvas.org/), containing strictly valid `nodes` (with `id`, `x`, `y`, `width`, `height`, and `type: text | file | link | group`) and `edges` (with `id`, `fromNode`, `toNode`, `fromSide`, `toSide`).
+All 17 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](https://jsoncanvas.org/), containing strictly valid `nodes` (with `id`, `x`, `y`, `width`, `height`, and `type: text | file | link | group`) and `edges` (with `id`, `fromNode`, `toNode`, `fromSide`, `toSide`).
 
 | # | Canvas File Path | Nodes | Edges | Core Domain & Architectural Focus |
 | :-: | :--- | :---: | :---: | :--- |
@@ -327,6 +357,7 @@ All 16 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](htt
 | **14**| `Maps/Rings.canvas` | 7 | 5 | Security rings: Ring 0 (Kernel) to Ring 3 (Client-side Web Studio). |
 | **15**| `Maps/Rooms.canvas` | 27 | 16 | Zoth Studio virtual workspaces, live collaborative canvas rooms, and IDE contexts. |
 | **16**| `Maps/Studio.canvas` | 24 | 23 | Zoth Studio v2 frontend architecture, 71 sovereign micro-tools, and WebGL engine. |
+| **17**| `Vaelor Layer-1 Complete Architecture.canvas` | 17 | 11 | Master L1 DAG, 5-Validator BFT, PoUW Cognitive Mining, 8.5% Vaults, 0% APR BNPL, Smart Receipts, Anti-Phishing Guard, Pedersen Commitments, 10-Tool MCP. |
 
 ---
 
@@ -357,9 +388,9 @@ Obsidian Bases provide structured, database-like querying over markdown files wi
 
 ---
 
-## 📚 The 12 Canonical Karpathy LLM Wiki Articles (`06-Wiki/`)
+## 📚 The 13 Canonical Karpathy LLM Wiki Articles
 
-Each canonical page in `06-Wiki/` represents an encyclopedic synthesis of a core architectural pillar, complete with verified wikilinks and STDP memory groundings:
+Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` represents an encyclopedic synthesis of a core architectural pillar, complete with verified wikilinks and STDP memory groundings:
 
 | # | Article File Name | Canonical Topic Title | Category | Status | Confidence | Summary & Technical Core |
 | :-: | :--- | :--- | :---: | :---: | :---: | :--- |
@@ -367,7 +398,7 @@ Each canonical page in `06-Wiki/` represents an encyclopedic synthesis of a core
 | **2** | `Byzantine Quorum & Epistemic Consensus.md` | Byzantine Quorum & Epistemic Consensus | `LLM-Wiki` | `CANONICAL` | `97%` | Epistemic truth consensus, multi-agent voting rounds, and Byzantine fault tolerance mechanisms. |
 | **3** | `Hermes Agent & Multi-Provider MCP Connector Ecosystem.md` | Hermes Agent & Multi-Provider MCP Connector Ecosystem | `LLM-Wiki` | `CANONICAL` | `99%` | Multi-provider MCP orchestration, dynamic tool discovery, and autonomous agent routing. |
 | **4** | `Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol.md` | Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol | `LLM-Wiki` | `CANONICAL` | `100%` | Complete reference for all 20 MCP tools (11 Cognitive STDP + 9 Obsidian Second Brain). |
-| **5** | `Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md` | Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Kepano Obsidian standards, 16 canvases, 18 bases, Knap synthesis, and bidirectional vault sync. |
+| **5** | `Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md` | Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Kepano Obsidian standards, 17 canvases, 18 bases, Knap synthesis, and bidirectional vault sync. |
 | **6** | `STDP Synaptic Memory Consolidation & Hebbian Dream Wave.md` | STDP Synaptic Memory Consolidation & Hebbian Dream Wave | `LLM-Wiki` | `CANONICAL` | `98%` | Hippocampal SWR dream waves, Ebbinghaus forgetting curves, and long-term memory stabilization. |
 | **7** | `Vaelor Account-Lattice & PoUW Protocol.md` | Vaelor Account-Lattice & PoUW Protocol | `LLM-Wiki` | `CANONICAL` | `99%` | Nano-inspired block-lattice DAG, Proof-of-Useful-Work AI mining, and ◈ VLR economic rails. |
 | **8** | `Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults.md` | Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults | `LLM-Wiki` | `CANONICAL` | `100%` | Zero-knowledge stealth addresses, multi-party group tabs, and dead-man switch inheritance vaults. |
@@ -375,6 +406,7 @@ Each canonical page in `06-Wiki/` represents an encyclopedic synthesis of a core
 | **10**| `Zero-Trust Supply Chain, Cosign & VirusTotal Verification.md` | Zero-Trust Supply Chain, Cosign & VirusTotal Verification | `LLM-Wiki` | `CANONICAL` | `98%` | Sigstore Cosign image signing, in-toto attestation, automated VirusTotal scanning, and SBOMs. |
 | **11**| `Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools.md` | Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools | `LLM-Wiki` | `CANONICAL` | `99%` | Material 3 glassmorphic Web IDE, 71 client-side micro-tools, dual Stripe/Solana monetization. |
 | **12**| `ZothOS Sovereign Linux & Kernel Architecture.md` | ZothOS Sovereign Linux & Kernel Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Hardened Linux 6.x kernel, cgroups v2 resource isolation, hardware thermals (<60°C target), and immutable roots. |
+| **13**| `05 - Knowledge Base/Karpathy LLM Wiki/Vaelor-Layer1-Complete-Reference.md` | Vaelor Layer-1 Complete Reference | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Account-Lattice DAG, 5-validator BFT, PoUW cognitive mining, 8.5% vaults, BNPL credit, Smart Receipts & 10-tool MCP server. |
 
 ---
 
