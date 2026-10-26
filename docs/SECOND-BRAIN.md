@@ -1,8 +1,9 @@
 # 💎 Zoth Second Brain & Sovereign Obsidian Integration Architecture
 
 [![Second Brain Health](https://img.shields.io/badge/audit-100%2F100%20%E2%9C%A6%20PERFECT-brightgreen.svg)](docs/SECOND-BRAIN.md)
-[![JSON Canvas 1.0](https://img.shields.io/badge/JSON%20Canvas%201.0-17%20verified-blue.svg)](https://jsoncanvas.org/)
-[![Obsidian Bases](https://img.shields.io/badge/Obsidian%20Bases-18%20active-purple.svg)](docs/SECOND-BRAIN.md)
+[![JSON Canvas 1.0](https://img.shields.io/badge/JSON%20Canvas%201.0-18%20verified-blue.svg)](https://jsoncanvas.org/)
+[![Obsidian Bases](https://img.shields.io/badge/Obsidian%20Bases-20%20active-purple.svg)](docs/SECOND-BRAIN.md)
+[![Vault Connectivity](https://img.shields.io/badge/Connectivity-100.0%25%20%E2%80%A2%200%20orphans-brightgreen.svg)](docs/SECOND-BRAIN.md)
 [![Karpathy LLM Wiki](https://img.shields.io/badge/Karpathy%20LLM%20Wiki-13%20canonical-gold.svg)](docs/SECOND-BRAIN.md)
 [![Vault Notes](https://img.shields.io/badge/vault%20notes-1%2C732%20indexed%20(99.6%25%20connected)-orange.svg)](docs/SECOND-BRAIN.md)
 [![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
@@ -30,8 +31,8 @@
    - [Command 11: `daily` (`day`, `journal`, `log`)](#11-daily-day-journal-log)
    - [Command 12: `bundle` (`export-bundle`, `export`)](#12-bundle-export-bundle-export)
    - [Command 13: `vaelor` (`mine`, `l1`, `vlr`)](#13-vaelor-mine-l1-vlr)
-4. [The 17 JSON Canvas 1.0 Visual Architecture Maps](#-the-17-json-canvas-10-visual-architecture-maps)
-5. [The 18 Obsidian Bases (`.base`) Databases](#-the-18-obsidian-bases-base-databases)
+4. [The 18 JSON Canvas 1.0 Visual Architecture Maps](#-the-18-json-canvas-10-visual-architecture-maps)
+5. [The 20 Obsidian Bases (`.base`) Databases](#-the-20-obsidian-bases-base-databases)
 6. [The 13 Canonical Karpathy LLM Wiki Articles](#-the-13-canonical-karpathy-llm-wiki-articles)
 7. [Automated Doctor Audit & Spec Verification Engine](#-automated-doctor-audit--spec-verification-engine)
 8. [The 21-Tool Model Context Protocol (MCP) Suite & `zoth-mcp` Ring-0 Integration](#-the-21-tool-model-context-protocol-mcp-suite--zoth-mcp-ring-0-integration)
@@ -53,14 +54,14 @@ The Zoth Second Brain bridges human knowledge management, biomorphic cognitive n
      │                      (/home/zoth/Documents/Obsidian Vault/)                      │
      │                                                                                  │
      │   ┌─────────────────────┐   ┌─────────────────────┐   ┌──────────────────────┐   │
-     │   │   16 JSON Canvases  │   │  18 Obsidian Bases  │   │  12 LLM Wiki Pages   │   │
+     │   │   18 JSON Canvases  │   │  20 Obsidian Bases  │   │  13 LLM Wiki Pages   │   │
      │   │   (.canvas 1.0)     │   │     (.base YAML)    │   │      (06-Wiki/)      │   │
      │   └──────────┬──────────┘   └──────────┬──────────┘   └──────────┬───────────┘   │
      │              │                         │                         │               │
      │              └─────────────────────────┼─────────────────────────┘               │
      │                                        ▼                                         │
-     │                      1,731 Obsidian Flavored Markdown Notes                      │
-     │                     (22 Maps of Content, 8,056 Wikilinks)                        │
+     │                      1,732 Obsidian Flavored Markdown Notes                      │
+     │              (22 Maps of Content, 8,121 Wikilinks, 100.0% Connectivity)          │
      └────────────────────────────────────────┬─────────────────────────────────────────┘
                                               │
                       Bidirectional STDP Sync │  zoth-second-brain CLI
@@ -120,7 +121,7 @@ sequenceDiagram
     Daemon->>Daemon: Encode Flashbulb engram & link MOCs
 
     Dev->>CLI: zoth-second-brain audit
-    CLI->>Vault: Validate 16 .canvas, 18 .base, 1,731 .md notes
+    CLI->>Vault: Validate 18 .canvas, 20 .base, 1,732 .md notes (100.0% connectivity)
     CLI-->>Dev: Second Brain Health: 100/100 ✦ PERFECT
 
     MCP->>Daemon: MCP Call: obsidian_vault_search / obsidian_note_read
@@ -145,9 +146,9 @@ zoth-second-brain status
 ◈ ZothOS Second Brain & Daemon Substrate Status
 ─────────────────────────────────────────────────────────────
  💎 Obsidian Vault: /home/zoth/Documents/Obsidian Vault
-    • Notes:     1731 (22 Maps of Content)
-    • Canvases:  16 (.canvas files)
-    • Bases:     18 (.base databases)
+    • Notes:     1732 (22 Maps of Content, 100.0% Connectivity)
+    • Canvases:  18 (.canvas files)
+    • Bases:     20 (.base databases)
 
  ⚡ Conductor & Fleet Daemons:
     ● ACTIVE  neuro-memory       :8094   [Memory & STDP]
@@ -224,17 +225,17 @@ zoth-second-brain audit
 ```
 🩺 Zoth Second Brain Health Audit & Spec Verification
 ───────────────────────────────────────────────────────────────────────
- 🎨 Auditing JSON Canvas 1.0 Files (16 files)...
-   ✔ 100% of Canvas files pass JSON Canvas 1.0 specification (16/16)
+ 🎨 Auditing JSON Canvas 1.0 Files (18 files)...
+   ✔ 100% of Canvas files pass JSON Canvas 1.0 specification (18/18)
 
- 📊 Auditing Obsidian Bases Databases (18 files)...
-   ✔ 100% of Base files pass Obsidian Bases YAML specification (18/18)
+ 📊 Auditing Obsidian Bases Databases (20 files)...
+   ✔ 100% of Base files pass Obsidian Bases YAML specification (20/20)
 
- 📝 Auditing Second Brain Knowledge Graph (1731 notes)...
-   • Total Notes:            1731
+ 📝 Auditing Second Brain Knowledge Graph (1732 notes)...
+   • Total Notes:            1732
    • Maps of Content (MOC):  22
-   • Total Wikilinks:        8056
-   • Graph Connectivity:     99.6%
+   • Total Wikilinks:        8121
+   • Graph Connectivity:     100.0% (0 orphan notes, 0 broken links)
 ───────────────────────────────────────────────────────────────────────
  Overall Second Brain Health Score: 100/100 ✦ PERFECT
 ───────────────────────────────────────────────────────────────────────
@@ -286,7 +287,7 @@ zoth-second-brain daily --append "Completed Wave 27 20-tool MCP verification"
 ```
 
 ### 12. `bundle` (`export-bundle`, `export`)
-Compiles the entire canonical Karpathy LLM Wiki, all 16 JSON Canvases, 18 Obsidian Bases, today's daily log, and graph topology into a single portable JSON file verified with a SHA-256 cryptographic checksum.
+Compiles the entire canonical Karpathy LLM Wiki, all 18 JSON Canvases, 20 Obsidian Bases, today's daily log, and graph topology into a single portable JSON file verified with a SHA-256 cryptographic checksum.
 
 ```bash
 zoth-second-brain bundle
@@ -299,8 +300,8 @@ zoth-second-brain bundle
  Bundle SHA-256:    c8f2b3e7a0914...
  Health Score:      100/100 ✦ PERFECT
  Indexed Notes:     1,732 Notes · 13 Canonical Wiki Articles
- Spec Artifacts:    17 Canvases (JSON Canvas 1.0) · 18 Bases
- Daily Note:        07-Daily/2026-10-26.md (8 entries)
+ Spec Artifacts:    18 Canvases (JSON Canvas 1.0) · 20 Bases
+ Daily Note:        07-Daily/2026-10-26.md (72 entries)
  ✔ Successfully compiled and verified knowledge bundle!
 ───────────────────────────────────────────────────────────────────────
 ```
@@ -336,9 +337,9 @@ zoth-second-brain vaelor --mine
 
 ---
 
-## 🎨 The 17 JSON Canvas 1.0 Visual Architecture Maps
+## 🎨 The 18 JSON Canvas 1.0 Visual Architecture Maps
 
-All 17 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](https://jsoncanvas.org/), containing strictly valid `nodes` (with `id`, `x`, `y`, `width`, `height`, and `type: text | file | link | group`) and `edges` (with `id`, `fromNode`, `toNode`, `fromSide`, `toSide`).
+All 18 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](https://jsoncanvas.org/), containing strictly valid `nodes` (with `id`, `x`, `y`, `width`, `height`, and `type: text | file | link | group`) and `edges` (with `id`, `fromNode`, `toNode`, `fromSide`, `toSide`).
 
 | # | Canvas File Path | Nodes | Edges | Core Domain & Architectural Focus |
 | :-: | :--- | :---: | :---: | :--- |
@@ -359,10 +360,11 @@ All 17 `.canvas` maps strictly adhere to the [JSON Canvas 1.0 specification](htt
 | **15**| `Maps/Rooms.canvas` | 27 | 16 | Zoth Studio virtual workspaces, live collaborative canvas rooms, and IDE contexts. |
 | **16**| `Maps/Studio.canvas` | 24 | 23 | Zoth Studio v2 frontend architecture, 71 sovereign micro-tools, and WebGL engine. |
 | **17**| `Vaelor Layer-1 Complete Architecture.canvas` | 17 | 11 | Master L1 DAG, 5-Validator BFT, PoUW Cognitive Mining, 8.5% Vaults, 0% APR BNPL, Smart Receipts, Anti-Phishing Guard, Pedersen Commitments, 10-Tool MCP. |
+| **18**| `ZothOS & Studio Supply-Chain Trust Stack.canvas` | 16 | 13 | End-to-end supply chain trust stack: CodeQL SAST, Semgrep, Gitleaks 8.30.1, OpenSSF Scorecard, SPDX/CycloneDX SBOM, Sigstore Cosign, SLSA Level 3, VirusTotal 70+ AV scanner. |
 
 ---
 
-## 📊 The 18 Obsidian Bases (`.base`) Databases
+## 📊 The 20 Obsidian Bases (`.base`) Databases
 
 Obsidian Bases provide structured, database-like querying over markdown files with typed schemas, custom formulas, dynamic filters, and multiple views (Table, Cards, Kanban).
 
@@ -386,6 +388,8 @@ Obsidian Bases provide structured, database-like querying over markdown files wi
 | **16**| `Maps/MCP.base` | Table, Cards | Model Context Protocol servers, stdio transport endpoints, and 20 tool schemas. |
 | **17**| `Maps/Studio Tools.base` | Table, Cards | In-browser micro-SaaS utilities, client-side AST parsers, and conversion tools. |
 | **18**| `Maps/Rooms.base` | Table, Cards | Virtual collaborative rooms, chat sessions, and multi-agent workspaces. |
+| **19**| `Vaelor Ecosystem & Patronage Ledger.base` | Table, Cards, Rewards | `file.hasTag("vaelor")` · Feeless transfers, 5/5 BFT quorum, 8.5% compute vaults, and PoUW patronage ledger. |
+| **20**| `Sovereign MCP Tools & Agent Catalog.base` | Table, Cards, Substrates | `file.hasTag("mcp")` · Master catalog indexing 21 Neuro-Memory + 12 Vaelor L1 tools in zoth-mcp Ring-0. |
 
 ---
 
@@ -399,7 +403,7 @@ Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` r
 | **2** | `Byzantine Quorum & Epistemic Consensus.md` | Byzantine Quorum & Epistemic Consensus | `LLM-Wiki` | `CANONICAL` | `97%` | Epistemic truth consensus, multi-agent voting rounds, and Byzantine fault tolerance mechanisms. |
 | **3** | `Hermes Agent & Multi-Provider MCP Connector Ecosystem.md` | Hermes Agent & Multi-Provider MCP Connector Ecosystem | `LLM-Wiki` | `CANONICAL` | `99%` | Multi-provider MCP orchestration, dynamic tool discovery, and autonomous agent routing. |
 | **4** | `Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol.md` | Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol | `LLM-Wiki` | `CANONICAL` | `100%` | Complete reference for all 21 MCP tools (11 Cognitive STDP + 10 Obsidian Second Brain & Vaelor L1). |
-| **5** | `Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md` | Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Kepano Obsidian standards, 17 canvases, 18 bases, Knap synthesis, and bidirectional vault sync. |
+| **5** | `Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md` | Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture | `LLM-Wiki` | `CANONICAL` | `100%` | Kepano Obsidian standards, 18 canvases, 20 bases, Knap synthesis, 100.0% connectivity, and bidirectional vault sync. |
 | **6** | `STDP Synaptic Memory Consolidation & Hebbian Dream Wave.md` | STDP Synaptic Memory Consolidation & Hebbian Dream Wave | `LLM-Wiki` | `CANONICAL` | `98%` | Hippocampal SWR dream waves, Ebbinghaus forgetting curves, and long-term memory stabilization. |
 | **7** | `Vaelor Account-Lattice & PoUW Protocol.md` | Vaelor Account-Lattice & PoUW Protocol | `LLM-Wiki` | `CANONICAL` | `99%` | Nano-inspired block-lattice DAG, Proof-of-Useful-Work AI mining, and ◈ VLR economic rails. |
 | **8** | `Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults.md` | Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults | `LLM-Wiki` | `CANONICAL` | `100%` | Zero-knowledge stealth addresses, multi-party group tabs, and dead-man switch inheritance vaults. |
