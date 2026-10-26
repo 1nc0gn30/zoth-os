@@ -146,6 +146,22 @@ if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/Desktop" ]; then
   chmod +x "$HOME/Desktop/"*.desktop "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
 fi
 
+# Install ZothOS Sovereign Gold GRUB Bootloader Theme & regenerate grub.cfg
+if [ -d "$REPO_DIR/config/includes.chroot/boot/grub/themes/zoth-hermetic" ]; then
+  echo -e "${CYAN}  • Installing ZothOS Sovereign Gold GRUB Bootloader Theme ...${RESET}"
+  sudo mkdir -p /boot/grub/themes/zoth-hermetic
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/boot/grub/themes/zoth-hermetic/"* /boot/grub/themes/zoth-hermetic/
+  if [ -f /etc/default/grub ]; then
+    sudo sed -i 's|^GRUB_DISTRIBUTOR=.*|GRUB_DISTRIBUTOR="ZothOS"|' /etc/default/grub
+    if grep -q "^GRUB_THEME=" /etc/default/grub; then
+      sudo sed -i 's|^GRUB_THEME=.*|GRUB_THEME="/boot/grub/themes/zoth-hermetic/theme.txt"|' /etc/default/grub
+    else
+      echo 'GRUB_THEME="/boot/grub/themes/zoth-hermetic/theme.txt"' | sudo tee -a /etc/default/grub >/dev/null
+    fi
+    sudo update-grub 2>/dev/null || true
+  fi
+fi
+
 # ------------------------------------------------------------------------------
 # STEP 6: Activate Live ZothOS 3.3 Sovereign Gold Mode, 3D Wallpaper & Zoth-Bot
 # ------------------------------------------------------------------------------
