@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# ⚡ ZOTH-DUALBOOT — Simultaneous Physical Drive KVM/UEFI Boot Engine
+# ==============================================================================
+# Boots your second physical drive (/dev/sda — Parrot OS / Work Drive) inside a
+# hardware-accelerated KVM/QEMU + OVMF UEFI session while ZothOS stays running!
+#
+# Key Engineering:
+# 1. Safety Guard: Verifies /dev/sda1 and /dev/sda2 are NOT mounted or swapon'd
+#    on the host before launching KVM to guarantee 0% filesystem corruption.
+# 2. Isolated Virtual ESP (UUID=8FD3-128C): Synthesizes a 64MB GPT EFI System
+#    Partition image (~/.config/zoth-dualboot/parrot-efi.img) carrying the exact
+#    FAT32 Volume ID (8FD3-128C) expected by /dev/sda1's /etc/fstab and clones
+#    /boot/efi/EFI/Parrot/grubx64.efi into \EFI\BOOT\BOOTX64.EFI so Parrot OS
+#    boots seamlessly without touching ZothOS's mounted /dev/nvme0n1p2.
+# ==============================================================================
+set -euo pipefail
+
+PREP_ONLY=0
+if [ "${1:-}" = "--prep-only" ]; then
+  PREP_ONLY=1
+  shift
+fi
+
+TARGET_DISK="${1:-/dev/sda}"
+CORES="${ZOTH_VM_CORES:-6}"
+RAM_MB="${ZOTH_VM_RAM:-12288}"
+CONF_DIR="$HOME/.config/zoth-dualboot"
+EFI_IMG="$CONF_DIR/parrot-efi.img"
+OVMF_VARS="$CONF_DIR/OVMF_VARS_4M.fd"
+OVMF_CODE="/usr/share/OVMF/OVMF_CODE_4M.fd"
+
+mkdir -p "$CONF_DIR"
+
+echo "=================================================================="
+echo "⚡ ZOTH-DUALBOOT — Simultaneous Physical Drive KVM Launcher"
+echo "=================================================================="
+echo "  Target Physical Drive : $TARGET_DISK"
+echo "  Allocated Xeon Cores  : $CORES threads (host-passthrough)"
+echo "  Allocated Memory      : $RAM_MB MB (~12 GB RAM)"
+echo "=================================================================="
+
+if [ ! -b "$TARGET_DISK" ]; then
+  echo "❌ Block device $TARGET_DISK not found."
+  exit 1
+fi
+
+# 1. Safety Check: Ensure no partition of TARGET_DISK is mounted or active swap on host
+if lsblk -no MOUNTPOINT "$TARGET_DISK" | grep -qE '\S'; then
+  echo "⚠️  Unmounting / disabling swap on $TARGET_DISK partitions before KVM handoff..."
+  for part in $(lsblk -ln -o NAME "$TARGET_DISK" | tail -n +2); do
+    sudo swapoff "/dev/$part" 2>/dev/null || true
+    sudo umount "/dev/$part" 2>/dev/null || true
+  done
+fi
+
+if lsblk -no MOUNTPOINT "$TARGET_DISK" | grep -qE '\S'; then
+  echo "❌ Safety Abort: $TARGET_DISK still has a mounted partition on host:"
+  lsblk "$TARGET_DISK"
+  exit 1
+fi
+
+# 2. Prepare writable OVMF UEFI NVRAM variables
+if [ ! -f "$OVMF_VARS" ]; then
+  cp /usr/share/OVMF/OVMF_VARS_4M.fd "$OVMF_VARS"
+fi
+
+# 3. Build or refresh the isolated 64MB GPT EFI System Partition (UUID=8FD3-128C)
+if [ ! -f "$EFI_IMG" ] || [ "${REFRESH_EFI:-0}" = "1" ]; then
+  echo "🔧 Synthesizing isolated UEFI Boot Image ($EFI_IMG) with UUID=8FD3-128C..."
+  dd if=/dev/zero of="$EFI_IMG" bs=1M count=64 status=none
+  parted -s "$EFI_IMG" mklabel gpt
+  parted -s "$EFI_IMG" mkpart ZOTH_EFI fat32 1MiB 63MiB
+  parted -s "$EFI_IMG" set 1 esp on
+
+  LOOP_DEV=$(sudo losetup --find --show --partscan "$EFI_IMG")
+  trap 'sudo losetup -d "$LOOP_DEV" 2>/dev/null || true' EXIT
+
+  sudo mkfs.vfat -F 32 -i 8FD3128C -n ZOTH_EFI "${LOOP_DEV}p1" >/dev/null
+  MNT_TMP=$(mktemp -d)
+  sudo mount "${LOOP_DEV}p1" "$MNT_TMP"
+  sudo mkdir -p "$MNT_TMP/EFI/BOOT" "$MNT_TMP/EFI/Parrot"
+
+  if sudo test -f /boot/efi/EFI/Parrot/grubx64.efi; then
+    sudo cp /boot/efi/EFI/Parrot/grubx64.efi "$MNT_TMP/EFI/Parrot/grubx64.efi"
+    sudo cp /boot/efi/EFI/Parrot/grubx64.efi "$MNT_TMP/EFI/BOOT/BOOTX64.EFI"
+  elif sudo test -f /boot/efi/EFI/BOOT/BOOTX64.EFI; then
+    sudo cp /boot/efi/EFI/BOOT/BOOTX64.EFI "$MNT_TMP/EFI/BOOT/BOOTX64.EFI"
+  fi
+
+  sudo sync
+  sudo umount "$MNT_TMP"
+  rmdir "$MNT_TMP"
+  sudo losetup -d "$LOOP_DEV"
+  trap - EXIT
+  echo "✅ Virtual ESP ready (UUID=8FD3-128C, Parrot GRUB UEFI staged)."
+fi
+
+if [ "$PREP_ONLY" = "1" ]; then
+  echo "✅ Dry-run / preparation complete! Run 'zoth-dualboot' to launch."
+  exit 0
+fi
+
+echo "🚀 Booting $TARGET_DISK inside hardware-accelerated KVM window..."
+echo "   (Press Ctrl+Alt+G to release mouse/keyboard grab, Ctrl+Alt+F for Fullscreen)"
+
+exec sudo qemu-system-x86_64 \
+  -name "Zoth-DualBoot ($TARGET_DISK)" \
+  -enable-kvm \
+  -machine q35,accel=kvm \
+  -cpu host,kvm=on \
+  -smp "cpus=$CORES,cores=$CORES,threads=1" \
+  -m "$RAM_MB" \
+  -drive if=pflash,format=raw,readonly=on,file="$OVMF_CODE" \
+  -drive if=pflash,format=raw,file="$OVMF_VARS" \
+  -drive file="$EFI_IMG",format=raw,if=virtio,index=0 \
+  -drive file="$TARGET_DISK",format=raw,if=virtio,cache=none,aio=native,index=1 \
+  -vga virtio \
+  -display gtk,gl=off,grab-on-hover=off \
+  -usb -device usb-tablet \
+  -netdev user,id=net0,hostfwd=tcp::2222-:22 \
+  -device virtio-net-pci,netdev=net0
