@@ -47,13 +47,28 @@
         "neuro_memory_daemon.cli",
         "mcp"
       ],
-      "description": "Biological-fidelity neuro-memory substrate with STDP, 3-factor neuromodulation, and spreading activation.",
+      "description": "Biological-fidelity neuro-memory substrate with STDP, 3-factor neuromodulation, spreading activation, and 21 Obsidian Second Brain tools.",
       "offline": true,
       "enabled": true,
       "securityRing": "RING_0_SOVEREIGN",
       "ring_level": 0,
       "sandbox": "${ZOTH_HOME}/.neuro_memory",
       "fallbackHandler": "python3 -m neuro_memory_daemon.cli search ''",
+      "timeout": 60,
+      "alwaysAllow": []
+    },
+    "vaelor-l1": {
+      "command": "node",
+      "args": [
+        "${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"
+      ],
+      "description": "Vaelor Layer-1 feeless Account-Lattice DAG, PoUW mining, 8.5% savings vaults, and financial tools.",
+      "offline": true,
+      "enabled": true,
+      "securityRing": "RING_0_SOVEREIGN",
+      "ring_level": 0,
+      "sandbox": "${ZOTH_HOME}/NullAITech/vaelor-network",
+      "fallbackHandler": "node ${ZOTH_HOME}/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js --status",
       "timeout": 60,
       "alwaysAllow": []
     },
