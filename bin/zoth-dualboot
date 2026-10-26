@@ -17,30 +17,80 @@
 set -euo pipefail
 
 PREP_ONLY=0
+MON_SOCK="/tmp/zoth-dualboot-monitor.sock"
+
+qemu_mon_exec() {
+  if [ ! -S "$MON_SOCK" ]; then
+    echo "❌ Monitor socket $MON_SOCK not found (is Zoth-DualBoot running?)."
+    return 1
+  fi
+  sudo python3 - "$MON_SOCK" "$@" <<'PYEOF'
+import socket, sys, time
+
+sock_path = sys.argv[1]
+cmds = sys.argv[2:]
+
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.settimeout(2.0)
+s.connect(sock_path)
+time.sleep(0.1)
+try:
+    s.recv(4096)
+except Exception:
+    pass
+
+for cmd in cmds:
+    if cmd.startswith("SLEEP:"):
+        time.sleep(float(cmd.split(":", 1)[1]))
+        continue
+    s.sendall((cmd + "\n").encode())
+    time.sleep(0.15)
+    try:
+        out = s.recv(8192).decode(errors="ignore")
+        for line in out.splitlines():
+            clean = line.strip()
+            if not clean or "\x1b[" in clean or clean.startswith("(qemu)") or clean.startswith("QEMU "):
+                continue
+            print("  [qemu]", clean)
+    except Exception:
+        pass
+
+s.close()
+PYEOF
+}
+
 if [ "${1:-}" = "--prep-only" ]; then
   PREP_ONLY=1
   shift
+elif [ "${1:-}" = "status" ] || [ "${1:-}" = "--status" ]; then
+  echo "🔍 Checking Zoth-DualBoot QEMU status..."
+  qemu_mon_exec "info status"
+  exit 0
+elif [ "${1:-}" = "reset" ] || [ "${1:-}" = "--reset" ]; then
+  echo "🔄 Sending hardware system_reset to Zoth-DualBoot..."
+  qemu_mon_exec "system_reset" "info status"
+  echo "✅ Reset signal dispatched."
+  exit 0
 elif [ "${1:-}" = "wake" ] || [ "${1:-}" = "--wake" ]; then
   echo "⚡ Sending wakeup & DPMS unblank signals to Zoth-DualBoot..."
-  if [ -S /tmp/zoth-dualboot-monitor.sock ]; then
-    {
-      echo "system_wakeup"
-      echo "sendkey shift"
-      echo "sendkey ctrl-alt-f1"
-      sleep 0.5
-      echo "sendkey ctrl-alt-f7"
-    } | sudo socat - UNIX-CONNECT:/tmp/zoth-dualboot-monitor.sock >/dev/null 2>&1 || true
+  if [ -S "$MON_SOCK" ]; then
+    qemu_mon_exec \
+      "info status" \
+      "system_wakeup" \
+      "sendkey shift" \
+      "sendkey spc" \
+      "mouse_move 15 15" \
+      "sendkey ctrl-alt-f1" \
+      "SLEEP:0.5" \
+      "sendkey ctrl-alt-f7" \
+      "info status" || true
   fi
   WIN_ID=$(DISPLAY="${DISPLAY:-:0}" xdotool search --name "Zoth-DualBoot" 2>/dev/null | head -n 1 || true)
   if [ -n "$WIN_ID" ]; then
     DISPLAY="${DISPLAY:-:0}" xdotool key --window "$WIN_ID" shift Return space 2>/dev/null || true
     echo "✅ Wake signal sent to window $WIN_ID!"
   fi
-  echo "💡 Tip: Inside the QEMU window, you can also click 'View -> compatmonitor0' (or press Ctrl+Alt+2), type:"
-  echo "     system_wakeup"
-  echo "     sendkey ctrl-alt-f1"
-  echo "     sendkey ctrl-alt-f7"
-  echo "   and then switch back via 'View -> virtio-vga' (or Ctrl+Alt+1)."
+  echo "💡 Tip: Run 'zoth-dualboot reset' to reboot the VM cleanly if the guest OS is frozen."
   exit 0
 fi
 
@@ -130,7 +180,7 @@ exec sudo qemu-system-x86_64 \
   -name "Zoth-DualBoot ($TARGET_DISK)" \
   -enable-kvm \
   -machine q35,accel=kvm \
-  -global ICH9-LPC.disable_s3=1 \
+  -global ICH9-LPC.disable_s3=0 \
   -global ICH9-LPC.disable_s4=1 \
   -cpu host,kvm=on \
   -smp "cpus=$CORES,cores=$CORES,threads=1" \
