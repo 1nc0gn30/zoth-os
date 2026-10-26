@@ -1,0 +1,77 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:2:1-32:12
+	package
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:2:11-69
+uses-feature#android.hardware.type.watch
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:4:5-64
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:4:19-61
+uses-permission#android.permission.INTERNET
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:6:22-64
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:7:5-71
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:7:22-68
+application
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:9:5-31:19
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:9:5-31:19
+	android:extractNativeLibs
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	android:label
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:12:9-33
+	android:hardwareAccelerated
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:14:9-43
+	android:icon
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:11:9-45
+	android:allowBackup
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:10:9-36
+	android:theme
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:13:9-37
+	android:networkSecurityConfig
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:16:9-69
+	android:usesCleartextTraffic
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:15:9-44
+meta-data#com.google.android.wearable.standalone
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:18:9-20:36
+	android:value
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:20:13-33
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:19:13-66
+activity#com.nealfrazier.zothbot.MainActivity
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:22:9-30:20
+	android:launchMode
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:25:13-44
+	android:exported
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:24:13-36
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:23:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:26:13-29:29
+action#android.intent.action.MAIN
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:27:17-69
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:27:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:28:17-77
+	android:name
+		ADDED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml:28:27-74
+uses-sdk
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/zoth/NullAITech/zoth-bot/wear/app/src/main/AndroidManifest.xml

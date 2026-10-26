@@ -1,7 +1,7 @@
 [Icon Theme]
 Name=Zoth-Hermetic
 Comment=Hermetic Emerald, Obsidian Void & Cyber Alchemical Vector Icons for ZOTHOS
-Inherits=Papirus-Dark,Papirus,Adwaita,hicolor
+Inherits=Papirus-Dark,Papirus,breeze-dark,breeze,Adwaita,hicolor
 Directories=512x512/apps,256x256/apps,128x128/apps,96x96/apps,64x64/apps,48x48/apps,32x32/apps,24x24/apps,16x16/apps,scalable/apps
 
 [512x512/apps]

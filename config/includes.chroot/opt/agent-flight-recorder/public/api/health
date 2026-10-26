@@ -1,0 +1,10 @@
+{
+  "status": "ONLINE",
+  "service": "agent-flight-recorder",
+  "version": "2.5.0",
+  "port": 8104,
+  "mode": "BLACK_BOX_TELEMETRY",
+  "frames_recorded": 24610,
+  "merkle_root_verified": true,
+  "incidents": 0
+}

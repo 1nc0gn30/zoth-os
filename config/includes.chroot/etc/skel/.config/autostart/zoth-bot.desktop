@@ -1,9 +1,11 @@
 [Desktop Entry]
 Type=Application
 Name=Zoth Bot
-Comment=Pocket companion — Hermes on this laptop
-Exec=/home/zoth/NullAITech/zoth-bot/bin/zoth-bot
-Icon=/home/zoth/NullAITech/zoth-bot/assets/icon-256.png
+GenericName=Sovereign AI Desk Companion
+Comment=Pocket companion — Azoth Prime / Hermes on this workstation
+Exec=/opt/zoth-bot/bin/zoth-bot
+Icon=/opt/zoth-bot/assets/icon-256.png
 Terminal=false
+Categories=Utility;ArtificialIntelligence;
 X-GNOME-Autostart-enabled=true
 StartupNotify=false

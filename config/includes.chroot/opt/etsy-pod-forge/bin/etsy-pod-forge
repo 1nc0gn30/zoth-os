@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+"""Etsy POD Forge Executable CLI Wrapper.
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+"""
+
+import os
+import sys
+
+# Add src to sys.path
+BIN_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(BIN_DIR)
+SRC_DIR = os.path.join(REPO_ROOT, "src")
+
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+from etsy_pod_forge.cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())

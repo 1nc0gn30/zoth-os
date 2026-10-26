@@ -1,0 +1,10 @@
+{
+  "status": "ONLINE",
+  "service": "agent-mock-twin",
+  "version": "2.5.0",
+  "port": 8097,
+  "mode": "DETERMINISTIC_REPLAY",
+  "cassettes_loaded": 42,
+  "replayed_calls": 1284,
+  "tokens_saved": 482900
+}

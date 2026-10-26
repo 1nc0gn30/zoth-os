@@ -1,0 +1,357 @@
+/* ==========================================================================
+   AGENT MOCK TWIN — WAVE STATES ENHANCEMENT
+   Anchor Concept: Precision Telemetry Instrument Deck — Reactive State Matrix
+   Provides: Accessible :focus-visible rings, tactile hovers, empty states,
+             error presentations, and robust prefers-reduced-motion overrides.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ACCESSIBLE :FOCUS-VISIBLE INDICATORS
+   Calibrated 2px geometric rings with semantic role tints & 2px offsets
+   -------------------------------------------------------------------------- */
+
+/* Universal Focus-Visible Foundation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.drop-zone:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+/* Action Button Focus Rings */
+.btn-gold:focus-visible,
+#btnRunTest:focus-visible,
+#btnActivateKey:focus-visible,
+#btnLoadSampleOpenAI:focus-visible {
+  outline: 2px solid #FFF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.45);
+}
+
+.btn-stripe:focus-visible {
+  outline: 2px solid #FFF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.5);
+}
+
+.btn-solana:focus-visible {
+  outline: 2px solid #FFF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(20, 241, 149, 0.5);
+}
+
+.btn-outline:focus-visible,
+#btnLoadSampleAnthropic:focus-visible,
+#btnExportDockerLive:focus-visible,
+#btnChaosTriggerLive:focus-visible,
+#btnActivateBanner:focus-visible,
+#btnKeyOverlay:focus-visible {
+  outline: 2px solid var(--cyan-glow);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+}
+
+#closeProModal:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Form & Input Focus Rings */
+#testEndpointSelect:focus-visible,
+#testRequestBody:focus-visible,
+#licenseKeyInput:focus-visible {
+  outline: 2px solid var(--cyan-glow);
+  outline-offset: 1px;
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25), 0 0 14px rgba(6, 182, 212, 0.15);
+}
+
+#testResponseBody:focus-visible {
+  outline: 2px solid var(--emerald-glow);
+  outline-offset: 1px;
+  border-color: var(--emerald-glow);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+#latencySlider:focus-visible {
+  outline: 2px solid var(--cyan-glow);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Header & Footer Links */
+header a:focus-visible,
+footer a:focus-visible,
+.sales-banner a:focus-visible,
+.paywall-overlay a:focus-visible,
+.modal-box a:focus-visible {
+  outline: 2px solid var(--gold-glow);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   2. TACTILE HOVER & ACTIVE MICRO-STATES
+   120–180ms subtle elevation and instrument illumination
+   -------------------------------------------------------------------------- */
+
+/* Buttons Tactile Press and Hover */
+.btn {
+  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.14s ease,
+              border-color 0.14s ease,
+              box-shadow 0.14s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn-gold:hover {
+  background: #E5C358;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+}
+
+.btn-stripe:hover {
+  background: #7A73FF;
+  box-shadow: 0 6px 18px rgba(99, 91, 255, 0.45);
+}
+
+.btn-solana:hover {
+  background: #3DF9AB;
+  box-shadow: 0 6px 18px rgba(20, 241, 149, 0.45);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #FFF;
+}
+
+#closeProModal {
+  transition: color 0.14s ease, transform 0.14s ease;
+}
+
+#closeProModal:hover {
+  color: #FFF;
+  transform: scale(1.1);
+}
+
+/* Glass Card & Telemetry Card Hover Highlights */
+.glass-card {
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.5);
+}
+
+.telemetry-card {
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.telemetry-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  background: rgba(18, 22, 34, 0.85);
+  transform: translateY(-1px);
+}
+
+/* Ingestion Drop Zone Hover & Drag States */
+.drop-zone {
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.drop-zone:hover {
+  border-color: var(--gold-primary);
+  background: rgba(212, 175, 55, 0.06);
+  transform: translateY(-1px);
+}
+
+/* Route Table Row Hover Feedback */
+#routeListTable tr {
+  transition: background 0.14s ease;
+}
+
+#routeListTable tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Replay Log Feed Item Hover */
+.replay-card {
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.replay-card:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(12, 16, 24, 0.85);
+  transform: translateY(-1px);
+}
+
+/* Form Controls Hover Readiness */
+#testEndpointSelect:hover,
+#testRequestBody:hover,
+#licenseKeyInput:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+#latencySlider:hover {
+  opacity: 0.95;
+}
+
+/* Badges & Pills Subtle Hover */
+.badge:hover,
+.provider-pill:hover,
+.method-badge:hover {
+  filter: brightness(1.15);
+}
+
+/* Attribution & Nav Links Hover */
+header a,
+footer a {
+  transition: color 0.14s ease, text-shadow 0.14s ease;
+}
+
+header a:hover,
+footer a:hover {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   3. EMPTY PRESENTATION STATES
+   Instrument placeholder indicators for unoccupied datasets
+   -------------------------------------------------------------------------- */
+
+#routeListTable:empty::after {
+  content: "No mock routes loaded. Drop a HAR file or load a sample blueprint above.";
+  display: block;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+#routeListTable tr td[colspan] {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: #9CA3AF;
+  padding: 24px 16px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+#replayLogList:empty::before {
+  content: "Awaiting agent request traffic...";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 6px;
+  margin: 6px 0;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+#licenseKeyInput::placeholder,
+#testRequestBody::placeholder {
+  color: rgba(156, 163, 175, 0.45);
+  font-style: normal;
+}
+
+/* --------------------------------------------------------------------------
+   4. ERROR & VALIDATION PRESENTATION STATES
+   High-contrast telemetry fault indicators & alert boundaries
+   -------------------------------------------------------------------------- */
+
+/* Form Input Validation Diagnostics */
+#licenseKeyInput:invalid:not(:placeholder-shown),
+#licenseKeyInput[aria-invalid="true"] {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 1px #EF4444, 0 0 12px rgba(239, 68, 68, 0.25);
+}
+
+#licenseKeyInput:invalid:not(:placeholder-shown):focus-visible,
+#licenseKeyInput[aria-invalid="true"]:focus-visible {
+  outline: 2px solid #EF4444;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Disabled Interactive Elements */
+.btn:disabled,
+button:disabled,
+input:disabled,
+textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Toast Notification Hover & Accent Elevation */
+.glass-toast {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s ease;
+}
+
+.glass-toast:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75);
+}
+
+/* --------------------------------------------------------------------------
+   5. PREFERS-REDUCED-MOTION OVERRIDES
+   Strict zero-latency motion suppression for vestibular accessibility
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .btn,
+  .btn:hover,
+  .btn:active,
+  .glass-card,
+  .glass-card:hover,
+  .telemetry-card,
+  .telemetry-card:hover,
+  .replay-card,
+  .replay-card:hover,
+  #routeListTable tr,
+  #routeListTable tr:hover,
+  .drop-zone,
+  .drop-zone:hover,
+  #closeProModal,
+  #closeProModal:hover,
+  .glass-toast,
+  .modal-backdrop,
+  .modal-box,
+  .conic-beam::before {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

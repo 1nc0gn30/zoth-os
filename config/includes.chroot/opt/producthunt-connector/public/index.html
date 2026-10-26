@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zoth PH · Product Hunt connector</title>
+  <style>
+    :root {
+      --bg: #08080B;
+      --ink: #EDE8DC;
+      --mute: #9A917C;
+      --gold: #D4AF37;
+      --line: rgba(212, 175, 55, 0.28);
+      --ok: #34D399;
+      --bad: #F87171;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); }
+    body { font-family: var(--serif); padding: 32px 24px 64px; max-width: 880px; margin: 0 auto; }
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
+    h1 { font-size: 2.1rem; font-weight: 600; margin: 8px 0 8px; letter-spacing: -0.02em; }
+    p.lead { color: var(--mute); max-width: 60ch; line-height: 1.55; margin: 0 0 28px; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      background: #0C0C10;
+    }
+    .row { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+    .row:first-child { border-top: 0; padding-top: 0; }
+    .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); }
+    .v { font-family: var(--mono); font-size: 13px; text-align: right; word-break: break-all; }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+    label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 8px; }
+    input[type=password] {
+      width: 100%; background: #111217; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 10px; padding: 12px 14px; font-family: var(--mono); font-size: 14px;
+    }
+    button, .btn {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--gold); color: #111; border: 0; border-radius: 999px; padding: 10px 16px;
+      font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;
+    }
+    button.ghost { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .comment { font-size: 0.95rem; line-height: 1.5; margin: 0 0 14px; }
+    .comment b { font-family: var(--mono); font-size: 12px; color: var(--gold); font-weight: 600; }
+    .note { font-family: var(--mono); font-size: 12px; color: var(--mute); line-height: 1.5; }
+    a { color: var(--gold); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="eyebrow">Zoth OS · Product Hunt</div>
+  <h1>Keep the listing honest.</h1>
+  <p class="lead">Read votes, comments, website, and GitHub. The public API cannot change those URLs. When they drift, this page tells you the dashboard step.</p>
+
+  <div class="card" id="login-card">
+    <div class="eyebrow">Developer token</div>
+    <p class="note" style="margin: 10px 0 14px;">Create an app at producthunt.com/v2/oauth/applications, copy the Developer Token, paste it here. It is stored in ~/.config/zothos/producthunt.secret.json mode 0600. Never paste it in chat.</p>
+    <label for="token">Token</label>
+    <input id="token" type="password" autocomplete="off" />
+    <div class="actions">
+      <button type="button" id="save">Save token</button>
+      <button type="button" class="ghost" id="refresh">Refresh listing</button>
+    </div>
+    <p class="note" id="login-msg"></p>
+  </div>
+
+  <div class="card" id="status-card">
+    <div class="eyebrow">Live listing</div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Comments</div>
+    <div id="comments" class="note">Load status to see comments. This tool does not post replies.</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Official badges</div>
+    <p class="note" id="badges"></p>
+  </div>
+
+  <script>
+    const rows = document.getElementById("rows");
+    const comments = document.getElementById("comments");
+    const loginMsg = document.getElementById("login-msg");
+    const badges = document.getElementById("badges");
+
+    function row(k, v, cls) {
+      return `<div class="row"><span class="k">${k}</span><span class="v ${cls || ""}">${v}</span></div>`;
+    }
+
+    async function loadStatus() {
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      if (!data.configured) {
+        rows.innerHTML = row("state", "not logged in", "bad");
+        return data;
+      }
+      if (data.error) {
+        rows.innerHTML = row("error", data.error, "bad");
+        return data;
+      }
+      const drift = (data.drift || []).map(d => row(d.field + " action", d.action, "bad")).join("");
+      rows.innerHTML = [
+        row("name", data.name || ""),
+        row("votes", data.votesCount ?? "—"),
+        row("comments", data.commentsCount ?? "—"),
+        row("reviews", data.reviewsCount ?? "—"),
+        row("week rank", data.weeklyRank ?? "—"),
+        row("website live", data.website || "—", data.website_ok ? "ok" : "bad"),
+        row("website desired", (data.desired || {}).website || "", data.website_ok ? "ok" : "bad"),
+        row("github live", (data.github_urls || []).join(" ") || "(none)", data.github_release_ok ? "ok" : "bad"),
+        row("github desired", (data.desired || {}).github || "", data.github_release_ok ? "ok" : "bad"),
+        row("api can patch URLs", "no — dashboard only"),
+        drift
+      ].join("");
+      const list = data.comments || [];
+      comments.innerHTML = list.length
+        ? list.map(c => `<p class="comment"><b>@${c.username || c.user}</b> ${c.body || ""}</p>`).join("")
+        : "no comments";
+      const b = data.badges || {};
+      badges.innerHTML = (b.featured_html || "") + "<br><br>" + (b.review_html || "");
+      return data;
+    }
+
+    document.getElementById("save").onclick = async () => {
+      const token = document.getElementById("token").value.trim();
+      loginMsg.textContent = "saving…";
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ developer_token: token })
+      });
+      const data = await res.json();
+      document.getElementById("token").value = "";
+      loginMsg.textContent = data.ok ? `saved as @${data.username}` : (data.error || "failed");
+      if (data.ok) loadStatus();
+    };
+    document.getElementById("refresh").onclick = loadStatus;
+    loadStatus().catch(err => { rows.innerHTML = row("error", String(err), "bad"); });
+  </script>
+</body>
+</html>

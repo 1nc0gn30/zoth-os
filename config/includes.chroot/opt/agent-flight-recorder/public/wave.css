@@ -1,0 +1,169 @@
+/* ==========================================================================
+   Agent Flight Recorder • Wave Telemetry Surface Refinement
+   Design Anchor: Precision Cockpit Telemetry Seam
+   - Calibrated type hierarchy for telemetry monitoring
+   - High-contrast, accessible focus-visible rings
+   - Short transform/opacity entrance motion for telemetry results
+   - Full prefers-reduced-motion compliance
+   ========================================================================== */
+
+/* --- Type Hierarchy on Working Tool Surface --- */
+
+/* Cockpit Session Selector */
+.session-select {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.session-meta-row strong {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrubber Deck Eyebrow & Readout */
+.scrubber-header div:first-child > div:first-child {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.time-indicator {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* Playback Speed Controls */
+.speed-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Cockpit Pane Typography */
+.pane-title {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pane-title-row span:not(.pane-title) {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Terminal & Metric Readouts */
+.terminal-box {
+  font-variant-numeric: tabular-nums;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+}
+
+.metric-gauge-row span {
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+
+.metric-gauge-row strong {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Voice Incident Briefing */
+.briefing-card h2 {
+  letter-spacing: -0.02em;
+}
+
+.briefing-header div:first-child > div:last-child {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.briefing-text-box {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+/* --- Visible Focus States (WCAG 2.2 Compliant) --- */
+
+.btn:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--telemetry-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
+}
+
+.btn-gold:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.session-select:focus-visible {
+  border-color: var(--telemetry-blue);
+  outline: 2px solid var(--telemetry-blue);
+  outline-offset: 1px;
+}
+
+.speed-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.flight-slider:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* --- Short Transform/Opacity Motion on Result Appear --- */
+
+@keyframes telemetryResultAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.network-pill {
+  animation: telemetryResultAppear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.engram-item {
+  animation: telemetryResultAppear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Motion Safety & Reduced Motion Override --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .network-pill,
+  .engram-item {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .btn,
+  .speed-btn,
+  .session-select,
+  .flight-slider {
+    transition: none !important;
+  }
+}

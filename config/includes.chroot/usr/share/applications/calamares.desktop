@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install ZothOS 3.3.0
+GenericName=Live System Installer
+Comment=Install ZothOS 3.3.0 Sovereign Gold AI & Cyber Linux to Disk
+Exec=/usr/local/bin/launch-calamares
+Icon=/usr/share/pixmaps/zoth-os.png
+Terminal=false
+Categories=System;
+StartupNotify=true
+StartupWMClass=calamares

@@ -1,5 +1,5 @@
 /*
- *  ZOTHOS 3.0 — Sovereign Alchemical Intelligence Slideshow
+ *  ZOTHOS 3.3.0 — Sovereign Alchemical Intelligence Slideshow
  *  Calamares Slideshow QML Presentation
  */
 
@@ -52,7 +52,7 @@ Presentation {
                     Column {
                         spacing: 4
                         Text {
-                            text: "✦ ZOTHOS 3.0 — SOVEREIGN AI LINUX ✦"
+                            text: "✦ ZOTHOS 3.3.0 — SOVEREIGN AI LINUX ✦"
                             font.family: "JetBrains Mono, Inter, sans-serif"
                             font.pixelSize: 22
                             font.bold: true

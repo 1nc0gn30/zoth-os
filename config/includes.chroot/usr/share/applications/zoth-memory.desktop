@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Neuro-Memory
+GenericName=Biological STDP Memory Substrate
+Comment=Live Biological STDP Memory Stream, Consolidation & 3D Enclave Graph (:8094)
+Exec=/usr/local/bin/zoth-memory
+TryExec=/usr/local/bin/zoth-memory
+Icon=/usr/share/pixmaps/zoth-memory.png
+Terminal=false
+Categories=System;ArtificialIntelligence;Utility;
+StartupNotify=true
+Actions=Stream;Graph;Consolidate;
+
+[Desktop Action Stream]
+Name=Open Memory Stream
+Exec=xdg-open "http://127.0.0.1:8094/#stream"
+
+[Desktop Action Graph]
+Name=Open 3D Memory Graph
+Exec=xdg-open "http://127.0.0.1:8094/#graph"
+
+[Desktop Action Consolidate]
+Name=Run Sleep Consolidation
+Exec=/usr/local/bin/zoth-memory --consolidate

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-flight-recorder"
+version = "0.1.0"
+description = "Autonomous Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Neal Frazier Tech", email = "1nc0gn30@users.noreply.github.com"}
+]
+dependencies = []
+
+[project.scripts]
+agent-flight = "agent_flight_recorder.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

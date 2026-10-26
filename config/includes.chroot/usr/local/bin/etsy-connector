@@ -1,30 +1,15 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Etsy Connector CLI Wrapper
-# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
-# ==============================================================================
 set -e
-
-if [ -f /etc/zothos/paths.sh ]; then
-  # shellcheck disable=SC1091
-  . /etc/zothos/paths.sh
-fi
-: "${ZOTH_USER:=zoth}"
-: "${AZOTH_USER:=azoth}"
-: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
-: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
-: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
-: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
-
-PRIMARY_BIN="${ZOTH_SRC_ROOT}/etsy-connector/bin/etsy-connector"
-REPO_DIR="${ZOTH_SRC_ROOT}/etsy-connector"
-
+REPO_DIR="/home/zoth/NullAITech/etsy-connector"
+[[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/etsy-connector"
+PRIMARY_BIN="$REPO_DIR/bin/etsy-connector"
 if [[ -x "$PRIMARY_BIN" ]]; then
     exec "$PRIMARY_BIN" "$@"
-elif [[ -d "$REPO_DIR/src/etsy_connector" ]]; then
+elif [[ -d "$REPO_DIR/src" ]]; then
     export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-    exec python3 -m etsy_connector.cli "$@"
+    pkg=$(ls "$REPO_DIR/src" | grep -v egg | head -n1)
+    exec python3 -m "${pkg}.cli" "$@"
 else
-    echo "Error: etsy-connector not found in $PRIMARY_BIN or $REPO_DIR" >&2
+    echo "Error: etsy-connector not found in $REPO_DIR" >&2
     exit 1
 fi

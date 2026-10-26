@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "producthunt-connector"
+version = "0.1.0"
+description = "Product Hunt GraphQL connector for Zoth OS. Read listing, diff website/GitHub, never auto-post."
+authors = [{ name = "Neal Frazier", email = "neal@nealfrazier.tech" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+producthunt-connector = "producthunt_connector.cli:main"
+zoth-ph = "producthunt_connector.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

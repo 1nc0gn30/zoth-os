@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Agent Flight Recorder • Typography Refinement Layer (wave-type.css)
+   - Readable measure (line-length constraints 48-68ch) on main work surfaces
+   - Tabular numerals (tabular-nums) for synchronized metrics, scores, & prices
+   - Calibrated letter-spacing and optical tracking for display and mono headers
+   - Pure typography: zero brand color changes, zero motion, zero JS changes
+   ========================================================================== */
+
+/* --- 1. Readable Measure on Main Work Surfaces --- */
+
+.hero-subtitle {
+  max-width: 58ch;
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+}
+
+.briefing-text-box,
+#briefingText {
+  max-width: 68ch;
+  line-height: 1.68;
+  letter-spacing: 0.005em;
+  text-rendering: optimizeLegibility;
+}
+
+.terminal-box,
+#terminalOutput {
+  line-height: 1.52;
+  letter-spacing: 0.01em;
+  tab-size: 2;
+  text-rendering: optimizeLegibility;
+}
+
+.lock-desc {
+  max-width: 48ch;
+  line-height: 1.55;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-header p {
+  max-width: 62ch;
+  line-height: 1.55;
+}
+
+.modal-box p {
+  max-width: 50ch;
+  line-height: 1.55;
+}
+
+.modal-features li {
+  line-height: 1.48;
+}
+
+/* --- 2. Tabular Numbers on Existing Scores, Prices, Counters, & Metrics --- */
+
+.price-highlight,
+.price-strike,
+#btnStripeBanner,
+#btnStripeOverlay,
+#btnStripeModal {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.time-indicator,
+#timeDisplay {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.04em;
+}
+
+.session-meta-row strong,
+#activeSessionDur,
+#activeSessionEvents {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.metric-gauge-row strong,
+#gaugeThreatVal,
+#statTokensSaved {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.speed-btn {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+#activeSessionCmd {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.urgency-pill {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.06em;
+}
+
+.badge,
+.badge-free,
+.badge-pro {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.04em;
+}
+
+.canvas-caption {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --- 3. Slightly Clearer Heading Tracking --- */
+
+.brand-title {
+  letter-spacing: -0.01em;
+}
+
+.hero-title {
+  letter-spacing: -0.022em;
+  line-height: 1.16;
+  text-rendering: optimizeLegibility;
+}
+
+.pane-title {
+  letter-spacing: -0.008em;
+}
+
+.pane-title-row span:not(.pane-title) {
+  letter-spacing: 0.16em;
+}
+
+.briefing-card h2 {
+  letter-spacing: -0.012em;
+  line-height: 1.28;
+}
+
+.section-header h2 {
+  letter-spacing: -0.018em;
+  line-height: 1.24;
+}
+
+.lock-title {
+  letter-spacing: 0.035em;
+  line-height: 1.25;
+}
+
+.modal-title {
+  letter-spacing: -0.012em;
+  line-height: 1.22;
+}

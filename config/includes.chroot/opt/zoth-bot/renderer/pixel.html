@@ -1,0 +1,1587 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#030508" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>ZothOS · Extended Sovereign Display</title>
+    <style>
+      @font-face {
+        font-family: 'Syne';
+        src: url('/fonts/syne-700.woff2') format('woff2');
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Syne';
+        src: url('/fonts/syne-800.woff2') format('woff2');
+        font-weight: 800;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('/fonts/space-grotesk-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('/fonts/space-grotesk-600.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/jetbrains-mono-600.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+      }
+
+      :root {
+        --bg: #030508;
+        --card-bg: #0b0e16;
+        --field: #080b12;
+        --gold: #d4af37;
+        --gold-bright: #f6d365;
+        --gold-soft: #e5c45c;
+        --gold-dim: rgba(212, 175, 55, 0.35);
+        --hair: rgba(212, 175, 55, 0.18);
+        --hair-strong: rgba(212, 175, 55, 0.38);
+        --text: #f3f0e6;
+        --text-soft: #c8c4b8;
+        --muted: #7c8599;
+        --ok: #38d399;
+        --font-display: 'Syne', sans-serif;
+        --font-sans: 'Space Grotesk', system-ui, sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100dvh;
+        overflow: hidden;
+        background: #030508;
+        color: var(--text);
+        font-family: var(--font-sans);
+        user-select: none;
+      }
+
+      /* ============================================================================
+         BLACK ZOTHOS DESKTOP WALLPAPER (Matches ZothOS Obsidian & Gold Desktop)
+         ============================================================================ */
+      #zothosWallpaper {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(212, 175, 55, 0.065) 0%, rgba(10, 14, 24, 0.35) 45%, #030508 82%),
+          linear-gradient(180deg, #05070c 0%, #020306 100%);
+        display: grid;
+        place-items: center;
+        z-index: 1;
+      }
+
+      /* Subtle ZothOS Sacred Grid & Crest Watermark on Empty Desktop */
+      .wallpaper-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(212, 175, 55, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(212, 175, 55, 0.025) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.75) 10%, transparent 78%);
+        -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.75) 10%, transparent 78%);
+        pointer-events: none;
+      }
+
+      .wallpaper-sigil {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        opacity: 0.22;
+        transition: opacity 320ms var(--ease);
+        pointer-events: none;
+      }
+
+      body.bot-present .wallpaper-sigil {
+        opacity: 0.06;
+      }
+
+      .wallpaper-sigil svg {
+        width: 88px;
+        height: 88px;
+      }
+
+      .wallpaper-kicker {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      /* Tiny subtle corner indicator on the ZothOS desktop */
+      .desktop-corner-hud {
+        position: fixed;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        left: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .desktop-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(8, 11, 18, 0.65);
+        border: 1px solid rgba(212, 175, 55, 0.16);
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        color: rgba(212, 175, 55, 0.55);
+      }
+
+      .desktop-status-pill .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 6px var(--ok);
+      }
+
+      .summon-ghost-btn {
+        pointer-events: auto;
+        appearance: none;
+        background: rgba(11, 14, 22, 0.55);
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        color: rgba(246, 211, 101, 0.55);
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        padding: 5px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 160ms var(--ease);
+      }
+
+      body.bot-present .summon-ghost-btn {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ============================================================================
+         LEFT-EDGE PORTAL SEAM (Ignites when Zoth leaps between Laptop & Phone)
+         ============================================================================ */
+      #leftPortalSeam {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        pointer-events: none;
+        z-index: 999;
+        opacity: 0;
+        background: linear-gradient(90deg, var(--gold-bright), rgba(212, 175, 55, 0.42), transparent);
+        box-shadow: 0 0 34px 8px rgba(246, 211, 101, 0.75);
+        display: flex;
+        align-items: center;
+        transition: opacity 100ms var(--ease), width 100ms var(--ease);
+      }
+
+      #leftPortalSeam.active {
+        width: 18px;
+        opacity: 1;
+      }
+
+      .seam-label {
+        writing-mode: vertical-rl;
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        color: #06080d;
+        background: var(--gold-bright);
+        padding: 8px 3px;
+        border-radius: 0 5px 5px 0;
+        margin-left: 1px;
+      }
+
+      /* ============================================================================
+         FLOATING ZOTH ORB (Identical to Desktop Compact Mode! Hidden when on Laptop)
+         ============================================================================ */
+      #floatingOrb {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 156px;
+        height: 156px;
+        z-index: 50;
+        touch-action: none;
+        cursor: grab;
+        display: grid;
+        place-items: center;
+        transform: translate3d(-220px, 40vh, 0) scale(0.82);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          transform 280ms cubic-bezier(0.18, 1.15, 0.36, 1),
+          opacity 180ms ease;
+      }
+
+      #floatingOrb.dragging,
+      #floatingOrb.peeking {
+        transition: none;
+      }
+
+      #floatingOrb.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .orb-hit {
+        position: relative;
+        width: 146px;
+        height: 146px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 35% 28%, rgba(36, 44, 66, 0.96) 0%, rgba(8, 11, 18, 0.99) 74%);
+        border: 2px solid var(--gold-bright);
+        box-shadow:
+          0 16px 42px rgba(0, 0, 0, 0.82),
+          0 0 28px rgba(212, 175, 55, 0.38),
+          inset 0 0 22px rgba(212, 175, 55, 0.26);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .orb-ring-svg {
+        position: absolute;
+        inset: -8px;
+        width: 162px;
+        height: 162px;
+        pointer-events: none;
+        animation: reticle-spin 38s linear infinite;
+      }
+
+      @keyframes reticle-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .orb-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 14%;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .orb-pip {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--ok);
+        border: 2px solid #06080d;
+        box-shadow: 0 0 10px var(--ok);
+      }
+
+      .orb-cargo-badge {
+        position: absolute;
+        top: 8px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(7, 9, 14, 0.92);
+        border: 1px solid var(--gold-bright);
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--gold-bright);
+      }
+
+      /* ============================================================================
+         EXPANDED ZOTH BOT DESKTOP CARD (Identical to Laptop Expanded UI!)
+         Opens when you tap/click the Floating Orb on the phone!
+         ============================================================================ */
+      #desktopCard {
+        position: fixed;
+        inset: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom)) 10px;
+        max-width: 472px;
+        margin: 0 auto;
+        z-index: 80;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 52%),
+          linear-gradient(180deg, rgba(14, 18, 28, 0.98) 0%, rgba(8, 10, 16, 0.99) 100%);
+        border: 1px solid rgba(212, 175, 55, 0.44);
+        border-radius: 22px;
+        box-shadow:
+          0 24px 64px rgba(0, 0, 0, 0.88),
+          0 0 0 1px rgba(246, 211, 101, 0.14) inset;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.88) translateY(18px);
+        transition:
+          opacity 220ms var(--ease),
+          transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      #desktopCard.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1) translateY(0);
+      }
+
+      /* Top Stage Frame (Matches renderer/index.html + renderer/style.css) */
+      .stage-frame {
+        position: relative;
+        padding: 12px 14px 10px;
+        background:
+          radial-gradient(circle at 50% 38%, rgba(212, 175, 55, 0.16) 0%, transparent 62%),
+          linear-gradient(180deg, rgba(16, 21, 33, 0.95) 0%, rgba(10, 13, 21, 0.95) 100%);
+        border-bottom: 1px solid var(--hair);
+        flex-shrink: 0;
+        touch-action: none;
+      }
+
+      .seam-top {
+        position: absolute;
+        top: 0;
+        left: 20px;
+        width: 84px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold-bright), var(--gold), transparent);
+      }
+
+      .stage-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        min-height: 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--gold);
+        background: rgba(11, 14, 22, 0.78);
+        border: 1px solid rgba(212, 175, 55, 0.26);
+        padding: 3px 8px;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .sig-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 8px var(--ok);
+        flex-shrink: 0;
+      }
+
+      .eyebrow-ring {
+        color: var(--gold-bright);
+        background: rgba(212, 175, 55, 0.14);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        border-radius: 999px;
+        padding: 1px 6px;
+      }
+
+      .model-pill {
+        color: var(--gold-soft);
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.22);
+        border-radius: 999px;
+        padding: 1px 6px;
+        text-transform: none;
+        max-width: 96px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Top-Right Horizontal Precision Dock Buttons (Matches Laptop!) */
+      .icon-btns {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        background: rgba(9, 12, 19, 0.85);
+        border: 1px solid rgba(212, 175, 55, 0.24);
+        padding: 3px 5px;
+        border-radius: 999px;
+      }
+
+      .ib {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        background: rgba(20, 25, 38, 0.75);
+        color: var(--text-soft);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        padding: 0;
+      }
+
+      .ib.on,
+      .ib:hover {
+        color: #07090e;
+        background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+        border-color: var(--gold-bright);
+      }
+
+      /* Center 3D / Azoth Mask Stage Viewport (Auto-collapses when a drawer opens!) */
+      .stage-viewport {
+        position: relative;
+        height: 158px;
+        display: grid;
+        place-items: center;
+        margin: 4px 0;
+        transition: height 220ms var(--ease), opacity 180ms var(--ease);
+      }
+
+      #desktopCard.drawer-open .stage-viewport {
+        height: 0;
+        margin: 0;
+        opacity: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .stage-orb-well {
+        position: relative;
+        width: 138px;
+        height: 138px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+      }
+
+      .stage-orb-well svg {
+        position: absolute;
+        inset: -12px;
+        width: 162px;
+        height: 162px;
+        animation: reticle-spin 42s linear infinite;
+        pointer-events: none;
+      }
+
+      .stage-orb-well img {
+        width: 134px;
+        height: 134px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: 50% 14%;
+        border: 1.5px solid rgba(212, 175, 55, 0.55);
+        box-shadow:
+          0 0 28px rgba(212, 175, 55, 0.25),
+          inset 0 0 18px rgba(0, 0, 0, 0.85);
+      }
+
+      /* Identity & Telemetry Strip (Matches Laptop!) */
+      .stage-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .name-line {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .name {
+        font-family: var(--font-sans);
+        font-size: 20px;
+        font-weight: 700;
+        background: linear-gradient(180deg, #ffffff 0%, #f3efe6 55%, #e0bc4c 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .sovereign-pill {
+        font-family: var(--font-mono);
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--gold-bright);
+        background: rgba(212, 175, 55, 0.12);
+        border: 1px solid rgba(212, 175, 55, 0.32);
+      }
+
+      .vitals-pill {
+        font-family: var(--font-mono);
+        font-size: 8px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--text-soft);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .job {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .telemetry-strip {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        padding: 5px 8px;
+        background: rgba(9, 12, 18, 0.78);
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+
+      .tele-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-family: var(--font-mono);
+        font-size: 8px;
+        font-weight: 600;
+        color: var(--text-soft);
+        white-space: nowrap;
+      }
+
+      .tele-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 6px var(--ok);
+      }
+
+      /* Chips Toolbar (Matches Laptop!) */
+      .chips {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--hair);
+        background: rgba(9, 12, 18, 0.65);
+        flex-shrink: 0;
+        scrollbar-width: none;
+      }
+
+      .chips::-webkit-scrollbar {
+        display: none;
+      }
+
+      .chip {
+        appearance: none;
+        border: 1px solid rgba(212, 175, 55, 0.22);
+        background: rgba(15, 20, 32, 0.85);
+        color: var(--text-soft);
+        font-family: var(--font-sans);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 5px 11px;
+        border-radius: 999px;
+        white-space: nowrap;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .chip.on {
+        background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+        color: #07090e;
+        border-color: var(--gold-bright);
+      }
+
+      /* Chat & Tool Execution Stream (Matches Laptop!) */
+      .log {
+        flex: 1;
+        padding: 12px 14px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        user-select: text;
+      }
+
+      .msg {
+        max-width: 88%;
+        padding: 9px 12px;
+        border-radius: 12px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .msg.user {
+        align-self: flex-end;
+        background: rgba(212, 175, 55, 0.14);
+        border: 1px solid rgba(212, 175, 55, 0.36);
+        color: #fff6d6;
+      }
+
+      .msg.bot {
+        align-self: flex-start;
+        background: rgba(16, 21, 33, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-left: 2px solid var(--gold);
+      }
+
+      .msg.sys {
+        align-self: stretch;
+        max-width: 100%;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        background: rgba(11, 15, 24, 0.9);
+        border: 1px dashed rgba(212, 175, 55, 0.32);
+        color: var(--gold-soft);
+      }
+
+      /* Cargo Drawer inside the Zoth Card */
+      .drawer {
+        display: none;
+        padding: 12px 14px;
+        border-top: 1px solid var(--hair-strong);
+        background: linear-gradient(180deg, rgba(20, 25, 38, 0.98) 0%, rgba(11, 14, 22, 0.99) 100%);
+        max-height: 240px;
+        overflow-y: auto;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .drawer.on {
+        display: flex;
+      }
+
+      .drawer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .panel-kicker {
+        font-family: var(--font-display);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold-bright);
+      }
+
+      .mini-gold-btn {
+        appearance: none;
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid rgba(212, 175, 55, 0.42);
+        color: var(--gold-bright);
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .cargo-row {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: rgba(7, 10, 16, 0.9);
+        border: 1px solid rgba(212, 175, 55, 0.24);
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .cargo-row-title {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--gold-bright);
+      }
+
+      .cargo-row-text {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-soft);
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 80px;
+        overflow-y: auto;
+      }
+
+      /* Bottom Composer (Matches Laptop!) */
+      .composer {
+        padding: 10px 12px;
+        border-top: 1px solid var(--hair);
+        background: rgba(7, 10, 16, 0.96);
+        flex-shrink: 0;
+      }
+
+      /* Mobile Bot Maker Drawer */
+      #desktopCard.maker-open .stage-viewport {
+        height: 152px !important;
+        margin: 4px 0 !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+
+      .pm-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .pm-label {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .pm-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .pm-pill {
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 6px;
+        background: #080b12;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--text-soft);
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .pm-pill.on {
+        background: rgba(212, 175, 55, 0.22);
+        border-color: var(--gold-bright);
+        color: var(--gold-bright);
+      }
+
+      .composer-shell {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--field);
+        border: 1px solid var(--hair-strong);
+        border-radius: 12px;
+        padding: 4px 5px 4px 10px;
+      }
+
+      .composer-shell input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font-family: var(--font-sans);
+        font-size: 13px;
+        outline: none;
+      }
+
+      .send-btn {
+        background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+        color: #07090e;
+        border: 0;
+        border-radius: 9px;
+        padding: 0 13px;
+        height: 32px;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 1. ZOTHOS BLACK OBSIDIAN DESKTOP WALLPAPER -->
+    <div id="zothosWallpaper">
+      <div class="wallpaper-grid"></div>
+      <div class="wallpaper-sigil">
+        <svg viewBox="0 0 120 120" fill="none">
+          <circle cx="60" cy="60" r="54" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="3 6" />
+          <circle cx="60" cy="60" r="38" stroke="#F6D365" stroke-width="0.6" />
+          <polygon points="60,16 98,82 22,82" stroke="#D4AF37" stroke-width="0.7" fill="none" />
+          <polygon points="60,104 98,38 22,38" stroke="#D4AF37" stroke-width="0.7" fill="none" />
+          <circle cx="60" cy="60" r="4" fill="#F6D365" />
+        </svg>
+        <div class="wallpaper-kicker">ZOTH OS · EXTENDED DESKTOP</div>
+      </div>
+    </div>
+
+    <!-- Subtle bottom-edge desktop indicator -->
+    <div class="desktop-corner-hud">
+      <div class="desktop-status-pill">
+        <span class="dot"></span>
+        <span id="desktopStatusText">ZOTH ON LAPTOP · DRAG RIGHT OFF LAPTOP TO LEAP HERE</span>
+      </div>
+      <button type="button" class="summon-ghost-btn" id="btnEmergencySummon" title="Leap Zoth to Phone">
+        LEAP HERE ⟶
+      </button>
+    </div>
+
+    <!-- 2. LEFT-EDGE PORTAL SEAM -->
+    <div id="leftPortalSeam" aria-hidden="true">
+      <span class="seam-label" id="seamLabel">⟵ LEAP TO LAPTOP</span>
+    </div>
+
+    <!-- 3. FLOATING ZOTH ORB (Identical to Desktop Compact Orb; only visible when Zoth leaps to Phone!) -->
+    <div id="floatingOrb" role="button" tabindex="0" aria-label="Zoth Floating Orb — Tap to expand, drag left edge to leap back to laptop">
+      <div class="orb-hit" id="phoneOrbWell">
+        <svg class="orb-ring-svg" viewBox="0 0 180 180" fill="none">
+          <circle cx="90" cy="90" r="84" stroke="rgba(212,175,55,0.34)" stroke-width="1.2" stroke-dasharray="4 6" />
+          <circle cx="90" cy="90" r="74" stroke="rgba(246,211,101,0.22)" stroke-width="1" />
+        </svg>
+        <div id="stageHost" class="stage-host" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;overflow:hidden;pointer-events:none;">
+          <canvas id="stage" style="width:100%;height:100%;display:block;"></canvas>
+          <img id="stageFallback" class="orb-avatar-img" src="/assets/azoth-mask.jpg" alt="Zoth Floating Orb" hidden />
+        </div>
+        <span class="orb-cargo-badge" id="orbCargoBadge" hidden>📦 1</span>
+        <span class="orb-pip"></span>
+      </div>
+    </div>
+
+    <!-- 4. EXPANDED ZOTH DESKTOP CARD (Identical to Desktop Expanded Interface; opens when Orb is tapped!) -->
+    <section id="desktopCard" aria-label="Zoth Bot Sovereign Interface">
+      <header class="stage-frame" id="cardDragHeader">
+        <div class="seam-top"></div>
+        <div class="stage-top-bar">
+          <div class="eyebrow">
+            <span class="sig-dot"></span>
+            <span class="eyebrow-ring" id="cardRingBadge">R2 · TOOLMASTER</span>
+            <span>/</span>
+            <span id="cardEngineBadge">GROK</span>
+            <span>·</span>
+            <span class="model-pill" id="cardModelBadge">grok-4.7</span>
+          </div>
+
+          <div class="icon-btns">
+            <button type="button" class="ib on" id="btnCardMask" title="Toggle Azoth 24K Mask">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 10c0-4 3.6-6 8-6s8 2 8 6c0 5-3.5 9-8 10-4.5-1-8-5-8-10Z" />
+                <path d="M8.5 11.5h2.5M13 11.5h2.5" />
+              </svg>
+            </button>
+            <button type="button" class="ib" id="btnCardCargo" title="Toggle Portal Cargo &amp; File Drop">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              </svg>
+            </button>
+            <button type="button" class="ib" id="btnCardLeapBack" title="Leap Zoth back to Laptop Screen">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button type="button" class="ib" id="btnCardMin" title="Minimize to Floating Zoth Orb">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9">
+                <path d="M6 12h12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="stage-viewport">
+          <div class="stage-orb-well" id="phoneExpandedWell">
+            <svg viewBox="0 0 220 220" fill="none">
+              <circle cx="110" cy="110" r="102" stroke="rgba(212,175,55,0.22)" stroke-width="1" stroke-dasharray="2 8" />
+              <circle cx="110" cy="110" r="88" stroke="rgba(212,175,55,0.34)" stroke-width="1.2" stroke-dasharray="18 10 4 10" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="stage-meta">
+          <div class="meta-row">
+            <div class="name-line">
+              <span class="name" id="cardBotName">Zoth</span>
+              <span class="sovereign-pill" id="cardMaskPill">AZOTH MASK</span>
+              <span class="vitals-pill" id="cardVitalsPill">RAM 32% · 152 MCP</span>
+            </div>
+          </div>
+          <div class="job" id="cardBotJob">Sovereign desk companion</div>
+          <div class="telemetry-strip">
+            <span class="tele-item"><i class="tele-dot"></i>OLLAMA :11434</span>
+            <span class="tele-item"><i class="tele-dot"></i>WEBGEN :5173</span>
+            <span class="tele-item"><i class="tele-dot"></i>RELAY :8765</span>
+            <span class="tele-item"><i class="tele-dot"></i>TAILDROP :9335</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="chips" id="cardChips">
+        <button type="button" class="chip on">● Zoth</button>
+        <button type="button" class="chip" id="chipMaker">✦ Bot Maker</button>
+        <button type="button" class="chip" id="chipLeapLaptop">⟵ Leap to Laptop</button>
+        <button type="button" class="chip" id="chipCargo">Cargo Vault</button>
+        <button type="button" class="chip" id="chipOrbMode">Floating Orb</button>
+      </div>
+
+      <main class="log" id="cardLog"></main>
+
+      <section class="drawer" id="cardMakerDrawer">
+        <div class="drawer-head">
+          <span class="panel-kicker">✦ 3D Bot Maker (Drag Stage to Spin)</span>
+          <button type="button" class="mini-gold-btn" id="pmRandomBtn">🎲 RANDOM</button>
+        </div>
+        <div class="pm-row">
+          <span class="pm-label">Mask &amp; Headgear</span>
+          <div class="pm-pills" id="pmMaskGrid"></div>
+        </div>
+        <div class="pm-row">
+          <span class="pm-label">Gender / Frame</span>
+          <div class="pm-pills" id="pmGenderGrid"></div>
+        </div>
+        <div class="pm-row">
+          <span class="pm-label">Hair Style</span>
+          <div class="pm-pills" id="pmHairGrid"></div>
+        </div>
+        <div class="pm-row">
+          <span class="pm-label">Cyberware &amp; Accessories</span>
+          <div class="pm-pills" id="pmAccGrid"></div>
+        </div>
+      </section>
+
+      <section class="drawer" id="cardCargoDrawer">
+        <div class="drawer-head">
+          <span class="panel-kicker">Dragged Cargo &amp; Taildrop</span>
+          <label class="mini-gold-btn">
+            + SEND FILE TO LAPTOP
+            <input type="file" id="phoneFileInput" hidden />
+          </label>
+        </div>
+        <div id="cardCargoList"></div>
+      </section>
+
+      <form class="composer" id="cardComposer">
+        <div class="composer-shell">
+          <input id="cardInput" type="text" placeholder="Ask Zoth or type / for commands…" autocomplete="off" />
+          <button type="submit" class="send-btn" id="cardSendBtn">SEND ⟶</button>
+        </div>
+      </form>
+    </section>
+
+    <script type="module" src="/stage.js"></script>
+    <script>
+      (() => {
+        const floatingOrb = document.getElementById('floatingOrb');
+        const phoneOrbWell = document.getElementById('phoneOrbWell');
+        const phoneExpandedWell = document.getElementById('phoneExpandedWell');
+        const stageHost = document.getElementById('stageHost');
+        const stageFallback = document.getElementById('stageFallback');
+        const orbCargoBadge = document.getElementById('orbCargoBadge');
+        const leftSeam = document.getElementById('leftPortalSeam');
+        const seamLabel = document.getElementById('seamLabel');
+        const desktopStatusText = document.getElementById('desktopStatusText');
+        const btnEmergencySummon = document.getElementById('btnEmergencySummon');
+
+        const desktopCard = document.getElementById('desktopCard');
+        const cardDragHeader = document.getElementById('cardDragHeader');
+        const cardBotName = document.getElementById('cardBotName');
+        const cardBotJob = document.getElementById('cardBotJob');
+        const cardRingBadge = document.getElementById('cardRingBadge');
+        const cardEngineBadge = document.getElementById('cardEngineBadge');
+        const cardModelBadge = document.getElementById('cardModelBadge');
+        const cardMaskPill = document.getElementById('cardMaskPill');
+        const cardVitalsPill = document.getElementById('cardVitalsPill');
+        const cardLog = document.getElementById('cardLog');
+        const cardCargoDrawer = document.getElementById('cardCargoDrawer');
+        const cardCargoList = document.getElementById('cardCargoList');
+        const cardComposer = document.getElementById('cardComposer');
+        const cardInput = document.getElementById('cardInput');
+        const cardSendBtn = document.getElementById('cardSendBtn');
+
+        let onPhone = false;
+        let expanded = false;
+        let maskOn = true;
+        let latestAvatar = null;
+        let orbPos = { x: Math.round(window.innerWidth / 2 - 78), y: Math.round(window.innerHeight * 0.42 - 78) };
+        let ws = null;
+
+        const MASK_LABELS = {
+          azoth: 'AZOTH 24K',
+          oni: 'CYBER ONI',
+          visor: 'HOLO-VISOR',
+          anubis: 'ANUBIS CREST',
+          kitsune: 'KITSUNE MASK',
+          crown: 'HALO CROWN',
+          none: 'UNMASKED',
+        };
+
+        function placePhoneStage() {
+          const targetWell = expanded ? phoneExpandedWell : phoneOrbWell;
+          if (targetWell && stageHost && stageHost.parentElement !== targetWell) {
+            targetWell.appendChild(stageHost);
+          }
+          if (window.ZothStage) {
+            window.ZothStage.setMode(!expanded);
+            setTimeout(() => window.ZothStage.resize && window.ZothStage.resize(), 40);
+          }
+        }
+
+        window.addEventListener('zoth-stage-ready', () => {
+          placePhoneStage();
+          if (latestAvatar && window.ZothStage && window.ZothStage.setAvatar) {
+            window.ZothStage.setAvatar(latestAvatar);
+          }
+          if (window.ZothStage && window.ZothStage.setMask) {
+            window.ZothStage.setMask(maskOn);
+          }
+        });
+
+        function setOrbTransform(x, y, scale = 1) {
+          floatingOrb.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) scale(${scale})`;
+        }
+
+        function updateVisualPresence() {
+          document.body.classList.toggle('bot-present', onPhone);
+          placePhoneStage();
+          if (!onPhone) {
+            floatingOrb.classList.remove('visible');
+            desktopCard.classList.remove('open');
+            setOrbTransform(-220, orbPos.y, 0.82);
+            desktopStatusText.textContent = 'ZOTH ON LAPTOP · DRAG RIGHT OFF LAPTOP TO LEAP HERE';
+          } else {
+            desktopStatusText.textContent = expanded
+              ? 'ZOTH ACTIVE ON PIXEL 10 PRO'
+              : 'ZOTH ORB ON PIXEL 10 · TAP TO EXPAND · DRAG LEFT OFF SCREEN TO LEAP TO LAPTOP';
+            if (expanded) {
+              floatingOrb.classList.remove('visible');
+              desktopCard.classList.add('open');
+            } else {
+              desktopCard.classList.remove('open');
+              floatingOrb.classList.add('visible');
+              setOrbTransform(orbPos.x, orbPos.y, 1);
+            }
+          }
+        }
+
+        function applyState(st) {
+          if (!st) return;
+          const wasOnPhone = onPhone;
+          onPhone = Boolean(st.onPhone);
+          if (onPhone && !wasOnPhone) {
+            expanded = false;
+            const yPx = Math.max(24, Math.min(window.innerHeight - 180, Math.round((st.yPct || 0.45) * window.innerHeight - 78)));
+            orbPos = { x: Math.round(window.innerWidth * 0.5 - 78), y: yPx };
+            if (navigator.vibrate) navigator.vibrate([22, 30, 45]);
+          }
+          maskOn = st.maskOn !== false;
+          const imgSrc = maskOn ? '/assets/azoth-mask.jpg' : '/assets/zoth-guy.jpg';
+          if (stageFallback) stageFallback.src = imgSrc;
+          if (window.ZothStage && window.ZothStage.setMask) window.ZothStage.setMask(maskOn);
+
+          if (st.bot) {
+            cardBotName.textContent = st.bot.name || 'Zoth';
+            cardBotJob.textContent = st.bot.job || 'Sovereign desk companion';
+            if (st.bot.avatar) {
+              latestAvatar = st.bot.avatar;
+              if (window.ZothStage && window.ZothStage.setAvatar) {
+                window.ZothStage.setAvatar(st.bot.avatar);
+              }
+            }
+          }
+          const mStyle = (latestAvatar && latestAvatar.maskStyle) || 'azoth';
+          cardMaskPill.textContent = maskOn && mStyle !== 'none' ? MASK_LABELS[mStyle] || 'AZOTH 24K' : 'UNMASKED';
+
+          if (st.ring) {
+            cardRingBadge.textContent = `R${st.ring.ring} · ${st.ring.name}`;
+          }
+          cardEngineBadge.textContent = String(st.provider || st.engine || 'GROK').toUpperCase();
+          cardModelBadge.textContent = st.model || 'grok-4.7';
+          if (st.vitals && st.vitals.memPct) {
+            cardVitalsPill.textContent = `RAM ${st.vitals.memPct}% · 152 MCP`;
+          }
+
+          const cargo = Array.isArray(st.cargo) ? st.cargo : [];
+          if (cargo.length > 0) {
+            orbCargoBadge.hidden = false;
+            orbCargoBadge.textContent = `📦 ${cargo.length}`;
+          } else {
+            orbCargoBadge.hidden = true;
+          }
+          renderCargo(cargo);
+          renderChat(Array.isArray(st.chat) ? st.chat : []);
+          updateVisualPresence();
+        }
+
+        // Real-time 60Hz Edge Peek when dragging Zoth across the right edge of the laptop screen!
+        function applyLaptopEdge(edge) {
+          if (onPhone) return;
+          if (!edge || !edge.active || edge.direction !== 'to-phone') {
+            leftSeam.classList.remove('active');
+            floatingOrb.classList.remove('peeking', 'visible');
+            setOrbTransform(-220, orbPos.y, 0.82);
+            return;
+          }
+          seamLabel.textContent = 'LEAPING FROM LAPTOP ⟶';
+          leftSeam.classList.add('active');
+          floatingOrb.classList.add('peeking', 'visible');
+          const yPx = Math.max(20, Math.min(window.innerHeight - 176, Math.round((edge.yPct || 0.5) * window.innerHeight - 78)));
+          const pen = Math.max(0, Math.min(1, Number(edge.penetration) || 0));
+          const peekX = -140 + Math.round(pen * 165);
+          orbPos.y = yPx;
+          setOrbTransform(peekX, yPx, 0.86 + pen * 0.14);
+        }
+
+        function renderChat(chat) {
+          cardLog.innerHTML = '';
+          if (!chat.length) {
+            const sys = document.createElement('div');
+            sys.className = 'msg sys';
+            sys.textContent = 'Zoth leaped onto Pixel 10 Pro. Tap – to return to Floating Orb or drag left off-screen to leap back to Laptop.';
+            cardLog.appendChild(sys);
+            return;
+          }
+          chat.slice(-16).forEach((m) => {
+            const div = document.createElement('div');
+            div.className = 'msg ' + (m.role === 'assistant' ? 'bot' : 'user');
+            div.textContent = m.content;
+            cardLog.appendChild(div);
+          });
+          cardLog.scrollTop = cardLog.scrollHeight;
+        }
+
+        function renderCargo(items) {
+          cardCargoList.innerHTML = '';
+          if (!items.length) {
+            const empty = document.createElement('div');
+            empty.className = 'cargo-row-text';
+            empty.textContent = 'No cargo items staged yet.';
+            cardCargoList.appendChild(empty);
+            return;
+          }
+          items.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'cargo-row';
+            const t = document.createElement('div');
+            t.className = 'cargo-row-title';
+            t.textContent = item.title;
+            row.appendChild(t);
+            if (item.text) {
+              const p = document.createElement('div');
+              p.className = 'cargo-row-text';
+              p.textContent = item.text;
+              row.appendChild(p);
+            }
+            if (item.fileName) {
+              const a = document.createElement('a');
+              a.className = 'mini-gold-btn';
+              a.href = '/cargo/' + encodeURIComponent(item.fileName);
+              a.download = item.fileName;
+              a.textContent = 'DOWNLOAD FILE ↓';
+              a.style.alignSelf = 'flex-start';
+              a.style.textDecoration = 'none';
+              row.appendChild(a);
+            }
+            cardCargoList.appendChild(row);
+          });
+        }
+
+        // Touch / Pointer Drag on the Floating Orb (move around wallpaper OR drag off left edge to leap to laptop!)
+        let dragStart = null;
+        let moved = false;
+
+        floatingOrb.addEventListener('pointerdown', (e) => {
+          if (!onPhone) return;
+          floatingOrb.setPointerCapture(e.pointerId);
+          floatingOrb.classList.add('dragging');
+          dragStart = {
+            startX: e.clientX,
+            startY: e.clientY,
+            origX: orbPos.x,
+            origY: orbPos.y,
+          };
+          moved = false;
+        });
+
+        floatingOrb.addEventListener('pointermove', (e) => {
+          if (!dragStart) return;
+          const dx = e.clientX - dragStart.startX;
+          const dy = e.clientY - dragStart.startY;
+          if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+
+          orbPos.x = Math.max(-110, Math.min(window.innerWidth - 110, dragStart.origX + dx));
+          orbPos.y = Math.max(12, Math.min(window.innerHeight - 160, dragStart.origY + dy));
+          setOrbTransform(orbPos.x, orbPos.y, 1);
+
+          // Check if dragging into the LEFT bezel to leap back to Laptop!
+          const nearLeftEdge = e.clientX <= 72 || orbPos.x < -10;
+          const yPct = Math.max(0.08, Math.min(0.92, e.clientY / Math.max(1, window.innerHeight)));
+          if (nearLeftEdge) {
+            const pen = Math.max(0.1, Math.min(1, (76 - e.clientX) / 68));
+            seamLabel.textContent = '⟵ RELEASE TO LEAP TO LAPTOP';
+            leftSeam.classList.add('active');
+            if (ws && ws.readyState === 1) {
+              ws.send(JSON.stringify({ type: 'phone-edge', active: true, penetration: pen, yPct }));
+            }
+          } else {
+            leftSeam.classList.remove('active');
+            if (ws && ws.readyState === 1) {
+              ws.send(JSON.stringify({ type: 'phone-edge', active: false, penetration: 0, yPct }));
+            }
+          }
+        });
+
+        floatingOrb.addEventListener('pointerup', (e) => {
+          if (!dragStart) return;
+          floatingOrb.classList.remove('dragging');
+          const yPct = Math.max(0.08, Math.min(0.92, e.clientY / Math.max(1, window.innerHeight)));
+          const shouldLeapBack = e.clientX <= 58 || orbPos.x < -28;
+          dragStart = null;
+          leftSeam.classList.remove('active');
+
+          if (shouldLeapBack) {
+            leapBackToLaptop(yPct);
+            return;
+          }
+          if (!moved) {
+            // Tap on the Floating Orb -> Expand into the full Zoth Bot Desktop Card!
+            expanded = true;
+            updateVisualPresence();
+          }
+        });
+
+        // Also allow dragging the Expanded Card Header left to leap back to Laptop!
+        let headerDragX = null;
+        cardDragHeader.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('button')) return;
+          headerDragX = e.clientX;
+        });
+        cardDragHeader.addEventListener('pointermove', (e) => {
+          if (headerDragX === null) return;
+          const dx = e.clientX - headerDragX;
+          if (dx < -15) {
+            desktopCard.style.transform = `translateX(${dx}px) scale(0.96)`;
+            seamLabel.textContent = '⟵ RELEASE TO LEAP TO LAPTOP';
+            leftSeam.classList.add('active');
+          }
+        });
+        cardDragHeader.addEventListener('pointerup', (e) => {
+          if (headerDragX === null) return;
+          const dx = e.clientX - headerDragX;
+          headerDragX = null;
+          desktopCard.style.transform = '';
+          leftSeam.classList.remove('active');
+          if (dx < -95) {
+            leapBackToLaptop(0.45);
+          }
+        });
+
+        async function leapBackToLaptop(yPct = 0.45) {
+          onPhone = false;
+          expanded = false;
+          if (navigator.vibrate) navigator.vibrate([18, 25]);
+          updateVisualPresence();
+          if (ws && ws.readyState === 1) {
+            ws.send(JSON.stringify({ type: 'recall-to-laptop', yPct }));
+          }
+          await fetch('/api/recall', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ yPct }),
+          }).catch(() => {});
+        }
+
+        // Card Controls (Identical to Desktop!)
+        document.getElementById('btnCardMin').addEventListener('click', () => {
+          expanded = false;
+          updateVisualPresence();
+        });
+        document.getElementById('chipOrbMode').addEventListener('click', () => {
+          expanded = false;
+          updateVisualPresence();
+        });
+        document.getElementById('btnCardLeapBack').addEventListener('click', () => leapBackToLaptop(0.45));
+        document.getElementById('chipLeapLaptop').addEventListener('click', () => leapBackToLaptop(0.45));
+        btnEmergencySummon.addEventListener('click', async () => {
+          await fetch('/api/handoff', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ yPct: 0.45 }),
+          }).catch(() => {});
+        });
+
+        const cardMakerDrawer = document.getElementById('cardMakerDrawer');
+
+        async function pushPhoneAvatar(patch) {
+          latestAvatar = { ...(latestAvatar || {}), ...patch, chassis: 'custom' };
+          if (window.ZothStage && window.ZothStage.setAvatar) {
+            window.ZothStage.setAvatar(latestAvatar);
+          }
+          const mStyle = latestAvatar.maskStyle || 'azoth';
+          cardMaskPill.textContent = maskOn && mStyle !== 'none' ? MASK_LABELS[mStyle] || 'AZOTH 24K' : 'UNMASKED';
+          renderPhoneMaker();
+          await fetch('/api/avatar', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ avatar: latestAvatar }),
+          }).catch(() => {});
+        }
+
+        function renderPhoneMaker() {
+          const av = latestAvatar || {};
+          const bindRow = (id, opts, cur, key) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML = '';
+            opts.forEach((o) => {
+              const b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'pm-pill' + (cur === o.id ? ' on' : '');
+              b.textContent = o.label;
+              b.addEventListener('click', () => pushPhoneAvatar({ [key]: o.id }));
+              el.appendChild(b);
+            });
+          };
+          bindRow(
+            'pmMaskGrid',
+            [
+              { id: 'azoth', label: 'Azoth' },
+              { id: 'oni', label: 'Oni' },
+              { id: 'visor', label: 'Visor' },
+              { id: 'anubis', label: 'Anubis' },
+              { id: 'kitsune', label: 'Kitsune' },
+              { id: 'crown', label: 'Crown' },
+              { id: 'none', label: 'Unmasked' },
+            ],
+            av.maskStyle || 'azoth',
+            'maskStyle'
+          );
+          bindRow(
+            'pmGenderGrid',
+            [
+              { id: 'masculine', label: 'Masculine' },
+              { id: 'feminine', label: 'Feminine' },
+              { id: 'androgynous', label: 'Androgynous' },
+              { id: 'construct', label: 'Synth' },
+            ],
+            av.gender || 'masculine',
+            'gender'
+          );
+          bindRow(
+            'pmHairGrid',
+            [
+              { id: 'locs', label: 'Locs' },
+              { id: 'fade', label: 'Crop' },
+              { id: 'long', label: 'Waves' },
+              { id: 'buns', label: 'Buns' },
+              { id: 'mohawk', label: 'Mohawk' },
+              { id: 'afro', label: 'Afro' },
+              { id: 'bald', label: 'Bald' },
+            ],
+            av.hairStyle || 'locs',
+            'hairStyle'
+          );
+          bindRow(
+            'pmAccGrid',
+            [
+              { id: 'cuffs', label: 'Gold Cuffs' },
+              { id: 'scouter', label: 'Holo-Scouter' },
+              { id: 'wings', label: 'Cyber Wings' },
+              { id: 'horns', label: 'Oni Horns' },
+            ],
+            av.accessory || 'cuffs',
+            'accessory'
+          );
+        }
+
+        document.getElementById('btnCardMask').addEventListener('click', () => {
+          maskOn = !maskOn;
+          const imgSrc = maskOn ? '/assets/azoth-mask.jpg' : '/assets/zoth-guy.jpg';
+          if (stageFallback) stageFallback.src = imgSrc;
+          if (window.ZothStage && window.ZothStage.setMask) window.ZothStage.setMask(maskOn);
+          const mStyle = (latestAvatar && latestAvatar.maskStyle) || 'azoth';
+          cardMaskPill.textContent = maskOn && mStyle !== 'none' ? MASK_LABELS[mStyle] || 'AZOTH 24K' : 'UNMASKED';
+          document.getElementById('btnCardMask').classList.toggle('on', maskOn);
+        });
+
+        const toggleMaker = () => {
+          const open = !cardMakerDrawer.classList.contains('on');
+          cardCargoDrawer.classList.remove('on');
+          desktopCard.classList.remove('drawer-open');
+          document.getElementById('btnCardCargo').classList.remove('on');
+          document.getElementById('chipCargo').classList.remove('on');
+          cardMakerDrawer.classList.toggle('on', open);
+          desktopCard.classList.toggle('maker-open', open);
+          document.getElementById('chipMaker').classList.toggle('on', open);
+          renderPhoneMaker();
+          setTimeout(() => window.ZothStage && window.ZothStage.resize && window.ZothStage.resize(), 60);
+        };
+        document.getElementById('chipMaker').addEventListener('click', toggleMaker);
+        cardMaskPill.addEventListener('click', toggleMaker);
+
+        document.getElementById('pmRandomBtn').addEventListener('click', () => {
+          const pick = (a) => a[Math.floor(Math.random() * a.length)];
+          pushPhoneAvatar({
+            gender: pick(['masculine', 'feminine', 'androgynous', 'construct']),
+            bodyType: pick(['balanced', 'athletic', 'slender', 'titan']),
+            skinColor: pick(['#2b1810', '#4a2919', '#7c4b31', '#9e6643', '#c48a62', '#f2cfb6', '#222733']),
+            faceType: pick(['stoic', 'sharp', 'serene', 'cyber', 'oracle']),
+            hairStyle: pick(['locs', 'fade', 'slick', 'long', 'buns', 'mohawk', 'afro']),
+            hairColor: pick(['#141419', '#d4af37', '#e2e8f0', '#dc2626', '#0ea5e9']),
+            facialHair: pick(['none', 'goatee', 'beard', 'stache']),
+            maskStyle: pick(['azoth', 'oni', 'visor', 'anubis', 'kitsune', 'crown', 'none']),
+            accessory: pick(['cuffs', 'scouter', 'wings', 'horns']),
+            eyeColor: pick(['#d4af37', '#38bdf8', '#22c55e', '#ef4444', '#a855f7']),
+            accentColor: pick(['#d4af37', '#38bdf8', '#ef4444', '#10b981', '#a855f7']),
+          });
+        });
+
+        const toggleCargo = () => {
+          const open = !cardCargoDrawer.classList.contains('on');
+          cardMakerDrawer.classList.remove('on');
+          desktopCard.classList.remove('maker-open');
+          document.getElementById('chipMaker').classList.remove('on');
+          cardCargoDrawer.classList.toggle('on', open);
+          desktopCard.classList.toggle('drawer-open', open);
+          document.getElementById('btnCardCargo').classList.toggle('on', open);
+          document.getElementById('chipCargo').classList.toggle('on', open);
+        };
+        document.getElementById('btnCardCargo').addEventListener('click', toggleCargo);
+        document.getElementById('chipCargo').addEventListener('click', toggleCargo);
+
+        document.getElementById('phoneFileInput').addEventListener('change', (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = async () => {
+            await fetch('/api/upload', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                kind: file.type.startsWith('image/') ? 'image' : 'file',
+                title: file.name,
+                fileName: file.name,
+                mime: file.type,
+                base64: reader.result,
+              }),
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+
+        cardComposer.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const text = cardInput.value.trim();
+          if (!text) return;
+          cardInput.value = '';
+          const u = document.createElement('div');
+          u.className = 'msg user';
+          u.textContent = text;
+          cardLog.appendChild(u);
+          cardLog.scrollTop = cardLog.scrollHeight;
+          cardSendBtn.disabled = true;
+          cardSendBtn.textContent = '…';
+          try {
+            const res = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ text }),
+            });
+            const data = await res.json();
+            if (data && data.reply) {
+              const b = document.createElement('div');
+              b.className = 'msg bot';
+              b.textContent = data.reply;
+              cardLog.appendChild(b);
+              cardLog.scrollTop = cardLog.scrollHeight;
+            }
+          } finally {
+            cardSendBtn.disabled = false;
+            cardSendBtn.textContent = 'SEND ⟶';
+          }
+        });
+
+        function connect() {
+          const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+          ws = new WebSocket(`${proto}//${location.host}/ws`);
+          ws.onmessage = (evt) => {
+            try {
+              const msg = JSON.parse(evt.data);
+              if (msg.event === 'init' || msg.event === 'state' || msg.event === 'handoff') {
+                applyState(msg.data);
+              } else if (msg.event === 'edge') {
+                applyLaptopEdge(msg.data);
+              } else if (msg.event === 'cargo' && msg.data) {
+                renderCargo(msg.data.cargo || []);
+              }
+            } catch {
+              /* ignore */
+            }
+          };
+          ws.onclose = () => setTimeout(connect, 1200);
+        }
+
+        fetch('/api/state')
+          .then((r) => r.json())
+          .then(applyState)
+          .catch(() => {});
+        connect();
+      })();
+    </script>
+  </body>
+</html>

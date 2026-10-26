@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub</title>
+  <meta name="description" content="Autonomous, zero-dependency Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI agents. Replay execution second-by-second with terminal sync, network graph, and engrams.">
+  <link rel="canonical" href="https://flight.nullai.tech/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+
+  <!-- Social & OpenGraph Meta -->
+  <meta property="og:title" content="Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub">
+  <meta property="og:description" content="Autonomous Black Box Flight Recorder for AI agents. Replay execution second-by-second with synchronized terminal stream, egress graph, and memory engrams.">
+  <meta property="og:url" content="https://flight.nullai.tech/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://flight.nullai.tech/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:image" content="https://flight.nullai.tech/assets/banner.png">
+
+  <!-- DePay Web3 Payments Integration -->
+  <script src="https://integrate.depay.com"></script>
+
+  <!-- Typography Pairing -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- AEO Schema.org JSON-LD Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://flight.nullai.tech/#app",
+        "name": "Agent Flight Recorder",
+        "url": "https://flight.nullai.tech/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows (Python 3.10+)",
+        "description": "Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents. Ingests events, synchronizes terminal outputs, and generates single-file incident bundles.",
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "Neal Frazier Tech",
+          "url": "https://nealfrazier.tech"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "19.00",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://flight.nullai.tech/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Agent Flight Recorder?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Agent Flight Recorder is an autonomous black box flight recorder and time-scrubbing forensics hub for AI agents. It captures high-resolution session timelines and provides an interactive in-browser scrubber that lets developers replay an agent's execution second-by-second."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Agent Flight Recorder require external pip packages?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The backend runtime requires 0 external pip packages and runs entirely on the standard Python 3.10+ library with SQLite time-series storage and loopback HTTP/SSE streaming on port 8104."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I export incident recordings to share with auditors offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. With 1-click export, Agent Flight Recorder produces a self-contained, single-file HTML bundle with embedded JSON data that functions fully offline in any browser without a server."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #08080B;
+      --card-bg: #121217;
+      --card-surface: #181820;
+      --border: #272733;
+      --border-accent: rgba(212, 175, 55, 0.35);
+      --gold: #D4AF37;
+      --gold-glow: rgba(212, 175, 55, 0.22);
+      --telemetry-blue: #38BDF8;
+      --telemetry-glow: rgba(56, 189, 248, 0.25);
+      --emerald: #10B981;
+      --ruby: #EF4444;
+      --amber: #F59E0B;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 8, 11, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(212, 175, 55, 0.08);
+      color: var(--gold);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-free {
+      background: rgba(156, 163, 175, 0.12);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .badge-pro {
+      background: rgba(212, 175, 55, 0.18);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      min-height: 44px;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: #000;
+      border: 1px solid var(--gold);
+    }
+
+    .btn-gold:hover {
+      background: #E5C158;
+      box-shadow: 0 0 16px var(--gold-glow);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-cyan {
+      background: var(--telemetry-blue);
+      color: #000;
+      border: 1px solid var(--telemetry-blue);
+    }
+
+    .btn-cyan:hover {
+      box-shadow: 0 0 16px var(--telemetry-glow);
+    }
+
+    /* Sales Banner */
+    .sales-banner {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(18, 18, 23, 0.95));
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem auto 1rem;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .banner-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .banner-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .urgency-pill {
+      background: rgba(239, 68, 68, 0.18);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .price-strike {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      margin: 0 4px;
+    }
+
+    .price-highlight {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .banner-ctas {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 2.25rem 0 1.75rem;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title span {
+      color: var(--telemetry-blue);
+      text-shadow: 0 0 24px var(--telemetry-glow);
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      max-width: 580px;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--telemetry-blue);
+    }
+
+    /* Hero Canvas Card */
+    .hero-canvas-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    #flightWaveformCanvas {
+      width: 100%;
+      height: 240px;
+      display: block;
+    }
+
+    .canvas-caption {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Cockpit Main Workspace */
+    .cockpit-section {
+      margin-bottom: 3rem;
+    }
+
+    .cockpit-toolbar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .session-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .session-select {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 40px;
+      max-width: 420px;
+    }
+
+    /* Scrubber Deck */
+    .scrubber-deck {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .scrubber-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .time-indicator {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--telemetry-blue);
+      text-shadow: 0 0 12px var(--telemetry-glow);
+    }
+
+    .playback-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scrubber-slider-wrap {
+      margin: 1rem 0 0.5rem;
+    }
+
+    .flight-slider {
+      width: 100%;
+      height: 10px;
+      accent-color: var(--gold);
+      background: var(--card-surface);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .speed-btn-group {
+      display: flex;
+      gap: 4px;
+      background: var(--card-surface);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .speed-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .speed-btn.active {
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* Cockpit 4-Pane Grid */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .cockpit-pane {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .pane-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pane-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .terminal-box {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--emerald);
+      height: 260px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .network-nodes-box {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 100px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-content: flex-start;
+    }
+
+    .network-pill {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--telemetry-blue);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .network-pill .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--telemetry-blue);
+    }
+
+    .engrams-box {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      list-style-type: none;
+      min-height: 120px;
+      max-height: 140px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .engram-item {
+      margin-bottom: 6px;
+      color: var(--text);
+      line-height: 1.4;
+      border-left: 2px solid var(--gold);
+      padding-left: 8px;
+    }
+
+    .empty-hint {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+    }
+
+    /* Metric Gauges */
+    .metric-gauge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .gauge-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--card-surface);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 6px 0;
+    }
+
+    .gauge-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--emerald);
+      transition: all 0.2s ease;
+    }
+
+    /* Voice Incident Briefing Section */
+    .briefing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .briefing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .briefing-text-box {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text);
+      min-height: 80px;
+    }
+
+    /* Frosted Locked Compliance Section */
+    .compliance-wrapper {
+      position: relative;
+      margin-bottom: 3.5rem;
+    }
+
+    .frosted-locked {
+      filter: blur(6px);
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.6;
+    }
+
+    .compliance-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .lock-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .lock-card {
+      background: rgba(18, 18, 23, 0.95);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      max-width: 480px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8), 0 0 24px var(--gold-glow);
+    }
+
+    .lock-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .lock-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+
+    .lock-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 16px 64px rgba(0, 0, 0, 0.9), 0 0 32px var(--gold-glow);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+
+    .modal-features {
+      margin: 1.25rem 0;
+      list-style-type: none;
+    }
+
+    .modal-features li {
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-input-group {
+      display: flex;
+      gap: 8px;
+      margin: 1rem 0;
+    }
+
+    .modal-input {
+      flex: 1;
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      margin-top: 3rem;
+      background: rgba(8, 8, 11, 0.6);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .cockpit-grid {
+        grid-template-columns: 1fr;
+      }
+      .compliance-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 0.5rem;
+      }
+      .nav-inner {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .brand-title {
+        font-size: 0.92rem;
+      }
+      .brand-icon {
+        width: 30px;
+        height: 30px;
+      }
+      .header-actions {
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .header-actions .btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        min-height: 32px;
+      }
+      #proStatusBadge {
+        display: none;
+      }
+      .hero-title {
+        font-size: 1.85rem;
+      }
+      .banner-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .banner-ctas {
+        width: 100%;
+      }
+      .banner-ctas .btn {
+        flex: 1;
+      }
+      .cockpit-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .session-select {
+        max-width: 100%;
+        width: 100%;
+      }
+      .scrubber-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .time-indicator {
+        font-size: 1.15rem;
+      }
+      .playback-actions {
+        flex-wrap: wrap;
+      }
+      .lock-card {
+        padding: 1.5rem 1rem;
+        margin: 0 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/wave.css">
+  <link rel="stylesheet" href="/wave-states.css">
+  <link rel="stylesheet" href="/wave-type.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="/" class="brand" aria-label="Agent Flight Recorder Home">
+          <img src="assets/icon.png" alt="Agent Flight Recorder Cryptographic Black Box Logo" width="36" height="36" style="border-radius: 8px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); object-fit: cover;">
+          <div>
+            <div class="brand-title">AGENT FLIGHT RECORDER</div>
+            <div style="font-size: 0.72rem; color: var(--telemetry-blue); font-family: var(--font-mono);">v0.1.0 • Black Box Telemetry Cockpit</div>
+          </div>
+        </a>
+
+        <div class="header-actions">
+          <span class="badge" style="background: rgba(212,175,55,0.15); color: #F59E0B; border: 1px solid rgba(212,175,55,0.3); font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;">v2.5 SOVEREIGN</span>
+          <span id="licenseBadge" class="badge-free" data-alias="pro-badge">⚡ FREE TIER</span>
+          <button class="btn btn-gold open-pro-modal" id="btnHeaderUpgrade" aria-label="Upgrade to Pro License">Upgrade Pro</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- High-Converting Sales Funnel Banner Above Main Section -->
+    <section class="sales-banner" id="salesBanner" data-alias="paywallBanner" aria-label="Founding Member Lifetime Offer">
+      <div class="banner-inner">
+        <div class="banner-content">
+          <span class="urgency-pill">⚡ FOUNDING MEMBER LAUNCH</span>
+          <div style="font-size: 0.92rem;">
+            <strong>Autonomous Black Box Telemetry:</strong> Lifetime Unlimited Access for 
+            <span class="price-strike">$79</span> 
+            <span class="price-highlight">$19</span> (Save 76%)
+          </div>
+        </div>
+        <div class="banner-ctas">
+          <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeBanner" aria-label="Instant Stripe Checkout">
+            Stripe Checkout ($19)
+          </a>
+          <button class="btn btn-cyan btn-depay-solana" id="btnSolanaBanner" aria-label="Solana Web3 Checkout">
+            Solana (SOL)
+          </button>
+          <button class="btn btn-outline open-pro-modal" id="btnActivateBanner" aria-label="Activate with Solana or License Key">
+            Activate Key
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero" aria-label="Hero Overview">
+      <div>
+        <div class="hero-pills">
+          <div class="hero-pill"><div class="hero-pill-dot"></div> Zero External Pip Dependencies</div>
+          <div class="hero-pill"><div class="hero-pill-dot"></div> Port 8104 Forensics Deck</div>
+          <div class="hero-pill"><div class="hero-pill-dot"></div> Single-File Bundle Exporter</div>
+        </div>
+        <h1 class="hero-title">
+          Black Box Flight Recorder & <span>Time-Scrubbing Telemetry.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Capture high-resolution agent session timelines and replay execution second-by-second. Synchronize terminal streams, active network egress connections, synaptic memory engrams, and prompt injection attacks with zero cloud dependencies.
+        </p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="#deck" class="btn btn-cyan" aria-label="Jump to Flight Deck">Launch Scrubber Deck</a>
+          <button class="btn btn-outline open-pro-modal" aria-label="View Pro Capabilities">1-Click Offline Bundle</button>
+        </div>
+      </div>
+
+      <!-- Oscilloscope Telemetry Canvas -->
+      <div class="hero-canvas-card" aria-label="Chrono-Reticle Oscilloscope Canvas">
+        <canvas id="flightWaveformCanvas" aria-label="Live oscilloscope telemetry wave"></canvas>
+        <div class="canvas-caption">CHRONO-PRISM OSCILLOSCOPE • 100HZ TELEMETRY REPLAY</div>
+      </div>
+    </section>
+
+    <!-- Cockpit Main Workspace -->
+    <section class="cockpit-section" id="deck" aria-label="Interactive Time-Scrubbing Cockpit">
+      
+      <!-- Cockpit Toolbar -->
+      <div class="cockpit-toolbar">
+        <div class="session-meta-row">
+          <label for="sessionSelect" class="sr-only" style="display:none;">Select Flight Session</label>
+          <select id="sessionSelect" class="session-select" aria-label="Select Flight Session">
+            <option value="flt-demo-4802">flt-demo-4802 • Market Sentiment & Trade Dispatch</option>
+          </select>
+          <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
+            Dur: <strong id="activeSessionDur" style="color: var(--telemetry-blue);">4.85s</strong> • 
+            Events: <strong id="activeSessionEvents" style="color: var(--gold);">14</strong>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline open-pro-modal" id="btnExportBundle" aria-label="Export Single File Bundle">
+            Export Bundle (.html)
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Scrubber Bar -->
+      <div class="scrubber-deck" aria-label="Timeline Scrubber Bar">
+        <div class="scrubber-header">
+          <div>
+            <div style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--gold); text-transform: uppercase;">
+              CURRENT SCRUBBER POSITION
+            </div>
+            <div class="time-indicator" id="timeDisplay">00:00.000 / 00:04.850</div>
+          </div>
+
+          <div class="playback-actions">
+            <button class="btn btn-cyan" id="btnPlayPause" aria-label="Play or Pause Replay">▶ Play</button>
+            <button class="btn btn-outline" id="btnStepBack" aria-label="Step Back 250ms">⏮ -250ms</button>
+            <button class="btn btn-outline" id="btnStepForward" aria-label="Step Forward 250ms">+250ms ⏭</button>
+            
+            <div class="speed-btn-group" aria-label="Playback Speed Selector">
+              <button class="speed-btn active" data-speed="1.0" aria-label="1x Speed">1x</button>
+              <button class="speed-btn" data-speed="2.0" aria-label="2x Speed">2x</button>
+              <button class="speed-btn" data-speed="4.0" aria-label="4x Speed">4x</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scrubber-slider-wrap">
+          <label for="timelineScrubber" class="sr-only" style="display:none;">Timeline Scrubber</label>
+          <input type="range" class="flight-slider" id="timelineScrubber" min="0" max="4850" value="0" aria-label="Timeline Scrubber Slider">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">
+          <span>T+00:00.000 (BOOT)</span>
+          <span id="activeSessionCmd" style="color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">python3 -m agent_core</span>
+          <span>MISSION END</span>
+        </div>
+      </div>
+
+      <!-- Cockpit 4-Pane Grid -->
+      <div class="cockpit-grid">
+        
+        <!-- Pane 1: Synchronized Terminal Output -->
+        <div class="cockpit-pane">
+          <div class="pane-title-row">
+            <span class="pane-title">Synchronized Terminal Stream</span>
+            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--emerald);">LIVE STDOUT/STDERR</span>
+          </div>
+          <div class="terminal-box" id="terminalOutput" aria-label="Terminal Stream">[Waiting for process output...]</div>
+        </div>
+
+        <!-- Pane 2: Active Network Egress & Engrams -->
+        <div class="cockpit-pane">
+          <div class="pane-title-row">
+            <span class="pane-title">Network Egress (Sentinel :8095)</span>
+            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--telemetry-blue);">ACTIVE TOPOLOGY</span>
+          </div>
+          <div class="network-nodes-box" id="networkNodesList" aria-label="Active Network Endpoints">
+            <span class="empty-hint">No outbound egress at this timestamp.</span>
+          </div>
+
+          <div class="pane-title-row" style="margin-top: 0.5rem;">
+            <span class="pane-title">Synaptic Engrams (Lucy :8094)</span>
+            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--gold);">NEURAL ANCHORS</span>
+          </div>
+          <ul class="engrams-box" id="engramsList" aria-label="Synaptic Engrams Triggered">
+            <li class="empty-hint">No synaptic engrams triggered.</li>
+          </ul>
+
+          <div style="margin-top: 0.5rem;">
+            <div class="metric-gauge-row">
+              <span style="font-size: 0.78rem; color: var(--text-muted);">Peak Threat Vector:</span>
+              <strong id="gaugeThreatVal" style="font-family: var(--font-mono); color: var(--ruby);">0.00</strong>
+            </div>
+            <div class="gauge-bar-wrap" aria-label="Threat Level Bar">
+              <div class="gauge-bar-fill" id="gaugeThreatFill"></div>
+            </div>
+            <div class="metric-gauge-row">
+              <span style="font-size: 0.78rem; color: var(--text-muted);">Mock Replay Token Savings:</span>
+              <strong style="font-family: var(--font-mono); color: var(--emerald);"><span id="statTokensSaved">0</span> tokens ($0.00 spend)</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Voice Incident Briefing Section -->
+      <div class="briefing-card" id="briefing" aria-label="Kokoro Audio Briefing Section">
+        <div class="briefing-header">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text);">
+              Voice Incident Briefing (Kokoro TTS :9394 Ready)
+            </h2>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">
+              Automated natural-language mission report synthesized from timeline telemetry.
+            </div>
+          </div>
+          <button class="btn btn-gold" id="btnSpeakBriefing" aria-label="Audio Briefing Button">
+            Audio Briefing ✦
+          </button>
+        </div>
+
+        <div class="briefing-text-box" id="briefingText">
+          Generating incident briefing...
+        </div>
+      </div>
+
+      <!-- Frosted Glass Paywall: Deep-Dive Root Cause Analysis -->
+      <div class="compliance-wrapper" id="paywall" aria-label="Pro Forensic Deep-Dive">
+        <div class="section-header" style="margin-bottom: 1rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--text);">
+            Deep-Dive Forensic Root Cause & Single-File Bundles
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Export self-contained HTML black box bundles with embedded JSON for offline incident post-mortems.
+          </p>
+        </div>
+
+        <div class="compliance-card frosted-locked" id="proLockedSection">
+          <div class="compliance-grid">
+            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Zero-Server Bundles</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Standalone single-file HTML viewers playable in any browser without a web server.</div>
+            </div>
+            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Sub-Millisecond Diffs</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Inspect memory mutations, AST transforms, and byte-level disk diffs at exact offsets.</div>
+            </div>
+            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Post-Mortem Root Cause</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Automated attribution linking exceptions directly to prompt injections or network timeouts.</div>
+            </div>
+          </div>
+          <button class="btn btn-gold" id="btnExportStandalone" aria-label="Export Single File Flight Bundle">Export Standalone Incident Bundle</button>
+        </div>
+
+        <!-- Glowing Lock Overlay -->
+        <div class="lock-overlay" id="forensicsLockOverlay">
+          <div class="lock-card">
+            <div class="lock-icon" aria-hidden="true">★</div>
+            <div class="lock-title">PRO FORENSIC SUITE LOCKED</div>
+            <p class="lock-desc">
+              Unlock Standalone Single-File Incident Bundles, Deep-Dive AST Diffs, and Unlimited Black Box Telemetry exports with permanent founding access.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+              <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeOverlay" aria-label="Unlock via Stripe">
+                Unlock via Stripe ($19)
+              </a>
+              <button class="btn btn-cyan btn-depay-solana" id="btnSolanaOverlay" aria-label="Solana Web3 Checkout">
+                Solana (SOL)
+              </button>
+              <button class="btn btn-outline open-pro-modal" id="btnKeyOverlay" aria-label="Activate with Key">
+                Activate Key
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Pro Modal -->
+  <div class="modal-backdrop" id="proModal" data-alias="licenseModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <button class="modal-close" id="closeProModal" aria-label="Close Pro Modal">&times;</button>
+      <h3 class="modal-title" id="modalTitle">⭐ AGENT FLIGHT RECORDER PRO</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted);">
+        Activate your founding member license to unlock single-file offline bundle exports and root-cause forensics.
+      </p>
+
+      <ul class="modal-features">
+        <li><span>✅</span> <strong>Zero-Server HTML Bundles:</strong> Standalone single-file incident players with embedded JSON</li>
+        <li><span>✅</span> <strong>Deep-Dive Root Cause Analysis:</strong> Automated attribution linking faults to prompts or network</li>
+        <li><span>✅</span> <strong>Sub-Millisecond AST Diffs:</strong> Inspect memory mutations and byte-level diffs at exact offsets</li>
+        <li><span>✅</span> <strong>Kokoro Audio Briefings:</strong> In-browser voice incident briefings optimized for loopback port 9394</li>
+        <li><span>✅</span> <strong>Sovereign Defense Chain:</strong> Seamless integration across ports 8094-8106 (Jail, Policy, Sentinel)</li>
+        <li><span>✅</span> <strong>Permanent Lifetime Access:</strong> All future forensic modules, CI/CD telemetry ingest, and updates</li>
+      </ul>
+
+      <div style="display: flex; gap: 10px; margin: 1.25rem 0;">
+        <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeModal" style="flex: 1;" aria-label="Stripe Checkout Button">
+          Stripe ($19 Lifetime)
+        </a>
+        <button class="btn btn-outline btn-depay-solana" id="btnModalSolana" style="flex: 1;" aria-label="Solana DePay Checkout">
+          Solana DePay (SOL)
+        </button>
+      </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Already have a license or receipt key?</div>
+        <div class="modal-input-group">
+          <input type="text" id="licenseKeyInput" class="modal-input" placeholder="Enter key (e.g. FLIGHT-PRO-2026)" aria-label="License Key Input">
+          <button id="btnActivateKey" data-alias="btnActivateKey" class="btn btn-gold" aria-label="Activate License Key">Activate</button>
+        </div>
+        <div id="activationMsg" style="font-size: 0.78rem; font-family: var(--font-mono);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Subtle Attribution -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: none;">@1nc0gn30</a>) • <strong>NullAI Platform</strong>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/1nc0gn30/agent-flight-recorder" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+          <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+          <a href="https://nealfrazier.tech" target="_blank" rel="noopener noreferrer">Neal Frazier Tech</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/flight_deck.js"></script>
+</body>
+</html>

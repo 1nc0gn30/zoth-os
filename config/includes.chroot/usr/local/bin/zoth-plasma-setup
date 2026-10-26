@@ -1,11 +1,32 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS KDE PLASMA 6 ENVIRONMENT SETUP
+#  ZOTHOS 3.3.0 KDE PLASMA 6 SOVEREIGN ENVIRONMENT SETUP
 # ==============================================================================
 set -u
 
 WALLPAPER="/usr/share/backgrounds/zothos/zoth-gold-master.jpg"
 QDBUS=$(command -v qdbus6 2>/dev/null || command -v qdbus 2>/dev/null || echo "qdbus6")
+
+# 1. Clean legacy unorganized 3.0 top-level .desktop clutter if layered over an older rootfs
+if [ -d "$HOME/Desktop" ] && [ -d "$HOME/Desktop/01-AI-Agents-and-Dev" ]; then
+    for f in "$HOME/Desktop/"*.desktop; do
+        [ -f "$f" ] || continue
+        base=$(basename "$f")
+        case "$base" in
+            claude-code.desktop|google-chrome.desktop|grok-ai.desktop|hermes-agent.desktop|zoth-civilization.desktop|zoth-control-center.desktop|zoth-cursor.desktop|zoth-os.desktop|zoth-studio.desktop|zoth-tool-nexus.desktop|install-zothos.desktop)
+                chmod +x "$f" 2>/dev/null || true
+                ;;
+            *)
+                rm -f "$f" 2>/dev/null || true
+                ;;
+        esac
+    done
+    # On Live USB environment, ensure Install ZothOS 3.3.0 is prominently on the Desktop
+    if [ -d /run/live/medium ] && [ -f /usr/share/applications/install-zothos.desktop ]; then
+        cp -f /usr/share/applications/install-zothos.desktop "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true
+        chmod +x "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true
+    fi
+fi
 
 # Wait for plasma shell to be available on DBus
 for i in {1..40}; do
@@ -17,7 +38,7 @@ done
 
 # Ensure KDE Plasma panel exists
 if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
-    "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1 && "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
         var p = panels();
         if (p.length === 0) {
             loadTemplate("org.kde.plasma.desktop.defaultPanel");
@@ -30,7 +51,6 @@ INTERACTIVE_PLUGIN="/usr/share/plasma/wallpapers/org.zothos.interactive"
 USER_INTERACTIVE_PLUGIN="$HOME/.local/share/plasma/wallpapers/org.zothos.interactive"
 
 if [ -d "$INTERACTIVE_PLUGIN" ] || [ -d "$USER_INTERACTIVE_PLUGIN" ]; then
-    # Ensure all desktop containments use org.zothos.interactive
     if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
         "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
             var desktops = desktops();
@@ -39,7 +59,6 @@ if [ -d "$INTERACTIVE_PLUGIN" ] || [ -d "$USER_INTERACTIVE_PLUGIN" ]; then
             }
         ' >/dev/null 2>&1 || true
     fi
-    # Also persist to desktop appletsrc for any new sessions
     if command -v kwriteconfig6 >/dev/null 2>&1 && [ -f "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" ]; then
         for cid in $(grep -E "^\[Containments\]\[[0-9]+\]$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null | tr -d '[]' | sed 's/Containments//'); do
             is_desktop=$(kreadconfig6 --file plasma-org.kde.plasma.desktop-appletsrc --group Containments --group "$cid" --key plugin 2>/dev/null || true)
@@ -49,25 +68,25 @@ if [ -d "$INTERACTIVE_PLUGIN" ] || [ -d "$USER_INTERACTIVE_PLUGIN" ]; then
         done
     fi
 else
-    # Fallback to static master wallpaper if interactive plugin is absent
     if [ -f "$WALLPAPER" ] && command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
         plasma-apply-wallpaperimage "$WALLPAPER" >/dev/null 2>&1 || true
     fi
-    if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
-        "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
-            var desktops = desktops();
-            for (var i = 0; i < desktops.length; i++) {
-                desktops[i].wallpaperPlugin = "org.kde.image";
-                desktops[i].currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
-                desktops[i].writeConfig("Image", "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg");
-            }
-        ' >/dev/null 2>&1 || true
-    fi
 fi
 
-# Ensure KDE dark colorscheme is applied
-if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
-    plasma-apply-colorscheme BreezeDark >/dev/null 2>&1 || true
+# Ensure ZothHermeticGold colorscheme & breeze-dark complete icon suite are applied (never overwrite with flat BreezeDark)
+ACTIVE_MODE="gold"
+if [ -f "$HOME/.config/zothos/current_mode" ]; then
+    ACTIVE_MODE=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "gold")
+fi
+if [ "$ACTIVE_MODE" = "gold" ] || [ -z "$ACTIVE_MODE" ]; then
+    if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
+        plasma-apply-colorscheme ZothHermeticGold >/dev/null 2>&1 || true
+    fi
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file kdeglobals --group General --key ColorScheme "ZothHermeticGold" 2>/dev/null || true
+        kwriteconfig6 --file kdeglobals --group Icons --key Theme "breeze-dark" 2>/dev/null || true
+        kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme "Zoth-Azoth-Gold" 2>/dev/null || true
+    fi
 fi
 
 # Ensure screen lock is disabled on live session & lockscreen uses zoth-gold-master.jpg
@@ -78,7 +97,12 @@ if command -v kwriteconfig6 >/dev/null 2>&1; then
     kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:///usr/share/backgrounds/zothos/zoth-gold-master.jpg" 2>/dev/null || true
 fi
 
-# Eight virtual desktops + Samsung as its own screen (not a clone at 0,0)
+# Launch Zoth-Bot Desktop Companion if not already running
+if [ -x /opt/zoth-bot/bin/zoth-bot ] && ! pgrep -f "/opt/zoth-bot" >/dev/null 2>&1 && ! pgrep -f "NullAITech/zoth-bot" >/dev/null 2>&1; then
+    nohup /opt/zoth-bot/bin/zoth-bot >/dev/null 2>&1 &
+fi
+
+# Eight virtual desktops
 if [[ -x /usr/local/bin/zoth-workspaces ]]; then
     /usr/local/bin/zoth-workspaces apply >/dev/null 2>&1 || true
 fi

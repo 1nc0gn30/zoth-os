@@ -1,0 +1,22 @@
+{
+  "name": "zoth-bot",
+  "version": "0.1.0",
+  "description": "Zoth Bot \u2014 local-first always-on desk companion for Zoth OS",
+  "main": "main.js",
+  "author": "NullAITech",
+  "license": "GPL-3.0",
+  "scripts": {
+    "start": "electron --no-sandbox .",
+    "test": "ELECTRON_RUN_AS_NODE=1 /opt/electron/electron --test test/"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.82",
+    "@ai-sdk/google": "^4.0.99",
+    "@ai-sdk/openai": "^4.0.96",
+    "@ai-sdk/xai": "^5.0.24",
+    "ai": "^7.0.143",
+    "better-sqlite3": "^11.10.0",
+    "ollama-ai-provider-v2": "^4.0.1",
+    "zod": "^4.6.7"
+  }
+}

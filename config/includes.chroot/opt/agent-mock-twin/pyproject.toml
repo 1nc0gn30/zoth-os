@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-mock-twin"
+version = "0.1.0"
+description = "Autonomous Offline API Mock & Network Twin for AI Agents ($0 Token Cost in CI/CD)"
+readme = "README.md"
+authors = [{ name = "Neal Frazier", email = "neal@nullai.tech" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+agent-mock = "agent_mock_twin.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

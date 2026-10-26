@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VAULT_DIR="$HOME/.config/zoth-vault"
+VAULT_FILE="$VAULT_DIR/stripe.env"
+SOVEREIGN_ENV="$HOME/NullAITech/zoth-civilization/.env.sovereign"
+SYNC_SCRIPT="$HOME/NullAITech/zoth-civilization/engine/sync_stripe_product_images.py"
+
+mkdir -p "$VAULT_DIR"
+chmod 700 "$VAULT_DIR"
+
+echo "================================================================"
+echo "🔐 ZOTH SOVEREIGN VAULT — STRIPE API KEY CONFIGURATOR"
+echo "================================================================"
+echo "• Stored in: $VAULT_FILE (chmod 600, 100% outside all Git repos)"
+echo "• Hidden input: Your key is NEVER echoed or saved in bash_history"
+echo "----------------------------------------------------------------"
+
+if [ "${1:-}" != "" ]; then
+  STRIPE_KEY="$1"
+else
+  read -rsp "Paste your Stripe Secret/Restricted Key (sk_live_... or rk_live_...): " STRIPE_KEY
+  echo ""
+fi
+
+STRIPE_KEY="$(echo -n "$STRIPE_KEY" | tr -d '[:space:]')"
+
+if [[ ! "$STRIPE_KEY" =~ ^(sk|rk)_(live|test)_ ]]; then
+  echo "❌ Invalid key format. Key must start with sk_live_, rk_live_, sk_test_, or rk_test_."
+  exit 1
+fi
+
+umask 077
+cat > "$VAULT_FILE" <<EOF
+STRIPE_SECRET_KEY=$STRIPE_KEY
+EOF
+chmod 600 "$VAULT_FILE"
+
+# Also update .env.sovereign (gitignored) so running Zoth Civilization daemons pick it up
+if [ -f "$SOVEREIGN_ENV" ]; then
+  if grep -q "^STRIPE_SECRET_KEY=" "$SOVEREIGN_ENV"; then
+    sed -i "s|^STRIPE_SECRET_KEY=.*|STRIPE_SECRET_KEY=$STRIPE_KEY|" "$SOVEREIGN_ENV"
+  else
+    echo "STRIPE_SECRET_KEY=$STRIPE_KEY" >> "$SOVEREIGN_ENV"
+  fi
+  chmod 600 "$SOVEREIGN_ENV"
+fi
+
+echo "✅ Saved securely to $VAULT_FILE (chmod 600)."
+echo ""
+echo "🚀 Launching Stripe Product Artwork Synchronizer..."
+python3 "$SYNC_SCRIPT"

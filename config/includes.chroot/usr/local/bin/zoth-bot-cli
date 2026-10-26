@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+# ==============================================================================
+#  🜂 ZOTHOS SOVEREIGN BOT COMPANION CLI v2.0 🜄
+#  Real-Time Local Intelligence Powered by Ollama & Reality Persona Engine
+# ==============================================================================
+
+import sys, os, json, urllib.request, readline
+
+CONFIG_DIR = os.path.expanduser("~/.config/zothos")
+MODE_FILE = os.path.join(CONFIG_DIR, "current_mode")
+CHAR_FILE = os.path.join(CONFIG_DIR, "active_character.json")
+ALL_CHARS_FILE = os.path.join(CONFIG_DIR, "bot_characters.json")
+
+def get_active_mode():
+    if os.path.exists(MODE_FILE):
+        try:
+            with open(MODE_FILE, "r") as f:
+                return f.read().strip() or "gold"
+        except:
+            pass
+    return "gold"
+
+def load_character(mode):
+    if os.path.exists(ALL_CHARS_FILE):
+        try:
+            with open(ALL_CHARS_FILE, "r") as f:
+                data = json.load(f)
+                if mode in data:
+                    return data[mode]
+        except:
+            pass
+    return {
+        "id": "azoth",
+        "name": "Azoth Prime",
+        "title": "The Alchemical Sovereign & Prime Architect",
+        "glyph": "☿",
+        "color": "#FFD700",
+        "system_prompt": "You are Azoth Prime, the sovereign alchemical AI architect of ZothOS. Ground all code and decisions in verifiable reality."
+    }
+
+def get_color_codes(color_hex):
+    # Mapping hex to ANSI color
+    if "FFD700" in color_hex or "D4AF37" in color_hex:
+        return "\033[38;2;255;215;0m", "\033[38;2;212;175;55m"
+    elif "FF3355" in color_hex or "F43F5E" in color_hex:
+        return "\033[38;2;255;51;85m", "\033[38;2;168;85;247m"
+    elif "00FF9D" in color_hex or "10B981" in color_hex:
+        return "\033[38;2;0;255;157m", "\033[38;2;0;229;255m"
+    elif "0078D4" in color_hex or "38BDF8" in color_hex:
+        return "\033[38;2;56;189;248m", "\033[38;2;0;120;212m"
+    return "\033[38;2;255;215;0m", "\033[38;2;212;175;55m"
+
+def query_ollama(system_prompt, messages):
+    payload = {
+        "model": "qwen2.5-coder:1.5b",
+        "messages": [{"role": "system", "content": system_prompt}] + messages,
+        "stream": False,
+        "options": {
+            "temperature": 0.65,
+            "num_predict": 256
+        }
+    }
+    req = urllib.request.Request(
+        "http://127.0.0.1:11434/api/chat",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"}
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        res = json.loads(resp.read().decode("utf-8"))
+        return res["message"]["content"]
+
+def main():
+    mode = get_active_mode()
+    char = load_character(mode)
+    c_prim, c_acc = get_color_codes(char.get("color", "#FFD700"))
+    reset = "\033[0m"
+    dim = "\033[38;2;120;140;160m"
+    bold = "\033[1m"
+
+    # Single-shot mode if arguments provided
+    args = sys.argv[1:]
+    if args and args[0] not in ["--chat", "-c", "--interactive", "-i"]:
+        if args[0] in ["--status", "-s"]:
+            print(f"{c_prim}{bold}Active Companion:{reset} {char['name']} [{char['glyph']}] ({char['title']})")
+            print(f"{dim}Reality Mode: {mode.upper()} · Model: qwen2.5-coder:1.5b (Local Loopback :11434){reset}")
+            return
+        query = " ".join(args)
+        try:
+            reply = query_ollama(char.get("system_prompt", ""), [{"role": "user", "content": query}])
+            print(f"{c_prim}{bold}{char['name']} [{char['glyph']}]:{reset} {reply.strip()}")
+        except Exception as e:
+            print(f"\033[31m[!] Local neural stack offline (:11434): {e}\033[0m")
+        return
+
+    # Interactive Chat Loop
+    print(f"\n{c_prim}{bold}╔══════════════════════════════════════════════════════════════════╗{reset}")
+    print(f"{c_prim}{bold}║        🜂 ZOTHOS COMPANION: {char['name'].upper()} [{char['glyph']}] 🜄        ║{reset}")
+    print(f"{c_prim}{bold}╚══════════════════════════════════════════════════════════════════╝{reset}")
+    print(f"  {dim}Title:{reset}   {char.get('title', 'Sovereign Intelligence')}")
+    print(f"  {dim}Reality:{reset} {c_acc}{mode.upper()} PROFILE{reset} {dim}· Zero-Egress Invariant Active{reset}")
+    print(f"  {dim}Engine:{reset}  Ollama (127.0.0.1:11434) · qwen2.5-coder:1.5b")
+    print(f"  {dim}Commands:{reset} Type {bold}'exit'{reset} or {bold}'ctrl+d'{reset} to leave, {bold}'mode'{reset} to check reality.\n")
+
+    history = []
+    while True:
+        try:
+            user_input = input(f"{c_acc}{bold}operator@zothos >> {reset}").strip()
+            if not user_input:
+                continue
+            if user_input.lower() in ["exit", "quit", "q"]:
+                print(f"{c_prim}Farewell, sovereign operator.{reset}\n")
+                break
+            if user_input.lower() in ["mode", "status"]:
+                print(f"{dim}Active reality is {mode.upper()} with {char['name']}.{reset}\n")
+                continue
+
+            history.append({"role": "user", "content": user_input})
+            print(f"{dim}Thinking...{reset}", end="\r")
+            reply = query_ollama(char.get("system_prompt", ""), history[-6:])
+            history.append({"role": "assistant", "content": reply})
+            print(f"{c_prim}{bold}{char['name']} [{char['glyph']}]:{reset} {reply.strip()}\n")
+        except (KeyboardInterrupt, EOFError):
+            print(f"\n{c_prim}Session detached.{reset}\n")
+            break
+        except Exception as e:
+            print(f"\033[31m[!] Neural link error: {e}\033[0m\n")
+
+if __name__ == "__main__":
+    main()

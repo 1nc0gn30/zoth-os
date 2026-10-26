@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "etsy-pod-forge"
+version = "0.1.0"
+description = "Autonomous Print-on-Demand Studio, High-Res Canvas Generator & Etsy Listing Synthesizer"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Neal Frazier Tech", email = "1nc0gn30@users.noreply.github.com"}
+]
+dependencies = [
+    "pillow>=10.0.0"
+]
+
+[project.scripts]
+etsy-pod-forge = "etsy_pod_forge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,10 @@
+{
+  "name": "agent-mock-twin",
+  "version": "2.5.0",
+  "description": "Autonomous offline API mock server and network twin for AI agents ($0 token spend in CI/CD) with dual Stripe + Solana checkout rails.",
+  "scripts": {
+    "serve": "python3 -m http.server 8097 --directory public"
+  },
+  "author": "Neal Frazier Tech (@1nc0gn30)",
+  "license": "MIT"
+}

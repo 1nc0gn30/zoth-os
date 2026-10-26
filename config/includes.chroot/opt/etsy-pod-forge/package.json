@@ -1,0 +1,28 @@
+{
+  "name": "etsy-pod-forge",
+  "version": "2.5.0",
+  "description": "Autonomous Print-on-Demand Studio & Etsy SEO Listing Synthesizer",
+  "main": "public/forge_engine.js",
+  "homepage": "https://etsy-pod.nullai.tech",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nc0gn30/etsy-pod-forge.git"
+  },
+  "scripts": {
+    "start": "python3 -m http.server 8107 --directory public",
+    "serve:public": "python3 -m http.server 8107 --directory public",
+    "test": "pytest tests/",
+    "test:ui": "python3 scripts/verify_ui.py"
+  },
+  "keywords": [
+    "etsy",
+    "pod",
+    "print-on-demand",
+    "seo",
+    "mockups",
+    "zero-cloud",
+    "sovereign"
+  ],
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "license": "MIT"
+}

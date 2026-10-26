@@ -129,6 +129,14 @@ if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/.config" ]; then
   echo -n "gold" > "$HOME/.config/zothos/profile.state"
   echo -n "gold" > "$HOME/.config/zothos/reality.state"
 fi
+if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/.local/share" ]; then
+  mkdir -p "$HOME/.local/share"
+  cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/.local/share/"* "$HOME/.local/share/" 2>/dev/null || true
+fi
+if [ -d /opt/zoth-bot ] && [ ! -d /opt/zoth-bot/node_modules ]; then
+  echo -e "${CYAN}  • Installing Zoth-Bot Desktop Companion runtime dependencies ...${RESET}"
+  sudo npm --prefix /opt/zoth-bot install --omit=dev >/dev/null 2>&1 || true
+fi
 
 # ------------------------------------------------------------------------------
 # STEP 5: Deploy Full /usr/share Assets & Clean 3.3 4-Folder Desktop Layout
@@ -173,8 +181,13 @@ fi
 if [ -x /usr/local/bin/zoth-plasma-setup ]; then
   /usr/local/bin/zoth-plasma-setup || true
 fi
-if [ -x /usr/local/bin/zoth-bot ] && ! pgrep -f "/usr/local/bin/zoth-bot" >/dev/null 2>&1; then
-  nohup /usr/local/bin/zoth-bot >/dev/null 2>&1 &
+if pgrep -x plasmashell >/dev/null 2>&1; then
+  kquitapp6 plasmashell 2>/dev/null || killall plasmashell 2>/dev/null || true
+  sleep 1
+  nohup kstart plasmashell >/dev/null 2>&1 &
+fi
+if [ -x /opt/zoth-bot/bin/zoth-bot ] && ! pgrep -f "/opt/zoth-bot" >/dev/null 2>&1; then
+  nohup /opt/zoth-bot/bin/zoth-bot >/dev/null 2>&1 &
 fi
 
 # ------------------------------------------------------------------------------

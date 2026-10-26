@@ -1,11 +1,11 @@
 [Desktop Entry]
-Version=1.0
 Type=Application
 Name=Zoth Bot
-Comment=Always-on 3D desk companion for Zoth OS
-Exec=/usr/local/bin/zoth-bot-launch
-Icon=applications-system
+GenericName=Sovereign AI Desk Companion
+Comment=Pocket companion — Azoth Prime / Hermes on this workstation
+Exec=/opt/zoth-bot/bin/zoth-bot
+Icon=/opt/zoth-bot/assets/icon-256.png
 Terminal=false
 Categories=Utility;ArtificialIntelligence;
-StartupNotify=true
-StartupWMClass=zoth-bot
+X-GNOME-Autostart-enabled=true
+StartupNotify=false

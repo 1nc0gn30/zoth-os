@@ -1,0 +1,401 @@
+/*
+ * Etsy POD Forge — Wave States Enhancement Stylesheet
+ * Architectural anchor: The Botanical Atelier State Diagnostics
+ * Focus-visible, hover, empty and error presentation for existing selectors.
+ * Strictly respects prefers-reduced-motion.
+ */
+
+/* ==========================================================================
+   1. ACCESSIBILITY & VISIBLE FOCUS ARCHITECTURE (:focus-visible)
+   ========================================================================== */
+
+/* Remove default focus outline on mouse click while preserving keyboard accessibility */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Base focus-visible ring across all interactive controls */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Distinctive primary actions & checkout buttons */
+.btn-checkout-stripe:focus-visible,
+.btn-checkout-solana:focus-visible,
+.btn-action-primary:focus-visible,
+#btnActivateKey:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px var(--bg-dark), 0 0 14px rgba(243, 229, 171, 0.45);
+}
+
+/* Secondary triggers, navigation chips, and header badges */
+.brand-title:focus-visible,
+.brand-badge:focus-visible,
+#licenseBadge:focus-visible,
+.btn-key-activate:focus-visible,
+#btnOpenProModal:focus-visible,
+#btn-paywall-key:focus-visible,
+.cadre-btn:focus-visible,
+.view-tab-btn:focus-visible,
+.btn-copy-chip:focus-visible,
+.tag-chip:focus-visible,
+.btn-action-secondary:focus-visible,
+.modal-close-btn:focus-visible,
+footer a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--bg-dark), 0 0 10px rgba(212, 175, 55, 0.35);
+}
+
+/* Form inputs & textareas focus rings */
+.form-input:focus-visible,
+.title-textarea:focus-visible,
+#inputTitle:focus-visible,
+#inputNames:focus-visible,
+#license-input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 0;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 12px rgba(212, 175, 55, 0.25);
+}
+
+/* Retail slider numeric input */
+#inputRetail:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 0;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 1px var(--emerald), 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+/* Color swatch focus states */
+.color-swatch:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 3px;
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   2. HOVER & ACTIVE MICRO-INTERACTIONS
+   ========================================================================== */
+
+/* Header brand title with botanical icon rotation */
+.brand-title {
+  transition: opacity 180ms ease;
+}
+
+.brand-title .floral-icon {
+  display: inline-block;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease;
+}
+
+.brand-title:hover .floral-icon {
+  transform: rotate(45deg);
+  color: var(--gold);
+}
+
+/* Header license badge */
+.brand-badge,
+#licenseBadge {
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 150ms ease;
+}
+
+.badge-guest:hover {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.badge-pro:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #34d399;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+#licenseBadge:active {
+  transform: scale(0.97);
+}
+
+/* Enter Key / Pro button */
+.btn-key-activate {
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease, transform 150ms ease;
+}
+
+.btn-key-activate:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-key-activate:active {
+  transform: scale(0.97);
+}
+
+/* Stripe & Solana checkout buttons */
+.btn-checkout-stripe,
+.btn-checkout-solana {
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease;
+}
+
+.btn-checkout-stripe:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(99, 91, 255, 0.35);
+}
+
+.btn-checkout-stripe:active {
+  transform: translateY(1px);
+}
+
+.btn-checkout-solana:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(20, 241, 149, 0.25);
+}
+
+.btn-checkout-solana:active {
+  transform: translateY(1px);
+}
+
+/* Activate key link in sales banner */
+#btn-paywall-key {
+  transition: color 150ms ease;
+}
+
+#btn-paywall-key:hover {
+  color: var(--gold) !important;
+}
+
+/* Cadre buttons */
+.cadre-btn {
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cadre-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.cadre-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* View tabs */
+.view-tab-btn {
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.view-tab-btn:hover:not(.active) {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Color swatches */
+.color-swatch {
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 150ms ease;
+}
+
+.color-swatch:hover:not(.active) {
+  transform: scale(1.12);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+.color-swatch:active {
+  transform: scale(1.05);
+}
+
+/* Copy chips (title & tags) */
+.btn-copy-chip {
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
+}
+
+.btn-copy-chip:hover {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: var(--gold-light);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-copy-chip:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* Tag chips */
+.tag-chip {
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tag-chip:hover {
+  border-color: var(--emerald);
+  color: var(--emerald);
+  background: rgba(16, 185, 129, 0.12);
+  transform: translateY(-1px);
+}
+
+.tag-chip:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Action export triggers */
+.btn-action-primary {
+  transition: background 180ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease;
+}
+
+.btn-action-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+}
+
+.btn-action-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-action-secondary {
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn-action-secondary:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gold-light);
+  transform: translateY(-1px);
+}
+
+.btn-action-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Modal close button */
+.modal-close-btn {
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--gold);
+  transform: rotate(90deg);
+}
+
+.modal-close-btn:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
+/* Modal activate key submit button */
+#btnActivateKey {
+  transition: background 180ms ease, transform 150ms ease, box-shadow 180ms ease;
+}
+
+#btnActivateKey:hover {
+  background: var(--gold-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+
+#btnActivateKey:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Footer links */
+footer a {
+  transition: color 150ms ease;
+}
+
+footer a:hover {
+  color: var(--gold-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ==========================================================================
+   3. EMPTY STATE PRESENTATION
+   ========================================================================== */
+
+/* Empty 13-tags container state before population or during transition */
+#tagListContainer:empty {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 14px;
+}
+
+#tagListContainer:empty::before {
+  content: "✦ Synthesizing 13 high-traffic Etsy tags (<20 chars)...";
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* Input placeholder formatting */
+.form-input::placeholder,
+.title-textarea::placeholder,
+#license-input::placeholder {
+  color: rgba(163, 163, 178, 0.45);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   4. ERROR & INVALID STATE DIAGNOSTICS
+   ========================================================================== */
+
+/* Numeric retail input invalid state (< $5.00 or > $99.00) */
+#inputRetail:invalid,
+#inputRetail:user-invalid {
+  border-color: var(--terracotta) !important;
+  color: var(--rose) !important;
+  background: rgba(196, 112, 88, 0.12) !important;
+  box-shadow: 0 0 0 1px var(--terracotta), 0 0 10px rgba(196, 112, 88, 0.35) !important;
+}
+
+#inputRetail:invalid:focus-visible,
+#inputRetail:user-invalid:focus-visible {
+  outline: 2px solid var(--terracotta) !important;
+  outline-offset: 1px;
+}
+
+/* General form input & license input error presentation */
+.form-input:invalid,
+.form-input:user-invalid,
+#license-input:invalid,
+#license-input:user-invalid {
+  border-color: var(--terracotta) !important;
+  background: rgba(196, 112, 88, 0.08);
+  box-shadow: 0 0 0 1px var(--terracotta), 0 0 8px rgba(196, 112, 88, 0.3);
+}
+
+.form-input:invalid:focus-visible,
+.form-input:user-invalid:focus-visible,
+#license-input:invalid:focus-visible,
+#license-input:user-invalid:focus-visible {
+  outline: 2px solid var(--terracotta) !important;
+  outline-offset: 1px;
+}
+
+/* ==========================================================================
+   5. STRICT PREFERS-REDUCED-MOTION OVERRIDES
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
+  }
+
+  .brand-title:hover .floral-icon,
+  .modal-close-btn:hover {
+    transform: none !important;
+  }
+}

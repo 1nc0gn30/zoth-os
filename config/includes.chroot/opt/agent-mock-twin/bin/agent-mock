@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+# Resolves repo root and adds src to PYTHONPATH for zero-pip execution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+
+exec python3 -m agent_mock_twin.cli "$@"

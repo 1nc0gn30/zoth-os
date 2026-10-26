@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self'; font-src 'self' data:; img-src 'self' data: blob: file:; script-src 'self'; connect-src 'self' file: blob: data:; worker-src 'self' blob:; media-src 'self' file: blob: data:"
+    />
+    <title>Zoth Bot — Sovereign Desk Companion</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="root" class="mode-compact">
+      <div id="a11yAnnouncer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+      <div id="orbWrap" class="orb-wrap">
+        <button
+          type="button"
+          id="orbHit"
+          class="orb-hit"
+          title="Drag to move · Click or press Enter to summon Sovereign Monolith"
+          aria-label="Open Zoth Bot Sovereign Desk Companion"
+        >
+          <div id="orbWell" class="well well-orb"></div>
+          <span class="orb-beacon" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div id="shell" class="shell" role="application" aria-label="Zoth Bot Sovereign Companion">
+        <div class="card" id="card">
+          <header class="stage-band" role="banner">
+            <div class="seam" aria-hidden="true"></div>
+            <div class="hud-corners" aria-hidden="true">
+              <span class="hc hc-tl"></span>
+              <span class="hc hc-tr"></span>
+            </div>
+
+            <div class="stage-top-bar">
+              <div class="eyebrow" role="group" aria-label="Active Authority and Neural Engine">
+                <span class="sig-dot" aria-hidden="true"></span>
+                <button
+                  type="button"
+                  id="ringBadge"
+                  class="eyebrow-ring-btn"
+                  title="Click to cycle Security Ring Authority (Ring 0–3)"
+                  aria-label="Security Ring Authority: Ring 2 Toolmaster"
+                >
+                  RING 2 · TOOLMASTER
+                </button>
+                <span class="sep" aria-hidden="true">/</span>
+                <span id="engine" class="engine">HERMES</span>
+                <span class="sep" aria-hidden="true">·</span>
+                <button
+                  type="button"
+                  id="modelLabel"
+                  class="model-label"
+                  title="Configure neural provider, model &amp; Ring authority (Alt+2)"
+                  aria-label="Choose active model"
+                >
+                  pick a model
+                </button>
+                <span id="live" class="live" role="status" hidden>SYNTH</span>
+              </div>
+            </div>
+
+            <div class="stage-viewport">
+              <div class="reticle-backdrop" aria-hidden="true">
+                <svg class="reticle-svg" viewBox="0 0 240 240" fill="none">
+                  <circle cx="120" cy="120" r="108" stroke="rgba(212,175,55,0.16)" stroke-width="1" stroke-dasharray="3 6" />
+                  <circle cx="120" cy="120" r="92" stroke="rgba(212,175,55,0.11)" stroke-width="1" />
+                  <path d="M120 4 V18 M120 222 V236 M4 120 H18 M222 120 H236" stroke="rgba(212,175,55,0.35)" stroke-width="1.2" />
+                </svg>
+              </div>
+              <div id="expandedWell" class="well well-expanded"></div>
+            </div>
+
+            <div class="stage-meta">
+              <div class="meta-row">
+                <div class="meta-identity">
+                  <div class="name-line">
+                    <h1 id="botName" class="name">Zoth</h1>
+                    <button
+                      type="button"
+                      class="sovereign-pill"
+                      id="maskBadge"
+                      title="Click to open Bot Maker &amp; customize Mask, Skin, Face, Hair &amp; Body (Alt+5)"
+                    >
+                      AZOTH MASK
+                    </button>
+                    <button
+                      type="button"
+                      class="vitals-pill bot-maker-pill"
+                      id="botMakerBtn"
+                      title="Open Zoth Bot Maker — Customize Skin, Face, Gender, Body, Hair, Eyes &amp; Masks (Alt+5)"
+                      aria-label="Open Zoth Bot Maker"
+                    >
+                      ✦ BOT MAKER
+                    </button>
+                    <button
+                      type="button"
+                      class="vitals-pill"
+                      id="vitalsBadge"
+                      title="Click to open 152 MCP Server Hub · Live Host CPU &amp; RAM Vitals"
+                      aria-label="Open 152 MCP Server Hub"
+                    >
+                      RAM --% · 152 MCP
+                    </button>
+                  </div>
+                  <div id="botJob" class="job">Sovereign desk companion</div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="telemetry-strip"
+                id="telemetryStrip"
+                title="Click or press Enter to probe live host daemons and log full OS telemetry"
+                aria-label="Probe live host port telemetry for Ollama, Studio, WebGen, Relay, and Zoth Lock"
+              >
+                <span class="tele-item" data-port="Ollama">
+                  <i class="tele-dot" id="teleOllama" aria-hidden="true"></i>
+                  <span>OLLAMA :11434</span>
+                </span>
+                <span class="tele-item" data-port="Studio">
+                  <i class="tele-dot" id="teleStudio" aria-hidden="true"></i>
+                  <span>STUDIO :3000</span>
+                </span>
+                <span class="tele-item" data-port="WebGen">
+                  <i class="tele-dot" id="teleWebGen" aria-hidden="true"></i>
+                  <span>WEBGEN :5173</span>
+                </span>
+                <span class="tele-item" data-port="Relay">
+                  <i class="tele-dot" id="teleRelay" aria-hidden="true"></i>
+                  <span>RELAY :8765</span>
+                </span>
+                <span class="tele-item" data-port="zoth-lock">
+                  <i class="tele-dot" id="teleLock" aria-hidden="true"></i>
+                  <span id="teleLockText">LOCK</span>
+                </span>
+              </button>
+            </div>
+
+            <div class="icon-btns" role="toolbar" aria-label="Sovereign Controls (Alt+1..6)">
+              <button
+                type="button"
+                class="ib"
+                id="btnMask"
+                aria-pressed="true"
+                title="Toggle Equipped 3D Mask On/Off (Alt+1)"
+                aria-label="Toggle Equipped 3D Mask"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 10c0-4 3.6-6 8-6s8 2 8 6c0 5-3.5 9-8 10-4.5-1-8-5-8-10Z" />
+                  <path d="M8.5 11.5h2.5M13 11.5h2.5" />
+                </svg>
+                <span class="sr-only">Az</span>
+              </button>
+              <button
+                type="button"
+                class="ib"
+                id="btnPower"
+                aria-expanded="false"
+                aria-controls="power"
+                title="Neural Engine, Ring Authority &amp; Model Matrix (Alt+2)"
+                aria-label="Neural Engine and Power Matrix"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+                </svg>
+                <span class="sr-only">P</span>
+              </button>
+              <button
+                type="button"
+                class="ib"
+                id="btnMem"
+                aria-expanded="false"
+                aria-controls="memory"
+                title="Sovereign Memory Ledger &amp; Active Goals (Alt+3)"
+                aria-label="Sovereign Memory and Goals"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <path d="M9 9h6M9 13h6M9 17h4" />
+                </svg>
+                <span class="sr-only">M</span>
+              </button>
+              <button
+                type="button"
+                class="ib"
+                id="btnVoice"
+                aria-pressed="false"
+                title="Toggle Local Voice Synthesis / TTS Readback (Alt+4)"
+                aria-label="Toggle Local Voice Synthesis"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                  <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />
+                </svg>
+                <span class="sr-only">V</span>
+              </button>
+              <button
+                type="button"
+                class="ib"
+                id="btnNew"
+                aria-expanded="false"
+                aria-controls="newBot"
+                title="Sovereign Bot Maker &amp; Avatar Forge (Alt+5)"
+                aria-label="Bot Maker and Avatar Forge"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                <span class="sr-only">+</span>
+              </button>
+              <button
+                type="button"
+                class="ib"
+                id="btnMin"
+                title="Collapse to Floating Orb (Alt+M)"
+                aria-label="Collapse to compact orb"
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 12h12" />
+                </svg>
+                <span class="sr-only">–</span>
+              </button>
+            </div>
+          </header>
+
+          <div
+            class="chips"
+            id="chips"
+            role="toolbar"
+            aria-label="Teammates and system tools (Use Left and Right Arrow keys to navigate)"
+          ></div>
+
+          <main class="log" id="log" role="log" aria-live="polite" aria-label="Conversation and tool execution stream"></main>
+
+          <section class="drawer drawer-power" id="power" role="region" aria-label="Neural Engine, Ring Authority, and Model Matrix">
+            <div class="drawer-head">
+              <div class="panel-kicker">Neural Engine &amp; Ring Matrix</div>
+              <span class="drawer-sub" id="mcpCountBadge">152 MCP READY</span>
+            </div>
+            <div class="field">
+              <span>ZothOS Security Ring Authority</span>
+              <div class="chips chips-wrap" id="ringChips" role="radiogroup" aria-label="Security Ring Level"></div>
+            </div>
+            <div class="field">
+              <span>Inference Provider</span>
+              <div class="chips chips-wrap" id="providerChips" role="radiogroup" aria-label="Inference Provider"></div>
+            </div>
+            <div class="field">
+              <span>Featured Frontier Models</span>
+              <div class="chips chips-wrap" id="featuredChips" role="list" aria-label="Featured models"></div>
+            </div>
+            <div class="field">
+              <label for="modelFilter">Full Catalog Registry</label>
+              <input id="modelFilter" maxlength="80" autocomplete="off" spellcheck="false" placeholder="Filter models by family or name…" />
+              <select id="modelSelect" size="6" aria-label="Available models in catalog"></select>
+            </div>
+            <div class="panel-hint" id="powerHint"></div>
+          </section>
+
+          <section class="drawer" id="memory" role="region" aria-label="Sovereign Memory Ledger and Active Goals">
+            <div class="drawer-head">
+              <div class="panel-kicker">Sovereign Memory &amp; Goals</div>
+              <span class="drawer-sub">PERSISTENT MD</span>
+            </div>
+            <div id="goalsList" class="goals-list" aria-label="Active teammate goals"></div>
+            <pre id="memoryBody" class="panel-body" tabindex="0" aria-label="Memory markdown contents"></pre>
+            <div class="mem-quick-row">
+              <input
+                id="memInput"
+                maxlength="240"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Append fact or goal (prefix with goal: to add an active goal)"
+                placeholder="Append fact to memory.md (or 'goal: …')…"
+              />
+              <button type="button" id="memAddBtn">COMMIT</button>
+            </div>
+          </section>
+
+          <section class="form bot-maker" id="newBot" role="region" aria-label="Sovereign Bot Maker and Avatar Forge">
+            <div class="drawer-head bm-head">
+              <div class="bm-mode-tabs" role="tablist" aria-label="Bot Maker Mode">
+                <button type="button" class="bm-tab on" id="bmModeEdit" role="tab" aria-selected="true">
+                  ✦ CUSTOMIZE
+                </button>
+                <button type="button" class="bm-tab" id="bmModeCreate" role="tab" aria-selected="false">
+                  + NEW BOT
+                </button>
+              </div>
+              <div class="bm-head-btns">
+                <button type="button" class="mini-gold-btn" id="bmMaskPreviewBtn" title="Temporarily lift/equip mask while sculpting face">
+                  🎭 UNMASK
+                </button>
+                <button type="button" class="mini-gold-btn" id="bmZoomBtn" title="Toggle close-up Face vs Bust 3D camera zoom (drag stage to rotate 360°)">
+                  🔍 FACE
+                </button>
+                <button type="button" class="mini-gold-btn" id="bmRandomBtn" title="Randomize Skin, Face, Gender, Body, Hair, Facial Hair, Eyes, Mask &amp; Cyberware">
+                  🎲 RANDOM
+                </button>
+              </div>
+            </div>
+
+            <div class="bm-cat-bar" id="bmCatTabs" role="tablist" aria-label="Bot Maker Studio Categories">
+              <button type="button" class="bm-cat-btn on" data-cat="all" role="tab" aria-selected="true">ALL</button>
+              <button type="button" class="bm-cat-btn" data-cat="mask" role="tab" aria-selected="false">🎭 MASK &amp; GEAR</button>
+              <button type="button" class="bm-cat-btn" data-cat="face" role="tab" aria-selected="false">👤 FACE &amp; SKIN</button>
+              <button type="button" class="bm-cat-btn" data-cat="hair" role="tab" aria-selected="false">💈 HAIR &amp; BEARD</button>
+              <button type="button" class="bm-cat-btn" data-cat="body" role="tab" aria-selected="false">⚡ BODY &amp; AURA</button>
+            </div>
+
+            <div class="bm-scroll">
+              <div class="field bm-sec" data-bm-cat="mask body">
+                <div class="bm-label-row">
+                  <span>Archetype Presets (Drag 3D Stage to Spin 360°)</span>
+                </div>
+                <div class="bm-pill-grid" id="bmPresetGrid" role="group" aria-label="Archetype Presets"></div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="body">
+                <label class="field">
+                  <span>Callsign / Name</span>
+                  <input id="newName" maxlength="40" autocomplete="off" spellcheck="false" placeholder="e.g. Zoth, Valkyrie, Cipher" />
+                </label>
+                <label class="field">
+                  <span>Primary Mandate</span>
+                  <input id="newJob" maxlength="80" autocomplete="off" spellcheck="false" placeholder="e.g. Sovereign Architect" />
+                </label>
+              </div>
+
+              <div class="field bm-sec" data-bm-cat="mask">
+                <div class="bm-label-row">
+                  <span>Mask &amp; Headgear</span>
+                  <span class="bm-val-tag" id="bmMaskVal">AZOTH 24K</span>
+                </div>
+                <div class="bm-pill-grid" id="bmMaskGrid" role="radiogroup" aria-label="Mask and Headgear"></div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="body">
+                <div class="field">
+                  <span>Gender / Frame</span>
+                  <div class="bm-pill-grid" id="bmGenderGrid" role="radiogroup" aria-label="Gender and Presentation"></div>
+                </div>
+                <div class="field">
+                  <span>Body Type</span>
+                  <div class="bm-pill-grid" id="bmBodyGrid" role="radiogroup" aria-label="Body Type and Build"></div>
+                </div>
+              </div>
+
+              <div class="field bm-sec" data-bm-cat="face">
+                <div class="bm-label-row">
+                  <span>Skin Tone / Subsurface Finish</span>
+                  <input type="color" id="bmSkinCustom" class="bm-color-input" value="#7c4b31" title="Pick custom skin color" aria-label="Custom skin color" />
+                </div>
+                <div class="bm-swatch-row" id="bmSkinSwatches" role="radiogroup" aria-label="Skin Tone Swatches"></div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="face hair">
+                <div class="field">
+                  <span>Face Sculpt &amp; Anatomy</span>
+                  <div class="bm-pill-grid" id="bmFaceGrid" role="radiogroup" aria-label="Face Sculpt"></div>
+                </div>
+                <div class="field">
+                  <span>Facial Hair</span>
+                  <div class="bm-pill-grid" id="bmFacialHairGrid" role="radiogroup" aria-label="Facial Hair"></div>
+                </div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="hair mask">
+                <div class="field">
+                  <span>3D Hair Style</span>
+                  <div class="bm-pill-grid" id="bmHairStyleGrid" role="radiogroup" aria-label="Hair Style"></div>
+                </div>
+                <div class="field">
+                  <span>Cyberware &amp; Accessories</span>
+                  <div class="bm-pill-grid" id="bmAccessoryGrid" role="radiogroup" aria-label="Cyberware and Accessories"></div>
+                </div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="face hair">
+                <div class="field">
+                  <div class="bm-label-row">
+                    <span>Hair Color</span>
+                    <input type="color" id="bmHairCustom" class="bm-color-input" value="#141419" title="Pick custom hair color" aria-label="Custom hair color" />
+                  </div>
+                  <div class="bm-swatch-row" id="bmHairSwatches" role="radiogroup" aria-label="Hair Color Swatches"></div>
+                </div>
+                <div class="field">
+                  <div class="bm-label-row">
+                    <span>Radial Iris Eye Color</span>
+                    <input type="color" id="bmEyeCustom" class="bm-color-input" value="#d4af37" title="Pick custom eye color" aria-label="Custom eye color" />
+                  </div>
+                  <div class="bm-swatch-row" id="bmEyeSwatches" role="radiogroup" aria-label="Eye Color Swatches"></div>
+                </div>
+              </div>
+
+              <div class="bm-row-2 bm-sec" data-bm-cat="body">
+                <div class="field">
+                  <div class="bm-label-row">
+                    <span>Suit &amp; Aura Trim</span>
+                    <input type="color" id="bmAccentCustom" class="bm-color-input" value="#d4af37" title="Pick custom aura accent color" aria-label="Custom aura accent color" />
+                  </div>
+                  <div class="bm-swatch-row" id="bmAccentSwatches" role="radiogroup" aria-label="Suit and Aura Accent Swatches"></div>
+                </div>
+                <div class="field">
+                  <span>3D Rig Mode</span>
+                  <div class="bm-pill-grid" id="bmChassisGrid" role="radiogroup" aria-label="3D Rig Mode"></div>
+                </div>
+              </div>
+
+              <label class="field bm-sec" data-bm-cat="body">
+                <span>Operational Directives</span>
+                <input id="newDesc" maxlength="200" autocomplete="off" spellcheck="false" placeholder="How this bot reasons, executes tools, and reports…" />
+              </label>
+            </div>
+
+            <div class="actions bm-actions">
+              <button type="button" id="newSave">SAVE AVATAR &amp; PROFILE</button>
+              <button type="button" class="ghost" id="newCancel">Close</button>
+            </div>
+          </section>
+
+          <section class="drawer drawer-mcp" id="mcpDrawer" role="region" aria-label="152 ZothOS MCP Server Hub">
+            <div class="drawer-head">
+              <div class="panel-kicker">ZothOS MCP Server Hub</div>
+              <div class="drawer-head-actions">
+                <span class="drawer-sub" id="mcpHotBadge">0 HOT / 152</span>
+                <button type="button" id="mcpSyncBtn" class="mini-gold-btn" title="Sync enabled MCP servers to Hermes, Grok, Claude, Cursor &amp; AGY">
+                  SYNC ALL
+                </button>
+              </div>
+            </div>
+            <input
+              id="mcpFilter"
+              maxlength="80"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Filter 152 MCP servers by name, Ring, or description"
+              placeholder="Filter 152 MCP servers (e.g. github, sqlite, stripe, ring 0)…"
+            />
+            <div id="mcpList" class="mcp-list" role="list" aria-label="Registered MCP Servers"></div>
+          </section>
+
+          <section class="drawer drawer-pocket" id="pocketDrawer" role="region" aria-label="Pocket Workspace Inspector">
+            <div class="drawer-head">
+              <div class="panel-kicker">Pocket Workspace Computer</div>
+              <div class="drawer-head-actions">
+                <button type="button" id="pocketOpenFolderBtn" class="mini-gold-btn" title="Open ~/.config/zothos/zoth-bot/workspace in system file manager">
+                  OPEN FOLDER ↗
+                </button>
+              </div>
+            </div>
+            <div id="pocketFiles" class="pocket-files" role="list" aria-label="Workspace files"></div>
+            <pre id="pocketPreview" class="panel-body" tabindex="0" aria-label="Selected file preview" hidden></pre>
+          </section>
+
+          <section class="drawer drawer-portal" id="portalDrawer" role="region" aria-label="Pixel 10 Sovereign Edge Portal">
+            <div class="drawer-head">
+              <div class="panel-kicker">Pixel 10 Pro Edge Portal</div>
+              <div class="drawer-head-actions">
+                <span class="drawer-badge connected" id="portalStatusBadge">🟢 PIXEL-10-PRO</span>
+                <button type="button" id="portalBeamBtn" class="mini-gold-btn" title="Beam Zoth &amp; Cargo to Pixel 10 Pro via Tailscale">
+                  BEAM TO PIXEL ⟶
+                </button>
+              </div>
+            </div>
+            <div class="portal-taildrop-banner" id="portalTaildropBanner">
+              <span class="td-dot" aria-hidden="true"></span>
+              <span id="portalTaildropText">
+                <strong>NATIVE TAILDROP ACTIVE (100.106.39.46)</strong> — Drag Zoth or drop any file/note off the right screen edge to pop up directly on Pixel 10 Pro via Tailscale.
+              </span>
+            </div>
+            <div class="portal-grid">
+              <div class="portal-qr-box" id="portalQrBox" aria-label="Scan QR Code with Pixel 10 Camera"></div>
+              <div class="portal-meta-col">
+                <div class="portal-url-list">
+                  <button type="button" class="portal-url-pill on" id="portalTsBtn" title="Tailscale Mesh URL (works anywhere on cellular/DoorDash)">
+                    TAILSCALE · 100.106.132.5:9335
+                  </button>
+                  <button type="button" class="portal-url-pill" id="portalLanBtn" title="Wi-Fi LAN URL">
+                    LAN · 100.71.116.90:9335
+                  </button>
+                </div>
+                <div class="portal-stage-btns">
+                  <button type="button" class="mini-gold-btn" id="portalClipBtn" title="Push current laptop clipboard to Pixel 10 Pro via Tailscale">
+                    + DROP CLIPBOARD
+                  </button>
+                  <button type="button" class="mini-gold-btn" id="portalScreenBtn" title="Capture desktop screenshot &amp; push to Pixel 10 Pro via Tailscale">
+                    + DROP SCREENSHOT
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="portal-cargo-strip" id="portalCargoStrip" role="list" aria-label="Staged Portal Cargo"></div>
+          </section>
+
+          <div id="slashPalette" class="slash-palette" role="listbox" aria-label="Slash Commands" hidden></div>
+
+          <form class="composer" id="form" role="search" aria-label="Command and chat composer">
+            <div class="composer-shell">
+              <button
+                type="button"
+                id="btnSlash"
+                class="prompt-glyph-btn"
+                title="Open Tactical Slash Command Palette (/)"
+                aria-label="Toggle Slash Command Palette"
+              >
+                ❯
+              </button>
+              <input
+                id="input"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Message or slash command input (Type / for tactical commands)"
+                placeholder="Ask Zoth or type / for commands…"
+              />
+              <button type="submit" id="btnSend" title="Dispatch directive (Enter)">
+                <span>SEND</span>
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="edgePortalGlow" class="edge-portal-glow" aria-hidden="true">
+        <span class="edge-portal-label" id="edgePortalLabel">PORTAL ⟶ PIXEL 10</span>
+      </div>
+
+      <div id="stageHost" class="stage-host">
+        <canvas id="stage" aria-label="3D interactive Zoth companion stage"></canvas>
+        <img
+          id="stageFallback"
+          class="stage-fallback"
+          src="./assets/zoth-guy.jpg"
+          alt="Zoth sovereign companion avatar"
+          hidden
+        />
+        <span class="stage-ring" aria-hidden="true"></span>
+        <span class="stage-glow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <script type="module" src="stage.js"></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=Zoth Civilization
-GenericName=21-Agent Sovereign Living Civilization
-Comment=GameBoy Top-Down Pixel Civilization & Adytum Hermetic Initiation Chamber
-Exec=sh -c 'exec "${ZOTH_SRC_ROOT:-$HOME/NullAITech}/zoth-civilization/bin/zoth-civ"'
-Icon=icon
-Terminal=false
+Version=1.0
 Type=Application
-Categories=Development;Game;Science;Education;
+Name=Zoth Civilization
+Comment=Sovereign AI Civilization & Colony Engine
+Exec=/opt/zoth-civilization/bin/zoth-civ
+Icon=/usr/share/pixmaps/zoth-civilization.png
+Terminal=false
+Categories=Game;Simulation;ArtificialIntelligence;
 StartupNotify=true

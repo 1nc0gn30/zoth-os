@@ -1,0 +1,379 @@
+/* ==========================================================================
+   Agent Flight Recorder • Wave Interactive States & Accessibility Layer
+   Design Anchor: Precision Cockpit Telemetry Seam
+   - High-contrast WCAG 2.2 focus-visible reticles
+   - Calibrated hover and tactile active states for cockpit instruments
+   - Precision standby empty indicators and error presentation
+   - Full prefers-reduced-motion accessibility compliance
+   ========================================================================== */
+
+/* --- Visible Focus Reticles (WCAG 2.2 Compliant) --- */
+
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--telemetry-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.28);
+}
+
+.btn-gold:focus-visible,
+#btnHeaderUpgrade:focus-visible,
+#btnStripeBanner:focus-visible,
+#btnSpeakBriefing:focus-visible,
+#btnExportStandalone:focus-visible,
+#btnStripeOverlay:focus-visible,
+#btnStripeModal:focus-visible,
+#btnActivateKey:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.btn-cyan:focus-visible,
+#btnSolanaBanner:focus-visible,
+#btnPlayPause:focus-visible,
+#btnSolanaOverlay:focus-visible {
+  outline: 2px solid var(--telemetry-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--telemetry-glow);
+}
+
+.btn-outline:focus-visible,
+#btnActivateBanner:focus-visible,
+#btnExportBundle:focus-visible,
+#btnStepBack:focus-visible,
+#btnStepForward:focus-visible,
+#btnKeyOverlay:focus-visible,
+#btnModalSolana:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.modal-close:focus-visible,
+#closeProModal:focus-visible {
+  outline: 2px solid var(--ruby);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.footer-links a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.session-select:focus-visible,
+#sessionSelect:focus-visible {
+  border-color: var(--telemetry-blue);
+  outline: 2px solid var(--telemetry-blue);
+  outline-offset: 1px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.modal-input:focus-visible,
+#licenseKeyInput:focus-visible {
+  border-color: var(--gold);
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.flight-slider:focus-visible,
+#timelineScrubber:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.speed-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+/* --- Hover & Tactile Press Transitions --- */
+
+.btn {
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 140ms ease,
+              background-color 140ms ease,
+              border-color 140ms ease,
+              color 140ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+  transition-duration: 50ms;
+}
+
+.btn-gold:hover {
+  background-color: #E5C158;
+  box-shadow: 0 2px 14px var(--gold-glow);
+}
+
+.btn-cyan:hover {
+  background-color: #58C9FA;
+  box-shadow: 0 2px 14px var(--telemetry-glow);
+}
+
+.btn-outline:hover {
+  background-color: rgba(212, 175, 55, 0.08);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.speed-btn {
+  transition: background-color 140ms ease,
+              color 140ms ease,
+              border-color 140ms ease,
+              transform 50ms ease;
+}
+
+.speed-btn:not(.active):hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-color: var(--border-accent);
+}
+
+.speed-btn:active {
+  transform: scale(0.96);
+}
+
+.session-select {
+  transition: border-color 140ms ease,
+              background-color 140ms ease,
+              box-shadow 140ms ease;
+}
+
+.session-select:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  background-color: #1b1b24;
+}
+
+.flight-slider {
+  transition: filter 140ms ease;
+}
+
+.flight-slider:hover {
+  filter: brightness(1.15);
+}
+
+.modal-close {
+  transition: color 140ms ease, transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-close:hover {
+  color: var(--ruby);
+  transform: scale(1.12);
+}
+
+.modal-close:active {
+  transform: scale(0.95);
+  transition-duration: 50ms;
+}
+
+.brand {
+  transition: opacity 140ms ease;
+}
+
+.brand:hover {
+  opacity: 0.95;
+}
+
+.brand:hover img {
+  box-shadow: 0 0 14px var(--gold-glow), 0 0 2px var(--gold);
+}
+
+.brand:hover .brand-title {
+  color: #FFFFFF;
+}
+
+.footer-links a {
+  transition: color 140ms ease;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Cockpit Telemetry Surfaces Hover Illumination */
+.cockpit-pane {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.cockpit-pane:hover {
+  border-color: rgba(56, 189, 248, 0.28);
+}
+
+.briefing-card {
+  transition: border-color 180ms ease;
+}
+
+.briefing-card:hover {
+  border-color: var(--border-accent);
+}
+
+.hero-canvas-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.hero-canvas-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.5);
+}
+
+.hero-pill {
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.hero-pill:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  background-color: rgba(24, 24, 32, 0.9);
+}
+
+.network-pill {
+  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.network-pill:hover {
+  border-color: var(--telemetry-blue);
+  background-color: rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
+.engram-item {
+  transition: border-left-color 150ms ease, background-color 150ms ease, padding-left 150ms ease;
+}
+
+.engram-item:hover {
+  border-left-color: var(--telemetry-blue);
+  background-color: rgba(212, 175, 55, 0.06);
+  padding-left: 10px;
+}
+
+/* --- Standby & Empty Presentation --- */
+
+.empty-hint {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-style: italic;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.empty-hint::before {
+  content: "○";
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.network-nodes-box:empty::before {
+  content: "[Standby: No outbound egress at this timestamp.]";
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  display: block;
+  padding: 4px;
+}
+
+.engrams-box:empty::before {
+  content: "[Standby: No synaptic engrams triggered.]";
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  display: block;
+  padding: 4px;
+}
+
+.terminal-box:empty::before {
+  content: "[Standby: Waiting for agent subprocess output...]";
+  color: var(--text-muted);
+  font-style: italic;
+  display: block;
+}
+
+.modal-input::placeholder {
+  color: rgba(156, 163, 175, 0.55);
+}
+
+/* --- Error & Warning Presentation --- */
+
+.modal-input:invalid:not(:placeholder-shown) {
+  border-color: var(--ruby);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+#activationMsg {
+  min-height: 1.25rem;
+  margin-top: 6px;
+  letter-spacing: 0.01em;
+  transition: opacity 150ms ease;
+}
+
+.urgency-pill {
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+#gaugeThreatVal {
+  font-variant-numeric: tabular-nums;
+}
+
+.terminal-box::selection {
+  background-color: rgba(56, 189, 248, 0.35);
+  color: #FFFFFF;
+}
+
+.briefing-text-box::selection {
+  background-color: rgba(212, 175, 55, 0.3);
+  color: #FFFFFF;
+}
+
+/* --- Prefers Reduced Motion Override --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .btn:active,
+  .btn-gold,
+  .btn-cyan,
+  .btn-outline,
+  .speed-btn,
+  .speed-btn:hover,
+  .speed-btn:active,
+  .session-select,
+  .flight-slider,
+  .modal-close,
+  .modal-close:hover,
+  .modal-close:active,
+  .brand,
+  .footer-links a,
+  .cockpit-pane,
+  .briefing-card,
+  .hero-canvas-card,
+  .hero-pill,
+  .network-pill,
+  .engram-item,
+  .modal-input,
+  #activationMsg {
+    transition: none !important;
+    transform: none !important;
+  }
+}

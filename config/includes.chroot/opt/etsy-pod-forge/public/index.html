@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etsy POD Forge — Autonomous Print-on-Demand Studio & Listing Synthesizer</title>
+  <meta name="description" content="Autonomous 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer targeting the high-LTV 50–75+ women demographic. 45%–98% net profit margins.">
+  <meta name="author" content="Neal Frazier Tech (@1nc0gn30)">
+  <link rel="canonical" href="https://etsy-pod.nullai.tech/">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:title" content="Etsy POD Forge — Autonomous Print-on-Demand Studio">
+  <meta property="og:description" content="Generate 300 DPI transparent PNG canvases, photorealistic lifestyle mockups, and Etsy SEO listing kits for the high-LTV 50-75+ demographic.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://etsy-pod.nullai.tech/">
+  <meta property="og:image" content="https://etsy-pod.nullai.tech/assets/banner.png">
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Etsy POD Forge — Autonomous Print-on-Demand Studio">
+  <meta name="twitter:description" content="Generate 300 DPI print-ready canvases, photorealistic mockups, and Etsy SEO listings for the high-LTV 50-75+ women market.">
+  <meta name="twitter:image" content="https://etsy-pod.nullai.tech/assets/banner.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+  <script src="https://integrate.depay.com/widgets/v13.js" defer></script>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- AEO & SEO Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://etsy-pod.nullai.tech/#app",
+        "name": "Etsy POD Forge",
+        "url": "https://etsy-pod.nullai.tech/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All modern browsers, Linux, macOS, Windows",
+        "description": "Autonomous Print-on-Demand studio engine generating 300 DPI print-ready transparent PNG canvases, lifestyle mockups, and 13-tag Etsy SEO listing kits targeting the 50-75+ women demographic.",
+        "offers": {
+          "@type": "Offer",
+          "price": "19.00",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech"
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "url": "https://github.com/1nc0gn30"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://etsy-pod.nullai.tech/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why target women aged 50 to 75+ on Etsy?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Women aged 50–75+ represent the highest lifetime customer value and largest discretionary spending demographic on Etsy. They frequently purchase sentimental gifts for grandchildren, book clubs, and garden circles with high repeat orders and low price sensitivity."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the net profit margins for Etsy POD Forge products?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Physical print-on-demand goods (sweatshirts, tees, mugs, canvas totes) yield 45% to 60% net margins after all production and Etsy marketplace fees. Instant digital downloads (wall art and quilting blueprints) yield 92% to 98% net margins with zero fulfillment overhead."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are the generated canvases ready for commercial printing?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Master canvases are exported at 300 DPI transparent PNG in standard production dimensions (4500x5400 px for direct-to-garment apparel, 2000x2000 px for mugs, and 3600x3600 px for heavy canvas totes)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg-dark: #08080B;
+      --card-bg: rgba(18, 16, 24, 0.85);
+      --card-border: rgba(212, 175, 55, 0.18);
+      --card-border-hover: rgba(212, 175, 55, 0.45);
+      --gold: #D4AF37;
+      --gold-light: #F3E5AB;
+      --emerald: #10B981;
+      --rose: #E0ACAA;
+      --sage: #8A9A86;
+      --terracotta: #C47058;
+      --text-main: #F8F5EC;
+      --text-muted: #A3A3B2;
+      --font-display: 'Syne', serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-body: 'Cabinet Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Space Grotesk', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 85% 30%, rgba(224, 172, 170, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(138, 154, 134, 0.05) 0%, transparent 50%);
+    }
+
+    /* Aurora Mesh Animation Primitive */
+    .aurora-bar {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, #D4AF37, #E0ACAA, #8A9A86, #10B981, #D4AF37);
+      background-size: 300% 100%;
+      animation: aurora 12s linear infinite;
+    }
+
+    @keyframes aurora {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+    .brand-title span.floral-icon {
+      font-size: 1.6rem;
+    }
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .badge-guest {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+    }
+    .badge-pro {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-key-activate {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-key-activate:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Sales Funnel Banner Above The Fold */
+    .sales-funnel-banner {
+      margin: 20px 0;
+      background: linear-gradient(135deg, rgba(32, 28, 40, 0.95), rgba(18, 16, 24, 0.95));
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 16px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .sales-banner-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .sales-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .sales-urgency-badge {
+      background: var(--terracotta);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .sales-headline {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .price-strike {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      margin: 0 6px;
+    }
+    .price-highlight {
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .sales-banner-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-checkout-stripe {
+      background: linear-gradient(135deg, #635BFF, #7A73FF);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s ease;
+    }
+    .btn-checkout-stripe:hover {
+      transform: translateY(-1px);
+    }
+    .btn-checkout-solana {
+      background: linear-gradient(135deg, #14F195, #9945FF);
+      color: #000;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s ease;
+    }
+    .btn-checkout-solana:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Cadre Selector */
+    .cadre-selector-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 6px 0 16px 0;
+      scrollbar-width: thin;
+    }
+    .cadre-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cadre-btn:hover {
+      border-color: var(--gold);
+      color: var(--text-main);
+    }
+    .cadre-btn.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    /* Main Grid Workspace */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 12px;
+    }
+
+    /* Left: Visual Studio & Viewport */
+    .studio-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .view-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .view-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .view-tab-btn.active {
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* Canvas Stage Container */
+    .canvas-stage-wrapper {
+      position: relative;
+      background: #0D0C12;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 440px;
+      overflow: hidden;
+    }
+    #studioCanvas {
+      max-width: 100%;
+      height: auto;
+      max-height: 480px;
+      display: block;
+      border-radius: 8px;
+    }
+
+    /* Frosted Glass Paywall Overlay */
+    .paywall-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 8, 11, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 10;
+    }
+    .paywall-lock-card {
+      background: rgba(24, 20, 32, 0.95);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 380px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .paywall-lock-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+    .paywall-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .paywall-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .paywall-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Controls Strip */
+    .controls-strip {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .form-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-input:focus {
+      border-color: var(--gold);
+    }
+    .color-swatch-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .color-swatch:hover {
+      transform: scale(1.15);
+    }
+    .color-swatch.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Right: SEO Listing Kit & Economics */
+    .listing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Profit Economics Box */
+    .profit-meter-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .profit-meter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .profit-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--emerald);
+      font-weight: 700;
+    }
+    .profit-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      text-align: center;
+    }
+    .profit-stat-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 8px 4px;
+    }
+    .profit-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .profit-stat-val {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .profit-stat-val.net-highlight {
+      color: var(--emerald);
+      font-size: 1.05rem;
+    }
+
+    /* Title Box */
+    .title-box-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .title-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-copy-chip {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .title-textarea {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      padding: 10px;
+      border-radius: 8px;
+      resize: vertical;
+      min-height: 54px;
+      outline: none;
+    }
+
+    /* 13 Tags Grid */
+    .tags-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tag-chips-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 5px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .tag-chip:hover {
+      border-color: var(--emerald);
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .tag-num {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+    }
+    .tag-len {
+      color: var(--gold);
+      font-size: 0.65rem;
+    }
+
+    /* Export Action Buttons */
+    .action-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .btn-action-primary {
+      flex: 1;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-action-primary:hover {
+      background: var(--gold-light);
+    }
+    .btn-action-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: #14121A;
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .studio-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1A1822;
+      border: 1px solid var(--emerald);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s ease;
+      z-index: 2000;
+    }
+    .studio-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 48px;
+      padding: 24px 0 32px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 900px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+      .profit-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .sales-banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .sales-banner-right {
+        width: 100%;
+      }
+      .btn-checkout-stripe, .btn-checkout-solana {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/wave.css">
+  <link rel="stylesheet" href="/wave-states.css">
+</head>
+<body>
+  <div class="aurora-bar"></div>
+
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="brand-title" title="Etsy POD Forge Home" style="display:flex; align-items:center;">
+        <img src="assets/icon.png" alt="Etsy POD Forge Icon" style="width:28px;height:28px;border-radius:6px;object-fit:cover;margin-right:8px;">
+        <span class="floral-icon">✦</span>
+        <span>ETSY POD FORGE</span>
+        <span class="version-pill" style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:9999px;background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);margin-left:8px;">v2.5 SOVEREIGN</span>
+      </a>
+      <div class="header-actions">
+        <div id="licenseBadge" class="brand-badge badge-guest" onclick="window.openProModal()" style="cursor: pointer;">⚡ FREE TIER</div>
+        <button id="btnOpenProModal" data-alias="btnHeaderPro" class="btn-key-activate" type="button" onclick="window.openProModal()">Enter Key / Pro</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Above-The-Fold Urgent Sales Funnel Banner -->
+    <section id="salesBanner" class="sales-funnel-banner" aria-label="Founding Member Offer" data-alias="founding-offer-banner">
+      <div class="sales-banner-content">
+        <div class="sales-banner-left">
+          <span class="sales-urgency-badge">⚡ LIMITED FOUNDING COHORT</span>
+          <div>
+            <div class="sales-headline">
+              Unlock Unlimited Master 300 DPI Exports & Full 13-Tag Engine
+            </div>
+            <div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px;">
+              Regular <span class="price-strike">$79</span> ➔ Lifetime Founding Member: 
+              <span class="price-highlight">$19</span> (One-time payment)
+            </div>
+          </div>
+        </div>
+        <div class="sales-banner-right">
+          <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" title="Checkout securely via Stripe">
+            <span>★ Pay $19 via Card / Apple Pay</span>
+          </a>
+          <button type="button" class="btn-checkout-solana btn-solana-pay" title="Pay with Solana or USDC">
+            <span>◎ Pay with Solana / USDC</span>
+          </button>
+          <button id="btn-paywall-key" data-alias="btnActivateBanner" type="button" onclick="window.openProModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 11px; margin-left: 8px;">
+            Activate Key
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cadre Selector Strip -->
+    <nav class="cadre-selector-strip" aria-label="Product Cadres">
+      <button type="button" class="cadre-btn active" data-cadre="apparel">
+        <span>✦ Grandma's Garden Apparel</span>
+      </button>
+      <button type="button" class="cadre-btn" data-cadre="mugs">
+        <span>✦ Songbirds & Floral Mugs</span>
+      </button>
+      <button type="button" class="cadre-btn" data-cadre="totes">
+        <span>✦ French Seed Packet Totes</span>
+      </button>
+      <button type="button" class="cadre-btn" data-cadre="wall_art">
+        <span>▣ Botanical Wall Art (300 DPI)</span>
+      </button>
+      <button type="button" class="cadre-btn" data-cadre="crafting">
+        <span>✦ Quilt & Craft Blueprints</span>
+      </button>
+    </nav>
+
+    <!-- Studio Workspace -->
+    <section class="studio-grid">
+      <!-- Left: Visual Canvas & Mockup Stage -->
+      <article class="studio-card">
+        <div class="card-header-bar">
+          <h2 class="card-title">
+            <span>✦ Visual Canvas Studio</span>
+          </h2>
+          <div class="view-tabs" role="tablist">
+            <button type="button" class="view-tab-btn active" data-tab="canvas" role="tab">▣ Master Canvas</button>
+            <button type="button" class="view-tab-btn" data-tab="mockup" role="tab">✦ Lifestyle Mockup</button>
+          </div>
+        </div>
+
+        <div class="canvas-stage-wrapper">
+          <canvas id="studioCanvas" width="900" height="1080"></canvas>
+
+          <!-- Paywall Lock Overlay (Unlocked via ?licensed=true or key) -->
+          <div id="paywallOverlay" class="paywall-overlay" style="display: none;">
+            <div class="paywall-lock-card">
+              <div class="paywall-lock-icon">★</div>
+              <h3 class="paywall-title">High-Res Master File Locked</h3>
+              <p class="paywall-desc">
+                The full 4500x5400 px (300 DPI) print-ready transparent PNG and lifestyle mockup zip bundle are reserved for Pro Founding Members.
+              </p>
+              <div class="paywall-btns">
+                <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" style="justify-content: center;">
+                  <span>Unlock Lifetime Access for $19</span>
+                </a>
+                <button type="button" class="btn-checkout-solana btn-solana-pay" style="justify-content: center;">
+                  <span>Pay $19 with Solana / USDC</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-strip">
+          <div class="form-group">
+            <label class="form-label" for="inputTitle">Primary Display Title / Wreath Top</label>
+            <input type="text" id="inputTitle" class="form-input" value="GRANDMA'S GARDEN" placeholder="e.g. GRANDMA'S GARDEN">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputNames">Personalized Names / Birth Flowers (Comma Separated)</label>
+            <input type="text" id="inputNames" class="form-input" value="Emma, Liam, Olivia, Noah" placeholder="e.g. Emma, Liam, Olivia, Noah">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Garment / Surface Colorway</label>
+            <div class="color-swatch-row">
+              <button type="button" class="color-swatch active" data-color="sand" style="background: #E0D6C6;" title="Sand" aria-label="Sand"></button>
+              <button type="button" class="color-swatch" data-color="moss" style="background: #768670;" title="Moss Green" aria-label="Moss Green"></button>
+              <button type="button" class="color-swatch" data-color="dusty_rose" style="background: #C48085;" title="Dusty Rose" aria-label="Dusty Rose"></button>
+              <button type="button" class="color-swatch" data-color="pepper" style="background: #343236;" title="Pepper" aria-label="Pepper"></button>
+              <button type="button" class="color-swatch" data-color="ivory" style="background: #F4F0E6;" title="Ivory" aria-label="Ivory"></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Right: SEO Listing Kit & Profit Economics -->
+      <article class="listing-card">
+        <!-- Live Profit Engine -->
+        <div class="profit-meter-box">
+          <div class="profit-meter-header">
+            <span class="profit-title">✦ Live Profit Margin Engine</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="inputRetail" style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Retail $</label>
+              <input type="number" id="inputRetail" step="1.00" min="5.00" max="99.00" value="34.99" style="width: 72px; padding: 4px 6px; background: rgba(0,0,0,0.4); border: 1px solid var(--emerald); color: #fff; font-family: var(--font-mono); border-radius: 4px; text-align: center;">
+            </div>
+          </div>
+          <div class="profit-stats-grid">
+            <div class="profit-stat-card">
+              <div class="profit-stat-label">Retail Price</div>
+              <div id="valRetail" class="profit-stat-val">$34.99</div>
+            </div>
+            <div class="profit-stat-card">
+              <div class="profit-stat-label">Production</div>
+              <div id="valCost" class="profit-stat-val">$12.50</div>
+            </div>
+            <div class="profit-stat-card">
+              <div class="profit-stat-label">Etsy Fees</div>
+              <div id="valFees" class="profit-stat-val">$3.77</div>
+            </div>
+            <div class="profit-stat-card">
+              <div class="profit-stat-label">Net Profit (Margin)</div>
+              <div id="valNet" class="profit-stat-val net-highlight">$18.72</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Etsy SEO Title Box -->
+        <div class="title-box-container">
+          <div class="title-box-header">
+            <span class="form-label">Etsy Search Title</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="titleCharCount" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">101/140 chars</span>
+              <button id="btnCopyTitle" type="button" class="btn-copy-chip">✦ Copy Title</button>
+            </div>
+          </div>
+          <textarea id="listingTitleText" class="title-textarea" readonly aria-label="Etsy Search Title"></textarea>
+        </div>
+
+        <!-- 13 Search Tags Section -->
+        <div class="tags-section">
+          <div class="title-box-header">
+            <span class="form-label">13 High-Traffic Tags (All &lt; 20 Chars)</span>
+            <button id="btnCopyTags" type="button" class="btn-copy-chip">✦ Copy All 13</button>
+          </div>
+          <div id="tagListContainer" class="tag-chips-wrapper">
+            <!-- Dynamic Chips Injected Here -->
+          </div>
+        </div>
+
+        <!-- Action Export Buttons -->
+        <div class="action-row">
+          <button type="button" class="btn-action-primary btn-export-trigger">
+            <span>▣ Download Master ZIP Kit</span>
+          </button>
+          <a href="/api/prompts?cadre=apparel" target="_blank" class="btn-action-secondary" title="View Midjourney & Flux Prompts">
+            <span>✦ AI Prompts (50+)</span>
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Pro Activation Modal -->
+  <div id="licenseModal" data-alias="paywall-modal proModal" class="modal-overlay">
+    <div class="modal-card">
+      <button id="closeModalBtn" type="button" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 8px; color: var(--text-main);">
+        ⭐ Unlock Pro Lifetime Access
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+        Instant commercial rights, 4500x5400 px master direct-to-garment print files, and automated ZIP export kits.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" style="justify-content: center; padding: 12px;">
+          <span>★ Instant Stripe Checkout ($19)</span>
+        </a>
+        <button type="button" class="btn-checkout-solana btn-solana-pay" style="justify-content: center; padding: 12px;">
+          <span>◎ Pay with Solana / USDC ($19)</span>
+        </button>
+      </div>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
+        <label for="license-input" style="display: block; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">
+          Already purchased? Enter receipt email or license key:
+        </label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="license-input" data-alias="inputLicenseKey licenseKeyInput" placeholder="e.g. neal@nealfrazier.tech or ETSY-PRO-2026" style="flex: 1; padding: 8px 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;">
+          <button id="btnActivateKey" data-alias="btnSubmitKey" type="button" style="background: var(--gold); border: none; color: #000; padding: 8px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: var(--font-mono);">Activate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>
+        Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • 
+        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+      </p>
+      <p style="margin-top: 6px; color: rgba(255,255,255,0.3); font-size: 0.75rem;">
+        Autonomous Sovereign Print-on-Demand Studio • Day 7 Revenue Engine • Port 8107
+      </p>
+    </div>
+  </footer>
+
+  <script src="/forge_engine.js"></script>
+</body>
+</html>

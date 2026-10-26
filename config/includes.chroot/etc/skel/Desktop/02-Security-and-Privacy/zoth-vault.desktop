@@ -2,10 +2,10 @@
 Version=1.0
 Type=Application
 Name=Zoth Sovereign Vault
-GenericName=Multi-Vault Secrets Manager
 Comment=Sovereign zero-leak secrets manager (Argon2id Rust Vault, Bitwarden, KeePassXC, UNIX Pass)
-Exec=konsole --hold -p tabtitle='Zoth Sovereign Vault' -e /usr/local/bin/zoth-vault
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Sovereign Vault" -- /usr/local/bin/zoth-vault
 Icon=security-high
 Terminal=false
 Categories=Utility;Security;System;
 StartupNotify=true
+GenericName=Multi-Vault Secrets Manager

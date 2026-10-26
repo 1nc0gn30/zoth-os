@@ -1,12 +1,25 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Bolt
-Comment=Flagship full-stack AI web and motion architect on :5173 (bolt.diy)
-Exec=/usr/local/bin/zoth-konsole --title 'Zoth Bolt' -- /usr/local/bin/bolt-diy
-Icon=bolt-diy
+Name=Bolt.DIY Full-Stack Engine
+GenericName=Localized AI Software Engineer
+Comment=Localized open-source AI software engineer capable of scaffolding and running full-stack web applications in the browser
+Exec=/usr/local/bin/zoth-konsole --title "Bolt.DIY Engine" -- /usr/local/bin/bolt-diy
+Icon=/usr/share/pixmaps/bolt-diy.png
 Terminal=false
 Categories=Development;ArtificialIntelligence;Utility;
 Keywords=bolt;boltdiy;webgen;fullstack;ai;engineer;scaffold;remix;
-MimeType=application/x-bolt-diy;
 StartupNotify=true
+Actions=Browser;Ollama;Desktop;
+
+[Desktop Action Browser]
+Name=Launch Bolt.DIY Studio (:5173)
+Exec=/usr/local/bin/bolt-diy dev
+
+[Desktop Action Ollama]
+Name=Launch with Local Ollama (:11434)
+Exec=/usr/local/bin/bolt-diy ollama
+
+[Desktop Action Desktop]
+Name=Launch Bolt.DIY Electron App
+Exec=/usr/local/bin/bolt-diy desktop
