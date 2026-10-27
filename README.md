@@ -63,7 +63,8 @@
 
 | Pillar | Technology | Implementation Details |
 | :--- | :--- | :--- |
-| **Desktop Core** | **KDE Plasma 6.3 Wayland** | Translucent obsidian frosted glass, 24K Celtic Gold insignia, KWin compositor effects, and custom golden cursor trails. |
+| **Desktop Core** | **KDE Plasma 6.3 Wayland** | Deterministic 4-Folder Desktop (`01-AI-Agents-and-Dev`, `02-Security-and-Privacy`, `03-ZothOS-Daemons`, `04-Media-and-Utilities`), 7 root flagships, verified 166KB multi-size `Zoth-Gold-Cursors` + `SWCursor` window visibility invariant, and custom golden cursor trails. |
+| **Companion Edition** | **ZothOS-Lite v1.0 (`:8145`)** | Tails-style Amnesic Monotone RAM-only edition featuring a zero-scroll windowed desktop GUI, 60fps Unicode `U+2800` Braille + Ordered Bayer 8×8 Dither engine, and live root terminal. |
 | **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for 100% package cohesion. |
 | **Kernel Stack** | **Debian Linux 6.12 (stock)** | Debian's standard `linux-image-amd64` kernel with Intel UHD (`i915`) + NVIDIA Quadro hybrid graphics DRM auto-switching. |
 | **Sovereign Vault** | **Local secrets daemon** | Resident daemon on `127.0.0.1:8787` (described as Argon2id + ChaCha20-Poly1305). It ships as a prebuilt binary whose source is not yet in this repo, so these crypto claims cannot be independently audited. |

@@ -298,7 +298,6 @@ DESK_ENTRIES = {
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 target_dirs = [
-    os.path.join(root_dir, "config/includes.chroot/etc/skel/Desktop"),
     os.path.join(root_dir, "config/includes.chroot/usr/share/applications")
 ]
 

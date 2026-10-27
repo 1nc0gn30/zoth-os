@@ -76,10 +76,9 @@ fi
         fi
     fi
 
-    # 4. Verify environment variables and paths
-    log "Updating ldconfig, desktop database and font caches..."
+    # 4. Verify environment variables and paths (do NOT run update-desktop-database here as it triggers mid-session Plasma desktop icon reloads)
+    log "Updating ldconfig..."
     ldconfig 2>/dev/null || true
-    update-desktop-database 2>/dev/null || true
 
     # 5. Final verification via zoth-pkg
     if command -v zoth-pkg >/dev/null 2>&1; then

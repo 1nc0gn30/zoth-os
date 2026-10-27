@@ -1,3 +1,7 @@
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/zothos-ai-env/bin:/usr/local/go/bin"
-ZOTHOS_VERSION="3.0-Hermetic"
+ZOTHOS_VERSION="3.3.0-Sovereign-Gold"
 ZOTHOS_AI_ENV="/opt/zothos-ai-env"
+XCURSOR_THEME="Zoth-Gold-Cursors"
+XCURSOR_SIZE="24"
+XCURSOR_PATH="/usr/share/icons:~/.local/share/icons:~/.icons"
+KWIN_FORCE_SW_CURSOR="1"

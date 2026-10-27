@@ -30,6 +30,8 @@ sudo find chroot -name "*matrix-rain*" -exec rm -f {} + 2>/dev/null || true
 
 echo "✦ Synchronizing config/includes.chroot..."
 sudo rsync -aHAX --delete "$PROJECT_DIR/config/includes.chroot/" config/includes.chroot/
+# Cleanly reset chroot/etc/skel/Desktop and chroot/home/*/Desktop BEFORE rsync so old loose .desktop files never survive
+sudo rm -rf chroot/etc/skel/Desktop chroot/home/*/Desktop 2>/dev/null || true
 sudo rsync -aHAX "$PROJECT_DIR/config/includes.chroot/" chroot/
 
 echo "✦ Scrubbing sensitive data, histories, and build caches..."
@@ -103,9 +105,10 @@ ZOTH_USER="${ZOTH_USER:-zoth}"
 AZOTH_USER="${AZOTH_USER:-azoth}"
 sudo rm -rf chroot/home/neo 2>/dev/null || true
 sudo mkdir -p "chroot/home/${ZOTH_USER}" "chroot/home/${AZOTH_USER}"
+sudo rm -rf "chroot/home/${ZOTH_USER}/Desktop" "chroot/home/${AZOTH_USER}/Desktop" 2>/dev/null || true
 sudo cp -a chroot/etc/skel/. "chroot/home/${ZOTH_USER}/" 2>/dev/null || true
 sudo cp -a chroot/etc/skel/. "chroot/home/${AZOTH_USER}/" 2>/dev/null || true
-sudo chmod +x chroot/home/*/Desktop/*.desktop chroot/etc/skel/Desktop/*.desktop 2>/dev/null || true
+sudo chmod +x chroot/home/*/Desktop/*.desktop chroot/home/*/Desktop/*/*.desktop chroot/etc/skel/Desktop/*.desktop chroot/etc/skel/Desktop/*/*.desktop 2>/dev/null || true
 sudo chroot chroot chown -R "${ZOTH_USER}:${ZOTH_USER}" "/home/${ZOTH_USER}" 2>/dev/null || sudo chown -R 1000:1000 "chroot/home/${ZOTH_USER}"
 sudo chroot chroot chown -R "${AZOTH_USER}:${AZOTH_USER}" "/home/${AZOTH_USER}" 2>/dev/null || sudo chown -R 1001:1005 "chroot/home/${AZOTH_USER}"
 sudo chmod 750 "chroot/home/${ZOTH_USER}" "chroot/home/${AZOTH_USER}"

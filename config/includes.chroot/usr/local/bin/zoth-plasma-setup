@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 #  ZOTHOS 3.3.0 KDE PLASMA 6 SOVEREIGN ENVIRONMENT SETUP
+#  Deterministic Desktop Folder Organizer + Multi-Toolkit Cursor Enforcement
 # ==============================================================================
 set -u
 
@@ -11,27 +12,63 @@ QDBUS=$(command -v qdbus6 2>/dev/null || command -v qdbus 2>/dev/null || echo "q
 sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
 sudo ln -sf /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
 killall -9 xfce4-panel xfdesktop xfwm4 picom 2>/dev/null || true
-if ! pgrep -x kwin_x11 >/dev/null 2>&1 && ! pgrep -x kwin_wayland >/dev/null 2>&1; then
-    nohup kwin_x11 --replace >/dev/null 2>&1 &
+
+# 0b. Enforce visible X11/Wayland/GTK/Qt/Electron hardware & software cursor immediately
+export XCURSOR_THEME="Zoth-Gold-Cursors"
+export XCURSOR_SIZE="24"
+export KWIN_FORCE_SW_CURSOR="1"
+if command -v xsetroot >/dev/null 2>&1; then
+    xsetroot -cursor_name left_ptr 2>/dev/null || true
 fi
-if ! pgrep -x plasmashell >/dev/null 2>&1; then
-    nohup plasmashell --replace >/dev/null 2>&1 &
+if [ -f "$HOME/.Xresources" ] && command -v xrdb >/dev/null 2>&1; then
+    xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
 fi
 
-# 1. Clean legacy unorganized 3.0 top-level .desktop clutter if layered over an older rootfs
-if [ -d "$HOME/Desktop" ] && [ -d "$HOME/Desktop/01-AI-Agents-and-Dev" ]; then
+# 1. Deterministic Desktop Folder Organization (Zero Loose AI/Security/Utility Clutter)
+if [ -d "$HOME/Desktop" ]; then
+    mkdir -p "$HOME/Desktop/01-AI-Agents-and-Dev" \
+             "$HOME/Desktop/02-Security-and-Privacy" \
+             "$HOME/Desktop/03-ZothOS-Daemons" \
+             "$HOME/Desktop/04-Media-and-Utilities"
+
+    # Remove any stray promotional images or legacy Debian installers
+    rm -f "$HOME/Desktop/"*.png "$HOME/Desktop/"*.jpg "$HOME/Desktop/calamares-install-debian.desktop" "$HOME/Desktop/thunderbird"* 2>/dev/null || true
+    rm -rf "$HOME/Desktop/Zoth-Meta-Hackathon" 2>/dev/null || true
+
     for f in "$HOME/Desktop/"*.desktop; do
         [ -f "$f" ] || continue
         base=$(basename "$f")
         case "$base" in
-            claude-code.desktop|google-chrome.desktop|grok-ai.desktop|hermes-agent.desktop|zoth-civilization.desktop|zoth-control-center.desktop|zoth-cursor.desktop|zoth-os.desktop|zoth-studio.desktop|zoth-tool-nexus.desktop|install-zothos.desktop)
+            # Only the 7 core flagship launchers stay on the root Desktop alongside the 4 folders:
+            zoth-os.desktop|zoth-studio.desktop|zoth-civilization.desktop|zoth-tool-nexus.desktop|zoth-control-center.desktop|google-chrome.desktop|install-zothos.desktop)
                 chmod +x "$f" 2>/dev/null || true
                 ;;
+            # All AI Agents & Dev IDEs belong strictly inside 01-AI-Agents-and-Dev:
+            claude-code.desktop|grok-ai.desktop|zoth-grok-bot.desktop|hermes-agent.desktop|zoth-cursor.desktop|aider.desktop|bolt-diy.desktop|cline.desktop|google-antigravity.desktop|netlify.desktop|openai-codex.desktop|opencode.desktop|streamlit.desktop|zoth-agent.desktop|zoth-ai.desktop|zoth-ai-stack.desktop|zoth-bot.desktop|zoth-lazydocker.desktop|zoth-update-studio.desktop|zoth-webgen.desktop|zoth-workspaces.desktop)
+                mv -f "$f" "$HOME/Desktop/01-AI-Agents-and-Dev/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
+                chmod +x "$HOME/Desktop/01-AI-Agents-and-Dev/$base" 2>/dev/null || true
+                ;;
+            # Security & Privacy tools belong inside 02-Security-and-Privacy:
+            bitwarden.desktop|burpsuite.desktop|element-desktop.desktop|hexstrike-ai.desktop|signal-desktop.desktop|simplex-desktop.desktop|tor-browser.desktop|zoth-ghost-amnesic.desktop|zoth-ghost.desktop|zoth-keepassxc.desktop|zoth-lock.desktop|zoth-netkill.desktop|zoth-onionshare.desktop|zoth-quicklock.desktop|zoth-sec.desktop|zoth-tools-installer.desktop|zoth-arsenal-provisioner.desktop|zoth-undercover.desktop|zoth-vault.desktop|zoth-veracrypt.desktop)
+                mv -f "$f" "$HOME/Desktop/02-Security-and-Privacy/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
+                chmod +x "$HOME/Desktop/02-Security-and-Privacy/$base" 2>/dev/null || true
+                ;;
+            # ZothOS Daemons belong inside 03-ZothOS-Daemons:
+            zoth-agent-conductor.desktop|zoth-agent-hud.desktop|zoth-budget-sentinel.desktop|zoth-capsule-jail.desktop|zoth-cockpit.desktop|zoth-egress-sentinel.desktop|zoth-etsy-connector.desktop|zoth-etsy-pod-forge.desktop|zoth-flight-recorder.desktop|zoth-mcp-lens.desktop|zoth-memory.desktop|zoth-mock-twin.desktop|zoth-neuro-memory.desktop|zoth-policy-auditor.desktop|zoth-producthunt.desktop|zoth-prompt-firewall.desktop|zoth-relay-pair.desktop|zoth-sentinel.desktop)
+                mv -f "$f" "$HOME/Desktop/03-ZothOS-Daemons/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
+                chmod +x "$HOME/Desktop/03-ZothOS-Daemons/$base" 2>/dev/null || true
+                ;;
+            # Everything else goes cleanly into 04-Media-and-Utilities:
             *)
-                rm -f "$f" 2>/dev/null || true
+                mv -f "$f" "$HOME/Desktop/04-Media-and-Utilities/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
+                chmod +x "$HOME/Desktop/04-Media-and-Utilities/$base" 2>/dev/null || true
                 ;;
         esac
     done
+
+    # Ensure all .desktop launchers inside the 4 folders are executable
+    chmod +x "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
+
     # On Live USB environment, ensure Install ZothOS 3.3.0 is prominently on the Desktop
     if [ -d /run/live/medium ] && [ -f /usr/share/applications/install-zothos.desktop ]; then
         cp -f /usr/share/applications/install-zothos.desktop "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true
@@ -49,7 +86,7 @@ done
 
 # Ensure KDE Plasma panel exists
 if "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1; then
-    "$QDBUS" org.kde.plasmashell /PlasmaShell >/dev/null 2>&1 && "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
         var p = panels();
         if (p.length === 0) {
             loadTemplate("org.kde.plasma.desktop.defaultPanel");
@@ -84,7 +121,7 @@ else
     fi
 fi
 
-# Ensure ZothHermeticGold colorscheme & breeze-dark complete icon suite are applied (never overwrite with flat BreezeDark)
+# Ensure ZothHermeticGold colorscheme, breeze-dark complete icon suite, and Zoth-Gold-Cursors are applied
 ACTIVE_MODE="gold"
 if [ -f "$HOME/.config/zothos/current_mode" ]; then
     ACTIVE_MODE=$(cat "$HOME/.config/zothos/current_mode" 2>/dev/null || echo "gold")
@@ -93,10 +130,14 @@ if [ "$ACTIVE_MODE" = "gold" ] || [ -z "$ACTIVE_MODE" ]; then
     if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
         plasma-apply-colorscheme ZothHermeticGold >/dev/null 2>&1 || true
     fi
+    if command -v plasma-apply-cursortheme >/dev/null 2>&1; then
+        plasma-apply-cursortheme Zoth-Gold-Cursors --size 24 >/dev/null 2>&1 || true
+    fi
     if command -v kwriteconfig6 >/dev/null 2>&1; then
         kwriteconfig6 --file kdeglobals --group General --key ColorScheme "ZothHermeticGold" 2>/dev/null || true
         kwriteconfig6 --file kdeglobals --group Icons --key Theme "breeze-dark" 2>/dev/null || true
-        kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme "Zoth-Azoth-Gold" 2>/dev/null || true
+        kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme "Zoth-Gold-Cursors" 2>/dev/null || true
+        kwriteconfig6 --file kcminputrc --group Mouse --key cursorSize "24" 2>/dev/null || true
     fi
 fi
 
