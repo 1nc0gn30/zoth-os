@@ -99,10 +99,12 @@ paths = ['''(?:^|/)vendor/xterm/xterm\.js$''']
 regexTarget = "match"
 regexes = ['''FourKeyMap''']
 
-# Vendored sovereign daemon bundles in config/includes.chroot/opt/
+# Vendored sovereign daemon bundles in config/includes.chroot/opt/ and studio workspace
 [[allowlists]]
-description = "Vendored sovereign daemons in config/includes.chroot/opt/."
+description = "Vendored sovereign daemons and studio workspace."
 paths = [
   '''(?:^|/)config/includes\.chroot/opt/vaelor-network/.*''',
-  '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*'''
+  '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*''',
+  '''(?:^|/)config/includes\.chroot/opt/zoth-studio/.*''',
+  '''(?:^|/)zoth-studio-v2/.*''',
 ]
