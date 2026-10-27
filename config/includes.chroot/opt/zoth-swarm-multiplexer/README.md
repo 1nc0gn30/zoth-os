@@ -169,7 +169,7 @@ Integrate the 21-Agent Swarm directly into **Claude Code**, **Cursor**, or **Her
     "zoth-swarm": {
       "command": "python3",
       "args": [
-        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/zoth-swarm-multiplexer/mcp_server.py"
+        "~/zoth-micro-repos/zoth-swarm-multiplexer/mcp_server.py"
       ]
     }
   }

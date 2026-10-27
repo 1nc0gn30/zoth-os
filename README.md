@@ -369,10 +369,10 @@ Every backend capability runs as an isolated daemon on localhost loopback (`127.
 | **`:5225`** | `simplex-chat` | SimpleX Peer Bus | Sovereign end-to-end encrypted agent signal mesh. |
 | **`:8787`** | `zoth-vault-daemon` | Rust / ChaCha20 | Memory-only cryptographic secrets injection engine. |
 
-### 2. Autonomous Client-Side Micro-SaaS Conversions & Dual Monetization Rails
+### 2. Autonomous Client-Side Micro-SaaS Conversions & 100% Open-Access Support Architecture
 Recent sovereign hardening cadences have ported key tools (`aeo-graph-engine`, `deepsearch-research-agent`, `promptmaster-studio`, `vector-search-engine`, `subsweep-lead-scanner`, `omnipost-social-engine`, `web-security-guard`, `jwt-inspector-guard`, `payload-entropy-studio`, `pwa-manifest-builder`, `regex-droid-builder`, `schema-illustrator-studio`, `certpath-roadmap-studio`, `badge3d-coin-generator`, `polyglot-framework-exporter`, `robots-txt-auditor`, `audiocipher-stego-engine`, `cron-rhythm-studio`, `osint-scout-skill`, `cyber-turtle-studio`, `datamosh-glitch-studio`, `nexus-3d-scene-studio`, `ufo-sacred-geometry`) to **100% in-browser client-side execution** requiring zero external backend cloud infrastructure.
 - **Instant Client Utility**: AST linting, Web Crypto SHA-384 hashing, L-System generation, and DoH reconnaissance execute 100% in the browser.
-- **Dual Monetization Funnel**: Glassmorphic sales banner ($19 founding lifetime vs $79 regular), dual Stripe + Solana Tip checkout rails, frosted glass output paywall blurs, and 1-click license unlocks (`?licensed=true`).
+- **100% Free & Open-Access**: Every tool, export, and diagnostic engine is unlocked by default with zero paywalls, zero license modals, and optional "☕ Buy Us a Coffee" support (Stripe + Solana tip address).
 - **Triple-Viewport Automated Verification**: Headless Chrome tests verify 0 console errors and 0px horizontal overflow across mobile (390px), tablet (820px), and desktop (1425px).
 
 ### 3. Model Context Protocol (MCP) Server Architecture & 4-Tier Security Rings

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/etsy-connector"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/etsy-connector"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/etsy-connector"
 PRIMARY_BIN="$REPO_DIR/bin/etsy-connector"
 if [[ -x "$PRIMARY_BIN" ]]; then

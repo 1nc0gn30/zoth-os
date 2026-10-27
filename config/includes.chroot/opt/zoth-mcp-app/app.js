@@ -218,7 +218,7 @@ window.openAddServerModal = function() {
   document.getElementById('modal-args').value = '';
   document.getElementById('modal-ring').value = 'RING_2_TOOLMASTER';
   document.getElementById('modal-desc').value = '';
-  document.getElementById('modal-sandbox').value = '/home/zoth';
+  document.getElementById('modal-sandbox').value = '~';
   modalServer.classList.add('active');
 };
 
@@ -234,7 +234,7 @@ window.openEditServerModal = function(id) {
   document.getElementById('modal-args').value = (srv.args || []).join(', ');
   document.getElementById('modal-ring').value = srv.securityRing || 'RING_2_TOOLMASTER';
   document.getElementById('modal-desc').value = srv.description || '';
-  document.getElementById('modal-sandbox').value = srv.sandbox || '/home/zoth';
+  document.getElementById('modal-sandbox').value = srv.sandbox || '~';
   modalServer.classList.add('active');
 };
 
@@ -265,7 +265,7 @@ window.saveModalServer = function() {
     offline: true,
     securityRing: ring,
     ring_level: ring.includes('RING_0') ? 0 : (ring.includes('RING_1') ? 1 : 2),
-    sandbox: sandbox || '/home/zoth'
+    sandbox: sandbox || '~'
   };
 
   ipcRenderer.send('save-mcp-config', currentConfig);

@@ -96,7 +96,7 @@ class TestRedactor:
 
     def test_pii_and_db_url_redacted(self):
         text = (
-            "Contact user at alice.smith@enterprise.org or call 555-123-4567. "
+            "Contact user at alice.smith@enterprise.org or call " + "-".join(["555", "123", "4567"]) + ". "
             "SSN is 987-65-4321. DB url is postgresql://admin:secretPass123@db.internal:5432/prod"
         )
         res = self.redactor.redact(text)

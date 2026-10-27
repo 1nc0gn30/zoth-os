@@ -6,15 +6,15 @@ Wants=network.target
 [Service]
 Type=simple
 User=zoth
-EnvironmentFile=-/etc/zothos/paths.conf
-WorkingDirectory=%h
-ExecStart=/usr/local/bin/zoth-run-repo neuro-memory-daemon /opt/zothos-ai-env/bin/python3 -m neuro_memory_daemon.cli serve --host 127.0.0.1 --port 8094
+WorkingDirectory=/opt/neuro-memory-daemon
+ExecStart=/opt/zothos-ai-env/bin/python3 -m neuro_memory_daemon.cli serve --host 127.0.0.1 --port 8094
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/neuro-memory-daemon/src
 
 [Install]
 WantedBy=multi-user.target

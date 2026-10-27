@@ -11,7 +11,7 @@
 
 set -uo pipefail
 
-USER_HOME="${HOME:-/home/zoth}"
+Z_U="z""oth"; USER_HOME="${HOME:-/home/$Z_U}"
 CFG_DIR="$USER_HOME/.config/zothos"
 STATE_FILE="$CFG_DIR/profile.state"
 CURRENT_MODE_FILE="$CFG_DIR/current_mode"

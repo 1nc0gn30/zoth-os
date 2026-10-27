@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/agent-flight-recorder"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-flight-recorder"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-flight-recorder"
 PRIMARY_BIN="$REPO_DIR/bin/agent-flight"
 if [[ -x "$PRIMARY_BIN" ]]; then

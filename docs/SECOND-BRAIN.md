@@ -9,7 +9,7 @@
 [![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
 [![MCP Suite](https://img.shields.io/badge/MCP%20Tools-21%20native-cyan.svg)](docs/SECOND-BRAIN.md)
 
-> **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`/home/zoth/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
+> **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`~/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
 > Built strictly against the official **@kepano Obsidian specifications**: Obsidian Flavored Markdown (OFM), JSON Canvas 1.0 (`.canvas`), Obsidian Bases (`.base`), and Knap structured-data note synthesis.
 
 ---
@@ -53,7 +53,7 @@ The Zoth Second Brain bridges human knowledge management, biomorphic cognitive n
                                                ▼
      ┌──────────────────────────────────────────────────────────────────────────────────┐
      │                      OBSIDIAN SECOND BRAIN VAULT STRATUM                         │
-     │                      (/home/zoth/Documents/Obsidian Vault/)                      │
+     │                      (~/Documents/Obsidian Vault/)                      │
      │                                                                                  │
      │   ┌─────────────────────┐   ┌─────────────────────┐   ┌──────────────────────┐   │
      │   │   18 JSON Canvases  │   │  20 Obsidian Bases  │   │  13 LLM Wiki Pages   │   │
@@ -135,7 +135,7 @@ sequenceDiagram
 
 ## 💻 The 12-Subcommand `zoth-second-brain` CLI Reference
 
-The `zoth-second-brain` executable resides in `/home/zoth/NullAITech/zoth-os/bin/zoth-second-brain` and is symlinked to `/usr/local/bin/zoth-second-brain`.
+The `zoth-second-brain` executable resides in `~/NullAITech/zoth-os/bin/zoth-second-brain` and is symlinked to `/usr/local/bin/zoth-second-brain`.
 
 ### 1. `status` (`st`)
 Probes the health of the Obsidian Vault, local fleet daemons, and the STDP synaptic cortex.
@@ -147,7 +147,7 @@ zoth-second-brain status
 ```
 ◈ ZothOS Second Brain & Daemon Substrate Status
 ─────────────────────────────────────────────────────────────
- 💎 Obsidian Vault: /home/zoth/Documents/Obsidian Vault
+ 💎 Obsidian Vault: ~/Documents/Obsidian Vault
     • Notes:     1732 (22 Maps of Content, 100.0% Connectivity)
     • Canvases:  18 (.canvas files)
     • Bases:     20 (.base databases)
@@ -177,7 +177,7 @@ zoth-second-brain sync
  ✔ Bidirectional STDP Sync Completed in 0.42s
     • Ingested Notes:  1731
     • Total Memories:  1731
-    • Vault Substrate: /home/zoth/Documents/Obsidian Vault
+    • Vault Substrate: ~/Documents/Obsidian Vault
 ```
 
 ### 3. `search <query>` (`find`, `q`)
@@ -215,7 +215,7 @@ Procedurally synthesizes an official JSON Canvas 1.0 (`.canvas`) visual architec
 ```bash
 zoth-second-brain canvas "Zero-Trust Supply Chain"
 ```
-**Output**: Generates `/home/zoth/Documents/Obsidian Vault/Zero-Trust Supply Chain Knowledge Map.canvas` with color-coded nodes (Gold for Core, Cyan for Interfaces, Crimson for Security, Violet for Telemetry) and directional Bezier edges.
+**Output**: Generates `~/Documents/Obsidian Vault/Zero-Trust Supply Chain Knowledge Map.canvas` with color-coded nodes (Gold for Core, Cyan for Interfaces, Crimson for Security, Violet for Telemetry) and directional Bezier edges.
 
 ### 6. `audit` (`doctor`, `doc`)
 Performs a deep health audit verifying 100% compliance with JSON Canvas 1.0 specifications, Obsidian Bases YAML schemas, broken wikilink detection, and connectivity percentage.
@@ -507,7 +507,7 @@ In `/etc/zothos/mcp-servers.json` (and `config/includes.chroot/etc/zothos/mcp-se
     "enabled": true,
     "securityRing": "RING_0_SOVEREIGN",
     "ring_level": 0,
-    "sandbox": "/home/zoth/.neuro_memory",
+    "sandbox": "~/.neuro_memory",
     "fallbackHandler": "python3 -m neuro_memory_daemon.cli search ''",
     "timeout": 60,
     "alwaysAllow": []
@@ -563,8 +563,8 @@ Agents can query status via `zoth-mcp list`:
 ```bash
 zoth-mcp list | grep -E "vaelor|neuro-memory"
 # Output:
-# neuro-memory     RING_0_SOVEREIGN   [ON]  /home/zoth/.neuro_memory
-# vaelor-l1        RING_0_SOVEREIGN   [ON]  /home/zoth/NullAITech/vaelor-network
+# neuro-memory     RING_0_SOVEREIGN   [ON]  ~/.neuro_memory
+# vaelor-l1        RING_0_SOVEREIGN   [ON]  ~/NullAITech/vaelor-network
 ```
 
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/etsy-pod-forge"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/etsy-pod-forge"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/etsy-pod-forge"
 PRIMARY_BIN="$REPO_DIR/bin/etsy-pod-forge"
 if [[ -x "$PRIMARY_BIN" ]]; then

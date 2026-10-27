@@ -243,7 +243,7 @@ def render_matrix(cols: int, mode: str, preset: str, image_path: str | None, edg
 
 
 def serve_web(port: int):
-    web_dir = "/home/zoth/NullAITech/zoth-ascii-magic/public"
+    web_dir = os.path.expanduser("~/NullAITech/zoth-ascii-magic/public")
     if not os.path.isdir(web_dir):
         web_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
     os.chdir(web_dir)

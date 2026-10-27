@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/agent-policy-auditor"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-policy-auditor"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-policy-auditor"
 PRIMARY_BIN="$REPO_DIR/bin/agent-policy"
 if [[ -x "$PRIMARY_BIN" ]]; then

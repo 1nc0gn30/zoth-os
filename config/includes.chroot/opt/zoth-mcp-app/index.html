@@ -526,7 +526,7 @@
 
           <div class="form-group">
             <label class="form-label">INPUT ARGUMENTS (JSON)</label>
-            <textarea id="tester-args-input" class="form-textarea" rows="6" placeholder='{\n  "path": "/home/zoth",\n  "query": "select * from memory"\n}'></textarea>
+            <textarea id="tester-args-input" class="form-textarea" rows="6" placeholder='{\n  "path": "~",\n  "query": "select * from memory"\n}'></textarea>
           </div>
 
           <button class="btn btn-gold" style="width:100%; justify-content:center; margin-top:8px;" onclick="runToolTest()">⚡ EXECUTE TOOL TEST</button>
@@ -626,7 +626,7 @@
 
       <div class="form-group">
         <label class="form-label">COMMAND ARGUMENTS (COMMA-SEPARATED)</label>
-        <input type="text" id="modal-args" class="form-input" placeholder="e.g. -y, @modelcontextprotocol/server-filesystem, /home/zoth">
+        <input type="text" id="modal-args" class="form-input" placeholder="e.g. -y, @modelcontextprotocol/server-filesystem, ~">
       </div>
 
       <div class="form-group">
@@ -645,7 +645,7 @@
 
       <div class="form-group">
         <label class="form-label">SANDBOX BOUNDARY</label>
-        <input type="text" id="modal-sandbox" class="form-input" placeholder="/home/zoth">
+        <input type="text" id="modal-sandbox" class="form-input" placeholder="~">
       </div>
 
       <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">

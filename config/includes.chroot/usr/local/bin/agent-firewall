@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/agent-prompt-firewall"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-prompt-firewall"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-prompt-firewall"
 PRIMARY_BIN="$REPO_DIR/bin/agent-firewall"
 if [[ -x "$PRIMARY_BIN" ]]; then

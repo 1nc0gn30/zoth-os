@@ -5,10 +5,10 @@
   ### The Feeless, Consumer-Grade Account-Lattice Layer-1 Cryptocurrency
   **Sub-20ms Finality • $0.00 Gas Forever • Native Protected-Pay Escrow • Human @Handles • Proof-of-Useful-Work**
 
-  [![Cryptographic Test Suite](https://img.shields.io/badge/Verification-33%2F33%20Suites%20Passing%20(100%25)-10b981?style=for-the-badge&logo=checkmarx&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/test/verify_lattice.js)
-  [![Consensus](https://img.shields.io/badge/Consensus-5--Validator%20BFT%20Quorum-f59e0b?style=for-the-badge&logo=diagram-next&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/src/core/lattice.js)
-  [![Zero Gas](https://img.shields.io/badge/Gas%20Fees-%240.00%20Feeless%20Forever-06b6d4?style=for-the-badge&logo=ethereum&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/public/index.html)
-  [![Cryptography](https://img.shields.io/badge/Crypto-Ed25519%20%E2%80%A2%20Pedersen%20%E2%80%A2%20SHA--256-8b5cf6?style=for-the-badge&logo=shield&logoColor=white)](file:///home/zoth/NullAITech/vaelor-network/src/core/lattice.js)
+  [![Cryptographic Test Suite](https://img.shields.io/badge/Verification-33%2F33%20Suites%20Passing%20(100%25)-10b981?style=for-the-badge&logo=checkmarx&logoColor=white)](test/verify_lattice.js)
+  [![Consensus](https://img.shields.io/badge/Consensus-5--Validator%20BFT%20Quorum-f59e0b?style=for-the-badge&logo=diagram-next&logoColor=white)](src/core/lattice.js)
+  [![Zero Gas](https://img.shields.io/badge/Gas%20Fees-%240.00%20Feeless%20Forever-06b6d4?style=for-the-badge&logo=ethereum&logoColor=white)](public/index.html)
+  [![Cryptography](https://img.shields.io/badge/Crypto-Ed25519%20%E2%80%A2%20Pedersen%20%E2%80%A2%20SHA--256-8b5cf6?style=for-the-badge&logo=shield&logoColor=white)](src/core/lattice.js)
   [![Author](https://img.shields.io/badge/Architect-Neal%20Frazier%20Tech%20(@1nc0gn30)-f5c542?style=for-the-badge&logo=github&logoColor=05060b)](https://github.com/1nc0gn30)
 
 </div>
@@ -449,7 +449,7 @@ Vaelor exposes 17 native Layer-1 Model Context Protocol (MCP) tools for Claude D
   "mcpServers": {
     "vaelor-l1": {
       "command": "node",
-      "args": ["/home/zoth/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"]
+      "args": ["~/NullAITech/vaelor-network/src/mcp/vaelor_mcp.js"]
     }
   }
 }
@@ -665,7 +665,7 @@ Solves enterprise CFO governance requirements where capital disbursements cannot
 The comprehensive automated test suite validates all 33 features, including Ed25519 signatures, Pedersen commitments, 5-Validator BFT Quorum certificates, credit line underwriting, 28-feature drop-in SDK (`vaelor-pay.js`), 17 MCP tools, `vaelor-cli`, creator feeless tip jars, dynamic loyalty cashback tiers, multi-currency merchant FX treasury auto-sweep, zero-penalty protected commerce escrows, high-throughput multi-account DAG stress benchmark, sovereign 1-click CPA tax exporter, ZothOS passphrase-gated P2P encrypted messenger, binary Merkle state root integrity audit, and 2-of-3 corporate multi-sig treasury:
 
 ```bash
-cd /home/zoth/NullAITech/vaelor-network
+cd ~/NullAITech/vaelor-network
 node test/verify_lattice.js
 ```
 

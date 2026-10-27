@@ -1,4 +1,0 @@
-com.nealfrazier.zothbot:style/Watch = 0x7f020000
-com.nealfrazier.zothbot:xml/network_security_config = 0x7f030000
-com.nealfrazier.zothbot:drawable/zoth_guy = 0x7f010001
-com.nealfrazier.zothbot:drawable/ic_launcher = 0x7f010000

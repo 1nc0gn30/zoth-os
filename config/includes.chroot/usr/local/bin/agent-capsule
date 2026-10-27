@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/agent-capsule-jail"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-capsule-jail"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-capsule-jail"
 PRIMARY_BIN="$REPO_DIR/bin/agent-capsule"
 if [[ -x "$PRIMARY_BIN" ]]; then

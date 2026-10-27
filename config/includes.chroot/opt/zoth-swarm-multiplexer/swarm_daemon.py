@@ -39,7 +39,7 @@ PANTHEON_AGENTS = [
         "pet": "🐺",
         "default_harness": "agy",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-studio-v2",
+        "default_pwd": "~/zoth-studio-v2",
     },
     {
         "id": "NEXUS",
@@ -49,7 +49,7 @@ PANTHEON_AGENTS = [
         "pet": "🌌",
         "default_harness": "claude-code",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908",
+        "default_pwd": "~",
     },
     {
         "id": "VIGIL",
@@ -59,7 +59,7 @@ PANTHEON_AGENTS = [
         "pet": "👁️",
         "default_harness": "codex",
         "default_model": "deepseek-r1:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos",
+        "default_pwd": "~/zoth-micro-repos",
     },
     {
         "id": "MERCURY",
@@ -69,7 +69,7 @@ PANTHEON_AGENTS = [
         "pet": "🐲",
         "default_harness": "hermes-agent",
         "default_model": "hermes-3:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/zoth-webgen",
+        "default_pwd": "~/zoth-micro-repos/zoth-webgen",
     },
     {
         "id": "GHOSTBYTE",
@@ -79,7 +79,7 @@ PANTHEON_AGENTS = [
         "pet": "👻",
         "default_harness": "agy",
         "default_model": "claude-3-5-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/envguard-secrets-vault",
+        "default_pwd": "~/zoth-micro-repos/envguard-secrets-vault",
     },
     {
         "id": "ATHENA",
@@ -89,7 +89,7 @@ PANTHEON_AGENTS = [
         "pet": "🦉",
         "default_harness": "opencode",
         "default_model": "gpt-4.5",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/aeo-graph-engine",
+        "default_pwd": "~/zoth-micro-repos/aeo-graph-engine",
     },
     {
         "id": "CHRONOS",
@@ -99,7 +99,7 @@ PANTHEON_AGENTS = [
         "pet": "⌛",
         "default_harness": "claude-code",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/cron-rhythm-studio",
+        "default_pwd": "~/zoth-micro-repos/cron-rhythm-studio",
     },
     {
         "id": "DRACO",
@@ -109,7 +109,7 @@ PANTHEON_AGENTS = [
         "pet": "🐉",
         "default_harness": "codex",
         "default_model": "deepseek-r1:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908",
+        "default_pwd": "~",
     },
     {
         "id": "IGNIS",
@@ -119,7 +119,7 @@ PANTHEON_AGENTS = [
         "pet": "🔥",
         "default_harness": "hermes-agent",
         "default_model": "qwen2.5-coder:32b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-studio-v2",
+        "default_pwd": "~/zoth-studio-v2",
     },
     {
         "id": "KAI",
@@ -129,7 +129,7 @@ PANTHEON_AGENTS = [
         "pet": "⚔️",
         "default_harness": "agy",
         "default_model": "claude-3-5-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908",
+        "default_pwd": "~",
     },
     {
         "id": "LYCAN",
@@ -139,7 +139,7 @@ PANTHEON_AGENTS = [
         "pet": "🐺",
         "default_harness": "hermes-agent",
         "default_model": "hermes-3:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/web-security-guard",
+        "default_pwd": "~/zoth-micro-repos/web-security-guard",
     },
     {
         "id": "ONYX",
@@ -149,7 +149,7 @@ PANTHEON_AGENTS = [
         "pet": "💎",
         "default_harness": "codex",
         "default_model": "deepseek-r1:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal",
+        "default_pwd": "~/zoth-micro-repos/NullAI-HexStrike-AI-Terminal",
     },
     {
         "id": "SCORPIUS",
@@ -159,7 +159,7 @@ PANTHEON_AGENTS = [
         "pet": "🦂",
         "default_harness": "agy",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal",
+        "default_pwd": "~/zoth-micro-repos/NullAI-HexStrike-AI-Terminal",
     },
     {
         "id": "PIXEL-SHIBA",
@@ -169,7 +169,7 @@ PANTHEON_AGENTS = [
         "pet": "🐕",
         "default_harness": "opencode",
         "default_model": "llama3.3:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/envguard-secrets-vault",
+        "default_pwd": "~/zoth-micro-repos/envguard-secrets-vault",
     },
     {
         "id": "KITSUNE",
@@ -179,7 +179,7 @@ PANTHEON_AGENTS = [
         "pet": "🦊",
         "default_harness": "claude-code",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/zoth-webgen",
+        "default_pwd": "~/zoth-micro-repos/zoth-webgen",
     },
     {
         "id": "LEVIATHAN",
@@ -189,7 +189,7 @@ PANTHEON_AGENTS = [
         "pet": "🐋",
         "default_harness": "agy",
         "default_model": "claude-3-5-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/vector-search-engine",
+        "default_pwd": "~/zoth-micro-repos/vector-search-engine",
     },
     {
         "id": "AQUILA",
@@ -199,7 +199,7 @@ PANTHEON_AGENTS = [
         "pet": "🦅",
         "default_harness": "hermes-agent",
         "default_model": "hermes-3:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/cwv-speed-engine",
+        "default_pwd": "~/zoth-micro-repos/cwv-speed-engine",
     },
     {
         "id": "KRAKEN",
@@ -209,7 +209,7 @@ PANTHEON_AGENTS = [
         "pet": "🦑",
         "default_harness": "opencode",
         "default_model": "qwen2.5-coder:32b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/sovereign-agent-bridge",
+        "default_pwd": "~/zoth-micro-repos/sovereign-agent-bridge",
     },
     {
         "id": "AETHER",
@@ -219,7 +219,7 @@ PANTHEON_AGENTS = [
         "pet": "⚡",
         "default_harness": "claude-code",
         "default_model": "claude-3-7-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/agent-comms",
+        "default_pwd": "~/agent-comms",
     },
     {
         "id": "PIXEL-NEKO",
@@ -229,7 +229,7 @@ PANTHEON_AGENTS = [
         "pet": "🐱",
         "default_harness": "agy",
         "default_model": "claude-3-5-sonnet",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos",
+        "default_pwd": "~/zoth-micro-repos",
     },
     {
         "id": "RADICAL-MINION",
@@ -239,7 +239,7 @@ PANTHEON_AGENTS = [
         "pet": "👾",
         "default_harness": "hermes-agent",
         "default_model": "hermes-3:70b",
-        "default_pwd": "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908",
+        "default_pwd": "~",
     },
 ]
 

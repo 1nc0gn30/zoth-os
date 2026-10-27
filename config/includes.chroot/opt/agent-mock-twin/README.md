@@ -164,7 +164,7 @@ pytest -v
 
 Run the headless browser guardrail audit:
 ```bash
-npx electron /home/zoth/NullAITech/zoth-civilization/engine/site_guardrail.js http://127.0.0.1:8097/
+npx electron ~/NullAITech/zoth-civilization/engine/site_guardrail.js http://127.0.0.1:8097/
 ```
 
 ---

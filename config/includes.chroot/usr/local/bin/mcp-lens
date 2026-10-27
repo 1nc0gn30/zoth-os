@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/mcp-lens"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/mcp-lens"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/mcp-lens"
 PRIMARY_BIN="$REPO_DIR/bin/mcp-lens"
 if [[ -x "$PRIMARY_BIN" ]]; then

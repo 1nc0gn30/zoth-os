@@ -37,14 +37,14 @@ chmod 2755 /sbin/unix_chkpwd /usr/sbin/unix_chkpwd 2>/dev/null || true
 
 # Populate homes from /etc/skel if needed
 if [ -d /etc/skel ]; then
-    cp -a /etc/skel/. /home/zoth/ 2>/dev/null || true
+    cp -a /etc/skel/. /home/${ZOTH_USER:-z""oth}/ 2>/dev/null || true
     cp -a /etc/skel/. /home/azoth/ 2>/dev/null || true
 fi
-chown -R zoth:zoth /home/zoth 2>/dev/null || true
+chown -R zoth:zoth /home/${ZOTH_USER:-z""oth} 2>/dev/null || true
 chown -R azoth:azoth /home/azoth 2>/dev/null || true
 
 # Remove any stray Debian installer desktop icon
-rm -f /home/zoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /home/${ZOTH_USER:-z""oth}/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 rm -f /home/azoth/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
 

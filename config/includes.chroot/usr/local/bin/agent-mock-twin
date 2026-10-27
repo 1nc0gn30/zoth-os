@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-REPO_DIR="/home/zoth/NullAITech/agent-mock-twin"
+REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-mock-twin"
 [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-mock-twin"
 PRIMARY_BIN="$REPO_DIR/bin/agent-mock-twin"
 if [[ -x "$PRIMARY_BIN" ]]; then

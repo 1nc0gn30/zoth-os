@@ -78,7 +78,7 @@ function runQuery({ prompt, onToken, onTool, onInit, onResult, maxTurns = 12, mo
   return new Promise((resolve, reject) => {
     const child = spawn(bin, args, {
       cwd: workspace,
-      env: { ...process.env, PATH: process.env.PATH || '/home/zoth/.local/bin:/usr/bin' },
+      env: { ...process.env, PATH: process.env.PATH || '~/.local/bin:/usr/bin' },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let buf = '';
