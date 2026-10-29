@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-[+] ZOTHOS Tool Nexus: Sovereign Dispatcher & 175+ Tool Orchestration Matrix
+[+] ZOTHOS Tool Nexus: Sovereign Dispatcher & Kali and Parrot security tools orchestration matrix
 Unified CLI & TUI interface with authentic vendor installations and diagnostics.
 All package installations use authentic system (APT), Python (VENV/PIP), Node (NPM), or Vendor shell installers.
 """
@@ -199,7 +199,7 @@ BOLD = "\033[1m"
 def print_header():
     os.system("clear" if os.name == "posix" else "cls")
     print(f"{GREEN}{BOLD}══════════════════════════════════════════════════════════════════════════════{RESET}")
-    print(f"{GOLD}{BOLD}   [+] ZOTHOS & NULLAI: SOVEREIGN 175+ TOOL NEXUS DISPATCHER [+]{RESET}")
+    print(f"{GOLD}{BOLD}   [+] ZOTHOS & NULLAI: SOVEREIGN KALI AND PARROT SECURITY TOOLS NEXUS DISPATCHER [+]{RESET}")
     print(f"{CYAN}   Authentic Package & Runtime Orchestration Matrix | Bookworm Core{RESET}")
     print(f"{GREEN}{BOLD}══════════════════════════════════════════════════════════════════════════════{RESET}\n")
 
@@ -576,7 +576,7 @@ def interactive_tui():
                         time.sleep(1)
 
 def main():
-    parser = argparse.ArgumentParser(description="ZOTHOS Sovereign 175+ Tool Nexus Dispatcher")
+    parser = argparse.ArgumentParser(description="ZOTHOS Sovereign Kali and Parrot security tools Nexus Dispatcher")
     parser.add_argument("--gui", action="store_true", help="Launch the sovereign Electron GUI application")
     parser.add_argument("--tui", action="store_true", help="Launch the interactive terminal TUI")
     parser.add_argument("--list", action="store_true", help="List all registered tools across 10 domains")
@@ -621,7 +621,7 @@ def main():
                             seen_recipes.append(sub)
 
         if not seen_recipes:
-            print(f"{GREEN}[✓] All 175+ tools are already installed and fully operational!{RESET}\n")
+            print(f"{GREEN}[✓] All Kali and Parrot security tools are already installed and fully operational!{RESET}\n")
             return
 
         print(f"{CYAN}Detected {len(seen_recipes)} missing package recipes across domains.{RESET}")

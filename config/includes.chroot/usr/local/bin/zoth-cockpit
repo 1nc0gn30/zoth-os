@@ -647,7 +647,7 @@ CORE_SYSTEM_TOOLS: List[Dict[str, Any]] = [
         "name": "Zoth Tool Nexus",
         "bin": "zoth-tool-nexus",
         "gui": True,
-        "desc": "175+ Cyber Arsenal App Store & 1-Click Unattended Suite Installer",
+        "desc": "Kali and Parrot security tools app store & 1-click unattended suite installer",
         "launch_gui": ["zoth-tool-nexus"],
     },
     {

@@ -1,7 +1,7 @@
 {
   "name": "zoth-tool-nexus-app",
   "version": "3.5.0",
-  "description": "Zoth Tool Nexus — Sovereign Cyber App Store & 175+ Arsenal Orchestrator",
+  "description": "Zoth Tool Nexus — Sovereign cyber app store & Kali and Parrot security tools orchestrator",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

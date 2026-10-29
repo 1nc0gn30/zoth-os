@@ -183,7 +183,7 @@ function getNativeBoard() {
   return {
     items: items.length > 0 ? items : [
       { id: "zoth-cockpit", name: "Terminal Cockpit", group: "desk", group_label: "Desk", blurb: "Autonomous swarm command deck", bins: ["zoth-cockpit"], argv: ["zoth-cockpit"], term: true, installed: true, path: "/usr/local/bin/zoth-cockpit" },
-      { id: "zoth-tool-nexus", name: "ZOTHOS Tool Nexus", group: "desk", group_label: "Desk", blurb: "Sovereign 175+ tool orchestrator", bins: ["zoth-tool-nexus"], argv: ["zoth-tool-nexus"], term: true, installed: true, path: "/usr/local/bin/zoth-tool-nexus" },
+      { id: "zoth-tool-nexus", name: "ZOTHOS Tool Nexus", group: "desk", group_label: "Desk", blurb: "Sovereign Kali and Parrot security tools orchestrator", bins: ["zoth-tool-nexus"], argv: ["zoth-tool-nexus"], term: true, installed: true, path: "/usr/local/bin/zoth-tool-nexus" },
       { id: "hermes", name: "Hermes Agent", group: "mind", group_label: "Harnesses", blurb: "Nous Research sovereign agent harness", bins: ["hermes"], argv: ["hermes"], term: true, installed: true, path: "/usr/local/bin/hermes" }
     ],
     rooms: [

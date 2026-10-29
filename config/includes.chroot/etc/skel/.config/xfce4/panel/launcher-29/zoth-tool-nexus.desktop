@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=ZOTHOS Tool Nexus
-Comment=Sovereign 175+ Tool Orchestrator & Multi-Domain App Store
+Comment=Kali and Parrot security tools orchestrator & multi-domain app store
 Exec=electron /opt/zoth-nexus-app
 Icon=zoth-tool-nexus
 Terminal=false

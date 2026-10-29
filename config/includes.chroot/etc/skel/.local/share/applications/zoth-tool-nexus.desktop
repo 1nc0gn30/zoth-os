@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=ZOTHOS Tool Nexus
-Comment=Sovereign 175+ Tool Orchestrator & Multi-Domain Dispatcher
+Comment=Kali and Parrot security tools orchestrator & multi-domain dispatcher
 Exec=/usr/local/bin/zoth-konsole --title "ZOTHOS Tool Nexus" -- zoth-tool-nexus
 Icon=utilities-terminal
 Terminal=false

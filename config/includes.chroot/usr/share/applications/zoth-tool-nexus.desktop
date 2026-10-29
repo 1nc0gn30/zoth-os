@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Zoth Tool Nexus
-Comment=175+ Penetration Testing, AI & Sovereign Runtimes Orchestrator
+Comment=Kali and Parrot security tools, AI & sovereign runtimes orchestrator
 Exec=/usr/local/bin/zoth-tool-nexus --gui
 Icon=/usr/share/pixmaps/zoth-tool-nexus.png
 Terminal=false
