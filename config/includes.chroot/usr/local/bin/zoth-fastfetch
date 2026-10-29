@@ -147,7 +147,7 @@ fi
 COMMS_STATUS="${P}● SimpleX (:5225) ${D}· ${P}Signal Bridge (:8765) ${D}· ${P}API (:8767)${R}"
 
 # Studio Status
-STUDIO_STATUS="${A}● Zoth Studio v2 ${D}[React 18 · Vite · 37 Workstations]${R}"
+STUDIO_STATUS="${A}● Zoth Studio v2 ${D}[React 18 · Vite · 43 Workstations]${R}"
 
 # ── Render Master ASCII Welcome HUD ─────────────────────────────────────────
 echo -e ""

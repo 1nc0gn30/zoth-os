@@ -1,16 +1,16 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 62-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.2
+#  ZOTHOS — 71-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.2
 #  Unified Catalog of the NullAI / 1nc0gn30 / Neo Sovereign Arsenal
-#  100% God-Mode Workstation + 15s Motion Edit Coverage in Zoth Studio v2 (45 Browser + 17 Enclaves)
+#  100% God-Mode Workstation + 15s Motion Edit Coverage in Zoth Studio v2 (54 in-browser + 17 local CLI; 59 with public repos)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 62 tools.
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 71 Studio tools.
 #   Every tool features a dedicated interactive God-Mode Workstation, a deterministic
 #   60fps 15-second Code-First Motion Edit showcase (6-scene Claude Motion / Revid.ai
 #   blueprint + 3 live shader modes: Hybrid Braille+Vector, Pure ASCII Matrix, and Vector Cinema
 #   + 1-Click ASCII Frame export), interactive ASCII & Braille Motion Synth (`AsciiMotionGodModeTool`),
-#   validated JSON-Schema contracts, and dual payment rails (Stripe + Solana Tip).
+#   validated JSON-Schema contracts, and optional tip rails (Stripe + Solana; everything is free).
 #
 # Desktop Consolidation Architecture (10 Root Flagships + 4 Pillars):
 #   ~/Desktop/ (10 Flagship Launchers)
@@ -151,19 +151,19 @@
 - **GitHub:** https://github.com/NullAITech/jwt-inspector-guard
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER • [Live App](https://jwtguard.nullai.tech)
-- **Operational Value:** Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor. Dual Stripe + Solana rails ($19).
+- **Operational Value:** Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor. Free to use; optional Stripe + Solana tips.
 
 ### 11. payload-entropy-studio (Payload Entropy Studio)
 - **GitHub:** https://github.com/1nc0gn30/payload-entropy-studio
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER • [Live App](https://entropystudio.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
-- **Operational Value:** 100% in-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser Shannon entropy analysis, 32-byte sliding window waveform visualizer, recursive payload deobfuscator, and multi-engine WAF rule generator. Free to use; optional Stripe + Solana tips.
 
 ### 12. web-security-guard (Web Security Guard)
 - **GitHub:** https://github.com/1nc0gn30/web-security-guard
 - **Category:** Security & Recon
 - **Execution Mode:** BROWSER • [Live App](https://securityguard.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
-- **Operational Value:** 100% in-browser client-side security headers auditor, TLS 1.3 cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and multi-framework deployment hardening exporter. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser client-side security headers auditor, TLS 1.3 cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, and multi-framework deployment hardening exporter. Free to use; optional Stripe + Solana tips.
 
 ### 41. agent-gods-eye (Agent God's Eye)
 - **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
@@ -206,7 +206,7 @@
 - **GitHub:** https://github.com/NullAITech/polyglot-framework-exporter
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://polyglot.nullai.tech)
-- **Operational Value:** 100% in-browser multi-framework project scaffolder (13 modern frameworks), AST component transpiler, and client-side PKZIP compressor. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser multi-framework project scaffolder (13 modern frameworks), AST component transpiler, and client-side PKZIP compressor. Free to use; optional Stripe + Solana tips.
 
 ### 14. aeo-graph-engine (AEO Graph Engine & Studio)
 - **Live Studio:** https://aeo-graph-engine.netlify.app
@@ -229,13 +229,13 @@
 - **GitHub:** https://github.com/1nc0gn30/pwa-manifest-builder
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://pwabuilder.nullai.tech)
-- **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Free to use; optional Stripe + Solana tips.
 
 ### 23. schema-illustrator-studio (Schema Illustrator Studio)
 - **GitHub:** https://github.com/1nc0gn30/schema-illustrator-studio
 - **Category:** Autonomous Web
 - **Execution Mode:** BROWSER • [Live App](https://schemaillustrator.nullai.tech)
-- **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Free to use; optional Stripe + Solana tips.
 
 ### 24. zoth-webgen (Zoth QuickSite Starter)
 - **GitHub:** https://github.com/NullAITech/zoth-webgen
@@ -311,31 +311,31 @@
 - **GitHub:** https://github.com/1nc0gn30/subsweep-lead-scanner
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://subsweep.nullai.tech) • [Headless Verified: 100% PASS]
-- **Operational Value:** 100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, and executive lead intelligence with dual checkout rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
+- **Operational Value:** 100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, and executive lead intelligence — free to use, with optional Stripe + Solana tips.
 
 ### 18. omnipost-social-engine (OmniPost Social Engine)
 - **GitHub:** https://github.com/1nc0gn30/omnipost-social-engine
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://omnipost.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
-- **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, and MCP client config generator with dual Stripe + Solana rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
+- **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, and MCP client config generator — free to use, with optional Stripe + Solana tips.
 
 ### 19. cron-rhythm-studio (CronRhythm Studio)
 - **GitHub:** https://github.com/1nc0gn30/cron-rhythm-studio
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://cronrhythm.nullai.tech) • [Headless Verified: 100% PASS]
-- **Operational Value:** 100% in-browser high-precision cron AST parser, 24x7 rhythm heatmap, upcoming run countdowns, and multi-dialect transpiler across K8s, GitHub Actions, AWS EventBridge, and Systemd with dual checkout rails ($19), frosted paywall blur, action interceptors, and 1-click Pro license unlock.
+- **Operational Value:** 100% in-browser high-precision cron AST parser, 24x7 rhythm heatmap, upcoming run countdowns, and multi-dialect transpiler across K8s, GitHub Actions, AWS EventBridge, and Systemd — free to use, with optional Stripe + Solana tips.
 
 ### 20. certpath-roadmap-studio (CertPath Roadmap Studio)
 - **GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://certpath-roadmap-studio.netlify.app) • [Headless Verified: 100% PASS]
-- **Operational Value:** 100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, dual checkout rails ($19), and action interceptors.
+- **Operational Value:** 100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, dual checkout rails , and action interceptors.
 
 ### 22. regex-droid-builder (Regex Droid Studio)
 - **GitHub:** https://github.com/1nc0gn30/regex-droid-builder
 - **Category:** Automation
 - **Execution Mode:** BROWSER • [Live App](https://regexdroid.nullai.tech)
-- **Operational Value:** 100% in-browser visual regular expression builder, AST breakdown, railroad vector diagrams, multi-language code generator, and static ReDoS vulnerability guardian. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser visual regular expression builder, AST breakdown, railroad vector diagrams, multi-language code generator, and static ReDoS vulnerability guardian. Free to use; optional Stripe + Solana tips.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -354,7 +354,7 @@
 - **GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
 - **Category:** Security & OpSec
 - **Execution Mode:** BROWSER • [Live App](https://audiocipher.nullai.tech)
-- **Operational Value:** 100% in-browser acoustic cryptography, PCM audio LSB steganography, DTMF Goertzel decoder, ITU Morse synthesizer, and ultrasonic BFSK air-gap modem. Dual Stripe + Solana rails ($19).
+- **Operational Value:** 100% in-browser acoustic cryptography, PCM audio LSB steganography, DTMF Goertzel decoder, ITU Morse synthesizer, and ultrasonic BFSK air-gap modem. Free to use; optional Stripe + Solana tips.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -374,7 +374,7 @@
 - **Category:** Growth & SEO
 - **Execution Mode:** BROWSER • [Live App](https://city-desk.netlify.app)
 - **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana)
-- **Operational Value:** Programmatic local landing page generator constructing 1,000 localized service pages across 20 trades and 50 mid-size cities with live client customizer, instant Pro license activation (`CITY-PRO-2026`), and standalone HTML bundle export.
+- **Operational Value:** Programmatic local landing page generator constructing 1,000 localized service pages across 20 trades and 50 mid-size cities with live client customizer, and free standalone HTML bundle export.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 
@@ -389,14 +389,14 @@
 - **Execution Mode:** BROWSER / LOCAL_CLI (`AgentEgressSentinelGodModeTool` 60fps Perimeter Radar Workstation)
 - **Operational Value:** Autonomous zero-dependency network interceptor, Shannon entropy DNS-tunneling blocker, 169.254.169.254 SSRF shield, 60fps egress radar canvas, and deterministic `nftables` kernel policy compiler.
 <!-- Intentional public Solana receive address on the DePay link below. Not key material. Allowlisted in .gitleaks.toml. -->
-- **Price:** $19 Lifetime Founding Access • [Stripe Payment Link](https://github.com/1nc0gn30/zoth-os) • [DePay Solana](solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
+- **Price:** Free to use • Optional tips: [Stripe Payment Link](https://github.com/1nc0gn30/zoth-os) • [DePay Solana](solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
 
 ### 33. agent-prompt-firewall (Agent Prompt Firewall)
 - **Live Studio:** https://agent-prompt-firewall.netlify.app • [Zoth Studio Workstation](https://zoth.nullai.tech/tools/agent-prompt-firewall)
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
 - **Category:** Security & Network
 - **Execution Mode:** BROWSER / LOCAL_CLI (`AgentPromptFirewallGodModeTool` 60fps AST Salience Spectrum Workstation)
-- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Support:** Free to use; optional Stripe / Solana tips
 - **Operational Value:** Autonomous inline prompt injection defense, indirect HTML/Markdown tool-poisoning sanitizer, and 60fps token attention salience spectrum canvas.
 
 ### 40. agent-budget-sentinel (Agent Budget Sentinel)
@@ -415,13 +415,13 @@
 - **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
 - **Category:** Simulation & Testing
 - **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://agent-mock.nullai.tech)
-- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Support:** Free to use; optional Stripe / Solana tips
 - **Operational Value:** Autonomous offline API mock & deterministic network twin for AI agents with HAR 1.2 / OpenAPI 3.0 ingestion, microsecond latency simulation, and CI/CD Docker bundle export with $0 token spend.
 
 ### 39. mcp-lens (MCP Lens)
 - **GitHub:** https://github.com/1nc0gn30/mcp-lens
 - **Category:** Simulation & Testing
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://mcp-lens.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://mcp-lens.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** Autonomous zero-dependency Model Context Protocol real-time stdio/SSE traffic sniffer, BPE token weight auditor, AST schema minifier (-35% token bloat), and Cursor & Claude export rules engine. Triple-viewport verified (0px overflow, 0 errors).
 
 
@@ -434,7 +434,7 @@
 - **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
 - **Category:** Forensics & Telemetry
 - **Execution Mode:** BROWSER / LOCAL_CLI (`AgentFlightRecorderGodModeTool` 60fps Merkle Trajectory DAG Workstation)
-- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Support:** Free to use; optional Stripe / Solana tips
 - **Operational Value:** Cryptographic FNV-1a/Merkle-chained trajectory blackbox recorder with interactive block sealing and 60fps Merkle chain topology canvas.
 
 
@@ -446,14 +446,14 @@
 - **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
 - **Category:** Security & Enclave
 - **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://capsule.nullai.tech)
-- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Support:** Free to use; optional Stripe / Solana tips
 - **Operational Value:** Autonomous kernel enclave sandbox, resource quota manager, and ephemeral process isolation for AI agents with secret stripping and filesystem delta diffing.
 
 ### 36. agent-policy-auditor (Agent Policy Auditor)
 - **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
 - **Category:** Security & Enclave
 - **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://policy.nullai.tech)
-- **Monetization Rails:** Stripe ($19) • DePay Solana Web3
+- **Support:** Free to use; optional Stripe / Solana tips
 - **Operational Value:** Autonomous zero-dependency capability leasing broker, permission manager, and static manifest security auditor enforcing time-bound HMAC leases and OWASP LLM compliance.
 
 
@@ -465,7 +465,7 @@
 - **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
 - **Category:** Commerce & POD
 - **Execution Mode:** BROWSER • [Live App](https://etsy-pod.nullai.tech) • [Headless Verified: 0 Errors, 0px Overflow]
-- **Operational Value:** 100% in-browser 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer with dual Stripe + Solana rails ($19), canvas stage paywall blur, export action interceptors, and 1-click Pro license unlock.
+- **Operational Value:** 100% in-browser 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer — free to use, with optional Stripe + Solana tips.
 
 ### 59. storefront-catalog (YourDigitalSpace POD Showcase)
 - **GitHub:** https://github.com/1nc0gn30/storefront-catalog
@@ -481,25 +481,25 @@
 ### 38. etsy-connector (Etsy Connector)
 - **GitHub:** https://github.com/1nc0gn30/etsy-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://etsy.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://etsy.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** Autonomous zero-dependency Etsy Open API v3 & Antigravity MCP bridge with 140-char/13-tag SEO auditor, fee/profit calculator, Printify POD payload generator, and CSV matrix export. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 42. shopify-connector (Shopify Connector)
 - **GitHub:** https://github.com/1nc0gn30/shopify-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://shopify.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://shopify.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** Autonomous zero-dependency Shopify GraphQL Admin API connector, 1-click Etsy-to-Shopify payload transpiler, net profit margin simulator, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 43. printify-connector (Printify Connector)
 - **GitHub:** https://github.com/1nc0gn30/printify-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://printify.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://printify.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 44. gelato-connector (Gelato Connector)
 - **GitHub:** https://github.com/1nc0gn30/gelato-connector
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://gelato.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://gelato.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 46. pod-smart-router (POD Smart Router)
@@ -512,20 +512,20 @@
 ### 47. digital-asset-forge (Digital Asset Forge)
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
 - **Category:** Commerce & MCP
-- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://digital-asset-forge.nullai.tech) • Dual Stripe ($19) + Solana Rails
+- **Execution Mode:** IN_BROWSER_SPA / LOCAL_CLI • [Live App](https://digital-asset-forge.nullai.tech) • Free to use; optional Stripe + Solana tips
 - **Operational Value:** High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB multi-zip splitting. Triple-viewport verified (0px overflow, 0 errors).
 
 ### 48. pod-mockup-forge (POD Mockup Forge)
 - **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
 - **Category:** Commerce & MCP
-- **Execution Mode:** BROWSER • [Live App](https://pod-mockup-forge.nullai.tech) • Dual Stripe ($19) + Solana Rails
-- **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor. Fully hardened with client-side canvas compositing, frosted paywall lock, and instant 1-click Pro activation.
+- **Execution Mode:** BROWSER • [Live App](https://pod-mockup-forge.nullai.tech) • Free to use; optional Stripe + Solana tips
+- **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor. Fully hardened with client-side canvas compositing, free to use with no locks.
 
 ### 49. pod-margin-sentinel (POD Margin Sentinel)
 - **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
 - **Category:** Commerce & MCP
-- **Execution Mode:** BROWSER • [Live App](https://pod-margin-sentinel.nullai.tech) • Dual Stripe ($19) + Solana Rails
-- **Operational Value:** Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop. Fully hardened with client-side mathematical execution, 60fps kinetic chronometer canvas, frosted paywall lock, and instant 1-click Pro activation.
+- **Execution Mode:** BROWSER • [Live App](https://pod-margin-sentinel.nullai.tech) • Free to use; optional Stripe + Solana tips
+- **Operational Value:** Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop. Fully hardened with client-side mathematical execution, 60fps kinetic chronometer canvas, free to use with no locks.
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════

@@ -1342,42 +1342,29 @@ flowchart LR
         T4["Obsidian Vault Bridge"]
     end
     
-    subgraph MonetizationRails["💰 Dual Monetization Cash Registers"]
-        S1["Stripe Checkout ($19 Lifetime)"]
-        S2["DePay Solana (◈ VLR / SOL)"]
-        Lock["Frosted Glass Output Paywall"]
+    subgraph SupportRails["☕ Optional Tips (Everything Free)"]
+        S1["Optional Stripe Tip"]
+        S2["Optional Solana Tip"]
     end
     
     StudioFrontend --> SovereignTools
-    SovereignTools --> Lock
-    Lock --> MonetizationRails
+    SovereignTools -.-> SupportRails
 ```"""
         taxonomy = """## Functional Taxonomy & Micro-SaaS Tool Matrix
 
 ### 1. In-Browser Client-Side Utility (Zero Fake Work)
-Every single tool within the 71-tool catalog operates 100% client-side in the browser. AST transformations, SVG transpilations, cryptographic signature verifications, and Schema.org syntheses execute locally without depending on brittle backend microservices.
+The 71-tool Studio catalog runs locally: 54 tools execute 100% client-side in the browser and 17 run as local CLI tools. AST transformations, SVG transpilations, cryptographic signature verifications, and Schema.org syntheses execute locally without depending on brittle backend microservices.
 
-### 2. High-Converting Monetization Architecture
-Each micro-SaaS tool incorporates standard monetization invariants:
-- **Above-the-Fold Sales Banner:** Founding member $19 lifetime pricing.
-- **Frosted Glass Blur Paywall (`filter: blur(6px)`):** Protects generated output while demonstrating live input functionality.
-- **Dual Cash Registers:** Stripe Payment Links (Credit Cards, Apple Pay) + DePay Solana Widget (`428790dd-7ad1-407c-8ecf-c048c77a4cb8`).
-- **Instant Client-Side License Verification:** Activates via URL parameter `?licensed=true` or license key, stored in `localStorage`.
+### 2. 100% Free & Open Access
+Every tool is free to use. No license, key, or purchase is required, and no output is blurred or locked.
+- **Optional Tips:** Stripe Payment Links (Credit Cards, Apple Pay) + DePay Solana Widget. Tips are voluntary and unlock nothing extra.
 
 ### 3. Avant-Garde Design Commodities
 Styled with custom typography (`Syne`, `Space Grotesk`, `JetBrains Mono`), tactile Bento grids, pure CSS border beams, and kinetic motion graphics inspired by Claude Opus 5.5 motion design."""
 
         math_section = """## Key Mathematical Formulations & Technical Primitives
 
-### 1. Conversion Rate Optimization (CRO) Sigmoid
-The probability of a user converting to a $19 lifetime license is modeled as:
-$$P(\\text{Conversion}) = \\frac{1}{1 + \\exp(-(\\beta_0 + \\beta_1 \\cdot \\mathcal{U}_{\\text{utility}} - \\beta_2 \\cdot \\mathcal{F}_{\\text{friction}}))}$$
-
-### 2. Dual-Rail Sovereign Treasury Growth
-Treasury accumulation across Stripe and Solana rails follows:
-$$T(t) = \\sum_{i=1}^{N_{\\text{stripe}}} (\\$19.00 - \\text{Fee}_{\\text{stripe}}) + \\sum_{j=1}^{N_{\\text{solana}}} \\$19.00_{\\text{USDC/SOL}}$$
-
-### 3. Client-Side AST Parsing Time Complexity
+### 1. Client-Side AST Parsing Time Complexity
 Token scanning and abstract syntax tree generation in JavaScript executes in linear time:
 $$t_{\\text{parse}} = \\mathcal{O}(N_{\\text{tokens}}) < 40\\text{ ms (tri-viewport verified)}$$"""
 
