@@ -1,4 +1,6 @@
 # 🜂 ZOTHOS: THE 10-YEAR IMMORTALITY & SOVEREIGNTY MASTER PLAN (2026–2036)
+
+> **Vision / not yet built.** This is a long-term plan. Versions such as v4.0 LTS, v5.0 and v6.0 and the features described for them do not exist yet. The current release is v3.3.0.
 **Autonomous Operating System Resilience, Air-Gapped Intelligence & Decade-Long Survivability Blueprint**
 
 ---

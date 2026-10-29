@@ -73,7 +73,7 @@
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.13, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction (from the `30-opsec` + `40-security` package lists). |
-| **Sovereign Tool Matrix** | **59 Tools & 22 Enclave Daemons** | 100% interactive workstation coverage in Zoth Studio v2 (28 In-Browser WebGPU/Client + 31 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
+| **Sovereign Tool Matrix** | **71 Studio Tools (59 with public repos) & 22 Enclave Daemons**<!-- TODO: verify the 22 daemon count --> | 100% interactive workstation coverage in Zoth Studio v2 (28 In-Browser WebGPU/Client + 31 Sovereign Enclaves) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -442,11 +442,11 @@ See the complete 59-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIOS systems.
 
 ### 1. Booting the Live ISO
-The current download is [v3.2.0](https://github.com/NullAITech/zoth-os/releases/tag/v3.2.0). GitHub splits the ISO into five parts plus `zothos-join-iso.sh`. Put those files in one folder, rejoin them, then flash a USB drive of at least 16 GB:
+The current download is [v3.3.0](https://github.com/NullAITech/zoth-os/releases/tag/v3.3.0). GitHub splits the ISO into five parts plus `zothos-join-iso.sh`. Put those files in one folder, rejoin them, then flash a USB drive of at least 16 GB:
 
 ```bash
 bash zothos-join-iso.sh
-sudo dd if=zothos-3.2-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
+sudo dd if=zothos-3.3-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
 `zothos-join-iso.sh` checks the SHA-256 before it says the image is ready. Replace `/dev/sdX` with the USB device, not a partition.
@@ -505,7 +505,7 @@ What is in place today, and what is not:
 | Item | Status |
 | :--- | :--- |
 | **Release checksums** | ✅ SHA-256 published for every release. Detects corruption, not tampering. |
-| **Release signatures** | ✅ v3.2.0 ships `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
+| **Release signatures** | ✅ v3.2.0 and v3.3.0 ship `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
 | **Reproducible builds** | ⏳ In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
 | **OpenSSF Scorecard** | ✅ Workflow runs and publishes results (score was 1.0/10 at the Oct 2026 audit; fixes since then should raise it). |
 | **Static analysis** | ✅ CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
@@ -518,7 +518,7 @@ Known live-image defaults you should understand before using ZOTHOS on a real ne
 (fixed passwords reset at boot, passwordless sudo) are documented in [`SECURITY.md`](SECURITY.md).
 
 ```bash
-# Verify the v3.2.0 signature, then the part checksums
+# Verify the v3.3.0 signature, then the part checksums
 cosign verify-blob SHA256SUMS --bundle SHA256SUMS.cosign.bundle \
   --certificate-identity-regexp '^https://github.com/NullAITech/zoth-os/\.github/workflows/release-sign\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com

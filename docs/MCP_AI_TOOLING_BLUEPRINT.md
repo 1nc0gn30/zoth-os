@@ -1,5 +1,7 @@
 # ARCHITECTURAL BLUEPRINT: MODEL CONTEXT PROTOCOL (MCP) & OPEN-SOURCE AI TOOLING FOR ZOTHOS v3.2.0
 
+> **Historical document:** written for ZOTHOS v3.2.0. The current release is v3.3.0; check the README for what ships today.
+
 **Target System**: ZothOS v3.2.0 (Debian 13 Trixie / Kali Rolling / Parrot OS Security Base, KDE Plasma 6.3 Wayland, Linux 6.12 Kernel)  
 **Security Architecture**: Tri-Ring Security Hierarchy (`RING_0_SOVEREIGN`, `RING_1_SYSADMIN`, `RING_2_TOOLMASTER`)  
 **Core Purpose**: Seamless integration of frontier local LLM runtimes, multi-agent orchestration frameworks, offensive/defensive cybersecurity MCPs, and persistent knowledge substrates.
