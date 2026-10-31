@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+"""
+Zela Glasses Guide CLI Binary
+Sovereign wearable AI mission coach for Ray-Ban Meta smart glasses over Tailscale.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import urllib.request
+
+TOOL_ID = "zela-glasses-guide"
+TOOL_NAME = "Zela Glasses Guide"
+TOOL_VERSION = "0.5.0"
+TOOL_CATEGORY = "Swarm & Core"
+TOOL_PORT = 8144
+STUDIO_PORT = 3000
+REPO_DIR = os.path.expanduser("~/NullAITech/zela-glasses-guide")
+STUDIO_URL = f"http://127.0.0.1:{STUDIO_PORT}/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def check_daemon(url=f"{LOCAL_PORT_URL}/health", timeout=1.5):
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "ZelaCLI/0.5.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as res:
+            if res.status == 200:
+                return json.loads(res.read().decode())
+    except Exception:
+        pass
+    return None
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — Sovereign wearable AI mission coach"
+    )
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local ZothOS installation & daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local ZothOS workbench URL")
+    parser.add_argument("--config", action="store_true", help="Print sample Zoth Relay mobile config YAML")
+    parser.add_argument("--presets", action="store_true", help="List wearable AI mission coaching presets")
+    parser.add_argument("--serve", type=int, metavar="PORT", help="Start local standalone server on specified port")
+
+    args = parser.parse_args()
+
+    if args.serve:
+        server_script = os.path.join(REPO_DIR, "server.py")
+        cmd = [sys.executable, server_script, "--port", str(args.serve)]
+        sys.exit(subprocess.run(cmd).returncode)
+
+    daemon_health = check_daemon()
+
+    if args.config:
+        cfg_path = os.path.join(REPO_DIR, "server.py")
+        if daemon_health:
+            try:
+                with urllib.request.urlopen(f"{LOCAL_PORT_URL}/api/config", timeout=2) as r:
+                    data = json.loads(r.read().decode())
+                    print(data.get("yaml", ""))
+                    return
+            except Exception:
+                pass
+        print("# ~/.config/zoth-relay/mobile/config.yaml (zoth-pill v0.5.0)\nhosts:\n  - 127.0.0.1\n  - 100.106.132.5\nport: 8766\n...")
+        return
+
+    if args.presets:
+        if daemon_health:
+            try:
+                with urllib.request.urlopen(f"{LOCAL_PORT_URL}/api/presets", timeout=2) as r:
+                    data = json.loads(r.read().decode())
+                    if args.json:
+                        print(json.dumps(data, indent=2))
+                    else:
+                        print(f"✦ Zela Wearable Presets ({len(data.get('presets', []))} loaded):")
+                        for p in data.get("presets", []):
+                            print(f"  • [{p['category']}] {p['name']} (model: {p['model']})")
+                    return
+            except Exception:
+                pass
+        print("Bicycle Repair, PCB Inspection, Kitchen Recipe, Live Audio Stego, Server Rack, Hazard Navigation")
+        return
+
+    telemetry = {
+        "id": TOOL_ID,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "studio_url": STUDIO_URL,
+        "local_url": LOCAL_PORT_URL,
+        "local_port": TOOL_PORT,
+        "daemon_active": daemon_health is not None,
+        "daemon_status": daemon_health or {"status": "inactive"},
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        }
+    }
+
+    if args.json:
+        print(json.dumps(telemetry, indent=2))
+        return
+
+    if args.ui:
+        print(f"Workbench: {STUDIO_URL}")
+        print(f"Local App: {LOCAL_PORT_URL}")
+        return
+
+    daemon_tag = "ACTIVE (running)" if daemon_health else "INACTIVE"
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Daemon     : {daemon_tag} at {LOCAL_PORT_URL}")
+    print(f"  Studio     : {STUDIO_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
+if __name__ == "__main__":
+    main()

@@ -32,7 +32,7 @@ The Hero Anchor Shape represents the seamless duplication of an AI agent's live 
 ```markdown
 **Prompt for Motion Graphics Engine (15s Product Showreel)**:
 
-Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 vertical and 16:9 widescreen formats for **AGENT MOCK TWIN** (by Neal Frazier Tech).
+Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 vertical and 16:9 widescreen formats for **AGENT MOCK TWIN** (by NullAI).
 
 **Style & Aesthetic**:
 - Ultra-dark obsidian void (`#08080B`) with micro-geometric grid lines.
@@ -59,7 +59,7 @@ Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 verti
 - **Scene 4 (0:11 – 0:15) — Call to Action**:
   - *Visual*: Sleek glassmorphic Bento dashboard showing active route matrix, latency slider, and Pro badge. Dual Stripe and Solana payment icons appear with subtle shine.
   - *Text Overlay*: "AGENT MOCK TWIN. Run Free Offline."
-  - *Footer Attribution*: "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform".
+  - *Footer Attribution*: "Engineered by 1nc0gn30 • NullAI Platform".
   - *Audio*: Reverberant sub-bass resolve with clean mechanical click.
 ```
 

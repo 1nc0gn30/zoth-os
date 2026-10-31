@@ -23,7 +23,7 @@ import urllib.error
 # Discovery of Studio Root directory
 CANDIDATE_ROOTS = [
     os.environ.get("STUDIO_ROOT", ""),
-    os.path.join(os.environ.get("ZOTH_SRC_ROOT") or os.path.join(os.path.expanduser("~"), "NullAITech"), "zoth-studio-v2"),
+    os.path.expanduser("~/NullAITech/zoth-studio-v2"),
     os.path.expanduser("~/NullAITech/zoth-studio-v2"),
     "/opt/zoth-studio",
     "/usr/share/zoth-studio",
@@ -50,7 +50,7 @@ if not os.path.exists(ICON_PATH):
     if os.path.exists(appdir_icon):
         ICON_PATH = appdir_icon
 
-PREFERRED_PORTS = [8088, 8080, 3000, 8008, 8090, 8099] + list(range(8100, 8150))
+PREFERRED_PORTS = [3000, 8008] + list(range(8150, 8180))
 PID_FILE = os.path.expanduser("~/.zoth-studio/zoth-studio.pid")
 
 
@@ -86,7 +86,7 @@ def is_zoth_studio_server(port):
         with urllib.request.urlopen(req, timeout=0.6) as response:
             if response.status == 200:
                 body = response.read(2048).decode('utf-8', errors='ignore')
-                if "Zoth" in body or "zoth" in body or "<html" in body.lower():
+                if "Zoth Studio" in body or "zoth-studio" in body:
                     return True
     except Exception:
         pass

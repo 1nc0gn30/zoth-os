@@ -1,6 +1,6 @@
 /**
  * Agent Capsule Jail — Interactive Web Engine & Telemetry Controller
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  * 100% Client-Side Real Working Utility (Zero Fake Work)
  */
 

@@ -6,6 +6,6 @@
   "scripts": {
     "start": "electron ."
   },
-  "author": "Neal Frazier Tech <neal@nealfrazier.tech>",
+  "author": "NullAI <contact@nullai.tech>",
   "license": "MIT"
 }

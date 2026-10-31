@@ -2,7 +2,7 @@
 
 **Product**: `agent-prompt-firewall`
 **Tagline**: Autonomous Zero-Dependency Inline Security Proxy & Threat Radar for AI Agents
-**Entity**: Neal Frazier Tech (`@1nc0gn30`) • NullAI Platform
+**Entity**: NullAI (`@1nc0gn30`) • NullAI Platform
 **Hero Anchor Shape**: **The Hexagonal Aegis Prism** (Dark Obsidian Hexagon with Dual Concentric Scanning Rings, Gold `#D4AF37` Refraction Beams, and Ruby `#EF4444` Threat Disintegration Sparkles)
 
 ---
@@ -49,7 +49,7 @@ Primary Heading:
 Subheading:
 "Lock Down Your Agent Runtime Today • $19 Lifetime Founding Tier"
 Attribution:
-"Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+"Engineered by 1nc0gn30 • NullAI Platform"
 Sound Effect: Resonant cinematic brass chord and warm analog fade-out.
 ```
 

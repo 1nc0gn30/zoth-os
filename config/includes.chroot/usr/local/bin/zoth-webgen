@@ -1,170 +1,64 @@
-#!/usr/bin/env bash
-# ==============================================================================
-#  Zoth QuickSite Starter — One-Shot Idea to Live Netlify Deploy & Template Engine
-# ==============================================================================
-set -eo pipefail
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse
 
-if [ -f /etc/zothos/paths.sh ]; then
-  # shellcheck disable=SC1091
-  . /etc/zothos/paths.sh
-fi
-: "${ZOTH_USER:=zoth}"
-: "${AZOTH_USER:=azoth}"
-: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
-: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
-: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
-: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+TOOL_ID = 'zoth-webgen'
+TOOL_REPO = 'zoth-webgen'
+TOOL_NAME = 'Zoth QuickSite Starter'
+TOOL_DESC = 'Simple 3-step static template & 1-click Netlify launcher on 127.0.0.1:8092. Pick a ready-made template, preview live, and export HTML/ZIP or deploy to Netlify.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Autonomous Web'
+TOOL_PORT = 8092
+REPO_DIR = os.path.expanduser('~/NullAITech/zoth-webgen')
+PY_CLI = os.path.expanduser('~/NullAITech/zoth-webgen/webgen_engine.py')
+PKG_DIR = None
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-GOLD='\033[38;2;212;175;55m'
-CYAN='\033[38;2;56;189;248m'
-GREEN='\033[38;2;52;211;153m'
-RED='\033[38;2;248;113;113m'
-DIM='\033[38;2;148;163;184m'
-BOLD='\033[1m'
-NC='\033[0m'
+def main():
+    args = sys.argv[1:]
+    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version', '-v'):
+        res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR)
+        sys.exit(res.returncode)
 
-CANDIDATES=(
-  "${ZOTH_SRC_ROOT}/zoth-webgen"
-  "${HOME}/NullAITech/zoth-webgen"
-  "/opt/zoth-webgen"
-  "${HOME}/zoth-webgen"
-)
-REPO_DIR=""
-for c in "${CANDIDATES[@]}"; do
-  if [[ -d "$c" && -f "$c/webgen_engine.py" ]]; then
-    REPO_DIR="$c"
-    break
-  fi
-done
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
+    parsed, unknown = parser.parse_known_args(args)
 
-if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
-  echo -e "${GOLD}[*] Cloning Zoth WebGen from sovereign repo...${NC}"
-  mkdir -p "${HOME}/NullAITech"
-  git clone https://github.com/NullAITech/zoth-webgen.git "${HOME}/NullAITech/zoth-webgen"
-  REPO_DIR="${HOME}/NullAITech/zoth-webgen"
-fi
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": PY_CLI,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "READY"
+    }
 
-cd "$REPO_DIR"
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
 
-ensure_server() {
-  local port="${1:-8092}"
-  if ! curl -s --max-time 1.5 "http://127.0.0.1:${port}/api/health" | grep -q "zoth-webgen" 2>/dev/null; then
-    nohup python3 "$REPO_DIR/server.py" --port "$port" >/tmp/zoth-webgen-server.log 2>&1 &
-    sleep 0.8
-  fi
-}
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
-open_studio_ui() {
-  local port="${1:-8092}"
-  ensure_server "$port"
-  local url="http://127.0.0.1:${port}"
-  echo -e "${GREEN}[✓] WebGen Visual Studio active at: ${CYAN}${BOLD}${url}${NC}"
-  if [[ -n "${DISPLAY:-}" ]]; then
-    if command -v google-chrome >/dev/null 2>&1; then
-      nohup google-chrome --app="$url" >/dev/null 2>&1 &
-    elif command -v xdg-open >/dev/null 2>&1; then
-      nohup xdg-open "$url" >/dev/null 2>&1 &
-    fi
-  fi
-}
-
-# Direct CLI execution when flags or subcommands are passed
-if [[ $# -gt 0 ]]; then
-  case "$1" in
-    web|desktop|gui)
-      open_studio_ui "${2:-8092}"
-      exit 0
-      ;;
-    server|daemon)
-      exec python3 "$REPO_DIR/server.py" --port "${2:-8092}"
-      ;;
-    *)
-      exec python3 "$REPO_DIR/webgen_engine.py" "$@"
-      ;;
-  esac
-fi
-
-# Interactive Console Menu when launched without arguments
-ensure_server 8092
-
-while true; do
-  clear
-  echo -e "${GOLD}${BOLD}╔══════════════════════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${GOLD}${BOLD}║     ⚡ ZOTH WEBGEN FOUNDRY • ONE-SHOT IDEA TO LIVE NETLIFY DEPLOY ⚡     ║${NC}"
-  echo -e "${GOLD}${BOLD}╚══════════════════════════════════════════════════════════════════════════╝${NC}"
-  echo -e "  ${DIM}Studio Server:${NC} ${GREEN}ONLINE${NC} (${CYAN}http://127.0.0.1:8092${NC})"
-  echo -e "  ${DIM}Templates:${NC}     ${GOLD}58 Sovereign Production Apps${NC} + ${CYAN}182 100-Websites Presets${NC}"
-  echo -e "  ${DIM}Visual FX:${NC}     ${GREEN}@teknium Uncommon Web Shaders (Braille / Dither / ASCII / Constellation)${NC}\n"
-
-  echo -e "  ${GOLD}${BOLD}SELECT OPERATION:${NC}"
-  echo -e "    ${CYAN}[1]${NC} ${BOLD}⚡ One-Shot Idea → Synthesize & Deploy LIVE to Netlify${NC}"
-  echo -e "    ${CYAN}[2]${NC} ${BOLD}🔥 One-Shot Idea → Synthesize Locally (No Deploy)${NC}"
-  echo -e "    ${CYAN}[3]${NC} ${BOLD}🌐 Launch WebGen Visual Studio UI in Browser (:8092)${NC}"
-  echo -e "    ${CYAN}[4]${NC} ${BOLD}📋 List All 58 Production App Templates (100-Websites Season)${NC}"
-  echo -e "    ${CYAN}[5]${NC} ${BOLD}🏛️ Compile 6-Page Stack Project (HTML / Astro / React / MUI)${NC}"
-  echo -e "    ${CYAN}[6]${NC} ${BOLD}🚀 Deploy Existing Project Directory to Netlify${NC}"
-  echo -e "    ${RED}[0]${NC} ${BOLD}Exit${NC}\n"
-
-  read -rp "  Select [0-6]: " choice || exit 0
-  case "$choice" in
-    1|2)
-      echo ""
-      read -rp "  💡 Describe your website or web app idea: " idea
-      [[ -z "$idea" ]] && idea="Sovereign AI Developer Utility & Interactive Studio"
-      read -rp "  🏷️  Brand / App Name [auto-generate]: " bname
-      read -rp "  🎨 Mode [remix = 100-Websites Interactive App | foundry = 6-Page Site] (default: remix): " mode
-      mode="${mode:-remix}"
-      read -rp "  ✨ Uncommon Web Shader [braille | dither | ascii | constellation] (default: braille): " shader
-      shader="${shader:-braille}"
-      echo ""
-      if [[ "$choice" == "1" ]]; then
-        echo -e "  ${CYAN}[*] Synthesizing & Deploying live to Netlify Edge CDN...${NC}"
-        python3 "$REPO_DIR/webgen_engine.py" --one-shot "$idea" --name "${bname:-Sovereign Site}" --mode "$mode" --shader "$shader" --deploy
-      else
-        echo -e "  ${CYAN}[*] Synthesizing project locally...${NC}"
-        python3 "$REPO_DIR/webgen_engine.py" --one-shot "$idea" --name "${bname:-Sovereign Site}" --mode "$mode" --shader "$shader"
-      fi
-      echo ""
-      read -rp "  Press [ENTER] to continue..." _
-      ;;
-    3)
-      open_studio_ui 8092
-      sleep 1
-      ;;
-    4)
-      echo ""
-      python3 -c '
-from foundry.oneshot import list_production_templates
-for i, t in enumerate(list_production_templates(), 1):
-    print(f"  {i:02d}. {t[\"id\"]:<28} | {t[\"category\"]:<24} | {t[\"title\"]}")
-' | less -R
-      ;;
-    5)
-      echo ""
-      read -rp "  Preset ID [100-websites-in-30-days]: " preset
-      preset="${preset:-100-websites-in-30-days}"
-      read -rp "  Stack [html | astro | react | react-mui] (default: html): " stack
-      stack="${stack:-html}"
-      read -rp "  Site Name [Sovereign Studio]: " sname
-      sname="${sname:-Sovereign Studio}"
-      out_dir="${ZOTH_SRC_ROOT}/generated-sites/$(echo "$sname" | tr '[:upper:] ' '[:lower:]-')"
-      python3 "$REPO_DIR/webgen_engine.py" --preset "$preset" --stack "$stack" --name "$sname" --project "$out_dir"
-      echo ""
-      read -rp "  Press [ENTER] to continue..." _
-      ;;
-    6)
-      echo ""
-      read -rp "  Enter project directory path to deploy: " dpath
-      if [[ -d "$dpath" ]]; then
-        python3 -c "import json; from foundry.oneshot import deploy_to_netlify; print(json.dumps(deploy_to_netlify('$dpath'), indent=2))"
-      else
-        echo -e "  ${RED}[!] Directory not found: $dpath${NC}"
-      fi
-      echo ""
-      read -rp "  Press [ENTER] to continue..." _
-      ;;
-    0)
-      exit 0
-      ;;
-  esac
-done
+if __name__ == '__main__':
+    main()

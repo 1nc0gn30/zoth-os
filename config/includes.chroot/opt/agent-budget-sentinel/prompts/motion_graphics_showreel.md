@@ -65,7 +65,7 @@
 - **Typography**:
   - `"PROTECT YOUR TREASURY. RUN AUTONOMOUSLY."`
   - `"AGENT BUDGET SENTINEL — agent-budget-sentinel.nullai.tech"`
-- **Attribution**: `"Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"`
+- **Attribution**: `"Engineered by 1nc0gn30 • NullAI Platform"`
 - **SFX**: Deep sub-bass resolution chime, ping-pong digital shimmer, tape-stop exit.
 
 ---
@@ -79,7 +79,7 @@ Hero Anchor Shape: The Chrono-Vault Aegis — an interlocking multi-tiered golde
 Scene 1 (0:00-0:03): Terminal cockpit #08080B. Token counter accelerates wildly (0 -> 482k tokens, $0.10 -> $5.00). Kinetic typography: 'AN INFINITE LOOP IS BLEEDING YOUR API TREASURY.'
 Scene 2 (0:03-0:07): At $5.00, mechanical calipers snap shut. Chrono-Vault Aegis locks into place; coils erupt from emerald to searing ruby #EF4444. Shockwave expands. 'HTTP 429: HARD BRAKE APPLIED. ZERO CLOUD OVERAGES.'
 Scene 3 (0:07-0:11): 3D isometric camera pull. Obsidian Bento grid cockpit reveals real-time SSE token velocity curves. Zero external dependencies. 'INLINE COST CIRCUIT BREAKER.'
-Scene 4 (0:11-0:15): Conic border beam card reveals founding price $79 -> $19 Lifetime. Dual Stripe + Solana payment badges. Resolves to: 'PROTECT YOUR TREASURY. RUN AUTONOMOUSLY. Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform'.
+Scene 4 (0:11-0:15): Conic border beam card reveals founding price $79 -> $19 Lifetime. Dual Stripe + Solana payment badges. Resolves to: 'PROTECT YOUR TREASURY. RUN AUTONOMOUSLY. Engineered by 1nc0gn30 • NullAI Platform'.
 Audio: -14 LUFS, 55Hz pitch riser, heavy industrial relay latch clank, dead-silence sub-bass drop, warm synth pad resolution.
 ```
 

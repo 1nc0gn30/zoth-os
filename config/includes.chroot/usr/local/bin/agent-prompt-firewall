@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'agent-prompt-firewall'
+TOOL_REPO = 'agent-prompt-firewall'
+TOOL_NAME = 'Agent Prompt Firewall'
+TOOL_DESC = 'Autonomous inline prompt injection defense, PII redactor, and threat radar for AI agents ($0 token leak) with real-time SSE stream, AST de-obfuscation, and zero-dependency Python backend.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Security & Network'
+TOOL_PORT = 8098
+PROXY_PORT = 8198
+REPO_DIR = os.path.expanduser('~/NullAITech/agent-prompt-firewall')
+PKG_DIR = os.path.expanduser('~/NullAITech/agent-prompt-firewall/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+PROXY_PORT_URL = f"http://127.0.0.1:{PROXY_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    subcommands = {'serve', 'scan', 'stats', 'run', 'test'}
+
+    if args and (args[0] in subcommands or (args[0] in ('-h', '--help') and len(args) > 1)):
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        res = subprocess.run([sys.executable, '-m', 'agent_prompt_firewall.cli'] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional subcommands (serve, scan, stats, run, test)')
+    parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.payload and parsed.payload[0] in subcommands:
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        res = subprocess.run([sys.executable, '-m', 'agent_prompt_firewall.cli'] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    is_live = False
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"http://127.0.0.1:{TOOL_PORT}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                is_live = True
+    except Exception:
+        pass
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": os.path.join(PKG_DIR, "agent_prompt_firewall", "cli.py"),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "proxy_endpoint": PROXY_PORT_URL,
+        "daemon_live": is_live,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "ACTIVE" if is_live else "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Web Radar  : {LOCAL_PORT_URL} (Daemon: {'ACTIVE' if is_live else 'OFFLINE'})")
+    print(f"  Proxy Port : {PROXY_PORT_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"\nSubcommands available via native CLI (agent-firewall):")
+    print("  agent-firewall scan <prompt>         Scan prompt for injection/PII threats")
+    print("  agent-firewall stats                 View aggregated firewall telemetry")
+    print("  agent-firewall serve                 Launch Web Radar UI & Proxy server")
+    print("  agent-firewall run -- <cmd>          Execute command with transparent interception")
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse, urllib.request, urllib.error
+
+TOOL_ID = 'badge3d-coin-generator'
+TOOL_REPO = 'badge3d-coin-generator'
+TOOL_NAME = 'Badge3D Coin Generator'
+TOOL_DESC = '100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders and watertight STL/OBJ export.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Media & 3D'
+TOOL_PORT = 8084
+REPO_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator')
+PKG_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def check_daemon():
+    try:
+        req = urllib.request.Request(f"http://127.0.0.1:{TOOL_PORT}/health")
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            if resp.status == 200:
+                return json.loads(resp.read().decode('utf-8'))
+    except Exception:
+        pass
+    return None
+
+def main():
+    args = sys.argv[1:]
+
+    # Check for Zoth wrapper flags first
+    if args and args[0] in ('--status', '--json', '--ui'):
+        daemon_status = check_daemon()
+        if args[0] == '--ui':
+            print(STUDIO_URL)
+            return
+
+        if args[0] == '--status':
+            state = "ONLINE" if daemon_status else "OFFLINE"
+            print(f"✦ {TOOL_NAME} Daemon Status: {state} (:{TOOL_PORT})")
+            if daemon_status:
+                print(f"  Service : {daemon_status.get('service')}")
+                print(f"  Version : {daemon_status.get('version')}")
+            return
+
+        if args[0] == '--json':
+            info = {
+                "id": TOOL_ID,
+                "repo": TOOL_REPO,
+                "name": TOOL_NAME,
+                "version": TOOL_VERSION,
+                "category": TOOL_CATEGORY,
+                "installed": os.path.exists(REPO_DIR),
+                "repo_path": REPO_DIR,
+                "native_cli": f"{PKG_DIR}/badge3d_coin_generator/cli.py",
+                "studio_workbench_url": STUDIO_URL,
+                "local_endpoint": LOCAL_PORT_URL,
+                "daemon_online": daemon_status is not None,
+                "daemon_info": daemon_status,
+                "license": "100% Free & Open Access (Zero Paywalls)",
+                "support": {
+                    "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+                    "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+                },
+                "status": "READY"
+            }
+            print(json.dumps(info, indent=2))
+            return
+
+    # Forward to native Python CLI
+    if os.path.exists(PKG_DIR):
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        res = subprocess.run([sys.executable, '-m', 'badge3d_coin_generator.cli'] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    print(f"Error: package directory not found at {PKG_DIR}", file=sys.stderr)
+    sys.exit(1)
+
+if __name__ == '__main__':
+    main()

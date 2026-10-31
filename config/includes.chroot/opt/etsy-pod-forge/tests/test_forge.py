@@ -1,6 +1,6 @@
 """Comprehensive Automated Test Suite for Etsy POD Forge.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Tests:
 - 100% Etsy compliance invariants (titles <= 140 chars, 13 tags <= 20 chars).
 - Canvas generator across all 5 cadres with DPI metadata.

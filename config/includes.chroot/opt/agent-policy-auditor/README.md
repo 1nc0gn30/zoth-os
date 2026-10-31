@@ -85,7 +85,7 @@ pytest -v
 
 ---
 
-*Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Sovereign Platform*
+*Engineered by NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Sovereign Platform*
 
 ## Network exposure
 

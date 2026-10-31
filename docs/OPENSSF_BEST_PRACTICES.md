@@ -1,7 +1,7 @@
 # OpenSSF Best Practices Self-Assessment & Audit Criteria
 
 **Project**: ZothOS Linux (`NullAITech/zoth-os`)  
-**Lead Maintainer**: Neal Frazier (@1nc0gn30), Neal Frazier Tech  
+**Lead Maintainer**: 1nc0gn30, NullAI  
 **Program**: [OpenSSF Best Practices Badge (CII)](https://bestpractices.coreinfrastructure.org/)
 
 ---
@@ -32,7 +32,7 @@
 | Criterion | Status | Evidence / Implementation |
 | :--- | :--- | :--- |
 | **Bug Reporting Process** | **PASS** | Public GitHub Issues with bug and feature request templates. |
-| **Coordinated Vulnerability Disclosure** | **PASS** | Comprehensive [`SECURITY.md`](../SECURITY.md) detailing: SLA response within 24h, triage within 72h, contact `neal@nealfrazier.tech`. |
+| **Coordinated Vulnerability Disclosure** | **PASS** | Comprehensive [`SECURITY.md`](../SECURITY.md) detailing: SLA response within 24h, triage within 72h, contact `contact@nullai.tech`. |
 | **Non-Public Vulnerability Reporting** | **PASS** | Private vulnerability reporting enabled via GitHub Security Advisories. |
 
 ---

@@ -1,15 +1,89 @@
-#!/usr/bin/env bash
-set -e
-REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/etsy-connector"
-[[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/etsy-connector"
-PRIMARY_BIN="$REPO_DIR/bin/etsy-connector"
-if [[ -x "$PRIMARY_BIN" ]]; then
-    exec "$PRIMARY_BIN" "$@"
-elif [[ -d "$REPO_DIR/src" ]]; then
-    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-    pkg=$(ls "$REPO_DIR/src" | grep -v egg | head -n1)
-    exec python3 -m "${pkg}.cli" "$@"
-else
-    echo "Error: etsy-connector not found in $REPO_DIR" >&2
-    exit 1
-fi
+#!/usr/bin/env python3
+"""Unified Command Line Interface for etsy-connector.
+Engineered by 1nc0gn30 • NullAI Platform.
+100% Python Standard Library — Zero External Dependencies.
+"""
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'etsy-connector'
+TOOL_REPO = 'etsy-connector'
+TOOL_NAME = 'Etsy Connector'
+TOOL_DESC = 'Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Commerce & MCP'
+TOOL_PORT = 8108
+REPO_DIR = os.path.expanduser('~/NullAITech/etsy-connector')
+PY_CLI = os.path.expanduser('~/NullAITech/etsy-connector/src/etsy_connector/cli.py')
+PKG_DIR = os.path.expanduser('~/NullAITech/etsy-connector/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version', '--help', '-h'):
+        env = os.environ.copy()
+        if PKG_DIR:
+            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+            pkg_mod = 'etsy_connector.cli'
+            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
+        else:
+            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('subcommand', nargs='*', help='Subcommand (mcp, serve, audit, profit, search, config, auth)')
+    parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.subcommand and parsed.subcommand[0] in ('mcp', 'serve', 'audit', 'profit', 'search', 'config', 'auth'):
+        env = os.environ.copy()
+        if PKG_DIR:
+            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+            pkg_mod = 'etsy_connector.cli'
+            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
+            sys.exit(res.returncode)
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": PY_CLI,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print()
+    print("Commands:")
+    print("  etsy-connector audit           Audit listing title and 13 tags for SEO rank")
+    print("  etsy-connector profit          Calculate Etsy fees, POD costs, and net margins")
+    print("  etsy-connector search          Search active competitor listings")
+    print("  etsy-connector mcp             Run JSON-RPC 2.0 stdio MCP server")
+    print("  etsy-connector serve           Launch REST API and web cockpit")
+
+if __name__ == '__main__':
+    main()

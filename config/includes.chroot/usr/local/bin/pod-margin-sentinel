@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""
+ZothOS Sovereign CLI Wrapper for POD Margin Sentinel (pod-margin-sentinel)
+"""
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'pod-margin-sentinel'
+TOOL_REPO = 'pod-margin-sentinel'
+TOOL_NAME = 'POD Margin Sentinel'
+TOOL_DESC = 'Autonomous real-time profit sentinel, break-even solver, and 2026 fee simulator across Etsy (Organic & 15% Ads), Shopify, and TikTok Shop.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Commerce & MCP'
+TOOL_PORT = 8120
+REPO_DIR = os.path.expanduser('~/NullAITech/pod-margin-sentinel')
+PY_CLI = os.path.expanduser('~/NullAITech/pod-margin-sentinel/src/pod_margin_sentinel/cli.py')
+PKG_DIR = os.path.expanduser('~/NullAITech/pod-margin-sentinel/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    
+    # If standard subcommands or help requested, delegate to native cli.py
+    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] in ('calc', 'compare', 'breakeven', 'coupon', 'server', 'mcp', '-h', '--help'):
+        env = os.environ.copy()
+        if PKG_DIR:
+            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+            pkg_mod = 'pod_margin_sentinel.cli'
+            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
+        else:
+            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
+    parsed, unknown = parser.parse_known_args(args)
+
+    daemon_running = False
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"{LOCAL_PORT_URL}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                daemon_running = True
+    except Exception:
+        daemon_running = False
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": PY_CLI,
+        "daemon_port": TOOL_PORT,
+        "daemon_running": daemon_running,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Daemon     : {LOCAL_PORT_URL} (Running: {daemon_running})")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"  Subcommands: calc, compare, breakeven, coupon, server, mcp")
+
+if __name__ == '__main__':
+    main()

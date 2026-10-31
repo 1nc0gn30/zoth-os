@@ -1,44 +1,35 @@
 #!/usr/bin/env bash
-# ==============================================================================
-#  Zoth OS Desk Launcher - Electron Shell & Python Backend
-# ==============================================================================
-set -euo pipefail
+REPO_DIR="$HOME/NullAITech/zoth-os"
+PYTHON_BIN="python3"
 
-export LD_LIBRARY_PATH="/opt/electron:${LD_LIBRARY_PATH:-}"
-
-HERE="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
-ROOT=""
-for candidate in \
-  /opt/zoth-os \
-  "$HERE/../../../opt/zoth-os" \
-  "${ZOTHOS_SRC:-}/config/includes.chroot/opt/zoth-os"
-do
-  if [[ -f "$candidate/serve.py" ]]; then
-    ROOT="$(cd "$candidate" && pwd)"
-    break
-  fi
-done
-
-if [[ -z "$ROOT" ]]; then
-  echo "Zoth OS desk files were not found." >&2
-  exit 1
-fi
-
-ELECTRON_BIN=""
-for e_cand in \
-  /usr/local/bin/electron \
-  /opt/electron/electron \
-  /tmp/electron/electron \
-  "$(which electron 2>/dev/null || true)"
-do
-  if [[ -n "$e_cand" && -x "$e_cand" ]]; then
-    ELECTRON_BIN="$e_cand"
-    break
-  fi
-done
-
-if [[ -n "$ELECTRON_BIN" && -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-  exec "$ELECTRON_BIN" --no-sandbox --disable-dev-shm-usage --disable-gpu-sandbox --disable-gpu "$ROOT" "$@"
+if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
+  curl -s http://127.0.0.1:8137/api/status 2>/dev/null || echo '{"status":"OFFLINE","port":8137}'
+elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
+  echo "zoth-os v3.3.0 (ZothOS Sovereign Linux Distro)"
+  exit 0
+elif [ "$1" = "--json" ]; then
+  curl -s http://127.0.0.1:8137/api/status 2>/dev/null || cat << 'JSON'
+{
+  "id": "zoth-os",
+  "name": "Zoth OS v3.3.0",
+  "status": "READY",
+  "binary": "/usr/local/bin/zoth-os",
+  "port": 8137,
+  "license": "100% Free & Open Access (Zero Paywalls)"
+}
+JSON
+elif [ "$1" = "web" ] || [ "$1" = "serve" ]; then
+  exec "$PYTHON_BIN" "$REPO_DIR/server.py" --port 8137
 else
-  exec python3 "$ROOT/serve.py" "$@"
+  cat << 'HELP'
+usage: zoth-os [-h] [--version] [--status] [--json] [serve|web]
+
+Zoth OS v3.3.0 — Sovereign Linux Distro CLI Controller
+
+commands:
+  serve, web      Launch local web cockpit daemon on port 8137
+  status, --status Query local daemon status and system telemetry
+  --json          Output deterministic JSON telemetry
+  --version       Display version information
+HELP
 fi

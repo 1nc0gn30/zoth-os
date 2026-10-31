@@ -1,6 +1,6 @@
 """Print-Ready High-Resolution Canvas Generator (300 DPI Transparent PNG).
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Generates master print-ready assets and preview canvases across all 5 Etsy cadres:
 - Apparel: 4500x5400 px at 300 DPI (Direct-to-Garment print standard)
 - Mugs: 2000x2000 px / 2700x1200 px at 300 DPI (Ceramic sublimation standard)
@@ -538,7 +538,7 @@ class CanvasGenerator:
         draw.rectangle(spec_box, fill=PALETTE["cream"], outline=PALETTE["sepia_ink"], width=max(2, int(w*0.003)))
         font_spec = load_font(size=max(13, int(w * 0.020)), bold=False)
         self._draw_centered_text(draw, "BLOCK SIZE: 24\" x 24\"  •  PIECES: 32 DIAMONDS  •  SKILL: CONFIDENT BEGINNER", center_x, int(h * 0.88), font_spec, PALETTE["dark_bark"])
-        self._draw_centered_text(draw, "NEAL FRAZIER TECH • NULLAI COMMERCE SUITE • 300 DPI VECTOR TEMPLATE", center_x, int(h * 0.91), font_spec, PALETTE["sage"])
+        self._draw_centered_text(draw, "NULLAI • NULLAI COMMERCE SUITE • 300 DPI VECTOR TEMPLATE", center_x, int(h * 0.91), font_spec, PALETTE["sage"])
 
         return canvas
 

@@ -11,7 +11,7 @@
 > 🏆 **All-Access Sovereign Pro Bundle (All 44 Tools — $49 Lifetime)**: **[Get All 44 Studios via Stripe](https://github.com/1nc0gn30/zoth-os)**
 
 **Autonomous LLM Token Cost Circuit Breaker & Inline Spending Guardrail for AI Agents**  
-*Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform*
+*Engineered by NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform*
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-gold.svg)](https://www.python.org/downloads/)
 [![Zero External Dependencies](https://img.shields.io/badge/dependencies-zero_pip-emerald.svg)](#architecture)
@@ -104,7 +104,7 @@ All tests execute with 100% standard library compliance and sub-second execution
 
 ## 📜 License & Sovereign Attribution
 
-Engineered by **Neal Frazier Tech** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech).  
+Engineered by **NullAI** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech).  
 Licensed under the MIT License.
 
 ## Network exposure

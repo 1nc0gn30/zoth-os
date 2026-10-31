@@ -12,7 +12,7 @@
  *   4. val-delta-zothos-local  — ZothOS Edge Micro-Validator (ZothStudio :8140)
  *   5. val-epsilon-nullai-core — NullAI Sovereign Consensus Core (Global Anycast)
  *
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 const crypto = require('crypto');

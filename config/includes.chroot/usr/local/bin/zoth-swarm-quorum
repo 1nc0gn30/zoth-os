@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 zoth-swarm-quorum — 21-Agent Pantheon Byzantine Fault Tolerance (3f+1) Quorum Verifier for ZothOS v3.2
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+Engineered by 1nc0gn30 • NullAI Platform
 """
 import argparse
 import hashlib

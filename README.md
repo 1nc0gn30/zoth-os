@@ -338,7 +338,7 @@ To eliminate stateless context loss across local Ollama (`qwen2.5-coder`) and cl
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.2 integrates with Zoth Studio v2 to provide **100% interactive workstation coverage across all 59 ecosystem tools** (28 In-Browser WebGPU & Client Workstations + 31 Sovereign Enclave Workstations):
+ZOTHOS Linux 3.2 integrates with Zoth Studio v2 to provide **43 interactive workstations across all 71 Studio tools** (54 in-browser + 17 local CLI):
 
 ### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:

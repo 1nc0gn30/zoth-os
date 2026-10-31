@@ -171,7 +171,7 @@ npx electron ~/NullAITech/zoth-civilization/engine/site_guardrail.js http://127.
 
 ## 📜 Attribution & License
 
-- **Engineered by**: Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30))
+- **Engineered by**: NullAI ([@1nc0gn30](https://github.com/1nc0gn30))
 - **Research Hub**: [NullAI Platform](https://nullai.tech)
 - **License**: MIT License
 

@@ -1,3 +1,77 @@
-#!/bin/sh
-export ZOTH_RELAY_CONFIG=${ZOTH_RELAY_CONFIG:-/etc/zoth-relay/config.yaml}
-exec /opt/zoth-relay/venv/bin/python -m zoth_relay "$@"
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'zoth-relay'
+TOOL_REPO = 'zoth-relay'
+TOOL_NAME = 'Zoth Relay (MCP Agent Bridge)'
+TOOL_DESC = 'Hardened local MCP/HTTP bridge so many AI agents share one ZothOS machine with per-agent tokens, path sandbox, command blocklist, rate limits, and audit trail on 127.0.0.1:8765.'
+TOOL_VERSION = '0.5.0'
+TOOL_CATEGORY = 'Swarm & Core'
+TOOL_PORT = 8765
+REPO_DIR = os.path.expanduser('~/NullAITech/zoth-relay')
+PY_VENV = '/opt/zoth-relay/venv/bin/python'
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    if args and args[0] in ('agent', 'serve', 'mcp-stdio', 'openapi'):
+        cmd = [PY_VENV, '-m', 'zoth_relay'] + args
+        if not os.access('/etc/zoth-relay/config.yaml', os.R_OK) and os.geteuid() != 0:
+            cmd = ['sudo'] + cmd
+        res = subprocess.run(cmd)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
+    parsed, unknown = parser.parse_known_args(args)
+
+    daemon_running = False
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"{LOCAL_PORT_URL}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                daemon_running = True
+    except Exception:
+        daemon_running = False
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_running": daemon_running,
+        "dashboard_url": f"{LOCAL_PORT_URL}/dashboard",
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "ONLINE" if daemon_running else "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL} (Daemon: {'ONLINE' if daemon_running else 'STANDBY'})")
+    print(f"  Dashboard  : {LOCAL_PORT_URL}/dashboard")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
+if __name__ == '__main__':
+    main()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 zoth-city-desk — Municipal RFP, Virginia eVA Quick-Quote & VFOIA Capability Statement CLI for ZothOS v3.2
-Engineered by Neal Frazier Tech (@1nc0gn30) • 757 Tech Pro / NullAI Platform
+Engineered by 1nc0gn30 • 757 Tech Pro / NullAI Platform
 """
 import argparse
 import json

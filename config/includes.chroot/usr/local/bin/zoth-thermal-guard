@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""
+Zoth Sovereign Thermal Governor Daemon (zoth-thermal-guard)
+Maintains hard hardware thermal invariants across CPU Package, PCH, and VRMs.
+- Clamps CPU performance percentage dynamically if temperatures rise.
+- Enforces no_turbo and energy_performance_preference.
+- Automatically throttles background CPU usage to keep hardware cold and quiet.
+"""
+
+import os
+import sys
+import time
+import subprocess
+import re
+
+# Targets and limits
+TEMP_CEILING_PACKAGE = 72.0  # Hard ceiling for CPU package
+TEMP_TARGET_PACKAGE = 65.0   # Desired cool target
+TEMP_CEILING_PCH = 72.0      # PCH chipset ceiling
+
+PSTATE_MAX_PERF = "/sys/devices/system/cpu/intel_pstate/max_perf_pct"
+PSTATE_NO_TURBO = "/sys/devices/system/cpu/intel_pstate/no_turbo"
+RAPL_LIMIT_0 = "/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw"
+
+def read_file(path, default=None):
+    try:
+        with open(path, "r") as f:
+            return f.read().strip()
+    except:
+        return default
+
+def write_file(path, val):
+    try:
+        with open(path, "w") as f:
+            f.write(str(val))
+        return True
+    except Exception as e:
+        return False
+
+def get_temps():
+    package_temp = 50.0
+    pch_temp = 50.0
+
+    try:
+        out = subprocess.check_output(["sensors"], text=True)
+        pkg_m = re.search(r"Package id 0:\s+\+([0-9\.]+)°C", out)
+        if pkg_m:
+            package_temp = float(pkg_m.group(1))
+
+        pch_m = re.search(r"pch_cannonlake[^\n]*\n[^\n]*\+([0-9\.]+)°C", out)
+        if pch_m:
+            pch_temp = float(pch_m.group(1))
+    except:
+        pass
+
+    return package_temp, pch_temp
+
+def main():
+    print("Starting Zoth Sovereign Thermal Guard Daemon...")
+    # Always enforce no_turbo = 1 to eliminate aggressive thermal spikes
+    write_file(PSTATE_NO_TURBO, 1)
+
+    # Initial safe performance ceiling (70% = ~1.8GHz - 2.2GHz base)
+    current_perf = 70
+    write_file(PSTATE_MAX_PERF, current_perf)
+
+    # Safe long-term power limit (28 Watts instead of 56 Watts)
+    write_file(RAPL_LIMIT_0, 28000000)
+
+    while True:
+        try:
+            pkg_temp, pch_temp = get_temps()
+            max_current = max(pkg_temp, pch_temp)
+
+            if max_current > TEMP_CEILING_PACKAGE:
+                # Temperature exceeding ceiling: reduce perf clamp
+                new_perf = max(40, current_perf - 10)
+                if new_perf != current_perf:
+                    current_perf = new_perf
+                    write_file(PSTATE_MAX_PERF, current_perf)
+                    # Lower power limit to 20 Watts
+                    write_file(RAPL_LIMIT_0, 20000000)
+                    print(f"🌡️ Temperature HIGH ({max_current}°C) -> Clamping CPU to {current_perf}%")
+            elif max_current < TEMP_TARGET_PACKAGE:
+                # Running cool: smoothly restore up to max 75%
+                new_perf = min(75, current_perf + 5)
+                if new_perf != current_perf:
+                    current_perf = new_perf
+                    write_file(PSTATE_MAX_PERF, current_perf)
+                    # Restore power limit to 28 Watts
+                    write_file(RAPL_LIMIT_0, 28000000)
+            
+            time.sleep(3)
+        except Exception as e:
+            time.sleep(5)
+
+if __name__ == "__main__":
+    main()

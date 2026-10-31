@@ -1,6 +1,6 @@
 """Product Mockup Compositing Engine.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Composites transparent design artwork onto realistic lifestyle backgrounds:
 - Apparel: Folded crewneck on rustic wooden table with dried lavender sprigs.
 - Mugs: 15oz glossy ceramic mug with morning light and steam.

@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse, urllib.request, urllib.error
+
+TOOL_ID = 'storefront-catalog'
+TOOL_REPO = 'storefront-catalog'
+TOOL_NAME = 'YourDigitalSpace POD Showcase'
+TOOL_DESC = '10 master Etsy Print-on-Demand products optimized for 55+ demographic with 62.6% blended profit margin, 13/13 tag sets, and 100% free open-access fulfillment.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Commerce & POD'
+TOOL_PORT = 8143
+REPO_DIR = os.path.expanduser('~/NullAITech/storefront-catalog')
+SERVER_PY = os.path.expanduser('~/NullAITech/storefront-catalog/server.py')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def query_health():
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={'User-Agent': 'ZothOS-CLI'})
+        with urllib.request.urlopen(req, timeout=3.0) as r:
+            return json.loads(r.read().decode('utf-8'))
+    except Exception as e:
+        return {"error": str(e)}
+
+def query_products():
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/products", headers={'User-Agent': 'ZothOS-CLI'})
+        with urllib.request.urlopen(req, timeout=3.0) as r:
+            return json.loads(r.read().decode('utf-8'))
+    except Exception as e:
+        # Fallback to local manifest if daemon offline
+        manifest_path = os.path.join(REPO_DIR, 'catalog_manifest.json')
+        if os.path.exists(manifest_path):
+            with open(manifest_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return {
+                    "total": len(data.get("listings", [])),
+                    "listings": data.get("listings", []),
+                    "financials": data.get("portfolio_financials", {})
+                }
+        return {"error": str(e)}
+
+def main():
+    args = sys.argv[1:]
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+
+    subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands')
+    subparsers.add_parser('list', help='List the 10 master Print-on-Demand products')
+    subparsers.add_parser('financials', help='Print portfolio financial breakdown & profit margins')
+
+    serve_p = subparsers.add_parser('serve', help='Run YourDigitalSpace showcase server daemon')
+    serve_p.add_argument('--port', type=int, default=TOOL_PORT, help='Port to bind')
+
+    parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.subcommand == 'serve':
+        cmd = [sys.executable, SERVER_PY, '--port', str(parsed.port or TOOL_PORT)]
+        print(f"✦ Starting {TOOL_NAME} on http://127.0.0.1:{parsed.port or TOOL_PORT} ...")
+        proc = subprocess.run(cmd, cwd=REPO_DIR)
+        sys.exit(proc.returncode)
+
+    if parsed.subcommand == 'list':
+        prods = query_products()
+        if "error" in prods:
+            print(f"Error fetching products: {prods['error']}")
+            sys.exit(1)
+        listings = prods.get("listings", [])
+        print(f"✦ YourDigitalSpace Master Catalog ({len(listings)} Listings):")
+        for i, p in enumerate(listings, 1):
+            fin = p.get("financials", {})
+            print(f"  [{i:02d}] {p.get('id')} — ${fin.get('retail_price', 0):.2f} (Margin: {fin.get('margin_percent', 0)}% / +${fin.get('net_profit', 0):.2f})")
+            print(f"       Title: {p.get('title')[:80]}...")
+            print(f"       Tags:  {', '.join(p.get('tags', [])[:5])}...")
+        sys.exit(0)
+
+    if parsed.subcommand == 'financials':
+        prods = query_products()
+        fin = prods.get("financials", {})
+        print(f"✦ Portfolio Financial Summary:")
+        print(f"  Total Retail Value    : ${fin.get('total_retail_value', 0):.2f}")
+        print(f"  Total Production Cost : ${fin.get('total_production_cost', 0):.2f}")
+        print(f"  Marketplace Fees      : ${fin.get('total_marketplace_fees', 0):.2f}")
+        print(f"  Total Net Profit      : ${fin.get('total_net_profit', 0):.2f}")
+        print(f"  Blended Net Margin    : {fin.get('blended_net_margin', 0)}%")
+        sys.exit(0)
+
+    health = query_health()
+    is_online = health.get("error") is None
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_active": is_online,
+        "daemon_telemetry": health if is_online else None,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL}")
+    print(f"  Daemon     : {'ONLINE (Live)' if is_online else 'OFFLINE'}")
+    if is_online:
+        print(f"  Listings   : {health.get('total_listings')} products | Blended Margin: {health.get('blended_margin')}%")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
+if __name__ == '__main__':
+    main()

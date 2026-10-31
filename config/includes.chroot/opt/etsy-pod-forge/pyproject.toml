@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Neal Frazier Tech", email = "1nc0gn30@users.noreply.github.com"}
+    {name = "NullAI", email = "1nc0gn30@users.noreply.github.com"}
 ]
 dependencies = [
     "pillow>=10.0.0"

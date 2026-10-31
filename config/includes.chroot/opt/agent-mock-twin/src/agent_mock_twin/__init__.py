@@ -5,7 +5,7 @@ Zero external pip dependencies.
 """
 
 __version__ = "0.1.0"
-__author__ = "Neal Frazier <neal@nullai.tech>"
+__author__ = "1nc0gn30 <neal@nullai.tech>"
 __all__ = [
     "HarParser",
     "OpenAPIParser",

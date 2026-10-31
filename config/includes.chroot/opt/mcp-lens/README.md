@@ -111,7 +111,7 @@ Output:
 | |  | | |___|  __/  | |___| |___| |\  |___) |
 |_|  |_|\____|_|     |_____|_____|_| \_|____/ 
    Zero-Dependency Model Context Protocol Traffic Sniffer
-   Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+   Engineered by 1nc0gn30 • NullAI Platform
 
 Service Status:       ONLINE (healthy)
 Server Port:          8109
@@ -239,7 +239,7 @@ Target: http://127.0.0.1:8109
 
 ## 9. Attribution & License
 
-- **Engineered by**: [Neal Frazier Tech](https://nealfrazier.tech) ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
+- **Engineered by**: [NullAI](https://nullai.tech) ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
 - **License**: [MIT](LICENSE)
 
 ## Network exposure

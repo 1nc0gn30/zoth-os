@@ -441,7 +441,7 @@ const PETS = {
       '⚔️ One cut to sever all rogue processes.',
       '🥋 Bushido protocol active: Integrity in every line of code.',
       '🌸 Cherry blossoms fall upon the cooled heatsink.',
-      '🛡️ Protecting master Neal Frazier\'s digital sanctum with unwavering loyalty.',
+      '🛡️ Protecting master 1nc0gn30\'s digital sanctum with unwavering loyalty.',
       '⚡ The blade gleams with neon precision.'
     ]
   }

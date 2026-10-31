@@ -1,6 +1,6 @@
 """Multi-Threaded HTTP Server & REST API for Etsy POD Forge.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 100% Python Standard Library (`http.server`, `urllib`, `json`, `threading`, `time`).
 Serves live on Port 8107 and forwards events to Agent Flight Recorder (:8104)
 and engrams to Neuro-Memory Daemon (:8094).
@@ -429,7 +429,7 @@ class ForgeRequestHandler(SimpleHTTPRequestHandler):
                 listing_doc = (
                     f"===========================================================\n"
                     f"🌸 ETSY STORE LISTING ASSET KIT — {kit.product_type.upper()}\n"
-                    f"Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform\n"
+                    f"Engineered by 1nc0gn30 • NullAI Platform\n"
                     f"===========================================================\n\n"
                     f"TITLE (Length: {len(kit.title)} chars <= 140):\n"
                     f"{kit.title}\n\n"

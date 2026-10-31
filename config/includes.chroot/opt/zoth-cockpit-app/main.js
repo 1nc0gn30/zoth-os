@@ -5,8 +5,8 @@
  * Integrates live hardware & network metrics, 21-Agent Swarm Deck,
  * Daemon Supervisor, Instant Reality Mode switching, and Sovereign Arsenal.
  *
- * Author: Neal Frazier / ZOTHOS Linux Core Systems Engineering
- * Entity: Neal Frazier Tech (https://nealfrazier.tech | https://github.com/1nc0gn30)
+ * Author: 1nc0gn30 / ZOTHOS Linux Core Systems Engineering
+ * Entity: NullAI (https://nullai.tech | https://github.com/1nc0gn30)
  * License: MIT / Sovereign Open Source
  */
 

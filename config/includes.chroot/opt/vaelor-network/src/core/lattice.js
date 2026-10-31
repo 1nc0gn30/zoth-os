@@ -5,7 +5,7 @@
  * Consensus: Asynchronous Account-Lattice DAG + Proof-of-Useful-Work (PoUW)
  * Gas Fees: $0.00 (Feeless forever; protected by sub-25ms SHA-256 micro-stamp)
  *
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 const crypto = require('crypto');
@@ -561,7 +561,7 @@ class VaelorLatticeNode {
 
     const neal = this.registerAccount({
       handle: '@neal',
-      displayName: 'Neal Frazier (@1nc0gn30)',
+      displayName: '1nc0gn30',
       guardians: ['@treasury', '@zoth'],
       initialGrantVlr: 50_000
     });
@@ -634,7 +634,7 @@ class VaelorLatticeNode {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
         name: 'Vaelor Lattice L1',
-        creator: 'Neal Frazier Tech'
+        creator: 'NullAI'
       })
     });
 
@@ -843,8 +843,8 @@ class VaelorLatticeNode {
     this.state.merchantDirectory = {
       '@neal': {
         handle: '@neal',
-        name: 'Neal Frazier Tech (@1nc0gn30)',
-        domain: 'nealfrazier.tech',
+        name: '1nc0gn30',
+        domain: 'nullai.tech',
         badge: '✓ Verified Sovereign Architect',
         category: 'Platform & Architecture',
         trustScore: 99,
@@ -3681,7 +3681,7 @@ class VaelorLatticeNode {
           parentHandle: '@neal',
           parentAddress: nealAcc.address,
           subHandle: '@neal.ops',
-          label: 'Neal Frazier DevOps & Cloud Infra Virtual Card',
+          label: '1nc0gn30 DevOps & Cloud Infra Virtual Card',
           dailyLimitVlr: 500.0,
           dailyLimitVael: 500.0 * VAEL_PER_VLR,
           spentTodayVael: 120.0 * VAEL_PER_VLR,
@@ -4664,7 +4664,7 @@ class VaelorLatticeNode {
         id: id1,
         owner: '@neal',
         ownerAddress: nealAcc ? nealAcc.address : 'vlr1_neal_address',
-        memo: 'Neal Frazier Sovereign Tech Estate Continuity Vault',
+        memo: '1nc0gn30 Sovereign Tech Estate Continuity Vault',
         inactivityDays: 180,
         lastActiveAt: new Date(Date.now() - 3600 * 1000 * 24 * 3).toISOString(),
         unlocksAt: new Date(Date.now() + 3600 * 1000 * 24 * 177).toISOString(),

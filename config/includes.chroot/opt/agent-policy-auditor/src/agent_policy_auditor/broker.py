@@ -1,6 +1,6 @@
 """Autonomous Policy Broker and Time-Bound Capability Leaser.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Provides HMAC-SHA256 signed capability leases with automatic TTL expiry,
 path glob matching, and emergency kill-switches.
 100% Python Standard Library — Zero External Dependencies.

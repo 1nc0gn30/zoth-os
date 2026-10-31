@@ -1,6 +1,6 @@
 # Claude Motion Graphics & Product Showreel Blueprint
 ## Product: Etsy POD Forge — Autonomous Commerce Studio for 50-75+ Women Demographic
-**Entity**: Neal Frazier Tech (`@1nc0gn30`) • **Platform**: NullAI Platform  
+**Entity**: NullAI (`@1nc0gn30`) • **Platform**: NullAI Platform  
 **Methodology**: Claude Opus 5.5 Code-to-Motion / Revid.ai Motion Graphics Architecture
 
 ---
@@ -38,7 +38,7 @@ Camera snaps to centered heroic monolith. Glowing founding member card floats fo
 "ETSY POD FORGE • DAY 7 REVENUE ENGINE"
 "START YOUR AUTOMATED STORE TODAY — $19 LIFETIME FOUNDING ACCESS"
 Dual checkout badges pulse: Stripe Card & Solana Tip.
-Subtle attribution lockup: "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform".
+Subtle attribution lockup: "Engineered by 1nc0gn30 • NullAI Platform".
 ```
 
 ---

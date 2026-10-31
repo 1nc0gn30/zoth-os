@@ -13,7 +13,7 @@ is and is not in place today, so you can decide how much to trust it.
 
 ## Reporting a vulnerability
 
-- Email **neal@nealfrazier.tech** with "ZOTHOS security" in the subject, or use
+- Email **contact@nullai.tech** with "ZOTHOS security" in the subject, or use
   GitHub's **private vulnerability reporting** on this repo (Security → Report a vulnerability).
 - Please don't open public issues for undisclosed vulnerabilities.
 - We aim to acknowledge within 3 days and to ship a fix or mitigation for

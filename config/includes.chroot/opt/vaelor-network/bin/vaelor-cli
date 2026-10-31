@@ -16,7 +16,7 @@
  *   --json        Output raw machine-readable JSON
  *   --offline     Force local direct lattice storage mode
  *
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 'use strict';
@@ -1356,7 +1356,7 @@ async function main() {
         console.log(`  ${C.cyan}--rpc <url>${C.reset}                Custom RPC endpoint (default: http://127.0.0.1:8140)`);
         console.log(`  ${C.cyan}--offline${C.reset}                  Bypass HTTP daemon and use direct local lattice`);
         console.log(`  ${C.cyan}--json${C.reset}                     Output raw machine-readable JSON format`);
-        console.log(`\n${C.dim}Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform${C.reset}`);
+        console.log(`\n${C.dim}Engineered by 1nc0gn30 • NullAI Platform${C.reset}`);
         break;
       }
     }

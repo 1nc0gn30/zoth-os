@@ -2,7 +2,7 @@
 
 **Product**: `agent-flight-recorder`
 **Tagline**: Autonomous Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents
-**Entity**: Neal Frazier Tech (`@1nc0gn30`) • NullAI Platform
+**Entity**: NullAI (`@1nc0gn30`) • NullAI Platform
 **Hero Anchor Shape**: **The Chrono-Prism Reticle** (Dark Obsidian Cockpit Enclosure with Rotating Cyan `#38BDF8` Oscilloscope Waveform, Gold `#D4AF37` Time-Scrubber Needle, and Emerald `#10B981` Live Terminal Phosphor Trails)
 
 ---
@@ -49,7 +49,7 @@ Primary Heading:
 Subheading:
 "Autonomous Black Box Telemetry Forensics • $19 Lifetime Founding Tier"
 Attribution:
-"Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+"Engineered by 1nc0gn30 • NullAI Platform"
 Sound Effect: Resonant cinematic analog chord and warm sub-bass resolve.
 ```
 

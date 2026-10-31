@@ -1,188 +1,70 @@
-#!/usr/bin/env bash
-# ==============================================================================
-#  Zoth Bolt — flagship full-stack AI web & motion architect
-# ==============================================================================
-#  Platform: ZothOS • NullAI
-#  Author: Neal Frazier Tech (@1nc0gn30)
-#  Repository: https://github.com/1nc0gn30/zoth-webgen
-# ==============================================================================
-set -euo pipefail
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse
 
-if [ -f /etc/zothos/paths.sh ]; then
-  # shellcheck disable=SC1091
-  . /etc/zothos/paths.sh
-fi
-: "${ZOTH_USER:=zoth}"
-: "${AZOTH_USER:=azoth}"
-: "${ZOTH_HOME:=/home/${ZOTH_USER}}"
-: "${AZOTH_HOME:=/home/${AZOTH_USER}}"
-: "${ZOTH_ACTIVE_HOME:=${HOME:-${ZOTH_HOME}}}"
-: "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
+TOOL_ID = 'bolt.diy'
+TOOL_REPO = 'bolt.diy'
+TOOL_NAME = 'Zoth Bolt'
+TOOL_DESC = 'Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Supports 23+ AI providers, local CLI agents (AGY, Hermes, Grok, Claude, OpenCode, Cline, Aider), 6 Motion Edit templates, 200k+ free SVG & 16-bit Pixel Art icons, MCP asset bridge, and live WebContainers.'
+TOOL_VERSION = '3.5.0'
+TOOL_CATEGORY = 'Autonomous Web'
+TOOL_PORT = 8085
+REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy')
+PY_CLI = None
+PKG_DIR = None
+STUDIO_URL = f"http://127.0.0.1:8085/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-GOLD='\033[38;2;212;175;55m'
-CYAN='\033[38;2;56;189;248m'
-GREEN='\033[38;2;34;197;94m'
-RED='\033[38;2;239;68;68m'
-DIM='\033[2m'
-BOLD='\033[1m'
-NC='\033[0m'
+def main():
+    args = sys.argv[1:]
+    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json'):
+        env = os.environ.copy()
+        if PKG_DIR:
+            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+            pkg_mod = os.path.basename(os.path.dirname(PY_CLI)) + '.cli'
+            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
+        else:
+            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
 
-CANDIDATES=(
-  "${ZOTH_SRC_ROOT}/bolt.diy"
-  "${HOME}/NullAITech/bolt.diy"
-  "/opt/bolt.diy"
-  "${HOME}/bolt.diy"
-)
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
+    parsed, unknown = parser.parse_known_args(args)
 
-REPO_DIR=""
-for c in "${CANDIDATES[@]}"; do
-  if [[ -d "$c" && -f "$c/package.json" ]]; then
-    REPO_DIR="$c"
-    break
-  fi
-done
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": PY_CLI,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "READY"
+    }
 
-ensure_repo() {
-  if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR" ]]; then
-    echo -e "${GOLD}${BOLD}[*] Zoth WebGen not found locally. Cloning...${NC}"
-    TARGET_DIR="${HOME}/NullAITech/bolt.diy"
-    mkdir -p "$(dirname "$TARGET_DIR")"
-    git clone https://github.com/1nc0gn30/zoth-webgen.git "$TARGET_DIR"
-    REPO_DIR="$TARGET_DIR"
-    echo -e "${GREEN}✓ Provisioned to ${REPO_DIR}${NC}"
-  fi
-}
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
 
-get_pkg_runner() {
-  if command -v pnpm >/dev/null 2>&1; then
-    echo "pnpm"
-  elif command -v npm >/dev/null 2>&1; then
-    echo "npm"
-  else
-    echo -e "${RED}[!] Neither pnpm nor npm found in PATH.${NC}"
-    exit 1
-  fi
-}
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL}")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
-launch_dev() {
-  ensure_repo
-  local runner
-  runner=$(get_pkg_runner)
-  echo -e "${GOLD}${BOLD}Launching Zoth WebGen on http://127.0.0.1:5173 ...${NC}"
-  if command -v xdg-open >/dev/null 2>&1; then
-    (sleep 2.5 && xdg-open "http://127.0.0.1:5173") &
-  fi
-  cd "$REPO_DIR"
-  exec "$runner" run dev
-}
-
-launch_ollama() {
-  ensure_repo
-  local runner
-  runner=$(get_pkg_runner)
-  echo -e "${CYAN}${BOLD}Launching Zoth WebGen with local Ollama (:11434)...${NC}"
-  if curl -s http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
-    echo -e "${GREEN}✓ Local Ollama daemon detected on :11434${NC}"
-  else
-    echo -e "${GOLD}[*] Starting Ollama daemon...${NC}"
-    ollama serve >/dev/null 2>&1 &
-    sleep 2
-  fi
-  if command -v xdg-open >/dev/null 2>&1; then
-    (sleep 2.5 && xdg-open "http://127.0.0.1:5173") &
-  fi
-  cd "$REPO_DIR"
-  exec "$runner" run dev
-}
-
-launch_desktop() {
-  ensure_repo
-  local runner
-  runner=$(get_pkg_runner)
-  echo -e "${GOLD}${BOLD}Launching Zoth WebGen Electron app...${NC}"
-  cd "$REPO_DIR"
-  exec "$runner" run electron:dev
-}
-
-if [[ $# -gt 0 ]]; then
-  case "$1" in
-    dev|run|start)
-      launch_dev
-      ;;
-    ollama|local|offline)
-      launch_ollama
-      ;;
-    desktop|electron|app)
-      launch_desktop
-      ;;
-    --help|-h)
-      echo "Usage: bolt-diy [dev|ollama|desktop|--help]"
-      echo "  dev      Start Zoth WebGen on port 5173 (default)"
-      echo "  ollama   Start with local Ollama on port 11434"
-      echo "  desktop  Launch the Electron app"
-      exit 0
-      ;;
-    *)
-      ensure_repo
-      cd "$REPO_DIR"
-      runner=$(get_pkg_runner)
-      exec "$runner" run "$@"
-      ;;
-  esac
-fi
-
-clear
-echo -e "${GOLD}${BOLD}★═════════════════════════════════════════════════════════════════════★${NC}"
-echo -e "          ${GOLD}${BOLD}Z O T H   W E B G E N${NC}"
-echo -e "     ${CYAN}Local full-stack site foundry${NC}"
-echo -e "${GOLD}${BOLD}★═════════════════════════════════════════════════════════════════════★${NC}"
-echo -e "  ${DIM}Creator:${NC} Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
-echo -e "  ${DIM}Repository:${NC} https://github.com/1nc0gn30/zoth-webgen"
-if [[ -n "$REPO_DIR" ]]; then
-  echo -e "  ${DIM}Local Path:${NC} ${GREEN}${REPO_DIR}${NC}"
-else
-  echo -e "  ${DIM}Local Path:${NC} ${RED}Not cloned yet (auto-provision on launch)${NC}"
-fi
-echo ""
-echo -e "  ${BOLD}${GOLD}AVAILABLE OPERATIONS:${NC}"
-echo -e "    ${CYAN}[1]${NC}  ${BOLD}Launch Zoth WebGen (:5173)${NC}          ${DIM}(Dev server and browser UI)${NC}"
-echo -e "    ${CYAN}[2]${NC}  ${BOLD}Launch with local Ollama (:11434)${NC}   ${DIM}(Offline inference)${NC}"
-echo -e "    ${CYAN}[3]${NC}  ${BOLD}Launch Electron desktop app${NC}         ${DIM}(Desktop window)${NC}"
-echo -e "    ${CYAN}[4]${NC}  ${BOLD}Configure model and API keys${NC}        ${DIM}(Edit .env.local)${NC}"
-echo -e "    ${CYAN}[5]${NC}  ${BOLD}Git sync / update engine${NC}            ${DIM}(Pull latest from origin)${NC}"
-echo -e "    ${RED}[0]${NC}  ${BOLD}Exit${NC}"
-echo ""
-
-read -rp "  Select operation [0-5]: " choice
-case "$choice" in
-  1)
-    launch_dev
-    ;;
-  2)
-    launch_ollama
-    ;;
-  3)
-    launch_desktop
-    ;;
-  4)
-    ensure_repo
-    cd "$REPO_DIR"
-    if [[ ! -f .env.local && -f .env.example ]]; then
-      cp .env.example .env.local
-    fi
-    ${EDITOR:-nano} .env.local
-    ;;
-  5)
-    ensure_repo
-    cd "$REPO_DIR"
-    git pull --rebase origin main || true
-    echo -e "${GREEN}✓ Engine up to date.${NC}"
-    ;;
-  0|q|Q|exit)
-    exit 0
-    ;;
-  *)
-    echo -e "${RED}Invalid selection.${NC}"
-    exit 1
-    ;;
-esac
+if __name__ == '__main__':
+    main()

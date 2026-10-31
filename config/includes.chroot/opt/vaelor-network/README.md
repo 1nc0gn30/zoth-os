@@ -736,6 +736,6 @@ Open your browser to **`http://127.0.0.1:8140`** to access the **Vaelor Explorer
 
 ## 📄 License & Attribution
 
-Engineered with pride by **Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30))**  
+Engineered with pride by **NullAI ([@1nc0gn30](https://github.com/1nc0gn30))**  
 NullAI Platform & Research • [https://nullai.tech](https://nullai.tech)  
 Open-source under the **MIT License**.

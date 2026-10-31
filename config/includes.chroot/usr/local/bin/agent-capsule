@@ -1,15 +1,1 @@
-#!/usr/bin/env bash
-set -e
-REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-capsule-jail"
-[[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-capsule-jail"
-PRIMARY_BIN="$REPO_DIR/bin/agent-capsule"
-if [[ -x "$PRIMARY_BIN" ]]; then
-    exec "$PRIMARY_BIN" "$@"
-elif [[ -d "$REPO_DIR/src" ]]; then
-    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-    pkg=$(ls "$REPO_DIR/src" | grep -v egg | head -n1)
-    exec python3 -m "${pkg}.cli" "$@"
-else
-    echo "Error: agent-capsule-jail not found in $REPO_DIR" >&2
-    exit 1
-fi
+/usr/local/bin/agent-capsule-jail

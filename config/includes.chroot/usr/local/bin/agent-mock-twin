@@ -1,15 +1,90 @@
-#!/usr/bin/env bash
-set -e
-REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-mock-twin"
-[[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-mock-twin"
-PRIMARY_BIN="$REPO_DIR/bin/agent-mock-twin"
-if [[ -x "$PRIMARY_BIN" ]]; then
-    exec "$PRIMARY_BIN" "$@"
-elif [[ -d "$REPO_DIR/src" ]]; then
-    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-    pkg=$(ls "$REPO_DIR/src" | grep -v egg | head -n1)
-    exec python3 -m "${pkg}.cli" "$@"
-else
-    echo "Error: agent-mock-twin not found in $REPO_DIR" >&2
-    exit 1
-fi
+#!/usr/bin/env python3
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'agent-mock-twin'
+TOOL_REPO = 'agent-mock-twin'
+TOOL_NAME = 'Agent Mock Twin'
+TOOL_DESC = 'Autonomous offline API mock server & deterministic replay twin for AI agents ($0 token spend in CI/CD) with OpenAPI/HAR ingestion and zero-dependency Python backend.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'Simulation & Testing'
+TOOL_PORT = 8097
+REPO_DIR = os.path.expanduser('~/NullAITech/agent-mock-twin')
+PKG_DIR = os.path.expanduser('~/NullAITech/agent-mock-twin/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    
+    # If standard subcommands or native flags are requested, delegate to native module
+    subcommands = {'serve', 'import', 'stats', 'run'}
+    if args and (args[0] in subcommands or (args[0] in ('-h', '--help') and len(args) > 1)):
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        res = subprocess.run([sys.executable, '-m', 'agent_mock_twin.cli'] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional subcommands (serve, import, stats, run)')
+    parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.payload and parsed.payload[0] in subcommands:
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        res = subprocess.run([sys.executable, '-m', 'agent_mock_twin.cli'] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    # Check daemon status
+    is_live = False
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"http://127.0.0.1:{TOOL_PORT}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                is_live = True
+    except Exception:
+        pass
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": os.path.join(PKG_DIR, "agent_mock_twin", "cli.py"),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_live": is_live,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "ACTIVE" if is_live else "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL} (Daemon: {'ACTIVE' if is_live else 'OFFLINE'})")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"\nSubcommands available via native CLI (agent-mock):")
+    print("  agent-mock serve [--port 8097]   Start mock server and dashboard")
+    print("  agent-mock stats                 Display token savings and telemetry")
+    print("  agent-mock import <file>         Import HAR 1.2 or OpenAPI 3.0 spec")
+    print("  agent-mock run -- <command>      Run test suite with redirected AI endpoints")
+
+if __name__ == '__main__':
+    main()

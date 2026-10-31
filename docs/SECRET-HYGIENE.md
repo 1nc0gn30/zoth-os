@@ -21,7 +21,7 @@ The custom rules fail the build on:
 
 - A real phone digit string: a leading `+` and 8–15 digits, or a separated number such as a NANP grouping. <!-- hygiene-example -->
 - The literal directory `/home/zoth`. <!-- hygiene-example -->
-- The literal mount `/media/neo/`. <!-- hygiene-example -->
+- A removable-media mount path named after the build user. <!-- hygiene-example -->
 - A `LITEON` disk token, or any concrete `/dev/disk/by-id/` id other than `your-parrot-disk`. <!-- hygiene-example -->
 - The variable name `SOLANA_PRIVATE_KEY`. <!-- hygiene-example -->
 

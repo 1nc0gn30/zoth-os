@@ -852,7 +852,7 @@ assert(Array.isArray(directory), 'Directory must be an array');
 assert(directory.length >= 4, 'Must seed at least 4 verified merchants');
 const nealEntry = directory.find((d) => d.handle === '@neal');
 assert(nealEntry, 'Merchant @neal must exist in verified directory');
-assert.strictEqual(nealEntry.domain, 'nealfrazier.tech');
+assert.strictEqual(nealEntry.domain, 'nullai.tech');
 assert(nealEntry.trustScore >= 95, 'Trust score should be high for verified merchants');
 assert(nealEntry.ratingAvg >= 4.5, 'Rating average should be seeded');
 
@@ -861,7 +861,7 @@ assert(nealEntry.ratingAvg >= 4.5, 'Rating average should be seeded');
 const safeNeal = nodeReloaded.checkHandleSafety('@neal');
 assert.strictEqual(safeNeal.safe, true);
 assert.strictEqual(safeNeal.riskLevel, 'VERIFIED_SAFE');
-assert.strictEqual(safeNeal.domain, 'nealfrazier.tech');
+assert.strictEqual(safeNeal.domain, 'nullai.tech');
 
 const safeZoth = nodeReloaded.checkHandleSafety('@zoth');
 assert.strictEqual(safeZoth.safe, true);

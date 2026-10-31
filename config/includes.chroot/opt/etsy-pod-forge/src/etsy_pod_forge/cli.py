@@ -1,6 +1,6 @@
 """Command-Line Interface (CLI) for Etsy POD Forge.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Commands:
   generate   Generate print-ready high-resolution transparent PNG canvas
   mockup     Composite design onto realistic product background
@@ -65,7 +65,7 @@ def print_banner() -> None:
     print(f"""
 {C_GOLD_BOLD}╔══════════════════════════════════════════════════════════════════════════════╗
 ║               🌸 ETSY POD FORGE — AUTONOMOUS COMMERCE STUDIO 🌸              ║
-║         Neal Frazier Tech (@1nc0gn30) • 55+ Women Demographic Engine         ║
+║         1nc0gn30 • 55+ Women Demographic Engine         ║
 ╚══════════════════════════════════════════════════════════════════════════════╝{C_RESET}""")
 
 

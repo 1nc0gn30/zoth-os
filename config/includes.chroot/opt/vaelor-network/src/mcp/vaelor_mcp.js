@@ -22,7 +22,7 @@
  * 16. vaelor_enterprise_audit_and_p2p - Merkle state root audit, WAL fsync, and multi-node P2P cluster sync
  * 17. vaelor_multisig_treasury        - M-of-N corporate multi-sig governance, idempotency replay, HMAC webhooks
  *
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 'use strict';

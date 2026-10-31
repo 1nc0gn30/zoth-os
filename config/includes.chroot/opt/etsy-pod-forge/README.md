@@ -125,7 +125,7 @@ Or via CLI:
 
 ## 📜 Attribution
 
-Engineered by **Neal Frazier Tech** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
+Engineered by **NullAI** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
 
 ## Network exposure
 

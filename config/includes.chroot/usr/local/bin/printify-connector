@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+"""ZothOS CLI binary wrapper for printify-connector.
+
+Engineered by 1nc0gn30 • NullAI Platform.
+100% Free & Open Access — Zero External Dependencies.
+"""
+
+import os
+import subprocess
+import sys
+
+TOOL_ID = "printify-connector"
+REPO_DIR = os.path.expanduser("~/NullAITech/printify-connector")
+PKG_DIR = os.path.expanduser("~/NullAITech/printify-connector/src")
+PY_CLI = os.path.expanduser("~/NullAITech/printify-connector/src/printify_connector/cli.py")
+
+
+def main():
+    args = sys.argv[1:]
+    env = os.environ.copy()
+    if os.path.exists(PKG_DIR):
+        env["PYTHONPATH"] = PKG_DIR + (os.pathsep + env.get("PYTHONPATH", "") if env.get("PYTHONPATH") else "")
+        res = subprocess.run([sys.executable, "-m", "printify_connector.cli"] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+    elif os.path.exists(PY_CLI):
+        res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+    else:
+        print(f"Error: {TOOL_ID} repository not found at {REPO_DIR}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

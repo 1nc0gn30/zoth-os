@@ -7,7 +7,7 @@
 # 🛡️ Agent Egress Sentinel
 
 > **Autonomous Zero-Dependency Network Interceptor, Domain Classifier, and Kinetic Egress Radar for AI Agents and LLM Runtimes.**  
-> *Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform*
+> *Engineered by NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform*
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external%20pip%20packages-emerald.svg)](pyproject.toml)
@@ -151,9 +151,9 @@ Verified using the sovereign automated headless Electron test suite (`site_guard
 
 ## 📜 Attribution & Author
 
-- **Engineered by**: Neal Frazier ([@1nc0gn30](https://github.com/1nc0gn30))
-- **Entity**: Neal Frazier Tech • [NullAI Platform](https://nullai.tech)
-- **Primary Hub**: [nealfrazier.tech](https://nealfrazier.tech)
+- **Engineered by**: 1nc0gn30 ([@1nc0gn30](https://github.com/1nc0gn30))
+- **Entity**: NullAI • [NullAI Platform](https://nullai.tech)
+- **Primary Hub**: [nullai.tech](https://nullai.tech)
 - **Repository**: [https://github.com/1nc0gn30/agent-egress-sentinel](https://github.com/1nc0gn30/agent-egress-sentinel)
 
 ## Network exposure

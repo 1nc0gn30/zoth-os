@@ -361,7 +361,7 @@ class EgressCollector:
                 "title": "Agent Egress Sentinel — Synthesized API Blueprint",
                 "version": "1.0.0",
                 "description": "Reverse-engineered OpenAPI specification synthesized directly from AI agent network traffic.",
-                "contact": {"name": "Neal Frazier Tech", "url": "https://nealfrazier.tech"},
+                "contact": {"name": "NullAI", "url": "https://nullai.tech"},
             },
             "servers": [{"url": s} for s in sorted(list(servers_set))] or [{"url": "https://api.openai.com"}],
             "paths": paths,

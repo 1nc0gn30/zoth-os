@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+if [ -f "$HOME/NullAITech/adytum-alchemist-ai-workflow/bin/adytum.js" ]; then
+  exec node $HOME/NullAITech/adytum-alchemist-ai-workflow/bin/adytum.js "$@"
+elif [ -f "/opt/NullAITech/adytum-alchemist-ai-workflow/bin/adytum.js" ]; then
+  exec node /opt/NullAITech/adytum-alchemist-ai-workflow/bin/adytum.js "$@"
+else
+  echo "Adytum Alchemist CLI v1.0.0 — http://127.0.0.1:8135"
+fi

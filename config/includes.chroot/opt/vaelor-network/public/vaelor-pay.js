@@ -19,7 +19,7 @@
  *   protectedHours: 24
  * });
  *
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 (function () {
@@ -414,7 +414,7 @@
 
       // Offline Homoglyph & Levenshtein Fallback
       const KNOWN_VERIFIED = [
-        { handle: '@neal', name: 'Neal Frazier Tech (@1nc0gn30)', domain: 'nealfrazier.tech', trustScore: 99 },
+        { handle: '@neal', name: '1nc0gn30', domain: 'nullai.tech', trustScore: 99 },
         { handle: '@zoth', name: 'Zoth Studio & ZothOS AI Engine', domain: 'zoth.nullai.tech', trustScore: 99 },
         { handle: '@sprig', name: 'Sprig Kitchen • 757 Local Merchant', domain: 'sprig.757tech.pro', trustScore: 97 },
         { handle: '@treasury', name: 'Vaelor Sovereign Treasury Reserve', domain: 'vaelor.nullai.tech', trustScore: 100 },

@@ -1,6 +1,6 @@
 """Prompt Vault: 50+ Battle-Tested AI Image Generation Recipes for Etsy POD.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Targeted specifically at the high-LTV 50-75+ women demographic on Etsy:
 Grandma's garden, cozy songbirds, cottagecore, botanical watercolors, and quilting blueprints.
 """

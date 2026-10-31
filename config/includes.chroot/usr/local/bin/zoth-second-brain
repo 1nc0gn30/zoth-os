@@ -1463,7 +1463,7 @@ $$\\text{RTT}_{\\text{stdio}} = t_{\\text{serialize}} + t_{\\text{pipe}} + t_{\\
         mermaid_chart = """```mermaid
 flowchart LR
     subgraph CommitOrigin["✍️ Author Provenance"]
-        Dev["Neal Frazier (@1nc0gn30)"]
+        Dev["1nc0gn30"]
         Git["GPG / Ed25519 Signed Git Commit"]
     end
     
@@ -1485,7 +1485,7 @@ flowchart LR
         taxonomy = """## Functional Taxonomy & Security Verification Layers
 
 ### 1. Cryptographic Git Commit Signatures
-All codebase modifications on `main` require strict author attribution (`Neal Frazier <1nc0gn30@users.noreply.github.com>`) and Ed25519 digital signatures. Unsigned commits or modified author strings fail local pre-commit guardrails.
+All codebase modifications on `main` require strict author attribution (`1nc0gn30 <1nc0gn30@users.noreply.github.com>`) and Ed25519 digital signatures. Unsigned commits or modified author strings fail local pre-commit guardrails.
 
 ### 2. Sigstore / Cosign Artifact Attestation
 Release packages and container layers are signed with `cosign`, producing cryptographic receipts verified without centralized certificate authorities. Verification proves image bit-for-bit authenticity against developer public keys.

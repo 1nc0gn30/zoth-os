@@ -1,0 +1,218 @@
+#!/usr/bin/env python3
+"""
+Zoth Reality Shader & Theme Forge CLI (v3.3.0)
+Engineered by 1nc0gn30 • NullAI Platform
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import urllib.request
+
+TOOL_ID = "reality-shader-forge"
+TOOL_REPO = "reality-shader-forge"
+TOOL_NAME = "Zoth Reality Shader & Theme Forge"
+TOOL_DESC = "Interactive 60fps Reality Switch shader synthesizer and ZothOS desktop theme compiler. Customize the 5 Zoth Realities and export KDE Plasma .colors, Alacritty .toml, and CSS tokens."
+TOOL_VERSION = "3.3.0"
+TOOL_CATEGORY = "Media & 3D"
+TOOL_PORT = 8134
+REPO_DIR = os.path.expanduser("~/NullAITech/reality-shader-forge")
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+REALITIES = {
+    "gold": {
+        "name": "Aurum Gold",
+        "primary": "#D4AF37",
+        "secondary": "#F59E0B",
+        "bgVoid": "#05060A",
+        "surface": "#0E121D",
+        "text": "#F5E6AB",
+    },
+    "emerald": {
+        "name": "Sovereign Emerald",
+        "primary": "#10B981",
+        "secondary": "#059669",
+        "bgVoid": "#040806",
+        "surface": "#07160E",
+        "text": "#A7F3D0",
+    },
+    "cyan": {
+        "name": "Cyber Cyan",
+        "primary": "#38BDF8",
+        "secondary": "#0284C7",
+        "bgVoid": "#04070B",
+        "surface": "#0A1322",
+        "text": "#BAE6FD",
+    },
+    "crimson": {
+        "name": "Ghost Crimson",
+        "primary": "#F43F5E",
+        "secondary": "#BE123C",
+        "bgVoid": "#0A0406",
+        "surface": "#1A080E",
+        "text": "#FECDD3",
+    },
+    "purple": {
+        "name": "Void Obsidian",
+        "primary": "#8B5CF6",
+        "secondary": "#6D28D9",
+        "bgVoid": "#06040A",
+        "surface": "#12091F",
+        "text": "#DDD6FE",
+    },
+}
+
+
+def hex_to_rgb(hex_str: str) -> dict:
+    clean = hex_str.lstrip("#")
+    num = int(clean, 16)
+    return {"r": (num >> 16) & 255, "g": (num >> 8) & 255, "b": num & 255}
+
+
+def compile_theme(reality_id: str, format_type: str) -> str:
+    r = REALITIES.get(reality_id, REALITIES["gold"])
+    rgb_p = hex_to_rgb(r["primary"])
+    rgb_v = hex_to_rgb(r["bgVoid"])
+    rgb_t = hex_to_rgb(r["text"])
+
+    if format_type == "kde":
+        return f"""[General]
+Name=ZothOS {r['name']}
+ColorScheme=ZothOS-{reality_id}
+
+[Colors:Window]
+BackgroundNormal={rgb_v['r']},{rgb_v['g']},{rgb_v['b']}
+ForegroundNormal={rgb_t['r']},{rgb_t['g']},{rgb_t['b']}
+
+[Colors:Selection]
+BackgroundNormal={rgb_p['r']},{rgb_p['g']},{rgb_p['b']}
+ForegroundNormal=5,6,10
+
+[Colors:Button]
+BackgroundNormal={rgb_v['r'] + 12},{rgb_v['g'] + 12},{rgb_v['b'] + 12}
+ForegroundNormal={rgb_t['r']},{rgb_t['g']},{rgb_t['b']}"""
+
+    if format_type == "alacritty":
+        return f"""[colors.primary]
+background = "{r['bgVoid']}"
+foreground = "{r['text']}"
+
+[colors.cursor]
+text = "{r['bgVoid']}"
+cursor = "{r['primary']}"
+
+[colors.selection]
+text = "{r['bgVoid']}"
+background = "{r['primary']}"
+
+[colors.normal]
+black   = "{r['bgVoid']}"
+red     = "#F43F5E"
+green   = "#10B981"
+yellow  = "{r['primary']}"
+blue    = "#38BDF8"
+magenta = "#8B5CF6"
+cyan    = "#06B6D4"
+white   = "{r['text']}"""
+
+    if format_type == "css":
+        return f""":root {{
+  --zoth-reality-name: "{r['name']}";
+  --zoth-reality-primary: {r['primary']};
+  --zoth-reality-secondary: {r['secondary']};
+  --zoth-reality-void: {r['bgVoid']};
+  --zoth-reality-surface: {r['surface']};
+  --zoth-reality-text: {r['text']};
+  --zoth-border-accent: {r['primary']}3D;
+  --zoth-shadow-glow: 0 0 24px {r['primary']}33;
+}}"""
+
+    return json.dumps(
+        {
+            "schema": "zothos/reality/v3",
+            "id": reality_id,
+            "name": r["name"],
+            "palette": r,
+        },
+        indent=2,
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
+    )
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local ZothOS installation & daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local ZothOS workbench URL")
+    parser.add_argument("--list", action="store_true", help="List available Zoth Realities")
+    parser.add_argument("--reality", default="gold", choices=list(REALITIES.keys()), help="Target Zoth Reality")
+    parser.add_argument("--format", choices=["kde", "alacritty", "css", "json"], help="Output theme bundle format")
+    parser.add_argument("--serve", type=int, metavar="PORT", help="Serve web studio on port")
+    parser.add_argument("payload", nargs="*", help="Optional payload or subcommand")
+    args = parser.parse_args()
+
+    if args.serve:
+        subprocess.run([sys.executable, os.path.join(REPO_DIR, "server.py"), "--port", str(args.serve)])
+        return
+
+    if args.list:
+        if args.json:
+            print(json.dumps(REALITIES, indent=2))
+        else:
+            print("Zoth Realities Matrix:")
+            for k, v in REALITIES.items():
+                print(f"  ✦ [{k}] {v['name']} — Primary: {v['primary']}, Void: {v['bgVoid']}")
+        return
+
+    if args.format:
+        print(compile_theme(args.reality, args.format))
+        return
+
+    daemon_running = False
+    try:
+        with urllib.request.urlopen(f"{LOCAL_PORT_URL}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                daemon_running = True
+    except Exception:
+        daemon_running = False
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_running": daemon_running,
+        "realities": list(REALITIES.keys()),
+        "formats": ["kde", "alacritty", "css", "json"],
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+        "status": "ONLINE" if daemon_running else "READY",
+    }
+
+    if args.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {LOCAL_PORT_URL} (Daemon: {'ONLINE' if daemon_running else 'STANDBY'})")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
+
+if __name__ == "__main__":
+    main()

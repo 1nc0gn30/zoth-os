@@ -3,7 +3,7 @@
 #  Zoth Bolt — flagship full-stack AI web & motion architect
 # ==============================================================================
 #  Platform: ZothOS • NullAI
-#  Author: Neal Frazier Tech (@1nc0gn30)
+#  Author: 1nc0gn30
 #  Repository: https://github.com/1nc0gn30/zoth-webgen
 # ==============================================================================
 set -euo pipefail
@@ -136,7 +136,7 @@ echo -e "${GOLD}${BOLD}★══════════════════
 echo -e "          ${GOLD}${BOLD}Z O T H   W E B G E N${NC}"
 echo -e "     ${CYAN}Local full-stack site foundry${NC}"
 echo -e "${GOLD}${BOLD}★═════════════════════════════════════════════════════════════════════★${NC}"
-echo -e "  ${DIM}Creator:${NC} Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+echo -e "  ${DIM}Creator:${NC} 1nc0gn30 • NullAI Platform"
 echo -e "  ${DIM}Repository:${NC} https://github.com/1nc0gn30/zoth-webgen"
 if [[ -n "$REPO_DIR" ]]; then
   echo -e "  ${DIM}Local Path:${NC} ${GREEN}${REPO_DIR}${NC}"

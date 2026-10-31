@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec $HOME/NullAITech/azoth-local-agent/.venv/bin/python $HOME/NullAITech/azoth-local-agent/agent.py "$@"

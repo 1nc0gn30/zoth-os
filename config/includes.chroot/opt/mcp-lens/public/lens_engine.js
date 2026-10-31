@@ -1,6 +1,6 @@
 /**
  * MCP Lens Engine — Real-time Stdio/SSE Sniffer & Playground Controller.
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+ * Engineered by 1nc0gn30 • NullAI Platform.
  * 100% Vanilla ES6+ — Zero External NPM Dependencies.
  */
 

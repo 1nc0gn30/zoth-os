@@ -6,8 +6,8 @@ Enterprise CLI controller for running, auditing, clustering, and monitoring
 the Vaelor Layer-1 Account-Lattice DAG (:8140), ZothNet P2P Cluster Mesh,
 and Neuro-Memory STDP Cognitive Cortex (:8094).
 
-Author: Neal Frazier <1nc0gn30@users.noreply.github.com>
-Copyright (c) 2026 Neal Frazier Tech • NullAI Platform
+Author: 1nc0gn30 <1nc0gn30@users.noreply.github.com>
+Copyright (c) 2026 NullAI (1nc0gn30)
 """
 
 import argparse

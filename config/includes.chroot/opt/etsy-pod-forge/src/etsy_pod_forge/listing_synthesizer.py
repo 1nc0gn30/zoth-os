@@ -1,6 +1,6 @@
 """Etsy Listing Synthesizer: High-Converting SEO Titles, 13 Tags, Descriptions & Profit Economics.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 • NullAI Platform.
 Strict Etsy Invariants:
 - Title strictly <= 140 characters.
 - Exactly 13 tags, each strictly <= 20 characters.

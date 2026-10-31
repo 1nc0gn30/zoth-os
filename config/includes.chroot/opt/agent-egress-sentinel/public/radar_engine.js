@@ -1,7 +1,7 @@
 /**
  * Agent Egress Sentinel — Kinetic Domain Radar & Telemetry Engine
  * Pure Vanilla Canvas & Reactive DOM Architecture. Zero external JS dependencies.
- * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Engineered by 1nc0gn30 • NullAI Platform
  */
 
 (function () {

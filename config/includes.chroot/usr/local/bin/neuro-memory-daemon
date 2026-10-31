@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+REPO_DIR="$HOME/NullAITech/neuro-memory-daemon"
+PYTHON_BIN="/opt/zothos-ai-env/bin/python3"
+if [ ! -f "$PYTHON_BIN" ]; then
+  PYTHON_BIN="python3"
+fi
+export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH}"
+
+if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
+  exec "$PYTHON_BIN" -m neuro_memory_daemon.cli stats
+elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
+  echo "neuro-memory-daemon v3.1.0 (Cognitive Associative Substrate & MCP Protocol Bridge)"
+  exit 0
+elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  exec "$PYTHON_BIN" -m neuro_memory_daemon.cli --help
+elif [ "$1" = "web" ] || [ "$1" = "serve" ]; then
+  exec "$PYTHON_BIN" -m neuro_memory_daemon.cli serve --host 127.0.0.1 --port 8094
+else
+  exec "$PYTHON_BIN" -m neuro_memory_daemon.cli "$@"
+fi

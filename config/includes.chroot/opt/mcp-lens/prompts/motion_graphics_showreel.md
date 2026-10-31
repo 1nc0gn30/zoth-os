@@ -3,7 +3,7 @@
 **Anchor Shape**: The Prismatic Hexagonal Lens — a floating obsidian prism with glowing gold (`#D4AF37`) aperture bevels and cyber-cyan (`#38BDF8`) laser optics.  
 **Style**: High-velocity Claude 3.5 / Revid.ai cinematic kinetic motion design, 60fps, 4K render, dark obsidian atmosphere, neon accents, tactile sound design.  
 **Product**: MCP Lens — Zero-Dependency Real-Time Stdio/SSE Traffic Sniffer & Token Weight Auditor for Model Context Protocol.  
-**Attribution**: Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+**Attribution**: Engineered by 1nc0gn30 • NullAI Platform.
 
 ---
 

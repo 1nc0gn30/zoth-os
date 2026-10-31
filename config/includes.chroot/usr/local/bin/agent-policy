@@ -1,15 +1,1 @@
-#!/usr/bin/env bash
-set -e
-REPO_DIR="${ZOTH_SRC_ROOT:-$HOME/NullAITech}/agent-policy-auditor"
-[[ ! -d "$REPO_DIR" ]] && REPO_DIR="/opt/agent-policy-auditor"
-PRIMARY_BIN="$REPO_DIR/bin/agent-policy"
-if [[ -x "$PRIMARY_BIN" ]]; then
-    exec "$PRIMARY_BIN" "$@"
-elif [[ -d "$REPO_DIR/src" ]]; then
-    export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-    pkg=$(ls "$REPO_DIR/src" | grep -v egg | head -n1)
-    exec python3 -m "${pkg}.cli" "$@"
-else
-    echo "Error: agent-policy-auditor not found in $REPO_DIR" >&2
-    exit 1
-fi
+/usr/local/bin/agent-policy-auditor

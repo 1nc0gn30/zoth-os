@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 zoth-gesture-map — 21-Joint Hand Gesture & 68-Point Facial Viseme KWin Dispatcher Map for ZothOS v3.2
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+Engineered by 1nc0gn30 • NullAI Platform
 """
 import argparse
 import json

@@ -332,3 +332,4 @@ config/includes.chroot/usr/share/doc/
 # Ignore large ISO split chunks and local chroot home test vault
 build/release-*/zothos-*.iso.part*
 config/includes.chroot/home/
+**/.gradle/

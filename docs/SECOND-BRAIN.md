@@ -9,7 +9,7 @@
 [![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
 [![MCP Suite](https://img.shields.io/badge/MCP%20Tools-21%20native-cyan.svg)](docs/SECOND-BRAIN.md)
 
-> **Architectural blueprint and operational manual for Neal Frazier's sovereign Obsidian Second Brain vault (`~/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
+> **Architectural blueprint and operational manual for 1nc0gn30's sovereign Obsidian Second Brain vault (`~/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
 > Built strictly against the official **@kepano Obsidian specifications**: Obsidian Flavored Markdown (OFM), JSON Canvas 1.0 (`.canvas`), Obsidian Bases (`.base`), and Knap structured-data note synthesis.
 
 ---
@@ -47,7 +47,7 @@ The Zoth Second Brain bridges human knowledge management, biomorphic cognitive n
 
 ```
                   ┌─────────────────────────────────────────────────────────┐
-                  │        HUMAN CURATOR / OPERATOR (Neal Frazier)          │
+                  │        HUMAN CURATOR / OPERATOR (1nc0gn30)          │
                   └────────────────────────────┬────────────────────────────┘
                                                │
                                                ▼
@@ -105,7 +105,7 @@ Following Andrej Karpathy's formulation of the *LLM Wiki as an Operating System*
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Dev as Neal Frazier / Agent
+    actor Dev as 1nc0gn30 / Agent
     participant CLI as zoth-second-brain CLI
     participant Vault as Obsidian Vault Stratum
     participant Daemon as Neuro-Memory (:8094)
@@ -671,4 +671,4 @@ Cross-wiki reference: `[[05-Telemetry/ZothNet Encrypted Comms|ZothNet Encrypted 
 
 ---
 
-*Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.*
+*Engineered by 1nc0gn30 • NullAI Platform.*

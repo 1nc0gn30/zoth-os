@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+REPO_DIR="$HOME/NullAITech/vector-search-engine"
+PYTHON_BIN="python3"
+export PYTHONPATH="$REPO_DIR/src${PYTHONPATH:+:$PYTHONPATH}"
+
+if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
+  exec "$PYTHON_BIN" -m vector_search_engine.cli list
+elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
+  echo "vector-search-engine v2.5.0 (HNSW Vector Database & Okapi BM25 Hybrid Studio)"
+  exit 0
+elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  exec "$PYTHON_BIN" -m vector_search_engine.cli --help
+elif [ "$1" = "web" ] || [ "$1" = "serve" ]; then
+  exec "$PYTHON_BIN" "$REPO_DIR/server.py" --port 8121
+else
+  exec "$PYTHON_BIN" -m vector_search_engine.cli "$@"
+fi
