@@ -178,9 +178,9 @@ def cmd_peers(args) -> int:
         # Fallback to local store + seeds
         local_peers = read_local_store("peers.json")
         default_seeds = [
-            {"handle": "@zoth", "name": "Neal Master Cockpit", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
+            {"handle": "@zoth", "name": "1nc0gn30 Master Cockpit", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
             {"handle": "@zoth-rig2", "name": "24/7 AI Laptop", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
-            {"handle": "@neal", "name": "Neal Primary", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
+            {"handle": "@1nc0gn30", "name": "1nc0gn30 Primary", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
             {"handle": "@citizen", "name": "Public Seed Node", "endpoint": "http://127.0.0.1:8140", "status": "online", "messageCount": 0},
         ]
         merged = {p["handle"]: p for p in default_seeds}
@@ -661,8 +661,8 @@ Commands:
 Examples:
   zoth-comm peers
   zoth-comm register @zoth-rig2 "sovereign-pass" --name "24/7 AI Laptop"
-  zoth-comm connect @neal @zoth-rig2 "sovereign-pass"
-  zoth-comm send @neal @zoth-rig2 "sovereign-pass" "Run continuous indexing" --vlr 5 --ai-task "Compile second brain"
+  zoth-comm connect @1nc0gn30 @zoth-rig2 "sovereign-pass"
+  zoth-comm send @1nc0gn30 @zoth-rig2 "sovereign-pass" "Run continuous indexing" --vlr 5 --ai-task "Compile second brain"
   zoth-comm inbox @zoth-rig2 "sovereign-pass"
   zoth-comm daemon @zoth-rig2 "sovereign-pass" --once
         """
@@ -684,14 +684,14 @@ Examples:
 
     # connect
     p_conn = subparsers.add_parser("connect", help="Passphrase-gated handshake authorization")
-    p_conn.add_argument("from_handle", help="Originating handle (e.g. @neal)")
+    p_conn.add_argument("from_handle", help="Originating handle (e.g. @1nc0gn30)")
     p_conn.add_argument("to_handle", help="Target handle (e.g. @zoth-rig2)")
     p_conn.add_argument("passphrase", help="Handshake authorization passphrase")
     p_conn.add_argument("intro_note", nargs="?", default="ZothOS handshake", help="Optional intro memo")
 
     # send
     p_send = subparsers.add_parser("send", help="Send AES-256-GCM encrypted message, VLR & AI task")
-    p_send.add_argument("from_handle", help="Originating handle (e.g. @neal)")
+    p_send.add_argument("from_handle", help="Originating handle (e.g. @1nc0gn30)")
     p_send.add_argument("to_handle", help="Target handle (e.g. @zoth-rig2)")
     p_send.add_argument("passphrase", help="Target passphrase for AES-256 key derivation")
     p_send.add_argument("message", help="Message text to encrypt and deliver")

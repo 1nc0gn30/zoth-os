@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS 3.3.0 KDE PLASMA 6 SOVEREIGN ENVIRONMENT SETUP
+#  ZOTHOS 3.4.0 KDE PLASMA 6 SOVEREIGN ENVIRONMENT SETUP
 #  Deterministic Desktop Folder Organizer + Multi-Toolkit Cursor Enforcement
 # ==============================================================================
 set -u
@@ -69,7 +69,7 @@ if [ -d "$HOME/Desktop" ]; then
     # Ensure all .desktop launchers inside the 4 folders are executable
     chmod +x "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
 
-    # On Live USB environment, ensure Install ZothOS 3.3.0 is prominently on the Desktop
+    # On Live USB environment, ensure Install ZothOS 3.4.0 is prominently on the Desktop
     if [ -d /run/live/medium ] && [ -f /usr/share/applications/install-zothos.desktop ]; then
         cp -f /usr/share/applications/install-zothos.desktop "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true
         chmod +x "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true

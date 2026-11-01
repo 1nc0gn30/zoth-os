@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# ⚡ ZOTHOS 3.0 → 3.3.0 SOVEREIGN IN-PLACE UPGRADER
+# ⚡ ZOTHOS 3.0 → 3.4.0 SOVEREIGN IN-PLACE UPGRADER
 # ==============================================================================
 # Upgrades any existing ZothOS 3.0 / 3.1 / 3.2 installation straight to
-# ZothOS v3.3.0 ("Sovereign Neural & Account-Lattice Edition") without
+# ZothOS v3.4.0 ("Sovereign Neural & Account-Lattice Edition") without
 # needing to re-flash an ISO!
 #
 # Usage on the 3.0 laptop:
@@ -21,7 +21,7 @@ RESET="\e[0m"
 
 echo -e "${GOLD}${BOLD}"
 echo "  ╔════════════════════════════════════════════════════════════════════╗"
-echo "  ║      ⚡ ZOTHOS 3.0 → 3.3.0 SOVEREIGN IN-PLACE UPGRADE ENGINE       ║"
+echo "  ║      ⚡ ZOTHOS 3.0 → 3.4.0 SOVEREIGN IN-PLACE UPGRADE ENGINE       ║"
 echo "  ╚════════════════════════════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
@@ -30,7 +30,7 @@ NULLAI_DIR="$HOME/NullAITech"
 mkdir -p "$NULLAI_DIR" "$HOME/.local/bin"
 
 # ------------------------------------------------------------------------------
-# STEP 1: Pull latest ZothOS 3.3.0 commits (with hard reset & cache-bust re-exec)
+# STEP 1: Pull latest ZothOS 3.4.0 commits (with hard reset & cache-bust re-exec)
 # ------------------------------------------------------------------------------
 if [ "${1:-}" != "--from-git" ]; then
   if [ ! -d "$REPO_DIR/.git" ]; then
@@ -38,19 +38,19 @@ if [ "${1:-}" != "--from-git" ]; then
     mkdir -p "$(dirname "$REPO_DIR")"
     git clone https://github.com/NullAITech/zoth-os.git "$REPO_DIR"
   else
-    echo -e "${CYAN}[1/7] Synchronizing $REPO_DIR to latest origin/main (v3.3.0) ...${RESET}"
+    echo -e "${CYAN}[1/7] Synchronizing $REPO_DIR to latest origin/main (v3.4.0) ...${RESET}"
     git -C "$REPO_DIR" fetch origin main
     git -C "$REPO_DIR" checkout -f main
     git -C "$REPO_DIR" reset --hard origin/main
   fi
   exec bash "$REPO_DIR/tools/upgrade-to-v3.3.sh" --from-git
 fi
-echo -e "${CYAN}[1/7] Running latest ZothOS v3.3.0 Upgrader from $(git -C "$REPO_DIR" rev-parse --short HEAD) ...${RESET}"
+echo -e "${CYAN}[1/7] Running latest ZothOS v3.4.0 Upgrader from $(git -C "$REPO_DIR" rev-parse --short HEAD) ...${RESET}"
 
 # ------------------------------------------------------------------------------
 # STEP 2: Upgrade CLI Arsenal in /usr/local/bin and ~/.local/bin
 # ------------------------------------------------------------------------------
-echo -e "${CYAN}[2/6] Upgrading /usr/local/bin & ~/.local/bin ZothOS 3.3 CLI Arsenal ...${RESET}"
+echo -e "${CYAN}[2/6] Upgrading /usr/local/bin & ~/.local/bin ZothOS 3.4 CLI Arsenal ...${RESET}"
 if [ -d "$REPO_DIR/config/includes.chroot/usr/local/bin" ]; then
   sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/local/bin/"* /usr/local/bin/ 2>/dev/null || true
   cp -rf "$REPO_DIR/config/includes.chroot/usr/local/bin/"* "$HOME/.local/bin/" 2>/dev/null || true
@@ -113,10 +113,10 @@ if [ -d "$REPO_DIR/config/includes.chroot/etc" ]; then
   sudo cp -rf "$REPO_DIR/config/includes.chroot/etc/"* /etc/ 2>/dev/null || true
 fi
 
-# Ensure 3.3.0 release version
-echo "3.3.0" | sudo tee /etc/zothos/version >/dev/null
-sudo sed -i 's/VERSION_ID=.*/VERSION_ID="3.3.0"/' /etc/os-release 2>/dev/null || true
-sudo sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="ZothOS 3.3.0 Sovereign Neural & Account-Lattice Edition"/' /etc/os-release 2>/dev/null || true
+# Ensure 3.4.0 release version
+echo "3.4.0" | sudo tee /etc/zothos/version >/dev/null
+sudo sed -i 's/VERSION_ID=.*/VERSION_ID="3.4.0"/' /etc/os-release 2>/dev/null || true
+sudo sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="ZothOS 3.4.0 Sovereign Neural & Account-Lattice Edition"/' /etc/os-release 2>/dev/null || true
 
 # Deploy 3.3 .bashrc and skel configurations to user home
 if [ -f "$REPO_DIR/config/includes.chroot/etc/skel/.bashrc" ]; then
@@ -171,9 +171,9 @@ if [ -d "$REPO_DIR/config/includes.chroot/boot/grub/themes/zoth-hermetic" ]; the
 fi
 
 # ------------------------------------------------------------------------------
-# STEP 6: Activate Live ZothOS 3.3 Sovereign Gold Mode, 3D Wallpaper & Zoth-Bot
+# STEP 6: Activate Live ZothOS 3.4 Sovereign Gold Mode, 3D Wallpaper & Zoth-Bot
 # ------------------------------------------------------------------------------
-echo -e "${CYAN}[6/7] Activating Live ZothOS 3.3 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
+echo -e "${CYAN}[6/7] Activating Live ZothOS 3.4 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
 export DISPLAY="${DISPLAY:-:0}"
 
 # Eliminate legacy XFCE4 / LightDM binaries & configs so system boots pure SDDM + KDE Plasma 6
@@ -227,9 +227,9 @@ if [ -x /opt/zoth-bot/bin/zoth-bot ] && ! pgrep -f "/opt/zoth-bot" >/dev/null 2>
 fi
 
 # ------------------------------------------------------------------------------
-# STEP 7: Verification of ZothOS v3.3.0 Sovereign Arsenal
+# STEP 7: Verification of ZothOS v3.4.0 Sovereign Arsenal
 # ------------------------------------------------------------------------------
-echo -e "\n${CYAN}[7/7] Verifying ZothOS v3.3.0 Sovereign Utilities ...${RESET}"
+echo -e "\n${CYAN}[7/7] Verifying ZothOS v3.4.0 Sovereign Utilities ...${RESET}"
 CORE_CMDS=(
   "zoth-os"
   "zoth-node"
@@ -252,7 +252,7 @@ for cmd in "${CORE_CMDS[@]}"; do
   fi
 done
 
-echo -e "\n${GREEN}${BOLD}✦ ZOTHOS UPGRADED TO v3.3.0 SUCCESSFULLY! ✦${RESET}"
+echo -e "\n${GREEN}${BOLD}✦ ZOTHOS UPGRADED TO v3.4.0 SUCCESSFULLY! ✦${RESET}"
 echo -e "  • Run ${GOLD}zoth-node status${RESET} to inspect your node, Merkle state root, and BFT quorum."
 echo -e "  • Run ${GOLD}zoth-comm peers${RESET} to discover lattice nodes across your local and mesh fleet."
 echo -e "  • Run ${GOLD}zoth-second-brain status${RESET} to inspect your Second Brain & STDP Memory."

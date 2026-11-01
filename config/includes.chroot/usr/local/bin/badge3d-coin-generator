@@ -8,19 +8,20 @@ TOOL_DESC = '100% in-browser WebGL 3D coin, medallion, and relief badge generato
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Media & 3D'
 TOOL_PORT = 8084
-REPO_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator')
-PKG_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator/src')
+REPO_DIR = '/home/zoth/NullAITech/badge3d-coin-generator'
+PKG_DIR = '/home/zoth/NullAITech/badge3d-coin-generator/src'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
 def check_daemon():
-    try:
-        req = urllib.request.Request(f"http://127.0.0.1:{TOOL_PORT}/health")
-        with urllib.request.urlopen(req, timeout=1.5) as resp:
-            if resp.status == 200:
-                return json.loads(resp.read().decode('utf-8'))
-    except Exception:
-        pass
+    for path in ("/api/health", "/health"):
+        try:
+            req = urllib.request.Request(f"http://127.0.0.1:{TOOL_PORT}{path}")
+            with urllib.request.urlopen(req, timeout=1.5) as resp:
+                if resp.status == 200:
+                    return json.loads(resp.read().decode('utf-8'))
+        except Exception:
+            pass
     return None
 
 def main():

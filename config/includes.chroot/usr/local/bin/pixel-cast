@@ -28,7 +28,7 @@ def print_banner():
   ║  |_|   |_/_/\_\___|_|\____\__,_|___/\__|                          ║
   ║                                                                   ║
   ║  Sovereign Google Pixel Mesh Screen Mirror & Hardware Bridge       ║
-  ║  Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform    ║
+  ║  Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform    ║
   ╚═══════════════════════════════════════════════════════════════════╝
 """
     print(banner)
@@ -85,11 +85,18 @@ def cmd_status(mgr: PixelCastManager, as_json: bool = False):
 
     print("\033[1;36m[TAILSCALE MESH]\033[0m")
     print(f"  • Host Desktop:    {self_node.get('hostname', 'localhost')} ({self_node.get('ip', '127.0.0.1')})")
-    if pixel_node:
+    android_devices = ts.get("android_devices", [])
+    if android_devices:
+        print(f"  • Connected Android Devices ({len(android_devices)} found):")
+        for dev in android_devices:
+            ping_s = f"~{dev.get('ping_ms')}ms" if dev.get('ping_ms') else "Active"
+            active_marker = " \033[1;33m[ACTIVE TARGET]\033[0m" if dev.get('ip') == (pixel_node.get('ip') if pixel_node else mgr.known_pixel_ip) else ""
+            print(f"    - \033[1;32m{dev.get('hostname')}\033[0m @ {dev.get('ip')} [{ping_s}]{active_marker}")
+    elif pixel_node:
         ping_str = f"~{pixel_node.get('ping_ms')}ms" if pixel_node.get("ping_ms") else "Active"
-        print(f"  • Detected Device: \033[1;32m{pixel_node.get('hostname')}\033[0m @ {pixel_node.get('ip')} [{ping_str}]")
+        print(f"  • Target Device:   \033[1;32m{pixel_node.get('hostname')}\033[0m @ {pixel_node.get('ip')} [{ping_str}]")
     else:
-        print(f"  • Detected Device: \033[1;33mNot found on mesh (defaulting to {mgr.known_pixel_ip})\033[0m")
+        print(f"  • Target Device:   \033[1;33mNot found on mesh (defaulting to {mgr.known_pixel_ip})\033[0m")
 
     print("\n\033[1;36m[ADB WIRELESS BRIDGE]\033[0m")
     if is_connected:
@@ -142,6 +149,7 @@ def main():
 
     # stream
     p_stream = subparsers.add_parser("stream", help="Launch native 60fps Scrcpy mirror window")
+    p_stream.add_argument("--ip", type=str, help="Target device IP (default: detected Pixel)")
     p_stream.add_argument("--bitrate", default="8M", help="Bitrate (e.g. 4M, 8M, 16M)")
     p_stream.add_argument("--max-size", type=int, default=1080, help="Max resolution (e.g. 720, 1080, 1440)")
     p_stream.add_argument("--max-fps", type=int, default=60, help="Max frame rate (e.g. 30, 60)")
@@ -224,7 +232,7 @@ def main():
 
     elif args.command == "stream":
         ts = mgr.get_tailscale_status()
-        ip = ts.get("pixel", {}).get("ip") if ts.get("pixel") else mgr.known_pixel_ip
+        ip = args.ip or (ts.get("pixel", {}).get("ip") if ts.get("pixel") else mgr.known_pixel_ip)
         opts = StreamOptions(
             serial=f"{ip}:5555",
             bitrate=args.bitrate,

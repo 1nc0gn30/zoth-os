@@ -9,10 +9,10 @@ windowPlacement: center
 strings:
     productName:         ZothOS Sovereign AI Linux
     shortProductName:    ZothOS
-    version:             3.3.0-Sovereign
-    shortVersion:        3.3.0
-    versionedName:       ZothOS 3.3.0 Sovereign Gold (24K Edition)
-    shortVersionedName:  ZothOS 3.3.0
+    version:             3.4.0-Sovereign
+    shortVersion:        3.4.0
+    versionedName:       ZothOS 3.4.0 Sovereign Gold (24K Edition)
+    shortVersionedName:  ZothOS 3.4.0
     bootloaderEntryName: ZothOS
     productUrl:          https://zoth.nullai.tech
     supportUrl:          https://github.com/NullAITech/zoth-os

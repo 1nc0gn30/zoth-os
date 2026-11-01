@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse
+import sys, os, json, subprocess, argparse, urllib.request
 
 TOOL_ID = 'audiocipher-stego-engine'
 TOOL_REPO = 'audiocipher-stego-engine'
@@ -8,11 +8,19 @@ TOOL_DESC = '100% in-browser acoustic cryptography, PCM audio LSB steganography,
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Security & OpSec'
 TOOL_PORT = 8096
-REPO_DIR = os.path.expanduser('~/NullAITech/audiocipher-stego-engine')
-PY_CLI = os.path.expanduser('~/NullAITech/audiocipher-stego-engine/src/audiocipher_stego_engine/cli.py')
-PKG_DIR = os.path.expanduser('~/NullAITech/audiocipher-stego-engine/src')
+REPO_DIR = '/home/zoth/NullAITech/audiocipher-stego-engine'
+PY_CLI = '/home/zoth/NullAITech/audiocipher-stego-engine/src/audiocipher_stego_engine/cli.py'
+PKG_DIR = '/home/zoth/NullAITech/audiocipher-stego-engine/src'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def probe_daemon():
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/health")
+        with urllib.request.urlopen(req, timeout=2.0) as resp:
+            return True, json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return False, None
 
 def main():
     args = sys.argv[1:]
@@ -37,6 +45,8 @@ def main():
     parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
     parsed, unknown = parser.parse_known_args(args)
 
+    online, health = probe_daemon()
+
     info = {
         "id": TOOL_ID,
         "repo": TOOL_REPO,
@@ -48,12 +58,14 @@ def main():
         "native_cli": PY_CLI,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
+        "daemon_online": online,
+        "daemon_health": health,
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
             "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
         },
-        "status": "READY"
+        "status": "ONLINE" if online else "READY"
     }
 
     if parsed.json:
@@ -61,6 +73,7 @@ def main():
         return
 
     print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Daemon     : {'ONLINE (' + LOCAL_PORT_URL + ')' if online else 'READY (CLI Mode)'}")
     print(f"  Repository : {REPO_DIR}")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL}")

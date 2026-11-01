@@ -8,15 +8,17 @@ TOOL_DESC = 'Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Su
 TOOL_VERSION = '3.5.0'
 TOOL_CATEGORY = 'Autonomous Web'
 TOOL_PORT = 5173
-REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy')
-SERVER_PY = os.path.expanduser('~/NullAITech/bolt.diy/server.py')
+REPO_DIR = '/home/zoth/NullAITech/bolt.diy'
+SERVER_PY = '/home/zoth/NullAITech/bolt.diy/server.py'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-def query_endpoint(endpoint):
+def query_endpoint(endpoint, method='GET', payload=None):
     try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}", headers={'User-Agent': 'ZothOS-CLI'})
-        with urllib.request.urlopen(req, timeout=2.0) as r:
+        data = json.dumps(payload).encode('utf-8') if payload is not None else None
+        headers = {'User-Agent': 'ZothOS-CLI', 'Content-Type': 'application/json'}
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}", data=data, headers=headers, method=method)
+        with urllib.request.urlopen(req, timeout=2.5) as r:
             return json.loads(r.read().decode('utf-8'))
     except Exception as e:
         return {"status": "offline", "error": str(e)}
@@ -37,20 +39,76 @@ def main():
     subparsers.add_parser('status', help='Query live daemon health on port 5173')
     subparsers.add_parser('providers', help='List supported AI providers & local agent bridges')
     subparsers.add_parser('templates', help='List full-stack motion & web application templates')
+    subparsers.add_parser('assets', help='List built-in 16-bit Pixel Art & Vector SVG assets')
+
+    synth_p = subparsers.add_parser('synthesize', help='Synthesize a full-stack application & motion showreel bundle')
+    synth_p.add_argument('--template', default='claude-15s-showreel', help='Template ID (default: claude-15s-showreel)')
+    synth_p.add_argument('--prompt', default='Build a sovereign AI dashboard with 60fps Unicode Braille shader hero', help='Prompt directive')
+    synth_p.add_argument('--provider', default='ZothLocal:zoth-bolt-instant', help='AI provider / local CLI agent')
 
     serve_p = subparsers.add_parser('serve', help='Run Zoth Bolt local server')
     serve_p.add_argument('--port', type=int, default=TOOL_PORT, help='Port to bind')
 
     parsed, unknown = parser.parse_known_args(args)
 
+    if parsed.ui:
+        print(STUDIO_URL)
+        return
+
     if parsed.subcommand == 'serve':
         cmd = [sys.executable, SERVER_PY, '--port', str(parsed.port or TOOL_PORT)]
         proc = subprocess.run(cmd, cwd=REPO_DIR)
         sys.exit(proc.returncode)
 
-    if parsed.subcommand in ('providers', 'templates'):
-        res = query_endpoint(f"/api/{parsed.subcommand}")
-        print(json.dumps(res, indent=2))
+    if parsed.subcommand == 'providers':
+        res = query_endpoint('/api/providers')
+        if parsed.json:
+            print(json.dumps(res, indent=2))
+        else:
+            items = res.get('providers', [])
+            print(f"⚡ Zoth Bolt Supported AI Providers & Local CLI Agents ({len(items)} active):")
+            for p in items:
+                print(f"  • {p['id']:<30} | {p['group']:<26} | {p['name']}")
+        sys.exit(0)
+
+    if parsed.subcommand == 'templates':
+        res = query_endpoint('/api/templates')
+        if parsed.json:
+            print(json.dumps(res, indent=2))
+        else:
+            items = res.get('templates', [])
+            print(f"🎬 Zoth Bolt Full-Stack & Motion Edit Templates ({len(items)} available):")
+            for t in items:
+                print(f"  • {t['id']:<28} [{t['framework']:<14} · shader={t['shader']:<13}] — {t['name']}")
+        sys.exit(0)
+
+    if parsed.subcommand == 'assets':
+        res = query_endpoint('/api/assets')
+        if parsed.json:
+            print(json.dumps(res, indent=2))
+        else:
+            items = res.get('assets', [])
+            print(f"👾 Zoth Bolt Pixel Art & Vector SVG Asset Bridge ({len(items)} core packs):")
+            for a in items:
+                print(f"  • {a['id']:<18} | {a['type']:<22} | {a['palette']} | {a['name']}")
+        sys.exit(0)
+
+    if parsed.subcommand == 'synthesize':
+        res = query_endpoint('/api/synthesize', method='POST', payload={
+            'template': parsed.template,
+            'prompt': parsed.prompt,
+            'provider': parsed.provider
+        })
+        if parsed.json:
+            print(json.dumps(res, indent=2))
+        else:
+            tpl = res.get('template', {})
+            files = res.get('files', {})
+            print(f"🚀 Zoth Bolt Full-Stack Bundle Synthesized!")
+            print(f"  • Provider   : {res.get('provider')}")
+            print(f"  • Template   : {tpl.get('name')} ({tpl.get('id')})")
+            print(f"  • Shader     : {tpl.get('shader')} (AST Verified: {res.get('ast_verified')})")
+            print(f"  • Files ({len(files)}) : {', '.join(files.keys())}")
         sys.exit(0)
 
     health = query_endpoint('/health')
@@ -71,7 +129,8 @@ def main():
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
         "daemon_active": health.get("status") == "healthy",
-        "providers_count": health.get("providers_count", 11),
+        "providers_count": health.get("providers_count", 17),
+        "templates_count": health.get("templates_count", 6),
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
@@ -88,7 +147,7 @@ def main():
     print(f"  Repository : {REPO_DIR}")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Daemon     : {'ONLINE (Healthy)' if health.get('status') == 'healthy' else 'OFFLINE'}")
+    print(f"  Daemon     : {'ONLINE (Healthy :5173)' if health.get('status') == 'healthy' else 'OFFLINE'}")
     print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
 if __name__ == '__main__':

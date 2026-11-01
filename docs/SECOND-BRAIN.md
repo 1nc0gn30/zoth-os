@@ -7,7 +7,7 @@
 [![Karpathy LLM Wiki](https://img.shields.io/badge/Karpathy%20LLM%20Wiki-13%20canonical-gold.svg)](docs/SECOND-BRAIN.md)
 [![Vault Notes](https://img.shields.io/badge/vault%20notes-1%2C732%20indexed%20(99.6%25%20connected)-orange.svg)](docs/SECOND-BRAIN.md)
 [![CLI Subcommands](https://img.shields.io/badge/zoth--second--brain-13%20subcommands-green.svg)](bin/zoth-second-brain)
-[![MCP Suite](https://img.shields.io/badge/MCP%20Tools-21%20native-cyan.svg)](docs/SECOND-BRAIN.md)
+[![MCP Suite](https://img.shields.io/badge/MCP%72Tools-21%20native-cyan.svg)](docs/SECOND-BRAIN.md)
 
 > **Architectural blueprint and operational manual for 1nc0gn30's sovereign Obsidian Second Brain vault (`~/Documents/Obsidian Vault/`), the 13-subcommand `zoth-second-brain` CLI, and its bidirectional biomorphic integration with the Neuro-Memory Daemon (`:8094`) and ZothOS.**  
 > Built strictly against the official **@kepano Obsidian specifications**: Obsidian Flavored Markdown (OFM), JSON Canvas 1.0 (`.canvas`), Obsidian Bases (`.base`), and Knap structured-data note synthesis.
@@ -373,7 +373,7 @@ Obsidian Bases provide structured, database-like querying over markdown files wi
 | # | Base File Path | Views | Primary Filter & Target Schema |
 | :-: | :--- | :---: | :--- |
 | **1** | `Zoth LLM Wiki Index.base` | Table, Cards | `file.hasTag("wiki")` · Formulas: confidence %, STDP engram count, status badge. |
-| **2** | `Zoth 71 Sovereign Tools.base` | Table, Cards, Kanban | `file.hasTag("tool")` · Catalogues all 71 sovereign tools across Studio v2. |
+| **2** | `Zoth 72 Sovereign Tools.base` | Table, Cards, Kanban | `file.hasTag("tool")` · Catalogues all 72 sovereign tools across Studio v2. |
 | **3** | `Zoth Fleet & Daemons.base` | Table, Cards, Status | `file.hasTag("daemon")` · Monitored ports, PIDs, health URLs, and heartbeat states. |
 | **4** | `Zoth Autonomous Agents.base` | Table, Cards, Fleet | `file.hasTag("agent")` · Agent roles, LLM backends, MCP capabilities, and permissions. |
 | **5** | `Zoth Memory Stratum.base` | Table, Cards | `file.hasTag("memory")` · Episodic/semantic memory engrams, access counts, and stability. |
@@ -411,7 +411,7 @@ Each canonical page in `06-Wiki/` and `05 - Knowledge Base/Karpathy LLM Wiki/` r
 | **8** | `Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults.md` | Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults | `LLM-Wiki` | `CANONICAL` | `100%` | Zero-knowledge stealth addresses, multi-party group tabs, and dead-man switch inheritance vaults. |
 | **9** | `Vaelor Smart Receipts, Sub-Accounts & Anti-Phishing Directory.md` | Vaelor Smart Receipts, Sub-Accounts & Anti-Phishing Directory | `LLM-Wiki` | `CANONICAL` | `100%` | Cryptographic smart receipts, segregated sub-accounts, and on-chain verified anti-phishing directory. |
 | **10**| `Zero-Trust Supply Chain, Cosign & VirusTotal Verification.md` | Zero-Trust Supply Chain, Cosign & VirusTotal Verification | `LLM-Wiki` | `CANONICAL` | `98%` | Sigstore Cosign image signing, in-toto attestation, automated VirusTotal scanning, and SBOMs. |
-| **11**| `Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools.md` | Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools | `LLM-Wiki` | `CANONICAL` | `99%` | Material 3 glassmorphic Web IDE, 71 client-side micro-tools, dual Stripe/Solana monetization. |
+| **11**| `Zoth Studio v2 & 72 Sovereign Micro-SaaS Tools.md` | Zoth Studio v2 & 72 Sovereign Micro-SaaS Tools | `LLM-Wiki` | `CANONICAL` | `99%` | Material 3 glassmorphic Web IDE, 71 client-side micro-tools, dual Stripe/Solana monetization. |
 | **12**| `ZothOS Sovereign Linux & Kernel Architecture.md` | ZothOS Sovereign Linux & Kernel Architecture | `LLM-Wiki` | `CANONICAL` | `99%` | Hardened Linux 6.x kernel, cgroups v2 resource isolation, hardware thermals (<60°C target), and immutable roots. |
 | **13**| `05 - Knowledge Base/Karpathy LLM Wiki/Vaelor-Layer1-Complete-Reference.md` | Vaelor Layer-1 Complete Reference | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Account-Lattice DAG, 5-validator BFT, PoUW cognitive mining, 8.5% vaults, BNPL credit, Smart Receipts & 13-tool MCP server. |
 | **14**| `05 - Knowledge Base/Karpathy LLM Wiki/Sovereign-MCP-34-Tool-Agent-Protocol.md` | Sovereign 34-Tool MCP Protocol: Neuro-Memory & Vaelor Layer-1 Ecosystem | `LLM-Wiki` | `CANONICAL` | `99%` | Complete reference: Ring-0 34-tool JSON-RPC suite, 21 Neuro-Memory & 13 Vaelor Layer-1 financial tools, feeless micro-tips, FX checkout & protected escrow. |
@@ -576,7 +576,7 @@ The `zoth-comm` CLI utility (`bin/zoth-comm`, symlinked to `~/.local/bin/zoth-co
 ### 🔐 Cryptographic Architecture & Flow
 
 ```
-   🧑 Client Node (@neal)                                🤖 AI Agent Worker Node (@zoth-rig2)
+   🧑 Client Node (@1nc0gn30)                                🤖 AI Agent Worker Node (@zoth-rig2)
             │                                                              │
             ├──── 1. Handshake Challenge (PBKDF2-SHA256 100k) ────────────►│
             │     [Validates target passphrase verifier on :8140]         │
@@ -611,10 +611,10 @@ zoth-comm peers
 zoth-comm register @zoth-rig2 "zoth-sovereign-757" --name "24/7 AI Laptop"
 
 # 3. Test cryptographic handshake
-zoth-comm connect @neal @zoth-rig2 "zoth-sovereign-757"
+zoth-comm connect @1nc0gn30 @zoth-rig2 "zoth-sovereign-757"
 
 # 4. Dispatch encrypted message with feeless ◈ VLR & 24/7 AI task
-zoth-comm send @neal @zoth-rig2 "zoth-sovereign-757" "Execute continuous vector indexing" \
+zoth-comm send @1nc0gn30 @zoth-rig2 "zoth-sovereign-757" "Execute continuous vector indexing" \
   --vlr 5.0 --ai-task "Ingest supply chain trust stack"
 
 # 5. Read decrypted inbox
@@ -639,7 +639,7 @@ The `zoth-node` CLI utility (`bin/zoth-node`, symlinked to `~/.local/bin/zoth-no
 | `status` | `zoth-node status [--json]` | Queries `:8140/api/status`, `:8140/api/ledger/verify-integrity`, `:8140/api/p2p/peers`, and `:8094/api/obsidian/status` to render the executive dashboard. |
 | `audit` | `zoth-node audit [--json]` | Executes a full Genesis-to-Head cryptographic chain & Binary Merkle State Root audit verifying 100.000000% supply conservation and zero double-spend risks. |
 | `cluster` | `zoth-node cluster <list\|join\|sync> [peer_url]` | Discovers cluster peers, connects new ZothOS laptops (`POST /api/p2p/connect`), and pulls/verifies block deltas (`GET /api/p2p/delta`). |
-| `multisig` | `zoth-node multisig <list\|propose\|approve> ...` | Manages 2-of-3 institutional corporate treasury vaults (`/api/multisig`) across `@zoth`, `@neal`, and `@zoth-rig2`. |
+| `multisig` | `zoth-node multisig <list\|propose\|approve> ...` | Manages 2-of-3 institutional corporate treasury vaults (`/api/multisig`) across `@zoth`, `@1nc0gn30`, and `@zoth-rig2`. |
 | `metrics` | `zoth-node metrics [--raw]` | Fetches live Prometheus / OpenTelemetry text exposition metrics from `GET http://127.0.0.1:8140/metrics`. |
 
 ### 🛠️ Example Usage

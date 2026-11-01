@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zoth Reality Shader & Theme Forge CLI (v3.3.0)
+Zoth Reality Shader & Theme Forge CLI (v3.4.0)
 Engineered by 1nc0gn30 • NullAI Platform
 """
 
@@ -15,7 +15,7 @@ TOOL_ID = "reality-shader-forge"
 TOOL_REPO = "reality-shader-forge"
 TOOL_NAME = "Zoth Reality Shader & Theme Forge"
 TOOL_DESC = "Interactive 60fps Reality Switch shader synthesizer and ZothOS desktop theme compiler. Customize the 5 Zoth Realities and export KDE Plasma .colors, Alacritty .toml, and CSS tokens."
-TOOL_VERSION = "3.3.0"
+TOOL_VERSION = "3.4.0"
 TOOL_CATEGORY = "Media & 3D"
 TOOL_PORT = 8134
 REPO_DIR = os.path.expanduser("~/NullAITech/reality-shader-forge")

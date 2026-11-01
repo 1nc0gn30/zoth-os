@@ -22,7 +22,7 @@ class ZothOSRequestHandler(http.server.SimpleHTTPRequestHandler):
             payload = {
                 "status": "healthy",
                 "service": "zoth-os",
-                "version": "3.3.0",
+                "version": "3.4.0",
                 "sovereign": True,
                 "desktop": "KDE Plasma 6.3 (Debian 13 Trixie)",
                 "virtual_desktops": 8,
@@ -37,7 +37,7 @@ class ZothOSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             payload = {
                 "os": "ZothOS Sovereign Linux",
-                "version": "3.3.0",
+                "version": "3.4.0",
                 "kernel": os.uname().release,
                 "arch": os.uname().machine,
                 "binary": "/usr/local/bin/zoth-os",

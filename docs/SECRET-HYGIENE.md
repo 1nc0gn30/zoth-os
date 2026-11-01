@@ -29,7 +29,7 @@ Stock gitleaks rules still apply (API keys, private keys, and similar). Lines in
 
 `build/pack-iso.sh` deletes a nested directory under the live-build chroot that belongs to the account `neo`. That cleanup is allowlisted in `.gitleaks.toml` for that script only. The same home path in any other file fails the scan. Do not copy a host home into a new script.
 
-The DePay link in [`ZOTHOS_TOOLS_CATALOG.md`](../ZOTHOS_TOOLS_CATALOG.md) publishes the receive address `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`. That exact public address is allowlisted. A private key is not.
+The Solana Tip link in [`ZOTHOS_TOOLS_CATALOG.md`](../ZOTHOS_TOOLS_CATALOG.md) publishes the receive address `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`. That exact public address is allowlisted. A private key is not.
 
 ## Run a scan locally
 

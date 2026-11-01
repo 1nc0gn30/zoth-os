@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ZOTHOS LOCAL SYSTEM CONVERTER / QUICK-DEPLOY (v3.3.0)
+#  ZOTHOS LOCAL SYSTEM CONVERTER / QUICK-DEPLOY (v3.4.0)
 #  Transforms your existing Debian/Parrot/Ubuntu system into ZOTHOS instantly!
 # ==============================================================================
 
@@ -14,13 +14,13 @@ RESET="\e[0m"
 
 echo -e "${GREEN}${BOLD}"
 echo "  ╔════════════════════════════════════════════════════════════════════╗"
-echo "  ║         TRANSMUTING HOST SYSTEM INTO ZOTHOS REALITY (v3.3.0)       ║"
+echo "  ║         TRANSMUTING HOST SYSTEM INTO ZOTHOS REALITY (v3.4.0)       ║"
 echo "  ╚════════════════════════════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo -e "${CYAN}[1/6] Installing ZOTHOS 3.3.0 command utilities to /usr/local/bin ...${RESET}"
+echo -e "${CYAN}[1/6] Installing ZOTHOS 3.4.0 command utilities to /usr/local/bin ...${RESET}"
 sudo cp -rf "$ROOT_DIR/config/includes.chroot/usr/local/bin/"* /usr/local/bin/ 2>/dev/null || true
 if [ -d "$ROOT_DIR/bin" ]; then
   sudo cp -rf "$ROOT_DIR/bin/"* /usr/local/bin/ 2>/dev/null || true
@@ -56,7 +56,7 @@ sudo mkdir -p /etc/zothos
 if [ -d "$ROOT_DIR/config/includes.chroot/etc" ]; then
   sudo cp -rf "$ROOT_DIR/config/includes.chroot/etc/"* /etc/ 2>/dev/null || true
 fi
-echo "3.3.0" | sudo tee /etc/zothos/version >/dev/null
+echo "3.4.0" | sudo tee /etc/zothos/version >/dev/null
 
 echo -e "\n${GREEN}${BOLD}[✓] ZOTHOS TRANSMUTATION COMPLETE!${RESET}"
 echo -e "You can now execute:"

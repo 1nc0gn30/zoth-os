@@ -1,4 +1,4 @@
-# ZOTHOS 3.3 GRUB Theme
+# ZOTHOS 3.4 GRUB Theme
 
 desktop-image: "splash.png"
 title-color: "#d4af37"

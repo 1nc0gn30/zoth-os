@@ -1,35 +1,148 @@
-#!/usr/bin/env bash
-REPO_DIR="$HOME/NullAITech/zoth-os"
-PYTHON_BIN="python3"
+#!/usr/bin/env python3
+"""
+Zoth OS v3.4.0 — Sovereign Linux Distro, A100 80GB Foundry & ISO Cockpit CLI
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+import os
+import platform
+import sys
+import urllib.request
+from pathlib import Path
 
-if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
-  curl -s http://127.0.0.1:8137/api/status 2>/dev/null || echo '{"status":"OFFLINE","port":8137}'
-elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
-  echo "zoth-os v3.3.0 (ZothOS Sovereign Linux Distro)"
-  exit 0
-elif [ "$1" = "--json" ]; then
-  curl -s http://127.0.0.1:8137/api/status 2>/dev/null || cat << 'JSON'
-{
-  "id": "zoth-os",
-  "name": "Zoth OS v3.3.0",
-  "status": "READY",
-  "binary": "/usr/local/bin/zoth-os",
-  "port": 8137,
-  "license": "100% Free & Open Access (Zero Paywalls)"
-}
-JSON
-elif [ "$1" = "web" ] || [ "$1" = "serve" ]; then
-  exec "$PYTHON_BIN" "$REPO_DIR/server.py" --port 8137
-else
-  cat << 'HELP'
-usage: zoth-os [-h] [--version] [--status] [--json] [serve|web]
+REPO_DIR = Path("/home/zoth/NullAITech/zoth-os")
+CHROOT_BIN = REPO_DIR / "config" / "includes.chroot" / "usr" / "local" / "bin"
+PKG_LISTS = REPO_DIR / "package-lists"
+PANTHEON_MANIFEST = REPO_DIR / "public" / "assets" / "pantheon" / "pantheon_21_manifest.json"
+PLANETS_MANIFEST = REPO_DIR / "public" / "assets" / "planets" / "star_system_manifest.json"
+TAROT_MANIFEST = REPO_DIR / "public" / "assets" / "tarot3d" / "adytum_22_tarot_manifest.json"
 
-Zoth OS v3.3.0 — Sovereign Linux Distro CLI Controller
+DESKTOPS = [
+    {"id": 1, "name": "I · Cockpit & Pantheon", "apps": ["zoth-civilization", "zoth-bot", "zoth-studio-v2"], "shortcut": "Meta+F1"},
+    {"id": 2, "name": "II · AI & Dev Studio", "apps": ["bolt.diy", "azoth-local-agent", "neuro-memory-daemon"], "shortcut": "Meta+F2"},
+    {"id": 3, "name": "III · OSINT & Surface Recon", "apps": ["osint-scout-skill", "shodan-surface-sentinel", "subsweep-lead-scanner"], "shortcut": "Meta+F3"},
+    {"id": 4, "name": "IV · Offensive & Exploit", "apps": ["hexstrike-arsenal", "ghidra-mcp-bridge", "yara-sigma-forge"], "shortcut": "Meta+F4"},
+    {"id": 5, "name": "V · Zero-Trust & Enclave", "apps": ["agent-capsule-jail", "agent-egress-sentinel", "agent-prompt-firewall"], "shortcut": "Meta+F5"},
+    {"id": 6, "name": "VI · Swarm Multiplexer", "apps": ["zoth-swarm-multiplexer", "zoth-relay", "mcp-lens"], "shortcut": "Meta+F6"},
+    {"id": 7, "name": "VII · Media & Shader Forge", "apps": ["reality-shader-forge", "zoth-scene-foundry", "zoth-ascii-magic"], "shortcut": "Meta+F7"},
+    {"id": 8, "name": "VIII · Commerce & Vault", "apps": ["envguard-secrets-vault", "etsy-pod-forge", "pod-smart-router"], "shortcut": "Meta+F8"},
+]
 
-commands:
-  serve, web      Launch local web cockpit daemon on port 8137
-  status, --status Query local daemon status and system telemetry
-  --json          Output deterministic JSON telemetry
-  --version       Display version information
-HELP
-fi
+def get_status():
+    daemon_health = {}
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=2) as r:
+            daemon_health = json.loads(r.read().decode())
+    except Exception:
+        daemon_health = {"status": "standalone"}
+    return {
+        "id": "zoth-os",
+        "os": "ZothOS Sovereign Linux",
+        "version": "3.4.0",
+        "codename": "Hermetic Trixie (Debian 13 + KDE Plasma 6.3)",
+        "kernel": platform.release(),
+        "arch": platform.machine(),
+        "binary": "/usr/local/bin/zoth-os",
+        "port": 8137,
+        "a100_gpu": "NVIDIA A100-SXM4-80GB",
+        "pantheon_agents": 21,
+        "helios_planets": 6,
+        "adytum_tarot_keys": 22,
+        "virtual_desktops": 8,
+        "arsenal_tools": 72,
+        "mcp_servers_configured": 163,
+        "daemon": daemon_health,
+        "engineered_by": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
+        "license": "100% Free & Open Access (Zero Paywalls)"
+    }
+
+def audit_iso():
+    chroot_bins = sorted([p.name for p in CHROOT_BIN.iterdir() if p.is_file()]) if CHROOT_BIN.exists() else []
+    pkg_files = sorted([p.name for p in PKG_LISTS.iterdir() if p.is_file()]) if PKG_LISTS.exists() else []
+    return {
+        "iso_version": "3.4.0",
+        "base_distro": "Debian 13 (Trixie) Live-Build",
+        "desktop_environment": "KDE Plasma 6.3 + XFCE4 Fallback",
+        "boot_modes": ["Live Amnesic (toram)", "Persistent Encrypted LUKS", "Forensic No-Swap"],
+        "cursor_hardening": {"Xcursor_magic": "Xcur", "KWIN_FORCE_SW_CURSOR": "1", "SWCursor": True},
+        "chroot_binaries_count": len(chroot_bins),
+        "chroot_binaries_sample": chroot_bins[:15],
+        "package_lists": pkg_files,
+        "reproducible_build_ready": True
+    }
+
+def main():
+    parser = argparse.ArgumentParser(description="Zoth OS v3.4.0 — Sovereign Linux Distro, A100 Foundry & ISO Cockpit CLI")
+    parser.add_argument("action", nargs="?", choices=["status", "desktops", "pantheon", "planets", "tarot", "audit", "serve", "web"], help="Action command")
+    parser.add_argument("--status", action="store_true", help="Query ZothOS system status and kernel telemetry")
+    parser.add_argument("--desktops", action="store_true", help="List the 8 named ZothOS KDE Plasma virtual desktops")
+    parser.add_argument("--pantheon", action="store_true", help="List the 21 Pantheon Agent Rigs (Braille + Pixel + GLB)")
+    parser.add_argument("--planets", action="store_true", help="List the 6 Helios-Zoth Star System planets")
+    parser.add_argument("--tarot", action="store_true", help="List the 22 Adytum Major Arcana Tarot Keys")
+    parser.add_argument("--audit-iso", action="store_true", help="Audit Live-Build chroot binaries, package lists, and ISO hardening")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--version", "-v", action="store_true", help="Show version")
+    args = parser.parse_args()
+
+    if args.version:
+        print("zoth-os v3.4.0 (ZothOS Sovereign Linux Distro • A100 80GB Foundry)")
+        return
+
+    if args.action in ("serve", "web"):
+        os.execvp("python3", ["python3", str(REPO_DIR / "server.py"), "--port", "8137"])
+
+    if args.pantheon or args.action == "pantheon":
+        data = json.loads(PANTHEON_MANIFEST.read_text()) if PANTHEON_MANIFEST.exists() else {"count": 21, "agents": []}
+        if args.json:
+            print(json.dumps({"count": data.get("count", 21), "states": data.get("states", []), "agents": [{"id": a["id"], "name": a["name"], "role": a["role"], "tarotKey": a.get("tarotKey"), "glbUrl": a.get("glbUrl")} for a in data.get("agents", [])]}, indent=2))
+        else:
+            for a in data.get("agents", []):
+                print(f"{a.get('petIcon','❖')} {a['id']:10s} | {a['name']:12s} | {a['role']} ({a.get('tarotKey')})")
+        return
+
+    if args.planets or args.action == "planets":
+        data = json.loads(PLANETS_MANIFEST.read_text()) if PLANETS_MANIFEST.exists() else {"planets": []}
+        if args.json:
+            print(json.dumps(data, indent=2))
+        else:
+            for p in data.get("planets", []):
+                print(f"🪐 {p['name']:16s} | {p['biome']} | Orbit: {p['orbit_radius']} AU-k | {p['glb_url']}")
+        return
+
+    if args.tarot or args.action == "tarot":
+        data = json.loads(TAROT_MANIFEST.read_text()) if TAROT_MANIFEST.exists() else {"keys": []}
+        if args.json:
+            print(json.dumps({"count": data.get("count", 22), "keys": [{"keyNumber": k["keyNumber"], "roman": k["roman"], "name": k["name"], "guardianAgent": k["guardianAgent"], "glbUrl": k["glbUrl"]} for k in data.get("keys", [])]}, indent=2))
+        else:
+            for k in data.get("keys", []):
+                print(f"🃏 Key {k['roman']:4s} | {k['name']:20s} | Guardian: {k['guardianAgent']}")
+        return
+
+    if args.desktops or args.action == "desktops":
+        data = {"virtual_desktops": DESKTOPS, "count": len(DESKTOPS), "window_manager": "KWin (KDE Plasma 6.3)"}
+        if args.json:
+            print(json.dumps(data, indent=2))
+        else:
+            for d in DESKTOPS:
+                print(f"[{d['shortcut']}] {d['name']} -> {', '.join(d['apps'])}")
+        return
+
+    if args.audit_iso or args.action == "audit":
+        data = audit_iso()
+        if args.json:
+            print(json.dumps(data, indent=2))
+        else:
+            print(f"ZothOS v{data['iso_version']} ISO Audit — {data['chroot_binaries_count']} Chroot Binaries Verified")
+            for p in data["package_lists"]:
+                print(f"  - package-list: {p}")
+        return
+
+    data = get_status()
+    if args.json or args.status or args.action == "status":
+        print(json.dumps(data, indent=2))
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()

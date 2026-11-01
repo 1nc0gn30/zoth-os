@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.2 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
+  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.3 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
 
   <br />
   <br />
@@ -19,14 +19,14 @@
   <p>
     <strong>Site:</strong> <a href="https://zothos.nullai.tech">zothos.nullai.tech</a>
     &nbsp;&bull;&nbsp;
-    <strong>ISO:</strong> <a href="https://github.com/NullAITech/zoth-os/releases/tag/v3.3.0">v3.3.0</a>
+    <strong>ISO:</strong> <a href="https://github.com/NullAITech/zoth-os/releases/tag/v3.4.0">v3.4.0</a>
     &nbsp;&bull;&nbsp;
     <strong>Studio:</strong> <a href="https://zoth.nullai.tech">zoth.nullai.tech</a>
   </p>
 
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ffd700.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License: MIT" /></a>
-    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.3.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
+    <a href="docs/VERIFYING.md"><img src="https://img.shields.io/badge/Releases-v3.4.0%20cosign%20signed-blue.svg?style=for-the-badge&logo=sigstore&logoColor=white" alt="Release signing status" /></a>
     <a href="REPRODUCIBLE_BUILDS.md"><img src="https://img.shields.io/badge/Reproducible%20builds-in%20progress-yellow.svg?style=for-the-badge" alt="Reproducible builds: in progress" /></a>
     <a href="https://scorecard.dev/viewer/?repo=github.com/NullAITech/zoth-os"><img src="https://api.scorecard.dev/projects/github.com/NullAITech/zoth-os/badge" alt="OpenSSF Scorecard" /></a>
     <a href="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml"><img src="https://github.com/NullAITech/zoth-os/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
@@ -64,7 +64,7 @@
 | Pillar | Technology | Implementation Details |
 | :--- | :--- | :--- |
 | **Desktop Core** | **KDE Plasma 6.3 Wayland** | Deterministic 4-Folder Desktop (`01-AI-Agents-and-Dev`, `02-Security-and-Privacy`, `03-ZothOS-Daemons`, `04-Media-and-Utilities`), 7 root flagships, verified 166KB multi-size `Zoth-Gold-Cursors` + `SWCursor` window visibility invariant, and custom golden cursor trails. |
-| **Companion Edition** | **[ZothOS-Lite v1.0 (`:8145`)](https://github.com/NullAITech/zothos-lite)** | Tails-style Amnesic Monotone RAM-only edition featuring **AZOTH** (Embodied `U+2800` Braille AI Agent with 6 mood rigs & phoneme lip-sync), **[Chain of Thoughts (`zoth-cot`)](https://github.com/NullAITech/chain-of-thoughts)**, **Kokoro 82M ONNX Voice + Mic STT**, **3D Perspective Braille Matrix**, **Sovereign Horology Niche Clock** (`Braille BCD + .beats + GMST`), and **75+ Kali/Parrot CLI tools**. |
+| **Companion Edition** | **[ZothOS-Lite v1.1 (`:8145`)](https://github.com/NullAITech/zothos-lite)** | Tails-style Amnesic Monotone RAM-only edition featuring **AZOTH** (Embodied `U+2800` Braille AI Agent with 6 mood rigs & phoneme lip-sync), **[Chain of Thoughts (`zoth-cot`)](https://github.com/NullAITech/chain-of-thoughts)**, **Kokoro 82M ONNX Voice + Mic STT**, **3D Perspective Braille Matrix**, **Sovereign Horology Niche Clock** (`Braille BCD + .beats + GMST`), and **75+ Kali/Parrot CLI tools**. |
 | **Chain of Thoughts** | **[`zoth-cot` Working Memory DAG](https://github.com/NullAITech/chain-of-thoughts)** | Persistent multi-turn context & cryptographic SHA-256 Merkle thought chain (`N00 -> N01 -> N02...`), automatic semantic fact extraction (`IDENTITY`, `MEMORY`, `MISSION`, `SECRET`), and 60fps Animated Braille/Bayer Synaptic DAG window (`winCoT`). |
 | **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for 100% package cohesion. |
 | **Kernel Stack** | **Debian Linux 6.12 (stock)** | Debian's standard `linux-image-amd64` kernel with Intel UHD (`i915`) + NVIDIA Quadro hybrid graphics DRM auto-switching. |
@@ -73,7 +73,7 @@
 | **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.13, Rust, Go, Foundry, and Solana. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction (from the `30-opsec` + `40-security` package lists). |
-| **Sovereign Tool Matrix** | **71 Studio Tools (59 with public repos) & 22 Enclave Daemons**<!-- TODO: verify the 22 daemon count --> | 100% interactive workstation coverage in Zoth Studio v2 (54 in-browser + 17 local CLI) on loopback ports :8094–:8120, :9393, :5225, :8787. |
+| **Sovereign Tool Matrix** | **72 Studio Tools (72 with public repos) & 23 Enclave Daemons**<!-- TODO: verify the 22 daemon count --> | 100% interactive workstation coverage in Zoth Studio v2 (53 in-browser + 19 local CLI) on loopback ports :8094–:8120, :9393, :5225, :8787. |
 | **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -86,7 +86,7 @@
 
 The flagship KDE Plasma 6.3 Wayland experience: 24K Celtic Gold icons, alchemical typography, translucent frosted obsidian taskbar, and responsive desktop shortcuts for the complete sovereign workstation suite.
 
-![ZOTHOS 3.2 desktop](docs/screenshots/zothos-desktop.png)
+![ZOTHOS 3.4 desktop](docs/screenshots/zothos-desktop.png)
 
 </details>
 
@@ -338,7 +338,7 @@ To eliminate stateless context loss across local Ollama (`qwen2.5-coder`) and cl
 
 ## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.2 integrates with Zoth Studio v2 to provide **43 interactive workstations across all 71 Studio tools** (54 in-browser + 17 local CLI):
+ZOTHOS Linux 3.3 integrates with Zoth Studio v2 to provide **43 interactive workstations across all 72 Studio tools** (53 in-browser + 19 local CLI):
 
 ### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
@@ -376,7 +376,7 @@ Recent sovereign hardening cadences have ported key tools (`aeo-graph-engine`, `
 - **Triple-Viewport Automated Verification**: Headless Chrome tests verify 0 console errors and 0px horizontal overflow across mobile (390px), tablet (820px), and desktop (1425px).
 
 ### 3. Model Context Protocol (MCP) Server Architecture & 4-Tier Security Rings
-ZOTHOS Linux 3.2 implements the native **Model Context Protocol (MCP)** master catalog in `/etc/zothos/mcp-servers.json` managed via `zoth-mcp`. Tools are governed by strict mathematical privilege rings:
+ZOTHOS Linux 3.3 implements the native **Model Context Protocol (MCP)** master catalog in `/etc/zothos/mcp-servers.json` managed via `zoth-mcp`. Tools are governed by strict mathematical privilege rings:
 
 | Security Ring | Level | Isolation Boundary | Assigned MCP Servers |
 | :--- | :--- | :--- | :--- |
@@ -400,7 +400,7 @@ ZOTHOS Linux 3.2 implements the native **Model Context Protocol (MCP)** master c
 - **Turbo Boost Lock**: `no_turbo = 1` enforced to prevent thermal throttling and acoustic disruption.
 - **Kokoro Voice Standby**: Kokoro TTS (`:9394`) kept strictly **OFFLINE in Thermal Guard Standby** when not actively generating speech.
 
-See the complete 59-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_TOOLS_CATALOG.md).
+See the complete 72-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_TOOLS_CATALOG.md).
 
 ---
 
@@ -442,11 +442,11 @@ See the complete 59-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIOS systems.
 
 ### 1. Booting the Live ISO
-The current download is [v3.3.0](https://github.com/NullAITech/zoth-os/releases/tag/v3.3.0). GitHub splits the ISO into five parts plus `zothos-join-iso.sh`. Put those files in one folder, rejoin them, then flash a USB drive of at least 16 GB:
+The current download is [v3.4.0](https://github.com/NullAITech/zoth-os/releases/tag/v3.4.0). GitHub splits the ISO into five parts plus `zothos-join-iso.sh`. Put those files in one folder, rejoin them, then flash a USB drive of at least 16 GB:
 
 ```bash
 bash zothos-join-iso.sh
-sudo dd if=zothos-3.3-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
+sudo dd if=zothos-3.4-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
 `zothos-join-iso.sh` checks the SHA-256 before it says the image is ready. Replace `/dev/sdX` with the USB device, not a partition.
@@ -505,7 +505,7 @@ What is in place today, and what is not:
 | Item | Status |
 | :--- | :--- |
 | **Release checksums** | ✅ SHA-256 published for every release. Detects corruption, not tampering. |
-| **Release signatures** | ✅ v3.2.0 and v3.3.0 ship `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
+| **Release signatures** | ✅ v3.2.0 and v3.4.0 ship `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
 | **Reproducible builds** | ⏳ In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
 | **OpenSSF Scorecard** | ✅ Workflow runs and publishes results (score was 1.0/10 at the Oct 2026 audit; fixes since then should raise it). |
 | **Static analysis** | ✅ CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
@@ -518,7 +518,7 @@ Known live-image defaults you should understand before using ZOTHOS on a real ne
 (fixed passwords reset at boot, passwordless sudo) are documented in [`SECURITY.md`](SECURITY.md).
 
 ```bash
-# Verify the v3.3.0 signature, then the part checksums
+# Verify the v3.4.0 signature, then the part checksums
 cosign verify-blob SHA256SUMS --bundle SHA256SUMS.cosign.bundle \
   --certificate-identity-regexp '^https://github.com/NullAITech/zoth-os/\.github/workflows/release-sign\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com

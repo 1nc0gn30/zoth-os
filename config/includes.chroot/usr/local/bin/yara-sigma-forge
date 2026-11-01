@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-YARA-X & Sigma Threat Rule Forge CLI (v3.3.0)
+YARA-X & Sigma Threat Rule Forge CLI (v3.4.0)
 Engineered by 1nc0gn30 • NullAI Platform
 """
 
@@ -17,7 +17,7 @@ TOOL_ID = "yara-sigma-forge"
 TOOL_REPO = "yara-sigma-forge"
 TOOL_NAME = "YARA-X & Sigma Threat Rule Forge"
 TOOL_DESC = "100% client-side YARA-X & Sigma threat detection compiler with 60fps byte-offset entropy radar, CVE-2024-4577 PHP-CGI / ELF64 memfd / AI Agent exfil signatures, and MITRE ATT&CK mapping."
-TOOL_VERSION = "3.3.0"
+TOOL_VERSION = "3.4.0"
 TOOL_CATEGORY = "Security & Recon"
 TOOL_PORT = 8133
 REPO_DIR = os.path.expanduser("~/NullAITech/yara-sigma-forge")

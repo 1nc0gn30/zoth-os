@@ -8,11 +8,12 @@ TOOL_DESC = 'Autonomous biometric laptop perimeter defense, facial recognition t
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Security & OpSec'
 TOOL_PORT = 8103
-REPO_DIR = os.path.expanduser('~/NullAITech/anderson-security-sentinel')
-PY_CLI = None
-PKG_DIR = None
+PANEL_PORT = 8150
+REPO_DIR = '/home/zoth/NullAITech/anderson-security-sentinel'
+CONTROL_CLI = os.path.join(REPO_DIR, 'control/sentinel')
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+PANEL_URL = f"http://127.0.0.1:{PANEL_PORT}"
 
 def check_daemon():
     try:
@@ -23,6 +24,14 @@ def check_daemon():
     except Exception:
         pass
     return None
+
+def api_get(endpoint):
+    try:
+        req = urllib.request.Request(f"http://127.0.0.1:{TOOL_PORT}{endpoint}")
+        with urllib.request.urlopen(req, timeout=3.0) as resp:
+            return json.loads(resp.read().decode('utf-8'))
+    except Exception as e:
+        return {"error": str(e)}
 
 def api_post(endpoint, data=None):
     try:
@@ -45,30 +54,64 @@ def main():
         description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
     )
     parser.add_argument('--version', '-v', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS daemon status')
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS daemon & panel status')
     parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
     parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
     parser.add_argument('--arm', action='store_true', help='Arm the biometric security perimeter')
     parser.add_argument('--disarm', action='store_true', help='Disarm the biometric security perimeter')
     parser.add_argument('--lockdown', action='store_true', help='Trigger emergency workstation lockdown')
-    parser.add_argument('subcommand', nargs='?', choices=['arm', 'disarm', 'lockdown', 'status'], help='Quick command')
+    parser.add_argument(
+        'subcommand',
+        nargs='?',
+        choices=['on', 'off', 'restart', 'arm', 'disarm', 'xray', 'dossier', 'lockdown', 'status'],
+        help='Tactical command (on, off, restart, arm, disarm, xray, dossier, lockdown, status)'
+    )
     parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.subcommand in ('on', 'off', 'restart'):
+        res = subprocess.run([CONTROL_CLI, parsed.subcommand], text=True)
+        sys.exit(res.returncode)
 
     daemon_status = check_daemon()
 
     if parsed.arm or parsed.subcommand == 'arm':
         res = api_post('/api/arm')
-        print(f"✦ Anderson Sentinel: Perimeter ARMED -> {res}")
+        print(f"✦ Anderson Sentinel: Perimeter ARMED -> {json.dumps(res)}")
         return
 
     if parsed.disarm or parsed.subcommand == 'disarm':
         res = api_post('/api/disarm')
-        print(f"✦ Anderson Sentinel: Perimeter DISARMED -> {res}")
+        print(f"✦ Anderson Sentinel: Perimeter DISARMED -> {json.dumps(res)}")
+        return
+
+    if parsed.subcommand == 'xray':
+        res = api_get('/api/wifi_xray')
+        summary = {
+            "scanning": res.get("scanning"),
+            "ambient_node_count": len(res.get("nodes", [])),
+            "disturbance_pct": res.get("disturbance_pct"),
+            "estimated_room_m": res.get("estimated_room_m"),
+            "vrti_tomography_active": bool(res.get("vrti")),
+            "building_perimeter": res.get("building_perimeter", {}).get("summary") if isinstance(res.get("building_perimeter"), dict) else "computed"
+        }
+        print(json.dumps(summary, indent=2))
+        return
+
+    if parsed.subcommand == 'dossier':
+        res = api_get('/api/export_dossier')
+        summary = {
+            "dossier_id": res.get("dossier_id"),
+            "generated_at": res.get("generated_at"),
+            "system_posture": res.get("system_posture"),
+            "biometric_engine": res.get("biometric_engine"),
+            "hardware_perimeters": res.get("hardware_perimeters"),
+        }
+        print(json.dumps(summary, indent=2))
         return
 
     if parsed.lockdown or parsed.subcommand == 'lockdown':
         res = api_post('/api/lockdown')
-        print(f"✦ Anderson Sentinel: Workstation LOCKDOWN Executed -> {res}")
+        print(f"✦ Anderson Sentinel: Workstation LOCKDOWN Executed -> {json.dumps(res)}")
         return
 
     info = {
@@ -79,9 +122,10 @@ def main():
         "category": TOOL_CATEGORY,
         "installed": os.path.exists(REPO_DIR),
         "repo_path": REPO_DIR,
-        "native_cli": os.path.join(REPO_DIR, 'bin/anderson-sentinel'),
+        "native_cli": CONTROL_CLI,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
+        "control_panel_url": PANEL_URL,
         "daemon_online": daemon_status is not None,
         "daemon_info": daemon_status,
         "license": "100% Free & Open Access (Zero Paywalls)",
@@ -102,19 +146,21 @@ def main():
 
     if parsed.status or parsed.subcommand == 'status':
         state = "ONLINE" if daemon_status else "OFFLINE"
-        print(f"✦ {TOOL_NAME} Daemon Status: {state} (:8103)")
+        print(f"✦ {TOOL_NAME} Daemon Status: {state} (:8103) | Control Panel: {PANEL_URL}")
         if daemon_status:
+            print(f"  Armed State    : {daemon_status.get('armed')}")
             print(f"  Security State : {daemon_status.get('security_status')}")
             print(f"  Enrolled Faces : {daemon_status.get('enrolled_count')}")
             print(f"  Camera Active  : {daemon_status.get('camera_active')}")
         return
 
     print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
-    print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Daemon     : {'ONLINE' if daemon_status else 'OFFLINE'}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"  Repository    : {REPO_DIR}")
+    print(f"  Workbench     : {STUDIO_URL}")
+    print(f"  Tactical Port : {LOCAL_PORT_URL}")
+    print(f"  Control Panel : {PANEL_URL}")
+    print(f"  Daemon        : {'ONLINE' if daemon_status else 'OFFLINE'}")
+    print(f"  Access        : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
 if __name__ == '__main__':
     main()

@@ -53,7 +53,7 @@ VAELOR_STATE_PATH = Path(os.environ.get(
 def http_get(url: str, timeout: float = 3.5) -> tuple[int, dict | str]:
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "ZothNode-Enterprise/3.3.0", "Accept": "application/json, text/plain"}
+        headers={"User-Agent": "ZothNode-Enterprise/3.4.0", "Accept": "application/json, text/plain"}
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -77,7 +77,7 @@ def http_post(url: str, payload: dict, timeout: float = 4.0) -> tuple[int, dict 
         url,
         data=raw_bytes,
         headers={
-            "User-Agent": "ZothNode-Enterprise/3.3.0",
+            "User-Agent": "ZothNode-Enterprise/3.4.0",
             "Content-Type": "application/json",
             "Accept": "application/json"
         },
@@ -221,9 +221,9 @@ def cmd_status(args) -> int:
         bft_validators = res_peers.get("bftValidators", [])
     else:
         cluster_peers = [
-            {"handle": "@zoth", "name": "Neal Master Cockpit", "endpoint": rpc_url, "status": "CONNECTED", "role": "COCKPIT_ORCHESTRATOR"},
+            {"handle": "@zoth", "name": "1nc0gn30 Master Cockpit", "endpoint": rpc_url, "status": "CONNECTED", "role": "COCKPIT_ORCHESTRATOR"},
             {"handle": "@zoth-rig2", "name": "24/7 AI Laptop", "endpoint": rpc_url, "status": "CONNECTED", "role": "AI_FLEET_WORKER"},
-            {"handle": "@neal", "name": "Neal Primary", "endpoint": rpc_url, "status": "CONNECTED", "role": "SOVEREIGN_OPERATOR"}
+            {"handle": "@1nc0gn30", "name": "1nc0gn30 Primary", "endpoint": rpc_url, "status": "CONNECTED", "role": "SOVEREIGN_OPERATOR"}
         ]
         bft_validators = [
             {"validatorId": "val-alpha-virginia", "name": "US-East Sovereign Validator", "flag": "🇺🇸", "latencyMs": 1.37, "status": "ONLINE"},
@@ -238,7 +238,7 @@ def cmd_status(args) -> int:
         "address": "vlr1_multisig_corp_treasury",
         "policy": "2-of-3",
         "balanceVlr": 25000.0,
-        "signers": ["@zoth", "@neal", "@zoth-rig2"],
+        "signers": ["@zoth", "@1nc0gn30", "@zoth-rig2"],
         "activeProposalsCount": 0
     }
     if multisig_ok and isinstance(res_multisig, dict) and "vault" in res_multisig:
@@ -417,9 +417,9 @@ def cmd_cluster(args) -> int:
             validators = res.get("bftValidators", [])
         else:
             peers = [
-                {"handle": "@zoth", "name": "Neal Master Cockpit", "endpoint": rpc_url, "status": "CONNECTED", "role": "COCKPIT_ORCHESTRATOR"},
+                {"handle": "@zoth", "name": "1nc0gn30 Master Cockpit", "endpoint": rpc_url, "status": "CONNECTED", "role": "COCKPIT_ORCHESTRATOR"},
                 {"handle": "@zoth-rig2", "name": "24/7 AI Laptop", "endpoint": rpc_url, "status": "CONNECTED", "role": "AI_FLEET_WORKER"},
-                {"handle": "@neal", "name": "Neal Primary", "endpoint": rpc_url, "status": "CONNECTED", "role": "SOVEREIGN_OPERATOR"}
+                {"handle": "@1nc0gn30", "name": "1nc0gn30 Primary", "endpoint": rpc_url, "status": "CONNECTED", "role": "SOVEREIGN_OPERATOR"}
             ]
 
         if args.json:
@@ -559,7 +559,7 @@ def cmd_multisig(args) -> int:
             print(f"{RED}Usage: zoth-node multisig approve <proposal_id> [--signer @signer]{RESET}")
             return 1
 
-        signer = args.signer or "@neal"
+        signer = args.signer or "@1nc0gn30"
         payload = {"proposalId": args.proposal_id, "signer": signer}
         code, res = http_post(f"{rpc_url}/api/multisig/approve", payload)
 
@@ -653,7 +653,7 @@ def main():
     p_multisig.add_argument("amount", nargs="?", default=0, help="Amount in VLR")
     p_multisig.add_argument("reason", nargs="?", default="", help="Proposal reason / memo")
     p_multisig.add_argument("--proposal-id", default=None, help="Proposal ID to approve")
-    p_multisig.add_argument("--signer", default=None, help="Signer handle (@zoth, @neal, @zoth-rig2)")
+    p_multisig.add_argument("--signer", default=None, help="Signer handle (@zoth, @1nc0gn30, @zoth-rig2)")
     p_multisig.add_argument("--json", action="store_true", help="Output machine-readable JSON")
 
     # metrics

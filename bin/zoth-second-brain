@@ -1056,7 +1056,7 @@ def cmd_wiki(args):
         mermaid_chart = """```mermaid
 flowchart LR
     subgraph UserSurfaces["👤 User & Client Surfaces"]
-        P1["Passkey Biometric<br/>@neal"]
+        P1["Passkey Biometric<br/>@1nc0gn30"]
         P2["Merchant POS SDK<br/>@merchant"]
         P3["Pull Subscriptions<br/>Guarded Allowances"]
     end

@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# ⚡ ZOTHOS 3.0 → 3.4.0 SOVEREIGN IN-PLACE UPGRADER
+# ==============================================================================
+# Upgrades any existing ZothOS 3.0 / 3.1 / 3.2 installation straight to
+# ZothOS v3.4.0 ("Sovereign Neural & Account-Lattice Edition") without
+# needing to re-flash an ISO!
+#
+# Usage on the 3.0 laptop:
+#   git clone https://github.com/NullAITech/zoth-os.git ~/NullAITech/zoth-os 2>/dev/null || git -C ~/NullAITech/zoth-os pull
+#   bash ~/NullAITech/zoth-os/tools/upgrade-to-v3.4.sh
+# ==============================================================================
+set -euo pipefail
+
+GREEN="\e[1;32m"
+CYAN="\e[1;36m"
+GOLD="\e[1;33m"
+PURPLE="\e[1;35m"
+BOLD="\e[1m"
+RESET="\e[0m"
+
+echo -e "${GOLD}${BOLD}"
+echo "  ╔════════════════════════════════════════════════════════════════════╗"
+echo "  ║      ⚡ ZOTHOS 3.0 → 3.4.0 SOVEREIGN IN-PLACE UPGRADE ENGINE       ║"
+echo "  ╚════════════════════════════════════════════════════════════════════╝"
+echo -e "${RESET}"
+
+REPO_DIR="${ZOTH_OS_DIR:-$HOME/NullAITech/zoth-os}"
+NULLAI_DIR="$HOME/NullAITech"
+mkdir -p "$NULLAI_DIR" "$HOME/.local/bin"
+
+# ------------------------------------------------------------------------------
+# STEP 1: Pull latest ZothOS 3.4.0 commits (with hard reset & cache-bust re-exec)
+# ------------------------------------------------------------------------------
+if [ "${1:-}" != "--from-git" ]; then
+  if [ ! -d "$REPO_DIR/.git" ]; then
+    echo -e "${CYAN}[1/7] Cloning latest NullAITech/zoth-os repository to $REPO_DIR ...${RESET}"
+    mkdir -p "$(dirname "$REPO_DIR")"
+    git clone https://github.com/NullAITech/zoth-os.git "$REPO_DIR"
+  else
+    echo -e "${CYAN}[1/7] Synchronizing $REPO_DIR to latest origin/main (v3.4.0) ...${RESET}"
+    git -C "$REPO_DIR" fetch origin main
+    git -C "$REPO_DIR" checkout -f main
+    git -C "$REPO_DIR" reset --hard origin/main
+  fi
+  exec bash "$REPO_DIR/tools/upgrade-to-v3.4.sh" --from-git
+fi
+echo -e "${CYAN}[1/7] Running latest ZothOS v3.4.0 Upgrader from $(git -C "$REPO_DIR" rev-parse --short HEAD) ...${RESET}"
+
+# ------------------------------------------------------------------------------
+# STEP 2: Upgrade CLI Arsenal in /usr/local/bin and ~/.local/bin
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[2/6] Upgrading /usr/local/bin & ~/.local/bin ZothOS 3.4 CLI Arsenal ...${RESET}"
+if [ -d "$REPO_DIR/config/includes.chroot/usr/local/bin" ]; then
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/local/bin/"* /usr/local/bin/ 2>/dev/null || true
+  cp -rf "$REPO_DIR/config/includes.chroot/usr/local/bin/"* "$HOME/.local/bin/" 2>/dev/null || true
+fi
+if [ -d "$REPO_DIR/bin" ]; then
+  sudo cp -rf "$REPO_DIR/bin/"* /usr/local/bin/ 2>/dev/null || true
+  cp -rf "$REPO_DIR/bin/"* "$HOME/.local/bin/" 2>/dev/null || true
+fi
+
+sudo chmod +x /usr/local/bin/zoth-* /usr/local/bin/agent-* /usr/local/bin/vaelor-* 2>/dev/null || true
+chmod +x "$HOME/.local/bin/"* 2>/dev/null || true
+
+# ------------------------------------------------------------------------------
+# STEP 3: Deploy Full /opt Applications, Symlinks & Sovereign Repos
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[3/6] Deploying 100% /opt Sovereign Applications & Symlinks ...${RESET}"
+sudo mkdir -p /opt
+if [ -d "$REPO_DIR/config/includes.chroot/opt" ]; then
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/opt/"* /opt/ 2>/dev/null || true
+fi
+
+# Recreate canonical /opt symlinks
+sudo ln -sf /opt/zoth-cockpit-app /opt/zoth-cockpit 2>/dev/null || true
+sudo ln -sf /opt/zoth-mcp-app /opt/zoth-mcp 2>/dev/null || true
+sudo ln -sf /opt/zoth-ai-stack-app /opt/zoth-ai-stack 2>/dev/null || true
+sudo ln -sf /opt/zoth-nexus-app /opt/zoth-tools-installer 2>/dev/null || true
+
+# Synchronize Vaelor L1 to ~/NullAITech/vaelor-network and symlink vaelor-cli
+if [ -d "/opt/vaelor-network" ]; then
+  mkdir -p "$NULLAI_DIR/vaelor-network"
+  rsync -a --exclude='.git' /opt/vaelor-network/ "$NULLAI_DIR/vaelor-network/" 2>/dev/null || true
+  sudo ln -sf "$NULLAI_DIR/vaelor-network/bin/vaelor-cli" /usr/local/bin/vaelor-cli 2>/dev/null || true
+  ln -sf "$NULLAI_DIR/vaelor-network/bin/vaelor-cli" "$HOME/.local/bin/vaelor-cli" 2>/dev/null || true
+  chmod +x "$NULLAI_DIR/vaelor-network/bin/vaelor-cli" 2>/dev/null || true
+fi
+
+# Synchronize Neuro-Memory Daemon to ~/NullAITech/neuro-memory-daemon and symlink zoth-memory
+if [ -d "/opt/neuro-memory-daemon" ]; then
+  mkdir -p "$NULLAI_DIR/neuro-memory-daemon"
+  rsync -a --exclude='.git' /opt/neuro-memory-daemon/ "$NULLAI_DIR/neuro-memory-daemon/" 2>/dev/null || true
+  sudo ln -sf "$NULLAI_DIR/neuro-memory-daemon/bin/zoth-memory" /usr/local/bin/zoth-memory 2>/dev/null || true
+  ln -sf "$NULLAI_DIR/neuro-memory-daemon/bin/zoth-memory" "$HOME/.local/bin/zoth-memory" 2>/dev/null || true
+  chmod +x "$NULLAI_DIR/neuro-memory-daemon/bin/zoth-memory" 2>/dev/null || true
+fi
+
+# Clone or pull Zoth Studio v2
+if [ ! -d "$NULLAI_DIR/zoth-studio-v2/.git" ]; then
+  echo -e "${PURPLE}  ↳ Cloning Zoth Studio v2 into $NULLAI_DIR/zoth-studio-v2 ...${RESET}"
+  git clone https://github.com/NullAITech/zoth-studio-v2.git "$NULLAI_DIR/zoth-studio-v2" 2>/dev/null || true
+else
+  git -C "$NULLAI_DIR/zoth-studio-v2" pull origin main 2>/dev/null || true
+fi
+
+# ------------------------------------------------------------------------------
+# STEP 4: Upgrade /etc Configuration, OS Branding, Shell & Desktop Profiles
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[4/7] Upgrading /etc Configuration, OS Release, .bashrc & Desktop Profiles ...${RESET}"
+sudo mkdir -p /etc/zothos
+if [ -d "$REPO_DIR/config/includes.chroot/etc" ]; then
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/etc/"* /etc/ 2>/dev/null || true
+fi
+
+# Ensure 3.4.0 release version
+echo "3.4.0" | sudo tee /etc/zothos/version >/dev/null
+sudo sed -i 's/VERSION_ID=.*/VERSION_ID="3.4.0"/' /etc/os-release 2>/dev/null || true
+sudo sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="ZothOS 3.4.0 Sovereign Neural & Account-Lattice Edition"/' /etc/os-release 2>/dev/null || true
+
+# Deploy 3.3 .bashrc and skel configurations to user home
+if [ -f "$REPO_DIR/config/includes.chroot/etc/skel/.bashrc" ]; then
+  cp -f "$REPO_DIR/config/includes.chroot/etc/skel/.bashrc" "$HOME/.bashrc" 2>/dev/null || true
+fi
+if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/.config" ]; then
+  mkdir -p "$HOME/.config/zothos" "$HOME/.config/autostart"
+  cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/.config/"* "$HOME/.config/" 2>/dev/null || true
+  echo -n "gold" > "$HOME/.config/zothos/current_mode"
+  echo -n "gold" > "$HOME/.config/zothos/profile.state"
+  echo -n "gold" > "$HOME/.config/zothos/reality.state"
+fi
+if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/.local/share" ]; then
+  mkdir -p "$HOME/.local/share"
+  cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/.local/share/"* "$HOME/.local/share/" 2>/dev/null || true
+fi
+if [ -d /opt/zoth-bot ] && [ ! -d /opt/zoth-bot/node_modules ]; then
+  echo -e "${CYAN}  • Installing Zoth-Bot Desktop Companion runtime dependencies ...${RESET}"
+  sudo npm --prefix /opt/zoth-bot install --omit=dev >/dev/null 2>&1 || true
+fi
+
+# ------------------------------------------------------------------------------
+# STEP 5: Deploy Full /usr/share Assets & Clean 3.3 4-Folder Desktop Layout
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[5/7] Deploying Full 3.3 /usr/share (Plasma 3D Wallpaper, Sounds, Icons, Themes) & 4-Folder Desktop ...${RESET}"
+sudo mkdir -p /usr/share/backgrounds/zothos /usr/share/themes /usr/share/applications /usr/share/sounds/zothos "$HOME/Desktop"
+if [ -d "$REPO_DIR/config/includes.chroot/usr/share" ]; then
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/usr/share/"* /usr/share/ 2>/dev/null || true
+fi
+
+# Clean legacy 3.0 top-level .desktop clutter and install clean 3.3 4-Folder Desktop
+rm -f "$HOME/Desktop/"*.desktop 2>/dev/null || true
+if [ -d "$REPO_DIR/config/includes.chroot/etc/skel/Desktop" ]; then
+  cp -rf "$REPO_DIR/config/includes.chroot/etc/skel/Desktop/"* "$HOME/Desktop/" 2>/dev/null || true
+  chmod +x "$HOME/Desktop/"*.desktop "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
+fi
+
+# Install ZothOS Sovereign Gold GRUB Bootloader Theme & regenerate grub.cfg
+if [ -d "$REPO_DIR/config/includes.chroot/boot/grub/themes/zoth-hermetic" ]; then
+  echo -e "${CYAN}  • Installing ZothOS Sovereign Gold GRUB Bootloader Theme ...${RESET}"
+  sudo mkdir -p /boot/grub/themes/zoth-hermetic
+  sudo cp -rf "$REPO_DIR/config/includes.chroot/boot/grub/themes/zoth-hermetic/"* /boot/grub/themes/zoth-hermetic/
+  if [ -f /etc/default/grub ]; then
+    sudo sed -i 's|^GRUB_DISTRIBUTOR=.*|GRUB_DISTRIBUTOR="ZothOS"|' /etc/default/grub
+    if grep -q "^GRUB_THEME=" /etc/default/grub; then
+      sudo sed -i 's|^GRUB_THEME=.*|GRUB_THEME="/boot/grub/themes/zoth-hermetic/theme.txt"|' /etc/default/grub
+    else
+      echo 'GRUB_THEME="/boot/grub/themes/zoth-hermetic/theme.txt"' | sudo tee -a /etc/default/grub >/dev/null
+    fi
+    sudo update-grub 2>/dev/null || true
+  fi
+fi
+
+# ------------------------------------------------------------------------------
+# STEP 6: Activate Live ZothOS 3.4 Sovereign Gold Mode, 3D Wallpaper & Zoth-Bot
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[6/7] Activating Live ZothOS 3.4 Sovereign Gold Mode & 3D Desktop Environment ...${RESET}"
+export DISPLAY="${DISPLAY:-:0}"
+
+# Eliminate legacy XFCE4 / LightDM binaries & configs so system boots pure SDDM + KDE Plasma 6
+echo "/usr/bin/sddm" | sudo tee /etc/X11/default-display-manager >/dev/null
+sudo ln -sfn /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service 2>/dev/null || true
+sudo ln -sfn /usr/bin/startplasma-x11 /etc/alternatives/x-session-manager 2>/dev/null || true
+sudo rm -f /usr/bin/xfce4-panel /usr/bin/xfdesktop /usr/bin/xfwm4 /usr/bin/startxfce4 /usr/share/xsessions/xfce.desktop /usr/share/xsessions/lightdm-xsession.desktop /usr/share/wayland-sessions/xfce-wayland.desktop 2>/dev/null || true
+sudo systemctl disable lightdm.service 2>/dev/null || true
+sudo systemctl mask lightdm.service 2>/dev/null || true
+sudo systemctl enable sddm.service 2>/dev/null || true
+
+TARGET_USER="${SUDO_USER:-$(whoami)}"
+sudo mkdir -p /etc/sddm.conf.d
+sudo tee /etc/sddm.conf >/dev/null << EOF
+[General]
+DisplayServer=x11
+Numlock=on
+
+[Autologin]
+User=${TARGET_USER}
+Session=plasmax11.desktop
+Relogin=false
+
+[Theme]
+Current=zothos
+CursorTheme=breeze_cursors
+EOF
+sudo cp -f /etc/sddm.conf /etc/sddm.conf.d/autologin.conf 2>/dev/null || true
+
+killall -9 xfce4-panel xfdesktop xfwm4 picom 2>/dev/null || true
+sudo systemctl restart zoth-sentinel.service 2>/dev/null || true
+
+if ! pgrep -x kwin_x11 >/dev/null 2>&1 && ! pgrep -x kwin_wayland >/dev/null 2>&1; then
+  nohup kwin_x11 --replace >/dev/null 2>&1 &
+fi
+if [ -x /usr/local/bin/zoth-mode ]; then
+  /usr/local/bin/zoth-mode gold || true
+fi
+if [ -x /usr/local/bin/zoth-plasma-setup ]; then
+  /usr/local/bin/zoth-plasma-setup || true
+fi
+if pgrep -x plasmashell >/dev/null 2>&1; then
+  kquitapp6 plasmashell 2>/dev/null || killall plasmashell 2>/dev/null || true
+  sleep 1
+  nohup kstart plasmashell >/dev/null 2>&1 &
+else
+  nohup plasmashell --replace >/dev/null 2>&1 &
+fi
+if [ -x /opt/zoth-bot/bin/zoth-bot ] && ! pgrep -f "/opt/zoth-bot" >/dev/null 2>&1; then
+  nohup /opt/zoth-bot/bin/zoth-bot >/dev/null 2>&1 &
+fi
+
+# ------------------------------------------------------------------------------
+# STEP 7: Verification of ZothOS v3.4.0 Sovereign Arsenal
+# ------------------------------------------------------------------------------
+echo -e "\n${CYAN}[7/7] Verifying ZothOS v3.4.0 Sovereign Utilities ...${RESET}"
+CORE_CMDS=(
+  "zoth-os"
+  "zoth-node"
+  "zoth-comm"
+  "zoth-second-brain"
+  "zoth-dualboot"
+  "zoth-vault"
+  "zoth-mcp"
+  "vaelor-cli"
+  "zoth-memory"
+)
+
+ALL_PRESENT=true
+for cmd in "${CORE_CMDS[@]}"; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    echo -e "  ${GREEN}✓${RESET} ${BOLD}$cmd${RESET} ($(command -v "$cmd"))"
+  else
+    echo -e "  ${GOLD}⚠${RESET} $cmd (not found in current PATH)"
+    ALL_PRESENT=false
+  fi
+done
+
+echo -e "\n${GREEN}${BOLD}✦ ZOTHOS UPGRADED TO v3.4.0 SUCCESSFULLY! ✦${RESET}"
+echo -e "  • Run ${GOLD}zoth-node status${RESET} to inspect your node, Merkle state root, and BFT quorum."
+echo -e "  • Run ${GOLD}zoth-comm peers${RESET} to discover lattice nodes across your local and mesh fleet."
+echo -e "  • Run ${GOLD}zoth-second-brain status${RESET} to inspect your Second Brain & STDP Memory."
+echo -e "  • Run ${GOLD}zoth-mcp list${RESET} to inspect the 36-Tool Ring-0 MCP Registry.\n"
+
+# If currently running inside legacy LightDM / XFCE4 session, hand off cleanly to SDDM (KDE Plasma 6)
+if systemctl is-active --quiet lightdm.service 2>/dev/null || pgrep -x xfce4-session >/dev/null 2>&1; then
+  echo -e "${GOLD}✦ Switching active display manager from legacy LightDM/XFCE4 to SDDM + KDE Plasma 6 ...${RESET}"
+  nohup sudo sh -c 'sleep 1; systemctl stop lightdm.service 2>/dev/null || killall -9 lightdm xfce4-session 2>/dev/null; systemctl unmask sddm.service 2>/dev/null; systemctl restart sddm.service' >/dev/null 2>&1 &
+fi
