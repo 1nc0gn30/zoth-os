@@ -1366,7 +1366,7 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/comm/handshake' && req.method === 'POST') {
       const body = await readJsonBody(req);
-      const from = body.from || body.caller || '@neal';
+      const from = body.from || body.caller || '@1nc0gn30';
       const to = body.to || '@zoth-rig2';
       const passphrase = body.passphrase || '';
       const introNote = body.introNote || 'ZothOS sovereign handshake';
@@ -1395,7 +1395,7 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/comm/send' && req.method === 'POST') {
       const body = await readJsonBody(req);
-      const from = body.from || body.caller || '@neal';
+      const from = body.from || body.caller || '@1nc0gn30';
       const to = body.to || '@zoth-rig2';
       const passphrase = body.passphrase || '';
       const message = body.message || '';
@@ -1526,10 +1526,10 @@ const server = http.createServer(async (req, res) => {
 
       const peers = typeof node.getP2pPeers === 'function' ? node.getP2pPeers() : [];
       const clusterPeers = [
-        { handle: "@zoth", name: "Neal Master Cockpit", endpoint: `http://127.0.0.1:${PORT}`, status: "CONNECTED", role: "COCKPIT_ORCHESTRATOR", pingMs: 0.12 },
+        { handle: "@zoth", name: "1nc0gn30 Master Cockpit", endpoint: `http://127.0.0.1:${PORT}`, status: "CONNECTED", role: "COCKPIT_ORCHESTRATOR", pingMs: 0.12 },
         { handle: "@zoth-rig2", name: "24/7 AI Laptop", endpoint: "http://192.168.1.247:8140", status: "CONNECTED", role: "AI_FLEET_WORKER", pingMs: 0.85 },
-        { handle: "@neal", name: "Neal Primary", endpoint: "http://127.0.0.1:8140", status: "CONNECTED", role: "SOVEREIGN_OPERATOR", pingMs: 0.45 },
-        ...peers.filter(p => !['@zoth', '@zoth-rig2', '@neal'].includes(p.handle))
+        { handle: "@1nc0gn30", name: "1nc0gn30 Primary", endpoint: "http://127.0.0.1:8140", status: "CONNECTED", role: "SOVEREIGN_OPERATOR", pingMs: 0.45 },
+        ...peers.filter(p => !['@zoth', '@zoth-rig2', '@1nc0gn30'].includes(p.handle))
       ];
 
       return sendJson(res, 200, {
@@ -1623,7 +1623,7 @@ const server = http.createServer(async (req, res) => {
         id: "msig_zoth_foundation",
         address: "vlr1_multisig_corp_treasury",
         policy: "2-of-3",
-        signers: ["@neal", "@zoth", "@sprig"],
+        signers: ["@1nc0gn30", "@zoth", "@sprig"],
         balanceVlr: 25000.0,
         activeProposalsCount: 0,
         totalProposalsCount: 0
@@ -1651,7 +1651,7 @@ const server = http.createServer(async (req, res) => {
         try {
           const resProp = node.proposeMultisigTx({
             vaultId: body.vaultId || 'msig_zoth_foundation',
-            proposer: body.proposer || body.handle || '@neal',
+            proposer: body.proposer || body.handle || '@1nc0gn30',
             to: body.to || body.recipient || body.toHandle || '@sprig',
             amountVlr: Number(body.amountVlr || body.amount || 0),
             memo: body.memo || body.reason || body.title || 'Treasury Grant Proposal'
@@ -1664,9 +1664,9 @@ const server = http.createServer(async (req, res) => {
             title: body.title || 'Treasury Grant Proposal',
             recipient: body.recipient || body.to || '@zoth-rig2',
             amountVlr: Number(body.amountVlr || body.amount || 0),
-            proposer: body.proposer || body.handle || '@neal',
+            proposer: body.proposer || body.handle || '@1nc0gn30',
             reason: body.reason || body.memo || 'Operational cluster expenses',
-            approvals: [body.proposer || body.handle || '@neal'],
+            approvals: [body.proposer || body.handle || '@1nc0gn30'],
             requiredApprovals: 2,
             status: "PENDING",
             createdAt: new Date().toISOString()
@@ -1726,8 +1726,8 @@ const server = http.createServer(async (req, res) => {
         proposalId: propId,
         vault: "msig_zoth_foundation",
         requiredSignatures: 2,
-        signers: ["@neal", "@zoth", "@sprig"],
-        approvedBy: propObj ? propObj.approvals : ["@neal", signer],
+        signers: ["@1nc0gn30", "@zoth", "@sprig"],
+        approvedBy: propObj ? propObj.approvals : ["@1nc0gn30", signer],
         thresholdReached,
         status,
         amountVlr: propObj ? propObj.amountVlr : 2500,
@@ -1743,7 +1743,7 @@ const server = http.createServer(async (req, res) => {
         proposal: propObj || {
           id: propId,
           title: "Q4 Sovereign R&D & KVM Fleet Grant",
-          approvals: ["@neal", signer],
+          approvals: ["@1nc0gn30", signer],
           status
         },
         timestamp: new Date().toISOString()

@@ -18,7 +18,7 @@
 
 ## 🏛️ Architectural Overview
 
-**Product Hunt Connector (zoth-ph)** is an official sovereign tool in the **[Zoth Studio v2](https://zoth.nullai.tech)** (71-Tool Matrix) and **[ZothOS Linux 3.3](https://zothos.nullai.tech)** ecosystem, engineered by **NullAI ([@1nc0gn30](https://github.com/1nc0gn30))**.
+**Product Hunt Connector (zoth-ph)** is an official sovereign tool in the **[Zoth Studio v2](https://zoth.nullai.tech)** (72-Tool Matrix) and **[ZothOS Linux 3.3](https://zothos.nullai.tech)** ecosystem, engineered by **NullAI ([@1nc0gn30](https://github.com/1nc0gn30))**.
 
 | Property | Specification |
 | :--- | :--- |
@@ -34,7 +34,7 @@
 
 - **100% Zero-Egress Client & Local Enclave Execution**
 - **Real-Time Interactive Telemetry & AST Verification**
-- **Native Zoth Studio v2 & ZothOS v3.3 Integration**
+- **Native Zoth Studio v2 & ZothOS v3.4 Integration**
 - **Zero-Egress Sovereign Guarantee**: Executes locally in-browser or on your loopback enclave (`127.0.0.1:8139`) with zero cloud telemetry.
 - **Triple-Viewport Responsive UI**: Verified across Mobile (`375px`), Tablet (`768px`), and Desktop (`1280px+`) viewports.
 

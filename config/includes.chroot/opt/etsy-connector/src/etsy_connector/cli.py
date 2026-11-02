@@ -62,7 +62,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Command: auth
     auth_p = subparsers.add_parser("auth", help="Generate OAuth 2.0 PKCE authorization link or exchange code for Etsy Open API v3")
     auth_p.add_argument("--key", default="", help="Etsy API Keystring (or Keystring:SharedSecret)")
-    auth_p.add_argument("--redirect", default="https://metadigitalgoods.nealfrazier.tech/oauth/callback/", help="Redirect URI")
+    auth_p.add_argument("--redirect", default="https://metadigitalgoods.nullai.tech/oauth/callback/", help="Redirect URI")
     auth_p.add_argument("--exchange-code", default="", help="Exchange returned OAuth authorization code for an access token")
 
     # Command: shop-update

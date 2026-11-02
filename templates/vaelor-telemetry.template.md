@@ -33,7 +33,7 @@ status: "ONLINE"
 flowchart TD
     subgraph AccountLattice["◈ Asynchronous Account-Lattice DAG"]
         direction LR
-        A["@treasury<br/>100,000 VLR"] -->|Feeless Tx| B["@neal<br/>25,038 VLR"]
+        A["@treasury<br/>100,000 VLR"] -->|Feeless Tx| B["@1nc0gn30<br/>25,038 VLR"]
         B -->|Feeless Tx| C["@zoth<br/>23,027 VLR"]
         C -->|Protected Escrow| D["Merchant Escrow<br/>Lock (72h)"]
         E["PoUW AI Miner<br/>+15.61 VLR Minted"] -->|Useful Compute| A

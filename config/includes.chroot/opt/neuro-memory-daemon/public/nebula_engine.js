@@ -3167,7 +3167,7 @@
 
       const snapshot = {
         title: "Neuro-Memory 3D Cosmos Substrate Topology Snapshot",
-        version: "3.3.0",
+        version: "3.4.0",
         timestamp: now,
         netrunnerCyberCortex: {
           hubPosition: [0, 0, 0],

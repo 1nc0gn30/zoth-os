@@ -16,7 +16,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-gold.svg)](https://www.python.org/downloads/)
 [![Zero External Dependencies](https://img.shields.io/badge/dependencies-zero_pip-emerald.svg)](#architecture)
 [![Port 8110 / 8111](https://img.shields.io/badge/mesh_ports-8110_|_8111-cyan.svg)](#ports)
-[![Sovereign Standard](https://img.shields.io/badge/standard-neal_frazier_tech-blue.svg)](https://nullai.tech)
+[![Sovereign Standard](https://img.shields.io/badge/standard-nullai_sovereign-blue.svg)](https://nullai.tech)
 
 ---
 

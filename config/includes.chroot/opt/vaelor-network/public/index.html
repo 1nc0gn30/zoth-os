@@ -1619,7 +1619,7 @@
             </div>
             <div class="form-group">
               <label for="txToInput">Recipient @Handle or vlr1_ Address</label>
-              <input class="input" id="txToInput" type="text" value="@sprig" placeholder="@neal, @sprig, @coffee757..." required />
+              <input class="input" id="txToInput" type="text" value="@sprig" placeholder="@1nc0gn30, @sprig, @coffee757..." required />
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
               <div class="form-group">
@@ -1878,7 +1878,7 @@
             </div>
             <div class="form-group">
               <label for="subMerchantInput">Service Provider / Merchant @Handle</label>
-              <input class="input" id="subMerchantInput" type="text" value="@zoth" placeholder="@zoth, @neal..." required />
+              <input class="input" id="subMerchantInput" type="text" value="@zoth" placeholder="@zoth, @1nc0gn30..." required />
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
               <div class="form-group">
@@ -1935,7 +1935,7 @@
             </div>
             <div class="form-group">
               <label for="streamRecipientInput">Stream Recipient @Handle</label>
-              <input class="input" id="streamRecipientInput" type="text" value="@zoth" placeholder="@zoth, @neal, @sprig..." required />
+              <input class="input" id="streamRecipientInput" type="text" value="@zoth" placeholder="@zoth, @1nc0gn30, @sprig..." required />
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
               <div class="form-group">
@@ -2148,7 +2148,7 @@
           <form id="issueVoucherForm">
             <div class="form-group">
               <label for="voucherIssuerInput">Issuer @Handle (Passkey Identity)</label>
-              <input class="input" id="voucherIssuerInput" type="text" value="@neal" readonly />
+              <input class="input" id="voucherIssuerInput" type="text" value="@1nc0gn30" readonly />
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -2626,14 +2626,14 @@
             </span>
           </div>
           <p style="font-size:0.83rem;color:var(--muted);margin-bottom:14px;">
-            Vaelor protects consumers against lookalike scams and typosquatting attacks before you sign a transaction. Deceptive Unicode substitutions (e.g. <code>@z0th</code> vs <code>@zoth</code>, <code>@nea1</code> vs <code>@neal</code>, <code>@spriq</code> vs <code>@sprig</code>) are detected in real-time.
+            Vaelor protects consumers against lookalike scams and typosquatting attacks before you sign a transaction. Deceptive Unicode substitutions (e.g. <code>@z0th</code> vs <code>@zoth</code>, <code>@nea1</code> vs <code>@1nc0gn30</code>, <code>@spriq</code> vs <code>@sprig</code>) are detected in real-time.
           </p>
 
           <form id="phishScannerForm" onsubmit="return false;" style="margin-bottom:14px;">
             <div class="form-group">
               <label for="phishHandleInput">Inspect Any @Handle for Phishing / Impersonation</label>
               <div style="display:flex;gap:8px;">
-                <input class="input" id="phishHandleInput" type="text" placeholder="@z0th or @neal" value="@z0th" autocomplete="off" />
+                <input class="input" id="phishHandleInput" type="text" placeholder="@z0th or @1nc0gn30" value="@z0th" autocomplete="off" />
                 <button type="button" class="btn btn-emerald" id="scanPhishBtn" style="white-space:nowrap;padding:8px 16px;">
                   🔎 Scan
                 </button>
@@ -2649,7 +2649,7 @@
                 <button type="button" class="phish-chip chip-danger" onclick="window.testPhishChip('@spriq')">⚠️ @spriq (q vs g)</button>
                 <button type="button" class="phish-chip chip-danger" onclick="window.testPhishChip('@zoths')">⚠️ @zoths (Typosquat +1)</button>
                 <button type="button" class="phish-chip chip-success" onclick="window.testPhishChip('@zoth')">🛡️ @zoth (Verified)</button>
-                <button type="button" class="phish-chip chip-success" onclick="window.testPhishChip('@neal')">🛡️ @neal (Verified)</button>
+                <button type="button" class="phish-chip chip-success" onclick="window.testPhishChip('@1nc0gn30')">🛡️ @1nc0gn30 (Verified)</button>
                 <button type="button" class="phish-chip" onclick="window.testPhishChip('@coffee757')">ℹ️ @coffee757 (Unverified)</button>
               </div>
             </div>
@@ -2722,7 +2722,7 @@
 
             <div class="form-group">
               <label for="newSubHandleInput">Sub-Account @Handle (e.g. @zoth.hermes or travel)</label>
-              <input class="input" id="newSubHandleInput" type="text" placeholder="@zoth.agent or @neal.travel" required autocomplete="off" />
+              <input class="input" id="newSubHandleInput" type="text" placeholder="@zoth.agent or @1nc0gn30.travel" required autocomplete="off" />
             </div>
 
             <div class="form-group">
@@ -2812,7 +2812,7 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div class="form-group">
                 <label for="shieldedFromInput">Sender Wallet (@Handle)</label>
-                <input class="input" id="shieldedFromInput" type="text" value="@neal" required />
+                <input class="input" id="shieldedFromInput" type="text" value="@1nc0gn30" required />
               </div>
               <div class="form-group">
                 <label for="shieldedToInput">Recipient Wallet (@Handle)</label>
@@ -2908,7 +2908,7 @@
           <form id="createGroupTabForm">
             <div class="form-group">
               <label for="tabOrganizerInput">Organizer @Handle (Your Share Auto-Funded)</label>
-              <input class="input" id="tabOrganizerInput" type="text" value="@neal" placeholder="@neal" required />
+              <input class="input" id="tabOrganizerInput" type="text" value="@1nc0gn30" placeholder="@1nc0gn30" required />
             </div>
 
             <div class="form-group">
@@ -2929,7 +2929,7 @@
 
             <div class="form-group">
               <label for="tabParticipantsInput">Participant @Handles (Comma-Separated, Includes Organizer)</label>
-              <input class="input" id="tabParticipantsInput" type="text" value="@neal, @citizen, @zoth" placeholder="@neal, @citizen, @zoth, @coffee757..." required />
+              <input class="input" id="tabParticipantsInput" type="text" value="@1nc0gn30, @citizen, @zoth" placeholder="@1nc0gn30, @citizen, @zoth, @coffee757..." required />
               <div style="font-size:0.73rem;color:var(--muted);margin-top:4px;">
                 Each participant will be allocated an exact equal share. Remainder vael are cleanly balanced without penny loss.
               </div>
@@ -2997,7 +2997,7 @@
           <form id="configureInheritanceForm">
             <div class="form-group">
               <label for="inhOwnerInput">Estate Owner @Handle (Active Wallet)</label>
-              <input class="input" id="inhOwnerInput" type="text" value="@neal" placeholder="@neal" required />
+              <input class="input" id="inhOwnerInput" type="text" value="@1nc0gn30" placeholder="@1nc0gn30" required />
             </div>
 
             <div class="form-group">
@@ -3457,7 +3457,7 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div class="form-group">
                 <label for="guardian1Input">Guardian #1 (@Handle or Identity)</label>
-                <input class="input" id="guardian1Input" type="text" value="@neal" required />
+                <input class="input" id="guardian1Input" type="text" value="@1nc0gn30" required />
               </div>
               <div class="form-group">
                 <label for="guardian2Input">Guardian #2 (@Handle or Identity)</label>
@@ -3489,7 +3489,7 @@
               <strong style="color:#fda4af;font-size:0.88rem;">Simulate Device Loss & 1-Click Key Rotation</strong>
             </div>
             <p style="font-size:0.78rem;color:#cbd5e1;margin-bottom:12px;">
-              Simulates a lost device or compromised credential: automatically requests 2 cryptographic approvals from Guardian 1 (<code id="simG1Text">@neal</code>) and Guardian 2 (<code id="simG2Text">@zoth</code>), mints a <code>KEY_ROTATE</code> micro-block, updates your Ed25519 public key, and preserves 100% of your funds.
+              Simulates a lost device or compromised credential: automatically requests 2 cryptographic approvals from Guardian 1 (<code id="simG1Text">@1nc0gn30</code>) and Guardian 2 (<code id="simG2Text">@zoth</code>), mints a <code>KEY_ROTATE</code> micro-block, updates your Ed25519 public key, and preserves 100% of your funds.
             </p>
 
             <button class="btn btn-rose" id="simulateRecoveryBtn" type="button" style="width:100%;font-size:0.86rem;">
@@ -3705,7 +3705,7 @@
                   <option value="@zoth">@zoth (Zoth Studio & ZothOS AI Engine)</option>
                   <option value="@sprig">@sprig (Sprig Kitchen • 757 Merchant)</option>
                   <option value="@hatch">@hatch (Hatch Open-Source Grant Fund)</option>
-                  <option value="@neal">@neal (NullAI)</option>
+                  <option value="@1nc0gn30">@1nc0gn30 (NullAI)</option>
                 </select>
               </div>
             </div>
@@ -3864,14 +3864,14 @@
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
                 <div class="form-group" style="margin:0;">
                   <label for="commSenderInput">Sender Node</label>
-                  <input class="input" id="commSenderInput" type="text" value="@neal" />
+                  <input class="input" id="commSenderInput" type="text" value="@1nc0gn30" />
                 </div>
                 <div class="form-group" style="margin:0;">
                   <label for="commPeerSelect">Target Fleet Peer</label>
                   <select class="input" id="commPeerSelect">
                     <option value="@zoth-rig2" selected>@zoth-rig2 (24/7 AI Laptop)</option>
                     <option value="@zoth">@zoth (Workstation Master)</option>
-                    <option value="@neal">@neal (Founder Node)</option>
+                    <option value="@1nc0gn30">@1nc0gn30 (Founder Node)</option>
                     <option value="@citizen">@citizen (Citizen Workstation)</option>
                   </select>
                 </div>
@@ -4010,7 +4010,7 @@
                   <input class="input" id="msigAmountInput" type="number" value="2500" placeholder="VLR" style="font-size:0.78rem;padding:4px 6px;" />
                   <select class="input" id="msigSignerSelect" style="font-size:0.78rem;padding:4px 6px;">
                     <option value="@zoth" selected>@zoth (Signer 2)</option>
-                    <option value="@neal">@neal (Signer 1)</option>
+                    <option value="@1nc0gn30">@1nc0gn30 (Signer 1)</option>
                     <option value="@sprig">@sprig (Signer 3)</option>
                   </select>
                 </div>
@@ -4072,7 +4072,7 @@
         </div>
         <div class="form-group">
           <label for="newGuardiansInput">Social Recovery Guardians (2-of-3 Vault Recovery — No Seed Phrase Needed)</label>
-          <input class="input" id="newGuardiansInput" type="text" value="@neal, @zoth, @treasury" />
+          <input class="input" id="newGuardiansInput" type="text" value="@1nc0gn30, @zoth, @treasury" />
         </div>
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
           <button class="btn btn-outline" id="closeHandleModalBtn" type="button">Cancel</button>
@@ -4162,7 +4162,7 @@
           ⭐ Submit On-Lattice Merchant Review
         </h3>
         <span class="badge" style="background:rgba(212, 175, 55, 0.18);color:var(--gold);border:1px solid rgba(212, 175, 55, 0.4);" id="reviewModalMerchantBadge">
-          @neal
+          @1nc0gn30
         </span>
       </div>
       <p style="font-size:0.84rem;color:var(--muted);margin-bottom:14px;">
@@ -4300,7 +4300,7 @@
         </div>
         <div class="tx-item">
           <strong style="color:#34d399;">3.5s – 8.0s • Asynchronous Account-Lattice Unfolding</strong>
-          <p style="color:var(--muted);">Parallel personal micro-chains (@neal, @sprig, @zoth) fire Ed25519 SEND → RECEIVE arcs in 11ms with $0.00 gas.</p>
+          <p style="color:var(--muted);">Parallel personal micro-chains (@1nc0gn30, @sprig, @zoth) fire Ed25519 SEND → RECEIVE arcs in 11ms with $0.00 gas.</p>
         </div>
         <div class="tx-item">
           <strong style="color:var(--cyan);">8.0s – 12.0s • Native Layer-1 Protected-Pay Escrow</strong>
@@ -4498,7 +4498,7 @@
             if (!parsed.directory) {
               parsed.directory = [
                 {
-                  handle: '@neal',
+                  handle: '@1nc0gn30',
                   displayName: '1nc0gn30',
                   domain: 'nullai.tech',
                   category: 'Platform Architecture & Sovereign Cryptography',
@@ -4523,13 +4523,13 @@
                   verifiedSince: '2025-02-01',
                   tags: ['PoUW Mining', 'AI Compute', 'ZothOS'],
                   reviews: [
-                    { id: 'rev_gen_zoth1', reviewer: '@neal', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' }
+                    { id: 'rev_gen_zoth1', reviewer: '@1nc0gn30', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' }
                   ]
                 },
                 {
                   handle: '@sprig',
                   displayName: 'Sprig Kitchen • 757 Artisan Roasters',
-                  domain: 'sprig.757tech.pro',
+                  domain: 'sprig.nullai.tech',
                   category: 'Coffee & Farm-to-Table Retail POS',
                   trustScore: 96,
                   ratingAvg: 4.8,
@@ -4565,7 +4565,7 @@
                   verifiedSince: '2025-03-10',
                   tags: ['Community', 'Passkey Wallet', 'Smart Escrow'],
                   reviews: [
-                    { id: 'rev_gen_cit1', reviewer: '@neal', rating: 5, comment: 'Active participant in lattice stress testing and escrow validation.', createdAt: '2025-03-12T14:20:00Z' }
+                    { id: 'rev_gen_cit1', reviewer: '@1nc0gn30', rating: 5, comment: 'Active participant in lattice stress testing and escrow validation.', createdAt: '2025-03-12T14:20:00Z' }
                   ]
                 }
               ];
@@ -4601,10 +4601,10 @@
                   ]
                 },
                 {
-                  id: 'sub_nealops_c02',
-                  parentHandle: '@neal',
+                  id: 'sub_nullaiops_c02',
+                  parentHandle: '@1nc0gn30',
                   parentAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
-                  subHandle: '@neal.ops',
+                  subHandle: '@1nc0gn30.ops',
                   label: '1nc0gn30 DevOps & Cloud Infra Virtual Card',
                   dailyLimitVlr: 500.0,
                   spentTodayVlr: 120.0,
@@ -4617,7 +4617,7 @@
                   totalSpentVlr: 120.0,
                   createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
                   history: [
-                    { txHash: '000subnealops120002', amountVlr: 120.0, recipientHandle: '@zoth', memo: 'Dedicated ARM64 Bare-Metal Server Allocation', category: 'Cloud & Infrastructure', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() }
+                    { txHash: '000subnullaiops120002', amountVlr: 120.0, recipientHandle: '@zoth', memo: 'Dedicated ARM64 Bare-Metal Server Allocation', category: 'Cloud & Infrastructure', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() }
                   ]
                 },
                 {
@@ -4647,9 +4647,9 @@
             if (!parsed.shieldedTransfers) {
               parsed.shieldedTransfers = [
                 {
-                  id: 'shld_payroll_nealzoth_c01',
+                  id: 'shld_payroll_nullaizoth_c01',
                   commitment: 'cmt_7f3a9e1482b6c00d51ef8a42bc0148e690a7751c82e690b2496f019b883015ae',
-                  fromHandle: '@neal',
+                  fromHandle: '@1nc0gn30',
                   toHandle: '@zoth',
                   fromAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
                   toAddress: 'vlr1_3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
@@ -4657,9 +4657,9 @@
                   publicMemo: '🔒 Encrypted Stealth Payload',
                   amountVlr: 250.0,
                   memo: 'Confidential Q4 Autonomous AI Inference Cluster Allocation',
-                  viewKey: 'vk_audit_nealzoth_250vlr_001',
+                  viewKey: 'vk_audit_nullaizoth_250vlr_001',
                   blindingFactor: '7f3a9e1482b6c00d51ef8a42bc0148e690a7751c82e690b2496f019b883015ae',
-                  sendBlockHash: '000shldsendnealzoth250c01',
+                  sendBlockHash: '000shldsendnullaizoth250c01',
                   timestamp: new Date(Date.now() - 3600000 * 12).toISOString(),
                   status: 'CONFIRMED'
                 },
@@ -4689,7 +4689,7 @@
                 {
                   id: 'tab_dinner_sprig_c01',
                   title: 'Artisan Dinner & Drinks @ Sprig Kitchen',
-                  organizer: '@neal',
+                  organizer: '@1nc0gn30',
                   merchant: '@sprig',
                   totalAmountVlr: 90.0,
                   totalVael: 90000000,
@@ -4701,7 +4701,7 @@
                   settleBlockHash: null,
                   createBlockHash: '000seed_tab_create_sprig01',
                   participants: [
-                    { handle: '@neal', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 2).toISOString() },
+                    { handle: '@1nc0gn30', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 2).toISOString() },
                     { handle: '@citizen', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 1).toISOString() },
                     { handle: '@zoth', shareVlr: 30.0, shareVael: 30000000, status: 'PENDING', paidAt: null }
                   ],
@@ -4727,7 +4727,7 @@
                   createBlockHash: '000seed_tab_create_coop02',
                   participants: [
                     { handle: '@zoth', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 2).toISOString() },
-                    { handle: '@neal', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1.5).toISOString() },
+                    { handle: '@1nc0gn30', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1.5).toISOString() },
                     { handle: '@citizen', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1).toISOString() }
                   ],
                   paidCount: 3,
@@ -4744,8 +4744,8 @@
             if (!parsed.inheritancePlans) {
               parsed.inheritancePlans = [
                 {
-                  id: 'inh_neal_continuity_01',
-                  owner: '@neal',
+                  id: 'inh_founder_continuity_01',
+                  owner: '@1nc0gn30',
                   ownerAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
                   memo: '1nc0gn30 Sovereign Tech Estate Continuity Vault',
                   inactivityDays: 180,
@@ -4761,7 +4761,7 @@
                   claimant: null,
                   distributedVlr: 0,
                   claimBlockHash: null,
-                  setBlockHash: '000seed_inh_set_neal01',
+                  setBlockHash: '000seed_inh_set_founder01',
                   isExpired: false,
                   remainingDays: 177,
                   remainingMs: 177 * 86400000,
@@ -4812,7 +4812,7 @@
               if (acc.totalCreditDrawnVlr === undefined) acc.totalCreditDrawnVlr = 0;
               if (acc.repaidCreditCount === undefined) acc.repaidCreditCount = 0;
               if (acc.stakedBalanceVlr === undefined) {
-                if (acc.handle === '@neal') {
+                if (acc.handle === '@1nc0gn30') {
                   acc.stakedBalanceVlr = 25000;
                   acc.stakedValidatorId = 'val-delta-zothos-local';
                   acc.stakedAt = new Date().toISOString();
@@ -4851,7 +4851,7 @@
                 },
                 {
                   id: 'tip_seed_hatch1',
-                  fromHandle: '@neal',
+                  fromHandle: '@1nc0gn30',
                   creatorHandle: '@hatch',
                   amountVlr: 50.0,
                   message: 'Grant funding for next-generation sovereign zero-fee crypto builders!',
@@ -4894,7 +4894,7 @@
                 handle: '@hatch',
                 displayName: 'Hatch Open-Source Grant Fund',
                 passkeyCredentialId: 'pk_webauthn_hatch01',
-                guardians: ['@neal', '@treasury'],
+                guardians: ['@1nc0gn30', '@treasury'],
                 balanceVlr: 2500.0,
                 lockedEscrowVlr: 0,
                 stakedBalanceVlr: 0,
@@ -4940,12 +4940,12 @@
         activeStakersCount: 2,
         stakingApyPct: 8.5,
         accounts: [
-          { address: 'vlr1_9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c', handle: '@citizen', displayName: 'Sovereign Demo Wallet (Passkey Ready)', passkeyCredentialId: 'pk_webauthn_citizen01', guardians: ['@neal', '@zoth'], balanceVlr: 2438.5, lockedEscrowVlr: 42.5, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, totalCashbackEarnedVlr: 2.50, pouwScore: 120, pouwBlocksMinted: 1, blockHeight: 3 },
-          { address: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d', handle: '@neal', displayName: '1nc0gn30', passkeyCredentialId: 'pk_webauthn_neal01', guardians: ['@treasury', '@zoth'], balanceVlr: 25019.0, lockedEscrowVlr: 0, stakedBalanceVlr: 25000.0, stakedValidatorId: 'val-delta-zothos-local', stakedAt: new Date().toISOString(), lastYieldHarvestAt: new Date().toISOString(), totalYieldHarvestedVlr: 0, pouwScore: 480, pouwBlocksMinted: 2, blockHeight: 2 },
-          { address: 'vlr1_7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f', handle: '@sprig', displayName: 'Sprig Kitchen • 757 Local Merchant', passkeyCredentialId: 'pk_webauthn_sprig01', guardians: ['@neal', '@treasury'], balanceVlr: 5000.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 90, pouwBlocksMinted: 0, blockHeight: 1 },
-          { address: 'vlr1_3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b', handle: '@zoth', displayName: 'Zoth Studio & ZothOS Compute Node', passkeyCredentialId: 'pk_webauthn_zoth01', guardians: ['@neal', '@treasury'], balanceVlr: 15014.0, lockedEscrowVlr: 0, stakedBalanceVlr: 15000.0, stakedValidatorId: 'val-epsilon-nullai-core', stakedAt: new Date().toISOString(), lastYieldHarvestAt: new Date().toISOString(), totalYieldHarvestedVlr: 0, pouwScore: 640, pouwBlocksMinted: 3, blockHeight: 2 },
-          { address: 'vlr1_00001111222233334444555566667777', handle: '@treasury', displayName: 'Vaelor Sovereign Treasury & Reserve', passkeyCredentialId: 'pk_webauthn_treasury', guardians: ['@neal', '@zoth'], balanceVlr: 100000.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 1000, pouwBlocksMinted: 1, blockHeight: 1 },
-          { address: 'vlr1_hatch_grant_foundation_001', handle: '@hatch', displayName: 'Hatch Open-Source Grant Fund', passkeyCredentialId: 'pk_webauthn_hatch01', guardians: ['@neal', '@treasury'], balanceVlr: 2500.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 200, pouwBlocksMinted: 1, blockHeight: 1 }
+          { address: 'vlr1_9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c', handle: '@citizen', displayName: 'Sovereign Demo Wallet (Passkey Ready)', passkeyCredentialId: 'pk_webauthn_citizen01', guardians: ['@1nc0gn30', '@zoth'], balanceVlr: 2438.5, lockedEscrowVlr: 42.5, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, totalCashbackEarnedVlr: 2.50, pouwScore: 120, pouwBlocksMinted: 1, blockHeight: 3 },
+          { address: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d', handle: '@1nc0gn30', displayName: '1nc0gn30', passkeyCredentialId: 'pk_webauthn_founder01', guardians: ['@treasury', '@zoth'], balanceVlr: 25019.0, lockedEscrowVlr: 0, stakedBalanceVlr: 25000.0, stakedValidatorId: 'val-delta-zothos-local', stakedAt: new Date().toISOString(), lastYieldHarvestAt: new Date().toISOString(), totalYieldHarvestedVlr: 0, pouwScore: 480, pouwBlocksMinted: 2, blockHeight: 2 },
+          { address: 'vlr1_7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f', handle: '@sprig', displayName: 'Sprig Kitchen • 757 Local Merchant', passkeyCredentialId: 'pk_webauthn_sprig01', guardians: ['@1nc0gn30', '@treasury'], balanceVlr: 5000.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 90, pouwBlocksMinted: 0, blockHeight: 1 },
+          { address: 'vlr1_3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b', handle: '@zoth', displayName: 'Zoth Studio & ZothOS Compute Node', passkeyCredentialId: 'pk_webauthn_zoth01', guardians: ['@1nc0gn30', '@treasury'], balanceVlr: 15014.0, lockedEscrowVlr: 0, stakedBalanceVlr: 15000.0, stakedValidatorId: 'val-epsilon-nullai-core', stakedAt: new Date().toISOString(), lastYieldHarvestAt: new Date().toISOString(), totalYieldHarvestedVlr: 0, pouwScore: 640, pouwBlocksMinted: 3, blockHeight: 2 },
+          { address: 'vlr1_00001111222233334444555566667777', handle: '@treasury', displayName: 'Vaelor Sovereign Treasury & Reserve', passkeyCredentialId: 'pk_webauthn_treasury', guardians: ['@1nc0gn30', '@zoth'], balanceVlr: 100000.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 1000, pouwBlocksMinted: 1, blockHeight: 1 },
+          { address: 'vlr1_hatch_grant_foundation_001', handle: '@hatch', displayName: 'Hatch Open-Source Grant Fund', passkeyCredentialId: 'pk_webauthn_hatch01', guardians: ['@1nc0gn30', '@treasury'], balanceVlr: 2500.0, lockedEscrowVlr: 0, stakedBalanceVlr: 0, stakedValidatorId: null, totalYieldHarvestedVlr: 0, pouwScore: 200, pouwBlocksMinted: 1, blockHeight: 1 }
         ],
         escrows: [
           {
@@ -4995,8 +4995,8 @@
         ],
         streams: [
           {
-            id: 'strm_neal_to_zoth_ai_inference',
-            senderHandle: '@neal',
+            id: 'strm_founder_to_zoth_ai_inference',
+            senderHandle: '@1nc0gn30',
             recipientHandle: '@zoth',
             totalAmountVlr: 3600.0,
             durationSeconds: 3600,
@@ -5028,13 +5028,13 @@
         vouchers: [
           {
             id: 'vch_757coffee01',
-            issuerHandle: '@neal',
+            issuerHandle: '@1nc0gn30',
             issuerAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
             recipientHandle: null,
             amountVlr: 50.0,
             hasPin: true,
             secretHash: 'd7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592',
-            uri: 'vaelor://voucher?id=vch_757coffee01&amount=50.00&issuer=@neal',
+            uri: 'vaelor://voucher?id=vch_757coffee01&amount=50.00&issuer=@1nc0gn30',
             memo: 'Coffee & Pastry Tap-to-Pay Check #757-01',
             status: 'ACTIVE',
             createdAt: new Date().toISOString(),
@@ -5060,7 +5060,7 @@
         receipts: [
           {
             id: 'rcp_98a7b6c5d4e3f2a1',
-            buyerHandle: '@neal',
+            buyerHandle: '@1nc0gn30',
             buyerAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
             merchantHandle: '@zoth',
             merchantAddress: 'vlr1_3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
@@ -5135,7 +5135,7 @@
         bounties: [
           {
             id: 'bty_98a7b6c5d4e3f2a1',
-            posterHandle: '@neal',
+            posterHandle: '@1nc0gn30',
             posterAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
             title: 'Autonomous Dijkstra Multi-Hop P2P Routing Kernel',
             category: 'AI & Security',
@@ -5209,13 +5209,13 @@
           { hash: '0005a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5', handle: '@citizen', type: 'SPLIT_SEND', height: 3, balanceAfterVlr: 2436.0, finalityMs: 10.4, data: { totalAmountVlr: 100.0, cashbackVlr: 2.50, netChargedVlr: 97.50, splits: [{ toHandle: '@zoth', amountVlr: 85.0 }, { toHandle: '@sprig', amountVlr: 12.5 }], memo: 'Zoth Studio Pro + 757 Platform Fee' }, timestamp: new Date().toISOString() },
           { hash: '0009a8f7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9', handle: '@zoth', type: 'POUW_MINT', height: 1, balanceAfterVlr: 15014.0, finalityMs: 9.4, data: { rewardVlr: 15.82, taskLabel: 'Schema.org AEO Knowledge Graph Synthesis' }, timestamp: new Date().toISOString() },
           { hash: '0004c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4', handle: '@citizen', type: 'ESCROW_LOCK', height: 2, balanceAfterVlr: 2438.5, finalityMs: 11.2, data: { merchantHandle: '@sprig', amountVlr: 42.5, memo: 'Sprig Kitchen 2x Harvest Bowl Order #757-884' }, timestamp: new Date().toISOString() },
-          { hash: '0001f2e3d4c5b6a7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6e7d8c9b0a1', handle: '@neal', type: 'RECEIVE', height: 1, balanceAfterVlr: 25019.0, finalityMs: 8.7, data: { fromHandle: '@citizen', amountVlr: 19.0, memo: 'Zoth Studio v2 Sovereign Pro License' }, timestamp: new Date().toISOString() }
+          { hash: '0001f2e3d4c5b6a7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6e7d8c9b0a1', handle: '@1nc0gn30', type: 'RECEIVE', height: 1, balanceAfterVlr: 25019.0, finalityMs: 8.7, data: { fromHandle: '@citizen', amountVlr: 19.0, memo: 'Zoth Studio v2 Sovereign Pro License' }, timestamp: new Date().toISOString() }
         ],
         totalVerifiedMerchantsCount: 5,
         totalReviewsCount: 9,
         directory: [
           {
-            handle: '@neal',
+            handle: '@1nc0gn30',
             displayName: '1nc0gn30',
             domain: 'nullai.tech',
             category: 'Platform Architecture & Sovereign Cryptography',
@@ -5240,13 +5240,13 @@
             verifiedSince: '2025-02-01',
             tags: ['PoUW Mining', 'AI Compute', 'ZothOS'],
             reviews: [
-              { id: 'rev_gen_zoth1', reviewer: '@neal', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' }
+              { id: 'rev_gen_zoth1', reviewer: '@1nc0gn30', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' }
             ]
           },
           {
             handle: '@sprig',
             displayName: 'Sprig Kitchen • 757 Artisan Roasters',
-            domain: 'sprig.757tech.pro',
+            domain: 'sprig.nullai.tech',
             category: 'Coffee & Farm-to-Table Retail POS',
             trustScore: 96,
             ratingAvg: 4.8,
@@ -5282,14 +5282,14 @@
             verifiedSince: '2025-03-10',
             tags: ['Community', 'Passkey Wallet', 'Smart Escrow'],
             reviews: [
-              { id: 'rev_gen_cit1', reviewer: '@neal', rating: 5, comment: 'Active participant in lattice stress testing and escrow validation.', createdAt: '2025-03-12T14:20:00Z' }
+              { id: 'rev_gen_cit1', reviewer: '@1nc0gn30', rating: 5, comment: 'Active participant in lattice stress testing and escrow validation.', createdAt: '2025-03-12T14:20:00Z' }
             ]
           }
         ],
         merchantReviews: [
-          { id: 'rev_gen_neal1', reviewer: '@citizen', merchant: '@neal', rating: 5, comment: 'Pioneered feeless personal chains with instantaneous BFT finality.', createdAt: '2025-02-10T12:00:00Z' },
-          { id: 'rev_gen_neal2', reviewer: '@sprig', merchant: '@neal', rating: 5, comment: 'One-line POS integration took less than 2 minutes. Flawless!', createdAt: '2025-03-01T15:30:00Z' },
-          { id: 'rev_gen_zoth1', reviewer: '@neal', merchant: '@zoth', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' },
+          { id: 'rev_gen_neal1', reviewer: '@citizen', merchant: '@1nc0gn30', rating: 5, comment: 'Pioneered feeless personal chains with instantaneous BFT finality.', createdAt: '2025-02-10T12:00:00Z' },
+          { id: 'rev_gen_neal2', reviewer: '@sprig', merchant: '@1nc0gn30', rating: 5, comment: 'One-line POS integration took less than 2 minutes. Flawless!', createdAt: '2025-03-01T15:30:00Z' },
+          { id: 'rev_gen_zoth1', reviewer: '@1nc0gn30', merchant: '@zoth', rating: 5, comment: 'High-throughput AST verification with sub-second execution.', createdAt: '2025-02-20T10:00:00Z' },
           { id: 'rev_gen_sprig1', reviewer: '@citizen', merchant: '@sprig', rating: 5, comment: 'Best pour-over in 757, paid in ◈ VLR with $0.00 fees and 2.5% cashback.', createdAt: '2025-03-05T09:15:00Z' }
         ],
         totalSubAccountsCount: 3,
@@ -5316,10 +5316,10 @@
             ]
           },
           {
-            id: 'sub_nealops_c02',
-            parentHandle: '@neal',
+            id: 'sub_nullaiops_c02',
+            parentHandle: '@1nc0gn30',
             parentAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
-            subHandle: '@neal.ops',
+            subHandle: '@1nc0gn30.ops',
             label: '1nc0gn30 DevOps & Cloud Infra Virtual Card',
             dailyLimitVlr: 500.0,
             spentTodayVlr: 120.0,
@@ -5332,7 +5332,7 @@
             totalSpentVlr: 120.0,
             createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
             history: [
-              { txHash: '000subnealops120002', amountVlr: 120.0, recipientHandle: '@zoth', memo: 'Dedicated ARM64 Bare-Metal Server Allocation', category: 'Cloud & Infrastructure', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() }
+              { txHash: '000subnullaiops120002', amountVlr: 120.0, recipientHandle: '@zoth', memo: 'Dedicated ARM64 Bare-Metal Server Allocation', category: 'Cloud & Infrastructure', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() }
             ]
           },
           {
@@ -5360,9 +5360,9 @@
         totalShieldedVolumeVlr: 325.0,
         shieldedTransfers: [
           {
-            id: 'shld_payroll_nealzoth_c01',
+            id: 'shld_payroll_nullaizoth_c01',
             commitment: 'cmt_7f3a9e1482b6c00d51ef8a42bc0148e690a7751c82e690b2496f019b883015ae',
-            fromHandle: '@neal',
+            fromHandle: '@1nc0gn30',
             toHandle: '@zoth',
             fromAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
             toAddress: 'vlr1_3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
@@ -5370,9 +5370,9 @@
             publicMemo: '🔒 Encrypted Stealth Payload',
             amountVlr: 250.0,
             memo: 'Confidential Q4 Autonomous AI Inference Cluster Allocation',
-            viewKey: 'vk_audit_nealzoth_250vlr_001',
+            viewKey: 'vk_audit_nullaizoth_250vlr_001',
             blindingFactor: '7f3a9e1482b6c00d51ef8a42bc0148e690a7751c82e690b2496f019b883015ae',
-            sendBlockHash: '000shldsendnealzoth250c01',
+            sendBlockHash: '000shldsendnullaizoth250c01',
             timestamp: new Date(Date.now() - 3600000 * 12).toISOString(),
             status: 'CONFIRMED'
           },
@@ -5401,7 +5401,7 @@
           {
             id: 'tab_dinner_sprig_c01',
             title: 'Artisan Dinner & Drinks @ Sprig Kitchen',
-            organizer: '@neal',
+            organizer: '@1nc0gn30',
             merchant: '@sprig',
             totalAmountVlr: 90.0,
             totalVael: 90000000,
@@ -5413,7 +5413,7 @@
             settleBlockHash: null,
             createBlockHash: '000seed_tab_create_sprig01',
             participants: [
-              { handle: '@neal', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 2).toISOString() },
+              { handle: '@1nc0gn30', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 2).toISOString() },
               { handle: '@citizen', shareVlr: 30.0, shareVael: 30000000, status: 'PAID', paidAt: new Date(Date.now() - 3600000 * 1).toISOString() },
               { handle: '@zoth', shareVlr: 30.0, shareVael: 30000000, status: 'PENDING', paidAt: null }
             ],
@@ -5439,7 +5439,7 @@
             createBlockHash: '000seed_tab_create_coop02',
             participants: [
               { handle: '@zoth', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 2).toISOString() },
-              { handle: '@neal', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1.5).toISOString() },
+              { handle: '@1nc0gn30', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1.5).toISOString() },
               { handle: '@citizen', shareVlr: 40.0, shareVael: 40000000, status: 'PAID', paidAt: new Date(Date.now() - 86400000 * 1).toISOString() }
             ],
             paidCount: 3,
@@ -5454,8 +5454,8 @@
         claimedInheritancePlansCount: 0,
         inheritancePlans: [
           {
-            id: 'inh_neal_continuity_01',
-            owner: '@neal',
+            id: 'inh_founder_continuity_01',
+            owner: '@1nc0gn30',
             ownerAddress: 'vlr1_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
             memo: '1nc0gn30 Sovereign Tech Estate Continuity Vault',
             inactivityDays: 180,
@@ -5471,7 +5471,7 @@
             claimant: null,
             distributedVlr: 0,
             claimBlockHash: null,
-            setBlockHash: '000seed_inh_set_neal01',
+            setBlockHash: '000seed_inh_set_founder01',
             isExpired: false,
             remainingDays: 177,
             remainingMs: 177 * 86400000,
@@ -5519,7 +5519,7 @@
           },
           {
             id: 'tip_seed_hatch1',
-            fromHandle: '@neal',
+            fromHandle: '@1nc0gn30',
             creatorHandle: '@hatch',
             amountVlr: 50.0,
             message: 'Grant funding for next-generation sovereign zero-fee crypto builders!',
@@ -5551,7 +5551,7 @@
             { id: 'tip_seed_zoth1', fromHandle: '@citizen', creatorHandle: '@zoth', amountVlr: 100.0, message: 'Founding backer for ZothOS sovereign AI kernel & MCP tooling!', projectSlug: 'zoth-os', badge: 'SOVEREIGN_BACKER', badgeEmoji: '👑', cashbackVlr: 2.5, cashbackBps: 250, timestamp: new Date().toISOString(), sendBlockHash: '000seed_tip_zoth01' }
           ],
           '@hatch': [
-            { id: 'tip_seed_hatch1', fromHandle: '@neal', creatorHandle: '@hatch', amountVlr: 50.0, message: 'Grant funding for next-generation sovereign zero-fee crypto builders!', projectSlug: 'hatch-grants', badge: 'PATRON', badgeEmoji: '🌟', cashbackVlr: 1.25, cashbackBps: 250, timestamp: new Date().toISOString(), sendBlockHash: '000seed_tip_hatch01' }
+            { id: 'tip_seed_hatch1', fromHandle: '@1nc0gn30', creatorHandle: '@hatch', amountVlr: 50.0, message: 'Grant funding for next-generation sovereign zero-fee crypto builders!', projectSlug: 'hatch-grants', badge: 'PATRON', badgeEmoji: '🌟', cashbackVlr: 1.25, cashbackBps: 250, timestamp: new Date().toISOString(), sendBlockHash: '000seed_tip_hatch01' }
           ],
           '@sprig': [
             { id: 'tip_seed_sprig1', fromHandle: '@citizen', creatorHandle: '@sprig', amountVlr: 25.0, message: 'Tip for artisan dark roast espresso & 1-line POS innovation.', projectSlug: 'sprig-pos', badge: 'PATRON', badgeEmoji: '🌟', cashbackVlr: 0.625, cashbackBps: 250, timestamp: new Date().toISOString(), sendBlockHash: '000seed_tip_sprig01' }
@@ -5593,7 +5593,7 @@
           handle: clean,
           displayName: body.displayName || clean,
           passkeyCredentialId: 'pk_webauthn_' + h.slice(0, 12),
-          guardians: body.guardians || ['@neal', '@zoth'],
+          guardians: body.guardians || ['@1nc0gn30', '@zoth'],
           balanceVlr: 150,
           lockedEscrowVlr: 0,
           pouwScore: 0,
@@ -6859,7 +6859,7 @@
       }
 
       if (endpoint === '/api/grouptabs' && method === 'POST' && body) {
-        const organizer = snap.accounts.find((a) => a.handle.toLowerCase() === (body.organizer || '@neal').toLowerCase()) || snap.accounts[0];
+        const organizer = snap.accounts.find((a) => a.handle.toLowerCase() === (body.organizer || '@1nc0gn30').toLowerCase()) || snap.accounts[0];
         const title = body.title || 'Group Tab Bill';
         const totalAmount = Number(body.totalAmount || body.amount || 0);
         const merchant = body.merchant || '@sprig';
@@ -7873,7 +7873,7 @@
           SOL: 'Solana Mainnet (DePay Integration)',
           BTC: 'Bitcoin Taproot / Lightning'
         };
-        const ZOTH_ECOSYSTEM_HANDLES = ['@zoth', '@neal', '@treasury', '@sprig', '@citizen'];
+        const ZOTH_ECOSYSTEM_HANDLES = ['@zoth', '@1nc0gn30', '@treasury', '@sprig', '@citizen'];
         const isZoth = ZOTH_ECOSYSTEM_HANDLES.includes(handle);
         const spreadPct = isZoth ? 0.0 : 0.25;
         const fromUsd = amt * (rates[from] || 1.0);
@@ -8015,7 +8015,7 @@
         const handle = body.handle || activeHandle;
         const acc = snap.accounts.find((a) => a.handle === handle);
         if (!acc) throw new Error(`Account '${handle}' not found`);
-        acc.guardians = body.guardians || ['@neal', '@zoth', 'passkey_backup_757'];
+        acc.guardians = body.guardians || ['@1nc0gn30', '@zoth', 'passkey_backup_757'];
         acc.guardianThreshold = body.threshold || 2;
         const h = await pseudoSha256(handle + JSON.stringify(body.guardians) + Date.now());
         const blk = {
@@ -8058,7 +8058,7 @@
             oldPublicKeyHex: oldKey,
             newPublicKeyHex: newKey,
             recoveryNonce: acc.recoveryNonce,
-            guardiansApproved: body.approvals || ['@neal', '@zoth'],
+            guardiansApproved: body.approvals || ['@1nc0gn30', '@zoth'],
             reason: body.reason || 'Device Lost / Passkey Rotation'
           },
           timestamp: new Date().toISOString()
@@ -8073,7 +8073,7 @@
           rotateBlock: rotateBlk,
           oldPublicKeyHex: oldKey,
           newPublicKeyHex: newKey,
-          guardiansApproved: body.approvals || ['@neal', '@zoth'],
+          guardiansApproved: body.approvals || ['@1nc0gn30', '@zoth'],
           snapshot: snap
         };
       }
@@ -8617,11 +8617,11 @@
 
         const gHandleEl = document.getElementById('guardianHandleInput');
         if (gHandleEl) gHandleEl.value = currentAcc.handle;
-        const gList = currentAcc.guardians || ['@neal', '@zoth', 'passkey_backup_757'];
-        if (document.getElementById('guardian1Input')) document.getElementById('guardian1Input').value = gList[0] || '@neal';
+        const gList = currentAcc.guardians || ['@1nc0gn30', '@zoth', 'passkey_backup_757'];
+        if (document.getElementById('guardian1Input')) document.getElementById('guardian1Input').value = gList[0] || '@1nc0gn30';
         if (document.getElementById('guardian2Input')) document.getElementById('guardian2Input').value = gList[1] || '@zoth';
         if (document.getElementById('guardian3Input')) document.getElementById('guardian3Input').value = gList[2] || 'passkey_backup_757';
-        if (document.getElementById('simG1Text')) document.getElementById('simG1Text').textContent = gList[0] || '@neal';
+        if (document.getElementById('simG1Text')) document.getElementById('simG1Text').textContent = gList[0] || '@1nc0gn30';
         if (document.getElementById('simG2Text')) document.getElementById('simG2Text').textContent = gList[1] || '@zoth';
 
         const splP = document.getElementById('splitPayerInput');
@@ -9072,7 +9072,7 @@
               ? window.VaelorPay.generateQrSvg(vch.uri, 110)
               : '';
 
-            const isIssuer = vch.issuerHandle === activeHandle || activeHandle === '@neal' || activeHandle === '@treasury';
+            const isIssuer = vch.issuerHandle === activeHandle || activeHandle === '@1nc0gn30' || activeHandle === '@treasury';
 
             let actionButtons = '';
             if (isActive) {
@@ -11644,7 +11644,7 @@
       const simRecoveryBtn = document.getElementById('simulateRecoveryBtn');
       if (simRecoveryBtn) {
         simRecoveryBtn.addEventListener('click', async () => {
-          const g1 = document.getElementById('guardian1Input').value.trim() || '@neal';
+          const g1 = document.getElementById('guardian1Input').value.trim() || '@1nc0gn30';
           const g2 = document.getElementById('guardian2Input').value.trim() || '@zoth';
           const handle = activeHandle;
 
@@ -12762,8 +12762,8 @@
           }
         },
         vaelor_mine_pouw: {
-          cli: 'vaelor-cli pouw-mine @neal',
-          args: '{\n  "worker": "@neal",\n  "workType": "SECURITY_ENTROPY_SCAN",\n  "taskLabel": "5-Validator Quorum Cryptographic Audit"\n}',
+          cli: 'vaelor-cli pouw-mine @1nc0gn30',
+          args: '{\n  "worker": "@1nc0gn30",\n  "workType": "SECURITY_ENTROPY_SCAN",\n  "taskLabel": "5-Validator Quorum Cryptographic Audit"\n}',
           schema: {
             name: 'vaelor_mine_pouw',
             description: 'Mine new VLR by submitting a Proof-of-Useful-Work (PoUW) computational audit.'
@@ -12878,8 +12878,8 @@
           }
         },
         vaelor_zoth_comm: {
-          cli: 'vaelor-cli comm send @neal @zoth-rig2 "zoth-sovereign-757" "Run nightly AST build" 25.0 "Verify 31 suites"',
-          args: '{\n  "action": "send",\n  "from": "@neal",\n  "to": "@zoth-rig2",\n  "passphrase": "zoth-sovereign-757",\n  "message": "Dispatched autonomous 24/7 nightly AST compiler build & security verification pass.",\n  "amountVlr": 25.0,\n  "aiPrompt": "Run autonomous AST linting and lattice quorum verification loop."\n}',
+          cli: 'vaelor-cli comm send @1nc0gn30 @zoth-rig2 "zoth-sovereign-757" "Run nightly AST build" 25.0 "Verify 31 suites"',
+          args: '{\n  "action": "send",\n  "from": "@1nc0gn30",\n  "to": "@zoth-rig2",\n  "passphrase": "zoth-sovereign-757",\n  "message": "Dispatched autonomous 24/7 nightly AST compiler build & security verification pass.",\n  "amountVlr": 25.0,\n  "aiPrompt": "Run autonomous AST linting and lattice quorum verification loop."\n}',
           schema: {
             name: 'vaelor_zoth_comm',
             description: 'Send a passphrase-gated, AES-256-GCM encrypted peer-to-peer message and optional AI task dispatch prompt between ZothOS nodes and 24/7 AI laptops over the Vaelor feeless lattice. Supports handshake authorization, inbox decryption, and peer discovery with zero-spam lattice gating.',

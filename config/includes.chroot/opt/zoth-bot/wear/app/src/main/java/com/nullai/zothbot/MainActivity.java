@@ -1,4 +1,4 @@
-package com.nealfrazier.zothbot;
+package com.nullai.zothbot;
 
 import android.Manifest;
 import android.animation.ValueAnimator;

@@ -155,7 +155,7 @@ class VaelorLatticeNode {
       totalBridgeVolumeUsd: 0,
       totalCashbackDistributedVael: 0,
       totalSplitTransactionsCount: 0,
-      handles: {},        // "@neal" -> address
+      handles: {},        // "@1nc0gn30" -> address
       accounts: {},       // address -> { address, handle, publicKeyHex, privateKeyHex (for local demo accounts), passkeyCredentialId, guardians, balanceVael, lockedEscrowVael, pouwScore, chain: [] }
       escrows: {},        // escrowId -> { id, buyerAddress, buyerHandle, merchantAddress, merchantHandle, amountVael, memo, protectionHours, createdAt, expiresAt, status, deliveryProofHash, settledAt, settlementTxHash }
       invoices: {},       // invoiceId -> { id, merchantAddress, merchantHandle, amountVlr, amountVael, memo, protectionHours, status, createdAt, expiresAt, ... }
@@ -327,7 +327,7 @@ class VaelorLatticeNode {
           if (Object.keys(this.state.streams).length === 0) {
             try {
               this.createStream({
-                sender: '@neal',
+                sender: '@1nc0gn30',
                 recipient: '@zoth',
                 totalAmount: 3600,
                 durationSeconds: 3600,
@@ -360,7 +360,7 @@ class VaelorLatticeNode {
           if (Object.keys(this.state.vouchers).length === 0) {
             try {
               this.issueVoucher({
-                issuer: '@neal',
+                issuer: '@1nc0gn30',
                 amount: 50.0,
                 claimSecret: '7570',
                 memo: 'Coffee & Pastry Tap-to-Pay Check #757-01'
@@ -383,18 +383,18 @@ class VaelorLatticeNode {
             if (acc.totalYieldHarvestedVael === undefined) acc.totalYieldHarvestedVael = 0;
           }
 
-          // Seed default active savings stakes for @neal (25,000 VLR) and @zoth (15,000 VLR)
-          const nealAcc = this.resolveAccount('@neal');
+          // Seed default active savings stakes for @1nc0gn30 (25,000 VLR) and @zoth (15,000 VLR)
+          const founderAcc = this.resolveAccount('@1nc0gn30');
           const zothAcc = this.resolveAccount('@zoth');
-          if (nealAcc && (!nealAcc.stakedBalanceVael || nealAcc.stakedBalanceVael === 0)) {
-            if (nealAcc.balanceVael < 50000 * VAEL_PER_VLR) {
-              const diff = (50000 * VAEL_PER_VLR) - nealAcc.balanceVael;
+          if (founderAcc && (!founderAcc.stakedBalanceVael || founderAcc.stakedBalanceVael === 0)) {
+            if (founderAcc.balanceVael < 50000 * VAEL_PER_VLR) {
+              const diff = (50000 * VAEL_PER_VLR) - founderAcc.balanceVael;
               if (diff > 0) {
-                nealAcc.balanceVael += diff;
+                founderAcc.balanceVael += diff;
                 this.state.totalSupplyVael += diff;
               }
             }
-            try { this.stakeDeposit({ handle: '@neal', amount: 25000.0, validatorId: 'val-delta-zothos-local' }); } catch (e) {}
+            try { this.stakeDeposit({ handle: '@1nc0gn30', amount: 25000.0, validatorId: 'val-delta-zothos-local' }); } catch (e) {}
           }
           if (zothAcc && (!zothAcc.stakedBalanceVael || zothAcc.stakedBalanceVael === 0)) {
             if (zothAcc.balanceVael < 30000 * VAEL_PER_VLR) {
@@ -411,7 +411,7 @@ class VaelorLatticeNode {
           if (Object.keys(this.state.receipts).length === 0) {
             try {
               this.createSmartReceipt({
-                buyer: '@neal',
+                buyer: '@1nc0gn30',
                 merchant: '@zoth',
                 items: [
                   { name: 'Zoth Studio Pro Lifetime License', qty: 1, unitPrice: 79.00 }
@@ -448,7 +448,7 @@ class VaelorLatticeNode {
           if (Object.keys(this.state.bounties).length === 0) {
             try {
               this.postBounty({
-                poster: '@neal',
+                poster: '@1nc0gn30',
                 title: 'Autonomous Dijkstra Multi-Hop P2P Routing Kernel',
                 category: 'AI & Security',
                 rewardAmount: 45.0,
@@ -511,7 +511,7 @@ class VaelorLatticeNode {
               this.registerAccount({
                 handle: '@hatch',
                 displayName: 'Hatch Open-Source & Creator Grants',
-                guardians: ['@neal', '@treasury'],
+                guardians: ['@1nc0gn30', '@treasury'],
                 initialGrantVlr: 5000
               });
             } catch (e) {}
@@ -555,12 +555,12 @@ class VaelorLatticeNode {
     const treasury = this.registerAccount({
       handle: '@treasury',
       displayName: 'Vaelor Sovereign Treasury & Reserve',
-      guardians: ['@neal', '@zoth', '@nullai'],
+      guardians: ['@1nc0gn30', '@zoth', '@nullai'],
       initialGrantVlr: 100_000
     });
 
-    const neal = this.registerAccount({
-      handle: '@neal',
+    const founder = this.registerAccount({
+      handle: '@1nc0gn30',
       displayName: '1nc0gn30',
       guardians: ['@treasury', '@zoth'],
       initialGrantVlr: 50_000
@@ -569,37 +569,37 @@ class VaelorLatticeNode {
     const zoth = this.registerAccount({
       handle: '@zoth',
       displayName: 'Zoth Studio & ZothOS Compute Node',
-      guardians: ['@neal', '@treasury'],
+      guardians: ['@1nc0gn30', '@treasury'],
       initialGrantVlr: 30_000
     });
 
     const sprig = this.registerAccount({
       handle: '@sprig',
       displayName: 'Sprig Kitchen • 757 Local Merchant',
-      guardians: ['@neal', '@treasury'],
+      guardians: ['@1nc0gn30', '@treasury'],
       initialGrantVlr: 5_000
     });
 
     const buyer = this.registerAccount({
       handle: '@citizen',
       displayName: 'Sovereign Demo Wallet (Passkey Ready)',
-      guardians: ['@neal', '@zoth'],
+      guardians: ['@1nc0gn30', '@zoth'],
       initialGrantVlr: 2_500
     });
 
     const hatch = this.registerAccount({
       handle: '@hatch',
       displayName: 'Hatch Open-Source & Creator Grants',
-      guardians: ['@neal', '@treasury'],
+      guardians: ['@1nc0gn30', '@treasury'],
       initialGrantVlr: 5_000
     });
 
     // Seed 1 instant feeless transfer, 1 active Protected-Pay Escrow, and 1 PoUW Mint block
     this.transfer({
       from: '@citizen',
-      to: '@neal',
+      to: '@1nc0gn30',
       amountVlr: 19,
-      memo: 'Zoth Studio v2 Sovereign Pro License (@citizen -> @neal)'
+      memo: 'Zoth Studio v2 Sovereign Pro License (@citizen -> @1nc0gn30)'
     });
 
     this.createProtectedEscrow({
@@ -652,7 +652,7 @@ class VaelorLatticeNode {
 
     try {
       this.createStream({
-        sender: '@neal',
+        sender: '@1nc0gn30',
         recipient: '@zoth',
         totalAmount: 3600,
         durationSeconds: 3600,
@@ -682,7 +682,7 @@ class VaelorLatticeNode {
 
     try {
       this.issueVoucher({
-        issuer: '@neal',
+        issuer: '@1nc0gn30',
         amount: 50.0,
         claimSecret: '7570',
         memo: 'Coffee & Pastry Tap-to-Pay Check #757-01'
@@ -696,13 +696,13 @@ class VaelorLatticeNode {
     } catch (e) {}
 
     try {
-      this.stakeDeposit({ handle: '@neal', amount: 25000.0, validatorId: 'val-delta-zothos-local' });
+      this.stakeDeposit({ handle: '@1nc0gn30', amount: 25000.0, validatorId: 'val-delta-zothos-local' });
       this.stakeDeposit({ handle: '@zoth', amount: 15000.0, validatorId: 'val-epsilon-nullai-core' });
     } catch (e) {}
 
     try {
       this.createSmartReceipt({
-        buyer: '@neal',
+        buyer: '@1nc0gn30',
         merchant: '@zoth',
         items: [
           { name: 'Zoth Studio Pro Lifetime License', qty: 1, unitPrice: 79.00 }
@@ -736,7 +736,7 @@ class VaelorLatticeNode {
 
     try {
       this.postBounty({
-        poster: '@neal',
+        poster: '@1nc0gn30',
         title: 'Autonomous Dijkstra Multi-Hop P2P Routing Kernel',
         category: 'AI & Security',
         rewardAmount: 45.0,
@@ -841,8 +841,8 @@ class VaelorLatticeNode {
 
   _seedMerchantDirectory() {
     this.state.merchantDirectory = {
-      '@neal': {
-        handle: '@neal',
+      '@1nc0gn30': {
+        handle: '@1nc0gn30',
         name: '1nc0gn30',
         domain: 'nullai.tech',
         badge: '✓ Verified Sovereign Architect',
@@ -854,9 +854,9 @@ class VaelorLatticeNode {
         verifiedAt: '2026-01-01T00:00:00.000Z',
         reviews: [
           {
-            id: 'rev_neal_genesis_01',
+            id: 'rev_founder_genesis_01',
             reviewerHandle: '@citizen',
-            merchantHandle: '@neal',
+            merchantHandle: '@1nc0gn30',
             rating: 5,
             comment: 'Flawless Layer-1 architecture: sub-10ms finality with true zero gas fees.',
             createdAt: '2026-10-20T12:00:00.000Z'
@@ -885,7 +885,7 @@ class VaelorLatticeNode {
           },
           {
             id: 'rev_zoth_genesis_02',
-            reviewerHandle: '@neal',
+            reviewerHandle: '@1nc0gn30',
             merchantHandle: '@zoth',
             rating: 5,
             comment: 'Deterministic ARM64 Metal benchmark attestation passed with 100% test coverage.',
@@ -896,7 +896,7 @@ class VaelorLatticeNode {
       '@sprig': {
         handle: '@sprig',
         name: 'Sprig Kitchen • 757 Local Merchant',
-        domain: 'sprig.757tech.pro',
+        domain: 'sprig.nullai.tech',
         badge: '✓ Verified Local Merchant',
         category: 'Food & Dining',
         trustScore: 97,
@@ -962,9 +962,9 @@ class VaelorLatticeNode {
           createdAt: '2026-10-24T08:45:00.000Z'
         },
         {
-          id: 'rev_neal_genesis_01',
+          id: 'rev_founder_genesis_01',
           reviewerHandle: '@citizen',
-          merchantHandle: '@neal',
+          merchantHandle: '@1nc0gn30',
           rating: 5,
           comment: 'Flawless Layer-1 architecture: sub-10ms finality with true zero gas fees.',
           createdAt: '2026-10-20T12:00:00.000Z'
@@ -1073,7 +1073,7 @@ class VaelorLatticeNode {
   registerAccount({ handle, displayName = '', passkeyCredentialId = null, guardians = [], initialGrantVlr = 100 }) {
     const normHandle = this.normalizeHandle(handle);
     if (!normHandle || !normHandle.startsWith('@')) {
-      throw new Error('Handle must be a valid @username (e.g., @neal, @coffee757)');
+      throw new Error('Handle must be a valid @username (e.g., @1nc0gn30, @coffee757)');
     }
     if (this.state.handles[normHandle]) {
       return this.state.accounts[this.state.handles[normHandle]];
@@ -1090,7 +1090,7 @@ class VaelorLatticeNode {
       rawPublicKeyHex: wallet.rawPublicKeyHex,
       privateKeyHex: wallet.privateKeyHex,
       passkeyCredentialId: passkeyCredentialId || `pk_webauthn_${sha256Hex(normHandle).slice(0, 16)}`,
-      guardians: Array.isArray(guardians) && guardians.length ? guardians : ['@neal', '@zoth'],
+      guardians: Array.isArray(guardians) && guardians.length ? guardians : ['@1nc0gn30', '@zoth'],
       guardianThreshold: 2,
       recoveryNonce: 0,
       balanceVael: grantVael,
@@ -2118,7 +2118,7 @@ class VaelorLatticeNode {
 
     const normHandle = this.normalizeHandle(accountHandle);
     // Zero protocol spread for Zoth ecosystem accounts & founding partners
-    const ZOTH_ECOSYSTEM_HANDLES = ['@zoth', '@neal', '@treasury', '@sprig', '@citizen'];
+    const ZOTH_ECOSYSTEM_HANDLES = ['@zoth', '@1nc0gn30', '@treasury', '@sprig', '@citizen'];
     const isZothEcosystem = ZOTH_ECOSYSTEM_HANDLES.includes(normHandle);
     const spreadPct = isZothEcosystem ? 0.0 : 0.25;
 
@@ -2371,7 +2371,7 @@ class VaelorLatticeNode {
     const account = this.resolveAccount(normHandle);
     if (!account) throw new Error(`Account '${handle}' not found`);
 
-    const currentGuardians = account.guardians || ['@neal', '@zoth'];
+    const currentGuardians = account.guardians || ['@1nc0gn30', '@zoth'];
     const threshold = account.guardianThreshold || 2;
 
     if (!Array.isArray(approvals) || approvals.length === 0) {
@@ -2865,7 +2865,7 @@ class VaelorLatticeNode {
 
     const callerAcc = this.resolveAccount(caller);
     const isIssuer = callerAcc && (callerAcc.address === voucher.issuerAddress || callerAcc.handle === voucher.issuerHandle);
-    const isAdmin = callerAcc && (callerAcc.handle === '@neal' || callerAcc.handle === '@treasury');
+    const isAdmin = callerAcc && (callerAcc.handle === '@1nc0gn30' || callerAcc.handle === '@treasury');
 
     if (!isIssuer && !isAdmin) {
       throw new Error(`Unauthorized: Only the issuer (${voucher.issuerHandle}) can cancel this voucher`);
@@ -3672,15 +3672,15 @@ class VaelorLatticeNode {
         };
       }
 
-      // 2. @neal.ops for DevOps & Cloud Infra
-      const nealAcc = this.resolveAccount('@neal');
-      if (nealAcc) {
-        const id2 = 'sub_nealops_c02';
+      // 2. @1nc0gn30.ops for DevOps & Cloud Infra
+      const founderAcc = this.resolveAccount('@1nc0gn30');
+      if (founderAcc) {
+        const id2 = 'sub_nullaiops_c02';
         this.state.subaccounts[id2] = {
           id: id2,
-          parentHandle: '@neal',
-          parentAddress: nealAcc.address,
-          subHandle: '@neal.ops',
+          parentHandle: '@1nc0gn30',
+          parentAddress: founderAcc.address,
+          subHandle: '@1nc0gn30.ops',
           label: '1nc0gn30 DevOps & Cloud Infra Virtual Card',
           dailyLimitVlr: 500.0,
           dailyLimitVael: 500.0 * VAEL_PER_VLR,
@@ -3693,7 +3693,7 @@ class VaelorLatticeNode {
           createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
           history: [
             {
-              txHash: '000subnealops120002',
+              txHash: '000subnullaiops120002',
               amountVlr: 120.0,
               recipientHandle: '@zoth',
               memo: 'Dedicated ARM64 Bare-Metal Server Allocation',
@@ -4000,27 +4000,27 @@ class VaelorLatticeNode {
     this.state.shieldedTransfers = {};
 
     try {
-      const nealAcc = this.resolveAccount('@neal');
+      const founderAcc = this.resolveAccount('@1nc0gn30');
       const zothAcc = this.resolveAccount('@zoth');
       const treasuryAcc = this.resolveAccount('@treasury');
       const sprigAcc = this.resolveAccount('@sprig');
 
-      // 1. Seeded Shielded Transfer 1: @neal -> @zoth (250 VLR)
-      if (nealAcc && zothAcc) {
+      // 1. Seeded Shielded Transfer 1: @1nc0gn30 -> @zoth (250 VLR)
+      if (founderAcc && zothAcc) {
         const amountVael1 = 250 * VAEL_PER_VLR;
         const memo1 = 'Confidential Q4 Autonomous AI Inference Cluster Allocation';
         const blindingFactor1 = '7f3a9e1482b6c00d51ef8a42bc0148e690a7751c82e690b2496f019b883015ae';
-        const commitment1 = 'cmt_' + sha256Hex(`${nealAcc.address}:${zothAcc.address}:${amountVael1}:${blindingFactor1}:${memo1}`);
-        const viewKey1 = 'vk_audit_nealzoth_250vlr_001';
+        const commitment1 = 'cmt_' + sha256Hex(`${founderAcc.address}:${zothAcc.address}:${amountVael1}:${blindingFactor1}:${memo1}`);
+        const viewKey1 = 'vk_audit_nullaizoth_250vlr_001';
         const viewKeyHash1 = sha256Hex(viewKey1);
-        const id1 = 'shld_payroll_nealzoth_c01';
+        const id1 = 'shld_payroll_nullaizoth_c01';
 
         this.state.shieldedTransfers[id1] = {
           id: id1,
           commitment: commitment1,
-          fromHandle: nealAcc.handle,
+          fromHandle: founderAcc.handle,
           toHandle: zothAcc.handle,
-          fromAddress: nealAcc.address,
+          fromAddress: founderAcc.address,
           toAddress: zothAcc.address,
           amountVlr: 250.0,
           amountVael: amountVael1,
@@ -4028,8 +4028,8 @@ class VaelorLatticeNode {
           blindingFactor: blindingFactor1,
           viewKey: viewKey1,
           viewKeyHash: viewKeyHash1,
-          sendBlockHash: '000shldsendnealzoth250c01',
-          receiveBlockHash: '000shldrecnealzoth250c01',
+          sendBlockHash: '000shldsendnullaizoth250c01',
+          receiveBlockHash: '000shldrecnullaizoth250c01',
           timestamp: new Date(Date.now() - 3600 * 1000 * 12).toISOString(),
           status: 'CONFIRMED'
         };
@@ -4271,12 +4271,12 @@ class VaelorLatticeNode {
 
     try {
       // 1. Seeded Group Tab 1: Artisan Dinner & Drinks @ Sprig Kitchen (90.00 VLR)
-      // Participants: @neal (PAID), @citizen (PAID), @zoth (PENDING) -> ready for 1-click auto-settle test
+      // Participants: @1nc0gn30 (PAID), @citizen (PAID), @zoth (PENDING) -> ready for 1-click auto-settle test
       const id1 = 'tab_dinner_sprig_c01';
       this.state.groupTabs[id1] = {
         id: id1,
         title: 'Artisan Dinner & Drinks @ Sprig Kitchen',
-        organizer: '@neal',
+        organizer: '@1nc0gn30',
         merchant: '@sprig',
         totalAmountVlr: 90.0,
         totalVael: 90 * VAEL_PER_VLR,
@@ -4288,7 +4288,7 @@ class VaelorLatticeNode {
         createBlockHash: '000seed_tab_create_sprig01',
         participants: [
           {
-            handle: '@neal',
+            handle: '@1nc0gn30',
             shareVlr: 30.0,
             shareVael: 30 * VAEL_PER_VLR,
             status: 'PAID',
@@ -4335,7 +4335,7 @@ class VaelorLatticeNode {
             paidAt: new Date(Date.now() - 86400 * 1000 * 2).toISOString()
           },
           {
-            handle: '@neal',
+            handle: '@1nc0gn30',
             shareVlr: 40.0,
             shareVael: 40 * VAEL_PER_VLR,
             status: 'PAID',
@@ -4655,15 +4655,15 @@ class VaelorLatticeNode {
     this.state.inheritancePlans = {};
 
     try {
-      const nealAcc = this.resolveAccount('@neal');
+      const founderAcc = this.resolveAccount('@1nc0gn30');
       const treasuryAcc = this.resolveAccount('@treasury');
 
-      // 1. Seeded Inheritance Plan 1: @neal -> @zoth (60%), @citizen (40%)
-      const id1 = 'inh_neal_continuity_01';
+      // 1. Seeded Inheritance Plan 1: @1nc0gn30 -> @zoth (60%), @citizen (40%)
+      const id1 = 'inh_founder_continuity_01';
       this.state.inheritancePlans[id1] = {
         id: id1,
-        owner: '@neal',
-        ownerAddress: nealAcc ? nealAcc.address : 'vlr1_neal_address',
+        owner: '@1nc0gn30',
+        ownerAddress: founderAcc ? founderAcc.address : 'vlr1_founder_address',
         memo: '1nc0gn30 Sovereign Tech Estate Continuity Vault',
         inactivityDays: 180,
         lastActiveAt: new Date(Date.now() - 3600 * 1000 * 24 * 3).toISOString(),
@@ -4678,7 +4678,7 @@ class VaelorLatticeNode {
         claimant: null,
         distributedVlr: 0,
         claimBlockHash: null,
-        setBlockHash: '000seed_inh_set_neal01'
+        setBlockHash: '000seed_inh_set_founder01'
       };
 
       // 2. Seeded Inheritance Plan 2: @treasury -> @sprig (50%), @citizen (50%)
@@ -5274,7 +5274,7 @@ class VaelorLatticeNode {
       creatorAcc = this.registerAccount({
         handle: '@hatch',
         displayName: 'Hatch Open-Source & Creator Grants',
-        guardians: ['@neal', '@treasury'],
+        guardians: ['@1nc0gn30', '@treasury'],
         initialGrantVlr: 5000
       });
     }
@@ -5582,19 +5582,19 @@ class VaelorLatticeNode {
         hatch = this.registerAccount({
           handle: '@hatch',
           displayName: 'Hatch Open-Source & Creator Grants',
-          guardians: ['@neal', '@treasury'],
+          guardians: ['@1nc0gn30', '@treasury'],
           initialGrantVlr: 5000
         });
       } catch (e) {}
     }
 
-    const neal = this.resolveAccount('@neal');
+    const founder = this.resolveAccount('@1nc0gn30');
     const citizen = this.resolveAccount('@citizen');
 
-    if (neal && zoth && neal.balanceVael >= 100 * VAEL_PER_VLR) {
+    if (founder && zoth && founder.balanceVael >= 100 * VAEL_PER_VLR) {
       try {
         this.sendCreatorTip({
-          from: '@neal',
+          from: '@1nc0gn30',
           creator: '@zoth',
           amount: 100.0,
           badge: 'SOVEREIGN_BACKER',
@@ -5617,10 +5617,10 @@ class VaelorLatticeNode {
       } catch (e) {}
     }
 
-    if (neal && hatch && neal.balanceVael >= 50 * VAEL_PER_VLR) {
+    if (founder && hatch && founder.balanceVael >= 50 * VAEL_PER_VLR) {
       try {
         this.sendCreatorTip({
-          from: '@neal',
+          from: '@1nc0gn30',
           creator: '@hatch',
           amount: 50.0,
           badge: 'PATRON',
@@ -5941,7 +5941,7 @@ class VaelorLatticeNode {
       publicKeyHex: acc.publicKeyHex,
       rawPublicKeyHex: acc.rawPublicKeyHex,
       passkeyCredentialId: acc.passkeyCredentialId,
-      guardians: acc.guardians || ['@neal', '@zoth'],
+      guardians: acc.guardians || ['@1nc0gn30', '@zoth'],
       guardianThreshold: acc.guardianThreshold || 2,
       recoveryNonce: acc.recoveryNonce || 0,
       balanceVlr: +(acc.balanceVael / VAEL_PER_VLR).toFixed(6),
@@ -6479,7 +6479,7 @@ class VaelorLatticeNode {
         this.registerAccount({
           handle: '@zoth-rig2',
           displayName: 'ZothOS Autonomous 24/7 AI Node',
-          guardians: ['@neal', '@zoth'],
+          guardians: ['@1nc0gn30', '@zoth'],
           initialGrantVlr: 2500
         });
       } catch (e) {}
@@ -6499,7 +6499,7 @@ class VaelorLatticeNode {
       lanEndpoint: 'http://192.168.1.102:8140'
     });
 
-    this.registerCommIdentity('@neal', DEMO_PASSPHRASE, {
+    this.registerCommIdentity('@1nc0gn30', DEMO_PASSPHRASE, {
       nodeName: 'Founder Sovereign Node (@1nc0gn30)',
       lanEndpoint: 'http://192.168.1.101:8140'
     });
@@ -6509,23 +6509,23 @@ class VaelorLatticeNode {
       lanEndpoint: 'http://127.0.0.1:8140'
     });
 
-    // 2. Seed Authorized Channel between @neal and @zoth-rig2
+    // 2. Seed Authorized Channel between @1nc0gn30 and @zoth-rig2
     try {
-      this.requestCommHandshake('@neal', '@zoth-rig2', DEMO_PASSPHRASE, 'ZothOS 24/7 Autonomous Node Command Channel');
+      this.requestCommHandshake('@1nc0gn30', '@zoth-rig2', DEMO_PASSPHRASE, 'ZothOS 24/7 Autonomous Node Command Channel');
     } catch (e) {}
 
-    // Ensure @neal has sufficient balance for attached VLR transfer
-    const nealAcc = this.resolveAccount('@neal');
-    if (nealAcc && nealAcc.balanceVael < 50 * VAEL_PER_VLR) {
+    // Ensure @1nc0gn30 has sufficient balance for attached VLR transfer
+    const founderAcc = this.resolveAccount('@1nc0gn30');
+    if (founderAcc && founderAcc.balanceVael < 50 * VAEL_PER_VLR) {
       try {
-        this.transfer({ from: '@treasury', to: '@neal', amountVlr: 500.0, memo: 'Fund @neal for ZothOS comm channel' });
+        this.transfer({ from: '@treasury', to: '@1nc0gn30', amountVlr: 500.0, memo: 'Fund @1nc0gn30 for ZothOS comm channel' });
       } catch (e) {}
     }
 
-    // 3. Seed Pre-Encrypted Messages between @neal and @zoth-rig2
+    // 3. Seed Pre-Encrypted Messages between @1nc0gn30 and @zoth-rig2
     try {
       this.sendCommMessage({
-        from: '@neal',
+        from: '@1nc0gn30',
         to: '@zoth-rig2',
         passphrase: DEMO_PASSPHRASE,
         message: 'Dispatched autonomous 24/7 nightly AST compiler build & security verification pass.',
@@ -6535,7 +6535,7 @@ class VaelorLatticeNode {
 
       this.sendCommMessage({
         from: '@zoth-rig2',
-        to: '@neal',
+        to: '@1nc0gn30',
         passphrase: DEMO_PASSPHRASE,
         message: 'Autonomous 24/7 AI Node running in nominal state. All 30 test suites passing, thermals < 55C, 0 errors.',
         attachedVlr: 0,
@@ -7119,7 +7119,7 @@ class VaelorLatticeNode {
         vaultAcc = this.registerAccount({
           handle: vaultHandle,
           displayName: 'Zoth Foundation Corporate Treasury',
-          guardians: ['@neal', '@zoth', '@sprig'],
+          guardians: ['@1nc0gn30', '@zoth', '@sprig'],
           initialGrantVlr: 500
         });
       } catch (e) {}
@@ -7131,12 +7131,12 @@ class VaelorLatticeNode {
         vaultId,
         name: 'Zoth Foundation Corporate Treasury',
         accountHandle: vaultHandle,
-        signers: ['@neal', '@zoth', '@sprig'],
+        signers: ['@1nc0gn30', '@zoth', '@sprig'],
         threshold: 2,
         balanceVlr: vaultAcc ? +(vaultAcc.balanceVael / VAEL_PER_VLR).toFixed(4) : 500.0,
         balanceVael: vaultAcc ? vaultAcc.balanceVael : 500 * VAEL_PER_VLR,
         createdAt: '2026-10-26T12:00:00.000Z',
-        creator: '@neal'
+        creator: '@1nc0gn30'
       };
     }
   }
@@ -7378,7 +7378,7 @@ class VaelorLatticeNode {
     try {
       res = this.approveMultisigTx({ proposalId, signer });
     } catch (e) {
-      res = { ok: true, executed: true, threshold: 2, proposal: { approvals: ['@neal', signer], amountVlr: 2500, memo: 'Q4 Sovereign R&D & KVM Fleet Grant' } };
+      res = { ok: true, executed: true, threshold: 2, proposal: { approvals: ['@1nc0gn30', signer], amountVlr: 2500, memo: 'Q4 Sovereign R&D & KVM Fleet Grant' } };
     }
     const hook = this.generateWebhookEvent('treasury.multisig.approved', { proposalId, signer });
     return {
@@ -7386,8 +7386,8 @@ class VaelorLatticeNode {
       proposalId,
       vault: 'msig_zoth_foundation',
       requiredSignatures: 2,
-      signers: ['@neal', '@zoth', '@sprig'],
-      approvedBy: res.proposal ? res.proposal.approvals : ['@neal', signer],
+      signers: ['@1nc0gn30', '@zoth', '@sprig'],
+      approvedBy: res.proposal ? res.proposal.approvals : ['@1nc0gn30', signer],
       thresholdReached: res.executed || false,
       status: res.executed ? 'EXECUTED_AND_DISPATCHED' : 'PROPOSAL_UPDATED',
       amountVlr: res.proposal ? res.proposal.amountVlr : 2500,

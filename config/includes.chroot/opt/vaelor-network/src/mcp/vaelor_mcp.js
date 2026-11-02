@@ -49,7 +49,7 @@ const VAELOR_TOOLS = [
       properties: {
         handle: {
           type: 'string',
-          description: 'The @handle to inspect (e.g., "@neal", "@citizen", "@sprig")'
+          description: 'The @handle to inspect (e.g., "@1nc0gn30", "@citizen", "@sprig")'
         }
       },
       required: ['handle']
@@ -63,7 +63,7 @@ const VAELOR_TOOLS = [
       properties: {
         from: {
           type: 'string',
-          description: 'Sender @handle (e.g. "@neal")'
+          description: 'Sender @handle (e.g. "@1nc0gn30")'
         },
         to: {
           type: 'string',
@@ -146,7 +146,7 @@ const VAELOR_TOOLS = [
       properties: {
         worker: {
           type: 'string',
-          description: 'Worker @handle claiming the mining reward (default: "@neal")'
+          description: 'Worker @handle claiming the mining reward (default: "@1nc0gn30")'
         },
         workType: {
           type: 'string',
@@ -287,7 +287,7 @@ const VAELOR_TOOLS = [
       properties: {
         from: {
           type: 'string',
-          description: 'Supporter @handle (e.g. "@citizen", "@neal")'
+          description: 'Supporter @handle (e.g. "@citizen", "@1nc0gn30")'
         },
         creator: {
           type: 'string',
@@ -321,7 +321,7 @@ const VAELOR_TOOLS = [
       properties: {
         buyer: {
           type: 'string',
-          description: 'Buyer @handle (e.g. "@citizen", "@neal")'
+          description: 'Buyer @handle (e.g. "@citizen", "@1nc0gn30")'
         },
         merchant: {
           type: 'string',
@@ -398,7 +398,7 @@ const VAELOR_TOOLS = [
       properties: {
         handle: {
           type: 'string',
-          description: 'Account @handle to audit (e.g. "@citizen", "@neal", "@sprig")'
+          description: 'Account @handle to audit (e.g. "@citizen", "@1nc0gn30", "@sprig")'
         },
         taxYear: {
           type: 'number',
@@ -425,11 +425,11 @@ const VAELOR_TOOLS = [
         },
         from: {
           type: 'string',
-          description: 'Sender @handle (e.g. "@neal", "@zoth")'
+          description: 'Sender @handle (e.g. "@1nc0gn30", "@zoth")'
         },
         to: {
           type: 'string',
-          description: 'Target Node @handle (e.g. "@zoth-rig2", "@zoth", "@neal")'
+          description: 'Target Node @handle (e.g. "@zoth-rig2", "@zoth", "@1nc0gn30")'
         },
         handle: {
           type: 'string',
@@ -496,7 +496,7 @@ const VAELOR_TOOLS = [
         },
         signerHandle: {
           type: 'string',
-          description: 'Co-signer @handle (e.g. "@zoth", "@neal", "@sprig")'
+          description: 'Co-signer @handle (e.g. "@zoth", "@1nc0gn30", "@sprig")'
         },
         idempotencyKey: {
           type: 'string',
@@ -649,7 +649,7 @@ function executeTool(node, toolName, args = {}) {
     }
 
     case 'vaelor_mine_pouw': {
-      const worker = String(args.worker || '@neal').trim();
+      const worker = String(args.worker || '@1nc0gn30').trim();
       const workType = args.workType || 'SECURITY_ENTROPY_SCAN';
       const taskLabel = args.taskLabel || 'Automated PoUW Node Verification Audit';
       const payload = typeof args.artifactPayload === 'string'
@@ -975,7 +975,7 @@ function executeTool(node, toolName, args = {}) {
 
     case 'vaelor_zoth_comm': {
       const action = String(args.action || 'send').toLowerCase().trim();
-      const from = String(args.from || args.sender || '@neal').trim();
+      const from = String(args.from || args.sender || '@1nc0gn30').trim();
       const to = String(args.to || args.recipient || '@zoth-rig2').trim();
       const handle = String(args.handle || from).trim();
       const passphrase = String(args.passphrase || '').trim();
@@ -1169,8 +1169,8 @@ function executeTool(node, toolName, args = {}) {
         proposalId,
         vault: 'msig_zoth_foundation',
         requiredSignatures: 2,
-        signers: ['@neal', '@zoth', '@sprig'],
-        approvedBy: ['@neal', signerHandle],
+        signers: ['@1nc0gn30', '@zoth', '@sprig'],
+        approvedBy: ['@1nc0gn30', signerHandle],
         thresholdReached: true,
         status: 'EXECUTED_AND_DISPATCHED',
         amountVlr: Number(args.amountVlr || 2500),

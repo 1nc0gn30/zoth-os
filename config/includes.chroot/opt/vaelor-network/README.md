@@ -9,7 +9,7 @@
   [![Consensus](https://img.shields.io/badge/Consensus-5--Validator%20BFT%20Quorum-f59e0b?style=for-the-badge&logo=diagram-next&logoColor=white)](src/core/lattice.js)
   [![Zero Gas](https://img.shields.io/badge/Gas%20Fees-%240.00%20Feeless%20Forever-06b6d4?style=for-the-badge&logo=ethereum&logoColor=white)](public/index.html)
   [![Cryptography](https://img.shields.io/badge/Crypto-Ed25519%20%E2%80%A2%20Pedersen%20%E2%80%A2%20SHA--256-8b5cf6?style=for-the-badge&logo=shield&logoColor=white)](src/core/lattice.js)
-  [![Author](https://img.shields.io/badge/Architect-Neal%20Frazier%20Tech%20(@1nc0gn30)-f5c542?style=for-the-badge&logo=github&logoColor=05060b)](https://github.com/1nc0gn30)
+  [![Author](https://img.shields.io/badge/Architect-1nc0gn30%20(@1nc0gn30)-f5c542?style=for-the-badge&logo=github&logoColor=05060b)](https://github.com/1nc0gn30)
 
 </div>
 
@@ -31,13 +31,13 @@
 
 ### 1. Asynchronous Account-Lattice DAG Topology
 
-In Vaelor, there is no single monolithic block queue. Instead, each participant (`@neal`, `@citizen`, `@sprig`, `@treasury`) maintains an independent blockchain consisting of discrete, immutable transaction blocks (`OPEN`, `SEND`, `RECEIVE`, `ESCROW_LOCK`, `ESCROW_RELEASE`, `CREDIT_DRAW`, `POUW_MINT`).
+In Vaelor, there is no single monolithic block queue. Instead, each participant (`@1nc0gn30`, `@citizen`, `@sprig`, `@treasury`) maintains an independent blockchain consisting of discrete, immutable transaction blocks (`OPEN`, `SEND`, `RECEIVE`, `ESCROW_LOCK`, `ESCROW_RELEASE`, `CREDIT_DRAW`, `POUW_MINT`).
 
 Settlement occurs via dual-entry block pairs: when `@citizen` pays `@sprig`, a `SEND` block is appended to `@citizen`'s lattice chain, and an associated `RECEIVE` block is appended to `@sprig`'s chain. Because state transitions only alter the accounts involved, thousands of concurrent transactions process asynchronously across the network without lock contention.
 
 ```mermaid
 flowchart LR
-    subgraph AccountNeal["Account @neal Chain"]
+    subgraph AccountNeal["Account @1nc0gn30 Chain"]
         N1["OPEN (Genesis Grant)"] --> N2["SEND 25.5 VLR"]
         N2 --> N3["STAKE 100 VLR (8.5% APY)"]
     end
@@ -155,7 +155,7 @@ To eliminate typosquatting and impersonation attacks before a user signs a trans
 ### 4. 2-of-3 Seedless Guardian Social Recovery
 Rather than requiring users to write down 24 English words on paper, account security is divided into a 2-of-3 Shamir threshold:
 - **Share 1**: User WebAuthn Secure Enclave (Passkey on iOS/macOS/Android).
-- **Share 2**: Trusted Social Guardian (`@neal`, friend, or hardware key).
+- **Share 2**: Trusted Social Guardian (`@1nc0gn30`, friend, or hardware key).
 - **Share 3**: Sovereign Recovery Vault (Encrypted cloud backup or second device).
 Any 2 valid cryptographic signatures can execute a `GUARDIAN_RECOVERY` block that updates the account's Ed25519 public key without moving funds or breaking transaction history.
 
@@ -287,7 +287,7 @@ The Vaelor daemon exposes a high-performance, JSON-over-HTTP REST RPC interface:
 | Method | Endpoint | Description | Request Payload / Parameters |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/snapshot` | Complete network state, supply, BFT consensus status, accounts | None |
-| `GET` | `/api/account/:handle` | Balance, recent blocks, escrow locks, staking summary | URL param `:handle` (`@neal`) |
+| `GET` | `/api/account/:handle` | Balance, recent blocks, escrow locks, staking summary | URL param `:handle` (`@1nc0gn30`) |
 | `POST` | `/api/register` | Register new `@handle` with Ed25519 public key | `{ handle, displayName, initialGrantVlr }` |
 | `POST` | `/api/transfer` | Execute sub-20ms feeless transfer ($0 gas) | `{ from, to, amountVlr, memo }` |
 | `GET` | `/api/escrows` | List active & settled zero-penalty protected escrows | Optional query `?handle=@citizen` |
@@ -367,19 +367,19 @@ The Vaelor daemon exposes a high-performance, JSON-over-HTTP REST RPC interface:
 vaelor-cli status
 
 # Inspect liquid balance, staked savings, and credit profile
-vaelor-cli balance @neal
+vaelor-cli balance @1nc0gn30
 
 # Send an instant feeless transfer ($0.00 gas forever)
-vaelor-cli send @neal @sprig 10.0 "Catering Deposit"
+vaelor-cli send @1nc0gn30 @sprig 10.0 "Catering Deposit"
 
 # Discover registered ZothOS Comm fleet peers
 vaelor-cli comm peers
 
 # Establish authorized P2P handshake channel (COMM_HANDSHAKE)
-vaelor-cli comm handshake @neal @zoth-rig2 "zoth-sovereign-757" "Handshake Request"
+vaelor-cli comm handshake @1nc0gn30 @zoth-rig2 "zoth-sovereign-757" "Handshake Request"
 
 # Dispatch AES-256-GCM encrypted comm message with attached VLR and AI fleet prompt
-vaelor-cli comm send @neal @zoth-rig2 "zoth-sovereign-757" "Run nightly AST build" 25.0 "Execute 31 suites"
+vaelor-cli comm send @1nc0gn30 @zoth-rig2 "zoth-sovereign-757" "Run nightly AST build" 25.0 "Execute 31 suites"
 
 # Decrypt and read inbox messages and AI dispatch stream
 vaelor-cli comm inbox @zoth-rig2 "zoth-sovereign-757"
@@ -403,13 +403,13 @@ vaelor-cli peer delta
 vaelor-cli multisig list
 
 # Propose corporate multi-sig transfer
-vaelor-cli multisig propose @sprig 2500 "Q4 Sovereign R&D & KVM Fleet Grant" @neal
+vaelor-cli multisig propose @sprig 2500 "Q4 Sovereign R&D & KVM Fleet Grant" @1nc0gn30
 
 # Co-sign and execute 2-of-3 corporate proposal with HMAC webhook dispatch
 vaelor-cli multisig approve prop_zoth_corp_2026_q4 @zoth
 
 # Mine a Proof-of-Useful-Work (PoUW) computational audit block
-vaelor-cli mine @neal SECURITY_ENTROPY_SCAN
+vaelor-cli mine @1nc0gn30 SECURITY_ENTROPY_SCAN
 
 # Run the anti-phishing homoglyph & typosquatting detection engine
 vaelor-cli check @spr1g
@@ -594,7 +594,7 @@ Cryptocurrency tax accounting is notoriously broken: traders and everyday shoppe
 
 ## 🚀 High-Throughput Multi-Account DAG Stress Benchmark (<20ms Finality & 100% BFT Quorum)
 
-Vaelor Wave 22 introduces a high-throughput multi-account stress benchmark in `test/verify_lattice.js` simulating real-world decentralized commerce across 5 concurrent sovereign participants (`@zoth`, `@sprig`, `@hatch`, `@citizen`, `@neal`):
+Vaelor Wave 22 introduces a high-throughput multi-account stress benchmark in `test/verify_lattice.js` simulating real-world decentralized commerce across 5 concurrent sovereign participants (`@zoth`, `@sprig`, `@hatch`, `@citizen`, `@1nc0gn30`):
 
 - **50 Rapid Multi-Account Operations**: Cycles through 20 rapid feeless transfers, 15 merchant FX checkouts, and 15 zero-penalty protected escrows (create and resolve).
 - **85 Total BFT-Attested Blocks Minted**:
@@ -644,7 +644,7 @@ Solves enterprise CFO governance requirements where capital disbursements cannot
 
 - **Corporate Treasury Vault (`msig_zoth_foundation`)**:
   - Pre-seeded with **`50,000 ◈ VLR`** corporate treasury balance.
-  - Policy: **2-of-3 Multi-Sig Threshold** (`@neal`, `@zoth`, `@sprig`).
+  - Policy: **2-of-3 Multi-Sig Threshold** (`@1nc0gn30`, `@zoth`, `@sprig`).
 - **Proposal Lifecycle (`PROPOSAL_CREATED` $\rightarrow$ `PENDING` $\rightarrow$ `EXECUTED_AND_DISPATCHED`)**:
   - Proposers submit transfers via `POST /api/multisig/propose` or `vaelor-cli multisig propose`.
   - Authorized signers co-sign via `POST /api/multisig/approve` or `vaelor-cli multisig approve`.

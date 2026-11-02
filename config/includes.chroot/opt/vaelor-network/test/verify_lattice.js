@@ -21,7 +21,7 @@ assert.strictEqual(acc.handle, '@test_bakery');
 // 2. Feeless Transfer (<50ms finality, $0 gas)
 const tx = node.transfer({
   from: '@test_bakery',
-  to: '@neal',
+  to: '@1nc0gn30',
   amountVlr: 25.5,
   memo: 'Custom POS integration test'
 });
@@ -270,7 +270,7 @@ const bakeryOldKey = bakeryAcc.publicKeyHex;
 // Register 2-of-3 guardian policy
 const setGuardRes = nodeReloaded.setGuardianPolicy({
   handle: '@test_bakery',
-  guardians: ['@neal', '@zoth', 'passkey_backup_bakery'],
+  guardians: ['@1nc0gn30', '@zoth', 'passkey_backup_bakery'],
   threshold: 2
 });
 assert.strictEqual(setGuardRes.account.guardians.length, 3);
@@ -282,7 +282,7 @@ assert(setGuardRes.block.quorumCertificate, 'SET_GUARDIANS block must have quoru
 assert.throws(() => {
   nodeReloaded.recoverAccountKey({
     handle: '@test_bakery',
-    approvals: ['@neal'] // only 1 approval
+    approvals: ['@1nc0gn30'] // only 1 approval
   });
 }, /Insufficient guardian approvals/);
 
@@ -294,10 +294,10 @@ assert.throws(() => {
   });
 }, /Insufficient guardian approvals/);
 
-// Successful recovery with 2 of 3 guardian approvals (@neal + @zoth)
+// Successful recovery with 2 of 3 guardian approvals (@1nc0gn30 + @zoth)
 const recoverRes = nodeReloaded.recoverAccountKey({
   handle: '@test_bakery',
-  approvals: ['@neal', '@zoth'],
+  approvals: ['@1nc0gn30', '@zoth'],
   reason: 'Lost Android Passkey • Rotating to Sovereign Hardware Key'
 });
 assert.strictEqual(recoverRes.ok, true);
@@ -410,9 +410,9 @@ assert(cbSummary.cashbackEventCount >= 1, 'Must track cashback rebate events');
 
 // 13. Test Cryptographic Offline Tap-to-Pay Vouchers & Bearer Checks
 console.log('Testing Cryptographic Offline Tap-to-Pay Vouchers & Bearer Checks...');
-const nealBalBeforeVoucher = nodeReloaded.resolveAccount('@neal').balanceVael;
+const founderBalBeforeVoucher = nodeReloaded.resolveAccount('@1nc0gn30').balanceVael;
 const voucherIssueRes = nodeReloaded.issueVoucher({
-  issuer: '@neal',
+  issuer: '@1nc0gn30',
   amount: 50.0,
   claimSecret: '7570',
   memo: 'Artisan Bakery Tap-to-Pay Bearer Check #44'
@@ -426,9 +426,9 @@ assert.strictEqual(voucherIssueRes.issueBlock.type, 'VOUCHER_ISSUE');
 assert.strictEqual(voucherIssueRes.issueBlock.signatureValid, true);
 assert(voucherIssueRes.issueBlock.quorumCertificate, 'VOUCHER_ISSUE must receive 5-validator quorum certificate');
 
-// Neal's balance should be debited 50 VLR immediately
-const nealBalAfterVoucher = nodeReloaded.resolveAccount('@neal').balanceVael;
-assert.strictEqual(nealBalAfterVoucher, nealBalBeforeVoucher - 50 * 1_000_000, 'Issuer balance must be debited on voucher issuance');
+// 1nc0gn30's balance should be debited 50 VLR immediately
+const founderBalAfterVoucher = nodeReloaded.resolveAccount('@1nc0gn30').balanceVael;
+assert.strictEqual(founderBalAfterVoucher, founderBalBeforeVoucher - 50 * 1_000_000, 'Issuer balance must be debited on voucher issuance');
 
 // Attempt redemption with wrong PIN -> should throw
 assert.throws(() => {
@@ -500,15 +500,15 @@ assert(Array.isArray(finalSnap.vouchers), 'Snapshot must return vouchers array')
 // 14. Test Zero-Lockup PoUW Compute Savings Vaults (8.5% Real-Yield APY)
 console.log('Testing Zero-Lockup PoUW Compute Savings Vaults (8.5% APY)...');
 
-// Verify boot seeding of @neal (25,000 VLR) and @zoth (15,000 VLR)
+// Verify boot seeding of @1nc0gn30 (25,000 VLR) and @zoth (15,000 VLR)
 const vaultSnap = nodeReloaded.getNetworkSnapshot();
 assert.strictEqual(vaultSnap.savingsVaultSummary.apyPct, 8.5, 'Savings Vault must offer 8.5% Real-Yield APY');
 assert(vaultSnap.totalStakedVlr >= 40000.0, 'Must reflect seeded savings stakes');
 assert(vaultSnap.activeStakersCount >= 2, 'Must have at least 2 active stakers');
 
-const nealStakedAcc = nodeReloaded.resolveAccount('@neal');
+const founderStakedAcc = nodeReloaded.resolveAccount('@1nc0gn30');
 const zothStakedAcc = nodeReloaded.resolveAccount('@zoth');
-assert.strictEqual(nealStakedAcc.stakedBalanceVael, 25000 * 1_000_000, '@neal must have 25,000 VLR in savings vault');
+assert.strictEqual(founderStakedAcc.stakedBalanceVael, 25000 * 1_000_000, '@1nc0gn30 must have 25,000 VLR in savings vault');
 assert.strictEqual(zothStakedAcc.stakedBalanceVael, 15000 * 1_000_000, '@zoth must have 15,000 VLR in savings vault');
 
 // Register new citizen saver
@@ -597,10 +597,10 @@ assert.throws(() => {
 }, /No active stake/, 'Harvesting with zero staked balance must fail');
 
 // Staking overview helper check
-const overview = nodeReloaded.getStakingOverview('@neal');
+const overview = nodeReloaded.getStakingOverview('@1nc0gn30');
 assert.strictEqual(overview.ok, true);
 assert.strictEqual(overview.apyPct, 8.5);
-assert.strictEqual(overview.userStake.handle, '@neal');
+assert.strictEqual(overview.userStake.handle, '@1nc0gn30');
 assert.strictEqual(overview.userStake.stakedBalanceVlr, 25000.0);
 
 // ==========================================
@@ -613,7 +613,7 @@ const seedReceipts = nodeReloaded.getReceiptsForHandle('@all');
 assert(seedReceipts.length >= 3, 'Must have at least 3 seeded smart receipts');
 const zothProReceipt = seedReceipts.find((r) => r.memo && r.memo.includes('Zoth Studio Sovereign AI Pro Tier'));
 assert(zothProReceipt, 'Zoth Studio Pro lifetime license receipt must exist');
-assert.strictEqual(zothProReceipt.buyerHandle, '@neal');
+assert.strictEqual(zothProReceipt.buyerHandle, '@1nc0gn30');
 assert.strictEqual(zothProReceipt.merchantHandle, '@zoth');
 assert.strictEqual(zothProReceipt.category, 'SaaS & AI Tools');
 assert.strictEqual(zothProReceipt.items.length, 1);
@@ -720,7 +720,7 @@ assert(settledBounties.length >= 1, 'Must have at least 1 SETTLED bounty');
 
 const dijkstraBty = initialBounties.find((b) => b.title.includes('Dijkstra'));
 assert(dijkstraBty, 'Dijkstra routing kernel bounty must exist');
-assert.strictEqual(dijkstraBty.posterHandle, '@neal');
+assert.strictEqual(dijkstraBty.posterHandle, '@1nc0gn30');
 assert.strictEqual(dijkstraBty.rewardVlr, 45.0);
 assert.strictEqual(dijkstraBty.status, 'OPEN');
 assert.strictEqual(dijkstraBty.requiredProofType, 'SHA256_AST_PROOF');
@@ -797,12 +797,12 @@ assert.throws(() => {
 }, /Cannot settle: bounty is already SETTLED/, 'Double-claim on settled bounty must throw');
 
 // 5. Post and Cancel/Refund test
-const nealAccBeforeCancel = nodeReloaded.resolveAccount('@neal');
-const nealBalBeforeCancel = nealAccBeforeCancel.balanceVael;
-const nealLockedBeforeCancel = nealAccBeforeCancel.lockedEscrowVael;
+const founderAccBeforeCancel = nodeReloaded.resolveAccount('@1nc0gn30');
+const founderBalBeforeCancel = founderAccBeforeCancel.balanceVael;
+const founderLockedBeforeCancel = founderAccBeforeCancel.lockedEscrowVael;
 
 const bountyCancelPostRes = nodeReloaded.postBounty({
-  poster: '@neal',
+  poster: '@1nc0gn30',
   title: 'Temporary Test Bounty for Cancellation',
   rewardAmount: 15.0,
   category: 'Experimental'
@@ -821,7 +821,7 @@ assert.throws(() => {
 // Poster cancels
 const bountyCancelRes = nodeReloaded.cancelBounty({
   bountyId: bountyCancelPostRes.bounty.id,
-  caller: '@neal'
+  caller: '@1nc0gn30'
 });
 assert.strictEqual(bountyCancelRes.ok, true);
 assert.strictEqual(bountyCancelRes.bounty.status, 'CANCELLED');
@@ -829,15 +829,15 @@ assert.strictEqual(bountyCancelRes.cancelBlock.type, 'BOUNTY_CANCEL');
 assert.strictEqual(bountyCancelRes.cancelBlock.signatureValid, true);
 
 // Verify balance fully refunded
-const nealAccAfterCancel = nodeReloaded.resolveAccount('@neal');
-assert.strictEqual(nealAccAfterCancel.balanceVael, nealBalBeforeCancel);
-assert.strictEqual(nealAccAfterCancel.lockedEscrowVael, nealLockedBeforeCancel);
+const founderAccAfterCancel = nodeReloaded.resolveAccount('@1nc0gn30');
+assert.strictEqual(founderAccAfterCancel.balanceVael, founderBalBeforeCancel);
+assert.strictEqual(founderAccAfterCancel.lockedEscrowVael, founderLockedBeforeCancel);
 
 // Cannot cancel already cancelled bounty
 assert.throws(() => {
   nodeReloaded.cancelBounty({
     bountyId: bountyCancelPostRes.bounty.id,
-    caller: '@neal'
+    caller: '@1nc0gn30'
   });
 }, /Cannot cancel: bounty is already CANCELLED/, 'Re-cancellation must throw');
 
@@ -850,15 +850,15 @@ console.log('Testing Feature 17: Verified Directory, Anti-Phishing Guard & On-La
 const directory = nodeReloaded.getDirectory();
 assert(Array.isArray(directory), 'Directory must be an array');
 assert(directory.length >= 4, 'Must seed at least 4 verified merchants');
-const nealEntry = directory.find((d) => d.handle === '@neal');
-assert(nealEntry, 'Merchant @neal must exist in verified directory');
-assert.strictEqual(nealEntry.domain, 'nullai.tech');
-assert(nealEntry.trustScore >= 95, 'Trust score should be high for verified merchants');
-assert(nealEntry.ratingAvg >= 4.5, 'Rating average should be seeded');
+const founderEntry = directory.find((d) => d.handle === '@1nc0gn30');
+assert(founderEntry, 'Merchant @1nc0gn30 must exist in verified directory');
+assert.strictEqual(founderEntry.domain, 'nullai.tech');
+assert(founderEntry.trustScore >= 95, 'Trust score should be high for verified merchants');
+assert(founderEntry.ratingAvg >= 4.5, 'Rating average should be seeded');
 
 // 2. Anti-Phishing Lookalike Guard Tests
 // 2a. Verified Safe Handles
-const safeNeal = nodeReloaded.checkHandleSafety('@neal');
+const safeNeal = nodeReloaded.checkHandleSafety('@1nc0gn30');
 assert.strictEqual(safeNeal.safe, true);
 assert.strictEqual(safeNeal.riskLevel, 'VERIFIED_SAFE');
 assert.strictEqual(safeNeal.domain, 'nullai.tech');
@@ -876,7 +876,7 @@ assert.strictEqual(phishZoth0.suggestedHandle, '@zoth');
 const phishNeal1 = nodeReloaded.checkHandleSafety('@nea1');
 assert.strictEqual(phishNeal1.safe, false);
 assert.strictEqual(phishNeal1.riskLevel, 'HIGH_LOOKALIKE_RISK');
-assert.strictEqual(phishNeal1.suggestedHandle, '@neal');
+assert.strictEqual(phishNeal1.suggestedHandle, '@1nc0gn30');
 
 const phishSprigQ = nodeReloaded.checkHandleSafety('@spriq');
 assert.strictEqual(phishSprigQ.safe, false);
@@ -897,17 +897,17 @@ assert.strictEqual(safeCommunity.suggestedHandle, null);
 
 // 3. Submit On-Lattice Merchant Review
 const reviewsCountBefore = (nodeReloaded.state.merchantReviews || []).length;
-const nealReviewCountBefore = nealEntry.reviewCount;
+const founderReviewCountBefore = founderEntry.reviewCount;
 const reviewRes = nodeReloaded.submitMerchantReview({
   reviewer: '@citizen',
-  merchant: '@neal',
+  merchant: '@1nc0gn30',
   rating: 5,
   comment: 'Top-tier sovereign cryptography and $0.00 gas POS integration!'
 });
 
 assert.strictEqual(reviewRes.ok, true);
 assert.strictEqual(reviewRes.review.reviewer, '@citizen');
-assert.strictEqual(reviewRes.review.merchant, '@neal');
+assert.strictEqual(reviewRes.review.merchant, '@1nc0gn30');
 assert.strictEqual(reviewRes.review.rating, 5);
 assert.strictEqual(reviewRes.reviewBlock.type, 'MERCHANT_REVIEW');
 assert.strictEqual(reviewRes.reviewBlock.signatureValid, true, 'Review block Ed25519 signature must be valid');
@@ -917,15 +917,15 @@ assert(reviewRes.reviewBlock.quorumCertificate.validatorSignatures.length >= 4, 
 assert.strictEqual(reviewRes.reviewBlock.quorumCertificate.approvals, 5);
 
 // Verify updated directory record
-assert.strictEqual(reviewRes.merchantDirectory.reviewCount, nealReviewCountBefore + 1);
+assert.strictEqual(reviewRes.merchantDirectory.reviewCount, founderReviewCountBefore + 1);
 assert.strictEqual((nodeReloaded.state.merchantReviews || []).length, reviewsCountBefore + 1);
 
 // 4. Rejection Guards
 // 4a. Self-review rejected
 assert.throws(() => {
   nodeReloaded.submitMerchantReview({
-    reviewer: '@neal',
-    merchant: '@neal',
+    reviewer: '@1nc0gn30',
+    merchant: '@1nc0gn30',
     rating: 5,
     comment: 'Self-serving review'
   });
@@ -935,7 +935,7 @@ assert.throws(() => {
 assert.throws(() => {
   nodeReloaded.submitMerchantReview({
     reviewer: '@citizen',
-    merchant: '@neal',
+    merchant: '@1nc0gn30',
     rating: 0,
     comment: 'Invalid rating'
   });
@@ -944,7 +944,7 @@ assert.throws(() => {
 assert.throws(() => {
   nodeReloaded.submitMerchantReview({
     reviewer: '@citizen',
-    merchant: '@neal',
+    merchant: '@1nc0gn30',
     rating: 6,
     comment: 'Invalid rating'
   });
@@ -970,7 +970,7 @@ assert(finalSnapshot.totalReviewsCount >= 1, 'Snapshot must report totalReviewsC
 assert.strictEqual(levenshteinDistance('vaelor', 'vaelor'), 0);
 assert.strictEqual(levenshteinDistance('zoth', 'zoths'), 1);
 assert.strictEqual(normalizeHomoglyphs('z0th'), 'zoth');
-assert.strictEqual(normalizeHomoglyphs('nea1'), 'neal');
+assert.strictEqual(normalizeHomoglyphs('nea1'), 'founder');
 
 // ==========================================
 // FEATURE 18: Delegated Team & Agent Sub-Accounts (Daily Caps + Freeze)
@@ -1114,8 +1114,8 @@ console.log('Testing Feature 19: Privacy Shielded Transfers & Selective View-Key
 const seededShielded = nodeReloaded.getShieldedTransfers();
 assert(Array.isArray(seededShielded), 'getShieldedTransfers must return an array');
 assert(seededShielded.length >= 2, 'Must have at least 2 default seeded shielded transfers');
-const seed1 = seededShielded.find((s) => s.fromHandle === '@neal' && s.toHandle === '@zoth');
-assert(seed1, 'Seeded shielded transfer @neal -> @zoth must exist');
+const seed1 = seededShielded.find((s) => s.fromHandle === '@1nc0gn30' && s.toHandle === '@zoth');
+assert(seed1, 'Seeded shielded transfer @1nc0gn30 -> @zoth must exist');
 assert(seed1.commitment.startsWith('cmt_'), 'Commitment must start with cmt_');
 assert(seed1.viewKey.startsWith('vk_'), 'View key must start with vk_');
 assert.strictEqual(seed1.publicAmount, '🔒 SHIELDED');
@@ -1196,7 +1196,7 @@ assert(seededTabs.length >= 2, 'Must have at least 2 default seeded group tabs')
 const dinnerTab = seededTabs.find((t) => t.id === 'tab_dinner_sprig_c01');
 assert(dinnerTab, 'tab_dinner_sprig_c01 must exist');
 assert.strictEqual(dinnerTab.status, 'OPEN');
-assert.strictEqual(dinnerTab.organizer, '@neal');
+assert.strictEqual(dinnerTab.organizer, '@1nc0gn30');
 assert.strictEqual(dinnerTab.merchant, '@sprig');
 assert.strictEqual(dinnerTab.totalAmountVlr, 90.0);
 assert.strictEqual(dinnerTab.totalParticipants, 3);
@@ -1212,16 +1212,16 @@ assert.strictEqual(coopTab.paidCount, 3);
 assert.strictEqual(coopTab.remainingAmountVlr, 0.0);
 
 // 2. Create new group tab with integer vael splitting
-const nealAccBeforeTab = nodeReloaded.resolveAccount('@neal');
-const nealBalBeforeTab = nealAccBeforeTab.balanceVael;
+const founderAccBeforeTab = nodeReloaded.resolveAccount('@1nc0gn30');
+const founderBalBeforeTab = founderAccBeforeTab.balanceVael;
 
-// Tab for 60.0 VLR split across 3 participants: @neal (organizer), @citizen, @test_bakery
+// Tab for 60.0 VLR split across 3 participants: @1nc0gn30 (organizer), @citizen, @test_bakery
 const createTabRes = nodeReloaded.createGroupTab({
-  organizer: '@neal',
+  organizer: '@1nc0gn30',
   merchant: '@sprig',
   title: 'Organic Team Lunch & Coffee Catchup',
   totalAmount: 60.0,
-  participantHandles: ['@neal', '@citizen', '@test_bakery'],
+  participantHandles: ['@1nc0gn30', '@citizen', '@test_bakery'],
   cashbackBps: 250 // 2.5%
 });
 
@@ -1235,8 +1235,8 @@ assert.strictEqual(createTabRes.createBlock.signatureValid, true);
 assert(createTabRes.createBlock.quorumCertificate, 'GROUP_TAB_CREATE must have quorum certificate');
 
 // Check that organizer share (20.0 VLR) was deducted immediately upon creation
-const nealAccAfterTab = nodeReloaded.resolveAccount('@neal');
-assert.strictEqual(nealAccAfterTab.balanceVael, nealBalBeforeTab - Math.round(20.0 * 1_000_000));
+const founderAccAfterTab = nodeReloaded.resolveAccount('@1nc0gn30');
+assert.strictEqual(founderAccAfterTab.balanceVael, founderBalBeforeTab - Math.round(20.0 * 1_000_000));
 assert.strictEqual(createTabRes.tab.paidCount, 1);
 assert.strictEqual(createTabRes.tab.paidAmountVlr, 20.0);
 assert.strictEqual(createTabRes.tab.remainingAmountVlr, 40.0);
@@ -1304,7 +1304,7 @@ assert.strictEqual(sprigAccAfterTab.balanceVael, sprigBalBeforeTab + Math.round(
 assert.throws(() => {
   nodeReloaded.payGroupTabShare({
     tabId: createTabRes.tab.id,
-    payer: '@neal'
+    payer: '@1nc0gn30'
   });
 }, /already settled/, 'Paying already settled tab must fail');
 
@@ -1326,16 +1326,16 @@ const seededPlans = nodeReloaded.getInheritancePlans();
 assert(Array.isArray(seededPlans), 'getInheritancePlans must return an array');
 assert(seededPlans.length >= 2, 'Must have at least 2 default seeded inheritance plans');
 
-const nealPlan = seededPlans.find((p) => p.owner === '@neal');
-assert(nealPlan, 'Seeded plan for @neal must exist');
-assert.strictEqual(nealPlan.status, 'ACTIVE');
-assert.strictEqual(nealPlan.inactivityDays, 180);
-assert.strictEqual(nealPlan.beneficiaries.length, 2);
-assert.strictEqual(nealPlan.beneficiaries[0].handle, '@zoth');
-assert.strictEqual(nealPlan.beneficiaries[0].bps, 6000);
-assert.strictEqual(nealPlan.beneficiaries[1].handle, '@citizen');
-assert.strictEqual(nealPlan.beneficiaries[1].bps, 4000);
-assert(nealPlan.remainingDays > 0, 'Should have positive remaining days');
+const founderPlan = seededPlans.find((p) => p.owner === '@1nc0gn30');
+assert(founderPlan, 'Seeded plan for @1nc0gn30 must exist');
+assert.strictEqual(founderPlan.status, 'ACTIVE');
+assert.strictEqual(founderPlan.inactivityDays, 180);
+assert.strictEqual(founderPlan.beneficiaries.length, 2);
+assert.strictEqual(founderPlan.beneficiaries[0].handle, '@zoth');
+assert.strictEqual(founderPlan.beneficiaries[0].bps, 6000);
+assert.strictEqual(founderPlan.beneficiaries[1].handle, '@citizen');
+assert.strictEqual(founderPlan.beneficiaries[1].bps, 4000);
+assert(founderPlan.remainingDays > 0, 'Should have positive remaining days');
 
 // 2. Configure new inheritance plan for @test_bakery
 // Total must equal exactly 10,000 bps (100%)
@@ -1615,11 +1615,11 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert(phishingCheck.warning.includes('Lookalike handle detected'));
 
   // Test 3c: Typosquatting single-edit distance
-  const nealTypoCheck = await VaelorPay.verifyHandle('@neall');
-  assert.strictEqual(nealTypoCheck.ok, true);
-  assert.strictEqual(nealTypoCheck.safe, false);
-  assert.strictEqual(nealTypoCheck.riskLevel, 'HIGH_LOOKALIKE_RISK');
-  assert.strictEqual(nealTypoCheck.suggestedHandle, '@neal');
+  const founderTypoCheck = await VaelorPay.verifyHandle('@1nc0gn30l');
+  assert.strictEqual(founderTypoCheck.ok, true);
+  assert.strictEqual(founderTypoCheck.safe, false);
+  assert.strictEqual(founderTypoCheck.riskLevel, 'HIGH_LOOKALIKE_RISK');
+  assert.strictEqual(founderTypoCheck.suggestedHandle, '@1nc0gn30');
 
   // Test 3d: Normal unknown community handle
   const unknownCheck = await VaelorPay.verifyHandle('@alice_wonderland');
@@ -1712,8 +1712,8 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(statusRes.consensus.bftThreshold, 4);
 
   // Tool 2: vaelor_account_balance
-  const balRes = executeTool(nodeReloaded, 'vaelor_account_balance', { handle: '@neal' });
-  assert.strictEqual(balRes.handle, '@neal');
+  const balRes = executeTool(nodeReloaded, 'vaelor_account_balance', { handle: '@1nc0gn30' });
+  assert.strictEqual(balRes.handle, '@1nc0gn30');
   assert(balRes.liquidBalanceVlr !== undefined, 'Liquid balance must be defined');
   assert(balRes.stakedBalanceVlr >= 0, 'Staked balance must be non-negative');
   assert(Array.isArray(balRes.recentBlocks), 'recentBlocks must be an array');
@@ -1757,7 +1757,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
 
   // Tool 6: vaelor_mine_pouw
   const mineMcp = executeTool(nodeReloaded, 'vaelor_mine_pouw', {
-    worker: '@neal',
+    worker: '@1nc0gn30',
     workType: 'SECURITY_ENTROPY_SCAN',
     taskLabel: 'Automated MCP PoUW Mining Test'
   });
@@ -1855,10 +1855,10 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(cliStatus.protocol, 'Vaelor Account-Lattice L1');
   assert(cliStatus.totalBlocks > 0);
 
-  // 4b. vaelor-cli --json balance @neal
-  const cliBalRaw = execSync(`node "${cliBin}" --offline --json balance @neal`, execOpts).toString();
+  // 4b. vaelor-cli --json balance @1nc0gn30
+  const cliBalRaw = execSync(`node "${cliBin}" --offline --json balance @1nc0gn30`, execOpts).toString();
   const cliBal = JSON.parse(cliBalRaw);
-  assert.strictEqual(cliBal.account.handle, '@neal');
+  assert.strictEqual(cliBal.account.handle, '@1nc0gn30');
 
   // 4c. vaelor-cli --json check @spr1g
   const cliCheckRaw = execSync(`node "${cliBin}" --offline --json check @spr1g`, execOpts).toString();
@@ -1890,11 +1890,11 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(initialTipsHatch[0].badge, 'PATRON', 'Initial seed for @hatch must be PATRON (50 VLR)');
 
   // 2. Send 100 VLR Tip -> SOVEREIGN_BACKER Badge & 2.5% Cashback Rebate
-  const nealBalBeforeTip = nodeReloaded.resolveAccount('@neal').balanceVael;
+  const founderBalBeforeTip = nodeReloaded.resolveAccount('@1nc0gn30').balanceVael;
   const zothBalBeforeTip = nodeReloaded.resolveAccount('@zoth').balanceVael;
 
   const tip100Res = nodeReloaded.sendCreatorTip({
-    from: '@neal',
+    from: '@1nc0gn30',
     creator: '@zoth',
     amount: 100.0,
     message: 'Founding Patron for Sovereign AI Compute & ZothOS DAG',
@@ -1903,12 +1903,12 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
 
   assert.strictEqual(tip100Res.ok, true);
   assert(tip100Res.tip.id.startsWith('tip_'), 'Tip ID must start with tip_');
-  assert.strictEqual(tip100Res.tip.fromHandle, '@neal');
+  assert.strictEqual(tip100Res.tip.fromHandle, '@1nc0gn30');
   assert.strictEqual(tip100Res.tip.creatorHandle, '@zoth');
   assert.strictEqual(tip100Res.tip.amountVlr, 100.0);
   assert.strictEqual(tip100Res.badge, 'SOVEREIGN_BACKER');
   assert.strictEqual(tip100Res.badgeEmoji, '👑');
-  // @neal is high-staked SOVEREIGN_DIAMOND -> 5.00% dynamic loyalty cashback (5.0 VLR)
+  // @1nc0gn30 is high-staked SOVEREIGN_DIAMOND -> 5.00% dynamic loyalty cashback (5.0 VLR)
   assert.strictEqual(tip100Res.cashbackVlr, 5.0);
   assert.strictEqual(tip100Res.sendBlock.type, 'TIP_JAR_SEND');
   assert.strictEqual(tip100Res.sendBlock.signatureValid, true);
@@ -1917,10 +1917,10 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(tip100Res.cashbackBlock.signatureValid, true);
 
   // Exact balance conservation check with 5.00% Sovereign Diamond cashback rebate:
-  // Neal sent 100 VLR (-100,000,000 vael) and received 5.0 VLR (+5,000,000 vael) cashback = net -95,000,000 vael
-  const nealBalAfterTip = nodeReloaded.resolveAccount('@neal').balanceVael;
+  // 1nc0gn30 sent 100 VLR (-100,000,000 vael) and received 5.0 VLR (+5,000,000 vael) cashback = net -95,000,000 vael
+  const founderBalAfterTip = nodeReloaded.resolveAccount('@1nc0gn30').balanceVael;
   const zothBalAfterTip = nodeReloaded.resolveAccount('@zoth').balanceVael;
-  assert.strictEqual(nealBalAfterTip, nealBalBeforeTip - 95_000_000, 'Sender balance must reflect net -95.0 VLR after 5.00% Sovereign Diamond cashback rebate');
+  assert.strictEqual(founderBalAfterTip, founderBalBeforeTip - 95_000_000, 'Sender balance must reflect net -95.0 VLR after 5.00% Sovereign Diamond cashback rebate');
   assert.strictEqual(zothBalAfterTip, zothBalBeforeTip + 100_000_000, 'Creator balance must increase by exact tip amount (+100 VLR)');
 
   // 3. Send 25 VLR Tip -> PATRON Tier (Citizen is GOLD tier -> 3.50% dynamic cashback = 0.875 VLR)
@@ -1989,8 +1989,8 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(profileCitizen.badgeEmoji, '🥇');
 
   // High-staked accounts evaluate to SOVEREIGN_DIAMOND (5.00% cashback)
-  const profileNeal = nodeTipsReloaded.getLoyaltyProfile('@neal');
-  assert.strictEqual(profileNeal.handle, '@neal');
+  const profileNeal = nodeTipsReloaded.getLoyaltyProfile('@1nc0gn30');
+  assert.strictEqual(profileNeal.handle, '@1nc0gn30');
   assert.strictEqual(profileNeal.tier, 'SOVEREIGN_DIAMOND');
   assert.strictEqual(profileNeal.cashbackBps, 500);
   assert.strictEqual(profileNeal.cashbackPct, 5.0);
@@ -2091,7 +2091,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(snapWithLoyalty.loyaltySummary.tiers.length, 4);
 
   const diamondAccounts = snapWithLoyalty.accounts.filter((a) => a.loyaltyTier === 'SOVEREIGN_DIAMOND');
-  assert(diamondAccounts.length >= 2, 'Must have at least 2 Sovereign Diamond accounts (@neal, @zoth, @citizen)');
+  assert(diamondAccounts.length >= 2, 'Must have at least 2 Sovereign Diamond accounts (@1nc0gn30, @zoth, @citizen)');
   const silverAccounts = snapWithLoyalty.accounts.filter((a) => a.loyaltyTier === 'SILVER');
   assert(silverAccounts.length >= 1, 'Must have at least 1 Silver account (@sprig)');
 
@@ -2237,8 +2237,8 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   // ==========================================
   console.log('\n--- Running Feature 28: Zero-Penalty Protected Commerce Escrow & Instant Split-Resolution ---');
 
-  // Fund @citizen with 500 VLR from @neal for testing
-  nodeFxReloaded.transfer({ from: '@neal', to: '@citizen', amountVlr: 500.0, memo: 'Fund @citizen for protected escrow testing' });
+  // Fund @citizen with 500 VLR from @1nc0gn30 for testing
+  nodeFxReloaded.transfer({ from: '@1nc0gn30', to: '@citizen', amountVlr: 500.0, memo: 'Fund @citizen for protected escrow testing' });
 
   // 1. Create Protected Escrow (Positional and Object Arguments)
   const pe1 = nodeFxReloaded.createProtectedEscrow('@citizen', '@sprig', 50.0, 'Hardware Order #1', 72);
@@ -2388,7 +2388,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   VaelorPay.setLocalNode(nodeEscrowReloaded);
 
   // Fund test participants for SDK and benchmark runs
-  const benchmarkParticipants = ['@zoth', '@sprig', '@hatch', '@citizen', '@neal'];
+  const benchmarkParticipants = ['@zoth', '@sprig', '@hatch', '@citizen', '@1nc0gn30'];
   for (const handle of benchmarkParticipants) {
     nodeEscrowReloaded.transfer({ from: '@treasury', to: handle, amountVlr: 5000.0, memo: 'Pre-fund benchmark participant' });
   }
@@ -2475,9 +2475,9 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(sdkMcpStatus.result.protocol, 'Vaelor Account-Lattice L1');
   assert.strictEqual(sdkMcpStatus.result.consensus.bftThreshold, 4);
 
-  const sdkMcpBal = await VaelorPay.callMcpTool('vaelor_account_balance', { handle: '@neal' });
+  const sdkMcpBal = await VaelorPay.callMcpTool('vaelor_account_balance', { handle: '@1nc0gn30' });
   assert.strictEqual(sdkMcpBal.ok, true);
-  assert.strictEqual(sdkMcpBal.result.handle, '@neal');
+  assert.strictEqual(sdkMcpBal.result.handle, '@1nc0gn30');
   assert(sdkMcpBal.result.liquidBalanceVlr > 0);
 
   // 2. High-Throughput Multi-Account DAG Stress Benchmark (50 rapid operations)
@@ -2663,7 +2663,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   const handles = commPeers.map(p => p.handle);
   assert(handles.includes('@zoth'), 'Must contain @zoth peer');
   assert(handles.includes('@zoth-rig2'), 'Must contain @zoth-rig2 peer');
-  assert(handles.includes('@neal'), 'Must contain @neal peer');
+  assert(handles.includes('@1nc0gn30'), 'Must contain @1nc0gn30 peer');
   assert(handles.includes('@citizen'), 'Must contain @citizen peer');
 
   // 2. Identity Registration & Cryptographic Verifier Derivation
@@ -2685,12 +2685,12 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   // 3. Cryptographic Handshake Authorization
   // Invalid passphrase must throw error
   assert.throws(() => {
-    nodeBenchReloaded.requestCommHandshake('@neal', '@comm_node_alpha', 'wrong-passphrase', 'Test handshake');
+    nodeBenchReloaded.requestCommHandshake('@1nc0gn30', '@comm_node_alpha', 'wrong-passphrase', 'Test handshake');
   }, /Invalid ZothOS Comm credentials: username or passphrase rejected/, 'Invalid passphrase must reject handshake');
 
   // Valid passphrase establishes authorized channel with 5/5 BFT consensus
   const handshakeRes = nodeBenchReloaded.requestCommHandshake(
-    '@neal',
+    '@1nc0gn30',
     '@comm_node_alpha',
     'alpha-vault-key-757',
     'Establish ZothOS P2P Autonomous Channel'
@@ -2703,11 +2703,11 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(handshakeRes.handshakeBlock.quorumCertificate.approvals, 5);
 
   // 4. AES-256-GCM Encrypted Message & Feeless Attached VLR Transfer
-  const nealBalBeforeComm = nodeBenchReloaded.resolveAccount('@neal').balanceVael;
+  const founderBalBeforeComm = nodeBenchReloaded.resolveAccount('@1nc0gn30').balanceVael;
   const alphaBalBeforeComm = nodeBenchReloaded.resolveAccount('@comm_node_alpha').balanceVael;
 
   const commMsgRes = nodeBenchReloaded.sendCommMessage({
-    from: '@neal',
+    from: '@1nc0gn30',
     to: '@comm_node_alpha',
     passphrase: 'alpha-vault-key-757',
     message: 'Deploy autonomous 24/7 AST parser service to ZothOS Alpha Node.',
@@ -2725,9 +2725,9 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(commMsgRes.quorumCertificate.approvals, 5);
 
   // Check balance transfer
-  const nealBalAfterComm = nodeBenchReloaded.resolveAccount('@neal').balanceVael;
+  const founderBalAfterComm = nodeBenchReloaded.resolveAccount('@1nc0gn30').balanceVael;
   const alphaBalAfterComm = nodeBenchReloaded.resolveAccount('@comm_node_alpha').balanceVael;
-  assert.strictEqual(nealBalAfterComm, nealBalBeforeComm - 15_000_000, 'Sender balance must decrease by attached VLR');
+  assert.strictEqual(founderBalAfterComm, founderBalBeforeComm - 15_000_000, 'Sender balance must decrease by attached VLR');
   assert.strictEqual(alphaBalAfterComm, alphaBalBeforeComm + 15_000_000, 'Recipient balance must increase by attached VLR');
 
   // 5. Decrypted Inbox Verification
@@ -2742,16 +2742,16 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert(Array.isArray(alphaInbox.messages));
   assert(alphaInbox.messages.length >= 1);
   const receivedMsg = alphaInbox.messages[0];
-  assert.strictEqual(receivedMsg.from, '@neal');
+  assert.strictEqual(receivedMsg.from, '@1nc0gn30');
   assert.strictEqual(receivedMsg.to, '@comm_node_alpha');
   assert.strictEqual(receivedMsg.message, 'Deploy autonomous 24/7 AST parser service to ZothOS Alpha Node.');
   assert.strictEqual(receivedMsg.aiTaskPrompt, 'Start AST parser daemon on port 8094.');
   assert.strictEqual(receivedMsg.attachedVlr, 15.0);
 
-  // 6. Pre-seeded Messages (@neal <-> @zoth-rig2)
+  // 6. Pre-seeded Messages (@1nc0gn30 <-> @zoth-rig2)
   const rig2Inbox = nodeBenchReloaded.readCommInbox('@zoth-rig2', 'zoth-sovereign-757');
   assert.strictEqual(rig2Inbox.ok, true);
-  assert(rig2Inbox.messages.length >= 2, 'Pre-seeded messages between @neal and @zoth-rig2 must exist');
+  assert(rig2Inbox.messages.length >= 2, 'Pre-seeded messages between @1nc0gn30 and @zoth-rig2 must exist');
   assert(rig2Inbox.messages.some(m => m.aiTaskPrompt.includes('autonomous AST linting')));
 
   // 7. MCP Tool #15 Verification (vaelor_zoth_comm)
@@ -2772,7 +2772,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
 
   // 7c. Valid message dispatch
   const mcpGoodSend = executeTool(nodeBenchReloaded, 'vaelor_zoth_comm', {
-    from: '@neal',
+    from: '@1nc0gn30',
     to: '@zoth-rig2',
     passphrase: 'zoth-sovereign-757',
     message: 'Dispatching Wave 24 Autonomous Agent Verification',
@@ -2802,7 +2802,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert(sdkCommPeers.peers.length >= 4);
 
   const sdkCommSend = await VaelorPay.sendCommMessage({
-    from: '@neal',
+    from: '@1nc0gn30',
     to: '@zoth-rig2',
     passphrase: 'zoth-sovereign-757',
     message: 'Wave 24 SDK Comm Verification',
@@ -2830,7 +2830,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert(cliCommInbox.messages.length >= 2);
 
   // 9c. vaelor-cli comm send
-  const cliCommSendRaw = execSync(`node "${cliBin}" --offline --json comm send @neal @zoth-rig2 zoth-sovereign-757 "CLI comm test message" 1.0 "Verify CLI prompt"`, execOpts).toString();
+  const cliCommSendRaw = execSync(`node "${cliBin}" --offline --json comm send @1nc0gn30 @zoth-rig2 zoth-sovereign-757 "CLI comm test message" 1.0 "Verify CLI prompt"`, execOpts).toString();
   const cliCommSend = JSON.parse(cliCommSendRaw);
   assert.strictEqual(cliCommSend.ok, true);
   assert.strictEqual(cliCommSend.algorithm, 'AES-256-GCM');
@@ -2960,13 +2960,13 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   const zothVault = msigVaults.find(v => v.id === 'msig_zoth_foundation');
   assert(zothVault, 'msig_zoth_foundation vault must exist');
   assert.strictEqual(zothVault.threshold, 2, 'Default corporate vault must be 2-of-3 threshold');
-  assert.deepStrictEqual(zothVault.signers, ['@neal', '@zoth', '@sprig']);
+  assert.deepStrictEqual(zothVault.signers, ['@1nc0gn30', '@zoth', '@sprig']);
   assert(zothVault.balanceVlr >= 500, 'Corporate treasury must have pre-funded VLR');
 
   // 2. Propose Multi-Sig Transfer
   const propRes = nodeReloaded.proposeMultisigTx({
     vaultId: 'msig_zoth_foundation',
-    proposer: '@neal',
+    proposer: '@1nc0gn30',
     to: '@sprig',
     amountVlr: 50.0,
     memo: 'Q4 Open Source Ecosystem Grant'
@@ -2974,7 +2974,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.strictEqual(propRes.ok, true);
   assert(propRes.proposal.id.startsWith('prop_'));
   assert.strictEqual(propRes.proposal.status, 'PENDING');
-  assert.deepStrictEqual(propRes.proposal.approvals, ['@neal']);
+  assert.deepStrictEqual(propRes.proposal.approvals, ['@1nc0gn30']);
   assert.strictEqual(propRes.executed, false);
 
   // Unauthorized proposer check
@@ -2991,7 +2991,7 @@ assert(snapAfterCredit.totalCreditRepayCount >= 1, 'Snapshot must report totalCr
   assert.throws(() => {
     nodeReloaded.approveMultisigTx({
       proposalId: propRes.proposal.id,
-      signer: '@neal'
+      signer: '@1nc0gn30'
     });
   }, /has already approved proposal/);
 

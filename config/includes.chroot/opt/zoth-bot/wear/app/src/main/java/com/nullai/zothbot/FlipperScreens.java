@@ -1,4 +1,4 @@
-package com.nealfrazier.zothbot;
+package com.nullai.zothbot;
 
 /** Ink #08080B, gold #D4AF37, bright gold #F6D365, monospace. */
 public final class FlipperScreens {

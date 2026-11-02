@@ -271,7 +271,7 @@
     generateQrSvg,
 
     openCheckoutModal(opts = {}) {
-      const merchant = this.normalizeHandle(opts.to || opts.merchant || '@neal');
+      const merchant = this.normalizeHandle(opts.to || opts.merchant || '@1nc0gn30');
       const amount = Number(opts.amount || 19.0).toFixed(2);
       const memo = opts.memo || 'Vaelor Protected Checkout';
       const hours = parseInt(opts.protectedHours || opts.escrowHours || 24, 10);
@@ -414,9 +414,9 @@
 
       // Offline Homoglyph & Levenshtein Fallback
       const KNOWN_VERIFIED = [
-        { handle: '@neal', name: '1nc0gn30', domain: 'nullai.tech', trustScore: 99 },
+        { handle: '@1nc0gn30', name: '1nc0gn30', domain: 'nullai.tech', trustScore: 99 },
         { handle: '@zoth', name: 'Zoth Studio & ZothOS AI Engine', domain: 'zoth.nullai.tech', trustScore: 99 },
-        { handle: '@sprig', name: 'Sprig Kitchen • 757 Local Merchant', domain: 'sprig.757tech.pro', trustScore: 97 },
+        { handle: '@sprig', name: 'Sprig Kitchen • 757 Local Merchant', domain: 'sprig.nullai.tech', trustScore: 97 },
         { handle: '@treasury', name: 'Vaelor Sovereign Treasury Reserve', domain: 'vaelor.nullai.tech', trustScore: 100 },
         { handle: '@citizen', name: 'Verified Citizen Testbed', domain: 'demo.vaelor.nullai.tech', trustScore: 92 }
       ];
@@ -734,7 +734,7 @@
     },
 
     async requestCommHandshake({ from, to, passphrase, introNote = '' }, options = {}) {
-      const cleanFrom = this.normalizeHandle(from || '@neal');
+      const cleanFrom = this.normalizeHandle(from || '@1nc0gn30');
       const cleanTo = this.normalizeHandle(to || '@zoth-rig2');
 
       if (options.localNode || this.localNode) {
@@ -756,7 +756,7 @@
     },
 
     async sendCommMessage({ from, to, passphrase, message, attachedVlr = 0, aiTaskPrompt = '' }, options = {}) {
-      const cleanFrom = this.normalizeHandle(from || '@neal');
+      const cleanFrom = this.normalizeHandle(from || '@1nc0gn30');
       const cleanTo = this.normalizeHandle(to || '@zoth-rig2');
       const amt = Number(attachedVlr || 0);
 
@@ -895,7 +895,7 @@
 
     async proposeMultisigTx(options = {}) {
       const vaultId = options.vaultId || 'msig_zoth_foundation';
-      const proposer = this.normalizeHandle(options.proposer || '@neal');
+      const proposer = this.normalizeHandle(options.proposer || '@1nc0gn30');
       const to = this.normalizeHandle(options.to || options.recipient || '@sprig');
       const amountVlr = Number(options.amountVlr !== undefined ? options.amountVlr : (options.amount || 100));
       const memo = options.memo || 'Corporate treasury allocation';
@@ -955,7 +955,7 @@
       if (script.getAttribute('data-vaelor-initialized')) return;
       script.setAttribute('data-vaelor-initialized', 'true');
 
-      const merchant = script.getAttribute('data-merchant') || '@neal';
+      const merchant = script.getAttribute('data-merchant') || '@1nc0gn30';
       const amount = script.getAttribute('data-amount') || '19.00';
       const memo = script.getAttribute('data-memo') || 'Order Checkout';
       const hours = script.getAttribute('data-escrow-hours') || '24';

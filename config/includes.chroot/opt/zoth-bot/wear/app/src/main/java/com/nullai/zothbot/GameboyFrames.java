@@ -1,4 +1,4 @@
-package com.nealfrazier.zothbot;
+package com.nullai.zothbot;
 
 // Round-watch handheld scenes. Original frames, not Nintendo art.
 public final class GameboyFrames {

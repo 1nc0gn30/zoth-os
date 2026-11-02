@@ -1,4 +1,4 @@
-package com.nealfrazier.zothbot;
+package com.nullai.zothbot;
 
 public final class SceneDeck {
     public static final int FLIPPER = 0;

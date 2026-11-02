@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nealfrazier.zothbot"
+    namespace = "com.nullai.zothbot"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.nealfrazier.zothbot"
+        applicationId = "com.nullai.zothbot"
         minSdk = 30
         targetSdk = 34
         versionCode = 10

@@ -171,7 +171,7 @@ class LatticeClient {
   }
 
   async minePouw(worker, workType, taskLabel) {
-    const cleanWorker = normalizeHandle(worker || '@neal');
+    const cleanWorker = normalizeHandle(worker || '@1nc0gn30');
     const type = workType || 'SECURITY_ENTROPY_SCAN';
     const label = taskLabel || 'Automated PoUW Node Verification & Entropy Audit';
     const payload = JSON.stringify({
@@ -714,7 +714,7 @@ async function main() {
       }
 
       case 'balance': {
-        const targetHandle = cleanArgs[1] || '@neal';
+        const targetHandle = cleanArgs[1] || '@1nc0gn30';
         const { data, source } = await client.getAccount(targetHandle);
 
         if (isJson) {
@@ -787,7 +787,7 @@ async function main() {
       }
 
       case 'mine': {
-        const worker = cleanArgs[1] || '@neal';
+        const worker = cleanArgs[1] || '@1nc0gn30';
         const workType = cleanArgs[2] || 'SECURITY_ENTROPY_SCAN';
         const { data } = await client.minePouw(worker, workType);
 
@@ -1290,7 +1290,7 @@ async function main() {
           const to = cleanArgs[2];
           const amount = Number(cleanArgs[3] || 0);
           const memo = cleanArgs[4] || 'Corporate Grant';
-          const proposer = cleanArgs[5] || '@neal';
+          const proposer = cleanArgs[5] || '@1nc0gn30';
           if (!to || !amount) {
             console.error(`${C.red}Error:${C.reset} Usage: vaelor-cli multisig propose <to> <amount> [memo] [proposer]`);
             process.exit(1);
