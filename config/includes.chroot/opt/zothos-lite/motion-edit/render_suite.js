@@ -3,9 +3,10 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+const os = require('os');
 const ROOT_DIR = path.join(__dirname, '..');
 const OUT_DIR = path.join(ROOT_DIR, 'public', 'assets');
-const ARTIFACT_DIR = '/home/zoth/.gemini/antigravity-cli/brain/5e2f4196-8ec1-4cf2-8d92-bad9291e3aa7';
+const ARTIFACT_DIR = process.env.ZOTH_ARTIFACT_DIR || path.join(os.homedir(), '.gemini/antigravity-cli/brain/5e2f4196-8ec1-4cf2-8d92-bad9291e3aa7');
 
 const REELS = [
   {

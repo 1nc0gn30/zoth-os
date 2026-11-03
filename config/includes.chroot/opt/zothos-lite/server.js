@@ -2130,7 +2130,7 @@ print(json.dumps({"transcript": transcript, "peakDb": peak_db, "engine": engine}
     try {
       const uid = typeof process.getuid === 'function' ? process.getuid() : 1000;
       const runtimeDir = process.env.XDG_RUNTIME_DIR || `/run/user/${uid}`;
-      const homeDir = process.env.HOME || '/home/zoth';
+      const homeDir = process.env.HOME || os.homedir();
       const initBannerCmd = [
         'clear',
         'echo "╔══════════════════════════════════════════════════════════════════════════════╗"',
@@ -2217,7 +2217,7 @@ print(json.dumps({"transcript": transcript, "peakDb": peak_db, "engine": engine}
           }
         }
       } else {
-        const homeDir = process.env.HOME || '/home/zoth';
+        const homeDir = process.env.HOME || os.homedir();
         const expanded = lastToken.startsWith('~') ? path.join(homeDir, lastToken.slice(1)) : lastToken;
         const searchDir = expanded.endsWith('/')
           ? path.resolve(cwd, expanded)
@@ -2682,7 +2682,7 @@ print(json.dumps({"transcript": transcript, "peakDb": peak_db, "engine": engine}
     if (!global.zothTerminalCwd) {
       global.zothTerminalCwd = __dirname;
     }
-    const homeDir = process.env.HOME || '/home/zoth';
+    const homeDir = process.env.HOME || os.homedir();
     const formatShortCwd = (dirPath) => {
       if (!dirPath) return '~';
       if (dirPath === __dirname) return '~/zothos-lite';

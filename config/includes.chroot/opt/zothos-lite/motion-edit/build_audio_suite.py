@@ -5,10 +5,10 @@ import math
 import os
 import sys
 
-sys.path.insert(0, "/home/zoth/.gemini/config/skills/claude-motion/scripts")
+sys.path.insert(0, os.path.expanduser("~/.gemini/config/skills/claude-motion/scripts"))
 from sfx import Mix, synth, dsp
 
-DIR = "/home/zoth/NullAITech/zothos-lite/motion-edit"
+DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def bass_pulse(freq, dur=0.34, drive=1.55):

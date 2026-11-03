@@ -42,7 +42,7 @@ const ROOT = path.resolve(HERE, '..');
 const BASE = (process.env.ZOTHOS_BASE_URL || 'http://127.0.0.1:8145').replace(/\/+$/, '');
 const OUT_DIR = process.env.ZOTHOS_VERIFY_OUT || '/tmp/zothos-lite-verify';
 const CAPTURE_SCRIPT = process.env.ZOTHOS_CAPTURE_SCRIPT
-  || '/home/zoth/.gemini/config/skills/ui-verification-loop/scripts/capture.mjs';
+  || path.join(os.homedir(), '.gemini/config/skills/ui-verification-loop/scripts/capture.mjs');
 const CHROME_BIN = process.env.CHROME_BIN || 'google-chrome';
 
 const EXPECTED_GUARD = { throttleC: 80, pauseC: 85, enforced: 'server-side' };

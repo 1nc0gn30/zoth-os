@@ -103,6 +103,7 @@ regexes = ['''FourKeyMap''']
 [[allowlists]]
 description = "Vendored sovereign daemons, studio workspace, and Python bytecode."
 paths = [
+  '''(?:^|/)build/live_workspace/.*''',
   '''(?:^|/)config/includes\.chroot/opt/vaelor-network/.*''',
   '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*''',
   '''(?:^|/)config/includes\.chroot/opt/zoth-studio/.*''',
