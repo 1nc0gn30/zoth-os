@@ -1,0 +1,21 @@
+filters:
+  and:
+    - file.inFolder("Studio/Workstations")
+    - file.hasTag("workstation")
+properties:
+  title:
+    displayName: Workstation
+  file.tags:
+    displayName: Tags
+views:
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+      - file.tags

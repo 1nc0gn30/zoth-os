@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "t",
+      "type": "text",
+      "text": "# Loopback enclave\nzeroEgress.js \u00b7 not public listeners",
+      "x": 120,
+      "y": -80,
+      "width": 480,
+      "height": 90,
+      "color": "4"
+    },
+    {
+      "id": "z",
+      "type": "file",
+      "file": "Studio/Zero Egress.md",
+      "x": 180,
+      "y": 40,
+      "width": 340,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b0",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 11434.md",
+      "x": -40,
+      "y": 240,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b1",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 3000.md",
+      "x": 260,
+      "y": 240,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b2",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8094.md",
+      "x": 560,
+      "y": 240,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b3",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8095.md",
+      "x": 860,
+      "y": 240,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b4",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8097.md",
+      "x": -40,
+      "y": 430,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b5",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8102.md",
+      "x": 260,
+      "y": 430,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b6",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8104.md",
+      "x": 560,
+      "y": 430,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b7",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8484.md",
+      "x": 860,
+      "y": 430,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b8",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8787.md",
+      "x": -40,
+      "y": 620,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b9",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8790.md",
+      "x": 260,
+      "y": 620,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "b10",
+      "type": "file",
+      "file": "Studio/Loopback/Loopback 8989.md",
+      "x": 560,
+      "y": 620,
+      "width": 280,
+      "height": 150,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "eb0",
+      "fromNode": "z",
+      "toNode": "b0"
+    },
+    {
+      "id": "eb1",
+      "fromNode": "z",
+      "toNode": "b1"
+    },
+    {
+      "id": "eb2",
+      "fromNode": "z",
+      "toNode": "b2"
+    },
+    {
+      "id": "eb3",
+      "fromNode": "z",
+      "toNode": "b3"
+    },
+    {
+      "id": "eb4",
+      "fromNode": "z",
+      "toNode": "b4"
+    },
+    {
+      "id": "eb5",
+      "fromNode": "z",
+      "toNode": "b5"
+    },
+    {
+      "id": "eb6",
+      "fromNode": "z",
+      "toNode": "b6"
+    },
+    {
+      "id": "eb7",
+      "fromNode": "z",
+      "toNode": "b7"
+    },
+    {
+      "id": "eb8",
+      "fromNode": "z",
+      "toNode": "b8"
+    },
+    {
+      "id": "eb9",
+      "fromNode": "z",
+      "toNode": "b9"
+    },
+    {
+      "id": "eb10",
+      "fromNode": "z",
+      "toNode": "b10"
+    }
+  ]
+}

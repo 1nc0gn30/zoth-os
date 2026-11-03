@@ -1,0 +1,256 @@
+{
+  "nodes": [
+    {
+      "id": "32f02b4ee0a19b86",
+      "type": "group",
+      "x": -250,
+      "y": -350,
+      "width": 500,
+      "height": 450,
+      "label": "\u2726 Autonomous Agents & Hermes Fleet Architecture",
+      "color": "3"
+    },
+    {
+      "id": "beffb9b5ad2a62ca",
+      "type": "text",
+      "x": -220,
+      "y": -300,
+      "width": 440,
+      "height": 350,
+      "color": "3",
+      "text": "# \ud83e\udd16 Zoth Autonomous Agent Fleet\n\nSovereign multi-agent collective orchestrating terminal CLIs, simulated societies, biological neural memory, and PoUW compute mining.\n\n- **Hermes Agent CLI:** Multi-interface tool-calling agent\n- **Zoth Civilization (:9393):** Autonomous LLM society sandbox\n- **Vaelor PoUW Miners (:8140):** AI compute coin minting\n- **Dream Consolidator (:8094):** Hebbian STDP memory consolidation\n- **Antigravity Swarm:** High-velocity subagent task execution\n\n> [!tip] STDP Synaptic Coherence\n> Every agent streams semantic memories directly into the central biological substrate at \\`:8094\\`."
+    },
+    {
+      "id": "952d38e38d862c31",
+      "type": "group",
+      "x": -1100,
+      "y": -750,
+      "width": 680,
+      "height": 380,
+      "label": "\ud83e\udd16 Hermes Agent CLI Ecosystem",
+      "color": "5"
+    },
+    {
+      "id": "5dc4b48b443579ef",
+      "type": "file",
+      "file": "Agents/Hermes Agent CLI.md",
+      "x": -1070,
+      "y": -700,
+      "width": 300,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "db07fd4182227ecc",
+      "type": "file",
+      "file": "Skills/Skill hermes-agent.md",
+      "x": -740,
+      "y": -700,
+      "width": 300,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "bb39db7a347509d7",
+      "type": "group",
+      "x": 420,
+      "y": -750,
+      "width": 680,
+      "height": 380,
+      "label": "\ud83c\udfdb\ufe0f Zoth Civilization Agent Mesh (:9393)",
+      "color": "6"
+    },
+    {
+      "id": "f22695c99dce3b49",
+      "type": "file",
+      "file": "Agents/Zoth Civilization Agent Mesh.md",
+      "x": 450,
+      "y": -700,
+      "width": 300,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "a4c3cfa77ccb4fb1",
+      "type": "file",
+      "file": "OS/Daemons/Daemon civilization.md",
+      "x": 780,
+      "y": -700,
+      "width": 300,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "561e9acd29ef782d",
+      "type": "group",
+      "x": 420,
+      "y": 180,
+      "width": 680,
+      "height": 380,
+      "label": "\u26cf\ufe0f Vaelor PoUW AI Compute Miners (:8140)",
+      "color": "4"
+    },
+    {
+      "id": "37be2089ff048053",
+      "type": "file",
+      "file": "Agents/Vaelor PoUW AI Compute Miners.md",
+      "x": 450,
+      "y": 230,
+      "width": 300,
+      "height": 300,
+      "color": "4"
+    },
+    {
+      "id": "4dd8239cd82a1fce",
+      "type": "file",
+      "file": "Vaelor Network.md",
+      "x": 780,
+      "y": 230,
+      "width": 300,
+      "height": 300,
+      "color": "4"
+    },
+    {
+      "id": "88d58460140d1396",
+      "type": "group",
+      "x": -1100,
+      "y": 180,
+      "width": 680,
+      "height": 380,
+      "label": "\ud83c\udf19 STDP Dream Consolidator (:8094)",
+      "color": "2"
+    },
+    {
+      "id": "b5b224f87652761b",
+      "type": "file",
+      "file": "Agents/Neuro-Memory Dream Consolidator.md",
+      "x": -1070,
+      "y": 230,
+      "width": 300,
+      "height": 300,
+      "color": "2"
+    },
+    {
+      "id": "525e680eaa63e780",
+      "type": "file",
+      "file": "Zoth Memory.md",
+      "x": -740,
+      "y": 230,
+      "width": 300,
+      "height": 300,
+      "color": "2"
+    },
+    {
+      "id": "f64812b744e7473e",
+      "type": "group",
+      "x": -340,
+      "y": 260,
+      "width": 680,
+      "height": 380,
+      "label": "\ud83d\udef8 Antigravity Subagent Swarm (IPC Mesh)",
+      "color": "1"
+    },
+    {
+      "id": "3892ad6b8245e5ba",
+      "type": "file",
+      "file": "Agents/Antigravity Subagent Swarm.md",
+      "x": -310,
+      "y": 310,
+      "width": 300,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "9dad542fad013db5",
+      "type": "file",
+      "file": "Agent permissions.md",
+      "x": 20,
+      "y": 310,
+      "width": 300,
+      "height": 300,
+      "color": "1"
+    }
+  ],
+  "edges": [
+    {
+      "id": "dcf9fba2e45f70b0",
+      "fromNode": "beffb9b5ad2a62ca",
+      "fromSide": "left",
+      "toNode": "5dc4b48b443579ef",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "tool execution",
+      "color": "5"
+    },
+    {
+      "id": "5e76bfac63b57505",
+      "fromNode": "beffb9b5ad2a62ca",
+      "fromSide": "right",
+      "toNode": "f22695c99dce3b49",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "society sim (:9393)",
+      "color": "6"
+    },
+    {
+      "id": "87e4a49bdea3cf9c",
+      "fromNode": "beffb9b5ad2a62ca",
+      "fromSide": "bottom",
+      "toNode": "37be2089ff048053",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "compute mining (:8140)",
+      "color": "4"
+    },
+    {
+      "id": "50f806cf6c310c8f",
+      "fromNode": "beffb9b5ad2a62ca",
+      "fromSide": "bottom",
+      "toNode": "b5b224f87652761b",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "sleep replay (:8094)",
+      "color": "2"
+    },
+    {
+      "id": "cc9d8affe4bd6852",
+      "fromNode": "beffb9b5ad2a62ca",
+      "fromSide": "bottom",
+      "toNode": "3892ad6b8245e5ba",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "orchestration mesh",
+      "color": "1"
+    },
+    {
+      "id": "34885f30a32f3604",
+      "fromNode": "3892ad6b8245e5ba",
+      "fromSide": "left",
+      "toNode": "5dc4b48b443579ef",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "subagent tasks",
+      "color": "5"
+    },
+    {
+      "id": "7240f1c5e7f9b2e0",
+      "fromNode": "f22695c99dce3b49",
+      "fromSide": "bottom",
+      "toNode": "b5b224f87652761b",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "STDP memory sync",
+      "color": "2"
+    },
+    {
+      "id": "24b707cccb8ea731",
+      "fromNode": "37be2089ff048053",
+      "fromSide": "left",
+      "toNode": "b5b224f87652761b",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "inference verification",
+      "color": "4"
+    }
+  ]
+}

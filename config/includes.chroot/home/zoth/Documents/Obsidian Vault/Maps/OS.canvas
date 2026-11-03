@@ -1,0 +1,390 @@
+{
+  "nodes": [
+    {
+      "id": "os",
+      "type": "file",
+      "file": "Zoth OS.md",
+      "x": 500,
+      "y": -20,
+      "width": 360,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "ws",
+      "type": "file",
+      "file": "Workspaces.md",
+      "x": 140,
+      "y": -20,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "mcp",
+      "type": "file",
+      "file": "MCP Catalog.md",
+      "x": 920,
+      "y": -20,
+      "width": 300,
+      "height": 160,
+      "color": "1"
+    },
+    {
+      "id": "cli-0",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-mcp.md",
+      "x": -40,
+      "y": 220,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-1",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-workspaces.md",
+      "x": 280,
+      "y": 220,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-2",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-docs.md",
+      "x": 600,
+      "y": 220,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-3",
+      "type": "file",
+      "file": "OS/CLIs/CLI bolt-diy.md",
+      "x": 920,
+      "y": 220,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-4",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-neuro-memory.md",
+      "x": -40,
+      "y": 410,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-5",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-lock.md",
+      "x": 280,
+      "y": 410,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-6",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-heal.md",
+      "x": 600,
+      "y": 410,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "cli-7",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-agent-conductor.md",
+      "x": 920,
+      "y": 410,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "ar-0",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal kali.md",
+      "x": -40,
+      "y": 620,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-1",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal nexus_agents.md",
+      "x": 280,
+      "y": 620,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-2",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal nexus_ai.md",
+      "x": 600,
+      "y": 620,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-3",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal nexus_infra.md",
+      "x": 920,
+      "y": 620,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-4",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal nexus_pkm.md",
+      "x": -40,
+      "y": 810,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-5",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal nexus_web3.md",
+      "x": 280,
+      "y": 810,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-6",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal parrot.md",
+      "x": 600,
+      "y": 810,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "ar-7",
+      "type": "file",
+      "file": "OS/Arsenal/Arsenal zoth_core.md",
+      "x": 920,
+      "y": 810,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "themes",
+      "type": "file",
+      "file": "MOC Themes.md",
+      "x": 140,
+      "y": 1020,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "units",
+      "type": "file",
+      "file": "MOC Units.md",
+      "x": 460,
+      "y": 1020,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "daemons",
+      "type": "file",
+      "file": "Maps/Daemons.base",
+      "x": 780,
+      "y": 1020,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "live",
+      "type": "file",
+      "file": "Repo vs Live OS.md",
+      "x": 1100,
+      "y": 1020,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ea",
+      "fromNode": "os",
+      "fromSide": "left",
+      "toNode": "ws",
+      "toSide": "right"
+    },
+    {
+      "id": "eb",
+      "fromNode": "os",
+      "fromSide": "right",
+      "toNode": "mcp",
+      "toSide": "left"
+    },
+    {
+      "id": "ecli-0",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-0",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-1",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-1",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-2",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-2",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-3",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-3",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-4",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-4",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-5",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-5",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-6",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-6",
+      "toSide": "top"
+    },
+    {
+      "id": "ecli-7",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "cli-7",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-0",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-0",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-1",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-1",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-2",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-2",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-3",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-3",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-4",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-4",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-5",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-5",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-6",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-6",
+      "toSide": "top"
+    },
+    {
+      "id": "ear-7",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "ar-7",
+      "toSide": "top"
+    },
+    {
+      "id": "ethemes",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "themes",
+      "toSide": "top"
+    },
+    {
+      "id": "eunits",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "units",
+      "toSide": "top"
+    },
+    {
+      "id": "edaemons",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "daemons",
+      "toSide": "top"
+    },
+    {
+      "id": "elive",
+      "fromNode": "os",
+      "fromSide": "bottom",
+      "toNode": "live",
+      "toSide": "top"
+    }
+  ]
+}

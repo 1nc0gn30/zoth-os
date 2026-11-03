@@ -1,0 +1,18 @@
+{
+	"nodes":[
+		{"id":"hub","type":"file","file":"Agent permissions.md","x":220,"y":40,"width":360,"height":160,"color":"1"},
+		{"id":"r0","type":"file","file":"OS/Rings/Ring 0 SOVEREIGN.md","x":-40,"y":280,"width":300,"height":170,"color":"1"},
+		{"id":"r1","type":"file","file":"OS/Rings/Ring 1 SYSADMIN.md","x":280,"y":280,"width":300,"height":170,"color":"1"},
+		{"id":"r2","type":"file","file":"OS/Rings/Ring 2 TOOLMASTER.md","x":600,"y":280,"width":300,"height":170,"color":"1"},
+		{"id":"r3","type":"file","file":"OS/Rings/Ring 3 SPECTRE.md","x":920,"y":280,"width":300,"height":170,"color":"1"},
+		{"id":"sent","type":"file","file":"OS/Sentinel.md","x":220,"y":520,"width":360,"height":150,"color":"1"},
+		{"id":"t","type":"text","text":"# Security rings\nagent-permissions.json · active ring 2","x":260,"y":-300,"width":420,"height":90,"color":"1"}
+	],
+	"edges":[
+		{"id":"er0","fromNode":"hub","fromSide":"bottom","toNode":"r0","toSide":"top"},
+		{"id":"er1","fromNode":"hub","fromSide":"bottom","toNode":"r1","toSide":"top"},
+		{"id":"er2","fromNode":"hub","fromSide":"bottom","toNode":"r2","toSide":"top"},
+		{"id":"er3","fromNode":"hub","fromSide":"right","toNode":"r3","toSide":"left"},
+		{"id":"es","fromNode":"hub","fromSide":"bottom","toNode":"sent","toSide":"top"}
+	]
+}

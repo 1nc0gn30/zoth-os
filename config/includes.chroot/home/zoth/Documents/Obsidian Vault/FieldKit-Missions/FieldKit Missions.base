@@ -1,0 +1,22 @@
+filters:
+  and:
+    - file.inFolder("FieldKit-Missions")
+    - file.hasTag("fieldkit")
+properties:
+  goal:
+    displayName: Goal
+  status:
+    displayName: Status
+  steps_done:
+    displayName: Done
+  steps_total:
+    displayName: Total
+  spark_p50_ms:
+    displayName: Spark p50 ms
+views:
+  - type: table
+    name: All missions
+    order: [file.name, goal, status, steps_done, steps_total, spark_p50_ms]
+  - type: cards
+    name: Mission cards
+    order: [file.name, goal, status]

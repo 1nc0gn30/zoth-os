@@ -1,0 +1,346 @@
+{
+  "nodes": [
+    {
+      "id": "1000000000000001",
+      "type": "group",
+      "x": -920,
+      "y": -650,
+      "width": 860,
+      "height": 560,
+      "label": "\u25c8 Vaelor Feeless Account-Lattice DAG Core (:8140)",
+      "color": "4"
+    },
+    {
+      "id": "1000000000000011",
+      "type": "file",
+      "x": -880,
+      "y": -590,
+      "width": 380,
+      "height": 180,
+      "file": "Vaelor Network.md",
+      "color": "4"
+    },
+    {
+      "id": "1000000000000012",
+      "type": "text",
+      "x": -470,
+      "y": -590,
+      "width": 380,
+      "height": 230,
+      "color": "5",
+      "text": "### \u26d3\ufe0f Asynchronous Micro-Chains\n- **Ed25519 Account-Lattice**: Every human (`@1nc0gn30`, `@zoth`) and AI agent owns an independent micro-chain.\n- **Zero Gas Fees ($0.00)**: Eliminates gas auctions; spam prevention via sub-20ms SHA-256 micro-stamp.\n- **Sub-25ms Finality**: High-concurrency DAG without global chain bottlenecks."
+    },
+    {
+      "id": "1000000000000013",
+      "type": "text",
+      "x": -880,
+      "y": -380,
+      "width": 380,
+      "height": 240,
+      "color": "3",
+      "text": "### \ud83d\udd11 Biometric Passkey & @Handle Layer\n- **WebAuthn / FIDO2 Passkeys**: Touch ID, Face ID, YubiKey biometric keypairs natively embedded.\n- **Human-Readable @Handles**: No `0x` hex addresses. P2P resolution across ZothOS workstations.\n- **Social Recovery Guardians**: Threshold multi-sig guardian network for sovereign key recovery."
+    },
+    {
+      "id": "1000000000000014",
+      "type": "text",
+      "x": -470,
+      "y": -330,
+      "width": 380,
+      "height": 190,
+      "color": "6",
+      "text": "### \ud83c\udf10 Daemon RPC & Gossip Interface (:8140)\n- `POST /api/accounts/register` \u00b7 Handle & Keygen\n- `POST /api/transactions/send` \u00b7 Feeless Transfer\n- `POST /api/escrow/create` \u00b7 Buyer Escrow Lock\n- `GET /api/network/state` \u00b7 Block Lattice Snapshot"
+    },
+    {
+      "id": "2000000000000001",
+      "type": "group",
+      "x": 20,
+      "y": -650,
+      "width": 860,
+      "height": 560,
+      "label": "\ud83d\udee1\ufe0f Layer-1 Protected-Pay Buyer Escrow (:8140)",
+      "color": "5"
+    },
+    {
+      "id": "2000000000000011",
+      "type": "text",
+      "x": 60,
+      "y": -590,
+      "width": 380,
+      "height": 230,
+      "color": "5",
+      "text": "### \ud83d\udd12 Native ESCROW_LOCK State\n- **Layer-1 Escrow Protocol**: Funds locked in deterministic contract state with time-lock.\n- **0% Merchant Interchange**: Beats traditional credit card fees (2.9% + $0.30 -> $0.00).\n- **Protection Window**: Configurable 24h to 72h dispute window for goods/services."
+    },
+    {
+      "id": "2000000000000012",
+      "type": "text",
+      "x": 470,
+      "y": -590,
+      "width": 380,
+      "height": 230,
+      "color": "4",
+      "text": "### \u26a1 Settlement & Release Logic\n- **1-Click Buyer Release**: Instant release upon satisfactory delivery of code or digital assets.\n- **Oracle Auto-Fulfillment**: Netlify / GitHub webhook or print-on-demand fulfillment receipt.\n- **Timeout Auto-Settle**: If no dispute filed within window, funds release automatically."
+    },
+    {
+      "id": "2000000000000013",
+      "type": "text",
+      "x": 60,
+      "y": -330,
+      "width": 380,
+      "height": 200,
+      "color": "1",
+      "text": "### \u2696\ufe0f Dispute & Chargeback Engine\n- **1-Click Refund Dispute**: Buyer halts auto-release if service or product is non-compliant.\n- **Cryptographic Evidence**: Audit logs from `agent-flight-recorder` (:8104) and `agent-policy-auditor`.\n- **Zero Seller Fraud**: Escrow collateral protects both buyer and merchant."
+    },
+    {
+      "id": "2000000000000014",
+      "type": "text",
+      "x": 470,
+      "y": -330,
+      "width": 380,
+      "height": 200,
+      "color": "2",
+      "text": "### \ud83d\udecd\ufe0f Merchant & Agent Commerce\n- **Agent-to-Agent Micro-Contracts**: Autonomous twin negotiation over HTTP / JSON-RPC.\n- **Shopify & Etsy Bridges**: Direct payout routing into VLR or fiat equivalents.\n- **VLR Payment Badge**: Visual checkout badge in Zoth Studio v2."
+    },
+    {
+      "id": "3000000000000001",
+      "type": "group",
+      "x": -920,
+      "y": 0,
+      "width": 860,
+      "height": 560,
+      "label": "\ud83e\udde0 Proof-of-Useful-Work (PoUW) & STDP Memory Substrate (:8094)",
+      "color": "3"
+    },
+    {
+      "id": "3000000000000011",
+      "type": "file",
+      "x": -880,
+      "y": 60,
+      "width": 380,
+      "height": 180,
+      "file": "Zoth Memory.md",
+      "color": "3"
+    },
+    {
+      "id": "3000000000000012",
+      "type": "text",
+      "x": -470,
+      "y": 60,
+      "width": 380,
+      "height": 230,
+      "color": "4",
+      "text": "### \ud83d\udd2c Verifiable Workloads (Zero Waste Mining)\n- **AEO Schema Synthesis**: Validates JSON-LD semantic graphs for Perplexity & Googlebot.\n- **Core Web Vitals Audits**: Real headless DOM audits (LCP < 800ms, INP < 50ms, CLS = 0.00).\n- **Security & Secret Entropy**: Ghostbyte zero-leak validation scan for zero exposed secrets.\n- **LLM Inference Receipts**: Deterministic hashes of verified local model completions."
+    },
+    {
+      "id": "3000000000000013",
+      "type": "text",
+      "x": -880,
+      "y": 270,
+      "width": 380,
+      "height": 250,
+      "color": "5",
+      "text": "### \u26a1 Hebbian Synaptic Minting Formula\n$$\\Delta w_{ij} = A_+ \\exp\\left(-\\frac{\\Delta t}{\\tau_+}\\right)$$\n- Useful compute reinforces 3D hippocampal memory weights in `neuro-memory-daemon` (:8094).\n- Submitting verified work artifacts mints new `\u25c8 VLR` directly to worker `@handles`."
+    },
+    {
+      "id": "3000000000000014",
+      "type": "file",
+      "x": -470,
+      "y": 320,
+      "width": 380,
+      "height": 200,
+      "file": "Zoth Memory Stratum.base",
+      "color": "6"
+    },
+    {
+      "id": "4000000000000001",
+      "type": "group",
+      "x": 20,
+      "y": 0,
+      "width": 860,
+      "height": 560,
+      "label": "\ud83d\udcb3 Sovereign Dual Fiat + Web3 Checkout Bridges",
+      "color": "2"
+    },
+    {
+      "id": "4000000000000011",
+      "type": "text",
+      "x": 60,
+      "y": 60,
+      "width": 380,
+      "height": 220,
+      "color": "2",
+      "text": "### \ud83d\udcb3 Stripe Credit Card / Apple Pay Rails\n- **Instant Checkout**: High-converting Stripe Payment Links embedded across SaaS tools.\n- **Founding Member Tier**: $0 Lifetime Pro license (strikethrough regular $0).\n- **Automatic Webhook & URL Redirect**: Passes `?licensed=true` to grant permanent access."
+    },
+    {
+      "id": "4000000000000012",
+      "type": "text",
+      "x": 470,
+      "y": 60,
+      "width": 380,
+      "height": 220,
+      "color": "6",
+      "text": "### \u2600\ufe0f Solana Tip Solana Sovereign Cash Register\n- **Integration ID**: `428790dd-7ad1-407c-8ecf-c048c77a4cb8`\n- **Solana Receiver**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`\n- **BTC Treasury**: `bc1p2dr247zklh8pnffak0ew7m82u2w8gx25ys28x7aavr95z674ydzsfw500t`\n- **Zero Chargeback Risk**: Crypto payment rail for sovereign treasury march to $100K."
+    },
+    {
+      "id": "4000000000000013",
+      "type": "text",
+      "x": 60,
+      "y": 310,
+      "width": 380,
+      "height": 210,
+      "color": "4",
+      "text": "### \ud83d\udd11 Client-Side License Verification\n- **Zero Backend Bottleneck**: Validates license key or return URL parameter client-side.\n- **LocalStorage Persistence**: Stores active license state permanently.\n- **Immediate Visual Feedback**: Header badge updates to `\u2b50 PRO ACTIVE`."
+    },
+    {
+      "id": "4000000000000014",
+      "type": "text",
+      "x": 470,
+      "y": 310,
+      "width": 380,
+      "height": 210,
+      "color": "1",
+      "text": "### \ud83c\udf2b\ufe0f Frosted Glass Output Paywall\n- `filter: blur(6px)` over generated code, AST trees, and export packages.\n- High-contrast glowing lock overlay with dual Stripe + Solana CTA buttons.\n- Copy/Export action interceptors trigger the Pro Paywall modal."
+    },
+    {
+      "id": "5000000000000001",
+      "type": "group",
+      "x": -450,
+      "y": 630,
+      "width": 900,
+      "height": 480,
+      "label": "\ud83d\ude80 ZothOS & Zoth Studio Commercialization & Distribution",
+      "color": "6"
+    },
+    {
+      "id": "5000000000000011",
+      "type": "file",
+      "x": -410,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "Zoth Studio.md",
+      "color": "4"
+    },
+    {
+      "id": "5000000000000012",
+      "type": "file",
+      "x": -130,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "Zoth OS.md",
+      "color": "6"
+    },
+    {
+      "id": "5000000000000013",
+      "type": "file",
+      "x": 150,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "00 Home.md",
+      "color": "3"
+    },
+    {
+      "id": "5000000000000014",
+      "type": "text",
+      "x": -410,
+      "y": 890,
+      "width": 820,
+      "height": 190,
+      "color": "5",
+      "text": "### \ud83d\udc8e Sovereign SaaS Design & Treasury Standards\n- **Zero Fake Work**: AST parsing, crypto transforms, and calculations run 100% in-browser.\n- **Avant-Garde UI/UX**: Syne/Space Grotesk typography, pure CSS border beams, dynamic aurora gradients.\n- **Subtle Attribution**: `Engineered by 1nc0gn30 (@1nc0gn30) \u2022 NullAI Platform`.\n- **Triple-Viewport Guardrail**: Multi-viewport verified, zero horizontal overflow, 0 console errors."
+    }
+  ],
+  "edges": [
+    {
+      "id": "e000000000000001",
+      "fromNode": "1000000000000012",
+      "fromSide": "right",
+      "toNode": "2000000000000011",
+      "toSide": "left",
+      "color": "5",
+      "label": "Layer-1 Escrow Protocol"
+    },
+    {
+      "id": "e000000000000002",
+      "fromNode": "1000000000000014",
+      "fromSide": "bottom",
+      "toNode": "3000000000000012",
+      "toSide": "top",
+      "color": "4",
+      "label": "/api/pouw/submit"
+    },
+    {
+      "id": "e000000000000003",
+      "fromNode": "3000000000000012",
+      "fromSide": "bottom",
+      "toNode": "3000000000000013",
+      "toSide": "right",
+      "color": "3",
+      "label": "PoUW Artifact -> STDP Weight"
+    },
+    {
+      "id": "e000000000000004",
+      "fromNode": "3000000000000013",
+      "fromSide": "top",
+      "toNode": "1000000000000011",
+      "toSide": "bottom",
+      "color": "4",
+      "label": "Mints \u25c8 VLR to Worker"
+    },
+    {
+      "id": "e000000000000005",
+      "fromNode": "2000000000000014",
+      "fromSide": "bottom",
+      "toNode": "4000000000000011",
+      "toSide": "top",
+      "color": "2",
+      "label": "Fiat On-Ramp"
+    },
+    {
+      "id": "e000000000000006",
+      "fromNode": "2000000000000014",
+      "fromSide": "bottom",
+      "toNode": "4000000000000012",
+      "toSide": "top",
+      "color": "6",
+      "label": "Solana Solana Tip Rail"
+    },
+    {
+      "id": "e000000000000007",
+      "fromNode": "4000000000000013",
+      "fromSide": "bottom",
+      "toNode": "5000000000000014",
+      "toSide": "right",
+      "color": "4",
+      "label": "Unlocks Pro Features"
+    },
+    {
+      "id": "e000000000000008",
+      "fromNode": "5000000000000011",
+      "fromSide": "top",
+      "toNode": "1000000000000014",
+      "toSide": "bottom",
+      "color": "5",
+      "label": "Embeds VLR Node (:8140)"
+    },
+    {
+      "id": "e000000000000009",
+      "fromNode": "5000000000000012",
+      "fromSide": "top",
+      "toNode": "3000000000000011",
+      "toSide": "bottom",
+      "color": "6",
+      "label": "System Synaptic Substrate (:8094)"
+    },
+    {
+      "id": "e000000000000010",
+      "fromNode": "5000000000000013",
+      "fromSide": "bottom",
+      "toNode": "5000000000000014",
+      "toSide": "top",
+      "color": "3",
+      "label": "Sovereign Synthesis"
+    }
+  ]
+}

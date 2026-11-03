@@ -1,0 +1,308 @@
+{
+  "nodes": [
+    {
+      "id": "hero_group_trust01",
+      "type": "group",
+      "x": -180,
+      "y": -460,
+      "width": 640,
+      "height": 340,
+      "label": "🛡️ Zero-Trust Supply-Chain Security Anchor",
+      "color": "3"
+    },
+    {
+      "id": "hero_node_trust01",
+      "type": "text",
+      "x": -150,
+      "y": -420,
+      "width": 580,
+      "height": 260,
+      "color": "3",
+      "text": "# 🛡️ ZothOS & Studio Supply-Chain Trust Stack\n\n**End-to-End Cryptographic Verification, Continuous SAST, and Anti-Malware Matrix.**\n\n- **Parity Repositories**: `NullAITech/zoth-os` & `NullAITech/zoth-studio-v2`\n- **Release Binary Guarantee**: Keyless Cosign Signed + SLSA Provenance + VirusTotal 0-Detection\n- **Continuous Assurance**: OpenSSF Scorecard, SPDX/CycloneDX SBOM, Gitleaks 8.30.1\n\n> [!tip] Sovereign Trust Parity\n> Enforces reproducible builds, tamper-proof releases, and zero-leak commit gates across OS and Studio."
+    },
+    {
+      "id": "group_sast_gate01",
+      "type": "group",
+      "x": -1140,
+      "y": -60,
+      "width": 380,
+      "height": 720,
+      "label": "🔍 Layer 1: Continuous SAST & Secret Defense",
+      "color": "5"
+    },
+    {
+      "id": "node_sast_codeql01",
+      "type": "text",
+      "x": -1110,
+      "y": -10,
+      "width": 320,
+      "height": 200,
+      "color": "5",
+      "text": "### 🔍 CodeQL Semantic SAST\n- **Workflow**: `.github/workflows/codeql.yml`\n- **Languages**: Python, TypeScript/JavaScript, Actions\n- **Cadence**: Push to `main`, PR gates, weekly cron\n- **Coverage**: AST data-flow & taint tracking against CWE-79, CWE-89, CWE-94"
+    },
+    {
+      "id": "node_sast_semgrep01",
+      "type": "text",
+      "x": -1110,
+      "y": 220,
+      "width": 320,
+      "height": 200,
+      "color": "5",
+      "text": "### ⚡ Semgrep Security Engine\n- **Workflow**: `.github/workflows/semgrep.yml`\n- **Rule-packs**: `p/security-audit`, `p/secrets`, `p/default`\n- **Format**: SARIF upload to GitHub Security\n- **Performance**: High-speed deterministic pattern linting"
+    },
+    {
+      "id": "node_sast_gitleaks01",
+      "type": "text",
+      "x": -1110,
+      "y": 440,
+      "width": 320,
+      "height": 190,
+      "color": "5",
+      "text": "### 🔐 Gitleaks 8.30.1 Secret Gate\n- **Engine**: `tools/scan-secrets.sh` + `.gitleaks.toml`\n- **Enforcement**: Pre-commit hooks & CI PR gate\n- **Protection**: Zero-leak gate for private keys, API tokens, seed phrases, and serials"
+    },
+    {
+      "id": "group_sbom_gate02",
+      "type": "group",
+      "x": -710,
+      "y": -60,
+      "width": 380,
+      "height": 500,
+      "label": "📦 Layer 2: Dependency Provenance & Scorecard",
+      "color": "4"
+    },
+    {
+      "id": "node_sbom_syft02",
+      "type": "text",
+      "x": -680,
+      "y": -10,
+      "width": 320,
+      "height": 210,
+      "color": "4",
+      "text": "### 📦 SPDX 2.3 & CycloneDX 1.5 SBOM\n- **Workflow**: `.github/workflows/sbom.yml`\n- **Engine**: Anchore Syft binary/source scanner\n- **Artifacts**: `zothos-source.spdx.json` & `zothos-source.cdx.json`\n- **Scope**: Comprehensive package dependency graph"
+    },
+    {
+      "id": "node_scorecard_ossf02",
+      "type": "text",
+      "x": -680,
+      "y": 220,
+      "width": 320,
+      "height": 200,
+      "color": "4",
+      "text": "### 🏆 OpenSSF Scorecard\n- **Workflow**: `.github/workflows/scorecard.yml`\n- **Audits**: Pinned dependencies, branch protection, binary verification, token permissions\n- **Badge**: Public transparency score on scorecard.dev"
+    },
+    {
+      "id": "group_sign_gate03",
+      "type": "group",
+      "x": -280,
+      "y": -60,
+      "width": 380,
+      "height": 500,
+      "label": "🔏 Layer 3: Cryptographic Signing & Provenance",
+      "color": "6"
+    },
+    {
+      "id": "node_sign_cosign03",
+      "type": "text",
+      "x": -250,
+      "y": -10,
+      "width": 320,
+      "height": 210,
+      "color": "6",
+      "text": "### 🔏 Sigstore Cosign Keyless OIDC\n- **Workflow**: `.github/workflows/release-sign.yml`\n- **Trust Model**: Fulcio OIDC certificates + Rekor ledger\n- **Output**: `SHA256SUMS.cosign.bundle`\n- **Verification**: Keyless zero-secret public verification"
+    },
+    {
+      "id": "node_sign_slsa03",
+      "type": "text",
+      "x": -250,
+      "y": 220,
+      "width": 320,
+      "height": 200,
+      "color": "6",
+      "text": "### 📜 SLSA Build Provenance (Level 3)\n- **Attestation**: `actions/attest-build-provenance`\n- **Format**: In-toto cryptographically signed JSONL\n- **Command**: `gh attestation verify <binary> --owner NullAITech`"
+    },
+    {
+      "id": "group_vt_gate04",
+      "type": "group",
+      "x": 150,
+      "y": -60,
+      "width": 400,
+      "height": 500,
+      "label": "🦠 Layer 4: Multi-Engine Binary Verification",
+      "color": "1"
+    },
+    {
+      "id": "node_vt_scanner04",
+      "type": "text",
+      "x": 180,
+      "y": -10,
+      "width": 340,
+      "height": 430,
+      "color": "1",
+      "text": "### 🦠 VirusTotal 70+ AV Release Scanner\n- **Workflow**: `.github/workflows/virustotal-release.yml`\n- **Script**: `tools/virustotal-release.sh`\n- **Scope**: Binary installers (`.AppImage`, `.deb`, `.tar.gz`, `.iso`)\n- **Engines**: 70+ engines (Microsoft Defender, Kaspersky, BitDefender, ESET-NOD32)\n- **Rate Limiting**: Paced at ~4 req/min for free-tier `VT_API_KEY`\n- **Strict Gate**: Zero detections allowed across high-confidence commercial vendors\n- **Report**: `virustotal-report.md` with per-asset SHA-256 and permalinks"
+    },
+    {
+      "id": "group_vault_notes05",
+      "type": "group",
+      "x": 600,
+      "y": -60,
+      "width": 440,
+      "height": 580,
+      "label": "💎 Second Brain Vault Reference Documents",
+      "color": "3"
+    },
+    {
+      "id": "node_file_trustmoc05",
+      "type": "file",
+      "x": 630,
+      "y": -10,
+      "width": 380,
+      "height": 110,
+      "file": "Zoth Trust & Supply Chain.md",
+      "color": "3"
+    },
+    {
+      "id": "node_file_trustwiki05",
+      "type": "file",
+      "x": 630,
+      "y": 120,
+      "width": 380,
+      "height": 110,
+      "file": "06-Wiki/Zero-Trust Supply Chain, Cosign & VirusTotal Verification.md",
+      "color": "3"
+    },
+    {
+      "id": "node_file_docsec05",
+      "type": "file",
+      "x": 630,
+      "y": 250,
+      "width": 380,
+      "height": 110,
+      "file": "OS/Docs/Doc SECURITY.md",
+      "color": "3"
+    },
+    {
+      "id": "node_file_docrepro05",
+      "type": "file",
+      "x": 630,
+      "y": 380,
+      "width": 380,
+      "height": 110,
+      "file": "OS/Docs/Doc REPRODUCIBLE_BUILDS.md",
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_hero_sast01",
+      "fromNode": "hero_node_trust01",
+      "fromSide": "left",
+      "toNode": "node_sast_codeql01",
+      "toSide": "top",
+      "color": "5",
+      "label": "Continuous SAST"
+    },
+    {
+      "id": "edge_hero_sbom02",
+      "fromNode": "hero_node_trust01",
+      "fromSide": "bottom",
+      "toNode": "node_sbom_syft02",
+      "toSide": "top",
+      "color": "4",
+      "label": "Dependency SBOM"
+    },
+    {
+      "id": "edge_hero_sign03",
+      "fromNode": "hero_node_trust01",
+      "fromSide": "bottom",
+      "toNode": "node_sign_cosign03",
+      "toSide": "top",
+      "color": "6",
+      "label": "Release Attestation"
+    },
+    {
+      "id": "edge_hero_vt04",
+      "fromNode": "hero_node_trust01",
+      "fromSide": "right",
+      "toNode": "node_vt_scanner04",
+      "toSide": "top",
+      "color": "1",
+      "label": "Multi-Engine AV"
+    },
+    {
+      "id": "edge_hero_wiki05",
+      "fromNode": "hero_node_trust01",
+      "fromSide": "right",
+      "toNode": "node_file_trustmoc05",
+      "toSide": "left",
+      "color": "3",
+      "label": "Second Brain MOC"
+    },
+    {
+      "id": "edge_sast_to_sbom01",
+      "fromNode": "node_sast_codeql01",
+      "fromSide": "right",
+      "toNode": "node_sbom_syft02",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "edge_gitleaks_to_score02",
+      "fromNode": "node_sast_gitleaks01",
+      "fromSide": "right",
+      "toNode": "node_scorecard_ossf02",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "edge_sbom_to_cosign01",
+      "fromNode": "node_sbom_syft02",
+      "fromSide": "right",
+      "toNode": "node_sign_cosign03",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "edge_score_to_slsa02",
+      "fromNode": "node_scorecard_ossf02",
+      "fromSide": "right",
+      "toNode": "node_sign_slsa03",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "edge_cosign_to_vt01",
+      "fromNode": "node_sign_cosign03",
+      "fromSide": "right",
+      "toNode": "node_vt_scanner04",
+      "toSide": "left",
+      "color": "6",
+      "label": "Signed Binaries"
+    },
+    {
+      "id": "edge_slsa_to_vt02",
+      "fromNode": "node_sign_slsa03",
+      "fromSide": "right",
+      "toNode": "node_vt_scanner04",
+      "toSide": "left",
+      "color": "6",
+      "label": "Provenance Gate"
+    },
+    {
+      "id": "edge_vt_to_moc01",
+      "fromNode": "node_vt_scanner04",
+      "fromSide": "right",
+      "toNode": "node_file_trustmoc05",
+      "toSide": "left",
+      "color": "1",
+      "label": "Audit Log"
+    },
+    {
+      "id": "edge_moc_to_wiki02",
+      "fromNode": "node_file_trustmoc05",
+      "fromSide": "bottom",
+      "toNode": "node_file_trustwiki05",
+      "toSide": "top",
+      "color": "3"
+    }
+  ]
+}

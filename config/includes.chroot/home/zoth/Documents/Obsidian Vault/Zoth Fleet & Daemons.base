@@ -1,0 +1,79 @@
+filters:
+  and:
+    - file.hasTag("daemon")
+    - 'file.ext == "md"'
+
+formulas:
+  port_label: 'if(port, ":" + port.toString(), "Dynamic")'
+  status_badge: 'if(status == "active", "🟢 Active", if(status == "standby", "🟡 Standby", "⚪ Idle"))'
+  health_endpoint: 'if(health_url, health_url, if(port, "http://127.0.0.1:" + port.toString() + "/health", ""))'
+  is_core_fleet: 'if(port == 8094 || port == 8140 || port == 3000 || port == 5173 || port == 9393, true, false)'
+  core_badge: 'if(formula.is_core_fleet, "⭐ Core Fleet", "📦 Service")'
+  days_since_audit: '(now() - file.ctime).days.round(1)'
+
+properties:
+  file.name:
+    displayName: "Daemon Note"
+  title:
+    displayName: "Service Identifier"
+  subsystem:
+    displayName: "Subsystem"
+  formula.port_label:
+    displayName: "Loopback Port"
+  formula.status_badge:
+    displayName: "Health Status"
+  formula.core_badge:
+    displayName: "Fleet Tier"
+  formula.health_endpoint:
+    displayName: "Health Probe"
+  formula.days_since_audit:
+    displayName: "Days Since Edit"
+
+views:
+  - type: table
+    name: "Core Fleet (:8094, :8140, :3000, :5173, :9393)"
+    filters:
+      and:
+        - 'formula.is_core_fleet == true'
+    order:
+      - file.name
+      - title
+      - formula.port_label
+      - subsystem
+      - formula.status_badge
+      - formula.health_endpoint
+    summaries:
+      formula.port_label: Unique
+
+  - type: table
+    name: "All Daemons (By Subsystem)"
+    groupBy:
+      property: subsystem
+      direction: ASC
+    order:
+      - file.name
+      - title
+      - formula.port_label
+      - formula.status_badge
+      - formula.days_since_audit
+    summaries:
+      formula.port_label: Unique
+
+  - type: cards
+    name: "Fleet Gallery"
+    order:
+      - file.name
+      - title
+      - formula.port_label
+      - subsystem
+      - formula.status_badge
+
+  - type: table
+    name: "Full Fleet Port Registry"
+    order:
+      - formula.port_label
+      - title
+      - subsystem
+      - formula.status_badge
+      - formula.health_endpoint
+      - repo

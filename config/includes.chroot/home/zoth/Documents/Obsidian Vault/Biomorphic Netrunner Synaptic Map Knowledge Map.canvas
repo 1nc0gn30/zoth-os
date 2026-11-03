@@ -1,0 +1,236 @@
+{
+  "nodes": [
+    {
+      "id": "19b92110c879bec1",
+      "type": "group",
+      "x": -220,
+      "y": -300,
+      "width": 440,
+      "height": 420,
+      "label": "\u2726 Core Synthesis: Biomorphic Netrunner Synaptic Map",
+      "color": "3"
+    },
+    {
+      "id": "f2300ada1766d910",
+      "type": "text",
+      "x": -180,
+      "y": -240,
+      "width": 360,
+      "height": 320,
+      "color": "3",
+      "text": "# \ud83e\udde0 Biomorphic Netrunner Synaptic Map\n\n**Procedural Knowledge Map** synthesized by `zoth-second-brain`.\n\n- **Vault Notes:** 5 matched\n- **STDP Engrams:** 5 retrieved\n- **Anchor Coordinate:** `(0, 0)`\n\n> [!tip] Bidirectional Linkage\n> Explores Hebbian vector clusters across Obsidian and Neuro-Memory."
+    },
+    {
+      "id": "d79b8805a1e87260",
+      "type": "group",
+      "x": -980,
+      "y": -340,
+      "width": 700,
+      "height": 680,
+      "label": "\ud83d\udc8e Second Brain Vault Cluster (5 notes)",
+      "color": "5"
+    },
+    {
+      "id": "d962d14cc61492be",
+      "type": "file",
+      "x": -940,
+      "y": -280,
+      "width": 620,
+      "height": 100,
+      "file": "Maps.md",
+      "color": "5"
+    },
+    {
+      "id": "4e019334d3b9aa43",
+      "type": "file",
+      "x": -940,
+      "y": -160,
+      "width": 620,
+      "height": 100,
+      "file": "06-Wiki/Biomorphic STDP & 3D Netrunner Cortex.md",
+      "color": "5"
+    },
+    {
+      "id": "acf342759d303c4b",
+      "type": "file",
+      "x": -940,
+      "y": -40,
+      "width": 620,
+      "height": 100,
+      "file": "06-Wiki/STDP Synaptic Memory Consolidation & Hebbian Dream Wave.md",
+      "color": "5"
+    },
+    {
+      "id": "19ce80815a912aa8",
+      "type": "file",
+      "x": -940,
+      "y": 80,
+      "width": 620,
+      "height": 100,
+      "file": "05-Telemetry/Dream Consolidation & Synaptic Bridges.md",
+      "color": "5"
+    },
+    {
+      "id": "fc83b46b618cd30f",
+      "type": "file",
+      "x": -940,
+      "y": 200,
+      "width": 620,
+      "height": 100,
+      "file": "Skills/Skill maps 2.md",
+      "color": "5"
+    },
+    {
+      "id": "24b3c6103db16d30",
+      "type": "group",
+      "x": 280,
+      "y": -340,
+      "width": 700,
+      "height": 780,
+      "label": "\ud83e\udde0 STDP Synaptic Engram Cluster (:8094)",
+      "color": "4"
+    },
+    {
+      "id": "202a55fae2af896f",
+      "type": "text",
+      "x": 320,
+      "y": -280,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `12ed2073` (imp: 0.80)\n#grok #agent\n\nGrok : 1\u2192--- title: \"MemoryPage\" tags: [studio, page] ---  # MemoryPage  `MemoryPage` is the interactive synaptic memory and neuromorphic Netrunner workbench...",
+      "color": "4"
+    },
+    {
+      "id": "0af612d2d028373a",
+      "type": "text",
+      "x": 320,
+      "y": -140,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `496d53f4` (imp: 0.96)\n#wiki #llm-wiki #karpathy #biomorphic-stdp-&-3d-netrunner-cortex\n\n[Karpathy LLM Wiki \u00b7 [[Biomorphic STDP & 3D Netrunner Cortex]]] The **Biomorphic STDP & 3D Netrunner Cortex** is the central biological cognitive substrate p...",
+      "color": "4"
+    },
+    {
+      "id": "8bda79ea72aad9e2",
+      "type": "text",
+      "x": 320,
+      "y": 0,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `20749f81` (imp: 0.90)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #architects\n\n[Adytum Cycle #1] Thoth (Key 2: The High Priestess) completed Observational Adytum Cycle. Divergence: \"Conceptual divergence under The High Priestess [Letter...",
+      "color": "4"
+    },
+    {
+      "id": "78c92800943c6da3",
+      "type": "text",
+      "x": 320,
+      "y": 140,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `cd40176b` (imp: 0.90)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #swarm\n\n[Adytum Cycle #22] Pixel-Neko (Key 2: The High Priestess) completed Observational Adytum Cycle. Divergence: \"Associative hypothesis: merging Scroll of TORA (...",
+      "color": "4"
+    },
+    {
+      "id": "86d3ff6026b8c4eb",
+      "type": "text",
+      "x": 320,
+      "y": 280,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `ca70f192` (imp: 0.90)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #architects\n\n[Adytum Cycle #24] Azoth (Key 2: The High Priestess) completed Observational Adytum Cycle. Divergence: \"Synthesizing Scroll of TORA (Cosmic Law & Memory) (Pa...",
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "36cc52b8911536f3",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "left",
+      "toNode": "d962d14cc61492be",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #1"
+    },
+    {
+      "id": "4828cb2aecff09ae",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "left",
+      "toNode": "4e019334d3b9aa43",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #2"
+    },
+    {
+      "id": "88fac438a8095b3d",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "left",
+      "toNode": "acf342759d303c4b",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #3"
+    },
+    {
+      "id": "db6ecff2b4b7df1a",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "left",
+      "toNode": "19ce80815a912aa8",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #4"
+    },
+    {
+      "id": "e89c9c86da7a3fb8",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "left",
+      "toNode": "fc83b46b618cd30f",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #5"
+    },
+    {
+      "id": "90d74d48b4de947f",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "right",
+      "toNode": "202a55fae2af896f",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #1"
+    },
+    {
+      "id": "5aa095c6c290b7ec",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "right",
+      "toNode": "0af612d2d028373a",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #2"
+    },
+    {
+      "id": "6ea688420aeeaf5e",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "right",
+      "toNode": "8bda79ea72aad9e2",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #3"
+    },
+    {
+      "id": "35f2707215c178d4",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "right",
+      "toNode": "78c92800943c6da3",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #4"
+    },
+    {
+      "id": "f49ff0984b97e96c",
+      "fromNode": "f2300ada1766d910",
+      "fromSide": "right",
+      "toNode": "86d3ff6026b8c4eb",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #5"
+    }
+  ]
+}

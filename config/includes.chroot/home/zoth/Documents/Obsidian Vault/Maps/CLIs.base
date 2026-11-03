@@ -1,0 +1,21 @@
+filters:
+  and:
+    - file.inFolder("OS/CLIs")
+    - file.hasTag("cli")
+properties:
+  title:
+    displayName: Command
+  file.tags:
+    displayName: Tags
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+      - file.tags
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

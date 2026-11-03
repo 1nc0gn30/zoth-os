@@ -1,0 +1,388 @@
+{
+  "nodes": [
+    {
+      "id": "rt",
+      "type": "text",
+      "text": "# Eight rooms\nCtrl+F1\u2026F8 \u00b7 Meta+Ctrl+Arrows \u00b7 `zoth-workspaces apply`",
+      "x": 200,
+      "y": -180,
+      "width": 720,
+      "height": 100,
+      "color": "3"
+    },
+    {
+      "id": "ws",
+      "type": "file",
+      "file": "Workspaces.md",
+      "x": 400,
+      "y": -40,
+      "width": 320,
+      "height": 140,
+      "color": "3"
+    },
+    {
+      "id": "g-Forge",
+      "type": "group",
+      "label": "F1  Forge",
+      "x": -20,
+      "y": 140,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Forge",
+      "type": "text",
+      "text": "**F1**",
+      "x": 0,
+      "y": 160,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Forge",
+      "type": "file",
+      "file": "OS/Rooms/Room Forge.md",
+      "x": 0,
+      "y": 210,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Studio",
+      "type": "group",
+      "label": "F2  Studio",
+      "x": 340,
+      "y": 140,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Studio",
+      "type": "text",
+      "text": "**F2**",
+      "x": 360,
+      "y": 160,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Studio",
+      "type": "file",
+      "file": "OS/Rooms/Room Studio.md",
+      "x": 360,
+      "y": 210,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-WebGen",
+      "type": "group",
+      "label": "F3  WebGen",
+      "x": 700,
+      "y": 140,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-WebGen",
+      "type": "text",
+      "text": "**F3**",
+      "x": 720,
+      "y": 160,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-WebGen",
+      "type": "file",
+      "file": "OS/Rooms/Room WebGen.md",
+      "x": 720,
+      "y": 210,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Memory",
+      "type": "group",
+      "label": "F4  Memory",
+      "x": 1060,
+      "y": 140,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Memory",
+      "type": "text",
+      "text": "**F4**",
+      "x": 1080,
+      "y": 160,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Memory",
+      "type": "file",
+      "file": "OS/Rooms/Room Memory.md",
+      "x": 1080,
+      "y": 210,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Agents",
+      "type": "group",
+      "label": "F5  Agents",
+      "x": -20,
+      "y": 400,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Agents",
+      "type": "text",
+      "text": "**F5**",
+      "x": 0,
+      "y": 420,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Agents",
+      "type": "file",
+      "file": "OS/Rooms/Room Agents.md",
+      "x": 0,
+      "y": 470,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Comms",
+      "type": "group",
+      "label": "F6  Comms",
+      "x": 340,
+      "y": 400,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Comms",
+      "type": "text",
+      "text": "**F6**",
+      "x": 360,
+      "y": 420,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Comms",
+      "type": "file",
+      "file": "OS/Rooms/Room Comms.md",
+      "x": 360,
+      "y": 470,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Ops",
+      "type": "group",
+      "label": "F7  Ops",
+      "x": 700,
+      "y": 400,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Ops",
+      "type": "text",
+      "text": "**F7**",
+      "x": 720,
+      "y": 420,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Ops",
+      "type": "file",
+      "file": "OS/Rooms/Room Ops.md",
+      "x": 720,
+      "y": 470,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "g-Sanctum",
+      "type": "group",
+      "label": "F8  Sanctum",
+      "x": 1060,
+      "y": 400,
+      "width": 340,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "t-Sanctum",
+      "type": "text",
+      "text": "**F8**",
+      "x": 1080,
+      "y": 420,
+      "width": 120,
+      "height": 50,
+      "color": "3"
+    },
+    {
+      "id": "r-Sanctum",
+      "type": "file",
+      "file": "OS/Rooms/Room Sanctum.md",
+      "x": 1080,
+      "y": 470,
+      "width": 300,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "cli-ws",
+      "type": "file",
+      "file": "OS/CLIs/CLI zoth-workspaces.md",
+      "x": 760,
+      "y": -40,
+      "width": 320,
+      "height": 140,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "er-Forge",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Forge",
+      "toSide": "top"
+    },
+    {
+      "id": "er-Studio",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Studio",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Studio",
+      "fromNode": "r-Forge",
+      "fromSide": "right",
+      "toNode": "r-Studio",
+      "toSide": "left"
+    },
+    {
+      "id": "er-WebGen",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-WebGen",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-WebGen",
+      "fromNode": "r-Studio",
+      "fromSide": "right",
+      "toNode": "r-WebGen",
+      "toSide": "left"
+    },
+    {
+      "id": "er-Memory",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Memory",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Memory",
+      "fromNode": "r-WebGen",
+      "fromSide": "right",
+      "toNode": "r-Memory",
+      "toSide": "left"
+    },
+    {
+      "id": "er-Agents",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Agents",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Agents",
+      "fromNode": "r-Memory",
+      "fromSide": "right",
+      "toNode": "r-Agents",
+      "toSide": "left"
+    },
+    {
+      "id": "er-Comms",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Comms",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Comms",
+      "fromNode": "r-Agents",
+      "fromSide": "right",
+      "toNode": "r-Comms",
+      "toSide": "left"
+    },
+    {
+      "id": "er-Ops",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Ops",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Ops",
+      "fromNode": "r-Comms",
+      "fromSide": "right",
+      "toNode": "r-Ops",
+      "toSide": "left"
+    },
+    {
+      "id": "er-Sanctum",
+      "fromNode": "ws",
+      "fromSide": "bottom",
+      "toNode": "r-Sanctum",
+      "toSide": "top"
+    },
+    {
+      "id": "eseq-Sanctum",
+      "fromNode": "r-Ops",
+      "fromSide": "right",
+      "toNode": "r-Sanctum",
+      "toSide": "left"
+    },
+    {
+      "id": "ecli",
+      "fromNode": "ws",
+      "fromSide": "right",
+      "toNode": "cli-ws",
+      "toSide": "left"
+    }
+  ]
+}

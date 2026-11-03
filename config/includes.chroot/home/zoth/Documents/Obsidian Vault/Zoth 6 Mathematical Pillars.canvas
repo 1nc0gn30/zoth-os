@@ -1,0 +1,396 @@
+{
+  "nodes": [
+    {
+      "id": "b100000000000001",
+      "type": "group",
+      "x": -1400,
+      "y": -650,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar I: Cryptographic & Zero-Trust Foundations",
+      "color": "1"
+    },
+    {
+      "id": "b100000000000011",
+      "type": "text",
+      "x": -1360,
+      "y": -590,
+      "width": 400,
+      "height": 260,
+      "color": "1",
+      "text": "### \ud83d\udd10 Cryptographic Primitives\n$$\\mathcal{S} = \\text{Ed25519}_{\\text{sk}}(m), \\quad \\mathcal{H} = \\text{SHA256}(m)$$\n$$\\text{PoW}: \\text{SHA256}(\\text{hash} \\parallel \\text{nonce}) < T$$\n- Keyless Sigstore Cosign OIDC signing.\n- Merkle tree root verification for immutable audit history.\n- Zero-leak secret entropy scanning (`.gitleaks.toml`)."
+    },
+    {
+      "id": "b100000000000012",
+      "type": "file",
+      "x": -930,
+      "y": -590,
+      "width": 360,
+      "height": 180,
+      "file": "Zoth Trust & Supply Chain.md",
+      "color": "1"
+    },
+    {
+      "id": "b100000000000013",
+      "type": "text",
+      "x": -1360,
+      "y": -300,
+      "width": 400,
+      "height": 200,
+      "color": "5",
+      "text": "### \ud83d\udee1\ufe0f Runtime Isolation & Verification\n- `agent-capsule-jail` (:8105) bubblewrap isolation.\n- `agent-egress-sentinel` (:8095) socket gate.\n- `virustotal-release.sh` automated release scan.\n- SPDX 2.3 & CycloneDX 1.5 dependency SBOM."
+    },
+    {
+      "id": "b100000000000014",
+      "type": "file",
+      "x": -930,
+      "y": -380,
+      "width": 360,
+      "height": 180,
+      "file": "OS/Daemons/Daemon vaelor.md",
+      "color": "4"
+    },
+    {
+      "id": "b200000000000001",
+      "type": "group",
+      "x": -450,
+      "y": -650,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar II: Neuromorphic STDP & Hyperdimensional Memory",
+      "color": "5"
+    },
+    {
+      "id": "b200000000000011",
+      "type": "text",
+      "x": -410,
+      "y": -590,
+      "width": 400,
+      "height": 260,
+      "color": "5",
+      "text": "### \u26a1 Biomorphic STDP Formulation\n$$\\Delta w_{ij} = \\begin{cases} A_+ \\exp\\left(-\\frac{\\Delta t}{\\tau_+}\\right) & \\Delta t > 0 \\quad (\\text{LTP}) \\\\ -A_- \\exp\\left(\\frac{\\Delta t}{\\tau_-}\\right) & \\Delta t < 0 \\quad (\\text{LTD}) \\end{cases}$$\n- LTP window $\\tau_+ = 16.8\\text{ ms}$, LTD window $\\tau_- = 33.7\\text{ ms}$.\n- Hebbian associative reinforcement on recall.\n- Hippocampal Sharp-Wave Ripple (SWR) replay."
+    },
+    {
+      "id": "b200000000000012",
+      "type": "file",
+      "x": 20,
+      "y": -590,
+      "width": 360,
+      "height": 180,
+      "file": "Studio/Math/Pillar stdp.md",
+      "color": "5"
+    },
+    {
+      "id": "b200000000000013",
+      "type": "text",
+      "x": -410,
+      "y": -300,
+      "width": 400,
+      "height": 200,
+      "color": "3",
+      "text": "### \ud83c\udf0c Hyperdimensional Vector Substrate\n$$\\text{sim}(u, v) = \\frac{u \\cdot v}{\\|u\\|_2 \\|v\\|_2} + 0.15 |T_u \\cap T_v|$$\n- Sparse BoW & term-frequency embedding.\n- 3D WebGL Netrunner Cortex spatial rendering.\n- `neuro-memory-daemon` (:8094) substrate."
+    },
+    {
+      "id": "b200000000000014",
+      "type": "file",
+      "x": 20,
+      "y": -380,
+      "width": 360,
+      "height": 180,
+      "file": "Zoth Memory.md",
+      "color": "6"
+    },
+    {
+      "id": "b300000000000001",
+      "type": "group",
+      "x": 500,
+      "y": -650,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar III: Account-Lattice Feeless Economics (\u25c8 VLR)",
+      "color": "4"
+    },
+    {
+      "id": "b300000000000011",
+      "type": "text",
+      "x": 540,
+      "y": -590,
+      "width": 400,
+      "height": 260,
+      "color": "4",
+      "text": "### \u26d3\ufe0f Asynchronous Micro-Chain DAG\n$$B_{i, k} = B_{i, k-1} + \\Delta v_k, \\quad \\sum_{i \\in \\text{Network}} \\Delta v_k = 0$$\n- Zero gas fees; spam prevention via sub-20ms SHA-256 micro-stamp.\n- Sub-25ms transaction finality.\n- Base denomination: $1\\text{ VLR} = 1,000,000\\text{ vael}$."
+    },
+    {
+      "id": "b300000000000012",
+      "type": "file",
+      "x": 970,
+      "y": -590,
+      "width": 360,
+      "height": 180,
+      "file": "Vaelor Network.md",
+      "color": "4"
+    },
+    {
+      "id": "b300000000000013",
+      "type": "text",
+      "x": 540,
+      "y": -300,
+      "width": 400,
+      "height": 200,
+      "color": "2",
+      "text": "### \ud83d\udee1\ufe0f Layer-1 Escrow & PoUW Minting\n$$\\text{State}(t) = \\begin{cases} \\text{LOCKED} & t < t_{\\text{rel}} \\land \\neg \\text{Disp} \\\\ \\text{SETTLED} & \\text{RelSig} \\lor t \\ge t_{\\text{tout}} \\\\ \\text{REFUNDED} & \\text{DispValid} \\end{cases}$$\n- 24h\u201372h buyer protection with 0% interchange.\n- Verifiable AI/compute workloads mint new VLR."
+    },
+    {
+      "id": "b300000000000014",
+      "type": "file",
+      "x": 970,
+      "y": -380,
+      "width": 360,
+      "height": 180,
+      "file": "Vaelor & Sovereign Economy.canvas",
+      "color": "3"
+    },
+    {
+      "id": "b400000000000001",
+      "type": "group",
+      "x": -1400,
+      "y": 0,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar IV: Deterministic AST & Formal Verification",
+      "color": "3"
+    },
+    {
+      "id": "b400000000000011",
+      "type": "text",
+      "x": -1360,
+      "y": 60,
+      "width": 400,
+      "height": 260,
+      "color": "3",
+      "text": "### \ud83c\udf32 Pure AST Transformation Morphism\n$$T: \\text{AST}_{\\text{src}} \\xrightarrow{\\mathcal{R}_{\\text{pure}}} \\text{AST}_{\\text{target}}, \\quad \\forall e \\in \\mathcal{E}: \\text{Verify}(e) = \\top$$\n- Client-side Babel/TypeScript parser.\n- Zero fake work: calculations & AST transforms run 100% in-browser.\n- CodeQL & Semgrep continuous static verification."
+    },
+    {
+      "id": "b400000000000012",
+      "type": "file",
+      "x": -930,
+      "y": 60,
+      "width": 360,
+      "height": 180,
+      "file": "Studio/Math/Pillar linear.md",
+      "color": "3"
+    },
+    {
+      "id": "b400000000000013",
+      "type": "text",
+      "x": -1360,
+      "y": 350,
+      "width": 400,
+      "height": 200,
+      "color": "6",
+      "text": "### \ud83d\udd0d Headless DOM Verification Guardrail\n- Headless Electron verifier (`site_guardrail.js`).\n- `consoleErrors.length === 0` invariant.\n- Triple-viewport check: zero horizontal overflow.\n- `bolt-diy` (:5173) in-browser WebContainer."
+    },
+    {
+      "id": "b400000000000014",
+      "type": "file",
+      "x": -930,
+      "y": 270,
+      "width": 360,
+      "height": 180,
+      "file": "OS/Daemons/Daemon bolt_diy.md",
+      "color": "4"
+    },
+    {
+      "id": "b500000000000001",
+      "type": "group",
+      "x": -450,
+      "y": 0,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar V: Multi-Agent Swarm Game Theory & Consensus",
+      "color": "2"
+    },
+    {
+      "id": "b500000000000011",
+      "type": "text",
+      "x": -410,
+      "y": 60,
+      "width": 400,
+      "height": 260,
+      "color": "2",
+      "text": "### \ud83e\udd1d Nash Equilibrium & Autonomous Consensus\n$$u_i(s_i^*, s_{-i}^*) \\ge u_i(s_i, s_{-i}^*), \\quad \\forall s_i \\in S_i$$\n$$\\mathcal{R}_i^{(t+1)} = \\alpha \\mathcal{R}_i^{(t)} + (1-\\alpha) \\mathcal{V}_i$$\n- Byzantine fault-tolerant autonomous agent commerce.\n- Micro-contract negotiations over JSON-RPC.\n- Dynamic swarm coordination without centralized leader."
+    },
+    {
+      "id": "b500000000000012",
+      "type": "file",
+      "x": 20,
+      "y": 60,
+      "width": 360,
+      "height": 180,
+      "file": "OS/Daemons/Daemon civilization.md",
+      "color": "2"
+    },
+    {
+      "id": "b500000000000013",
+      "type": "text",
+      "x": -410,
+      "y": 350,
+      "width": 400,
+      "height": 200,
+      "color": "4",
+      "text": "### \ud83c\udf10 Swarm Hub & Telemetry Fleet\n- `zoth-civilization` (:9393) autonomous hub.\n- `agent-flight-recorder` (:8104) audit black-box.\n- `agent-mock-twin` (:8097) shadow simulation.\n- `agent-gods-eye` (:8112) global swarm monitor."
+    },
+    {
+      "id": "b500000000000014",
+      "type": "file",
+      "x": 20,
+      "y": 270,
+      "width": 360,
+      "height": 180,
+      "file": "Zoth Plugin & Connector Marketplace.canvas",
+      "color": "5"
+    },
+    {
+      "id": "b600000000000001",
+      "type": "group",
+      "x": 500,
+      "y": 0,
+      "width": 860,
+      "height": 580,
+      "label": "Pillar VI: Generative Spatial & Kinetic UI Systems",
+      "color": "6"
+    },
+    {
+      "id": "b600000000000011",
+      "type": "text",
+      "x": 540,
+      "y": 60,
+      "width": 400,
+      "height": 260,
+      "color": "6",
+      "text": "### \ud83c\udf0a Kinetic Motion & Phase Dynamics\n$$\\frac{d^2 x}{dt^2} + 2\\zeta \\omega_n \\frac{dx}{dt} + \\omega_n^2 x = 0, \\quad V(x) = \\frac{1}{2} k x^2$$\n- Claude motion graphics aperture handoff ($t = 380\\text{ ms}$).\n- Pure CSS conic border beams & dynamic aurora mesh.\n- Three.js AsciiEffect procedural scene engine (:8823)."
+    },
+    {
+      "id": "b600000000000012",
+      "type": "file",
+      "x": 970,
+      "y": 60,
+      "width": 360,
+      "height": 180,
+      "file": "Studio/Math/Pillar lyapunov.md",
+      "color": "6"
+    },
+    {
+      "id": "b600000000000013",
+      "type": "text",
+      "x": 540,
+      "y": 350,
+      "width": 400,
+      "height": 200,
+      "color": "5",
+      "text": "### \ud83c\udfa8 Sovereign SaaS Design Commodities\n- Syne + Space Grotesk distinctive typography.\n- Frosted glass output paywall (`filter: blur(6px)`).\n- Dual Stripe + Solana cash registers.\n- `zoth-studio-v2` (:3000) production environment."
+    },
+    {
+      "id": "b600000000000014",
+      "type": "file",
+      "x": 970,
+      "y": 270,
+      "width": 360,
+      "height": 180,
+      "file": "Zoth Studio.md",
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "eb00000000000001",
+      "fromNode": "b100000000000011",
+      "fromSide": "right",
+      "toNode": "b200000000000011",
+      "toSide": "left",
+      "color": "5",
+      "label": "Cryptographic Hash -> STDP Engram"
+    },
+    {
+      "id": "eb00000000000002",
+      "fromNode": "b200000000000011",
+      "fromSide": "right",
+      "toNode": "b300000000000011",
+      "toSide": "left",
+      "color": "4",
+      "label": "Synaptic Weights -> PoUW Minting"
+    },
+    {
+      "id": "eb00000000000003",
+      "fromNode": "b100000000000013",
+      "fromSide": "bottom",
+      "toNode": "b400000000000011",
+      "toSide": "top",
+      "color": "3",
+      "label": "Sandboxed Execution"
+    },
+    {
+      "id": "eb00000000000004",
+      "fromNode": "b200000000000013",
+      "fromSide": "bottom",
+      "toNode": "b500000000000011",
+      "toSide": "top",
+      "color": "2",
+      "label": "Shared Swarm Memory (:8094)"
+    },
+    {
+      "id": "eb00000000000005",
+      "fromNode": "b300000000000013",
+      "fromSide": "bottom",
+      "toNode": "b600000000000011",
+      "toSide": "top",
+      "color": "6",
+      "label": "Lattice Escrow -> UI Cash Register"
+    },
+    {
+      "id": "eb00000000000006",
+      "fromNode": "b400000000000011",
+      "fromSide": "right",
+      "toNode": "b500000000000011",
+      "toSide": "left",
+      "color": "3",
+      "label": "Deterministic AST Transpilation"
+    },
+    {
+      "id": "eb00000000000007",
+      "fromNode": "b500000000000011",
+      "fromSide": "right",
+      "toNode": "b600000000000011",
+      "toSide": "left",
+      "color": "6",
+      "label": "Swarm State -> Spatial Render"
+    },
+    {
+      "id": "eb00000000000008",
+      "fromNode": "b600000000000014",
+      "fromSide": "left",
+      "toNode": "b500000000000012",
+      "toSide": "right",
+      "color": "2",
+      "label": "Studio Telemetry"
+    },
+    {
+      "id": "eb00000000000009",
+      "fromNode": "b100000000000012",
+      "fromSide": "bottom",
+      "toNode": "b100000000000013",
+      "toSide": "right",
+      "color": "1",
+      "label": "Supply Chain Attestations"
+    },
+    {
+      "id": "eb00000000000010",
+      "fromNode": "b300000000000014",
+      "fromSide": "left",
+      "toNode": "b200000000000014",
+      "toSide": "right",
+      "color": "4",
+      "label": "VLR \u2194 STDP Engram Loop"
+    }
+  ]
+}

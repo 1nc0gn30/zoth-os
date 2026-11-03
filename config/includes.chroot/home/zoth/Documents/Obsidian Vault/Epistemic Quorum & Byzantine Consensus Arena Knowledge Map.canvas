@@ -1,0 +1,236 @@
+{
+  "nodes": [
+    {
+      "id": "7bdf94c5f6d43c2b",
+      "type": "group",
+      "x": -220,
+      "y": -300,
+      "width": 440,
+      "height": 420,
+      "label": "\u2726 Core Synthesis: Epistemic Quorum & Byzantine Consensus Arena",
+      "color": "3"
+    },
+    {
+      "id": "25ecd0b74ce99b4f",
+      "type": "text",
+      "x": -180,
+      "y": -240,
+      "width": 360,
+      "height": 320,
+      "color": "3",
+      "text": "# \ud83e\udde0 Epistemic Quorum & Byzantine Consensus Arena\n\n**Procedural Knowledge Map** synthesized by `zoth-second-brain`.\n\n- **Vault Notes:** 5 matched\n- **STDP Engrams:** 5 retrieved\n- **Anchor Coordinate:** `(0, 0)`\n\n> [!tip] Bidirectional Linkage\n> Explores Hebbian vector clusters across Obsidian and Neuro-Memory."
+    },
+    {
+      "id": "6ac9f8d7a6dc4d98",
+      "type": "group",
+      "x": -980,
+      "y": -340,
+      "width": 700,
+      "height": 680,
+      "label": "\ud83d\udc8e Second Brain Vault Cluster (5 notes)",
+      "color": "5"
+    },
+    {
+      "id": "b4893f8def90b42c",
+      "type": "file",
+      "x": -940,
+      "y": -280,
+      "width": 620,
+      "height": 100,
+      "file": "06-Wiki/Byzantine Quorum & Epistemic Consensus.md",
+      "color": "5"
+    },
+    {
+      "id": "965d7f32f23bdae7",
+      "type": "file",
+      "x": -940,
+      "y": -160,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Gallery/Capture consensus.md",
+      "color": "5"
+    },
+    {
+      "id": "242c91691894d9fb",
+      "type": "file",
+      "x": -940,
+      "y": -40,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Pages/Page ConsensusPage.md",
+      "color": "5"
+    },
+    {
+      "id": "11ce104cb2e9cf2c",
+      "type": "file",
+      "x": -940,
+      "y": 80,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/FAQs/FAQ merkle-ast-quorum.md",
+      "color": "5"
+    },
+    {
+      "id": "6983cdb00068a43b",
+      "type": "file",
+      "x": -940,
+      "y": 200,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/FAQs/FAQ byzantine-consensus-triad.md",
+      "color": "5"
+    },
+    {
+      "id": "29df67d49ad8044b",
+      "type": "group",
+      "x": 280,
+      "y": -340,
+      "width": 700,
+      "height": 780,
+      "label": "\ud83e\udde0 STDP Synaptic Engram Cluster (:8094)",
+      "color": "4"
+    },
+    {
+      "id": "b7bbb599b73317f0",
+      "type": "text",
+      "x": 320,
+      "y": -280,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `1aa9c4ec` (imp: 0.48)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #architects\n\n[Adytum Cycle #16] Mercury (Key 11: Justice) completed Observational Adytum Cycle. Divergence: \"Associative hypothesis: merging Upright Double-Edged Sword of...",
+      "color": "4"
+    },
+    {
+      "id": "6ce375a90f968d0a",
+      "type": "text",
+      "x": 320,
+      "y": -140,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `b593a4bb` (imp: 0.48)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #architects\n\n[Adytum Cycle #23] Vigil (Key 11: Justice) completed Observational Adytum Cycle. Divergence: \"Associative hypothesis: merging Upright Double-Edged Sword of D...",
+      "color": "4"
+    },
+    {
+      "id": "7b2449591ca08f12",
+      "type": "text",
+      "x": 320,
+      "y": 0,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `817075f0` (imp: 0.49)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #swarm\n\n[Adytum Cycle #54] Seshat (Key 11: Justice) completed Observational Adytum Cycle. Divergence: \"Imaginative synthesis: what if Public record treated all user ...",
+      "color": "4"
+    },
+    {
+      "id": "e0c2e03a0d1f7b69",
+      "type": "text",
+      "x": 320,
+      "y": 140,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `cce345c9` (imp: 0.50)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #code\n\n[Adytum Cycle #66] Draco (Key 11: Justice) completed Observational Adytum Cycle. Divergence: \"Synthesizing Upright Double-Edged Sword of Discernment (Consens...",
+      "color": "4"
+    },
+    {
+      "id": "aa8394f0c7f88e8f",
+      "type": "text",
+      "x": 320,
+      "y": 280,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `3a63a87c` (imp: 0.50)\n#hermetic_cycle #divergent_synthesis #objective_crystallization #code\n\n[Adytum Cycle #79] Kai (Key 11: Justice) completed Observational Adytum Cycle. Divergence: \"Synthesizing Upright Double-Edged Sword of Discernment (Consensus...",
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "2e97f2e3b13b3e60",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "left",
+      "toNode": "b4893f8def90b42c",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #1"
+    },
+    {
+      "id": "b520c9aa5d49823c",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "left",
+      "toNode": "965d7f32f23bdae7",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #2"
+    },
+    {
+      "id": "8183f7799bd82d48",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "left",
+      "toNode": "242c91691894d9fb",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #3"
+    },
+    {
+      "id": "4e960df7278fe44e",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "left",
+      "toNode": "11ce104cb2e9cf2c",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #4"
+    },
+    {
+      "id": "df7bce6acbc16764",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "left",
+      "toNode": "6983cdb00068a43b",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #5"
+    },
+    {
+      "id": "adc44872b51c645e",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "right",
+      "toNode": "b7bbb599b73317f0",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #1"
+    },
+    {
+      "id": "dfab91c60fa81c8f",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "right",
+      "toNode": "6ce375a90f968d0a",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #2"
+    },
+    {
+      "id": "c32014eff49f0889",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "right",
+      "toNode": "7b2449591ca08f12",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #3"
+    },
+    {
+      "id": "6f30b1e77e742d26",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "right",
+      "toNode": "e0c2e03a0d1f7b69",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #4"
+    },
+    {
+      "id": "0d09e4aed11bd1b2",
+      "fromNode": "25ecd0b74ce99b4f",
+      "fromSide": "right",
+      "toNode": "aa8394f0c7f88e8f",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #5"
+    }
+  ]
+}

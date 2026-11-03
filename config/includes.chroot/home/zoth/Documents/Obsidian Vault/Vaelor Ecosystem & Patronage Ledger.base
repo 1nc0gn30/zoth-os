@@ -1,0 +1,69 @@
+filters:
+  and:
+    - file.hasTag("vaelor")
+    - 'file.ext == "md"'
+
+formulas:
+  category_badge: 'if(file.hasTag("wiki"), "📚 Canonical Wiki", if(file.hasTag("agent"), "⛏️ PoUW Miner", if(file.hasTag("daemon"), "⚡ L1 Service", if(file.hasTag("telemetry"), "📊 Telemetry", "◈ Core Lattice"))))'
+  consensus_badge: 'if(bft_status == "finalized" || file.hasTag("consensus"), "🛡️ 5/5 BFT Quorum", "🟢 Active Lattice")'
+  fee_badge: 'if(gas_cost == 0 || feeless, "⚡ Feeless ($0.00)", "⚡ Feeless ($0.00)")'
+  yield_badge: 'if(apy, apy.toString() + "% Compute APY", "8.5% Compute APY")'
+  reward_badge: 'if(reward_vlr, "+" + reward_vlr.toString() + " ◈ VLR", "+15.9 ◈ VLR")'
+
+properties:
+  file.name:
+    displayName: "Lattice Ledger Entry"
+  title:
+    displayName: "Ecosystem Title"
+  formula.category_badge:
+    displayName: "Stratum Tier"
+  formula.consensus_badge:
+    displayName: "BFT Consensus"
+  formula.fee_badge:
+    displayName: "Transfer Fee"
+  formula.yield_badge:
+    displayName: "Savings Yield"
+  formula.reward_badge:
+    displayName: "PoUW Block Reward"
+  status:
+    displayName: "L1 Status"
+
+views:
+  - type: table
+    name: "Vaelor Master Ledger (Layer-1 & Patronage)"
+    order:
+      - file.name
+      - title
+      - formula.category_badge
+      - formula.consensus_badge
+      - formula.fee_badge
+      - formula.yield_badge
+      - formula.reward_badge
+      - status
+    summaries:
+      formula.category_badge: Unique
+
+  - type: cards
+    name: "Ecosystem Cards"
+    order:
+      - file.name
+      - title
+      - formula.category_badge
+      - formula.consensus_badge
+      - formula.yield_badge
+      - formula.reward_badge
+
+  - type: table
+    name: "Patronage & PoUW Mining Rewards"
+    filters:
+      or:
+        - file.hasTag("pouw")
+        - file.hasTag("miner")
+        - file.hasTag("telemetry")
+    order:
+      - file.name
+      - title
+      - formula.category_badge
+      - formula.reward_badge
+      - formula.consensus_badge
+      - formula.fee_badge

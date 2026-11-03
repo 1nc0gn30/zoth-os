@@ -1,0 +1,23 @@
+filters:
+  and:
+    - file.inFolder("Skills")
+    - file.hasTag("skill")
+    - not:
+        - file.hasTag("ref")
+properties:
+  title:
+    displayName: Skill
+  file.tags:
+    displayName: Origin
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+      - file.tags
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

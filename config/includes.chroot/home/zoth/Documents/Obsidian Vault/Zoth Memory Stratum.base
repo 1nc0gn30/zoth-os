@@ -1,0 +1,41 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - not:
+        - 'file.hasTag("archived")'
+
+formulas:
+  word_estimate: '(file.size / 5).round(0)'
+  days_since_edit: '(now() - file.mtime).days.round(1)'
+  link_density: 'if(file.links, file.links.length, 0)'
+
+properties:
+  file.name:
+    displayName: "Second Brain Note"
+  formula.word_estimate:
+    displayName: "~Words"
+  formula.link_density:
+    displayName: "Wikilinks"
+  formula.days_since_edit:
+    displayName: "Days Since Edit"
+
+views:
+  - type: table
+    name: "Second Brain Knowledge Graph"
+    limit: 50
+    order:
+      - file.name
+      - file.folder
+      - formula.link_density
+      - formula.word_estimate
+      - formula.days_since_edit
+    summaries:
+      formula.word_estimate: Sum
+      formula.link_density: Average
+
+  - type: cards
+    name: "MOC & Architecture Gallery"
+    order:
+      - file.name
+      - file.tags
+      - formula.link_density

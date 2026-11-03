@@ -1,0 +1,356 @@
+{
+  "nodes": [
+    {
+      "id": "t",
+      "type": "text",
+      "text": "# Adytum keys\nadytumKeys.json \u00b7 22",
+      "x": 200,
+      "y": -80,
+      "width": 400,
+      "height": 80,
+      "color": "5"
+    },
+    {
+      "id": "a",
+      "type": "file",
+      "file": "Studio/Tools/Studio adytum-alchemist-ai-workflow.md",
+      "x": 180,
+      "y": 20,
+      "width": 360,
+      "height": 150,
+      "color": "5"
+    },
+    {
+      "id": "k0",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 00 The Fool.md",
+      "x": -80,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k1",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 01 The Magician.md",
+      "x": 170,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k2",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 02 The High Priestess.md",
+      "x": 420,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k3",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 03 The Empress.md",
+      "x": 670,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k4",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 04 The Emperor.md",
+      "x": 920,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k5",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 05 The Hierophant.md",
+      "x": 1170,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k6",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 06 The Lovers.md",
+      "x": -80,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k7",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 07 The Chariot.md",
+      "x": 170,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k8",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 08 Strength.md",
+      "x": 420,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k9",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 09 The Hermit.md",
+      "x": 670,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k10",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 10 Wheel of Fortune.md",
+      "x": 920,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k11",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 11 Justice.md",
+      "x": 1170,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k12",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 12 The Hanged Man.md",
+      "x": -80,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k13",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 13 Death.md",
+      "x": 170,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k14",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 14 Temperance.md",
+      "x": 420,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k15",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 15 The Devil.md",
+      "x": 670,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k16",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 16 The Tower.md",
+      "x": 920,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k17",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 17 The Star.md",
+      "x": 1170,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k18",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 18 The Moon.md",
+      "x": -80,
+      "y": 760,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k19",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 19 The Sun.md",
+      "x": 170,
+      "y": 760,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k20",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 20 Judgement.md",
+      "x": 420,
+      "y": 760,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "k21",
+      "type": "file",
+      "file": "Studio/Adytum/Adytum 21 The World.md",
+      "x": 670,
+      "y": 760,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ek0",
+      "fromNode": "a",
+      "toNode": "k0"
+    },
+    {
+      "id": "ek1",
+      "fromNode": "a",
+      "toNode": "k1"
+    },
+    {
+      "id": "ek2",
+      "fromNode": "a",
+      "toNode": "k2"
+    },
+    {
+      "id": "ek3",
+      "fromNode": "a",
+      "toNode": "k3"
+    },
+    {
+      "id": "ek4",
+      "fromNode": "a",
+      "toNode": "k4"
+    },
+    {
+      "id": "ek5",
+      "fromNode": "a",
+      "toNode": "k5"
+    },
+    {
+      "id": "ek6",
+      "fromNode": "a",
+      "toNode": "k6"
+    },
+    {
+      "id": "ek7",
+      "fromNode": "a",
+      "toNode": "k7"
+    },
+    {
+      "id": "ek8",
+      "fromNode": "a",
+      "toNode": "k8"
+    },
+    {
+      "id": "ek9",
+      "fromNode": "a",
+      "toNode": "k9"
+    },
+    {
+      "id": "ek10",
+      "fromNode": "a",
+      "toNode": "k10"
+    },
+    {
+      "id": "ek11",
+      "fromNode": "a",
+      "toNode": "k11"
+    },
+    {
+      "id": "ek12",
+      "fromNode": "a",
+      "toNode": "k12"
+    },
+    {
+      "id": "ek13",
+      "fromNode": "a",
+      "toNode": "k13"
+    },
+    {
+      "id": "ek14",
+      "fromNode": "a",
+      "toNode": "k14"
+    },
+    {
+      "id": "ek15",
+      "fromNode": "a",
+      "toNode": "k15"
+    },
+    {
+      "id": "ek16",
+      "fromNode": "a",
+      "toNode": "k16"
+    },
+    {
+      "id": "ek17",
+      "fromNode": "a",
+      "toNode": "k17"
+    },
+    {
+      "id": "ek18",
+      "fromNode": "a",
+      "toNode": "k18"
+    },
+    {
+      "id": "ek19",
+      "fromNode": "a",
+      "toNode": "k19"
+    },
+    {
+      "id": "ek20",
+      "fromNode": "a",
+      "toNode": "k20"
+    },
+    {
+      "id": "ek21",
+      "fromNode": "a",
+      "toNode": "k21"
+    }
+  ]
+}

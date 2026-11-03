@@ -1,0 +1,74 @@
+filters:
+  and:
+    - or:
+        - file.hasTag("mcp")
+        - file.inFolder("MCP")
+        - file.hasTag("agent")
+        - file.hasTag("substrate")
+    - 'file.ext == "md"'
+
+formulas:
+  server_tier: 'if(file.hasTag("neuro-memory") || file.name.contains("neuro-memory"), "🧠 Ring-0 Neuro-Memory (21 Tools)", if(file.hasTag("vaelor") || file.name.contains("vaelor"), "◈ Ring-0 Vaelor L1 (13 Tools)", if(file.hasTag("agent"), "🤖 Hermes Agent Fleet", "⚡ Ring-1 Tool Server")))'
+  protocol_badge: 'if(ring_level == 0 || file.hasTag("ring0") || file.hasTag("neuro-memory") || file.hasTag("vaelor"), "🛡️ Ring-0 Sovereign (Offline)", "⚡ Ring-1 Agent Sandbox")'
+  transport_badge: 'if(transport == "sse", "🌐 SSE / Streamable HTTP (:8094)", "💻 Stdio Subprocess (IPC)")'
+  status_badge: 'if(enabled != false, "🟢 Active & Enabled [ON]", "⚪ Catalog Standby")'
+  auth_badge: 'if(offline != false, "🔒 100% Offline Sovereign", "🔑 Keyless / Managed")'
+
+properties:
+  file.name:
+    displayName: "MCP Server / Spec Note"
+  title:
+    displayName: "Subsystem Title"
+  formula.server_tier:
+    displayName: "Master Server Tier"
+  formula.protocol_badge:
+    displayName: "Security Ring Level"
+  formula.transport_badge:
+    displayName: "Transport Architecture"
+  formula.status_badge:
+    displayName: "Registry Daemon Status"
+  formula.auth_badge:
+    displayName: "Air-Gap & Privacy"
+
+views:
+  - type: table
+    name: "Master Sovereign MCP & Agent Tool Catalog (34 Tools)"
+    order:
+      - file.name
+      - title
+      - formula.server_tier
+      - formula.protocol_badge
+      - formula.transport_badge
+      - formula.status_badge
+      - formula.auth_badge
+    summaries:
+      formula.server_tier: Unique
+      formula.protocol_badge: Filled
+
+  - type: cards
+    name: "Cards: Sovereign MCP Tools by Security Ring"
+    groupBy:
+      property: formula.protocol_badge
+      direction: ASC
+    order:
+      - file.name
+      - title
+      - formula.server_tier
+      - formula.transport_badge
+      - formula.status_badge
+
+  - type: table
+    name: "Ring-0 Substrates: Neuro-Memory & Vaelor L1 DAG"
+    filters:
+      or:
+        - file.hasTag("neuro-memory")
+        - file.hasTag("vaelor")
+        - file.name.contains("neuro-memory")
+        - file.name.contains("vaelor")
+    order:
+      - file.name
+      - title
+      - formula.server_tier
+      - formula.protocol_badge
+      - formula.transport_badge
+      - formula.status_badge

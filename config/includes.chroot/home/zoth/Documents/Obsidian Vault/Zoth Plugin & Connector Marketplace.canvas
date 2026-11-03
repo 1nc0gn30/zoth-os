@@ -1,0 +1,346 @@
+{
+  "nodes": [
+    {
+      "id": "6000000000000001",
+      "type": "group",
+      "x": -920,
+      "y": -650,
+      "width": 860,
+      "height": 560,
+      "label": "\u2624 Hermes Agent Catalog Plugin (Nous Research)",
+      "color": "4"
+    },
+    {
+      "id": "6000000000000011",
+      "type": "file",
+      "x": -880,
+      "y": -590,
+      "width": 380,
+      "height": 180,
+      "file": "OS/CLIs/CLI hermes.md",
+      "color": "4"
+    },
+    {
+      "id": "6000000000000012",
+      "type": "text",
+      "x": -470,
+      "y": -590,
+      "width": 380,
+      "height": 230,
+      "color": "5",
+      "text": "### \ud83e\udde0 Autonomous Skill Execution\n- **Nous Research Hermes 3**: Advanced tool calling & multi-turn reasoning.\n- **Local Fallback**: Routes via local Ollama (`qwen2.5-coder:14b`) or vLLM.\n- **Error Recovery**: Automatic AST linting and retry loops on syntax failures."
+    },
+    {
+      "id": "6000000000000013",
+      "type": "text",
+      "x": -880,
+      "y": -380,
+      "width": 380,
+      "height": 240,
+      "color": "1",
+      "text": "### \ud83d\udee1\ufe0f Capsule Jail Isolation\n- **Sandbox Environment**: Executes in isolated `~/.hermes` environment.\n- **Jail Daemon**: Managed by `agent-capsule-jail` (:8105).\n- **Network Egress Firewall**: Outbound calls filtered via `agent-egress-sentinel` (:8095)."
+    },
+    {
+      "id": "6000000000000014",
+      "type": "text",
+      "x": -470,
+      "y": -330,
+      "width": 380,
+      "height": 190,
+      "color": "6",
+      "text": "### \ud83d\udce6 Catalog Plugin Registration\n- `zoth-mcp enable hermes-agent`\n- Auto-provisions tools into `~/.config/zothos/mcp-servers.json`.\n- Full interoperability with Grok Bot and Claude Code."
+    },
+    {
+      "id": "7000000000000001",
+      "type": "group",
+      "x": 20,
+      "y": -650,
+      "width": 860,
+      "height": 560,
+      "label": "\ud83e\udd16 Grok Bot Connector (grok-bot-zoth-plugins)",
+      "color": "5"
+    },
+    {
+      "id": "7000000000000011",
+      "type": "file",
+      "x": 60,
+      "y": -590,
+      "width": 380,
+      "height": 180,
+      "file": "OS/Desktops/Desktop zoth-grok-bot.md",
+      "color": "5"
+    },
+    {
+      "id": "7000000000000012",
+      "type": "text",
+      "x": 470,
+      "y": -590,
+      "width": 380,
+      "height": 230,
+      "color": "4",
+      "text": "### \ud83d\udd0c Protocol Handler & Broker Architecture\n- **Custom URI Handlers**: Native `grokbot://` and `sand://` schemes.\n- **Broker Process**: Electron broker routes system calls to Zoth tools.\n- **Zero Overhead**: Direct IPC to local loopback daemons."
+    },
+    {
+      "id": "7000000000000013",
+      "type": "text",
+      "x": 60,
+      "y": -380,
+      "width": 380,
+      "height": 240,
+      "color": "3",
+      "text": "### \ud83e\udde0 STDP Synaptic Engram Bridge\n- Synchronizes Grok conversational context with `neuro-memory-daemon` (:8094).\n- Biomorphic 3D memory reinforcement.\n- Flashbulb priority tagging for high-salience milestones."
+    },
+    {
+      "id": "7000000000000014",
+      "type": "text",
+      "x": 470,
+      "y": -330,
+      "width": 380,
+      "height": 190,
+      "color": "2",
+      "text": "### \ud83e\udde9 Dynamic Plugin Ecosystem\n- Modular plugin discovery under `grok-bot-zoth-plugins`.\n- Hot reload without restarting Grok client.\n- Strict signature verification before execution."
+    },
+    {
+      "id": "8000000000000001",
+      "type": "group",
+      "x": -920,
+      "y": 0,
+      "width": 860,
+      "height": 560,
+      "label": "\u26a1 Cursor & Claude Desktop Model Context Protocol (MCP)",
+      "color": "3"
+    },
+    {
+      "id": "8000000000000011",
+      "type": "file",
+      "x": -880,
+      "y": 60,
+      "width": 380,
+      "height": 180,
+      "file": "OS/CLIs/CLI zoth-mcp.md",
+      "color": "3"
+    },
+    {
+      "id": "8000000000000012",
+      "type": "text",
+      "x": -470,
+      "y": 60,
+      "width": 380,
+      "height": 230,
+      "color": "4",
+      "text": "### \ud83d\udcbb Cursor IDE Composer Integration\n- **Client Config**: Generates `.cursor/mcp.json` automatically.\n- **Tool Exposal**: Direct access to local vector memories, git diffs, and AST linters.\n- **Latency**: Sub-5ms stdio IPC directly into Cursor editor."
+    },
+    {
+      "id": "8000000000000013",
+      "type": "text",
+      "x": -880,
+      "y": 270,
+      "width": 380,
+      "height": 250,
+      "color": "5",
+      "text": "### \ud83c\udfad Claude Desktop FastMCP Socket Bridge\n- Configured via `~/.config/Claude/claude_desktop_config.json`.\n- Supports streaming FastMCP tools and SSE transports.\n- Seamless multi-turn reasoning with Claude 3.7 / Opus."
+    },
+    {
+      "id": "8000000000000014",
+      "type": "file",
+      "x": -470,
+      "y": 320,
+      "width": 380,
+      "height": 200,
+      "file": "MCP Catalog.md",
+      "color": "6"
+    },
+    {
+      "id": "9000000000000001",
+      "type": "group",
+      "x": 20,
+      "y": 0,
+      "width": 860,
+      "height": 560,
+      "label": "\ud83c\udf10 ChatGPT Actions Relay & Sovereign OpenAPI Gateway",
+      "color": "2"
+    },
+    {
+      "id": "9000000000000011",
+      "type": "text",
+      "x": 60,
+      "y": 60,
+      "width": 380,
+      "height": 220,
+      "color": "2",
+      "text": "### \ud83d\udcdc OpenAPI 3.1.0 Dynamic Schema Relay\n- Exposes custom GPT Actions via standardized OpenAPI definitions.\n- Automatic schema validation against real endpoints.\n- Live swagger/redoc preview in Zoth Studio."
+    },
+    {
+      "id": "9000000000000012",
+      "type": "text",
+      "x": 470,
+      "y": 60,
+      "width": 380,
+      "height": 220,
+      "color": "6",
+      "text": "### \ud83d\udd12 Authenticated Zero-Trust Gateway\n- Ephemeral Ed25519 request signing.\n- Token-based rate limiting to prevent denial-of-service.\n- Audit logs indexed in `agent-flight-recorder` (:8104)."
+    },
+    {
+      "id": "9000000000000013",
+      "type": "text",
+      "x": 60,
+      "y": 310,
+      "width": 380,
+      "height": 210,
+      "color": "4",
+      "text": "### \u26a1 Real In-Browser Utility\n- Zero fake work: calculations, parsing, and transforms execute client-side.\n- Offline mode support for air-gapped workstations.\n- High-speed WebSocket bidirectional notifications."
+    },
+    {
+      "id": "9000000000000014",
+      "type": "text",
+      "x": 470,
+      "y": 310,
+      "width": 380,
+      "height": 210,
+      "color": "1",
+      "text": "### \u25c8 VLR & Pro License Interceptor\n- Feeless `\u25c8 VLR` micro-transaction verification on port `:8140`.\n- Dual Stripe + Solana checkout rails for unverified requests.\n- Frosted glass paywall blur on proprietary schema outputs."
+    },
+    {
+      "id": "a000000000000001",
+      "type": "group",
+      "x": -450,
+      "y": 630,
+      "width": 900,
+      "height": 480,
+      "label": "\ud83d\udee1\ufe0f Sovereign Marketplace Gatekeeper & Trust Layer",
+      "color": "6"
+    },
+    {
+      "id": "a000000000000011",
+      "type": "file",
+      "x": -410,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "Zoth Trust & Supply Chain.md",
+      "color": "1"
+    },
+    {
+      "id": "a000000000000012",
+      "type": "file",
+      "x": -130,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "Zoth OS.md",
+      "color": "6"
+    },
+    {
+      "id": "a000000000000013",
+      "type": "file",
+      "x": 150,
+      "y": 690,
+      "width": 260,
+      "height": 170,
+      "file": "Zoth Studio.md",
+      "color": "4"
+    },
+    {
+      "id": "a000000000000014",
+      "type": "text",
+      "x": -410,
+      "y": 890,
+      "width": 820,
+      "height": 190,
+      "color": "5",
+      "text": "### \ud83c\udff0 Security Rings & Verification Standards\n- **RING_0 (Core OS)**: Conductor daemons, kernel modules, verified apt packages.\n- **RING_1 (Sandboxed MCPs)**: Local Docker/bubblewrap containers, isolated user registries.\n- **RING_2 (External Relays)**: Claude, Cursor, ChatGPT Actions with mandatory VirusTotal & Cosign attestations."
+    }
+  ],
+  "edges": [
+    {
+      "id": "ea00000000000001",
+      "fromNode": "6000000000000014",
+      "fromSide": "bottom",
+      "toNode": "8000000000000011",
+      "toSide": "top",
+      "color": "4",
+      "label": "Registers in zoth-mcp"
+    },
+    {
+      "id": "ea00000000000002",
+      "fromNode": "7000000000000012",
+      "fromSide": "bottom",
+      "toNode": "8000000000000011",
+      "toSide": "top",
+      "color": "5",
+      "label": "grokbot:// Protocol Bridge"
+    },
+    {
+      "id": "ea00000000000003",
+      "fromNode": "7000000000000013",
+      "fromSide": "bottom",
+      "toNode": "8000000000000014",
+      "toSide": "right",
+      "color": "3",
+      "label": "STDP Vector Engrams"
+    },
+    {
+      "id": "ea00000000000004",
+      "fromNode": "8000000000000012",
+      "fromSide": "right",
+      "toNode": "8000000000000014",
+      "toSide": "left",
+      "color": "3",
+      "label": "Exposes 153 Servers"
+    },
+    {
+      "id": "ea00000000000005",
+      "fromNode": "8000000000000013",
+      "fromSide": "right",
+      "toNode": "9000000000000011",
+      "toSide": "left",
+      "color": "2",
+      "label": "FastMCP Schema Export"
+    },
+    {
+      "id": "ea00000000000006",
+      "fromNode": "9000000000000014",
+      "fromSide": "bottom",
+      "toNode": "a000000000000014",
+      "toSide": "right",
+      "color": "6",
+      "label": "License & Ring Gate"
+    },
+    {
+      "id": "ea00000000000007",
+      "fromNode": "a000000000000011",
+      "fromSide": "bottom",
+      "toNode": "a000000000000014",
+      "toSide": "top",
+      "color": "1",
+      "label": "SLSA & VirusTotal Provenance"
+    },
+    {
+      "id": "ea00000000000008",
+      "fromNode": "a000000000000012",
+      "fromSide": "top",
+      "toNode": "8000000000000011",
+      "toSide": "bottom",
+      "color": "5",
+      "label": "ZothOS Master Hub"
+    },
+    {
+      "id": "ea00000000000009",
+      "fromNode": "a000000000000013",
+      "fromSide": "top",
+      "toNode": "9000000000000013",
+      "toSide": "bottom",
+      "color": "4",
+      "label": "Studio In-Browser Utility"
+    },
+    {
+      "id": "ea00000000000010",
+      "fromNode": "6000000000000013",
+      "fromSide": "bottom",
+      "toNode": "a000000000000014",
+      "toSide": "left",
+      "color": "1",
+      "label": "Capsule Jail Isolation"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "id": "43113d1355d598e4",
+      "type": "group",
+      "x": -220,
+      "y": -300,
+      "width": 440,
+      "height": 420,
+      "label": "\u2726 Core Synthesis: Netrunner Cyber-Cortex",
+      "color": "3"
+    },
+    {
+      "id": "51a1fdd04cae6a20",
+      "type": "text",
+      "x": -180,
+      "y": -240,
+      "width": 360,
+      "height": 320,
+      "color": "3",
+      "text": "# \ud83e\udde0 Netrunner Cyber-Cortex\n\n**Procedural Knowledge Map** synthesized by `zoth-second-brain`.\n\n- **Vault Notes:** 5 matched\n- **STDP Engrams:** 1 retrieved\n- **Anchor Coordinate:** `(0, 0)`\n\n> [!tip] Bidirectional Linkage\n> Explores Hebbian vector clusters across Obsidian and Neuro-Memory."
+    },
+    {
+      "id": "6accc3da7fb803a0",
+      "type": "group",
+      "x": -980,
+      "y": -340,
+      "width": 700,
+      "height": 680,
+      "label": "\ud83d\udc8e Second Brain Vault Cluster (5 notes)",
+      "color": "5"
+    },
+    {
+      "id": "34347da5761d6cf4",
+      "type": "file",
+      "x": -940,
+      "y": -280,
+      "width": 620,
+      "height": 100,
+      "file": "OS/Rings/Layer 2 CYBERPUPPET.md",
+      "color": "5"
+    },
+    {
+      "id": "13d59ba211103043",
+      "type": "file",
+      "x": -940,
+      "y": -160,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Tools/Studio cyber-turtle-studio.md",
+      "color": "5"
+    },
+    {
+      "id": "8a7081203ba76548",
+      "type": "file",
+      "x": -940,
+      "y": -40,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Components/Component Netrunner3DWorld.md",
+      "color": "5"
+    },
+    {
+      "id": "a5164862683ea666",
+      "type": "file",
+      "x": -940,
+      "y": 80,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Legacy/Legacy netrunner-memory.md",
+      "color": "5"
+    },
+    {
+      "id": "8f8f7e5bdf624c5d",
+      "type": "file",
+      "x": -940,
+      "y": 200,
+      "width": 620,
+      "height": 100,
+      "file": "Studio/Workstations/Workstation cyberpunk-hud.md",
+      "color": "5"
+    },
+    {
+      "id": "77a3ef07b5d72345",
+      "type": "group",
+      "x": 280,
+      "y": -340,
+      "width": 700,
+      "height": 480,
+      "label": "\ud83e\udde0 STDP Synaptic Engram Cluster (:8094)",
+      "color": "4"
+    },
+    {
+      "id": "d97129e91c27d361",
+      "type": "text",
+      "x": 320,
+      "y": -280,
+      "width": 620,
+      "height": 120,
+      "text": "### \u26a1 Engram `12ed2073` (imp: 0.80)\n#grok #agent\n\nGrok : 1\u2192--- title: \"MemoryPage\" tags: [studio, page] ---  # MemoryPage  `MemoryPage` is the interactive synaptic memory and neuromorphic Netrunner workbench...",
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "fcb82aae13f53978",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "left",
+      "toNode": "34347da5761d6cf4",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #1"
+    },
+    {
+      "id": "6b853dbf5352e945",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "left",
+      "toNode": "13d59ba211103043",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #2"
+    },
+    {
+      "id": "cfcdf264291200d3",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "left",
+      "toNode": "8a7081203ba76548",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #3"
+    },
+    {
+      "id": "8ef28408fcd444f3",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "left",
+      "toNode": "a5164862683ea666",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #4"
+    },
+    {
+      "id": "bbc44e2c97c33b4e",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "left",
+      "toNode": "8f8f7e5bdf624c5d",
+      "toSide": "right",
+      "color": "5",
+      "label": "Vault Note #5"
+    },
+    {
+      "id": "3f6125eb67534f43",
+      "fromNode": "51a1fdd04cae6a20",
+      "fromSide": "right",
+      "toNode": "d97129e91c27d361",
+      "toSide": "left",
+      "color": "4",
+      "label": "STDP Vector #1"
+    }
+  ]
+}

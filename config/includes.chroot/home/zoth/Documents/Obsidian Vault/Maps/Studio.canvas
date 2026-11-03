@@ -1,0 +1,407 @@
+{
+  "nodes": [
+    {
+      "id": "studio",
+      "type": "file",
+      "file": "Zoth Studio.md",
+      "x": 520,
+      "y": -40,
+      "width": 360,
+      "height": 180,
+      "color": "5"
+    },
+    {
+      "id": "tools-moc",
+      "type": "file",
+      "file": "MOC Studio Tools.md",
+      "x": 160,
+      "y": -40,
+      "width": 300,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "tools-base",
+      "type": "file",
+      "file": "Maps/Studio Tools.base",
+      "x": 940,
+      "y": -40,
+      "width": 300,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-0",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category AI-Knowledge.md",
+      "x": -80,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-1",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Automation.md",
+      "x": 200,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-2",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Autonomous-Web.md",
+      "x": 480,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-3",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Commerce-MCP.md",
+      "x": 760,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-4",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Commerce-POD.md",
+      "x": 1040,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-5",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Forensics-Telemetry.md",
+      "x": 1320,
+      "y": 220,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-6",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Growth-SEO.md",
+      "x": -80,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-7",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Media-3D.md",
+      "x": 200,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-8",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Memory-Brain.md",
+      "x": 480,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-9",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Planning.md",
+      "x": 760,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-10",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Security-Enclave.md",
+      "x": 1040,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-11",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Security-Network.md",
+      "x": 1320,
+      "y": 420,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-12",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Security-OpSec.md",
+      "x": -80,
+      "y": 620,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-13",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Security-Recon.md",
+      "x": 200,
+      "y": 620,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-14",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Simulation-Testing.md",
+      "x": 480,
+      "y": 620,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-15",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Swarm-Core.md",
+      "x": 760,
+      "y": 620,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "cat-16",
+      "type": "file",
+      "file": "Studio/Categories/Studio Category Voice-Real-Time.md",
+      "x": 1040,
+      "y": 620,
+      "width": 260,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "kt-0",
+      "type": "file",
+      "file": "Studio/Tools/Studio zoth-os.md",
+      "x": -80,
+      "y": 820,
+      "width": 300,
+      "height": 160,
+      "color": "3"
+    },
+    {
+      "id": "kt-1",
+      "type": "file",
+      "file": "Studio/Tools/Studio neuro-memory-daemon.md",
+      "x": 240,
+      "y": 820,
+      "width": 300,
+      "height": 160,
+      "color": "3"
+    },
+    {
+      "id": "kt-2",
+      "type": "file",
+      "file": "Studio/Tools/Studio bolt.diy.md",
+      "x": 560,
+      "y": 820,
+      "width": 300,
+      "height": 160,
+      "color": "3"
+    },
+    {
+      "id": "kt-3",
+      "type": "file",
+      "file": "Studio/Tools/Studio zoth-webgen.md",
+      "x": 880,
+      "y": 820,
+      "width": 300,
+      "height": 160,
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ee1",
+      "fromNode": "studio",
+      "fromSide": "left",
+      "toNode": "tools-moc",
+      "toSide": "right"
+    },
+    {
+      "id": "ee2",
+      "fromNode": "studio",
+      "fromSide": "right",
+      "toNode": "tools-base",
+      "toSide": "left"
+    },
+    {
+      "id": "ecat-0",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-0",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-1",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-1",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-2",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-2",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-3",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-3",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-4",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-4",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-5",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-5",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-6",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-6",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-7",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-7",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-8",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-8",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-9",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-9",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-10",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-10",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-11",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-11",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-12",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-12",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-13",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-13",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-14",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-14",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-15",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-15",
+      "toSide": "top"
+    },
+    {
+      "id": "ecat-16",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "cat-16",
+      "toSide": "top"
+    },
+    {
+      "id": "ekt-0",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "kt-0",
+      "toSide": "top"
+    },
+    {
+      "id": "ekt-1",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "kt-1",
+      "toSide": "top"
+    },
+    {
+      "id": "ekt-2",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "kt-2",
+      "toSide": "top"
+    },
+    {
+      "id": "ekt-3",
+      "fromNode": "studio",
+      "fromSide": "bottom",
+      "toNode": "kt-3",
+      "toSide": "top"
+    }
+  ]
+}

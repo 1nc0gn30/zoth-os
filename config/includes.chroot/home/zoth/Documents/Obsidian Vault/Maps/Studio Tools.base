@@ -1,0 +1,23 @@
+filters:
+  and:
+    - file.inFolder("Studio/Tools")
+    - file.hasTag("tool")
+properties:
+  title:
+    displayName: Name
+  file.tags:
+    displayName: Tags
+  file.folder:
+    displayName: Folder
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+      - file.tags
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

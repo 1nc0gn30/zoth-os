@@ -1,0 +1,55 @@
+filters:
+  and:
+    - file.hasTag("agent")
+    - 'file.ext == "md"'
+
+formulas:
+  runtime_badge: 'if(runtime, runtime, "Sovereign Mesh")'
+  status_badge: 'if(status == "active", "🟢 Active", if(status == "standby", "🟡 Standby", "⚪ Autonomous"))'
+  port_label: 'if(port, ":" + port.toString(), "Mesh/Subprocess")'
+  stdp_link_badge: 'if(stdp_enabled, "🧠 STDP Synced", "⚪ Local Memory")'
+
+properties:
+  file.name:
+    displayName: "Agent Spec Note"
+  title:
+    displayName: "Agent Name"
+  role:
+    displayName: "Cognitive Role"
+  runtime:
+    displayName: "Runtime / Engine"
+  formula.port_label:
+    displayName: "Loopback Port"
+  formula.status_badge:
+    displayName: "Operational State"
+  formula.stdp_link_badge:
+    displayName: "STDP Memory Link"
+
+views:
+  - type: table
+    name: "Autonomous Agent Fleet"
+    order:
+      - file.name
+      - title
+      - role
+      - formula.runtime_badge
+      - formula.port_label
+      - formula.status_badge
+      - formula.stdp_link_badge
+
+  - type: cards
+    name: "Agent Cockpit Cards"
+    order:
+      - file.name
+      - title
+      - role
+      - formula.runtime_badge
+      - formula.status_badge
+
+  - type: table
+    name: "Memory & STDP Integration"
+    order:
+      - title
+      - formula.stdp_link_badge
+      - role
+      - formula.port_label

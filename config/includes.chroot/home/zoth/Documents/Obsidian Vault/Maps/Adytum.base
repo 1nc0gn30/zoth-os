@@ -1,0 +1,15 @@
+filters:
+  and:
+    - file.inFolder("Studio/Adytum")
+    - file.hasTag("adytum")
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

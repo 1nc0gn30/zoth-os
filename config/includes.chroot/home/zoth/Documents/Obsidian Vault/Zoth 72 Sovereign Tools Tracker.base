@@ -1,0 +1,105 @@
+filters:
+  and:
+    - file.inFolder("Studio/Tools")
+    - file.hasTag("tool")
+    - 'file.ext == "md"'
+
+formulas:
+  pillar_label: 'if(pillar, pillar, "Pillar IV: AST Verification")'
+  status_badge: 'if(test_status == "PASS", "🟢 PASS (Verified)", "🟡 Standby")'
+  runs_badge: 'if(runs == "browser", "🌐 In-Browser", if(runs == "node", "🟢 Node / Local", if(runs == "webgpu", "⚡ WebGPU", "💻 System CLI")))'
+  open_badge: '"⚡ 100% Free & Open"'
+  port_badge: 'if(local_port, concat(":", string(local_port)), "-")'
+  live_link: 'if(live_url, link(live_url, "Workstation ↗"), if(github, link(github, "Source ↗"), ""))'
+  studio_link: 'if(studio_url, link(studio_url, "Studio ↗"), "")'
+
+properties:
+  file.name:
+    displayName: "Tool Note"
+  title:
+    displayName: "Tool Name"
+  category:
+    displayName: "Category"
+  formula.pillar_label:
+    displayName: "Mathematical Pillar"
+  formula.runs_badge:
+    displayName: "Runtime Engine"
+  formula.open_badge:
+    displayName: "Open Access"
+  formula.port_badge:
+    displayName: "Port"
+  formula.status_badge:
+    displayName: "Verification Status"
+  formula.live_link:
+    displayName: "Workstation"
+  formula.studio_link:
+    displayName: "Studio God-Mode"
+  braille_archetype:
+    displayName: "Uncommon Web Braille SDF"
+  step1_install_shot:
+    displayName: "Step 1: Install (Both Users)"
+  step2_load_shot:
+    displayName: "Step 2: Load & Help"
+  step3_tui_shot:
+    displayName: "Step 3: TUI Execution"
+  step5_gui_exec_shot:
+    displayName: "Step 5: GUI Execution"
+
+views:
+  - type: table
+    name: "Table: All 72 Sovereign Tools"
+    limit: 100
+    order:
+      - file.name
+      - title
+      - category
+      - braille_archetype
+      - formula.pillar_label
+      - formula.runs_badge
+      - formula.port_badge
+      - formula.status_badge
+      - formula.open_badge
+      - step1_install_shot
+      - step3_tui_shot
+      - step5_gui_exec_shot
+      - formula.live_link
+      - formula.studio_link
+    summaries:
+      formula.pillar_label: Unique
+      formula.status_badge: Filled
+
+  - type: cards
+    name: "Cards: By Uncommon Web Braille SDF"
+    groupBy:
+      property: braille_archetype
+      direction: ASC
+    order:
+      - file.name
+      - title
+      - formula.status_badge
+      - formula.port_badge
+      - formula.live_link
+
+  - type: cards
+    name: "Cards: By Mathematical Pillar"
+    groupBy:
+      property: formula.pillar_label
+      direction: ASC
+    order:
+      - file.name
+      - title
+      - formula.status_badge
+      - formula.port_badge
+      - formula.live_link
+
+  - type: cards
+    name: "Cards: By Category"
+    groupBy:
+      property: category
+      direction: ASC
+    order:
+      - file.name
+      - title
+      - formula.status_badge
+      - formula.port_badge
+      - formula.live_link

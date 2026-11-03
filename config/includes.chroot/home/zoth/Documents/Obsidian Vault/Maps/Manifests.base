@@ -1,0 +1,15 @@
+filters:
+  and:
+    - file.inFolder("OS/Manifests")
+    - file.hasTag("manifest")
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

@@ -1,0 +1,41 @@
+filters:
+  and:
+    - file.hasTag("wiki")
+    - 'file.ext == "md"'
+
+formulas:
+  status_badge: 'if(status == "CANONICAL", "🟢 Canonical", "🟡 In-Progress")'
+  confidence_pct: 'if(confidence, (confidence * 100).round(0).toString() + "%", "98%")'
+  engram_badge: 'if(stdp_engrams, "🧠 " + stdp_engrams.toString() + " Engrams", "⚪ Local")'
+
+properties:
+  file.name:
+    displayName: "Wiki Article"
+  title:
+    displayName: "Canonical Topic"
+  category:
+    displayName: "Category"
+  formula.confidence_pct:
+    displayName: "Synthesis Confidence"
+  formula.engram_badge:
+    displayName: "STDP Engrams"
+  formula.status_badge:
+    displayName: "Status"
+
+views:
+  - type: table
+    name: "LLM Wiki Index"
+    order:
+      - file.name
+      - title
+      - formula.confidence_pct
+      - formula.engram_badge
+      - formula.status_badge
+
+  - type: cards
+    name: "Wiki Article Cards"
+    order:
+      - file.name
+      - title
+      - formula.confidence_pct
+      - formula.status_badge

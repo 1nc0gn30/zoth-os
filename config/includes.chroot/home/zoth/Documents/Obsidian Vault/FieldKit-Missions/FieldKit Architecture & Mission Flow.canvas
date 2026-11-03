@@ -1,0 +1,131 @@
+{
+  "nodes": [
+    {
+      "id": "glasses",
+      "type": "text",
+      "text": "## Ray-Ban Meta (DAT)\nGlasses POV, Meta AI permission flow",
+      "x": -560,
+      "y": 0,
+      "width": 260,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "relay",
+      "type": "text",
+      "text": "## FieldKit Relay (:8770)\nSessions + Missions APIs, bounded context",
+      "x": -240,
+      "y": 0,
+      "width": 260,
+      "height": 120,
+      "color": "5"
+    },
+    {
+      "id": "wonder",
+      "type": "text",
+      "text": "## Muse Wonder\nPlanner + typed step assessor",
+      "x": 80,
+      "y": -140,
+      "width": 260,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "spark",
+      "type": "text",
+      "text": "## Muse Spark\nEyes -> Advisor -> Director proactive coach",
+      "x": 80,
+      "y": 60,
+      "width": 260,
+      "height": 120,
+      "color": "3"
+    },
+    {
+      "id": "jot",
+      "type": "text",
+      "text": "## Hermes Jot\nLive checklist ticks itself off",
+      "x": 400,
+      "y": -140,
+      "width": 260,
+      "height": 120,
+      "color": "2"
+    },
+    {
+      "id": "brain",
+      "type": "text",
+      "text": "## Obsidian Second Brain\nMission engrams + prior-job recall",
+      "x": 400,
+      "y": 60,
+      "width": 260,
+      "height": 120,
+      "color": "1"
+    },
+    {
+      "id": "base",
+      "type": "file",
+      "file": "FieldKit-Missions/FieldKit Missions.base",
+      "x": 400,
+      "y": 260,
+      "width": 260,
+      "height": 120
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "glasses",
+      "toNode": "relay",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "frames + voice (WS /v1/sessions)"
+    },
+    {
+      "id": "e2",
+      "fromNode": "relay",
+      "toNode": "wonder",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "one sentence -> checklist"
+    },
+    {
+      "id": "e3",
+      "fromNode": "relay",
+      "toNode": "spark",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "changed frames only"
+    },
+    {
+      "id": "e4",
+      "fromNode": "spark",
+      "toNode": "jot",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "step_done -> jot_set_task"
+    },
+    {
+      "id": "e5",
+      "fromNode": "spark",
+      "toNode": "brain",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "compile engram"
+    },
+    {
+      "id": "e6",
+      "fromNode": "brain",
+      "toNode": "wonder",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "prior_notes recall"
+    },
+    {
+      "id": "e7",
+      "fromNode": "brain",
+      "toNode": "base",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "frontmatter views"
+    }
+  ]
+}

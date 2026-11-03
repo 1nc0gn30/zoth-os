@@ -1,0 +1,23 @@
+filters:
+  and:
+    - file.inFolder("MCP")
+    - file.hasTag("mcp")
+    - not:
+        - 'file.name == "_index"'
+properties:
+  title:
+    displayName: Name
+  file.tags:
+    displayName: Tags
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title
+      - file.tags
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - title

@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "group_sovereign_core",
+      "type": "group",
+      "x": -480,
+      "y": -320,
+      "width": 980,
+      "height": 640,
+      "label": "Zoth Sovereign Second Brain & STDP Memory Substrate",
+      "color": "3"
+    },
+    {
+      "id": "node_home_moc",
+      "type": "file",
+      "x": -140,
+      "y": -60,
+      "width": 280,
+      "height": 140,
+      "file": "00 Home.md",
+      "color": "3"
+    },
+    {
+      "id": "node_zoth_memory",
+      "type": "file",
+      "x": -430,
+      "y": -250,
+      "width": 250,
+      "height": 140,
+      "file": "Zoth Memory.md",
+      "color": "5"
+    },
+    {
+      "id": "node_zoth_studio",
+      "type": "file",
+      "x": 190,
+      "y": -250,
+      "width": 260,
+      "height": 140,
+      "file": "Zoth Studio.md",
+      "color": "4"
+    },
+    {
+      "id": "node_zoth_os",
+      "type": "file",
+      "x": -430,
+      "y": 120,
+      "width": 250,
+      "height": 140,
+      "file": "Zoth OS.md",
+      "color": "6"
+    },
+    {
+      "id": "node_vaelor_l1",
+      "type": "file",
+      "x": 190,
+      "y": 120,
+      "width": 260,
+      "height": 140,
+      "file": "Vaelor Network.md",
+      "color": "4"
+    },
+    {
+      "id": "node_stdp_formula",
+      "type": "text",
+      "x": -140,
+      "y": -270,
+      "width": 280,
+      "height": 150,
+      "color": "5",
+      "text": "### ⚡ STDP Synaptic Core (:8094)\n$$\\Delta w = A_+ e^{-\\Delta t / \\tau_+}$$\nBiomorphic vector consolidation + Netrunner 3D WebGL Cortex."
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_home_memory",
+      "fromNode": "node_home_moc",
+      "fromSide": "left",
+      "toNode": "node_zoth_memory",
+      "toSide": "bottom",
+      "color": "5",
+      "label": "STDP Bus :8094"
+    },
+    {
+      "id": "edge_home_studio",
+      "fromNode": "node_home_moc",
+      "fromSide": "right",
+      "toNode": "node_zoth_studio",
+      "toSide": "bottom",
+      "color": "4",
+      "label": "73-Port Fleet"
+    },
+    {
+      "id": "edge_home_os",
+      "fromNode": "node_home_moc",
+      "fromSide": "left",
+      "toNode": "node_zoth_os",
+      "toSide": "top",
+      "color": "6",
+      "label": "Kernel Substrate"
+    },
+    {
+      "id": "edge_home_vaelor",
+      "fromNode": "node_home_moc",
+      "fromSide": "right",
+      "toNode": "node_vaelor_l1",
+      "toSide": "top",
+      "color": "3",
+      "label": "PoUW Minting :8140"
+    },
+    {
+      "id": "edge_stdp_home",
+      "fromNode": "node_stdp_formula",
+      "fromSide": "bottom",
+      "toNode": "node_home_moc",
+      "toSide": "top",
+      "color": "5",
+      "label": "Hebbian Recall"
+    }
+  ]
+}

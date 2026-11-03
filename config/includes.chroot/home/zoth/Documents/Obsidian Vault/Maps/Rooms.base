@@ -1,0 +1,14 @@
+filters:
+  and:
+    - file.inFolder("OS/Rooms")
+views:
+  - type: cards
+    name: Rooms
+    order:
+      - file.name
+      - title
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - title

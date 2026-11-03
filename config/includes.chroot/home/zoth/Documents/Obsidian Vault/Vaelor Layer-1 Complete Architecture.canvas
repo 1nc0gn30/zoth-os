@@ -1,0 +1,275 @@
+{
+  "nodes": [
+    {
+      "id": "a100000000000001",
+      "type": "group",
+      "x": -1350,
+      "y": -800,
+      "width": 1250,
+      "height": 720,
+      "label": "◈ Vaelor Account-Lattice DAG Core & BFT Quorum (:8140)",
+      "color": "4"
+    },
+    {
+      "id": "a100000000000011",
+      "type": "file",
+      "file": "05 - Knowledge Base/Karpathy LLM Wiki/Vaelor-Layer1-Complete-Reference.md",
+      "x": -1310,
+      "y": -740,
+      "width": 440,
+      "height": 300,
+      "color": "4"
+    },
+    {
+      "id": "a100000000000012",
+      "type": "text",
+      "x": -830,
+      "y": -740,
+      "width": 420,
+      "height": 300,
+      "color": "5",
+      "text": "### ⛓️ Asynchronous Micro-Chain DAG\n- **Ed25519 Account Micro-Chains**: Every sovereign actor and Hermes agent owns an asynchronous micro-chain.\n- **Zero Gas Fees ($0.00 / 0 Gwei)**: Dual-block consensus (SEND + RECEIVE) eliminates mempool fee auctions.\n- **Sub-25ms Finality**: High-concurrency DAG without global chain bottlenecks or head-of-line blocking.\n- **SHA-256 Micro-Stamp**: Fast sub-20ms anti-spam proof-of-work stamp replaces gas costs."
+    },
+    {
+      "id": "a100000000000013",
+      "type": "text",
+      "x": -1070,
+      "y": -400,
+      "width": 660,
+      "height": 280,
+      "color": "3",
+      "text": "### ⚡ 5-Validator Byzantine Fault Tolerant (BFT) Quorum\n- **Quorum Equation**: Requires $\\ge 4/5$ (80%) Byzantine signatures for state finality.\n- **5 Regional Validator Nodes**:\n  1. Node 1 (US-East Virginia) · 1.2ms latency anchor\n  2. Node 2 (EU-Central Frankfurt) · 14.8ms GDPR anchor\n  3. Node 3 (AP-East Tokyo) · 22.4ms APAC anchor\n  4. Node 4 (Local Edge Desktop) · 0.4ms loopback peer\n  5. Node 5 (NullAI Sovereign Core) · 0.8ms attestation anchor\n- **Sub-Second Epoch Checkpoints**: Merkle root state snapshots published every 10 blocks."
+    },
+    {
+      "id": "b200000000000001",
+      "type": "group",
+      "x": 50,
+      "y": -800,
+      "width": 1250,
+      "height": 720,
+      "label": "⛏️ PoUW Cognitive Mining & Neuro-Memory STDP Engrams (:8094)",
+      "color": "5"
+    },
+    {
+      "id": "b200000000000011",
+      "type": "file",
+      "file": "06-Wiki/Vaelor Account-Lattice & PoUW Protocol.md",
+      "x": 90,
+      "y": -740,
+      "width": 440,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "b200000000000012",
+      "type": "text",
+      "x": 570,
+      "y": -740,
+      "width": 440,
+      "height": 300,
+      "color": "4",
+      "text": "### 🧠 PoUW Cognitive Mining Engine\n- **Proof-of-Useful-Work (PoUW)**: Replaces wasteful hashing with verified cognitive work.\n- **STDP Obsidian Indexing**: Computes TF-IDF vector projections, AST wikilink topologies, and JSON Canvas synthesis.\n- **+15.9 ◈ VLR Base Reward**: Minted per valid cognitive block verified by 5/5 BFT quorum.\n- **Self-Tuning Difficulty**: Auto-adjusts cognitive complexity based on cluster node count."
+    },
+    {
+      "id": "b200000000000013",
+      "type": "text",
+      "x": 330,
+      "y": -400,
+      "width": 680,
+      "height": 280,
+      "color": "6",
+      "text": "### 🧬 Biological Memory Substrate Integration (:8094)\n- **Bidirectional Engram Recording**: Every mined block writes a high-importance STDP memory engram (importance: 1.0, category: architecture).\n- **Hippocampal Replay**: Consolidated during sleep replay cycles into long-term cortex clusters.\n- **Cross-Cluster Synaptic Bridges**: Links financial mining transactions to OS, Studio, and Agent wikilinks.\n- **REST RPC**: `POST /api/obsidian/vaelor/mine` & `GET /api/obsidian/vaelor`."
+    },
+    {
+      "id": "c300000000000001",
+      "type": "group",
+      "x": -1350,
+      "y": 0,
+      "width": 1250,
+      "height": 720,
+      "label": "💎 Native L1 Financial Primitives (Vaults, BNPL, Receipts)",
+      "color": "3"
+    },
+    {
+      "id": "c300000000000011",
+      "type": "text",
+      "x": -1310,
+      "y": 60,
+      "width": 380,
+      "height": 300,
+      "color": "3",
+      "text": "### 📈 8.5% Compute Savings Vaults\n- **Real-Yield Engine**: 8.5% APY baseline yield backed by NullAI compute cluster rental and agent tool fees.\n- **Hourly Auto-Compounding**: Epoch interest distributions compound automatically with zero gas costs.\n- **Flexible & 90-Day Lock Tiers**: Liquid withdrawals anytime or lock for up to 12.5% boosted APY."
+    },
+    {
+      "id": "c300000000000012",
+      "type": "text",
+      "x": -890,
+      "y": 60,
+      "width": 380,
+      "height": 300,
+      "color": "2",
+      "text": "### 💳 0% APR BNPL Micro-Credit\n- **Reputation-Backed Credit**: Based on historical on-chain volume, merchant reviews, and validator staking.\n- **4-Installment Schedule**: Split commercial purchases into 4 equal bi-weekly payments with 0% APR.\n- **Autonomous Escrow Settlement**: Auto-deducted from revenue streams or bonded vault reserves."
+    },
+    {
+      "id": "c300000000000013",
+      "type": "text",
+      "x": -1100,
+      "y": 400,
+      "width": 600,
+      "height": 280,
+      "color": "4",
+      "text": "### 🧾 Smart Receipts & Sub-Account Envelopes\n- **Itemized SHA-256 Receipts**: Full line-item details, SKU proofs, and 365-day warranty metadata encrypted for the buyer.\n- **Sub-Account Envelopes**: Isolate funds into budget categories (@zoth/saas, @zoth/groceries, @zoth/agents).\n- **Hardware-Enforced Spending Caps**: Daily and per-transaction limits enforced at the consensus lattice layer."
+    },
+    {
+      "id": "d400000000000001",
+      "type": "group",
+      "x": 50,
+      "y": 0,
+      "width": 1250,
+      "height": 720,
+      "label": "🛡️ Security, Privacy Shield & 10-Tool MCP Stratum",
+      "color": "6"
+    },
+    {
+      "id": "d400000000000011",
+      "type": "file",
+      "file": "Vaelor Network.md",
+      "x": 90,
+      "y": 60,
+      "width": 380,
+      "height": 280,
+      "color": "6"
+    },
+    {
+      "id": "d400000000000012",
+      "type": "text",
+      "x": 510,
+      "y": 60,
+      "width": 440,
+      "height": 280,
+      "color": "1",
+      "text": "### 🔒 Shielded Pedersen Commitments\n- **Homomorphic Blinding**: Balance commitments formatted as C = vG + rH, concealing transferred values.\n- **Bulletproof Range Proofs**: Guarantees balances are non-negative without revealing numerical amounts.\n- **Auditor View Keys**: Selective cryptographic disclosure for sovereign accounting and tax attestation."
+    },
+    {
+      "id": "d400000000000013",
+      "type": "text",
+      "x": 90,
+      "y": 380,
+      "width": 440,
+      "height": 300,
+      "color": "5",
+      "text": "### 🛡️ Anti-Phishing @Handle Guard\n- **Human-Readable Handles**: Eliminates confusing hex addresses (@1nc0gn30, @zoth, @studio).\n- **Hamming-Distance Defense**: Consensus blocks reject typosquatted or visually confusing address lookalikes.\n- **Verified Merchant Badging**: Signed Ed25519 PKI badges verified via Cosign and VirusTotal notarization."
+    },
+    {
+      "id": "d400000000000014",
+      "type": "text",
+      "x": 570,
+      "y": 380,
+      "width": 480,
+      "height": 300,
+      "color": "2",
+      "text": "### 🧰 10-Tool Vaelor MCP & vaelor-cli\n- **10 Autonomous Agent Tools**: get_status, get_balance, transfer, mine_pouw, create_escrow, release_escrow, open_vault, bnpl_split, verify_receipt, register_handle.\n- **vaelor-cli & Second Brain Command #13**:\n  `zoth-second-brain vaelor [--mine] [--json]`\n- **Dual Cash Registers**: Embedded in 71 Zoth Studio web tools."
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001000000000001",
+      "fromNode": "a100000000000012",
+      "fromSide": "bottom",
+      "toNode": "a100000000000013",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Sub-25ms BFT Consensus"
+    },
+    {
+      "id": "e001000000000002",
+      "fromNode": "a100000000000013",
+      "fromSide": "right",
+      "toNode": "b200000000000012",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Validates Cognitive Blocks"
+    },
+    {
+      "id": "e001000000000003",
+      "fromNode": "b200000000000012",
+      "fromSide": "bottom",
+      "toNode": "b200000000000013",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Anchors STDP Engrams (+◈ VLR)"
+    },
+    {
+      "id": "e001000000000004",
+      "fromNode": "a100000000000012",
+      "fromSide": "bottom",
+      "toNode": "c300000000000011",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Deposits & Yield Compounding"
+    },
+    {
+      "id": "e001000000000005",
+      "fromNode": "a100000000000012",
+      "fromSide": "bottom",
+      "toNode": "c300000000000012",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "0% APR BNPL Split"
+    },
+    {
+      "id": "e001000000000006",
+      "fromNode": "c300000000000011",
+      "fromSide": "bottom",
+      "toNode": "c300000000000013",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Smart Receipt Proofs"
+    },
+    {
+      "id": "e001000000000007",
+      "fromNode": "a100000000000012",
+      "fromSide": "bottom",
+      "toNode": "d400000000000012",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Blinds Transaction Balances"
+    },
+    {
+      "id": "e001000000000008",
+      "fromNode": "d400000000000013",
+      "fromSide": "left",
+      "toNode": "c300000000000013",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "Anti-Phishing Verification"
+    },
+    {
+      "id": "e001000000000009",
+      "fromNode": "d400000000000014",
+      "fromSide": "left",
+      "toNode": "a100000000000013",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "JSON-RPC :8140 Calls"
+    },
+    {
+      "id": "e001000000000010",
+      "fromNode": "d400000000000014",
+      "fromSide": "top",
+      "toNode": "b200000000000012",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Dispatches PoUW Mining"
+    },
+    {
+      "id": "e001000000000011",
+      "fromNode": "a100000000000011",
+      "fromSide": "right",
+      "toNode": "a100000000000012",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Canonical Wiki Reference"
+    }
+  ]
+}

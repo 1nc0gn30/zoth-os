@@ -1,0 +1,245 @@
+{
+  "nodes": [
+    {
+      "id": "t",
+      "type": "text",
+      "text": "# Studio captures\ngalleryManifest.js",
+      "x": 120,
+      "y": -80,
+      "width": 400,
+      "height": 80,
+      "color": "5"
+    },
+    {
+      "id": "g0",
+      "type": "file",
+      "file": "Studio/Gallery/Capture adytum-docs.md",
+      "x": -80,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g1",
+      "type": "file",
+      "file": "Studio/Gallery/Capture adytum.md",
+      "x": 170,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g2",
+      "type": "file",
+      "file": "Studio/Gallery/Capture arsenal.md",
+      "x": 420,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g3",
+      "type": "file",
+      "file": "Studio/Gallery/Capture ax-docs.md",
+      "x": 670,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g4",
+      "type": "file",
+      "file": "Studio/Gallery/Capture ax.md",
+      "x": 920,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g5",
+      "type": "file",
+      "file": "Studio/Gallery/Capture bridges.md",
+      "x": 1170,
+      "y": 40,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g6",
+      "type": "file",
+      "file": "Studio/Gallery/Capture consensus.md",
+      "x": -80,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g7",
+      "type": "file",
+      "file": "Studio/Gallery/Capture docs-math.md",
+      "x": 170,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g8",
+      "type": "file",
+      "file": "Studio/Gallery/Capture docs.md",
+      "x": 420,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g9",
+      "type": "file",
+      "file": "Studio/Gallery/Capture faqs.md",
+      "x": 670,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g10",
+      "type": "file",
+      "file": "Studio/Gallery/Capture hexstrike-docs.md",
+      "x": 920,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g11",
+      "type": "file",
+      "file": "Studio/Gallery/Capture hexstrike.md",
+      "x": 1170,
+      "y": 220,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g12",
+      "type": "file",
+      "file": "Studio/Gallery/Capture home.md",
+      "x": -80,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g13",
+      "type": "file",
+      "file": "Studio/Gallery/Capture memory-docs.md",
+      "x": 170,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g14",
+      "type": "file",
+      "file": "Studio/Gallery/Capture memory.md",
+      "x": 420,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g15",
+      "type": "file",
+      "file": "Studio/Gallery/Capture swarm-docs.md",
+      "x": 670,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g16",
+      "type": "file",
+      "file": "Studio/Gallery/Capture swarm.md",
+      "x": 920,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g17",
+      "type": "file",
+      "file": "Studio/Gallery/Capture tools.md",
+      "x": 1170,
+      "y": 400,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g18",
+      "type": "file",
+      "file": "Studio/Gallery/Capture webgen-docs.md",
+      "x": -80,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g19",
+      "type": "file",
+      "file": "Studio/Gallery/Capture webgen.md",
+      "x": 170,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g20",
+      "type": "file",
+      "file": "Studio/Gallery/Capture workstations.md",
+      "x": 420,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g21",
+      "type": "file",
+      "file": "Studio/Gallery/Capture zoth-os-docs.md",
+      "x": 670,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "g22",
+      "type": "file",
+      "file": "Studio/Gallery/Capture zoth-os.md",
+      "x": 920,
+      "y": 580,
+      "width": 230,
+      "height": 140,
+      "color": "5"
+    }
+  ],
+  "edges": []
+}
