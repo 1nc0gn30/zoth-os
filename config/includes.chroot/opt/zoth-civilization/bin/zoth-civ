@@ -3,7 +3,7 @@
 import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
 if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
     _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/zoth-civilization')
+    _z_rdir = '/opt/zoth-civilization'
     _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
     _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
 if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
@@ -18,8 +18,8 @@ TOOL_DESC = 'The living heart of the 21-agent society. Runs the GameBoy pixel wo
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Swarm & Core'
 TOOL_PORT = 9393
-REPO_DIR = os.path.expanduser('~/NullAITech/zoth-civilization'
-SERVER_JS = os.path.expanduser('~/NullAITech/zoth-civilization/server.js'
+REPO_DIR = '/opt/zoth-civilization'
+SERVER_JS = '/opt/zoth-civilization/server.js'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

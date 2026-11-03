@@ -20,7 +20,7 @@ TOOL_DESC = "100% client-side YARA-X & Sigma threat detection compiler with 60fp
 TOOL_VERSION = "3.3.0"
 TOOL_CATEGORY = "Security & Recon"
 TOOL_PORT = 8133
-REPO_DIR = os.path.expanduser("~/NullAITech/yara-sigma-forge"
+REPO_DIR = "/opt/yara-sigma-forge"
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

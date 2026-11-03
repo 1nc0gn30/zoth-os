@@ -17,7 +17,7 @@ TOOL_VERSION = "1.0.0"
 TOOL_CATEGORY = "Media & 3D"
 TOOL_PORT = 8823
 STUDIO_PORT = 3000
-REPO_DIR = os.path.expanduser("~/NullAITech/zoth-scene-foundry"
+REPO_DIR = "/opt/zoth-scene-foundry"
 STUDIO_URL = f"http://127.0.0.1:{STUDIO_PORT}/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

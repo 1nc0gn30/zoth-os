@@ -18,7 +18,7 @@ TOOL_DESC = "Interactive 60fps Reality Switch shader synthesizer and ZothOS desk
 TOOL_VERSION = "3.3.0"
 TOOL_CATEGORY = "Media & 3D"
 TOOL_PORT = 8134
-REPO_DIR = os.path.expanduser("~/NullAITech/reality-shader-forge"
+REPO_DIR = "/opt/reality-shader-forge"
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

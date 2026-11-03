@@ -8,9 +8,9 @@ TOOL_DESC = 'Local Zoth OS cockpit that diffs the ZOTHOS Product Hunt listing ag
 TOOL_VERSION = '1.0.0'
 TOOL_CATEGORY = 'Commerce & POD'
 TOOL_PORT = 8085
-REPO_DIR = os.path.expanduser('~/NullAITech/producthunt-connector'
-PY_CLI = os.path.expanduser('~/NullAITech/producthunt-connector/src/producthunt_connector/cli.py'
-PKG_DIR = os.path.expanduser('~/NullAITech/producthunt-connector/src'
+REPO_DIR = '/opt/producthunt-connector'
+PY_CLI = '/opt/producthunt-connector/src/producthunt_connector/cli.py'
+PKG_DIR = '/opt/producthunt-connector/src'
 STUDIO_URL = f"http://127.0.0.1:8085/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
