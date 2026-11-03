@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+import sys
+import os
+import argparse
+import urllib.request
+import json
+import webbrowser
+
+PORT = 8151
+SERVER_PATH = os.path.expanduser("~/NullAITech/zoth-obsidian-tracker/server.py")
+
+def main():
+    parser = argparse.ArgumentParser(description="Zoth Obsidian Arsenal Tracker CLI")
+    parser.add_argument("--status", action="store_true", help="Check tracker daemon health and tool counts")
+    parser.add_argument("--json", action="store_true", help="Output JSON status payload")
+    parser.add_argument("--serve", action="store_true", help="Run standalone server daemon")
+    parser.add_argument("--port", type=int, default=PORT, help="Port to run on")
+    parser.add_argument("--open", action="store_true", help="Open web app in default browser")
+    parser.add_argument("--obsidian", action="store_true", help="Open Obsidian desktop application")
+    args = parser.parse_args()
+
+    if args.serve:
+        os.system(f"python3 {SERVER_PATH} --port {args.port}")
+        return
+
+    if args.open:
+        webbrowser.open(f"http://127.0.0.1:{args.port}")
+        return
+
+    if args.obsidian:
+        os.system("xdg-open 'obsidian://open?vault=Obsidian%20Vault&file=Studio%2FVerification%2FArsenal%20Verification%20%26%20Test%20Tracker'")
+        return
+
+    try:
+        url = f"http://127.0.0.1:{args.port}/health"
+        req = urllib.request.Request(url, headers={"User-Agent": "ZothObsidianCLI/1.0"})
+        with urllib.request.urlopen(req, timeout=2.0) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if args.json:
+                print(json.dumps(data, indent=2))
+            else:
+                print(f"🟢 Zoth Obsidian Tracker: ONLINE (Port :{args.port})")
+                print(f"   Verified Tools: {data.get('verified_tools')}/72 (100% Free & Open-Access)")
+                print(f"   Vault Path: {data.get('vault')}")
+                print(f"   Web Dashboard: http://127.0.0.1:{args.port}")
+    except Exception as e:
+        if args.json:
+            print(json.dumps({"status": "offline", "error": str(e), "port": args.port}))
+        else:
+            print(f"🟡 Zoth Obsidian Tracker daemon offline on port :{args.port}.")
+            print(f"   Run '{parser.prog} --serve' or 'python3 {SERVER_PATH} --port {args.port}' to start.")
+
+if __name__ == "__main__":
+    main()

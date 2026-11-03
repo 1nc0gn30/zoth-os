@@ -300,6 +300,11 @@ window.spoofMac = function(iface, event) {
   ipcRenderer.send('randomize-mac', iface);
 };
 
+window.launchHudTool = function(toolKey, event) {
+  if (event) event.stopPropagation();
+  ipcRenderer.send('launch-tool', toolKey);
+};
+
 // ── Drawer Toggles ──────────────────────────────────────────────
 document.getElementById('card-cpu').addEventListener('click', () => {
   const cardCpu = document.getElementById('card-cpu');

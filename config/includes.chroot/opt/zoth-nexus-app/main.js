@@ -62,6 +62,15 @@ const TOOLS_DATABASE = [
   { id: 'zoth-session', name: 'Session Switcher', domain: 'flagship', desc: 'Instant Wayland Apex / XFCE4 Desktop Session Switcher', cmd: 'zoth-session-switch', pkg: 'zoth-session-switch', type: 'system' },
   { id: 'zoth-powershell', name: 'PowerShell v7 Emulation', domain: 'flagship', desc: 'PowerShell v7 Terminal Emulation & Command Environment', cmd: 'zoth-powershell', pkg: 'zoth-powershell', type: 'system' },
   { id: 'zoth-arsenal', name: 'Arsenal Skill Engine', domain: 'flagship', desc: 'Hermes Skill & Tool Synchronization Engine', cmd: 'zoth-arsenal-sync', pkg: 'zoth-arsenal-sync', type: 'system' },
+  { id: 'zoth-obsidian-tracker', name: 'Obsidian Arsenal Tracker', domain: 'flagship', desc: '72-Tool Sovereign Verification Matrix, Live Port Probes & Obsidian Vault Sync', cmd: 'obsidian-tracker', pkg: 'obsidian-tracker', type: 'system' },
+  { id: 'zothos-lite', name: 'ZothOS-Lite Edge', domain: 'flagship', desc: 'Featherweight Sovereign Edge & Browser OS Telemetry Engine', cmd: 'zothos-lite-tui', pkg: 'zothos-lite-tui', type: 'system' },
+  { id: 'zoth-civilization', name: 'Zoth Civilization 3D', domain: 'flagship', desc: '3D Multi-World Star System & 21 Pantheon Agent Engine', cmd: 'zoth-pantheon-tui', pkg: 'zoth-pantheon-tui', type: 'system' },
+  { id: 'vaelor-network', name: 'Vaelor L1 Account-Lattice', domain: 'web3', desc: 'Feeless Account-Lattice DAG & 5-Validator BFT Quorum CLI', cmd: 'vaelor-cli', pkg: 'vaelor-cli', type: 'system' },
+  { id: 'linux-30', name: '30 Days of Linux Academy', domain: 'dev', desc: 'Interactive 30-Day ZothOS x 1nc0gn30 Linux Mastery Academy (TUI + GUI + Labs)', cmd: 'linux-30', pkg: 'linux-30', type: 'system' },
+  { id: 'bounty-hub', name: 'Zoth Bounty Research Hub', domain: 'sec', desc: 'Zero-False-Positive Security Research & Disclosure Workspace', cmd: 'bounty-hub', pkg: 'bounty-hub', type: 'system' },
+  { id: 'scene-foundry', name: 'Zoth Scene Foundry', domain: 'media', desc: 'Procedural ZothOS-style ASCII + Pixel-Art Scene Engine', cmd: 'scene-foundry', pkg: 'scene-foundry', type: 'system' },
+  { id: 'zela-guide', name: 'Zela Glasses Guide', domain: 'ai', desc: 'Sovereign Wearable AI Mission Coach for Smart Glasses over Tailscale', cmd: 'zela-guide', pkg: 'zela-guide', type: 'system' },
+  { id: 'zoth-gpu-foundry', name: 'Zoth A100 GPU Foundry', domain: 'ai', desc: 'Local-to-A100 80GB Autonomous Orchestrator & Process Recorder', cmd: 'zoth-gpu-foundry', pkg: 'zoth-gpu-foundry', type: 'system' },
 
   // ── 2. Frontier AI & Local Inference (16 tools) ──
   { id: 'ollama', name: 'Ollama LLM Daemon', domain: 'ai', desc: 'Zero-Cloud Local LLM Inference (Llama 3, DeepSeek, Qwen)', cmd: 'ollama', pkg: 'ollama', type: 'custom:ollama' },

@@ -439,6 +439,46 @@ const DAEMONS = [
     startCmd: 'nohup /usr/local/bin/simplex-chat -d "$HOME/.simplex/zoth_agent" -p 5225 --user-display-name "Zoth Studio AI" >/tmp/simplex.log 2>&1 &',
     stopCmd: 'pkill -f simplex-chat || true',
   },
+  {
+    id: 'zoth_civilization',
+    name: 'Zoth Civilization 3D',
+    desc: 'Multi-World Star System & 21 Pantheon Agent Engine',
+    port: 8125,
+    type: 'port',
+    processName: 'zoth-civilization',
+    startCmd: 'PORT=8125 nohup node "$HOME/NullAITech/zoth-civilization/server.js" >/tmp/civilization.log 2>&1 &',
+    stopCmd: 'pkill -f "zoth-civilization/server.js" || true',
+  },
+  {
+    id: 'zoth_obsidian_tracker',
+    name: 'Obsidian Arsenal Tracker',
+    desc: '72-Tool Sovereign Verification Matrix & Obsidian Sync',
+    port: 8151,
+    type: 'port',
+    processName: 'zoth-obsidian-tracker',
+    startCmd: 'nohup python3 "$HOME/NullAITech/zoth-obsidian-tracker/server.py" --port 8151 >/tmp/obsidian_tracker.log 2>&1 &',
+    stopCmd: 'pkill -f "zoth-obsidian-tracker/server.py" || true',
+  },
+  {
+    id: 'zothos_lite',
+    name: 'ZothOS-Lite Daemon',
+    desc: 'Featherweight Sovereign Edge & Browser OS Telemetry',
+    port: 8145,
+    type: 'port',
+    processName: 'zothos-lite',
+    startCmd: 'PORT=8145 nohup node "$HOME/NullAITech/zothos-lite/server.js" >/tmp/zothos_lite.log 2>&1 &',
+    stopCmd: 'pkill -f "zothos-lite/server.js" || true',
+  },
+  {
+    id: 'vaelor_network',
+    name: 'Vaelor L1 Account-Lattice',
+    desc: 'Feeless Account-Lattice DAG & 5-Validator BFT Quorum',
+    port: 8096,
+    type: 'port',
+    processName: 'vaelor-network',
+    startCmd: 'PORT=8096 nohup node "$HOME/NullAITech/vaelor-network/server.js" >/tmp/vaelor.log 2>&1 &',
+    stopCmd: 'pkill -f "vaelor-network/server.js" || true',
+  },
 ];
 
 // 21 Pantheon Agents Master Specs
@@ -795,6 +835,11 @@ ipcMain.handle('launch-tool', async (event, { toolId }) => {
     'zoth-mcp': 'konsole --title "Zoth MCP Registry" --hold -e /usr/local/bin/zoth-mcp list &',
     'zoth-netkill': 'nohup /usr/local/bin/zoth-netkill >/dev/null 2>&1 &',
     'btop': 'konsole --title "Btop Resource Monitor" -e btop &',
+    'obsidian-tracker': 'xdg-open http://127.0.0.1:8151 &',
+    'zothos-lite': 'xdg-open http://127.0.0.1:8145 &',
+    'zoth-civilization': 'xdg-open http://127.0.0.1:8125 &',
+    'vaelor-network': 'xdg-open http://127.0.0.1:8096 &',
+    'linux-30': 'konsole --title "30 Days of Linux Fundamentals // ZOTHOS" --hold -e /usr/local/bin/linux-30 &',
   };
 
   // Unknown tools may only be a bare executable name (no shell syntax).

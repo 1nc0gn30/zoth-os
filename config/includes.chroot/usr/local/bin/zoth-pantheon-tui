@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""
+ZOTH PANTHEON 21 — UNICODE U+2800 BRAILLE LATTICE & ABILITY TUI
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+"""
+import argparse, json, sys, time
+from pathlib import Path
+
+MANIFEST = Path.home() / "NullAITech/zoth-civilization/public/assets/pantheon/pantheon_21_manifest.json"
+
+def main():
+    p = argparse.ArgumentParser(description="Zoth Pantheon 21 Animated Braille Lattice & Ability Explorer")
+    p.add_argument("--agent", default="AZOTH", help="Agent ID (e.g. AZOTH, KITSUNE, DRACO, SCORPIUS)")
+    p.add_argument("--state", default="ability", choices=["idle", "walk", "work", "ability", "ultimate", "meditate"])
+    p.add_argument("--list", action="store_true", help="List all 21 Zoth Studio Pantheon Agents & Abilities")
+    p.add_argument("--json", action="store_true", help="Emit JSON manifest")
+    args = p.parse_args()
+
+    data = json.loads(MANIFEST.read_text())
+    agents = data["agents"]
+    if args.json:
+        print(json.dumps(data, indent=2))
+        return
+    if args.list:
+        print("╔════════════════════════════════════════════════════════════════════════════════════════╗")
+        print("║  ✦ THE 21 ZOTH STUDIO PANTHEON AGENTS — PIXEL • BRAILLE • 3D • ABILITIES              ║")
+        print("╠════════════════════════════════════════════════════════════════════════════════════════╣")
+        for idx, a in enumerate(agents, 1):
+            print(f"║ {idx:2d}. {a['id']:<15} | {a['cadre']:<10} | {a['abilitySpec']['name']:<32} | {a['petIcon']} {a['petName']:<14} ║")
+        print("╚════════════════════════════════════════════════════════════════════════════════════════╝")
+        return
+
+    target = next((a for a in agents if a["id"].upper() == args.agent.upper()), agents[0])
+    braille_file = (Path.home() / "NullAITech/zoth-civilization/public") / target["brailleUrl"].lstrip("/")
+    bdata = json.loads(braille_file.read_text())
+    frames = bdata["states"].get(args.state, bdata["states"]["idle"])
+
+    print(f"\033[1;33m✦ {target['id']} ({target['role']}) — {target['tarotKey']}\033[0m")
+    print(f"\033[1;36m⚡ Ability: {target['abilitySpec']['name']} ({target['abilitySpec']['damageOrEffect']})\033[0m")
+    print(f"\033[0;32m🎬 Animation [{args.state.upper()}]: {target['animations'][args.state]}\033[0m\n")
+    for line in frames[0]:
+        print("  " + line)
+
+if __name__ == "__main__":
+    main()

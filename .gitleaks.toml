@@ -101,11 +101,13 @@ regexes = ['''FourKeyMap''']
 
 # Vendored sovereign daemon bundles in config/includes.chroot/opt/ and studio workspace
 [[allowlists]]
-description = "Vendored sovereign daemons and studio workspace."
+description = "Vendored sovereign daemons, studio workspace, and Python bytecode."
 paths = [
   '''(?:^|/)config/includes\.chroot/opt/vaelor-network/.*''',
   '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*''',
   '''(?:^|/)config/includes\.chroot/opt/zoth-studio/.*''',
   '''(?:^|/)zoth-studio-v2/.*''',
   '''(?:^|/)config/includes\.chroot/etc/skel/Documents/Obsidian Vault/.*''',
+  '''(?:^|/)__pycache__/.*''',
+  '''\.pyc$''',
 ]

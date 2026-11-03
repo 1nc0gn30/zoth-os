@@ -2,7 +2,7 @@
 // no require(), no Node globals. Regenerate if the renderer adds channels.
 const { contextBridge, ipcRenderer } = require('electron');
 
-const SEND = new Set(["cloak-all","kill-process","purge-ram","randomize-mac","renew-dhcp","resize-window","rotate-ip","run-heal","toggle-sentinel","toggle-tor"]);
+const SEND = new Set(["cloak-all","kill-process","launch-tool","open-url","purge-ram","randomize-mac","renew-dhcp","resize-window","rotate-ip","run-heal","toggle-sentinel","toggle-tor"]);
 const INVOKE = new Set([]);
 const RECEIVE = new Set(["telemetry-update"]);
 const fakeEvent = Object.freeze({ sender: null });

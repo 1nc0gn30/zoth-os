@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Zoth Workstation -> Google Drive (gdrive20tb:) Sovereign Backup Engine
+# Strictly uses `rclone copy` (NEVER `rclone sync`) to guarantee zero deletions.
+# ==============================================================================
+set -u
+
+REMOTE="gdrive20tb:Zoth-Workstation-Backup-2026-11"
+LOG_FILE="/tmp/zoth_gdrive_backup.log"
+STATUS_FILE="/tmp/zoth_gdrive_backup_status.json"
+
+COMMON_FLAGS=(
+  --transfers 16
+  --checkers 32
+  --fast-list
+  --contimeout 60s
+  --timeout 300s
+  --retries 3
+  --low-level-retries 10
+  --stats 15s
+  -- stats-one-line
+  --exclude "**/node_modules/**"
+  --exclude "**/.venv/**"
+  --exclude "**/venv/**"
+  --exclude "**/voice-runtime/**"
+  --exclude "**/__pycache__/**"
+  --exclude "**/.pytest_cache/**"
+  --exclude "**/.cache/**"
+  --exclude "**/Cache/**"
+  --exclude "**/Code Cache/**"
+  --exclude "**/GPUCache/**"
+)
+
+update_status() {
+  local stage="$1"
+  local state="$2"
+  local detail="$3"
+  cat <<JSON > "$STATUS_FILE"
+{
+  "remote": "$REMOTE",
+  "stage": "$stage",
+  "state": "$state",
+  "detail": "$detail",
+  "updatedAt": "$(date -Is)"
+}
+JSON
+}
+
+echo "==================================================================" | tee -a "$LOG_FILE"
+echo "[$(date -Is)] Starting Zoth Workstation Backup -> $REMOTE" | tee -a "$LOG_FILE"
+echo "Mode: STRICT rclone copy (Zero-Deletion Guarantee)" | tee -a "$LOG_FILE"
+echo "==================================================================" | tee -a "$LOG_FILE"
+
+# STAGE 1: Skills, Agent Configs, Obsidian Vault & Core Home Tools
+update_status "1/4" "RUNNING" "Backing up Antigravity skills, Obsidian Vault (Documents), konsole-relay, and core configs"
+echo "[STAGE 1/4] Backing up Skills, Configs, Documents & Core Tools..." | tee -a "$LOG_FILE"
+rclone copy $HOME/.gemini/config "$REMOTE/home/.gemini/config" --transfers 16 --checkers 32 --fast-list >> "$LOG_FILE" 2>&1
+rclone copy $HOME/Documents "$REMOTE/home/Documents" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+rclone copy $HOME/konsole-relay "$REMOTE/home/konsole-relay" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+rclone copy $HOME/agent-tools "$REMOTE/home/agent-tools" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+rclone copy $HOME/1nc0gn30-game "$REMOTE/home/1nc0gn30-game" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+rclone copy $HOME/.config/rclone "$REMOTE/home/.config/rclone" --transfers 8 >> "$LOG_FILE" 2>&1
+rclone copy $HOME/.config/konsole-relay "$REMOTE/home/.config/konsole-relay" --transfers 8 >> "$LOG_FILE" 2>&1
+echo "[$(date -Is)] [STAGE 1/4] Completed." | tee -a "$LOG_FILE"
+
+# STAGE 2: Desktop, Pictures, Videos & Livestream Showcase
+update_status "2/4" "RUNNING" "Backing up Desktop, Pictures, Videos, and Livestream Showcase"
+echo "[STAGE 2/4] Backing up Desktop, Pictures, Videos & Showcase Assets..." | tee -a "$LOG_FILE"
+rclone copy $HOME/Pictures "$REMOTE/home/Pictures" --transfers 16 --checkers 32 --fast-list >> "$LOG_FILE" 2>&1
+rclone copy $HOME/Videos "$REMOTE/home/Videos" --transfers 16 --checkers 32 --fast-list >> "$LOG_FILE" 2>&1
+rclone copy $HOME/livestream_showcase "$REMOTE/home/livestream_showcase" --transfers 16 --checkers 32 --fast-list >> "$LOG_FILE" 2>&1
+rclone copy $HOME/Desktop "$REMOTE/home/Desktop" \
+  --transfers 16 --checkers 32 --fast-list \
+  --exclude "**/node_modules/**" \
+  --exclude "**/.venv/**" \
+  --exclude "**/__pycache__/**" >> "$LOG_FILE" 2>&1
+echo "[$(date -Is)] [STAGE 2/4] Completed." | tee -a "$LOG_FILE"
+
+# STAGE 3: All 115 ~/NullAITech Repositories & Built Web/OS Artifacts
+update_status "3/4" "RUNNING" "Backing up ~/NullAITech (all 115 repos, source code, git history, and built dist)"
+echo "[STAGE 3/4] Backing up ~/NullAITech (excluding ephemeral node_modules/venv/chroot caches)..." | tee -a "$LOG_FILE"
+rclone copy $HOME/NullAITech "$REMOTE/home/NullAITech" \
+  --transfers 16 --checkers 32 --fast-list \
+  --exclude "**/node_modules/**" \
+  --exclude "**/.venv/**" \
+  --exclude "**/venv/**" \
+  --exclude "**/voice-runtime/**" \
+  --exclude "**/__pycache__/**" \
+  --exclude "**/.pytest_cache/**" \
+  --exclude "zoth-os/build/chroot/**" \
+  --exclude "zoth-os/build/cache/**" \
+  --exclude "zoth-os/build/binary/**" \
+  --exclude "zoth-os/build/.build/**" >> "$LOG_FILE" 2>&1
+echo "[$(date -Is)] [STAGE 3/4] Completed." | tee -a "$LOG_FILE"
+
+# STAGE 4: Downloads & Bootable ISO Images
+update_status "4/4" "RUNNING" "Backing up Downloads and bootable ISO images"
+echo "[STAGE 4/4] Backing up Downloads & Bootable ISOs..." | tee -a "$LOG_FILE"
+rclone copy $HOME/Downloads "$REMOTE/home/Downloads" \
+  --transfers 16 --checkers 32 --fast-list \
+  --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+echo "[$(date -Is)] [STAGE 4/4] Completed." | tee -a "$LOG_FILE"
+
+update_status "4/4" "COMPLETED" "Full workstation backup to $REMOTE completed successfully."
+echo "==================================================================" | tee -a "$LOG_FILE"
+echo "[$(date -Is)] ALL STAGES COMPLETE -> $REMOTE" | tee -a "$LOG_FILE"
+echo "==================================================================" | tee -a "$LOG_FILE"

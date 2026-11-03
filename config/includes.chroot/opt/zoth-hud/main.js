@@ -255,49 +255,66 @@ function getSystemTelemetry() {
             exec("iptables -t nat -L OUTPUT 2>/dev/null | grep -q '9040' || [ -f /run/zoth_ghostmode.state ]", (torErr) => {
               const torActive = (torErr === null) || currentWanInfo.isTor;
 
-              // Uptime
-              let uptimeStr = '0h 00m';
-              try {
-                const upSec = parseFloat(fs.readFileSync('/proc/uptime', 'utf8').split(' ')[0]);
-                const h = Math.floor(upSec / 3600);
-                const m = Math.floor((upSec % 3600) / 60);
-                uptimeStr = `${h}h ${m.toString().padStart(2, '0')}m`;
-              } catch (e) {}
+              // 8. Check Sovereign Daemons
+              const netMod = require('net');
+              const checkP = (p) => new Promise((res) => {
+                const s = netMod.createConnection({ port: p, host: '127.0.0.1', timeout: 80 });
+                s.on('connect', () => { s.destroy(); res(true); });
+                s.on('timeout', () => { s.destroy(); res(false); });
+                s.on('error', () => res(false));
+              });
+              Promise.all([checkP(3000), checkP(8125), checkP(8151), checkP(8145), checkP(8096)]).then(([studioUp, civUp, obsUp, liteUp, vlrUp]) => {
+                // Uptime
+                let uptimeStr = '0h 00m';
+                try {
+                  const upSec = parseFloat(fs.readFileSync('/proc/uptime', 'utf8').split(' ')[0]);
+                  const h = Math.floor(upSec / 3600);
+                  const m = Math.floor((upSec % 3600) / 60);
+                  uptimeStr = `${h}h ${m.toString().padStart(2, '0')}m`;
+                } catch (e) {}
 
-              resolve({
-                cpu: {
-                  pct: cpuPct,
-                  freqGHz: cpuFreqGHz,
-                  tempC,
-                  cores: corePcts,
-                  top: cpuProcs[0] ? `${cpuProcs[0].name} (${Math.round(cpuProcs[0].cpu)}%)` : 'idle'
-                },
-                ram: {
-                  usedGB: ramUsedGB,
-                  totalGB: ramTotalGB,
-                  cachedGB: ramCachedGB,
-                  pct: ramPct
-                },
-                disk: {
-                  freeGB: diskFreeGB,
-                  totalGB: diskTotalGB,
-                  pct: diskPct
-                },
-                net: {
-                  rxKB: netRxKB,
-                  txKB: netTxKB,
-                  wanIp: currentWanInfo.ip,
-                  isTor: currentWanInfo.isTor,
-                  interfaces: netIdentities.slice(0, 3)
-                },
-                processes: {
-                  cpu: cpuProcs,
-                  ram: ramProcs
-                },
-                torActive,
-                sentinelActive: true,
-                aiModel: 'llama3.2:latest',
-                uptime: uptimeStr
+                resolve({
+                  cpu: {
+                    pct: cpuPct,
+                    freqGHz: cpuFreqGHz,
+                    tempC,
+                    cores: corePcts,
+                    top: cpuProcs[0] ? `${cpuProcs[0].name} (${Math.round(cpuProcs[0].cpu)}%)` : 'idle'
+                  },
+                  ram: {
+                    usedGB: ramUsedGB,
+                    totalGB: ramTotalGB,
+                    cachedGB: ramCachedGB,
+                    pct: ramPct
+                  },
+                  disk: {
+                    freeGB: diskFreeGB,
+                    totalGB: diskTotalGB,
+                    pct: diskPct
+                  },
+                  net: {
+                    rxKB: netRxKB,
+                    txKB: netTxKB,
+                    wanIp: currentWanInfo.ip,
+                    isTor: currentWanInfo.isTor,
+                    interfaces: netIdentities.slice(0, 3)
+                  },
+                  processes: {
+                    cpu: cpuProcs,
+                    ram: ramProcs
+                  },
+                  daemons: {
+                    studio: studioUp,
+                    civ: civUp,
+                    obsidian: obsUp,
+                    lite: liteUp,
+                    vaelor: vlrUp
+                  },
+                  torActive,
+                  sentinelActive: true,
+                  aiModel: 'llama3.2:latest',
+                  uptime: uptimeStr
+                });
               });
             });
           });
@@ -412,6 +429,22 @@ ipcMain.on('run-heal', () => {
 
 ipcMain.on('toggle-sentinel', () => {
   spawn('/usr/local/bin/zoth-sentinel-hud', [], { detached: true, stdio: 'ignore' }).unref();
+});
+
+ipcMain.on('launch-tool', (event, cmd) => {
+  const allowed = {
+    'studio': 'xdg-open http://127.0.0.1:3000',
+    'civ': 'xdg-open http://127.0.0.1:8125',
+    'obsidian': 'xdg-open http://127.0.0.1:8151',
+    'lite': 'xdg-open http://127.0.0.1:8145',
+    'vaelor': 'xdg-open http://127.0.0.1:8096',
+    'linux30': 'konsole --title "30 Days of Linux Fundamentals // ZOTHOS" -e /usr/local/bin/linux-30',
+    'nexus': '/usr/local/bin/zoth-tool-nexus',
+    'cockpit': '/usr/local/bin/zoth-cockpit'
+  };
+  if (allowed[cmd]) {
+    exec(`nohup ${allowed[cmd]} >/dev/null 2>&1 &`);
+  }
 });
 
 ipcMain.on('resize-window', (event, { height }) => {
