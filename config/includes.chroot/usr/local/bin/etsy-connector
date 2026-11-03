@@ -20,6 +20,14 @@ LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
 def main():
     args = sys.argv[1:]
+    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
+        import shutil as _sh
+        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
+        elec = _sh.which('electron') or '/usr/local/bin/electron'
+        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
+    if '--tui' in args or (args and args[0] == 'tui'):
+        rem = [a for a in args if a not in ('--tui', 'tui')]
+        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
     if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version', '--help', '-h'):
         env = os.environ.copy()
         if PKG_DIR:

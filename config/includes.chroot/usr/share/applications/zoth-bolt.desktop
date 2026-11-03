@@ -1,0 +1,27 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Bolt Full-Stack Engine
+GenericName=AI Full-Stack Web & Motion IDE
+Comment=Sovereign Zoth Bolt (bolt.diy) AI Full-Stack Web Architect on :5173 with Ollama & 19+ LLM Providers
+Exec=/usr/local/bin/zoth-bolt desktop
+TryExec=/usr/local/bin/zoth-bolt
+Icon=bolt-diy
+Terminal=false
+Categories=Development;IDE;WebDevelopment;ArtificialIntelligence;
+Keywords=zoth;bolt;boltdiy;ai;coding;fullstack;ollama;agent;webcontainer;
+StartupNotify=true
+StartupWMClass=zoth-bolt
+Actions=DevServer;LocalOllama;TUI;
+
+[Desktop Action DevServer]
+Name=Launch Zoth Bolt Web Workstation (:5173)
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bolt Server (:5173)" -e /usr/local/bin/zoth-bolt dev
+
+[Desktop Action LocalOllama]
+Name=Launch Zoth Bolt + Local Ollama (:11434)
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bolt + Ollama" -e /usr/local/bin/zoth-bolt ollama
+
+[Desktop Action TUI]
+Name=Launch Zoth Bolt Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bolt TUI" -e /usr/local/bin/zoth-bolt-tui

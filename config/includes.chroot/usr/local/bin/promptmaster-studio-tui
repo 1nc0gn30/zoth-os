@@ -24,9 +24,10 @@ def braille_sparkline(vals):
 def main():
     ap = argparse.ArgumentParser(description="PromptMaster Studio Sovereign TUI & Benchmark")
     ap.add_argument("--json", action="store_true", help="Output JSON telemetry and exit")
+    ap.add_argument("--status", action="store_true", help="Check live status and render TUI")
     ap.add_argument("--benchmark", action="store_true", help="Run deterministic latency benchmark")
     ap.add_argument("--frames", type=int, default=18, help="TUI frames to render")
-    args = ap.parse_args()
+    args, _ = ap.parse_known_args()
 
     t0 = time.perf_counter()
     samples = [0.5 + 0.45 * math.sin(i * 0.35) for i in range(48)]

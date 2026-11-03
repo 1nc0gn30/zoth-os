@@ -17,6 +17,14 @@ PY_CLI = os.path.expanduser("~/NullAITech/shopify-connector/src/shopify_connecto
 
 def main():
     args = sys.argv[1:]
+    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
+        import shutil as _sh
+        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
+        elec = _sh.which('electron') or '/usr/local/bin/electron'
+        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
+    if '--tui' in args or (args and args[0] == 'tui'):
+        rem = [a for a in args if a not in ('--tui', 'tui')]
+        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
     env = os.environ.copy()
     if os.path.exists(PKG_DIR):
         env["PYTHONPATH"] = PKG_DIR + (os.pathsep + env.get("PYTHONPATH", "") if env.get("PYTHONPATH") else "")

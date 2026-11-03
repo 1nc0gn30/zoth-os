@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pre-load the model the Hermes "zoth" profile actually routes to, with
+# keep_alive=-1 so the weights AND the prompt-prefix cache stay resident.
+# (This used to warm qwen2.5-coder:1.5b, which meant every Hermes session paid
+# a cold model load and the wrong model held the single resident slot.)
+curl --retry 15 --retry-connrefused --retry-delay 1 -s http://127.0.0.1:11434/api/generate -d '{"model": "zoth-fast", "keep_alive": -1}' >/dev/null &

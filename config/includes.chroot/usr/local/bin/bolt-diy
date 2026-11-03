@@ -1,53 +1,200 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse
+"""
+Zoth Bolt (zoth-bolt / bolt.diy) — Sovereign Full-Stack AI Web & Motion Architect CLI
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+100% Free & Open Access
+"""
+import sys, os, json, subprocess, argparse, urllib.request, urllib.error, time, shutil
 
-TOOL_ID = 'bolt.diy'
+TOOL_ID = 'zoth-bolt'
+TOOL_ALIAS = 'bolt.diy'
 TOOL_REPO = 'bolt.diy'
 TOOL_NAME = 'Zoth Bolt'
-TOOL_DESC = 'Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Supports 23+ AI providers, local CLI agents (AGY, Hermes, Grok, Claude, OpenCode, Cline, Aider), 6 Motion Edit templates, 200k+ free SVG & 16-bit Pixel Art icons, MCP asset bridge, and live WebContainers.'
-TOOL_VERSION = '3.5.0'
-TOOL_CATEGORY = 'Autonomous Web'
-TOOL_PORT = 8085
+TOOL_DESC = 'Flagship sovereign full-stack AI web, 3D shader, and motion architect on :5173 with local Ollama, 19+ LLM providers, and WebContainer live synthesis.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'AI Agents & Dev'
+TOOL_PORT = 5173
 REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy')
-PY_CLI = None
-PKG_DIR = None
-STUDIO_URL = f"http://127.0.0.1:8085/tools/{TOOL_ID}"
+SERVER_PY = os.path.expanduser('~/NullAITech/bolt.diy/server.py')
+ELECTRON_MAIN = os.path.expanduser('~/NullAITech/bolt.diy/electron/main.cjs')
+STUDIO_URL = "http://127.0.0.1:3000/tools/zoth-bolt"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+
+def check_daemon():
+    for path in ("/api/health", "/health", "/"):
+        try:
+            req = urllib.request.Request(f"{LOCAL_PORT_URL}{path}")
+            with urllib.request.urlopen(req, timeout=1.5) as resp:
+                if 200 <= resp.status < 400:
+                    body = resp.read().decode("utf-8", errors="ignore")
+                    try:
+                        return json.loads(body)
+                    except Exception:
+                        return {"status": "online", "port": TOOL_PORT}
+        except Exception:
+            pass
+    return None
+
+
+def ensure_daemon(port=TOOL_PORT):
+    status = check_daemon()
+    if status is not None:
+        return status
+    if os.path.exists(SERVER_PY):
+        subprocess.Popen(
+            [sys.executable, SERVER_PY, "--port", str(port)],
+            cwd=REPO_DIR,
+            stdout=open("/tmp/zoth-bolt.log", "a"),
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        for _ in range(25):
+            time.sleep(0.2)
+            status = check_daemon()
+            if status is not None:
+                return status
+    return check_daemon()
+
+
+def api_get(endpoint):
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}")
+        with urllib.request.urlopen(req, timeout=3.0) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def api_post(endpoint, data=None):
+    try:
+        req_data = json.dumps(data or {}).encode("utf-8")
+        req = urllib.request.Request(
+            f"{LOCAL_PORT_URL}{endpoint}",
+            data=req_data,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=5.0) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def launch_electron(extra_args=None):
+    ensure_daemon(TOOL_PORT)
+    electron_bin = shutil.which("electron") or "/usr/local/bin/electron"
+    cmd = [electron_bin, ELECTRON_MAIN] + (extra_args or [])
+    res = subprocess.run(cmd, cwd=REPO_DIR)
+    sys.exit(res.returncode)
+
+
+def launch_tui(extra_args=None):
+    tui_bin = shutil.which("zoth-bolt-tui") or "/usr/local/bin/zoth-bolt-tui"
+    res = subprocess.run([tui_bin] + (extra_args or []))
+    sys.exit(res.returncode)
+
 
 def main():
     args = sys.argv[1:]
-    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json'):
-        env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = os.path.basename(os.path.dirname(PY_CLI)) + '.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-        else:
-            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
-        sys.exit(res.returncode)
+
+    if "--electron" in args:
+        rem = [a for a in args if a != "--electron"]
+        launch_electron(rem)
+    if "--tui" in args:
+        rem = [a for a in args if a != "--tui"]
+        launch_tui(rem)
 
     parser = argparse.ArgumentParser(
-        prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+        prog="zoth-bolt",
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
     )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
+    parser.add_argument("--version", "-v", action="version", version=f"zoth-bolt v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local Zoth Bolt daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local Zoth Bolt workbench URL")
+    parser.add_argument("--port", type=int, default=TOOL_PORT, help="Port for serve subcommand")
+    parser.add_argument("--prompt", type=str, default="", help="Prompt for AI full-stack synthesis")
+    parser.add_argument("--provider", type=str, default="Ollama (Local Sovereign)", help="LLM Provider")
+    parser.add_argument("--model", type=str, default="qwen2.5-coder:32b", help="Model ID")
+    parser.add_argument(
+        "subcommand",
+        nargs="?",
+        choices=[
+            "status", "providers", "templates", "assets", "synthesize",
+            "serve", "dev", "ollama", "desktop", "electron", "tui"
+        ],
+        help="Subcommand (status, serve, dev, ollama, desktop, electron, tui, providers, templates, assets, synthesize)",
+    )
     parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.subcommand in ("desktop", "electron"):
+        launch_electron(unknown)
+
+    if parsed.subcommand == "tui":
+        launch_tui(unknown + (["--json"] if parsed.json else []))
+
+    if parsed.subcommand == "serve":
+        os.execv(sys.executable, [sys.executable, SERVER_PY, "--port", str(parsed.port)])
+
+    if parsed.subcommand in ("dev", "ollama"):
+        daemon_status = ensure_daemon(parsed.port)
+        mode_label = "Ollama Local Sovereign (http://127.0.0.1:11434)" if parsed.subcommand == "ollama" else "Full-Stack Workbench"
+        if parsed.json:
+            print(json.dumps({
+                "tool": TOOL_ID,
+                "name": TOOL_NAME,
+                "mode": mode_label,
+                "url": LOCAL_PORT_URL,
+                "studio_url": STUDIO_URL,
+                "daemon_online": daemon_status is not None,
+                "status": "READY"
+            }, indent=2))
+            return
+        print(f"✦ {TOOL_NAME} [{mode_label}] is LIVE at {LOCAL_PORT_URL}")
+        print(f"  Studio Enclave : {STUDIO_URL}")
+        print(f"  TUI Command    : zoth-bolt-tui")
+        print(f"  Desktop App    : zoth-bolt desktop")
+        return
+
+    daemon_status = ensure_daemon(TOOL_PORT)
+
+    if parsed.subcommand == "providers":
+        print(json.dumps(api_get("/api/providers"), indent=2))
+        return
+
+    if parsed.subcommand == "templates":
+        print(json.dumps(api_get("/api/templates"), indent=2))
+        return
+
+    if parsed.subcommand == "assets":
+        print(json.dumps(api_get("/api/assets"), indent=2))
+        return
+
+    if parsed.subcommand == "synthesize" or parsed.prompt:
+        prompt_text = parsed.prompt or "Build a dark glassmorphic AI telemetry dashboard with real-time charts"
+        res = api_post("/api/synthesize", {
+            "prompt": prompt_text,
+            "provider": parsed.provider,
+            "model": parsed.model,
+        })
+        print(json.dumps(res, indent=2))
+        return
 
     info = {
         "id": TOOL_ID,
+        "alias": TOOL_ALIAS,
         "repo": TOOL_REPO,
         "name": TOOL_NAME,
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
         "installed": os.path.exists(REPO_DIR),
         "repo_path": REPO_DIR,
-        "native_cli": PY_CLI,
+        "native_cli": SERVER_PY,
+        "electron_main": ELECTRON_MAIN,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
+        "daemon_online": daemon_status is not None,
+        "daemon_info": daemon_status,
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
@@ -60,11 +207,28 @@ def main():
         print(json.dumps(info, indent=2))
         return
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
-    print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    if parsed.ui:
+        print(LOCAL_PORT_URL)
+        return
 
-if __name__ == '__main__':
+    if parsed.status or parsed.subcommand == "status":
+        state = "ONLINE" if daemon_status else "OFFLINE"
+        print(f"✦ {TOOL_NAME} Daemon Status: {state} (:{TOOL_PORT}) | Workbench: {LOCAL_PORT_URL}")
+        if isinstance(daemon_status, dict):
+            print(f"  Engine        : {daemon_status.get('service', 'zoth-bolt-sovereign')}")
+            print(f"  Providers     : {daemon_status.get('providers_count', 19)} AI Providers")
+            print(f"  Templates     : {daemon_status.get('templates_count', 8)} Stacks")
+            print(f"  GPU Assets    : {daemon_status.get('gpu_assets_count', 3)} Verified Assets")
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository    : {REPO_DIR}")
+    print(f"  Studio Route  : {STUDIO_URL}")
+    print(f"  Local Port    : {LOCAL_PORT_URL}")
+    print(f"  Daemon        : {'ONLINE' if daemon_status else 'OFFLINE'}")
+    print(f"  Commands      : zoth-bolt [status|dev|ollama|desktop|tui|providers|templates|synthesize]")
+    print(f"  Access        : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
+
+if __name__ == "__main__":
     main()

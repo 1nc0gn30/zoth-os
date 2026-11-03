@@ -29,6 +29,14 @@ def check_daemon_status():
 
 def main():
     args = sys.argv[1:]
+    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
+        import shutil as _sh
+        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
+        elec = _sh.which('electron') or '/usr/local/bin/electron'
+        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
+    if '--tui' in args or (args and args[0] == 'tui'):
+        rem = [a for a in args if a not in ('--tui', 'tui')]
+        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
     # Pass through subcommands to native python cli
     if args and args[0] in ('serve', 'run', 'stats', 'export', 'openapi', 'clear'):
         env = os.environ.copy()

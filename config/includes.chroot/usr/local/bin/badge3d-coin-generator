@@ -8,8 +8,8 @@ TOOL_DESC = '100% in-browser WebGL 3D coin, medallion, and relief badge generato
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Media & 3D'
 TOOL_PORT = 8084
-REPO_DIR = '~/NullAITech/badge3d-coin-generator'
-PKG_DIR = '~/NullAITech/badge3d-coin-generator/src'
+REPO_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator')
+PKG_DIR = os.path.expanduser('~/NullAITech/badge3d-coin-generator/src')
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
@@ -26,6 +26,14 @@ def check_daemon():
 
 def main():
     args = sys.argv[1:]
+    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
+        import shutil as _sh
+        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
+        elec = _sh.which('electron') or '/usr/local/bin/electron'
+        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
+    if '--tui' in args or (args and args[0] == 'tui'):
+        rem = [a for a in args if a not in ('--tui', 'tui')]
+        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
 
     # Check for Zoth wrapper flags first
     if args and args[0] in ('--status', '--json', '--ui'):
