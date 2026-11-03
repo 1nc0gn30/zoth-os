@@ -8,9 +8,9 @@ TOOL_DESC = '100% in-browser acoustic cryptography, PCM audio LSB steganography,
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Security & OpSec'
 TOOL_PORT = 8096
-REPO_DIR = '/home/zoth/NullAITech/audiocipher-stego-engine'
-PY_CLI = '/home/zoth/NullAITech/audiocipher-stego-engine/src/audiocipher_stego_engine/cli.py'
-PKG_DIR = '/home/zoth/NullAITech/audiocipher-stego-engine/src'
+REPO_DIR = '~/NullAITech/audiocipher-stego-engine'
+PY_CLI = '~/NullAITech/audiocipher-stego-engine/src/audiocipher_stego_engine/cli.py'
+PKG_DIR = '~/NullAITech/audiocipher-stego-engine/src'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

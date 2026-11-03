@@ -17,7 +17,7 @@ TOOL_VERSION = "0.5.0"
 TOOL_CATEGORY = "Swarm & Core"
 TOOL_PORT = 8144
 STUDIO_PORT = 3000
-REPO_DIR = "/home/zoth/NullAITech/zela-glasses-guide"
+REPO_DIR = os.path.expanduser("~/NullAITech/zela-glasses-guide")
 STUDIO_URL = f"http://127.0.0.1:{STUDIO_PORT}/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

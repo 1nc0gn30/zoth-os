@@ -8,8 +8,8 @@ TOOL_DESC = 'Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Su
 TOOL_VERSION = '3.5.0'
 TOOL_CATEGORY = 'Autonomous Web'
 TOOL_PORT = 5173
-REPO_DIR = '/home/zoth/NullAITech/bolt.diy'
-SERVER_PY = '/home/zoth/NullAITech/bolt.diy/server.py'
+REPO_DIR = '~/NullAITech/bolt.diy'
+SERVER_PY = '~/NullAITech/bolt.diy/server.py'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

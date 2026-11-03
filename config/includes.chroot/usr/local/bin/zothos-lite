@@ -10,7 +10,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPO_DIR = Path("/home/zoth/NullAITech/zothos-lite")
+REPO_DIR = Path.home() / "NullAITech/zothos-lite"
 PANTHEON_MANIFEST = REPO_DIR / "public" / "assets" / "pantheon" / "pantheon_21_manifest.json"
 PLANETS_MANIFEST = REPO_DIR / "public" / "assets" / "planets" / "star_system_manifest.json"
 TAROT_MANIFEST = REPO_DIR / "public" / "assets" / "tarot3d" / "adytum_22_tarot_manifest.json"

@@ -8,8 +8,8 @@ TOOL_DESC = '100% in-browser WebGL 3D coin, medallion, and relief badge generato
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'Media & 3D'
 TOOL_PORT = 8084
-REPO_DIR = '/home/zoth/NullAITech/badge3d-coin-generator'
-PKG_DIR = '/home/zoth/NullAITech/badge3d-coin-generator/src'
+REPO_DIR = '~/NullAITech/badge3d-coin-generator'
+PKG_DIR = '~/NullAITech/badge3d-coin-generator/src'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

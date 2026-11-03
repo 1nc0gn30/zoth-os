@@ -107,4 +107,5 @@ paths = [
   '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*''',
   '''(?:^|/)config/includes\.chroot/opt/zoth-studio/.*''',
   '''(?:^|/)zoth-studio-v2/.*''',
+  '''(?:^|/)config/includes\.chroot/etc/skel/Documents/Obsidian Vault/.*''',
 ]

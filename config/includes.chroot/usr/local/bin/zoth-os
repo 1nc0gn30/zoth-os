@@ -11,7 +11,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPO_DIR = Path("/home/zoth/NullAITech/zoth-os")
+REPO_DIR = Path.home() / "NullAITech/zoth-os"
 CHROOT_BIN = REPO_DIR / "config" / "includes.chroot" / "usr" / "local" / "bin"
 PKG_LISTS = REPO_DIR / "package-lists"
 PANTHEON_MANIFEST = REPO_DIR / "public" / "assets" / "pantheon" / "pantheon_21_manifest.json"
