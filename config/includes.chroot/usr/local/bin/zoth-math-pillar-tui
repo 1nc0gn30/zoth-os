@@ -1,1 +1,35 @@
-/usr/local/bin/zoth-pill-tui
+#!/usr/bin/env python3
+"""
+Zoth Math Pillar TUI (/usr/local/bin/zoth-math-pillar-tui)
+4-Pillar Mathematical Telemetry & Sovereign System HUD (:9995)
+"""
+import sys, json, urllib.request, time
+
+URL = "http://127.0.0.1:9995/api/telemetry"
+
+def fetch():
+    try:
+        req = urllib.request.urlopen(URL, timeout=2.0)
+        return json.loads(req.read().decode())
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+if "--status" in sys.argv or "--json" in sys.argv:
+    data = fetch()
+    if "--json" in sys.argv:
+        print(json.dumps(data, indent=2))
+    else:
+        p = data.get("pillars", {})
+        print("Zoth Math Pillar v2.4.0 [ONLINE :9995]")
+        for k, v in p.items():
+            print(f"  [{k.upper()}] {v.get('title','')}: {v.get('primary_value','')} ({v.get('formula','')})")
+    sys.exit(0)
+
+if "--help" in sys.argv or "-h" in sys.argv:
+    print("Usage: zoth-math-pillar-tui [--status] [--json] [--help]")
+    sys.exit(0)
+
+data = fetch()
+print("=== ZOTH MATH PILLAR 4-PILLAR TELEMETRY HUD (:9995) ===")
+for k, v in data.get("pillars", {}).items():
+    print(f"• {v.get('title', k)}: {v.get('primary_value')} | {v.get('formula')}")

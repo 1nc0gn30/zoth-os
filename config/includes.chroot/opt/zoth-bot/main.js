@@ -56,7 +56,7 @@ function keyLookup(id, envNames) {
   return secrets.getKey(store.ROOT, envNames, id).value;
 }
 
-// Chromium sandbox: on by default when chrome-sandbox is SUID (tested OK on zoth-pill).
+// Chromium sandbox: on by default when chrome-sandbox is SUID (tested OK on zothos).
 // ZOTH_BOT_NO_SANDBOX=1 restores the old behaviour.
 if (process.env.ZOTH_BOT_NO_SANDBOX === '1') {
   app.commandLine.appendSwitch('no-sandbox');

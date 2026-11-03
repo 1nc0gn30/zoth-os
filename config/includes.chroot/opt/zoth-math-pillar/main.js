@@ -1560,7 +1560,7 @@ function createWindow() {
       setTimeout(async () => {
         try {
           const title = await mainWindow.webContents.executeJavaScript('document.title');
-          console.log(JSON.stringify({ tool: 'zoth-pill', port: HTTP_PORT, status: 'OK', title }));
+          console.log(JSON.stringify({ tool: 'zoth-math-pillar', port: HTTP_PORT, status: 'OK', title }));
           process.exit(0);
         } catch (err) {
           console.error(err);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Zoth Pill & Math Pillar Standalone Telemetry + Web HUD Server (:9995)
+// Zoth Math Pillar & Math Pillar Standalone Telemetry + Web HUD Server (:9995)
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -57,7 +57,7 @@ const agentRegistry = {
         time: new Date().toISOString().slice(11, 19),
         agent: 'Antigravity',
         phase: 'SYNTHESIS',
-        what: 'Zoth Pill & 4-Pillar Telemetry Verification',
+        what: 'Zoth Math Pillar & 4-Pillar Telemetry Verification',
         plainAction: 'Measuring Shannon entropy H(X) and token flux across local swarm',
         plainWhy: 'Guarantees zero-egress mathematical observability on 127.0.0.1:9995',
         note: 'Observed text sample verified via measure.shannonBitsPerChar.',
@@ -156,7 +156,7 @@ const server = http.createServer((req, res) => {
 
   if (req.url === '/health' || req.url === '/api/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'healthy', tool: 'zoth-pill', port: PORT, uptime: process.uptime() }));
+    res.end(JSON.stringify({ status: 'healthy', tool: 'zoth-math-pillar', port: PORT, uptime: process.uptime() }));
     return;
   }
 
@@ -203,8 +203,8 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.url.startsWith('/export')) {
-    const outPath = '/tmp/zoth-pill-telemetry-audit.md';
-    fs.writeFileSync(outPath, `# Zoth Pill Telemetry Audit\nGenerated: ${new Date().toISOString()}\n`, 'utf8');
+    const outPath = '/tmp/zoth-math-pillar-telemetry-audit.md';
+    fs.writeFileSync(outPath, `# Zoth Math Pillar Telemetry Audit\nGenerated: ${new Date().toISOString()}\n`, 'utf8');
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ status: 'ok', exported: true, filePath: outPath, count: agentRegistry.ALL.logs.length }));
     return;
@@ -216,5 +216,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`[zoth-pill] Telemetry & Compact Pill HUD listening on http://127.0.0.1:${PORT}`);
+  console.log(`[zoth-math-pillar] Telemetry & Compact Pill HUD listening on http://127.0.0.1:${PORT}`);
 });

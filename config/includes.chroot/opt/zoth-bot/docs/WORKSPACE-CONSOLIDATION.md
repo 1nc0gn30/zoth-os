@@ -3,7 +3,7 @@
 Canonical root: `~/.config/zothos/zoth-bot/` (override with `ZOTH_BOT_ROOT`).
 It holds state.json, bots/, skills/, workspace/, zoth-bot.db (SQLite), portal-token, keys.enc.json.
 
-Found on zoth-pill (2026-10-17):
+Found on zothos (2026-10-17):
 
 | Path | Files | Used by current code? |
 |---|---|---|

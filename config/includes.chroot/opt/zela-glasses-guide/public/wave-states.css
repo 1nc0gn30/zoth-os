@@ -183,7 +183,7 @@
 }
 
 #liveRelayStatusBox:empty::before {
-  content: 'Status: Ready. Run zoth-guide up on zoth-pill to connect.';
+  content: 'Status: Ready. Run zoth-guide up on zothos to connect.';
   color: var(--text-muted);
   font-style: italic;
 }

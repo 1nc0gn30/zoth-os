@@ -29,8 +29,8 @@ tags = ["pii", "phone"]
 # pack-iso allowlist below inspects.
 [[rules]]
 id = "zoth-machine-home-path"
-description = "Machine home or neo media path. Use ZOTH_HOME. build/pack-iso.sh may delete the nested chroot home."
-regex = '''/(?:home/(zot[h])|media/(ne[o])|home/(ne[o]))(?:/|[^A-Za-z0-9_]|$)'''
+description = "Machine home, neo media path, or personal machine hostname. Use ZOTH_HOME. build/pack-iso.sh may delete the nested chroot home."
+regex = '''(?:^|[^A-Za-z0-9_])(/(?:home/(zot[h])|media/(ne[o])|home/(ne[o]))|zot[h]-pil[l])(?:/|[^A-Za-z0-9_-]|$)'''
 tags = ["pii", "path"]
 
   [[rules.allowlists]]

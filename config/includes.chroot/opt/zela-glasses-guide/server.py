@@ -25,7 +25,7 @@ SCENES = [
     {"id": "s6", "name": "Autonomous Navigation & Hazard Audio Cues", "category": "Mobility", "model": "moondream"}
 ]
 
-CONFIG_YAML = """# ~/.config/zoth-relay/mobile/config.yaml (zoth-pill v0.5.0)
+CONFIG_YAML = """# ~/.config/zoth-relay/mobile/config.yaml (zothos v0.5.0)
 hosts:
   - 127.0.0.1
   - 100.106.132.5

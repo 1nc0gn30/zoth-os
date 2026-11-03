@@ -437,7 +437,7 @@ ipcMain.on('launch-tool', (event, cmd) => {
     'civ': 'xdg-open http://127.0.0.1:9393',
     'obsidian': 'xdg-open http://127.0.0.1:8151',
     'lite': 'xdg-open http://127.0.0.1:8145',
-    'pill': '/usr/local/bin/zoth-pill --pill',
+    'pill': '/usr/local/bin/zoth-math-pillar --pill',
     'bolt': '/usr/local/bin/zoth-bolt desktop',
     'vaelor': 'xdg-open http://127.0.0.1:8096',
     'linux30': 'konsole --title "30 Days of Linux Fundamentals // ZOTHOS" -e /usr/local/bin/linux-30',

@@ -81,7 +81,7 @@ const FEATURED = {
 const SLASH_COMMANDS = [
   { cmd: '/maker', desc: 'Open Zoth Bot Maker — Customize Skin, Face, Body, Gender, Hair, Eyes & Masks' },
   { cmd: '/portal', desc: 'Open Pixel 10 Sovereign Edge Portal & QR Pairing Hub' },
-  { cmd: '/beam', desc: 'Beam Zoth Pill & staged Cargo off-screen to Pixel 10' },
+  { cmd: '/beam', desc: 'Beam Zoth Math Pillar & staged Cargo off-screen to Pixel 10' },
   { cmd: '/status', desc: 'Probe live ZothOS ports, Ring authority & system vitals' },
   { cmd: '/grok', desc: 'Switch neural harness to xAI Grok CLI (grok-4.7)' },
   { cmd: '/hermes', desc: 'Switch neural harness to Nous Hermes Agent' },
@@ -943,7 +943,7 @@ async function executeSlashCommand(raw) {
     const helpLines = [
       'TACTICAL SLASH COMMANDS:',
       '  /portal          — Open Pixel 10 Sovereign Edge Portal & QR Pairing Hub',
-      '  /beam [text]     — Beam Zoth Pill & staged Cargo off-screen to Pixel 10',
+      '  /beam [text]     — Beam Zoth Math Pillar & staged Cargo off-screen to Pixel 10',
       '  /status          — Probe live ZothOS ports, Ring authority & RAM/CPU vitals',
       '  /grok [model]    — Switch neural engine to xAI Grok CLI (default: grok-4.7)',
       '  /hermes [model]  — Switch neural engine to Nous Hermes Agent',
@@ -980,8 +980,8 @@ async function executeSlashCommand(raw) {
     }
     const snap = await api.invoke('portal:handoff', { yPct: 0.45 });
     applySnap(snap);
-    addMsg('sys', 'Beamed Zoth Pill & staged Cargo to Pixel 10 Sovereign Receiver.');
-    announce('Beamed Zoth Pill to Pixel 10');
+    addMsg('sys', 'Beamed Zoth Math Pillar & staged Cargo to Pixel 10 Sovereign Receiver.');
+    announce('Beamed Zoth Math Pillar to Pixel 10');
     return true;
   }
   if (cmd === '/grok') {
@@ -1289,7 +1289,7 @@ if (portalBeamBtn) {
     const docked = state && state.portal && state.portal.dockedOnPhone;
     const snap = await api.invoke(docked ? 'portal:recall' : 'portal:handoff', { yPct: 0.45 });
     applySnap(snap);
-    announce(docked ? 'Recalled Zoth Pill to laptop' : 'Beamed Zoth Pill to Pixel 10');
+    announce(docked ? 'Recalled Zoth Math Pillar to laptop' : 'Beamed Zoth Math Pillar to Pixel 10');
   });
 }
 
