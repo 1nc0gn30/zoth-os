@@ -68,7 +68,7 @@ PRODUCTS = [
         "color": "white",
         "retail": 21.99,
         "cost": 6.80,
-        "blueprint_key": "ceramic_mug_15oz",
+        "blueprint_key": "ceramic_mug_15oz",  # gitleaks:allow
     },
     {
         "id": "prod-04-highland-cow-wreath-mug",
@@ -79,7 +79,7 @@ PRODUCTS = [
         "color": "sage",
         "retail": 22.99,
         "cost": 7.20,
-        "blueprint_key": "ceramic_mug_15oz",
+        "blueprint_key": "ceramic_mug_15oz",  # gitleaks:allow
     },
     {
         "id": "prod-05-french-lavender-tote",

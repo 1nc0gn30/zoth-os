@@ -127,9 +127,9 @@ class TestEnvConfigManager:
         assert raw.get("MODEL") == "test-model"
 
         # Test Set Single
-        success = EnvConfigManager.set("XAI_API_KEY", "xai-test-key-12345", persist=True)
+        success = EnvConfigManager.set("XAI_API_KEY", "EXAMPLE_PLACEHOLDER", persist=True)
         assert success is True
-        assert os.getenv("XAI_API_KEY") == "xai-test-key-12345"
+        assert os.getenv("XAI_API_KEY") == "EXAMPLE_PLACEHOLDER"
 
         # Test Set Multiple
         success = EnvConfigManager.set_multiple({
