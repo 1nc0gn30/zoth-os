@@ -3,30 +3,45 @@
 ZothOS-Lite v1.1 — Amnesic Monotone Desktop GUI, A100 80GB Foundry & Enclave CLI (:8145)
 Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """
+import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
+if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
+    _z_rdir = _z_os.path.expanduser('~/NullAITech/zothos-lite') if _z_os.path.exists(_z_os.path.expanduser('~/NullAITech/zothos-lite/electron/main.cjs')) else '/opt/zothos-lite'
+    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
+    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
+if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
+    _z_sys.exit(_z_sp.run(['/usr/local/bin/zothos-lite-tui'] + _z_rem).returncode)
+
 import argparse
 import json
 import os
+import subprocess
 import sys
 import urllib.request
 from pathlib import Path
 
-REPO_DIR = Path.home() / "NullAITech/zothos-lite"
+REPO_DIR = Path("/opt/zothos-lite") if Path("/opt/zothos-lite/server.js").exists() else (Path.home() / "NullAITech/zothos-lite")
 PANTHEON_MANIFEST = REPO_DIR / "public" / "assets" / "pantheon" / "pantheon_21_manifest.json"
 PLANETS_MANIFEST = REPO_DIR / "public" / "assets" / "planets" / "star_system_manifest.json"
 TAROT_MANIFEST = REPO_DIR / "public" / "assets" / "tarot3d" / "adytum_22_tarot_manifest.json"
 
 def get_status():
     live = {}
+    online = False
     try:
         with urllib.request.urlopen("http://127.0.0.1:8145/api/system-status", timeout=2) as r:
             live = json.loads(r.read().decode())
+            online = True
     except Exception:
         live = {"ok": True, "mode": "standalone"}
     return {
         "id": "zothos-lite",
         "os": "ZothOS-Lite v1.1 (Amnesic Monotone Desktop GUI)",
-        "port": 8147,
+        "port": 8145,
         "url": "http://127.0.0.1:8145",
+        "studio_workbench_url": "http://127.0.0.1:3000/tools/zothos-lite",
+        "daemon_active": online,
         "a100_gpu": "NVIDIA A100-SXM4-80GB (qwen3.8:27b + gemma3:27b + FLUX.1 + LTX-Video 2B)",
         "pantheon_agents": 21,
         "helios_planets": 6,
@@ -39,11 +54,12 @@ def get_status():
 
 def main():
     parser = argparse.ArgumentParser(description="ZothOS-Lite v1.1 — Amnesic Monotone Desktop & A100 Foundry CLI (:8145)")
-    parser.add_argument("action", nargs="?", choices=["status", "pantheon", "planets", "tarot"], help="Action command")
+    parser.add_argument("action", nargs="?", choices=["status", "pantheon", "planets", "tarot", "serve", "desktop", "tui"], help="Action command")
     parser.add_argument("--status", action="store_true", help="Query ZothOS-Lite (:8145) live status and A100 telemetry")
     parser.add_argument("--pantheon", action="store_true", help="List the 21 Pantheon Agent Rigs (U+2800 Braille + 48-Frame Pixel + GLB)")
     parser.add_argument("--planets", action="store_true", help="List the 6 Helios-Zoth Star System planets")
     parser.add_argument("--tarot", action="store_true", help="List the 22 Adytum Tarot Arcana Keys")
+    parser.add_argument("--port", type=int, default=8145, help="Port to bind when serving")
     parser.add_argument("--json", action="store_true", help="Output deterministic JSON")
     parser.add_argument("--version", "-v", action="store_true", help="Show version")
     args = parser.parse_args()
@@ -51,6 +67,11 @@ def main():
     if args.version:
         print("zothos-lite v1.1 (Amnesic Monotone Desktop GUI • A100 80GB Foundry :8145)")
         return
+
+    if args.action == "serve":
+        env = os.environ.copy()
+        env["PORT"] = str(args.port or 8145)
+        sys.exit(subprocess.run(["node", str(REPO_DIR / "server.js")], cwd=str(REPO_DIR), env=env).returncode)
 
     if args.pantheon or args.action == "pantheon":
         data = json.loads(PANTHEON_MANIFEST.read_text()) if PANTHEON_MANIFEST.exists() else {"count": 21, "agents": []}
@@ -80,7 +101,7 @@ def main():
         return
 
     data = get_status()
-    if args.json or args.status or args.action == "status":
+    if args.json or args.status or args.action == "status" or args.action is None:
         print(json.dumps(data, indent=2))
     else:
         parser.print_help()

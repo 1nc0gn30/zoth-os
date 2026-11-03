@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ZothOS-Lite v1.1 × Chain of Thoughts — Motion Edit Compositor (1920x1080 @ 60fps)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #050508;
+      font-family: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    #stage {
+      width: 1920px;
+      height: 1080px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage" width="1920" height="1080"></canvas>
+  <script>
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d');
+
+    const FRAME_FILES = {
+      boot_3d: '/motion-edit/frames/zothos-lite-3d-perspective-agent.png',
+      kali_parrot: '/motion-edit/frames/zothos-lite-final-kali-parrot.png',
+      azoth_visor: '/motion-edit/frames/zothos-lite-azoth-tactical-visor-live.png',
+      azoth_speak: '/motion-edit/frames/zothos-lite-azoth-speaking-live.png',
+      azoth_excited: '/motion-edit/frames/zothos-lite-azoth-excited-live.png',
+      cot_window: '/motion-edit/frames/zothos-lite-chain-of-thoughts-window.png',
+      cot_live: '/motion-edit/frames/zothos-lite-chain-of-thoughts-live.png',
+      horology: '/motion-edit/frames/zothos-lite-niche-horology-popover.png',
+      clean_bars: '/motion-edit/frames/zothos-lite-niche-clock-clean-bars.png',
+      dojo_live: '/motion-edit/frames/zothos-lite-cyber-dojo-live.png',
+      dojo_diploma: '/motion-edit/frames/zothos-lite-dojo-diploma-unlocked.png'
+    };
+
+    const IMAGES = {};
+    window.__IMAGES_READY = false;
+
+    async function preloadAll() {
+      const promises = [];
+      for (const [key, src] of Object.entries(FRAME_FILES)) {
+        const img = new Image();
+        const p = new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+        img.src = src;
+        IMAGES[key] = img;
+        promises.push(p);
+      }
+      if (document.fonts && document.fonts.ready) {
+        promises.push(document.fonts.ready);
+      }
+      await Promise.all(promises);
+      window.__IMAGES_READY = true;
+      window.renderFrame(0);
+    }
+
+    const SCENES = [
+      {
+        id: '01_amnesic_boot',
+        start: 0.0,
+        end: 3.0,
+        tag: '01 // ZOTHOS-LITE v1.1 • AMNESIC MONOTONE EDITION',
+        headline: '100% RAM-ONLY. *ZERO DISK TRACE.*',
+        sub: '3D PERSPECTIVE UNICODE BRAILLE MATRIX • BAYER 8×8 DITHER • 75+ KALI & PARROT TOOLS',
+        cmd: 'zoth-lite-boot --toram --3d-braille-matrix --kali-parrot-parity',
+        mainImg: 'boot_3d',
+        pip1: { img: 'kali_parrot', title: '75+ KALI & PARROT OFFENSIVE CLI TOOLS', badge: 'TIER 0 // OFFENSIVE PARITY' },
+        pip2: { img: 'clean_bars', title: 'MONOTONE 1-BIT X11 DESKTOP & MENUS', badge: 'RAM-ONLY // SQUASHFS TORAM' }
+      },
+      {
+        id: '02_azoth_braille_ai',
+        start: 3.0,
+        end: 6.5,
+        tag: '02 // AZOTH EMBODIED BRAILLE AI AGENT (:8145)',
+        headline: 'IT SPEAKS. IT *MOVES WITH MOOD.*',
+        sub: 'KOKORO 82M ONNX NEURAL TTS • REAL-TIME LIP-SYNC MOUTH • TACTICAL VISOR & STT',
+        cmd: 'azoth-agent --voice af_bella --visor tactical --providers all',
+        mainImg: 'azoth_visor',
+        pip1: { img: 'azoth_speak', title: 'LIP-SYNC MOUTH & KOKORO 82M ONNX VOICE', badge: 'NEURAL TTS // 24KHZ STREAM' },
+        pip2: { img: 'azoth_excited', title: 'REACTIVE KINEMATIC BODY & MOOD STATES', badge: 'EMBODIED // U+2800 BRAILLE' }
+      },
+      {
+        id: '03_chain_of_thoughts',
+        start: 6.5,
+        end: 10.5,
+        tag: '03 // CHAIN OF THOUGHTS (ZOTH-COT) • WORKING MEMORY DAG',
+        headline: 'NEVER FORGETS *WHAT YOU SAID.*',
+        sub: '4-TIER WORKING MEMORY • AUTO ENTITY & FACT PINNING • SHA-256 MERKLE REASONING DAG • MCP SERVER',
+        cmd: 'zoth-cot trace "Recall pinned identity & target" --mcp-stdio active',
+        mainImg: 'cot_window',
+        pip1: { img: 'cot_live', title: 'AUTO-EXTRACTED ENTITIES & PINNED FACTS', badge: 'TIER 1–2 // SEMANTIC VAULT' },
+        pip2: { img: 'azoth_visor', title: 'MERKLE DAG + JSON-RPC 2.0 MCP SERVER', badge: 'TIER 3–4 // 33/33 TESTS PASS' }
+      },
+      {
+        id: '04_horology_cyber_dojo',
+        start: 10.5,
+        end: 14.5,
+        tag: '04 // HOROLOGICAL CHRONOMETER & CYBER DOJO (:8140)',
+        headline: 'HEX SIDEREAL TIME ↔ *CYBER DOJO.*',
+        sub: 'SWATCH .BEATS • GMST • LUNAR PHASE • GAMIFIED CTF TRAINING RANGE & DIPLOMA',
+        cmd: 'zoth-dojo --mission 06 --horology hex,beats,gmst,lunar',
+        mainImg: 'horology',
+        pip1: { img: 'dojo_live', title: 'INTERACTIVE 6-MISSION CYBER DOJO RANGE', badge: 'PORT :8140 // LIVE CTF LAB' },
+        pip2: { img: 'dojo_diploma', title: 'CRYPTOGRAPHIC SOVEREIGN OPERATOR DIPLOMA', badge: 'XP + RANKS // UNLOCKED' }
+      },
+      {
+        id: '05_sovereign_resolve',
+        start: 14.5,
+        end: 18.0,
+        tag: '◈ // 100% FREE & OPEN-ACCESS SOVEREIGNTY',
+        headline: 'ZOTHOS-LITE *× CHAIN OF THOUGHTS*',
+        sub: 'ZOTHOS.NULLAI.TECH • GITHUB.COM/NULLAITECH • ENGINEERED BY 1NC0GN30 • NULLAI (@1NC0GN30)',
+        cmd: 'git clone https://github.com/NullAITech/chain-of-thoughts && zoth-cot status',
+        mainImg: 'cot_window',
+        pip1: { img: 'boot_3d', title: 'NULLAITECH / ZOTHOS-LITE v1.1', badge: 'GITHUB // OPEN-ACCESS ISO' },
+        pip2: { img: 'cot_live', title: 'NULLAITECH / CHAIN-OF-THOUGHTS', badge: 'GITHUB // ZOTH-COT + MCP' }
+      }
+    ];
+
+    const BRAILLE_CHARS = ['⠁','⠃','⠇','⠏','⠟','⠿','⡿','⣿','[::]','◈','▓','░'];
+
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+    function easeOutExpo(x) { return x >= 1 ? 1 : 1 - Math.pow(2, -10 * clamp01(x)); }
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Draw Hero Anchor Shape: Merkle Octagon + Rotating Braille Telemetry Rings
+    function drawHeroAnchor(ctx, cx, cy, radius, t, kick) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      const pulse = 1 + 0.085 * kick;
+      ctx.scale(pulse, pulse);
+
+      const grad = ctx.createRadialGradient(0, 0, radius * 0.1, 0, 0, radius * 1.5);
+      grad.addColorStop(0, 'rgba(245, 208, 97, 0.45)');
+      grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.16)');
+      grad.addColorStop(1, 'rgba(5, 5, 8, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.92)';
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.88, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rotating 3D Perspective Rings
+      const rings = [
+        { rx: radius * 0.96, ry: radius * 0.34, rot: t * 1.05, color: '#F5D061', width: 2.5 },
+        { rx: radius * 0.86, ry: radius * 0.44, rot: -t * 0.8 + 1.1, color: '#FFFFFF', width: 1.8 },
+        { rx: radius * 0.74, ry: radius * 0.28, rot: t * 1.35 + 2.2, color: '#9CA3AF', width: 1.5 }
+      ];
+      rings.forEach(r => {
+        ctx.save();
+        ctx.rotate(r.rot);
+        ctx.strokeStyle = r.color;
+        ctx.lineWidth = r.width;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r.rx, r.ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Merkle Octagon
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + t * 0.35;
+        const px = Math.cos(ang) * radius * 0.62;
+        const py = Math.sin(ang) * radius * 0.62;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Inner Diamond (◈)
+      const dR = radius * 0.34;
+      ctx.fillStyle = '#F5D061';
+      ctx.beginPath();
+      ctx.moveTo(0, -dR);
+      ctx.lineTo(dR, 0);
+      ctx.lineTo(0, dR);
+      ctx.lineTo(-dR, 0);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#050508';
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawPipCard(ctx, img, x, y, w, h, title, badge, accentColor) {
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.94)';
+      ctx.fill();
+      ctx.clip();
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, x, y, w, h);
+      }
+
+      const g = ctx.createLinearGradient(x, y, x, y + h);
+      g.addColorStop(0, 'rgba(5, 5, 8, 0.80)');
+      g.addColorStop(0.28, 'rgba(5, 5, 8, 0.05)');
+      g.addColorStop(0.68, 'rgba(5, 5, 8, 0.12)');
+      g.addColorStop(1, 'rgba(5, 5, 8, 0.92)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.fillStyle = accentColor;
+      ctx.font = '700 13px "JetBrains Mono", monospace';
+      ctx.fillText(badge, x + 16, y + 24);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 17px "Inter", sans-serif';
+      ctx.fillText(title, x + 16, y + h - 16);
+      ctx.restore();
+
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Draw live Chain of Thoughts 4-Tier Merkle DAG overlay widget
+    function drawMerkleDagWidget(ctx, x, y, w, h, t, kick) {
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.fillStyle = 'rgba(7, 7, 11, 0.92)';
+      ctx.fill();
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '700 13px "JetBrains Mono", monospace';
+      ctx.fillText('◈ ZOTH-COT // 4-TIER WORKING MEMORY & MERKLE DAG', x + 18, y + 26);
+
+      const nodes = [
+        { label: 'T1: PINNED FACTS', sub: 'Name: 1nc0gn30 • Target: 10.10.14.8', nx: x + 78, ny: y + 72 },
+        { label: 'T2: ENTITY GRAPH', sub: 'IPs • Ports • CVEs • Tools', nx: x + 235, ny: y + 72 },
+        { label: 'T3: CHECKPOINT', sub: 'Rolling Summary Synthesis', nx: x + 392, ny: y + 72 },
+        { label: 'T4: MERKLE DAG', sub: 'SHA-256 Parent-Linked Trace', nx: x + 548, ny: y + 72 }
+      ];
+
+      // Connecting edges with animated pulse
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const a = nodes[i], b = nodes[i + 1];
+        ctx.strokeStyle = 'rgba(245, 208, 97, 0.55)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(a.nx + 55, a.ny);
+        ctx.lineTo(b.nx - 55, b.ny);
+        ctx.stroke();
+
+        const p = (t * 1.8 + i * 0.3) % 1;
+        const px = (a.nx + 55) + ((b.nx - 55) - (a.nx + 55)) * p;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(px, a.ny, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      nodes.forEach((n, idx) => {
+        const active = Math.floor(t * 2) % 4 === idx;
+        roundRectPath(ctx, n.nx - 68, n.ny - 24, 136, 52, 8);
+        ctx.fillStyle = active ? 'rgba(245, 208, 97, 0.22)' : 'rgba(255, 255, 255, 0.05)';
+        ctx.fill();
+        ctx.strokeStyle = active ? '#F5D061' : 'rgba(255, 255, 255, 0.28)';
+        ctx.lineWidth = active ? 2 : 1.2;
+        ctx.stroke();
+
+        ctx.fillStyle = active ? '#F5D061' : '#FFFFFF';
+        ctx.font = '800 12px "JetBrains Mono", monospace';
+        ctx.fillText(n.label, n.nx - 58, n.ny - 4);
+
+        ctx.fillStyle = '#D1D5DB';
+        ctx.font = '600 10px "Inter", sans-serif';
+        ctx.fillText(n.sub.slice(0, 22), n.nx - 58, n.ny + 14);
+      });
+
+      ctx.restore();
+    }
+
+    window.renderFrame = function(t) {
+      const W = 1920;
+      const H = 1080;
+      const D = 18.0;
+      const spb = 60.0 / 128.0;
+      const beatPhase = (t % spb) / spb;
+      const kick = Math.exp(-beatPhase * 4.4);
+
+      const scene = SCENES.find(s => t >= s.start && t < s.end) || SCENES[SCENES.length - 1];
+      const sceneProgress = clamp01((t - scene.start) / (scene.end - scene.start));
+
+      ctx.fillStyle = '#050508';
+      ctx.fillRect(0, 0, W, H);
+
+      // 1. Draw Main Live VM Screenshot Layer with Beat Zoom
+      const mainImg = IMAGES[scene.mainImg];
+      const zoom = 1.0 + 0.016 * kick + 0.024 * sceneProgress;
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-W / 2, -H / 2);
+      if (mainImg && mainImg.complete && mainImg.naturalWidth > 0) {
+        ctx.drawImage(mainImg, 0, 0, W, H);
+      }
+      ctx.restore();
+
+      // 2. Subtle 3D Perspective Braille Matrix Horizon Overlay
+      ctx.save();
+      ctx.fillStyle = 'rgba(245, 208, 97, 0.14)';
+      ctx.font = '700 14px "JetBrains Mono", monospace';
+      for (let gx = 80; gx < W - 80; gx += 120) {
+        const idx = Math.floor((gx * 0.03 + t * 8)) % BRAILLE_CHARS.length;
+        const ch = BRAILLE_CHARS[Math.abs(idx)];
+        const gy = 135 + Math.sin(t * 2.2 + gx * 0.01) * 10;
+        ctx.fillText(ch, gx, gy);
+      }
+      ctx.restore();
+
+      // 3. Top & Bottom High-Contrast Cinematic Vignettes
+      const topGrad = ctx.createLinearGradient(0, 0, 0, 165);
+      topGrad.addColorStop(0, 'rgba(5, 5, 8, 0.95)');
+      topGrad.addColorStop(1, 'rgba(5, 5, 8, 0.0)');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0, 0, W, 165);
+
+      const botGrad = ctx.createLinearGradient(0, H - 430, 0, H);
+      botGrad.addColorStop(0, 'rgba(5, 5, 8, 0.0)');
+      botGrad.addColorStop(0.32, 'rgba(5, 5, 8, 0.84)');
+      botGrad.addColorStop(1, 'rgba(5, 5, 8, 0.98)');
+      ctx.fillStyle = botGrad;
+      ctx.fillRect(0, H - 430, W, 430);
+
+      // 4. Top Telemetry Header Bar
+      ctx.save();
+      roundRectPath(ctx, 64, 34, W - 128, 64, 12);
+      ctx.fillStyle = 'rgba(10, 10, 16, 0.88)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(245, 208, 97, 0.45)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 16px "JetBrains Mono", monospace';
+      ctx.fillText('▓ ZOTHOS-LITE v1.1  ×  ◈ CHAIN OF THOUGHTS (ZOTH-COT)', 92, 72);
+
+      // Niche Horological Chronometer readout in top right
+      const hexHour = Math.floor((t / D) * 16).toString(16).toUpperCase();
+      const beats = (253.4 + t * 0.4).toFixed(1);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '700 15px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`[ ◈ 0${hexHour}:F7 · @${beats}.beats · GMST 06:41 · 100% FREE & OPEN-ACCESS ]`, W - 92, 72);
+      ctx.textAlign = 'left';
+      ctx.restore();
+
+      // 5. Right-Side Picture-in-Picture Bento Cards
+      const pipEnter = easeOutExpo((t - scene.start) / 0.55);
+      const pipX = W - 490 + (1 - pipEnter) * 90;
+      if (scene.pip1) {
+        drawPipCard(ctx, IMAGES[scene.pip1.img], pipX, 132, 426, 236, scene.pip1.title, scene.pip1.badge, '#F5D061');
+      }
+      if (scene.pip2) {
+        drawPipCard(ctx, IMAGES[scene.pip2.img], pipX, 388, 426, 236, scene.pip2.title, scene.pip2.badge, '#FFFFFF');
+      }
+
+      // 6. Scene 3 & 5 Special Widget: 4-Tier Merkle Reasoning DAG
+      if (scene.id === '03_chain_of_thoughts' || scene.id === '05_sovereign_resolve') {
+        drawMerkleDagWidget(ctx, 64, 595, 636, 122, t, kick);
+      }
+
+      // 7. Hero Anchor Shape (Merkle Octagon ◈)
+      const anchorX = scene.id === '05_sovereign_resolve' ? 136 : 118;
+      const anchorY = 795;
+      drawHeroAnchor(ctx, anchorX, anchorY, 44, t, kick);
+
+      // 8. Scene Tag Badge
+      const textX = 186;
+      ctx.save();
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 17px "JetBrains Mono", monospace';
+      ctx.fillText(scene.tag, textX, 766);
+
+      // 9. Kinetic Word-by-Word Headline with Gold Accent (*WORD*)
+      const words = scene.headline.split(' ');
+      let curX = textX;
+      const baseY = 838;
+      ctx.font = '900 62px "Inter", sans-serif';
+      let inAccent = false;
+
+      words.forEach((rawWord, wIdx) => {
+        const wStart = scene.start + wIdx * 0.075;
+        const wProg = easeOutExpo((t - wStart) / 0.48);
+        if (rawWord.startsWith('*')) inAccent = true;
+        const cleanWord = rawWord.replace(/\*/g, '');
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(curX - 6, baseY - 72, 900, 92);
+        ctx.clip();
+
+        const yOffset = (1 - wProg) * 58;
+        ctx.fillStyle = inAccent ? '#F5D061' : '#FFFFFF';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 16;
+        ctx.fillText(cleanWord, curX, baseY + yOffset);
+        ctx.restore();
+
+        curX += ctx.measureText(cleanWord + ' ').width;
+        if (rawWord.endsWith('*')) inAccent = false;
+      });
+
+      // 10. Subtitle Line
+      ctx.fillStyle = '#E5E7EB';
+      ctx.font = '700 20px "JetBrains Mono", monospace';
+      ctx.fillText(scene.sub, textX, 882);
+
+      // 11. Live Terminal Command Pill + Timeline Progress Bar
+      roundRectPath(ctx, 64, 922, W - 128, 72, 12);
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.94)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      const typedLen = Math.floor(clamp01((t - scene.start) / 1.35) * scene.cmd.length);
+      const caret = Math.floor(t * 4.8) % 2 === 0 ? '█' : '';
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '700 20px "JetBrains Mono", monospace';
+      ctx.fillText('root@zothos-lite:~# ', 92, 965);
+      const promptW = ctx.measureText('root@zothos-lite:~# ').width;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(scene.cmd.slice(0, typedLen) + caret, 92 + promptW, 965);
+
+      ctx.fillStyle = '#9CA3AF';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`github.com/NullAITech  •  ${t.toFixed(1)}s / ${D.toFixed(1)}s`, W - 92, 965);
+      ctx.textAlign = 'left';
+
+      // Bottom Beat Progress Bar
+      const progW = (W - 128) * clamp01(t / D);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.fillRect(64, 1014, W - 128, 6);
+      ctx.fillStyle = '#F5D061';
+      ctx.fillRect(64, 1014, progW, 6);
+
+      ctx.restore();
+    };
+
+    preloadAll();
+  </script>
+</body>
+</html>

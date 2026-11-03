@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+echo "║  peas // LINPEAS AMNESIC LINUX PRIVILEGE ESCALATION & KERNEL HARDENING AUDIT ║"
+echo "╚══════════════════════════════════════════════════════════════════════════════╝"
+echo "[+] OS & Kernel     : $(uname -a)"
+echo "[+] Current User    : $(id)"
+echo "[+] SUID Binaries   : $(find /usr/bin -perm -4000 2>/dev/null | tr '\n' ' ')"
+echo "[+] Listening Ports : $(ss -tulpn 2>/dev/null | awk 'NR>1 {print $5}' | head -n 10 | tr '\n' ' ')"
+echo "[+] RAM Mounts      : $(df -hT / /dev/shm /tmp 2>/dev/null | awk 'NR>1 {print $1\"(\"$2\":\"$6\")\"}' | tr '\n' ' ')"
+echo "[+] ASLR Status     : randomize_va_space=$(cat /proc/sys/kernel/randomize_va_space 2>/dev/null)"

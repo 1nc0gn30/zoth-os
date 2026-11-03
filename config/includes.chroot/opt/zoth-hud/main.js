@@ -434,9 +434,11 @@ ipcMain.on('toggle-sentinel', () => {
 ipcMain.on('launch-tool', (event, cmd) => {
   const allowed = {
     'studio': 'xdg-open http://127.0.0.1:3000',
-    'civ': 'xdg-open http://127.0.0.1:8125',
+    'civ': 'xdg-open http://127.0.0.1:9393',
     'obsidian': 'xdg-open http://127.0.0.1:8151',
     'lite': 'xdg-open http://127.0.0.1:8145',
+    'pill': '/usr/local/bin/zoth-pill --pill',
+    'bolt': '/usr/local/bin/zoth-bolt desktop',
     'vaelor': 'xdg-open http://127.0.0.1:8096',
     'linux30': 'konsole --title "30 Days of Linux Fundamentals // ZOTHOS" -e /usr/local/bin/linux-30',
     'nexus': '/usr/local/bin/zoth-tool-nexus',

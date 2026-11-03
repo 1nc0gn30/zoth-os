@@ -2154,7 +2154,39 @@
   </div>
 
   <script>
-    const ipcRenderer = window.zothIpc; // preload bridge (contextIsolation)
+    const ipcRenderer = window.zothIpc || {
+      _listeners: {},
+      send(channel, ...args) {
+        if (channel === 'export-telemetry') {
+          fetch(`/export?agent=${encodeURIComponent(args[0] || 'ALL')}`).then(r => r.json()).then(res => {
+            (this._listeners['export-result'] || []).forEach(fn => fn({}, { success: res.status === 'ok', filePath: res.filePath, count: res.count, error: res.error }));
+          }).catch(() => {});
+        } else if (channel === 'request-telemetry') {
+          fetch('/active').then(r => r.json()).then(payload => {
+            (this._listeners['telemetry-update'] || []).forEach(fn => fn({}, payload));
+          }).catch(() => {});
+        }
+      },
+      on(channel, cb) {
+        if (!this._listeners[channel]) this._listeners[channel] = [];
+        this._listeners[channel].push(cb);
+      }
+    };
+    if (!window.zothIpc) {
+      document.documentElement.style.setProperty('background', '#06070B', 'important');
+      document.body.style.setProperty('background', '#06070B', 'important');
+      document.body.style.setProperty('overflow', 'auto', 'important');
+      const rootEl = document.getElementById('pillar-root');
+      if (rootEl) {
+        rootEl.style.maxWidth = '960px';
+        rootEl.style.margin = '12px auto';
+        rootEl.style.minHeight = '720px';
+      }
+      setInterval(() => ipcRenderer.send('request-telemetry'), 2000);
+    }
+    if (window.location.search.includes('pill=1') || window.location.hash.includes('pill')) {
+      document.body.classList.add('compact-mode');
+    }
 
     let currentRegistry = {};
     let currentInsights = {};

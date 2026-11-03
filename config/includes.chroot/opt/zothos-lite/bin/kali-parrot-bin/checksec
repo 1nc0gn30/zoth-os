@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+import sys, subprocess, os
+
+target = "/bin/bash"
+for arg in sys.argv[1:]:
+    if arg.startswith("--file="):
+        target = arg.split("=", 1)[1]
+    elif not arg.startswith("-"):
+        target = arg
+
+if not os.path.exists(target):
+    print(f"[!] checksec: file not found: {target}")
+    sys.exit(1)
+
+def run(cmd):
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout
+
+hdr = run(f"readelf -h {target} 2>/dev/null")
+dyn = run(f"readelf -d {target} 2>/dev/null")
+prog = run(f"readelf -l {target} 2>/dev/null")
+syms = run(f"readelf -s {target} 2>/dev/null")
+
+relro = "Full RELRO" if ("BIND_NOW" in dyn and "GNU_RELRO" in prog) else ("Partial RELRO" if "GNU_RELRO" in prog else "No RELRO")
+canary = "Canary found" if "__stack_chk_fail" in syms else "No canary found"
+nx = "NX enabled" if "GNU_STACK" in prog and "RWE" not in prog else "NX disabled"
+pie = "PIE enabled" if "DYN (Position-Independent Executable" in hdr or "DYN (Shared object" in hdr else "No PIE"
+fortify = "FORTIFY" if "_chk@" in syms else "No FORTIFY"
+
+print("╔══════════════════════════════════════════════════════════════════════════════╗")
+print(f"║ 🛡️  KALI/PARROT CHECKSEC // ELF BINARY HARDENING AUDIT: {os.path.basename(target):<20} ║")
+print("╚══════════════════════════════════════════════════════════════════════════════╝")
+print(f"  FILE      : {os.path.abspath(target)}")
+print(f"  RELRO     : {relro}")
+print(f"  STACK CAN : {canary}")
+print(f"  NX BIT    : {nx}")
+print(f"  PIE       : {pie}")
+print(f"  FORTIFY   : {fortify}")

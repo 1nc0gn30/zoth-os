@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+import sys, socket
+host = next((a for a in sys.argv[1:] if not a.startswith("-") and not a.startswith("@")), "localhost")
+print(f"; <<>> DiG 9.18.28-Debian (ZothOS-Lite) <<>> {host}")
+try:
+    infos = socket.getaddrinfo(host, None)
+    seen = set()
+    for info in infos:
+        ip = info[4][0]
+        if ip not in seen:
+            seen.add(ip)
+            rtype = "AAAA" if ":" in ip else "A"
+            print(f"{host}.\t\t300\tIN\t{rtype}\t{ip}")
+except Exception as e:
+    print(f";; resolution status: {e} (Amnesic Zero-Egress DNS Guard)")

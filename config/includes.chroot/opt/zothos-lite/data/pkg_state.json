@@ -1,0 +1,28 @@
+{
+  "pulledTools": {
+    "promptmaster-security-lab": {
+      "mode": "RAM_TMPFS",
+      "pulledAt": "2026-10-26T16:50:00Z"
+    },
+    "webmcp-protocol-inspector": {
+      "mode": "RAM_TMPFS",
+      "pulledAt": "2026-10-26T16:50:00Z"
+    },
+    "neuro-memory-daemon": {
+      "mode": "RAM_TMPFS",
+      "pulledAt": "2026-10-26T21:03:29.974Z"
+    }
+  },
+  "amnesiaConfig": {
+    "ramOnlyMode": true,
+    "torStrictKillswitch": true,
+    "macSpoofing": true,
+    "spoofedMac": "02:42:ac:11:00:7f",
+    "luksPersistenceUnlocked": false,
+    "usbKillswitchArmed": true,
+    "baseIsoSizeMb": 840
+  },
+  "daemonStates": {
+    "swarm-conductor-daemon": true
+  }
+}

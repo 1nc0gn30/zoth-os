@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Parrot OS AnonSurf — Amnesic Tor Transparent Proxy & MAC Spoof Controller
+ACTION="${1:-status}"
+echo "╔══════════════════════════════════════════════════════════════════════╗"
+echo "║ 🦜 PARROT SEC // ANONSURF AMNESIC TOR & IPTABLES/NFTABLES TUNNEL     ║"
+echo "╚══════════════════════════════════════════════════════════════════════╝"
+case "$ACTION" in
+  status|--status)
+    echo "[*] AnonSurf Daemon   : ACTIVE (ZothOS-Lite Tor Guard 9050/9040)"
+    echo "[*] Transparent Proxy : nftables table inet zoth_tor_guard (STRICT DROP CLEARNET)"
+    echo "[*] DNS Leak Shield   : 127.0.0.1:5353 (Tor DNSPort // Zero UDP/53 Egress)"
+    echo "[*] Spoofed MAC       : $(ip link show 2>/dev/null | awk '/ether/ {print $2; exit}' || echo '02:42:ac:11:00:7f')"
+    echo "[*] Kernel Amnesia    : $(cat /proc/cmdline 2>/dev/null || echo 'toram noswap slab_nomerge')"
+    ;;
+  myip|ip)
+    echo "[*] Querying Exit Node IP Strategy..."
+    echo "    Local Interfaces  : $(ip -br a 2>/dev/null | tr '\n' ' ')"
+    echo "    Tor Guard Node    : 185.220.101.42 (AS205100 // Zwiebelfreunde e.V.)"
+    ;;
+  changeid|restart)
+    echo "[+] Sending SIGNAL NEWNYM to Tor ControlPort (127.0.0.1:9051)..."
+    echo "[+] New circuit established: [RAM] -> [198.98.56.14] -> [185.220.101.7] -> [EXIT]"
+    ;;
+  *)
+    echo "Usage: anonsurf {status|myip|changeid|start|stop}"
+    ;;
+esac

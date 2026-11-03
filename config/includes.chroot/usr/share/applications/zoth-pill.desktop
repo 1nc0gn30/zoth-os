@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Pill (4-Pillar Math HUD)
+Comment=Real-Time 4-Pillar Mathematical Security & Compute Telemetry HUD (:9995)
+Exec=/usr/local/bin/zoth-pill desktop
+Icon=/usr/share/pixmaps/zothos.png
+Terminal=false
+Categories=System;Security;Monitor;
+Keywords=zoth;pill;math;telemetry;hud;security;
+StartupNotify=false

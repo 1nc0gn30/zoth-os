@@ -930,9 +930,17 @@ function startHttpServer() {
       return;
     }
 
+    if (req.url === '/' || req.url.startsWith('/index.html') || req.url.startsWith('/?')) {
+      const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(html);
+      return;
+    }
+
     res.writeHead(404); res.end();
   });
 
+  server.on('error', () => {});
   server.listen(HTTP_PORT, '127.0.0.1', () => {
     console.log(`[Math Pillar] Telemetry HTTP listening on 127.0.0.1:${HTTP_PORT}`);
   });
@@ -940,6 +948,7 @@ function startHttpServer() {
 
 function startUdpServer() {
   const socket = dgram.createSocket('udp4');
+  socket.on('error', () => {});
   socket.on('message', (msg) => {
     try {
       const data = JSON.parse(msg.toString());
@@ -1508,9 +1517,12 @@ function saveConfig(cfg) {
 }
 
 function createWindow() {
+  const IS_SMOKE = process.argv.includes('--smoke-test');
+  const IS_PILL = process.argv.includes('--pill') || process.argv.includes('--compact');
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   const cfg = loadConfig();
+  if (IS_PILL) cfg.compact = true;
 
   const winW = cfg.compact ? 340 : 480;
   const winH = cfg.compact ? 72 : 760;
@@ -1524,6 +1536,7 @@ function createWindow() {
     height: winH,
     x: posX,
     y: posY,
+    show: !IS_SMOKE,
     transparent: true,
     frame: false,
     alwaysOnTop: cfg.alwaysOnTop !== false,
@@ -1540,7 +1553,22 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'index.html'), IS_PILL ? { search: 'pill=1' } : undefined);
+
+  if (IS_SMOKE) {
+    mainWindow.webContents.once('dom-ready', () => {
+      setTimeout(async () => {
+        try {
+          const title = await mainWindow.webContents.executeJavaScript('document.title');
+          console.log(JSON.stringify({ tool: 'zoth-pill', port: HTTP_PORT, status: 'OK', title }));
+          process.exit(0);
+        } catch (err) {
+          console.error(err);
+          process.exit(1);
+        }
+      }, 400);
+    });
+  }
 
   mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
     console.log(`[Renderer Console] [lvl:${level}] ${message} (at line ${line})`);

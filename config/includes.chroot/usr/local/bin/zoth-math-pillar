@@ -1,38 +1,73 @@
-#!/usr/bin/env bash
-# ==============================================================================
-#  ZOTHOS MATHEMATICAL PILLAR TELEMETRY GAUGE HUD v1.0
-# ==============================================================================
-set -euo pipefail
+#!/usr/bin/env python3
+"""
+Zoth Pill (zoth-pill / zoth-math-pillar) — Compact Pill HUD & 4-Pillar Mathematical Telemetry Engine (:9995)
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+"""
+import os
+import sys
+import json
+import subprocess
+import urllib.request
 
-APP_DIR="/opt/zoth-math-pillar"
+APP_DIR = "/opt/zoth-math-pillar"
+PORT = 9995
 
-# Resolve Electron binary
-ELECTRON_BIN=""
-for e in /usr/local/bin/electron /usr/bin/electron /opt/electron/electron "$(which electron 2>/dev/null || true)"; do
-    if [[ -n "$e" && -x "$e" ]]; then
-        ELECTRON_BIN="$e"
-        break
-    fi
-done
+def get_status():
+    live = {}
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/active", timeout=1.5) as r:
+            live = json.loads(r.read().decode())
+    except Exception:
+        live = {"status": "standby"}
+    return {
+        "id": "zoth-pill",
+        "alias": "zoth-math-pillar",
+        "name": "Zoth Pill — Mathematical Telemetry & Compact Pill HUD",
+        "port": PORT,
+        "udp_port": 9996,
+        "url": f"http://127.0.0.1:{PORT}",
+        "modes": ["Compact Pill Mode (--pill)", "4-Pillar Full HUD", "Braille TUI (zoth-pill-tui)", "Local Web HUD (:9995)"],
+        "pillars": [
+            "Pillar I: Shannon Entropy H(X) & Perplexity 2^H",
+            "Pillar II: Token Flux & Kinematic Velocity (dT/dt)",
+            "Pillar III: Context Cylinder & KV Cache Volume",
+            "Pillar IV: Empirical Markov Step Transition Matrix",
+        ],
+        "live": bool(live.get("registry")),
+        "engineered_by": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
+        "license": "100% Free & Open Access (Zero Paywalls)",
+    }
 
-if [[ -z "$ELECTRON_BIN" ]]; then
-    echo "[!] Electron binary not found." >&2
-    exit 1
-fi
+def launch_electron(extra_args):
+    env = os.environ.copy()
+    env.pop("ELECTRON_RUN_AS_NODE", None)
+    for e in ["/usr/local/bin/electron", "/usr/bin/electron", "/opt/electron/electron"]:
+        if os.path.isfile(e) and os.access(e, os.X_OK):
+            cmd = [e, "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu-sandbox", "--enable-transparent-visuals", APP_DIR] + extra_args
+            if "--smoke-test" in extra_args:
+                if not env.get("DISPLAY") and not env.get("WAYLAND_DISPLAY"):
+                    cmd = ["xvfb-run", "-a"] + cmd
+                sys.exit(subprocess.call(cmd, env=env))
+            subprocess.Popen(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            print(json.dumps({"status": "launched", "tool": "zoth-pill", "mode": "pill" if "--pill" in extra_args else "hud", "port": PORT}))
+            sys.exit(0)
+    print("Electron binary not found", file=sys.stderr)
+    sys.exit(1)
 
-if [[ -z "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
-    echo "[!] No graphical display environment found (DISPLAY or WAYLAND_DISPLAY)." >&2
-    exit 1
-fi
+def main():
+    args = sys.argv[1:]
+    if "tui" in args or "--tui" in args:
+        rem = [a for a in args if a not in ("tui", "--tui")]
+        os.execv("/usr/local/bin/zoth-pill-tui", ["/usr/local/bin/zoth-pill-tui"] + rem)
+    if "--help" in args or "-h" in args:
+        print("Usage: zoth-pill [desktop|--electron] [--pill|--compact] [tui|--tui] [--status] [--json] [--smoke-test]")
+        sys.exit(0)
+    if "--status" in args or "--json" in args or "status" in args:
+        print(json.dumps(get_status(), indent=2))
+        sys.exit(0)
+    if "desktop" in args or "--electron" in args or "--pill" in args or "--compact" in args or "--smoke-test" in args or not args:
+        extra = [a for a in args if a not in ("desktop", "--electron")]
+        launch_electron(extra)
 
-if [[ ! -f "$APP_DIR/main.js" ]]; then
-    echo "[!] Math Pillar application files not found at $APP_DIR." >&2
-    exit 1
-fi
-
-exec "$ELECTRON_BIN" \
-    --no-sandbox \
-    --disable-dev-shm-usage \
-    --disable-gpu-sandbox \
-    --enable-transparent-visuals \
-    "$APP_DIR" "$@"
+if __name__ == "__main__":
+    main()

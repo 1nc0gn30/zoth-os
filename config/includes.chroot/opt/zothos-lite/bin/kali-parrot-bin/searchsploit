@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import sys
+query = " ".join([a for a in sys.argv[1:] if not a.startswith("-")]).lower() or "linux kernel"
+db = [
+    ("Linux Kernel 6.x - io_uring Privilege Escalation (CVE-2024-0582)", "linux/local/51902.c"),
+    ("Linux Kernel - Netfilter nf_tables Use-After-Free (CVE-2024-1086)", "linux/local/51984.c"),
+    ("OpenSSH < 9.8p1 - regreSSHion SIGALRM Race Condition (CVE-2024-6387)", "linux/remote/52091.py"),
+    ("glibc < 2.39 - syslog() Heap Buffer Overflow (CVE-2023-6246)", "linux/local/51811.py"),
+    ("BlueZ HFP/A2DP - Bluetooth Stack Audio Channel Injection", "linux/dos/51409.txt"),
+    ("WebMCP / Agent JSON-RPC - Indirect Prompt Injection Bypass", "multi/remote/zoth_001.md"),
+]
+print("-------------------------------------------------------------------------------- ---------------------------------")
+print(" Exploit Title                                                                  |  Path")
+print("-------------------------------------------------------------------------------- ---------------------------------")
+matches = [r for r in db if any(w in r[0].lower() or w in r[1].lower() for w in query.split())] or db
+for title, path in matches:
+    print(f" {title:<78} | {path}")
+print("-------------------------------------------------------------------------------- ---------------------------------")

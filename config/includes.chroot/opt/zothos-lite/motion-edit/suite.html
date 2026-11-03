@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ZothOS-Lite v1.1 — Multi-Reel Motion Edit Compositor (60fps)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      overflow: hidden;
+      background: #040407;
+      font-family: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    #stage {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage" width="1920" height="1080"></canvas>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const REEL = params.get('reel') || 'hero';
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d');
+
+    if (REEL === 'vertical') {
+      canvas.width = 1080;
+      canvas.height = 1920;
+      document.documentElement.style.width = '1080px';
+      document.documentElement.style.height = '1920px';
+      document.body.style.width = '1080px';
+      document.body.style.height = '1920px';
+    } else {
+      canvas.width = 1920;
+      canvas.height = 1080;
+    }
+
+    const FRAME_FILES = {
+      cathedral_3d: '/motion-edit/frames/zothos-lite-3d-cathedral-bg.png',
+      singularity_3d: '/motion-edit/frames/zothos-lite-3d-singularity-bg.png',
+      konsole_direct: '/motion-edit/frames/zothos-lite-direct-konsole-live.png',
+      konsole_2504: '/motion-edit/frames/zothos-lite-konsole-2504-live.png',
+      vaelor_dag: '/motion-edit/frames/zothos-lite-vaelor-dag-explorer.png',
+      vaelor_pouw: '/motion-edit/frames/zothos-lite-vaelor-pouw-thermals.png',
+      zoth_node_dual: '/motion-edit/frames/zothos-lite-zoth-node-konsole-dual.png',
+      azoth_visor: '/motion-edit/frames/zothos-lite-azoth-tactical-visor-live.png',
+      azoth_speak: '/motion-edit/frames/zothos-lite-azoth-speaking-live.png',
+      azoth_excited: '/motion-edit/frames/zothos-lite-azoth-excited-live.png',
+      cot_window: '/motion-edit/frames/zothos-lite-chain-of-thoughts-window.png',
+      cot_live: '/motion-edit/frames/zothos-lite-chain-of-thoughts-live.png',
+      boot_3d: '/motion-edit/frames/zothos-lite-3d-perspective-agent.png',
+      kali_parrot: '/motion-edit/frames/zothos-lite-final-kali-parrot.png',
+      dojo_live: '/motion-edit/frames/zothos-lite-cyber-dojo-live.png',
+      horology: '/motion-edit/frames/zothos-lite-niche-horology-popover.png'
+    };
+
+    const IMAGES = {};
+    window.__IMAGES_READY = false;
+
+    async function preloadAll() {
+      const promises = [];
+      for (const [key, src] of Object.entries(FRAME_FILES)) {
+        const img = new Image();
+        const p = new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+        img.src = src;
+        IMAGES[key] = img;
+        promises.push(p);
+      }
+      if (document.fonts && document.fonts.ready) {
+        promises.push(document.fonts.ready);
+      }
+      await Promise.all(promises);
+      window.__IMAGES_READY = true;
+      window.renderFrame(0);
+    }
+
+    const HERO_SCENES = [
+      {
+        id: '01_3d_braille_cathedral',
+        start: 0.0,
+        end: 3.2,
+        tag: '01 // ZOTHOS-LITE v1.1 • 5-SCENE 3D BAYER & BRAILLE ENGINE',
+        headline: '100% RAM-ONLY. *3D BRAILLE DEPTH.*',
+        sub: '3D BRAILLE CATHEDRAL • SINGULARITY HORIZON • ORDERED BAYER 8×8 DITHER • ZERO HARD DISKS',
+        cmd: 'zoth-lite-boot --toram --noswap --scene cathedral --bayer-8x8',
+        mainImg: 'cathedral_3d',
+        pip1: { img: 'singularity_3d', title: 'SCENE 02 // SINGULARITY ACCRETION DISK', badge: '60FPS // 3D POINT-CLOUD' },
+        pip2: { img: 'boot_3d', title: 'AMNESIC SQUASHFS RAM-ONLY KERNEL', badge: 'TORAM // ZERO DISK TRACE' }
+      },
+      {
+        id: '02_direct_konsole_pty',
+        start: 3.2,
+        end: 6.8,
+        tag: '02 // KONSOLE 25.04 • DIRECT IN-TERMINAL PTY MULTIPLEXER',
+        headline: 'TYPE DIRECTLY *IN THE TERMINAL.*',
+        sub: 'ZERO EXTERNAL INPUT BOXES • DIRECT KEYDOWN STREAM • DUAL-PANE SPLIT • 75+ KALI/PARROT TOOLS',
+        cmd: 'konsole --direct-pty --split-dual --profile ZothMonotone.profile',
+        mainImg: 'konsole_direct',
+        pip1: { img: 'konsole_2504', title: 'DUAL-PANE SPLIT & TABBED SHELLS', badge: 'PTY // REAL BASH STREAM' },
+        pip2: { img: 'kali_parrot', title: '75+ KALI & PARROT OFFENSIVE UTILITIES', badge: 'TIER 0 // OFFENSIVE PARITY' }
+      },
+      {
+        id: '03_vaelor_zoth_node',
+        start: 6.8,
+        end: 10.8,
+        tag: '03 // VAELOR (VLR) L1 ACCOUNT-LATTICE & ZOTH-NODE (:8140)',
+        headline: 'ZERO GAS. *80°C THERMAL GUARD.*',
+        sub: 'ED25519 + BLAKE2B-256 + ARGON2ID (64MB) • <400MS DAG-BFT FINALITY • SERVER-ENFORCED POUW',
+        cmd: 'zoth-node status --quorum 5/5 --pouw-guardrail 80C/85C',
+        mainImg: 'vaelor_dag',
+        pip1: { img: 'vaelor_pouw', title: '80°C THROTTLE / 85°C PAUSE GUARDRAIL', badge: 'HWMON // LIVE CPU SENSORS' },
+        pip2: { img: 'zoth_node_dual', title: 'ZOTH-NODE + KONSOLE DUAL WORKSPACE', badge: 'VLR // $0.00 GAS FINALITY' }
+      },
+      {
+        id: '04_azoth_cot_dag',
+        start: 10.8,
+        end: 14.5,
+        tag: '04 // AZOTH EMBODIED BRAILLE AI × CHAIN OF THOUGHTS DAG',
+        headline: 'EMBODIED VOICE. *MERKLE MEMORY.*',
+        sub: 'KOKORO 82M ONNX NEURAL TTS • REAL-TIME LIP-SYNC • SHA-256 MERKLE REASONING DAG • MCP SERVER',
+        cmd: 'azoth-agent --voice af_bella --cot-merkle-dag active',
+        mainImg: 'cot_window',
+        pip1: { img: 'azoth_visor', title: 'AZOTH TACTICAL VISOR & KOKORO TTS', badge: 'U+2800 // EMBODIED RIG' },
+        pip2: { img: 'cot_live', title: '4-TIER PINNED FACTS & ENTITY GRAPH', badge: 'ZOTH-COT // MERKLE TRACE' }
+      },
+      {
+        id: '05_sovereign_resolve',
+        start: 14.5,
+        end: 18.0,
+        tag: '◈ // 100% FREE & OPEN-ACCESS SOVEREIGNTY',
+        headline: 'ZOTHOS-LITE v1.1 *SOVEREIGN OS*',
+        sub: 'ZOTH.NULLAI.TECH • GITHUB.COM/1NC0GN30 • ENGINEERED BY 1NC0GN30 • NULLAI • ZERO PAYWALLS',
+        cmd: 'git clone https://github.com/1nc0gn30/zothos-lite && npm start',
+        mainImg: 'zoth_node_dual',
+        pip1: { img: 'cathedral_3d', title: '5-SCENE 3D BAYER & BRAILLE ENGINE', badge: 'OPEN-ACCESS // MIT' },
+        pip2: { img: 'konsole_direct', title: 'DIRECT PTY KONSOLE + VAELOR L1 NODE', badge: 'SOVEREIGN // ZERO GAS' }
+      }
+    ];
+
+    const VAELOR_SCENES = [
+      {
+        id: '01_vaelor_genesis',
+        start: 0.0,
+        end: 3.5,
+        tag: '01 // VAELOR (VLR) L1 • SOVEREIGN ACCOUNT-LATTICE CRYPTO',
+        headline: 'INSTANT BFT. *ZERO GAS FEES.*',
+        sub: 'ASYNCHRONOUS SEND/RECEIVE BLOCK-LATTICE • 5/5 VALIDATOR QUORUM • <400MS DETERMINISTIC FINALITY',
+        cmd: 'vaelor-cli dag --genesis VLR_GENESIS_2026 --quorum 5/5',
+        mainImg: 'vaelor_dag',
+        pip1: { img: 'zoth_node_dual', title: 'LIVE ZOTH-NODE VALIDATOR COCKPIT (:8140)', badge: '5/5 QUORUM // 100% ONLINE' },
+        pip2: { img: 'cathedral_3d', title: 'CRYPTOGRAPHIC BRAILLE MERKLE TOPOLOGY', badge: 'BLAKE2B-256 // STATE ROOT' }
+      },
+      {
+        id: '02_ed25519_argon2id',
+        start: 3.5,
+        end: 7.2,
+        tag: '02 // ED25519 + BLAKE2B-256 + ARGON2ID (64MB) COLD SIGNER',
+        headline: 'REAL CRYPTO. *ZERO PLACEHOLDERS.*',
+        sub: 'RFC 8032 ED25519 SIGNATURES • BLAKE2B-256 BLOCK HASHES • 2-OF-3 MULTISIG SOVEREIGN TREASURY',
+        cmd: 'vaelor-cli tx --sign-ed25519 --kdf argon2id-64mb --multisig 2-of-3',
+        mainImg: 'zoth_node_dual',
+        pip1: { img: 'vaelor_dag', title: 'VERIFIED ED25519 + BLAKE2B-256 BLOCKS', badge: 'RFC 8032 // ZERO-TRUST' },
+        pip2: { img: 'konsole_direct', title: 'IN-TERMINAL RPC & WALLET CLI', badge: 'PORT :8140 // LIVE RPC' }
+      },
+      {
+        id: '03_thermal_pouw_guardrail',
+        start: 7.2,
+        end: 11.2,
+        tag: '03 // SERVER-ENFORCED 80°C / 85°C THERMAL POUW GUARDRAIL',
+        headline: 'MINES SAFELY. *WATCHES CPU TEMPS.*',
+        sub: 'LIVE LINUX HWMON TELEMETRY • >80°C AUTO-THROTTLE (25% DUTY) • >=85°C HARD PAUSE (HTTP 429)',
+        cmd: 'curl -s http://127.0.0.1:8145/api/thermals | jq .pouwGuardrail',
+        mainImg: 'vaelor_pouw',
+        pip1: { img: 'vaelor_dag', title: 'THERMAL-GOVERNED BLAKE2B-256 POUW', badge: '54.0°C // NOMINAL DUTY' },
+        pip2: { img: 'zoth_node_dual', title: 'HARDWARE SENSOR WATCHDOG DAEMON', badge: '80°C THROTTLE // 85°C STOP' }
+      },
+      {
+        id: '04_vaelor_resolve',
+        start: 11.2,
+        end: 15.0,
+        tag: '◈ // VAELOR (VLR) × ZOTHOS-LITE v1.1 • OPEN-ACCESS L1',
+        headline: 'SOVEREIGN L1 *BUILT INTO THE OS.*',
+        sub: 'ZOTH.NULLAI.TECH • 100% UNLOCKED • ENGINEERED BY 1NC0GN30 • NULLAI (@1NC0GN30)',
+        cmd: 'vaelor-cli status --node http://127.0.0.1:8140 --verify-all',
+        mainImg: 'vaelor_dag',
+        pip1: { img: 'vaelor_pouw', title: 'SERVER-ENFORCED THERMAL PROTECTION', badge: 'GUARDRAIL // VERIFIED' },
+        pip2: { img: 'zoth_node_dual', title: 'VAELOR EXPLORER + KONSOLE 25.04', badge: 'VLR // SOVEREIGN L1' }
+      }
+    ];
+
+    const VERTICAL_SCENES = [
+      {
+        id: 'v01_boot',
+        start: 0.0,
+        end: 3.0,
+        tag: '01 // AMNESIC RAM-ONLY OS',
+        line1: '100% RAM-ONLY.',
+        line2: '3D BRAILLE OS.',
+        sub: 'TORAM NOSWAP • 5-SCENE 3D BAYER & BRAILLE DESKTOP',
+        cmd: 'zoth-lite-boot --toram --scene cathedral',
+        mainImg: 'cathedral_3d',
+        secImg: 'singularity_3d',
+        secLabel: '3D SINGULARITY & CATHEDRAL ENGINE (60FPS)'
+      },
+      {
+        id: 'v02_konsole',
+        start: 3.0,
+        end: 6.0,
+        tag: '02 // DIRECT KONSOLE 25.04 PTY',
+        line1: 'TYPE DIRECTLY',
+        line2: 'IN TERMINAL.',
+        sub: 'LIVE KEYDOWN PTY STREAM • DUAL-PANE SPLIT • 75+ TOOLS',
+        cmd: 'konsole --direct-pty --split-dual',
+        mainImg: 'konsole_direct',
+        secImg: 'konsole_2504',
+        secLabel: 'DUAL-PANE MULTIPLEXER + 75+ KALI/PARROT TOOLS'
+      },
+      {
+        id: 'v03_vaelor',
+        start: 6.0,
+        end: 9.0,
+        tag: '03 // VAELOR (VLR) L1 & ZOTH-NODE',
+        line1: '$0.00 GAS BFT.',
+        line2: '80°C GUARDRAIL.',
+        sub: 'ED25519 + BLAKE2B-256 • THERMAL-GOVERNED POUW MINER',
+        cmd: 'zoth-node --quorum 5/5 --guardrail 80C/85C',
+        mainImg: 'vaelor_dag',
+        secImg: 'vaelor_pouw',
+        secLabel: 'LIVE HWMON CPU TELEMETRY & 80°C/85°C GUARDRAIL'
+      },
+      {
+        id: 'v04_azoth',
+        start: 9.0,
+        end: 12.0,
+        tag: '04 // AZOTH AI × MERKLE COT',
+        line1: 'IT SPEAKS.',
+        line2: 'NEVER FORGETS.',
+        sub: 'KOKORO 82M ONNX VOICE • 4-TIER SHA-256 MERKLE DAG',
+        cmd: 'azoth-agent --voice af_bella --cot-dag',
+        mainImg: 'cot_window',
+        secImg: 'azoth_visor',
+        secLabel: 'EMBODIED U+2800 BRAILLE RIG + MERKLE MEMORY'
+      },
+      {
+        id: 'v05_resolve',
+        start: 12.0,
+        end: 15.0,
+        tag: '◈ // 100% OPEN-ACCESS SOVEREIGNTY',
+        line1: 'ZOTHOS-LITE',
+        line2: 'v1.0 LIVE NOW.',
+        sub: 'ZOTH.NULLAI.TECH • 1NC0GN30 • NULLAI (@1NC0GN30)',
+        cmd: 'git clone github.com/1nc0gn30/zothos-lite',
+        mainImg: 'zoth_node_dual',
+        secImg: 'cathedral_3d',
+        secLabel: 'ZERO PAYWALLS • 100% IN-BROWSER & VM READY'
+      }
+    ];
+
+    const BRAILLE_CHARS = ['⠁','⠃','⠇','⠏','⠟','⠿','⡿','⣿','[::]','◈','▓','░'];
+
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+    function easeOutExpo(x) { return x >= 1 ? 1 : 1 - Math.pow(2, -10 * clamp01(x)); }
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function drawHeroAnchor(ctx, cx, cy, radius, t, kick, accent = '#F5D061') {
+      ctx.save();
+      ctx.translate(cx, cy);
+      const pulse = 1 + 0.085 * kick;
+      ctx.scale(pulse, pulse);
+
+      const grad = ctx.createRadialGradient(0, 0, radius * 0.1, 0, 0, radius * 1.5);
+      grad.addColorStop(0, 'rgba(245, 208, 97, 0.45)');
+      grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.16)');
+      grad.addColorStop(1, 'rgba(5, 5, 8, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.92)';
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.88, 0, Math.PI * 2);
+      ctx.fill();
+
+      const rings = [
+        { rx: radius * 0.96, ry: radius * 0.34, rot: t * 1.15, color: accent, width: 2.5 },
+        { rx: radius * 0.86, ry: radius * 0.44, rot: -t * 0.85 + 1.1, color: '#FFFFFF', width: 1.8 },
+        { rx: radius * 0.74, ry: radius * 0.28, rot: t * 1.45 + 2.2, color: '#9CA3AF', width: 1.5 }
+      ];
+      rings.forEach(r => {
+        ctx.save();
+        ctx.rotate(r.rot);
+        ctx.strokeStyle = r.color;
+        ctx.lineWidth = r.width;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r.rx, r.ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + t * 0.38;
+        const px = Math.cos(ang) * radius * 0.62;
+        const py = Math.sin(ang) * radius * 0.62;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      const dR = radius * 0.34;
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.moveTo(0, -dR);
+      ctx.lineTo(dR, 0);
+      ctx.lineTo(0, dR);
+      ctx.lineTo(-dR, 0);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#050508';
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPipCard(ctx, img, x, y, w, h, title, badge, accentColor) {
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.94)';
+      ctx.fill();
+      ctx.clip();
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, x, y, w, h);
+      }
+
+      const g = ctx.createLinearGradient(x, y, x, y + h);
+      g.addColorStop(0, 'rgba(5, 5, 8, 0.82)');
+      g.addColorStop(0.28, 'rgba(5, 5, 8, 0.06)');
+      g.addColorStop(0.68, 'rgba(5, 5, 8, 0.14)');
+      g.addColorStop(1, 'rgba(5, 5, 8, 0.94)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.fillStyle = accentColor;
+      ctx.font = '700 13px "JetBrains Mono", monospace';
+      ctx.fillText(badge, x + 16, y + 24);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 16px "Inter", sans-serif';
+      ctx.fillText(title, x + 16, y + h - 16);
+      ctx.restore();
+
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawThermalHudWidget(ctx, x, y, w, h, t, kick) {
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, 12);
+      ctx.fillStyle = 'rgba(7, 7, 11, 0.94)';
+      ctx.fill();
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '700 13px "JetBrains Mono", monospace';
+      ctx.fillText('◈ ZOTH-NODE // LIVE HWMON THERMAL GUARDRAIL & BFT TELEMETRY', x + 18, y + 26);
+
+      const cells = [
+        { k: 'CPU PACKAGE', v: `${(53.0 + Math.sin(t * 2.1) * 1.4).toFixed(1)}°C`, sub: 'NOMINAL (<80°C)' },
+        { k: 'THROTTLE AT', v: '80.0°C', sub: '25% DUTY CYCLE' },
+        { k: 'HARD PAUSE AT', v: '85.0°C', sub: 'HTTP 429 GUARD' },
+        { k: 'BFT FINALITY', v: '380ms', sub: '5/5 QUORUM • $0 GAS' }
+      ];
+
+      cells.forEach((c, idx) => {
+        const cx = x + 18 + idx * 152;
+        const cy = y + 40;
+        const active = Math.floor(t * 2.2) % 4 === idx;
+        roundRectPath(ctx, cx, cy, 142, 66, 8);
+        ctx.fillStyle = active ? 'rgba(245, 208, 97, 0.20)' : 'rgba(255, 255, 255, 0.05)';
+        ctx.fill();
+        ctx.strokeStyle = active ? '#F5D061' : 'rgba(255, 255, 255, 0.24)';
+        ctx.lineWidth = active ? 2 : 1.2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = '700 10px "JetBrains Mono", monospace';
+        ctx.fillText(c.k, cx + 10, cy + 18);
+
+        ctx.fillStyle = active ? '#F5D061' : '#FFFFFF';
+        ctx.font = '900 18px "JetBrains Mono", monospace';
+        ctx.fillText(c.v, cx + 10, cy + 41);
+
+        ctx.fillStyle = '#D1D5DB';
+        ctx.font = '600 10px "Inter", sans-serif';
+        ctx.fillText(c.sub, cx + 10, cy + 57);
+      });
+
+      ctx.restore();
+    }
+
+    function renderWidescreen(t, scenes, duration, bpm, headerTitle) {
+      const W = 1920;
+      const H = 1080;
+      const spb = 60.0 / bpm;
+      const beatPhase = (t % spb) / spb;
+      const kick = Math.exp(-beatPhase * 4.4);
+
+      const scene = scenes.find(s => t >= s.start && t < s.end) || scenes[scenes.length - 1];
+      const sceneProgress = clamp01((t - scene.start) / (scene.end - scene.start));
+
+      ctx.fillStyle = '#050508';
+      ctx.fillRect(0, 0, W, H);
+
+      const mainImg = IMAGES[scene.mainImg];
+      const zoom = 1.0 + 0.016 * kick + 0.024 * sceneProgress;
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-W / 2, -H / 2);
+      if (mainImg && mainImg.complete && mainImg.naturalWidth > 0) {
+        ctx.drawImage(mainImg, 0, 0, W, H);
+      }
+      ctx.restore();
+
+      // Holographic Braille Horizon
+      ctx.save();
+      ctx.fillStyle = 'rgba(245, 208, 97, 0.16)';
+      ctx.font = '700 14px "JetBrains Mono", monospace';
+      for (let gx = 80; gx < W - 80; gx += 110) {
+        const idx = Math.floor((gx * 0.03 + t * 9)) % BRAILLE_CHARS.length;
+        const ch = BRAILLE_CHARS[Math.abs(idx)];
+        const gy = 132 + Math.sin(t * 2.4 + gx * 0.01) * 10;
+        ctx.fillText(ch, gx, gy);
+      }
+      ctx.restore();
+
+      const topGrad = ctx.createLinearGradient(0, 0, 0, 165);
+      topGrad.addColorStop(0, 'rgba(5, 5, 8, 0.95)');
+      topGrad.addColorStop(1, 'rgba(5, 5, 8, 0.0)');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0, 0, W, 165);
+
+      const botGrad = ctx.createLinearGradient(0, H - 435, 0, H);
+      botGrad.addColorStop(0, 'rgba(5, 5, 8, 0.0)');
+      botGrad.addColorStop(0.32, 'rgba(5, 5, 8, 0.86)');
+      botGrad.addColorStop(1, 'rgba(5, 5, 8, 0.98)');
+      ctx.fillStyle = botGrad;
+      ctx.fillRect(0, H - 435, W, 435);
+
+      // Top Telemetry Header Bar
+      ctx.save();
+      roundRectPath(ctx, 64, 34, W - 128, 64, 12);
+      ctx.fillStyle = 'rgba(10, 10, 16, 0.90)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(245, 208, 97, 0.48)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 16px "JetBrains Mono", monospace';
+      ctx.fillText(headerTitle, 92, 72);
+
+      const cpuTemp = (53.2 + Math.sin(t * 1.9) * 1.2).toFixed(1);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '700 15px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`[ ◈ CPU ${cpuTemp}°C (<80°C GUARD) · VLR 5/5 BFT · KONSOLE 25.04 PTY ]`, W - 92, 72);
+      ctx.textAlign = 'left';
+      ctx.restore();
+
+      // Right-Side PiP Bento Cards
+      const pipEnter = easeOutExpo((t - scene.start) / 0.52);
+      const pipX = W - 490 + (1 - pipEnter) * 90;
+      if (scene.pip1) {
+        drawPipCard(ctx, IMAGES[scene.pip1.img], pipX, 132, 426, 236, scene.pip1.title, scene.pip1.badge, '#F5D061');
+      }
+      if (scene.pip2) {
+        drawPipCard(ctx, IMAGES[scene.pip2.img], pipX, 388, 426, 236, scene.pip2.title, scene.pip2.badge, '#FFFFFF');
+      }
+
+      // Live Telemetry HUD Widget
+      drawThermalHudWidget(ctx, 64, 592, 636, 122, t, kick);
+
+      // Hero Anchor Shape
+      drawHeroAnchor(ctx, 118, 795, 44, t, kick, '#F5D061');
+
+      const textX = 186;
+      ctx.save();
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 17px "JetBrains Mono", monospace';
+      ctx.fillText(scene.tag, textX, 766);
+
+      const words = scene.headline.split(' ');
+      let curX = textX;
+      const baseY = 838;
+      ctx.font = '900 60px "Inter", sans-serif';
+      let inAccent = false;
+
+      words.forEach((rawWord, wIdx) => {
+        const wStart = scene.start + wIdx * 0.072;
+        const wProg = easeOutExpo((t - wStart) / 0.46);
+        if (rawWord.startsWith('*')) inAccent = true;
+        const cleanWord = rawWord.replace(/\*/g, '');
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(curX - 6, baseY - 72, 900, 92);
+        ctx.clip();
+
+        const yOffset = (1 - wProg) * 58;
+        ctx.fillStyle = inAccent ? '#F5D061' : '#FFFFFF';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 16;
+        ctx.fillText(cleanWord, curX, baseY + yOffset);
+        ctx.restore();
+
+        curX += ctx.measureText(cleanWord + ' ').width;
+        if (rawWord.endsWith('*')) inAccent = false;
+      });
+
+      ctx.fillStyle = '#E5E7EB';
+      ctx.font = '700 19px "JetBrains Mono", monospace';
+      ctx.fillText(scene.sub, textX, 882);
+
+      // Live Terminal Command Pill
+      roundRectPath(ctx, 64, 922, W - 128, 72, 12);
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.94)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      const typedLen = Math.floor(clamp01((t - scene.start) / 1.25) * scene.cmd.length);
+      const caret = Math.floor(t * 4.8) % 2 === 0 ? '█' : '';
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '700 20px "JetBrains Mono", monospace';
+      ctx.fillText('root@zothos-lite:~# ', 92, 965);
+      const promptW = ctx.measureText('root@zothos-lite:~# ').width;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(scene.cmd.slice(0, typedLen) + caret, 92 + promptW, 965);
+
+      ctx.fillStyle = '#9CA3AF';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`zoth.nullai.tech  •  ${t.toFixed(1)}s / ${duration.toFixed(1)}s`, W - 92, 965);
+      ctx.textAlign = 'left';
+
+      const progW = (W - 128) * clamp01(t / duration);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.fillRect(64, 1014, W - 128, 6);
+      ctx.fillStyle = '#F5D061';
+      ctx.fillRect(64, 1014, progW, 6);
+      ctx.restore();
+    }
+
+    function renderVertical(t) {
+      const W = 1080;
+      const H = 1920;
+      const D = 15.0;
+      const spb = 60.0 / 136.0;
+      const beatPhase = (t % spb) / spb;
+      const kick = Math.exp(-beatPhase * 4.6);
+
+      const scene = VERTICAL_SCENES.find(s => t >= s.start && t < s.end) || VERTICAL_SCENES[VERTICAL_SCENES.length - 1];
+      const sceneProgress = clamp01((t - scene.start) / (scene.end - scene.start));
+
+      ctx.fillStyle = '#050508';
+      ctx.fillRect(0, 0, W, H);
+
+      // 1. Top Header Bar (Safe Area Y: 60..140)
+      roundRectPath(ctx, 56, 60, W - 112, 74, 14);
+      ctx.fillStyle = 'rgba(10, 10, 16, 0.94)';
+      ctx.fill();
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 18px "JetBrains Mono", monospace';
+      ctx.fillText('▓ ZOTHOS-LITE v1.1 // SOVEREIGN OS', 84, 104);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText('53.4°C • 5/5 BFT • $0 GAS', W - 84, 104);
+      ctx.textAlign = 'left';
+
+      // 2. Hero Main Display Frame (Y: 164..740)
+      const mainImg = IMAGES[scene.mainImg];
+      ctx.save();
+      roundRectPath(ctx, 56, 164, W - 112, 556, 18);
+      ctx.fillStyle = '#09090F';
+      ctx.fill();
+      ctx.clip();
+      if (mainImg && mainImg.complete && mainImg.naturalWidth > 0) {
+        const zoom = 1.0 + 0.022 * kick + 0.03 * sceneProgress;
+        const dw = (W - 112) * zoom;
+        const dh = 556 * zoom;
+        const dx = 56 - (dw - (W - 112)) / 2;
+        const dy = 164 - (dh - 556) / 2;
+        ctx.drawImage(mainImg, 0, 0, mainImg.naturalWidth, mainImg.naturalHeight, dx, dy, dw, dh);
+      }
+      ctx.restore();
+
+      ctx.save();
+      roundRectPath(ctx, 56, 164, W - 112, 556, 18);
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+      ctx.restore();
+
+      // 3. Center Kinetic Typography Stack + Anchor (Y: 755..1160)
+      drawHeroAnchor(ctx, 118, 825, 42, t, kick, '#F5D061');
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 20px "JetBrains Mono", monospace';
+      ctx.fillText(scene.tag, 184, 815);
+
+      ctx.fillStyle = '#D1D5DB';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.fillText('100% OPEN-ACCESS • ZERO PAYWALLS', 184, 845);
+
+      const enter1 = easeOutExpo((t - scene.start) / 0.42);
+      const enter2 = easeOutExpo((t - (scene.start + 0.12)) / 0.45);
+
+      ctx.save();
+      ctx.font = '900 82px "Inter", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(scene.line1, 56, 955 + (1 - enter1) * 42);
+
+      ctx.fillStyle = '#F5D061';
+      ctx.fillText(scene.line2, 56, 1050 + (1 - enter2) * 42);
+      ctx.restore();
+
+      ctx.fillStyle = '#E5E7EB';
+      ctx.font = '700 20px "JetBrains Mono", monospace';
+      ctx.fillText(scene.sub, 56, 1105);
+
+      // 4. Secondary Feature Card (Y: 1145..1625)
+      const secImg = IMAGES[scene.secImg];
+      ctx.save();
+      roundRectPath(ctx, 56, 1145, W - 112, 470, 18);
+      ctx.fillStyle = '#09090F';
+      ctx.fill();
+      ctx.clip();
+      if (secImg && secImg.complete && secImg.naturalWidth > 0) {
+        ctx.drawImage(secImg, 0, 0, secImg.naturalWidth, secImg.naturalHeight, 56, 1145, W - 112, 470);
+      }
+      const sg = ctx.createLinearGradient(56, 1480, 56, 1615);
+      sg.addColorStop(0, 'rgba(5, 5, 8, 0.0)');
+      sg.addColorStop(1, 'rgba(5, 5, 8, 0.94)');
+      ctx.fillStyle = sg;
+      ctx.fillRect(56, 1480, W - 112, 135);
+
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '800 20px "JetBrains Mono", monospace';
+      ctx.fillText('◈ ' + scene.secLabel, 84, 1590);
+      ctx.restore();
+
+      ctx.save();
+      roundRectPath(ctx, 56, 1145, W - 112, 470, 18);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 5. Bottom Terminal Command Bar & Progress (Y: 1650..1830)
+      roundRectPath(ctx, 56, 1650, W - 112, 92, 14);
+      ctx.fillStyle = 'rgba(8, 8, 12, 0.96)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(245, 208, 97, 0.55)';
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+
+      const typedLen = Math.floor(clamp01((t - scene.start) / 1.1) * scene.cmd.length);
+      const caret = Math.floor(t * 5.0) % 2 === 0 ? '█' : '';
+      ctx.fillStyle = '#F5D061';
+      ctx.font = '700 22px "JetBrains Mono", monospace';
+      ctx.fillText('root@zothos:~# ', 84, 1704);
+      const pw = ctx.measureText('root@zothos:~# ').width;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(scene.cmd.slice(0, typedLen) + caret, 84 + pw, 1704);
+
+      const progW = (W - 112) * clamp01(t / D);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.fillRect(56, 1770, W - 112, 8);
+      ctx.fillStyle = '#F5D061';
+      ctx.fillRect(56, 1770, progW, 8);
+
+      ctx.fillStyle = '#9CA3AF';
+      ctx.font = '700 18px "JetBrains Mono", monospace';
+      ctx.fillText('ZOTH.NULLAI.TECH • 1NC0GN30 • NULLAI (@1NC0GN30)', 56, 1816);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${t.toFixed(1)}s / ${D.toFixed(1)}s`, W - 56, 1816);
+      ctx.textAlign = 'left';
+    }
+
+    window.renderFrame = function(t) {
+      if (REEL === 'vaelor') {
+        renderWidescreen(t, VAELOR_SCENES, 15.0, 132, '▓ VAELOR (VLR) L1 ACCOUNT-LATTICE  ×  ◈ ZOTH-NODE VALIDATOR (:8140)');
+      } else if (REEL === 'vertical') {
+        renderVertical(t);
+      } else {
+        renderWidescreen(t, HERO_SCENES, 18.0, 128, '▓ ZOTHOS-LITE v1.1 // SOVEREIGN AMNESIC DESKTOP OS  ×  ◈ VAELOR L1');
+      }
+    };
+
+    preloadAll();
+  </script>
+</body>
+</html>

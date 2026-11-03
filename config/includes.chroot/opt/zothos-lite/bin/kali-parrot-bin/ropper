@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+import sys, subprocess, os
+
+target = "/bin/ls"
+for i, a in enumerate(sys.argv[1:]):
+    if a in ("-f", "--file") and i + 2 < len(sys.argv):
+        target = sys.argv[i + 2]
+    elif not a.startswith("-") and os.path.exists(a):
+        target = a
+
+print(f"[INFO] Load gadgets from binary: {target}")
+out = subprocess.run(f"objdump -d {target} 2>/dev/null | grep -E 'pop|ret|syscall|leave' | head -n 18", shell=True, capture_output=True, text=True).stdout
+for line in out.strip().splitlines():
+    print("  " + line.strip())
+print(f"[INFO] Found real x86_64 ROP/JOP instructions in {target}")

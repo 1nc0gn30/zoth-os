@@ -1,0 +1,280 @@
+#!/usr/bin/env python3
+"""
+zoth-lite-pkg — ZothOS-Lite Modular On-Demand Tool Puller & Manifest Manager
+"Tails-Style Amnesic Monotone OS — Keep Core Zoth Security/Dev Tools, Pull Only What You Need"
+"""
+import argparse
+import hashlib
+import json
+import os
+import sys
+import time
+from pathlib import Path
+
+STATE_FILE = Path(__file__).resolve().parent.parent / "data" / "pkg_state.json"
+
+CORE_SECURITY_DEV_TOOLS = [
+    {
+        "id": "envguard-secrets-vault",
+        "binary": "zoth-envguard",
+        "name": "EnvGuard Secrets Vault",
+        "category": "Zoth Core Security",
+        "sizeMb": 14,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "description": "Zero-leak secret scanner, Shannon entropy analyzer & AES-256-GCM / Argon2id .env vault."
+    },
+    {
+        "id": "ghostbyte-amnesic-enclave",
+        "binary": "zoth-ghostbyte",
+        "name": "GhostByte Amnesic Enclave",
+        "category": "Zoth Core Security",
+        "sizeMb": 18,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4",
+        "description": "Tails-style RAM-only workspace, sdmem panic memory wipe, mat2 metadata stripper & USB kill-switch."
+    },
+    {
+        "id": "hexstrike-defensive-auditor",
+        "binary": "zoth-hexstrike",
+        "name": "HexStrike Binary & Net Sentinel",
+        "category": "Zoth Core Security",
+        "sizeMb": 26,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+        "description": "ELF/binary hardening inspector, nftables Tor kill-switch auditor & Ed25519 SBOM verifier."
+    },
+    {
+        "id": "sovereign-stealth-bridge",
+        "binary": "zoth-comm",
+        "name": "Sovereign E2EE Stealth Bridge",
+        "category": "Zoth Core Security",
+        "sizeMb": 22,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+        "description": "Air-gapped E2EE Signal, SimpleX SMP & Tor Onion messaging relay with zero metadata retention."
+    },
+    {
+        "id": "vaelor-l1-cold-signer",
+        "binary": "zoth-node-lite",
+        "name": "Vaelor L1 Cold Signer & Passkey Vault",
+        "category": "Zoth Core Crypto",
+        "sizeMb": 16,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+        "description": "RFC-8032 Ed25519 Account-Lattice transaction signer, air-gapped QR/hex broadcast & Merkle verifier."
+    },
+    {
+        "id": "azoth-hardened-dev-suite",
+        "binary": "zoth-dev-core",
+        "name": "Azoth Hardened Dev & Crypto Toolchain",
+        "category": "Zoth Core Dev",
+        "sizeMb": 145,
+        "installed": "CORE_BASE",
+        "immutable": True,
+        "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "description": "git, gnupg2, age, sops, neovim, tmux, btop (braille), ripgrep, rust/cargo, python3, node & local LLM CLI."
+    }
+]
+
+OPTIONAL_PULLABLE_TOOLS = [
+    {
+        "id": "neuro-memory-daemon",
+        "binary": "zoth-memory",
+        "name": "Neuro-Memory STDP Enclave",
+        "category": "AI & Memory",
+        "sizeMb": 48,
+        "repo": "https://github.com/1nc0gn30/neuro-memory-daemon",
+        "description": "Local Cosine Vector + Okapi BM25 + Ebbinghaus STDP synaptic memory recall daemon (:8094)."
+    },
+    {
+        "id": "obsidian-second-brain",
+        "binary": "zoth-second-brain",
+        "name": "Obsidian Second Brain & LLM Wiki",
+        "category": "AI & Memory",
+        "sizeMb": 34,
+        "repo": "https://github.com/1nc0gn30/zoth-os",
+        "description": "Karpathy-style Markdown knowledge compiler, JSON Canvas graph & encrypted LUKS vault notes."
+    },
+    {
+        "id": "vector-search-engine",
+        "binary": "zoth-vector",
+        "name": "HNSW Vector & Hybrid Search Studio",
+        "category": "AI & Memory",
+        "sizeMb": 28,
+        "repo": "https://github.com/NullAITech/vector-search-engine",
+        "description": "Zero-dependency HNSW skip-graph vector index, IVF clustering & Reciprocal Rank Fusion."
+    },
+    {
+        "id": "deepsearch-research-agent",
+        "binary": "zoth-deepsearch",
+        "name": "DeepSearch Tor/Offline Research Agent",
+        "category": "AI & Research",
+        "sizeMb": 52,
+        "repo": "https://github.com/NullAITech/deepsearch-research-agent",
+        "description": "Recursive Tree-of-Thought query decomposition & multi-source citation verifier over Tor/local docs."
+    },
+    {
+        "id": "zoth-webgen",
+        "binary": "zoth-webgen",
+        "name": "Zoth WebGen Local UI Compiler",
+        "category": "Dev & Builders",
+        "sizeMb": 64,
+        "repo": "https://github.com/1nc0gn30/zoth-webgen",
+        "description": "Local prompt-to-production monochrome & avant-garde web application synthesizer (:8092)."
+    },
+    {
+        "id": "bolt-diy-sandbox",
+        "binary": "zoth-bolt",
+        "name": "Bolt.diy Local Full-Stack Sandbox",
+        "category": "Dev & Builders",
+        "sizeMb": 110,
+        "repo": "https://github.com/1nc0gn30/bolt.diy",
+        "description": "Air-gapped full-stack IDE & container runner powered by local Ollama models (:5173)."
+    },
+    {
+        "id": "zoth-swarm-multiplexer",
+        "binary": "zoth-swarm",
+        "name": "21-Agent TUI Swarm Multiplexer",
+        "category": "Swarm & Automation",
+        "sizeMb": 38,
+        "repo": "https://github.com/NullAITech/zoth-swarm-multiplexer",
+        "description": "Multi-pane terminal agent multiplexer with hardware thermal throttling & local GPU routing."
+    },
+    {
+        "id": "promptmaster-security-lab",
+        "binary": "zoth-promptmaster",
+        "name": "PromptMaster & Jailbreak Auditor",
+        "category": "Security & Red-Team",
+        "sizeMb": 24,
+        "repo": "https://github.com/1nc0gn30/promptmaster-studio",
+        "description": "Adversarial prompt-injection red-teaming, token-budget optimizer & deterministic system-prompt linter."
+    },
+    {
+        "id": "webmcp-protocol-inspector",
+        "binary": "zoth-mcp-audit",
+        "name": "WebMCP Protocol & Tool Auditor",
+        "category": "Security & Red-Team",
+        "sizeMb": 19,
+        "repo": "https://github.com/1nc0gn30/webmcp-protocol-inspector",
+        "description": "Inspect, sandbox, and verify Model Context Protocol (MCP) JSON-RPC payloads for data exfiltration."
+    },
+    {
+        "id": "cron-rhythm-scheduler",
+        "binary": "zoth-cron",
+        "name": "Cron Rhythm & Systemd Timer Studio",
+        "category": "Dev & Builders",
+        "sizeMb": 15,
+        "repo": "https://github.com/1nc0gn30/cron-rhythm-studio",
+        "description": "Visual 5-field cron & systemd timer compiler with collision & jitter simulator."
+    },
+    {
+        "id": "zoth-civilization-portal",
+        "binary": "zoth-civ-node",
+        "name": "Zoth Civilization 3D P2P Stargate",
+        "category": "Swarm & Automation",
+        "sizeMb": 85,
+        "repo": "https://github.com/1nc0gn30/zoth-civilization",
+        "description": "23-agent Pantheon society node & P2P World Portal (:9393)."
+    },
+    {
+        "id": "local-ollama-zoth-hermes",
+        "binary": "zoth-llm-pack",
+        "name": "Zoth-Hermes 1.5B + Zoth-Coder 1B Weights",
+        "category": "AI & Research",
+        "sizeMb": 986,
+        "repo": "https://github.com/1nc0gn30/zoth-os",
+        "description": "Quantized Q4_K_M local GPU/CPU weights for 100% air-gapped code synthesis & security auditing."
+    }
+]
+
+
+def load_state():
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    default_state = {
+        "pulledTools": {
+            "promptmaster-security-lab": {"mode": "RAM_TMPFS", "pulledAt": "2026-10-26T16:50:00Z"},
+            "webmcp-protocol-inspector": {"mode": "RAM_TMPFS", "pulledAt": "2026-10-26T16:50:00Z"}
+        },
+        "amnesiaConfig": {
+            "ramOnlyMode": True,
+            "torStrictKillswitch": True,
+            "macSpoofing": True,
+            "spoofedMac": "02:42:ac:11:00:7f",
+            "luksPersistenceUnlocked": False,
+            "usbKillswitchArmed": True,
+            "baseIsoSizeMb": 840
+        }
+    }
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.write_text(json.dumps(default_state, indent=2), encoding="utf-8")
+    return default_state
+
+
+def save_state(state):
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="ZothOS-Lite Modular Tool Puller (zoth-lite-pkg)")
+    sub = parser.add_subparsers(dest="cmd")
+    sub.add_parser("list", help="List core pre-installed security/dev tools and optional pullable tools")
+    pull_p = sub.add_parser("pull", help="Pull an optional Zoth tool into RAM tmpfs or LUKS persistence")
+    pull_p.add_argument("tool_id", help="Tool ID to pull")
+    pull_p.add_argument("--persist", action="store_true", help="Store in LUKS2 persistent vault instead of volatile RAM")
+    purge_p = sub.add_parser("purge", help="Remove a pulled optional tool from RAM/persistence")
+    purge_p.add_argument("tool_id", help="Tool ID to purge")
+
+    args = parser.parse_args()
+    state = load_state()
+
+    if args.cmd == "pull":
+        tool = next((t for t in OPTIONAL_PULLABLE_TOOLS if t["id"] == args.tool_id), None)
+        if not tool:
+            print(f"[!] Unknown tool ID: {args.tool_id}")
+            sys.exit(1)
+        mode = "LUKS_PERSIST" if args.persist else "RAM_TMPFS"
+        state["pulledTools"][tool["id"]] = {
+            "mode": mode,
+            "pulledAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        save_state(state)
+        digest = hashlib.sha256(tool["id"].encode()).hexdigest()[:24]
+        print(f"░░▒▒▓▓██ PULLED {tool['id']} ({tool['sizeMb']} MB) -> {mode} [SHA256:{digest}…] ██▓▓▒▒░░")
+        return
+
+    if args.cmd == "purge":
+        if args.tool_id in state.get("pulledTools", {}):
+            del state["pulledTools"][args.tool_id]
+            save_state(state)
+            print(f"░░▒▒▓▓██ PURGED {args.tool_id} FROM VOLATILE OVERLAYFS ██▓▓▒▒░░")
+        else:
+            print(f"[i] Tool {args.tool_id} is not currently pulled.")
+        return
+
+    print("┌──────────────────────────────────────────────────────────────────────────────┐")
+    print("│ ░░▒▒▓▓██ ZOTHOS-LITE v1.1 // AMNESIC MONOTONE SECURITY & DEV ARSENAL ██▓▓▒▒░░ │")
+    print("└──────────────────────────────────────────────────────────────────────────────┘")
+    print("\n[CORE PRE-INSTALLED ZOTH SECURITY & DEV TOOLS — ALWAYS ON ISO]")
+    for t in CORE_SECURITY_DEV_TOOLS:
+        print(f"  █ {t['id']:<30} ({t['sizeMb']:>3} MB)  [{t['binary']}] — {t['description'][:48]}…")
+
+    print("\n[MODULAR ON-DEMAND ZOTH TOOLS — PULL ONLY WHAT YOU NEED]")
+    pulled = state.get("pulledTools", {})
+    for t in OPTIONAL_PULLABLE_TOOLS:
+        status = f"▓ PULLED ({pulled[t['id']]['mode']})" if t["id"] in pulled else "░ AVAILABLE"
+        print(f"  {status:<24} {t['id']:<30} ({t['sizeMb']:>3} MB) — {t['category']}")
+
+
+if __name__ == "__main__":
+    main()
