@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=POD Smart Router
+Comment=Multi-channel POD order router dynamically comparing Printify (:8115) and Gelato (:8116) on landed cost, domestic proximity, delivery speed,
+Exec=/usr/local/bin/pod-smart-router desktop
+TryExec=/usr/local/bin/pod-smart-router
+Icon=pod-smart-router
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch POD Smart Router Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "POD Smart Router TUI" -e /usr/local/bin/pod-smart-router-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8117)
+Exec=xdg-open http://127.0.0.1:8117

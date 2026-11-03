@@ -1,2 +1,10 @@
 #!/usr/bin/env bash
+# ZothOS Desktop (Electron) & Braille TUI Interceptor
+if [ "$1" = "desktop" ] || [ "$1" = "electron" ] || [ "$1" = "--electron" ]; then
+  shift
+  exec /usr/local/bin/electron "$HOME/NullAITech/azoth-local-agent/electron/main.cjs" "$@"
+elif [ "$1" = "tui" ] || [ "$1" = "--tui" ]; then
+  shift
+  exec /usr/local/bin/azoth-local-agent-tui "$@"
+fi
 exec $HOME/NullAITech/azoth-local-agent/.venv/bin/python $HOME/NullAITech/azoth-local-agent/agent.py "$@"

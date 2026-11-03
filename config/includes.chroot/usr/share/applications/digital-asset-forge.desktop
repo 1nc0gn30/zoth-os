@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Digital Asset Forge
+Comment=High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB
+Exec=/usr/local/bin/digital-asset-forge desktop
+TryExec=/usr/local/bin/digital-asset-forge
+Icon=digital-asset-forge
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Digital Asset Forge Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Digital Asset Forge TUI" -e /usr/local/bin/digital-asset-forge-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8118)
+Exec=xdg-open http://127.0.0.1:8118

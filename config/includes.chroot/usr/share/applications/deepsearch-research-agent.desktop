@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=DeepSearch Research Agent & Studio
+Comment=100% in-browser multi-source deep research agent with grounded inline citations, quantitative benchmark verification, research DAG brand med
+Exec=/usr/local/bin/deepsearch-research-agent desktop
+TryExec=/usr/local/bin/deepsearch-research-agent
+Icon=deepsearch-research-agent
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch DeepSearch Research Agent & Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "DeepSearch Research Agent & Studio TUI" -e /usr/local/bin/deepsearch-research-agent-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8122)
+Exec=xdg-open http://127.0.0.1:8122

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Budget Sentinel
+Comment=Autonomous zero-dependency spending guardrail, real-time token cost circuit breaker, and runaway loop interceptor.
+Exec=/usr/local/bin/agent-budget-sentinel desktop
+TryExec=/usr/local/bin/agent-budget-sentinel
+Icon=agent-budget-sentinel
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Budget Sentinel Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Budget Sentinel TUI" -e /usr/local/bin/agent-budget-sentinel-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8110)
+Exec=xdg-open http://127.0.0.1:8110

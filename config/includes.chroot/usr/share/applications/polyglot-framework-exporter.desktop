@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Polyglot Framework Exporter
+Comment=100% in-browser multi-framework project scaffolder (13 frameworks), AST component transpiler, and client-side PKZIP compressor.
+Exec=/usr/local/bin/polyglot-framework-exporter desktop
+TryExec=/usr/local/bin/polyglot-framework-exporter
+Icon=polyglot-framework-exporter
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Polyglot Framework Exporter Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Polyglot Framework Exporter TUI" -e /usr/local/bin/polyglot-framework-exporter-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8126)
+Exec=xdg-open http://127.0.0.1:8126

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Bolt
+Comment=Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Supports 23+ AI providers, local CLI agents (AGY, Hermes, Grok, Claude, Ope
+Exec=/usr/local/bin/bolt.diy desktop
+TryExec=/usr/local/bin/bolt.diy
+Icon=bolt.diy
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Bolt Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bolt TUI" -e /usr/local/bin/bolt.diy-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:5173)
+Exec=xdg-open http://127.0.0.1:5173

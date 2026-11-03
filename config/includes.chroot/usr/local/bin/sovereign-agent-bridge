@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# ZothOS Desktop (Electron) & Braille TUI Interceptor
+if [ "$1" = "desktop" ] || [ "$1" = "electron" ] || [ "$1" = "--electron" ]; then
+  shift
+  exec /usr/local/bin/electron "$HOME/NullAITech/sovereign-agent-bridge/electron/main.cjs" "$@"
+elif [ "$1" = "tui" ] || [ "$1" = "--tui" ]; then
+  shift
+  exec /usr/local/bin/sovereign-agent-bridge-tui "$@"
+fi
 REPO_DIR="$HOME/NullAITech/sovereign-agent-bridge"
 PYTHON_BIN="$REPO_DIR/.venv/bin/python"
 if [ ! -f "$PYTHON_BIN" ]; then

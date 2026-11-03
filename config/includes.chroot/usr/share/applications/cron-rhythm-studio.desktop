@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=CronRhythm Studio
+Comment=High-precision cron AST parser, 24x7 rhythm heatmap, countdown timeline, multi-dialect transpiler across K8s, GitHub Actions, AWS EventBridg
+Exec=/usr/local/bin/cron-rhythm-studio desktop
+TryExec=/usr/local/bin/cron-rhythm-studio
+Icon=cron-rhythm-studio
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch CronRhythm Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "CronRhythm Studio TUI" -e /usr/local/bin/cron-rhythm-studio-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:5174)
+Exec=xdg-open http://127.0.0.1:5174

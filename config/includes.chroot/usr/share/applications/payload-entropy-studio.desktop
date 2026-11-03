@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Payload Entropy Studio
+Comment=100% in-browser Shannon entropy waveform visualizer, 32-byte sliding window, recursive payload deobfuscator, automated multi-engine WAF rule
+Exec=/usr/local/bin/payload-entropy-studio desktop
+TryExec=/usr/local/bin/payload-entropy-studio
+Icon=payload-entropy-studio
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Payload Entropy Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Payload Entropy Studio TUI" -e /usr/local/bin/payload-entropy-studio-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8080)
+Exec=xdg-open http://127.0.0.1:8080

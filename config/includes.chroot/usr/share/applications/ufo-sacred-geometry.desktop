@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=UFO Sacred Geometry Studio
+Comment=100% in-browser sacred geometry synthesizer, crop circle agro-glyph CAD generator, procedural Metatron brand media, and AutoCAD DXF, Wavefro
+Exec=/usr/local/bin/ufo-sacred-geometry desktop
+TryExec=/usr/local/bin/ufo-sacred-geometry
+Icon=ufo-sacred-geometry
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch UFO Sacred Geometry Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "UFO Sacred Geometry Studio TUI" -e /usr/local/bin/ufo-sacred-geometry-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8083)
+Exec=xdg-open http://127.0.0.1:8083

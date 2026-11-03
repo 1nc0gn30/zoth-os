@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=SubSweep Lead Scanner
+Comment=100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, OSINT radar brand media, and executive lead intellig
+Exec=/usr/local/bin/subsweep-lead-scanner desktop
+TryExec=/usr/local/bin/subsweep-lead-scanner
+Icon=subsweep-lead-scanner
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch SubSweep Lead Scanner Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "SubSweep Lead Scanner TUI" -e /usr/local/bin/subsweep-lead-scanner-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8090)
+Exec=xdg-open http://127.0.0.1:8090

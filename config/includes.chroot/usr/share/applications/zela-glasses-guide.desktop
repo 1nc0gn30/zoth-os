@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zela Glasses Guide
+Comment=Sovereign wearable AI mission coach for Ray-Ban Meta smart glasses over Tailscale — full-duplex WebSocket guide stream, Moondream vision, AG
+Exec=/usr/local/bin/zela-glasses-guide desktop
+TryExec=/usr/local/bin/zela-glasses-guide
+Icon=zela-glasses-guide
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zela Glasses Guide Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zela Glasses Guide TUI" -e /usr/local/bin/zela-glasses-guide-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8144)
+Exec=xdg-open http://127.0.0.1:8144

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Capsule Jail
+Comment=Autonomous kernel enclave sandbox, resource quota manager, and secret stripping engine with dual Stripe + Solana rails.
+Exec=/usr/local/bin/agent-capsule-jail desktop
+TryExec=/usr/local/bin/agent-capsule-jail
+Icon=agent-capsule-jail
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Capsule Jail Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Capsule Jail TUI" -e /usr/local/bin/agent-capsule-jail-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8105)
+Exec=xdg-open http://127.0.0.1:8105

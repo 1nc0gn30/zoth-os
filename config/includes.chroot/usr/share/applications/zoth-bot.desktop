@@ -1,11 +1,20 @@
 [Desktop Entry]
+Version=1.0
 Type=Application
-Name=Zoth Bot
-GenericName=Sovereign AI Desk Companion
-Comment=Pocket companion — Azoth Prime / Hermes on this workstation
-Exec=/opt/zoth-bot/bin/zoth-bot
-Icon=/opt/zoth-bot/assets/icon-256.png
+Name=Zoth Bot Desktop Companion
+Comment=Local-first always-on 3D WebGL desk companion for Zoth OS — multi-harness neural engine (Grok/Hermes/Ollama), Security Ring authority, MCP h
+Exec=/usr/local/bin/zoth-bot desktop
+TryExec=/usr/local/bin/zoth-bot
+Icon=zoth-bot
 Terminal=false
-Categories=Utility;ArtificialIntelligence;
-X-GNOME-Autostart-enabled=true
-StartupNotify=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Bot Desktop Companion Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bot Desktop Companion TUI" -e /usr/local/bin/zoth-bot-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8146)
+Exec=xdg-open http://127.0.0.1:8146

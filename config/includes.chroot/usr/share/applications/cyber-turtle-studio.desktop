@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Cyber Turtle Studio
+Comment=100% in-browser L-System fractal synthesizer, turtle geometry studio, and physical CNC pen-plotter G-Code and SVG vector exporter. Free to u
+Exec=/usr/local/bin/cyber-turtle-studio desktop
+TryExec=/usr/local/bin/cyber-turtle-studio
+Icon=cyber-turtle-studio
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Cyber Turtle Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Cyber Turtle Studio TUI" -e /usr/local/bin/cyber-turtle-studio-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8129)
+Exec=xdg-open http://127.0.0.1:8129

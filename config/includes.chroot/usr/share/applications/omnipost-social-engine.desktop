@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OmniPost Social Engine
+Comment=100% in-browser social content formatting, viral thread splitter, virality scoring, MCP AI agent client hub, and procedural omni-beacon bran
+Exec=/usr/local/bin/omnipost-social-engine desktop
+TryExec=/usr/local/bin/omnipost-social-engine
+Icon=omnipost-social-engine
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch OmniPost Social Engine Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "OmniPost Social Engine TUI" -e /usr/local/bin/omnipost-social-engine-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8091)
+Exec=xdg-open http://127.0.0.1:8091

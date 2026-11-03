@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Printify Connector
+Comment=Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite.
+Exec=/usr/local/bin/printify-connector desktop
+TryExec=/usr/local/bin/printify-connector
+Icon=printify-connector
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Printify Connector Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Printify Connector TUI" -e /usr/local/bin/printify-connector-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8115)
+Exec=xdg-open http://127.0.0.1:8115

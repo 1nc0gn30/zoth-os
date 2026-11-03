@@ -1,0 +1,13 @@
+[Unit]
+Description=ZothOS 72-Tool Arsenal Sovereign Daemons Orchestrator
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/zoth-arsenal-daemons
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

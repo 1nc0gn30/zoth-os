@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Relay (MCP Agent Bridge)
+Comment=Hardened local MCP/HTTP bridge so many AI agents share one ZothOS machine with per-agent tokens, path sandbox, command blocklist, rate limit
+Exec=/usr/local/bin/zoth-relay desktop
+TryExec=/usr/local/bin/zoth-relay
+Icon=zoth-relay
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Relay (MCP Agent Bridge) Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Relay (MCP Agent Bridge) TUI" -e /usr/local/bin/zoth-relay-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8765)
+Exec=xdg-open http://127.0.0.1:8765

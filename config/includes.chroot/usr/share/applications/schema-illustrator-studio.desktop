@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Schema Illustrator Studio
+Comment=100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Free to use; tips optiona
+Exec=/usr/local/bin/schema-illustrator-studio desktop
+TryExec=/usr/local/bin/schema-illustrator-studio
+Icon=schema-illustrator-studio
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Schema Illustrator Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Schema Illustrator Studio TUI" -e /usr/local/bin/schema-illustrator-studio-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8099)
+Exec=xdg-open http://127.0.0.1:8099

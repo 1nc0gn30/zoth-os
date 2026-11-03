@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AEO Graph Engine & Studio
+Comment=100% in-browser Answer Engine Optimization (AEO/GEO) workbench, Schema.org JSON-LD @graph generator, live semantic crawler, and MCP export w
+Exec=/usr/local/bin/aeo-graph-engine desktop
+TryExec=/usr/local/bin/aeo-graph-engine
+Icon=aeo-graph-engine
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch AEO Graph Engine & Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "AEO Graph Engine & Studio TUI" -e /usr/local/bin/aeo-graph-engine-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8127)
+Exec=xdg-open http://127.0.0.1:8127

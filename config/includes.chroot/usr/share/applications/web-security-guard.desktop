@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Web Security Guard
+Comment=100% in-browser security headers auditor, TLS cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, security defense 
+Exec=/usr/local/bin/web-security-guard desktop
+TryExec=/usr/local/bin/web-security-guard
+Icon=web-security-guard
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Web Security Guard Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Web Security Guard TUI" -e /usr/local/bin/web-security-guard-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8125)
+Exec=xdg-open http://127.0.0.1:8125

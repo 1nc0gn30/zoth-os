@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Egress Sentinel
+Comment=Autonomous zero-dependency network interceptor, TLS SNI sniffer, kinetic egress radar, and kernel quarantine. Free to use; tips optional.
+Exec=/usr/local/bin/agent-egress-sentinel desktop
+TryExec=/usr/local/bin/agent-egress-sentinel
+Icon=agent-egress-sentinel
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Egress Sentinel Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Egress Sentinel TUI" -e /usr/local/bin/agent-egress-sentinel-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8095)
+Exec=xdg-open http://127.0.0.1:8095

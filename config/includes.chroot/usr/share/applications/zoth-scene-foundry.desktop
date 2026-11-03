@@ -2,9 +2,19 @@
 Version=1.0
 Type=Application
 Name=Zoth Scene Foundry
-Comment=1000 ASCII + pixel scenes on :8823
-Exec=/usr/local/bin/zoth-konsole --title 'Zoth Scene Foundry' -- /usr/local/bin/zoth-scene-foundry
-Icon=applications-graphics
+Comment=Procedural ZothOS-style ASCII + pixel-art scene engine — 1000 deterministic scenes with Bayer dither, tube palettes, and three.js AsciiEffec
+Exec=/usr/local/bin/zoth-scene-foundry desktop
+TryExec=/usr/local/bin/zoth-scene-foundry
+Icon=zoth-scene-foundry
 Terminal=false
-Categories=Graphics;AudioVideo;
+Categories=Development;Utility;ArtificialIntelligence;
 StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Scene Foundry Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Scene Foundry TUI" -e /usr/local/bin/zoth-scene-foundry-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8823)
+Exec=xdg-open http://127.0.0.1:8823

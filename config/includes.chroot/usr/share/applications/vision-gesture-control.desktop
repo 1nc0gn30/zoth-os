@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vision Gesture Control
+Comment=100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivi
+Exec=/usr/local/bin/vision-gesture-control desktop
+TryExec=/usr/local/bin/vision-gesture-control
+Icon=vision-gesture-control
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Vision Gesture Control Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Vision Gesture Control TUI" -e /usr/local/bin/vision-gesture-control-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8089)
+Exec=xdg-open http://127.0.0.1:8089

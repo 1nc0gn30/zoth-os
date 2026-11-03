@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=21-Agent Swarm Multiplexer
+Comment=21-terminal autonomous agent multiplexer daemon with hot-swappable AI harnesses, PWD control, and SSE telemetry.
+Exec=/usr/local/bin/zoth-swarm-multiplexer desktop
+TryExec=/usr/local/bin/zoth-swarm-multiplexer
+Icon=zoth-swarm-multiplexer
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch 21-Agent Swarm Multiplexer Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "21-Agent Swarm Multiplexer TUI" -e /usr/local/bin/zoth-swarm-multiplexer-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8141)
+Exec=xdg-open http://127.0.0.1:8141

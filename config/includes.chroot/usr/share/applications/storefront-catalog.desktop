@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=YourDigitalSpace POD Showcase
+Comment=10 master Etsy Print-on-Demand products optimized for 55+ demographic with 62.6% blended profit margin, 13/13 tag sets, and 100% free & open
+Exec=/usr/local/bin/storefront-catalog desktop
+TryExec=/usr/local/bin/storefront-catalog
+Icon=storefront-catalog
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch YourDigitalSpace POD Showcase Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "YourDigitalSpace POD Showcase TUI" -e /usr/local/bin/storefront-catalog-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8143)
+Exec=xdg-open http://127.0.0.1:8143

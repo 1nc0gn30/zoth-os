@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sovereign Agent Signal Bridge
+Comment=E2EE WebSocket signal protocol and Simplex peer mesh IPC communicator.
+Exec=/usr/local/bin/sovereign-agent-bridge desktop
+TryExec=/usr/local/bin/sovereign-agent-bridge
+Icon=sovereign-agent-bridge
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Sovereign Agent Signal Bridge Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Sovereign Agent Signal Bridge TUI" -e /usr/local/bin/sovereign-agent-bridge-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8102)
+Exec=xdg-open http://127.0.0.1:8102

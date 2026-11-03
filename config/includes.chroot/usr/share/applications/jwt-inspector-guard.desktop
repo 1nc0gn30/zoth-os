@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=JWT Inspector Guard
+Comment=Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor.
+Exec=/usr/local/bin/jwt-inspector-guard desktop
+TryExec=/usr/local/bin/jwt-inspector-guard
+Icon=jwt-inspector-guard
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch JWT Inspector Guard Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "JWT Inspector Guard TUI" -e /usr/local/bin/jwt-inspector-guard-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8124)
+Exec=xdg-open http://127.0.0.1:8124

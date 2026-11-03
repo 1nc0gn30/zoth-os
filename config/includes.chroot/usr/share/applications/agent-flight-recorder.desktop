@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Flight Recorder
+Comment=Black box flight recorder & time-scrubbing telemetry forensics hub for AI agents with synchronized terminal stream, egress graph, memory eng
+Exec=/usr/local/bin/agent-flight-recorder desktop
+TryExec=/usr/local/bin/agent-flight-recorder
+Icon=agent-flight-recorder
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Flight Recorder Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Flight Recorder TUI" -e /usr/local/bin/agent-flight-recorder-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8104)
+Exec=xdg-open http://127.0.0.1:8104

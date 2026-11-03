@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Product Hunt Connector (zoth-ph)
+Comment=Local Zoth OS cockpit that diffs the ZOTHOS Product Hunt listing against live website/GitHub URLs, surfaces votes/ranks/comments, and serves
+Exec=/usr/local/bin/producthunt-connector desktop
+TryExec=/usr/local/bin/producthunt-connector
+Icon=producthunt-connector
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Product Hunt Connector (zoth-ph) Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Product Hunt Connector (zoth-ph) TUI" -e /usr/local/bin/producthunt-connector-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8139)
+Exec=xdg-open http://127.0.0.1:8139

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HexStrike Security Arsenal
+Comment=Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.
+Exec=/usr/local/bin/hexstrike-arsenal desktop
+TryExec=/usr/local/bin/hexstrike-arsenal
+Icon=hexstrike-arsenal
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch HexStrike Security Arsenal Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "HexStrike Security Arsenal TUI" -e /usr/local/bin/hexstrike-arsenal-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8138)
+Exec=xdg-open http://127.0.0.1:8138

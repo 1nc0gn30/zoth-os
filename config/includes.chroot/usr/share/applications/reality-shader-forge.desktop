@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Reality Shader & Theme Forge
+Comment=Interactive 60fps Reality Switch shader synthesizer and ZothOS desktop theme compiler. Customize the 5 Zoth Realities, preview Zoth Bot comp
+Exec=/usr/local/bin/reality-shader-forge desktop
+TryExec=/usr/local/bin/reality-shader-forge
+Icon=reality-shader-forge
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Reality Shader & Theme Forge Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Reality Shader & Theme Forge TUI" -e /usr/local/bin/reality-shader-forge-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8134)
+Exec=xdg-open http://127.0.0.1:8134

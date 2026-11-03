@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Prompt Firewall
+Comment=Autonomous inline prompt injection defense, PII redactor, and threat radar for AI agents ($0 token leak) with real-time SSE stream, AST de-o
+Exec=/usr/local/bin/agent-prompt-firewall desktop
+TryExec=/usr/local/bin/agent-prompt-firewall
+Icon=agent-prompt-firewall
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Prompt Firewall Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Prompt Firewall TUI" -e /usr/local/bin/agent-prompt-firewall-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8098)
+Exec=xdg-open http://127.0.0.1:8098

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Robots.txt & AEO Auditor
+Comment=100% in-browser RFC 9309 robots.txt parser, AI crawler simulator (Googlebot, GPTBot, ClaudeBot, PerplexityBot, Applebot), Pro Drift Shield, 
+Exec=/usr/local/bin/robots-txt-auditor desktop
+TryExec=/usr/local/bin/robots-txt-auditor
+Icon=robots-txt-auditor
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Robots.txt & AEO Auditor Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Robots.txt & AEO Auditor TUI" -e /usr/local/bin/robots-txt-auditor-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8086)
+Exec=xdg-open http://127.0.0.1:8086

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Anderson Security Sentinel
+Comment=Autonomous biometric laptop perimeter defense, WiFi X-Ray RF tomography, USB tripwire guard, and thermal FLIR optics. Free to use; tips opti
+Exec=/usr/local/bin/anderson-security-sentinel desktop
+TryExec=/usr/local/bin/anderson-security-sentinel
+Icon=anderson-security-sentinel
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Anderson Security Sentinel Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Anderson Security Sentinel TUI" -e /usr/local/bin/anderson-security-sentinel-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8103)
+Exec=xdg-open http://127.0.0.1:8103

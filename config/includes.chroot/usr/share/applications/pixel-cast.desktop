@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PixelCast
+Comment=Ultra-low latency Google Pixel screenshare, camera bridge, and sovereign wireless ADB mirroring workstation over Tailscale mesh.
+Exec=/usr/local/bin/pixel-cast desktop
+TryExec=/usr/local/bin/pixel-cast
+Icon=pixel-cast
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch PixelCast Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "PixelCast TUI" -e /usr/local/bin/pixel-cast-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8148)
+Exec=xdg-open http://127.0.0.1:8148

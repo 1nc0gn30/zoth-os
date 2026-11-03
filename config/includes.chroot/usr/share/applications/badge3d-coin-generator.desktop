@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Badge3D Coin Generator
+Comment=100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders, watertight STL/OBJ export, and 100
+Exec=/usr/local/bin/badge3d-coin-generator desktop
+TryExec=/usr/local/bin/badge3d-coin-generator
+Icon=badge3d-coin-generator
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Badge3D Coin Generator Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Badge3D Coin Generator TUI" -e /usr/local/bin/badge3d-coin-generator-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8084)
+Exec=xdg-open http://127.0.0.1:8084

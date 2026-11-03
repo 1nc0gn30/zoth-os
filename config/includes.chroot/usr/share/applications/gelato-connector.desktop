@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gelato Connector
+Comment=Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Ant
+Exec=/usr/local/bin/gelato-connector desktop
+TryExec=/usr/local/bin/gelato-connector
+Icon=gelato-connector
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Gelato Connector Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Gelato Connector TUI" -e /usr/local/bin/gelato-connector-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8116)
+Exec=xdg-open http://127.0.0.1:8116

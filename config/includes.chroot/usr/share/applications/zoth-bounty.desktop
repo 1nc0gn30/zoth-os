@@ -1,10 +1,20 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Bounty
-Comment=Responsible disclosure hub on :9494
-Exec=/usr/local/bin/zoth-konsole --title 'Zoth Bounty' -- /usr/local/bin/zoth-bounty-launch
-Icon=security-high
+Name=Zoth Bounty Research Hub
+Comment=Zero-false-positive security research & responsible disclosure workspace tracking Ongoing / Pending / Completed audits with a loopback comma
+Exec=/usr/local/bin/zoth-bounty desktop
+TryExec=/usr/local/bin/zoth-bounty
+Icon=zoth-bounty
 Terminal=false
-Categories=Network;Security;
+Categories=Development;Utility;ArtificialIntelligence;
 StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Bounty Research Hub Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bounty Research Hub TUI" -e /usr/local/bin/zoth-bounty-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:9494)
+Exec=xdg-open http://127.0.0.1:9494

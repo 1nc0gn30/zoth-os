@@ -1,10 +1,20 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Zoth Civilization
-Comment=Sovereign AI Civilization & Colony Engine
-Exec=/opt/zoth-civilization/bin/zoth-civ
-Icon=/usr/share/pixmaps/zoth-civilization.png
+Name=Zoth Civilization Hub
+Comment=The living heart of the 21-agent society. Runs the GameBoy pixel world simulation, Adytum Initiation Deck, and meditation art catalog.
+Exec=/usr/local/bin/zoth-civilization desktop
+TryExec=/usr/local/bin/zoth-civilization
+Icon=zoth-civilization
 Terminal=false
-Categories=Game;Simulation;ArtificialIntelligence;
+Categories=Development;Utility;ArtificialIntelligence;
 StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth Civilization Hub Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Civilization Hub TUI" -e /usr/local/bin/zoth-civilization-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:9393)
+Exec=xdg-open http://127.0.0.1:9393

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vector Search Engine & Studio
+Comment=100% in-browser HNSW skip-graph vector database, IVF clustering, Okapi BM25 lexical engine, HNSW graph brand media, and RRF hybrid search si
+Exec=/usr/local/bin/vector-search-engine desktop
+TryExec=/usr/local/bin/vector-search-engine
+Icon=vector-search-engine
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Vector Search Engine & Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Vector Search Engine & Studio TUI" -e /usr/local/bin/vector-search-engine-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8121)
+Exec=xdg-open http://127.0.0.1:8121

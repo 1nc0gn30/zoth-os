@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=YARA-X & Sigma Threat Rule Forge
+Comment=100% client-side YARA-X & Sigma threat detection compiler with 60fps byte-offset entropy radar, CVE-2024-4577 PHP-CGI / ELF64 memfd / AI Age
+Exec=/usr/local/bin/yara-sigma-forge desktop
+TryExec=/usr/local/bin/yara-sigma-forge
+Icon=yara-sigma-forge
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch YARA-X & Sigma Threat Rule Forge Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "YARA-X & Sigma Threat Rule Forge TUI" -e /usr/local/bin/yara-sigma-forge-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8133)
+Exec=xdg-open http://127.0.0.1:8133

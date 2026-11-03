@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GhidraMCP Binary Reverse Engineering Bridge
+Comment=LaurieWired Ghidra Model Context Protocol bridge for autonomous binary decompilation, AST method analysis, and project variable annotation.
+Exec=/usr/local/bin/ghidra-mcp-bridge desktop
+TryExec=/usr/local/bin/ghidra-mcp-bridge
+Icon=ghidra-mcp-bridge
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch GhidraMCP Binary Reverse Engineering Bridge Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "GhidraMCP Binary Reverse Engineering Bridge TUI" -e /usr/local/bin/ghidra-mcp-bridge-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8131)
+Exec=xdg-open http://127.0.0.1:8131

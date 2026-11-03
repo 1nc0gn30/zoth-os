@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth ASCII Magic Studio
+Comment=100% client-side Image/Video/3D-to-ASCII & Sub-Pixel Unicode Braille studio with Sobel directional edge detection (/\|-), interactive 2D poi
+Exec=/usr/local/bin/zoth-ascii-magic desktop
+TryExec=/usr/local/bin/zoth-ascii-magic
+Icon=zoth-ascii-magic
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Zoth ASCII Magic Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Zoth ASCII Magic Studio TUI" -e /usr/local/bin/zoth-ascii-magic-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8132)
+Exec=xdg-open http://127.0.0.1:8132

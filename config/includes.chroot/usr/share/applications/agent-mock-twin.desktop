@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Mock Twin
+Comment=Autonomous offline API mock server & deterministic replay twin for AI agents ($0 token spend in CI/CD) with OpenAPI/HAR ingestion, Python st
+Exec=/usr/local/bin/agent-mock-twin desktop
+TryExec=/usr/local/bin/agent-mock-twin
+Icon=agent-mock-twin
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Agent Mock Twin Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Mock Twin TUI" -e /usr/local/bin/agent-mock-twin-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8097)
+Exec=xdg-open http://127.0.0.1:8097

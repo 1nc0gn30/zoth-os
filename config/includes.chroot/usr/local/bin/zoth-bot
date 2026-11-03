@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# ZothOS Desktop (Electron) & Braille TUI Interceptor
+import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
+if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
+    _z_rdir = _z_os.path.expanduser('~/NullAITech/zoth-bot')
+    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
+    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
+if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
+    _z_sys.exit(_z_sp.run(['/usr/local/bin/zoth-bot-tui'] + _z_rem).returncode)
 """
 Zoth Bot CLI Binary
 Local-first, always-on 3D WebGL desk companion for Zoth OS.

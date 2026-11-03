@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Neuro-Memory Daemon
+Comment=Biological-fidelity memory substrate with 3D Cosmic Nebula and federated Zoth Memory viewer. CLI zoth-memory / zoth-neuro-memory.
+Exec=/usr/local/bin/neuro-memory-daemon desktop
+TryExec=/usr/local/bin/neuro-memory-daemon
+Icon=neuro-memory-daemon
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Neuro-Memory Daemon Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Neuro-Memory Daemon TUI" -e /usr/local/bin/neuro-memory-daemon-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8094)
+Exec=xdg-open http://127.0.0.1:8094

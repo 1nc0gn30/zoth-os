@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Adytum Planner
+Comment=The 22-key hermetic planning rite. Intention, five-minute incubation, and a local-model gate.
+Exec=/usr/local/bin/adytum-alchemist-ai-workflow desktop
+TryExec=/usr/local/bin/adytum-alchemist-ai-workflow
+Icon=adytum-alchemist-ai-workflow
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Adytum Planner Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Adytum Planner TUI" -e /usr/local/bin/adytum-alchemist-ai-workflow-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8135)
+Exec=xdg-open http://127.0.0.1:8135

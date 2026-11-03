@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PWA Manifest Studio
+Comment=100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle expor
+Exec=/usr/local/bin/pwa-manifest-builder desktop
+TryExec=/usr/local/bin/pwa-manifest-builder
+Icon=pwa-manifest-builder
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch PWA Manifest Studio Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "PWA Manifest Studio TUI" -e /usr/local/bin/pwa-manifest-builder-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8100)
+Exec=xdg-open http://127.0.0.1:8100

@@ -101,10 +101,10 @@ function createWindow() {
   if (IS_SMOKE) {
     const timer = setTimeout(() => {
       console.log(JSON.stringify({ tool: TOOL_ID, port: BACKEND_PORT, ok: false, error: 'timeout' }));
-      app.exit(1);
+      app.exit(1); process.exit(1);
     }, 10000);
 
-    mainWindow.webContents.once('did-finish-load', async () => {
+    mainWindow.webContents.once('dom-ready', async () => {
       clearTimeout(timer);
       try {
         const metrics = await mainWindow.webContents.executeJavaScript(`({
@@ -123,10 +123,10 @@ function createWindow() {
           ...metrics,
           consoleErrors: consoleErrors.slice(0, 5)
         }));
-        app.exit(ok ? 0 : 1);
+        app.exit(ok ? 0 : 1); process.exit(ok ? 0 : 1);
       } catch (err) {
         console.log(JSON.stringify({ tool: TOOL_ID, port: BACKEND_PORT, ok: false, error: String(err) }));
-        app.exit(1);
+        app.exit(1); process.exit(1);
       }
     });
   }

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=CWV Speed Engine
+Comment=100% in-browser Core Web Vitals diagnostic engine, client DOM AST speed transformer, PWA manifest builder, tachometer gauge brand media, and
+Exec=/usr/local/bin/cwv-speed-engine desktop
+TryExec=/usr/local/bin/cwv-speed-engine
+Icon=cwv-speed-engine
+Terminal=false
+Categories=Development;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch CWV Speed Engine Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "CWV Speed Engine TUI" -e /usr/local/bin/cwv-speed-engine-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8128)
+Exec=xdg-open http://127.0.0.1:8128
