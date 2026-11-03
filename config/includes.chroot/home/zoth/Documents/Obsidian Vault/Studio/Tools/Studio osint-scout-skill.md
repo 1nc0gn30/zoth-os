@@ -101,3 +101,44 @@ Switching to the **LIVE (12)** filter tab (`nullai.tech`, `www.nullai.tech`, `ap
 Verifying zero horizontal scroll overflow (`overflowPx === 0`), stacked responsive recon cards, and 44px touch targets at `390×844`.
 
 ![Step 12 — Mobile 390px Responsive Layout](Artifacts/osint-scout-skill/osint-scout-skill_12_mobile_390px_responsive.jpg)
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/osint-scout-skill"]
+        TUI["/usr/local/bin/osint-scout-skill-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["http://127.0.0.1:8085<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/osint-scout-skill<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio osint-scout-skill.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `osint-scout-skill-tui --status` / `osint-scout-skill-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

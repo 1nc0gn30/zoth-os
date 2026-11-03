@@ -1,0 +1,209 @@
+/* Zoth Canon — gold on obsidian. One seam, no noise. */
+
+.theme-dark {
+  --zoth-gold: #d4af37;
+  --zoth-gold-soft: #f5e6ab;
+  --zoth-line: rgba(212, 175, 55, 0.28);
+  --background-primary: #08080b;
+  --background-primary-alt: #0b0f17;
+  --background-secondary: #0c1016;
+  --background-secondary-alt: #10151d;
+  --background-modifier-border: var(--zoth-line);
+  --background-modifier-hover: rgba(212, 175, 55, 0.08);
+  --text-normal: #e6edf3;
+  --text-muted: #8b949e;
+  --text-faint: #5c6570;
+  --text-accent: var(--zoth-gold);
+  --text-accent-hover: var(--zoth-gold-soft);
+  --text-on-accent: #08080b;
+  --interactive-accent: var(--zoth-gold);
+  --interactive-accent-hover: #e4c35a;
+  --h1-color: var(--zoth-gold-soft);
+  --h2-color: var(--zoth-gold);
+  --h3-color: #c9d1d9;
+  --inline-title-color: var(--zoth-gold-soft);
+  --link-color: var(--zoth-gold);
+  --link-unresolved-color: rgba(212, 175, 55, 0.55);
+  --tag-color: var(--zoth-gold);
+  --tag-background: rgba(212, 175, 55, 0.1);
+  --nav-item-color-active: var(--zoth-gold-soft);
+  --tab-text-color-focused: var(--zoth-gold-soft);
+  --scrollbar-thumb-bg: rgba(212, 175, 55, 0.22);
+  --divider-color: var(--zoth-line);
+  --canvas-color: 8, 8, 11;
+}
+
+.theme-dark .markdown-preview-view,
+.theme-dark .markdown-source-view {
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.theme-dark .markdown-preview-view h1,
+.theme-dark .HyperMD-header-1,
+.theme-dark .inline-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  border-bottom: none;
+}
+
+.theme-dark .markdown-preview-view h1::after,
+.theme-dark .inline-title::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 2px;
+  margin-top: 12px;
+  background: linear-gradient(90deg, var(--zoth-gold), transparent);
+}
+
+.theme-dark .markdown-preview-view h2 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  margin-top: 2.2em;
+}
+
+.theme-dark .markdown-preview-view h3 {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--zoth-gold);
+  font-weight: 500;
+}
+
+.theme-dark .markdown-preview-view a.internal-link {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.theme-dark .markdown-preview-view a.internal-link:hover {
+  border-bottom-color: var(--zoth-gold);
+}
+
+.theme-dark .markdown-preview-view table {
+  width: 100%;
+  border: 1px solid var(--zoth-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.theme-dark .markdown-preview-view th {
+  background: rgba(212, 175, 55, 0.08);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--zoth-gold);
+  font-weight: 500;
+}
+
+.theme-dark .markdown-preview-view td,
+.theme-dark .markdown-preview-view th {
+  border-color: var(--zoth-line);
+}
+
+.theme-dark .callout {
+  background: rgba(12, 16, 22, 0.9);
+  border: 1px solid var(--zoth-line);
+  border-radius: 10px;
+  mix-blend-mode: normal;
+}
+
+.theme-dark .callout[data-callout="gold"] {
+  --callout-color: 212, 175, 55;
+}
+
+.theme-dark .workspace-leaf.mod-active .workspace-leaf-content {
+  border-color: var(--zoth-line);
+}
+
+.theme-dark .nav-file-title.is-active {
+  color: var(--zoth-gold-soft);
+}
+
+.theme-dark .status-bar {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.theme-dark .graph-view.color-fill {
+  color: var(--zoth-gold);
+}
+
+/* Dashboard home */
+.dashboard {
+  --file-line-width: 100%;
+  --file-margins: 20px 28px;
+}
+
+.theme-dark .internal-embed.canvas-wrapper,
+.theme-dark .markdown-preview-view .internal-embed.media-embed.canvas-embed {
+  border: 1px solid var(--zoth-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #08080b;
+}
+
+.theme-dark .canvas-node-container {
+  border-radius: 10px;
+}
+
+.theme-dark .canvas-node.is-focused .canvas-node-container {
+  border-color: var(--zoth-gold);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
+}
+
+.theme-dark .canvas-node-group {
+  border-color: var(--zoth-line);
+}
+
+.theme-dark .bases-view,
+.theme-dark .workspace-leaf-content[data-type="bases"] {
+  --bases-header-background: rgba(212, 175, 55, 0.06);
+}
+
+.theme-dark .bases-thead,
+.theme-dark .bases-header-cell {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zoth-gold);
+}
+
+.theme-dark .metadata-container {
+  background: transparent;
+  border: 1px solid var(--zoth-line);
+  border-radius: 10px;
+}
+
+.theme-dark .metadata-property-key {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--zoth-gold);
+}
+
+.theme-dark .tree-item-inner[data-path="Maps"],
+.theme-dark .nav-folder-title[data-path="Maps"] .nav-folder-title-content {
+  color: var(--zoth-gold-soft);
+}
+
+.theme-dark .callout[data-callout="canon"] {
+  --callout-color: 212, 175, 55;
+}
+
+.theme-dark .workspace-tabs .workspace-tab-header.is-active .workspace-tab-header-inner-title {
+  color: var(--zoth-gold-soft);
+}
+
+.theme-dark .suggestion-item.is-selected {
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.theme-dark .bookmark .tree-item-self.is-active {
+  color: var(--zoth-gold-soft);
+}

@@ -1,0 +1,13 @@
+{
+  "accentColor": "#d4af37",
+  "theme": "obsidian",
+  "cssTheme": "",
+  "baseFontSize": 16,
+  "interfaceFontFamily": "Google Sans, Inter, sans-serif",
+  "textFontFamily": "Google Sans, Inter, sans-serif",
+  "monospaceFontFamily": "JetBrains Mono, IBM Plex Mono, monospace",
+  "enabledCssSnippets": [
+    "zoth-canon"
+  ],
+  "showViewHeader": true
+}

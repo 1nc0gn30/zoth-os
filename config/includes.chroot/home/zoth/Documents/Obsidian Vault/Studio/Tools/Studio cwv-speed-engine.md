@@ -110,3 +110,44 @@ Executing **TRANSFORM & OPTIMIZE DOM** inside Zoth Studio v2 God-Mode — liftin
 Verifying the Standalone CWV Speed Engine workstation across a mobile viewport (`390x844`) with zero horizontal overflow, stacked score gauges, and accessible touch targets.
 
 ![[cwv-speed-engine_12_gui_mobile_responsive.jpg]]
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/cwv-speed-engine"]
+        TUI["/usr/local/bin/cwv-speed-engine-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["https://cwv-speed-engine.nullai.tech<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/cwv-speed-engine<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio cwv-speed-engine.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `cwv-speed-engine-tui --status` / `cwv-speed-engine-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

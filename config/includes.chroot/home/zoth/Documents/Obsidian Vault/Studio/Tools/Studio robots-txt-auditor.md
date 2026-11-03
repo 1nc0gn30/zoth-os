@@ -89,3 +89,44 @@ Switching to **SaaS & API Isolation (/dashboard)** and clicking the `/dashboard`
 Verified at mobile viewport (`390×844`) with zero horizontal scroll overflow (`overflowPx === 0`), clean mobile header, and full editor/simulator access.
 
 ![Step 12 — Mobile 390px Responsive Layout](Artifacts/robots-txt-auditor/robots-txt-auditor_12_mobile_390px_verified.jpg)
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/robots-txt-auditor"]
+        TUI["/usr/local/bin/robots-txt-auditor-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["http://127.0.0.1:8086<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/robots-txt-auditor<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio robots-txt-auditor.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `robots-txt-auditor-tui --status` / `robots-txt-auditor-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

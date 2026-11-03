@@ -101,3 +101,44 @@ Switching to the **Pro JSON Pack** tab to verify the 100% unlocked JSON campaign
 Verifying zero horizontal scroll overflow (`overflowPx === 0`), stacked responsive composer cards, and 44px touch targets at `390×844`.
 
 ![Step 12 — Mobile 390px Responsive Layout](Artifacts/omnipost-social-engine/omnipost-social-engine_12_mobile_390px_responsive.jpg)
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/omnipost-social-engine"]
+        TUI["/usr/local/bin/omnipost-social-engine-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["http://127.0.0.1:8091<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/omnipost-social-engine<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio omnipost-social-engine.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `omnipost-social-engine-tui --status` / `omnipost-social-engine-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

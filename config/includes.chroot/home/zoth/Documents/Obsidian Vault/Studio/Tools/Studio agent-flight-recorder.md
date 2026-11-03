@@ -86,3 +86,44 @@ Opening `http://127.0.0.1:3000/tools/agent-flight-recorder` to inspect the 60fps
 #### Step 12: Zoth Studio v2 God-Mode — Sealing New Trajectory Frame (`STEP #5`) & Verifying Chain Head
 Appending a new signed trajectory frame (`grok-cli -> TOOL_CALL_VERIFY`) via **Seal Frame**, updating the Merkle DAG chain (`#5`, `hash: 0xa1a91eb0efa47b04`, `prevHash: 0x9601903846739002`), and verifying `overflowPx === 0` and `consoleErrors === 0`.
 ![[Studio/Assets/Screenshots/Gallery/agent-flight-recorder/agent-flight-recorder_12_studio_godmode_seal_frame.jpg]]
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/agent-flight-recorder"]
+        TUI["/usr/local/bin/agent-flight-recorder-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["http://127.0.0.1:8080<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/agent-flight-recorder<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio agent-flight-recorder.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `agent-flight-recorder-tui --status` / `agent-flight-recorder-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

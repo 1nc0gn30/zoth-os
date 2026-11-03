@@ -86,3 +86,44 @@ Selecting the critical industrial target `194.226.49.12` (`Industrial Grid Energ
 #### Step 12: Zoth Studio v2 God-Mode — Correlated CVEs & Threat Severity Matrix
 Switching to the **Correlated CVEs & Threat Severity** tab (`CVE-2021-36260`, `CVE-2022-45788`, `CVE-2024-21626`, `CVE-2024-37032`) and verifying `overflowPx === 0` and `consoleErrors === 0`.
 ![[Studio/Assets/Screenshots/Gallery/agent-gods-eye/agent-gods-eye_12_studio_godmode_cve_matrix.jpg]]
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/agent-gods-eye"]
+        TUI["/usr/local/bin/agent-gods-eye-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["http://127.0.0.1:8080<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/agent-gods-eye<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio agent-gods-eye.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `agent-gods-eye-tui --status` / `agent-gods-eye-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

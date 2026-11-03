@@ -16,7 +16,7 @@ The `CivicProcurementGodModeTool` component (`zoth-studio-v2/src/components/tool
   - Commonwealth of Virginia VITA SEC530 Information Security Standard
   - DoD Cybersecurity Maturity Model Certification (CMMC v2.0 Level 2)
   - CJIS Security Policy v5.9 & SWaM Small Business Set-Aside criteria
-- **Capability Statement Generator**: Synthesizes structured Markdown capability briefs for 1nc0gn30 • NullAI / 757 Tech Pro, detailing core competencies, NAICS codes (541512, 541511, 541715), and past performance.
+- **Capability Statement Generator**: Synthesizes structured Markdown capability briefs for 1nc0gn30 • NullAI / NullAI Platform, detailing core competencies, NAICS codes (541512, 541511, 541715), and past performance.
 - **Virginia FOIA § 2.2-3700 Synthesizer**: Generates formal public-records request letters for municipal IT contracts, competitor bid evaluations, and procurement histories under the Virginia Freedom of Information Act.
 
 ## Parent & Integration

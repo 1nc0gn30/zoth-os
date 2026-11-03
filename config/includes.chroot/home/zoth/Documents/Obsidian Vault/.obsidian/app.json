@@ -1,0 +1,17 @@
+{
+  "legacyEditor": false,
+  "livePreview": true,
+  "showLineNumber": false,
+  "strictLineBreaks": false,
+  "readableLineLength": true,
+  "attachmentFolderPath": "attachments",
+  "alwaysUpdateLinks": true,
+  "showInlineTitle": true,
+  "showFrontmatter": false,
+  "propertiesInDocument": "visible",
+  "promptDelete": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Inbox",
+  "useMarkdownLinks": false,
+  "showUnsupportedFiles": true
+}

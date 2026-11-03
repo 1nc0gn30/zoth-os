@@ -1,0 +1,499 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-10-31T20:43:57.580823+00:00",
+  "healthScore": 100,
+  "auditMetrics": {
+    "totalNotes": 1762,
+    "totalWikilinks": 8040,
+    "connectivityPct": 99.6,
+    "canvasesCount": 19,
+    "basesCount": 22,
+    "wikiCount": 13
+  },
+  "wikiArticles": [
+    {
+      "title": "Biomorphic STDP & 3D Netrunner Cortex",
+      "relPath": "06-Wiki/Biomorphic STDP & 3D Netrunner Cortex.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **Biomorphic STDP & 3D Netrunner Cortex** is the central biological cognitive substrate powering ZothOS and Zoth Studio (`:8094`). Operating on biological principles of **Spike-Timing-Dependent Plasticity (STDP)** and **Hebbian Learning**, the cortex continuously updates associative synaptic weights between 41,690+ cognitive engrams across semantic, episodic, insight, and security categories. Through an autonomous **Metacognitive Dream Loop** and real-time 3D Netrunner force-directed embedding, the substrate distills ambient developer actions into enduring mathematical intuition with zero telemetry data leakage."
+    },
+    {
+      "title": "Byzantine Quorum & Epistemic Consensus",
+      "relPath": "06-Wiki/Byzantine Quorum & Epistemic Consensus.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **Byzantine Quorum & Epistemic Consensus** is an essential technical domain within the ZothOS / Obsidian Second Brain ecosystem. This Karpathy-style wiki page compiles distributed knowledge across 6 vault notes and 6 STDP synaptic memory engrams into a unified canonical reference."
+    },
+    {
+      "title": "Hermes Agent & Multi-Provider MCP Connector Ecosystem",
+      "relPath": "06-Wiki/Hermes Agent & Multi-Provider MCP Connector Ecosystem.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **Hermes Agent & Multi-Provider MCP Connector Ecosystem** is the sovereign autonomous agency layer within ZothOS. Built on Nous Research's Hermes Agent framework, Hermes provides an extensible, tool-calling agent operating across terminal CLI (`hermes chat`), desktop Electron interfaces, and OpenAI-compatible proxies. Hermes interfaces with **150+ modular skills** and standardized Model Context Protocol (MCP) servers, delegating bounded subtasks with persistent associative memory."
+    },
+    {
+      "title": "Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol",
+      "relPath": "06-Wiki/Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **Neuro-Memory 20-Tool MCP Server** (`neuro_memory_daemon.mcp_server`) is the open standard cognitive and knowledge bridge linking autonomous AI agents (Claude Desktop, Cursor IDE, Grok Bot, Hermes Agent) to the biomorphic **Spike-Timing-Dependent Plasticity (STDP)** memory substrate and the **1,729+ note Obsidian Second Brain Vault**. Implementing the **Model Context Protocol (MCP)** specification over dual transport layers (`stdio` JSON-RPC 2.0 and RESTful HTTP `:8094`), the server delivers a cohesive 20-tool suite spanning associative engram recall, memory consolidation, fixed-root confined note read/write, spatial JSON Canvas generation, database querying, doctor health audits, and portable cryptographic bundle attestation."
+    },
+    {
+      "title": "Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture",
+      "relPath": "06-Wiki/Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **ZothOS Sovereign Second Brain** integrates the complete suite of official `@kepano/obsidian-skills` specifications—including **Obsidian Flavored Markdown (OFM)**, **JSON Canvas 1.0 (`.canvas`)**, **Obsidian Bases (`.base`)**, and **Defuddle/Knap** transformation pipelines—with the **Neuro-Memory Daemon (`:8094`)**. Through continuous Spike-Timing-Dependent Plasticity (STDP) synchronization, human knowledge structures stored in local Markdown files seamlessly cross-pollinate with high-dimensional neural engrams, creating a self-organizing, biologically inspired cognitive substrate."
+    },
+    {
+      "title": "Biomorphic STDP & 3D Netrunner Cortex",
+      "relPath": "06-Wiki/STDP Synaptic Memory Consolidation & Hebbian Dream Wave.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **Biomorphic STDP & 3D Netrunner Cortex** is the central biological cognitive substrate powering ZothOS and Zoth Studio (`:8094`). Operating on biological principles of **Spike-Timing-Dependent Plasticity (STDP)** and **Hebbian Learning**, the cortex continuously updates associative synaptic weights between 41,690+ cognitive engrams across semantic, episodic, insight, and security categories. Through an autonomous **Metacognitive Dream Loop** and real-time 3D Netrunner force-directed embedding, the substrate distills ambient developer actions into enduring mathematical intuition with zero telemetry data leakage."
+    },
+    {
+      "title": "Vaelor Account-Lattice & PoUW Protocol",
+      "relPath": "06-Wiki/Vaelor Account-Lattice & PoUW Protocol.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **Vaelor (◈ VLR)** is a next-generation Layer-1 feeless cryptocurrency architecture designed to eliminate blockchain transaction fees and mining energy waste. Operating on an asynchronous **Account-Lattice DAG**, each account controls an independent micro-chain validated via a sub-20ms SHA-256 work stamp. Byzantine Fault Tolerant (BFT) finality is achieved across a 5-region validator quorum, while native Layer-1 **Protected-Pay Escrow** (24–72h buyer protection windows) and **Recurring Pull Subscription Allowances** provide consumer payment features surpassing legacy credit card rails."
+    },
+    {
+      "title": "Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults",
+      "relPath": "06-Wiki/Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **Vaelor (◈ VLR)** introduces zero-knowledge privacy and social coordination primitives directly into its Layer-1 feeless Account-Lattice DAG (:8140). The **Vaelor Privacy Shield** combines Pedersen-style SHA-256 value commitments (`cmt_...`) and selective disclosure view keys (`vk_...`) for non-custodial auditability without deanonymization. Complementing the privacy layer are native **Social Group Tabs** (`GROUP_TAB_SETTLE`) providing integer-exact zero-remainder bill settlement across multi-agent swarms and human cohorts, alongside sovereign **Inheritance Continuity Vaults** (`INHERITANCE_CLAIM`) featuring configurable dead-man's switch epochs, multi-beneficiary quorum disbursement, and zero custodial exposure."
+    },
+    {
+      "title": "Vaelor Smart Receipts, Sub-Accounts & Anti-Phishing Directory",
+      "relPath": "06-Wiki/Vaelor Smart Receipts, Sub-Accounts & Anti-Phishing Directory.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **Vaelor (◈ VLR)** incorporates sovereign commerce primitives into its Layer-1 feeless Account-Lattice DAG. Beyond basic value transfer, the protocol provides native **`SMART_RECEIPT`** itemized cryptographic proofs, **365-day on-chain warranties** with escrow disputation windows, **`SUBACCOUNT_SPEND`** hierarchical spending caps with 1-click kill switches for autonomous agents, and a real-time **Anti-Phishing Directory** utilizing Levenshtein distance metrics and Unicode homoglyph analysis to shield users and sovereign daemons from address spoofing."
+    },
+    {
+      "title": "Zero-Trust Supply Chain, Cosign & VirusTotal Verification",
+      "relPath": "06-Wiki/Zero-Trust Supply Chain, Cosign & VirusTotal Verification.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> The **Zero-Trust Supply Chain, Cosign & VirusTotal Verification** architecture establishes mathematical tamper-evidence for all code, container images, and release artifacts distributed across ZothOS and the NullAI Platform. Every git commit, release tarball, and live daemon binary is cryptographically signed using **Cosign Ed25519** and verified against **VirusTotal 70+ Antivirus Scanning Engines**, guaranteeing 0 false positives, 0 malware detections, and unalterable author provenance."
+    },
+    {
+      "title": "Zoth Brain — Many-Model Chains vs Measured Gated Hops",
+      "relPath": "06-Wiki/Zoth Brain — Many-Model Chains vs Measured Gated Hops.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.95,
+      "status": "RESEARCH",
+      "executiveSummary": "> [!abstract] Why this note exists\n> Asked: build a \"brain\" from ~100 tiny hyperfocused models, one running at a time, each refining the last answer. Research pass (2026-10-29, no building) through `zoth.nullai.tech`, the NullAITech GitHub org, and the local clones under `/home/zoth/NullAITech/`. Result: the ecosystem has **already shipped the working half of that idea** — in `chain-of-thoughts` (zoth-cot), the Pantheon, and Vaelor's BFT quorum — and the half that does not work is the half that assumes *weights* carry the specialisation. Measurement of a 2-hop relay over one resident 1.5B on this laptop shows hops add corruption, not capability (see `zoth-fast/chain/DESIGN.md`)."
+    },
+    {
+      "title": "Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools",
+      "relPath": "06-Wiki/Zoth Studio v2 & 71 Sovereign Micro-SaaS Tools.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **Zoth Studio v2** is the sovereign in-browser developer cockpit and micro-SaaS application suite running on port `:3000`. Powered by React 18, Vite, and Tailwind CSS, Zoth Studio hosts **71 fully-functional, client-side developer tools** spanning AST code generation, crypto transactions, SEO audits, and media synthesis. Every tool operates with zero broken backend server dependencies, dual Stripe and Solana Tip Solana payment rails, and client-side license unlock state persistence."
+    },
+    {
+      "title": "ZothOS Sovereign Linux & Kernel Architecture",
+      "relPath": "06-Wiki/ZothOS Sovereign Linux & Kernel Architecture.md",
+      "category": "LLM-Wiki",
+      "confidence": 0.99,
+      "status": "CANONICAL",
+      "executiveSummary": "> [!abstract] Executive Summary\n> **ZothOS** is a sovereign, low-latency Linux operating system and developer workstation environment engineered for autonomous AI agency, zero-egress local privacy, and deterministic developer cockpits. Built on a performance-tuned Preempt-RT kernel with decoupled cgroups and isolated systemd service units, ZothOS orchestrates the 5 sovereign fleet daemons (`:8094`, `:8140`, `:3000`, `:5173`, `:9393`) across eight dedicated desktop rooms (Forge through Sanctum)."
+    }
+  ],
+  "canvases": [
+    {
+      "name": "Biomorphic Netrunner Synaptic Map Knowledge Map.canvas",
+      "relPath": "Biomorphic Netrunner Synaptic Map Knowledge Map.canvas",
+      "nodeCount": 14,
+      "edgeCount": 10
+    },
+    {
+      "name": "Epistemic Quorum & Byzantine Consensus Arena Knowledge Map.canvas",
+      "relPath": "Epistemic Quorum & Byzantine Consensus Arena Knowledge Map.canvas",
+      "nodeCount": 14,
+      "edgeCount": 10
+    },
+    {
+      "name": "FieldKit Architecture & Mission Flow.canvas",
+      "relPath": "FieldKit-Missions/FieldKit Architecture & Mission Flow.canvas",
+      "nodeCount": 7,
+      "edgeCount": 7
+    },
+    {
+      "name": "Adytum.canvas",
+      "relPath": "Maps/Adytum.canvas",
+      "nodeCount": 24,
+      "edgeCount": 22
+    },
+    {
+      "name": "Canon.canvas",
+      "relPath": "Maps/Canon.canvas",
+      "nodeCount": 28,
+      "edgeCount": 20
+    },
+    {
+      "name": "Gallery.canvas",
+      "relPath": "Maps/Gallery.canvas",
+      "nodeCount": 24,
+      "edgeCount": 0
+    },
+    {
+      "name": "Loopback.canvas",
+      "relPath": "Maps/Loopback.canvas",
+      "nodeCount": 13,
+      "edgeCount": 11
+    },
+    {
+      "name": "OS.canvas",
+      "relPath": "Maps/OS.canvas",
+      "nodeCount": 23,
+      "edgeCount": 22
+    },
+    {
+      "name": "Rings.canvas",
+      "relPath": "Maps/Rings.canvas",
+      "nodeCount": 7,
+      "edgeCount": 5
+    },
+    {
+      "name": "Rooms.canvas",
+      "relPath": "Maps/Rooms.canvas",
+      "nodeCount": 27,
+      "edgeCount": 16
+    },
+    {
+      "name": "Studio.canvas",
+      "relPath": "Maps/Studio.canvas",
+      "nodeCount": 24,
+      "edgeCount": 23
+    },
+    {
+      "name": "Netrunner Cyber-Cortex Knowledge Map.canvas",
+      "relPath": "Netrunner Cyber-Cortex Knowledge Map.canvas",
+      "nodeCount": 10,
+      "edgeCount": 6
+    },
+    {
+      "name": "Vaelor & Sovereign Economy.canvas",
+      "relPath": "Vaelor & Sovereign Economy.canvas",
+      "nodeCount": 25,
+      "edgeCount": 10
+    },
+    {
+      "name": "Vaelor Layer-1 Complete Architecture.canvas",
+      "relPath": "Vaelor Layer-1 Complete Architecture.canvas",
+      "nodeCount": 17,
+      "edgeCount": 11
+    },
+    {
+      "name": "Zoth 6 Mathematical Pillars.canvas",
+      "relPath": "Zoth 6 Mathematical Pillars.canvas",
+      "nodeCount": 30,
+      "edgeCount": 10
+    },
+    {
+      "name": "Zoth Autonomous Agents & Hermes Fleet.canvas",
+      "relPath": "Zoth Autonomous Agents & Hermes Fleet.canvas",
+      "nodeCount": 17,
+      "edgeCount": 8
+    },
+    {
+      "name": "Zoth Plugin & Connector Marketplace.canvas",
+      "relPath": "Zoth Plugin & Connector Marketplace.canvas",
+      "nodeCount": 25,
+      "edgeCount": 10
+    },
+    {
+      "name": "Zoth Second Brain.canvas",
+      "relPath": "Zoth Second Brain.canvas",
+      "nodeCount": 7,
+      "edgeCount": 5
+    },
+    {
+      "name": "ZothOS & Studio Supply-Chain Trust Stack.canvas",
+      "relPath": "ZothOS & Studio Supply-Chain Trust Stack.canvas",
+      "nodeCount": 19,
+      "edgeCount": 13
+    }
+  ],
+  "bases": [
+    {
+      "name": "FieldKit Missions.base",
+      "relPath": "FieldKit-Missions/FieldKit Missions.base",
+      "viewsCount": 2,
+      "formulasCount": 6
+    },
+    {
+      "name": "Adytum.base",
+      "relPath": "Maps/Adytum.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "Arsenal.base",
+      "relPath": "Maps/Arsenal.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "CLIs.base",
+      "relPath": "Maps/CLIs.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Daemons.base",
+      "relPath": "Maps/Daemons.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Gallery.base",
+      "relPath": "Maps/Gallery.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "Loopback.base",
+      "relPath": "Maps/Loopback.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "MCP.base",
+      "relPath": "Maps/MCP.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Manifests.base",
+      "relPath": "Maps/Manifests.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "Rings.base",
+      "relPath": "Maps/Rings.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "Rooms.base",
+      "relPath": "Maps/Rooms.base",
+      "viewsCount": 2,
+      "formulasCount": 1
+    },
+    {
+      "name": "Skills.base",
+      "relPath": "Maps/Skills.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Studio Tools.base",
+      "relPath": "Maps/Studio Tools.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Workstations.base",
+      "relPath": "Maps/Workstations.base",
+      "viewsCount": 2,
+      "formulasCount": 2
+    },
+    {
+      "name": "Sovereign MCP Tools & Agent Catalog.base",
+      "relPath": "Sovereign MCP Tools & Agent Catalog.base",
+      "viewsCount": 3,
+      "formulasCount": 7
+    },
+    {
+      "name": "Vaelor Ecosystem & Patronage Ledger.base",
+      "relPath": "Vaelor Ecosystem & Patronage Ledger.base",
+      "viewsCount": 3,
+      "formulasCount": 8
+    },
+    {
+      "name": "Zoth 72 Sovereign Tools.base",
+      "relPath": "Zoth 72 Sovereign Tools.base",
+      "viewsCount": 3,
+      "formulasCount": 10
+    },
+    {
+      "name": "Zoth 72 Sovereign Tools Tracker.base",
+      "relPath": "Zoth 72 Sovereign Tools Tracker.base",
+      "viewsCount": 4,
+      "formulasCount": 15
+    },
+    {
+      "name": "Zoth Autonomous Agents.base",
+      "relPath": "Zoth Autonomous Agents.base",
+      "viewsCount": 3,
+      "formulasCount": 8
+    },
+    {
+      "name": "Zoth Fleet & Daemons.base",
+      "relPath": "Zoth Fleet & Daemons.base",
+      "viewsCount": 4,
+      "formulasCount": 9
+    },
+    {
+      "name": "Zoth LLM Wiki Index.base",
+      "relPath": "Zoth LLM Wiki Index.base",
+      "viewsCount": 2,
+      "formulasCount": 6
+    },
+    {
+      "name": "Zoth Memory Stratum.base",
+      "relPath": "Zoth Memory Stratum.base",
+      "viewsCount": 2,
+      "formulasCount": 4
+    }
+  ],
+  "topHubs": [
+    {
+      "title": "Zoth OS",
+      "relPath": "Zoth OS.md",
+      "inDegree": 1157,
+      "outDegree": 12,
+      "totalDegree": 1169,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Skills",
+      "relPath": "MOC Skills.md",
+      "inDegree": 350,
+      "outDegree": 346,
+      "totalDegree": 696,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Arsenal",
+      "relPath": "MOC Arsenal.md",
+      "inDegree": 411,
+      "outDegree": 214,
+      "totalDegree": 625,
+      "cluster": "Root"
+    },
+    {
+      "title": "Zoth Studio",
+      "relPath": "Zoth Studio.md",
+      "inDegree": 363,
+      "outDegree": 7,
+      "totalDegree": 370,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Apt",
+      "relPath": "MOC Apt.md",
+      "inDegree": 190,
+      "outDegree": 179,
+      "totalDegree": 369,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC CLIs",
+      "relPath": "MOC CLIs.md",
+      "inDegree": 158,
+      "outDegree": 156,
+      "totalDegree": 314,
+      "cluster": "Root"
+    },
+    {
+      "title": "MCP Catalog",
+      "relPath": "MCP Catalog.md",
+      "inDegree": 164,
+      "outDegree": 54,
+      "totalDegree": 218,
+      "cluster": "Root"
+    },
+    {
+      "title": "Arsenal kali",
+      "relPath": "OS/Arsenal/Arsenal kali.md",
+      "inDegree": 96,
+      "outDegree": 98,
+      "totalDegree": 194,
+      "cluster": "OS"
+    },
+    {
+      "title": "MOC Desktops",
+      "relPath": "MOC Desktops.md",
+      "inDegree": 89,
+      "outDegree": 89,
+      "totalDegree": 178,
+      "cluster": "Root"
+    },
+    {
+      "title": "CLI zoth-mcp",
+      "relPath": "OS/CLIs/CLI zoth-mcp.md",
+      "inDegree": 160,
+      "outDegree": 4,
+      "totalDegree": 164,
+      "cluster": "OS"
+    },
+    {
+      "title": "_index",
+      "relPath": "MCP/_index.md",
+      "inDegree": 0,
+      "outDegree": 155,
+      "totalDegree": 155,
+      "cluster": "MCP"
+    },
+    {
+      "title": "MOC Studio Tools",
+      "relPath": "MOC Studio Tools.md",
+      "inDegree": 87,
+      "outDegree": 66,
+      "totalDegree": 153,
+      "cluster": "Root"
+    },
+    {
+      "title": "00 Home",
+      "relPath": "00 Home.md",
+      "inDegree": 57,
+      "outDegree": 75,
+      "totalDegree": 132,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Workstations",
+      "relPath": "MOC Workstations.md",
+      "inDegree": 46,
+      "outDegree": 44,
+      "totalDegree": 90,
+      "cluster": "Root"
+    },
+    {
+      "title": "Arsenal zoth_core",
+      "relPath": "OS/Arsenal/Arsenal zoth_core.md",
+      "inDegree": 42,
+      "outDegree": 44,
+      "totalDegree": 86,
+      "cluster": "OS"
+    }
+  ],
+  "dailyNote": {
+    "date": "2026-10-31",
+    "relPath": "07-Daily/2026-10-31.md",
+    "exists": true,
+    "entriesCount": 10,
+    "snippet": "--- title: \"Daily Sovereign Note — 2026-10-31\" date: \"2026-10-31\" type: \"daily-note\" tags: [daily, second-brain, sovereign-log] health_score: 100 ---  # 📅 Daily Sovereign Note — 2026-10-31  > [!info] Live Sovereign Snapshot > - **Vaelor Ledger (:8140):** Height #4,821 · Supply: 2"
+  },
+  "bundleSha256": "7db71ac3dd8bb60beea45d2dc5ec5cb57d09b12e0f74092c81842bcea0f8194e"
+}

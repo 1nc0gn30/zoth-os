@@ -540,3 +540,29 @@ sha256sum --ignore-missing -c SHA256SUMS
   <p><em>✦ Sovereign Mind. Sovereign Code. Sovereign Silicon. ✦</em></p>
   <img src="assets/brand/zoth-mark.png" alt="Zoth Sigil" width="48" height="48" />
 </div>
+
+---
+
+## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
+
+### Cross-Surface Integration Matrix
+
+| Surface | Endpoint / Binary | Capabilities |
+| :--- | :--- | :--- |
+| **Standalone Workstation** | `http://127.0.0.1:8137` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
+| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/zoth-os` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
+| **ZothOS v3.4 CLI & TUI** | `zoth-os` / `zoth-os-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
+| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
+| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio zoth-os.md`) |
+| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
+
+```bash
+# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
+zoth-os --help
+zoth-os-tui --status
+zoth-os-tui --json
+
+# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
+zoth-obsidian-tracker --verify
+```
+

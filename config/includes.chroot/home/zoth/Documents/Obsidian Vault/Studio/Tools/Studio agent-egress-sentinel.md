@@ -122,3 +122,44 @@ Navigating to `http://127.0.0.1:3000/tools/agent-egress-sentinel` loads the God-
 Enabling **Strict 127.0.0.1 Loopback Air-Gap** and clicking **▶ Test Outbound Socket Frame Against Firewall** immediately blocks `webhook.unknown-collector.net:443` (`BLOCKED — Strict Air-Gap Mode: Non-loopback socket egress denied`) and updates the live **Compiled nftables Kernel Firewall Policy** (`table inet zoth_agent_egress`) with zero horizontal overflow (`overflowPx: 0`) and zero console errors (`consoleErrors: 0`).
 
 ![[attachments/tools/agent-egress-sentinel_12_studio_godmode_nftables.jpg]]
+
+
+---
+
+## Sovereign 5-Layer Architecture & Second Brain Topology
+
+```mermaid
+flowchart LR
+    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
+        CLI["/usr/local/bin/agent-egress-sentinel"]
+        TUI["/usr/local/bin/agent-egress-sentinel-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
+    end
+
+    subgraph L2["2. Standalone Workstation"]
+        WEB["https://agent-egress.nullai.tech<br/>REST API & /health"]
+    end
+
+    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
+        STUDIO["http://127.0.0.1:3000/tools/agent-egress-sentinel<br/>God-Mode Component"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        VAULT["Studio/Tools/Studio agent-egress-sentinel.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> STUDIO
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> VAULT
+    VAULT <--> NEURO
+```
+
+### ZothOS v3.4 TUI & Obsidian Second Brain Sync
+- **Unicode `U+2800` Braille TUI**: `agent-egress-sentinel-tui --status` / `agent-egress-sentinel-tui --json`
+- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
+- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

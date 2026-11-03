@@ -1,0 +1,240 @@
+{
+  "ok": true,
+  "timestamp": "2026-10-26T09:19:52.826409+00:00",
+  "totalNodes": 1760,
+  "totalEdges": 7836,
+  "clusterDistribution": {
+    "Root": 37,
+    "Ingested": 4,
+    "Telemetry": 3,
+    "Wiki": 12,
+    "07-Daily": 1,
+    "Agents": 5,
+    "Canvases": 8,
+    "MCP": 154,
+    "Maps": 22,
+    "OS": 812,
+    "Skills": 346,
+    "Studio": 352,
+    "Templates": 4,
+    "Bases": 5
+  },
+  "clusters": {
+    "Root": 37,
+    "Ingested": 4,
+    "Telemetry": 3,
+    "Wiki": 12,
+    "07-Daily": 1,
+    "Agents": 5,
+    "Canvases": 8,
+    "MCP": 154,
+    "Maps": 22,
+    "OS": 812,
+    "Skills": 346,
+    "Studio": 352,
+    "Templates": 4,
+    "Bases": 5
+  },
+  "topHubs": [
+    {
+      "title": "Zoth OS",
+      "relPath": "Zoth OS.md",
+      "inDegree": 1157,
+      "outDegree": 12,
+      "totalDegree": 1169,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Skills",
+      "relPath": "MOC Skills.md",
+      "inDegree": 350,
+      "outDegree": 346,
+      "totalDegree": 696,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Arsenal",
+      "relPath": "MOC Arsenal.md",
+      "inDegree": 411,
+      "outDegree": 214,
+      "totalDegree": 625,
+      "cluster": "Root"
+    },
+    {
+      "title": "Zoth Studio",
+      "relPath": "Zoth Studio.md",
+      "inDegree": 363,
+      "outDegree": 7,
+      "totalDegree": 370,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Apt",
+      "relPath": "MOC Apt.md",
+      "inDegree": 190,
+      "outDegree": 179,
+      "totalDegree": 369,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC CLIs",
+      "relPath": "MOC CLIs.md",
+      "inDegree": 158,
+      "outDegree": 156,
+      "totalDegree": 314,
+      "cluster": "Root"
+    },
+    {
+      "title": "MCP Catalog",
+      "relPath": "MCP Catalog.md",
+      "inDegree": 164,
+      "outDegree": 54,
+      "totalDegree": 218,
+      "cluster": "Root"
+    },
+    {
+      "title": "Arsenal kali",
+      "relPath": "OS/Arsenal/Arsenal kali.md",
+      "inDegree": 96,
+      "outDegree": 98,
+      "totalDegree": 194,
+      "cluster": "OS"
+    },
+    {
+      "title": "MOC Desktops",
+      "relPath": "MOC Desktops.md",
+      "inDegree": 89,
+      "outDegree": 89,
+      "totalDegree": 178,
+      "cluster": "Root"
+    },
+    {
+      "title": "CLI zoth-mcp",
+      "relPath": "OS/CLIs/CLI zoth-mcp.md",
+      "inDegree": 160,
+      "outDegree": 4,
+      "totalDegree": 164,
+      "cluster": "OS"
+    },
+    {
+      "title": "_index",
+      "relPath": "MCP/_index.md",
+      "inDegree": 0,
+      "outDegree": 155,
+      "totalDegree": 155,
+      "cluster": "MCP"
+    },
+    {
+      "title": "MOC Studio Tools",
+      "relPath": "MOC Studio Tools.md",
+      "inDegree": 87,
+      "outDegree": 66,
+      "totalDegree": 153,
+      "cluster": "Root"
+    },
+    {
+      "title": "00 Home",
+      "relPath": "00 Home.md",
+      "inDegree": 57,
+      "outDegree": 75,
+      "totalDegree": 132,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Workstations",
+      "relPath": "MOC Workstations.md",
+      "inDegree": 46,
+      "outDegree": 44,
+      "totalDegree": 90,
+      "cluster": "Root"
+    },
+    {
+      "title": "Arsenal zoth_core",
+      "relPath": "OS/Arsenal/Arsenal zoth_core.md",
+      "inDegree": 42,
+      "outDegree": 44,
+      "totalDegree": 86,
+      "cluster": "OS"
+    },
+    {
+      "title": "MOC Components",
+      "relPath": "MOC Components.md",
+      "inDegree": 39,
+      "outDegree": 38,
+      "totalDegree": 77,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Host extras",
+      "relPath": "MOC Host extras.md",
+      "inDegree": 35,
+      "outDegree": 35,
+      "totalDegree": 70,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Routes",
+      "relPath": "MOC Routes.md",
+      "inDegree": 33,
+      "outDegree": 33,
+      "totalDegree": 66,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Pages",
+      "relPath": "MOC Pages.md",
+      "inDegree": 31,
+      "outDegree": 31,
+      "totalDegree": 62,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Daemons",
+      "relPath": "MOC Daemons.md",
+      "inDegree": 28,
+      "outDegree": 30,
+      "totalDegree": 58,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Themes",
+      "relPath": "MOC Themes.md",
+      "inDegree": 28,
+      "outDegree": 28,
+      "totalDegree": 56,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Units",
+      "relPath": "MOC Units.md",
+      "inDegree": 25,
+      "outDegree": 25,
+      "totalDegree": 50,
+      "cluster": "Root"
+    },
+    {
+      "title": "MOC Build",
+      "relPath": "MOC Build.md",
+      "inDegree": 23,
+      "outDegree": 23,
+      "totalDegree": 46,
+      "cluster": "Root"
+    },
+    {
+      "title": "Arsenal parrot",
+      "relPath": "OS/Arsenal/Arsenal parrot.md",
+      "inDegree": 22,
+      "outDegree": 24,
+      "totalDegree": 46,
+      "cluster": "OS"
+    },
+    {
+      "title": "MOC Pantheon",
+      "relPath": "MOC Pantheon.md",
+      "inDegree": 23,
+      "outDegree": 22,
+      "totalDegree": 45,
+      "cluster": "Root"
+    }
+  ]
+}

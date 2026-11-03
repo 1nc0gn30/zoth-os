@@ -1,0 +1,93 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:Studio",
+      "color": {
+        "a": 1,
+        "rgb": 13214247
+      }
+    },
+    {
+      "query": "path:MCP",
+      "color": {
+        "a": 1,
+        "rgb": 13938487
+      }
+    },
+    {
+      "query": "path:OS/CLIs",
+      "color": {
+        "a": 1,
+        "rgb": 15259043
+      }
+    },
+    {
+      "query": "path:OS/Packages",
+      "color": {
+        "a": 1,
+        "rgb": 9136404
+      }
+    },
+    {
+      "query": "path:OS/Apt",
+      "color": {
+        "a": 1,
+        "rgb": 9136404
+      }
+    },
+    {
+      "query": "path:Skills",
+      "color": {
+        "a": 1,
+        "rgb": 10910762
+      }
+    },
+    {
+      "query": "path:OS/Daemons",
+      "color": {
+        "a": 1,
+        "rgb": 13214247
+      }
+    },
+    {
+      "query": "path:OS/Rooms",
+      "color": {
+        "a": 1,
+        "rgb": 13938487
+      }
+    },
+    {
+      "query": "file:MOC",
+      "color": {
+        "a": 1,
+        "rgb": 15259043
+      }
+    },
+    {
+      "query": "file:Zoth",
+      "color": {
+        "a": 1,
+        "rgb": 13214247
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -0.3,
+  "nodeSizeMultiplier": 0.55,
+  "lineSizeMultiplier": 0.6,
+  "collapse-forces": false,
+  "centerStrength": 0.3,
+  "repelStrength": 8.5,
+  "linkStrength": 0.4,
+  "linkDistance": 90,
+  "scale": 0.1634837056722049,
+  "close": false
+}

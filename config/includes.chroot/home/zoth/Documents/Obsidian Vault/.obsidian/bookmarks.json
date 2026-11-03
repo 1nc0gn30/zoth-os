@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "ctime": 1760680000000,
+      "path": "00 Home.md",
+      "title": "Home"
+    },
+    {
+      "type": "file",
+      "ctime": 1760680000001,
+      "path": "Maps/Canon.canvas",
+      "title": "Canon canvas"
+    },
+    {
+      "type": "file",
+      "ctime": 1760680000002,
+      "path": "Maps/Rooms.canvas",
+      "title": "Rooms canvas"
+    },
+    {
+      "type": "file",
+      "ctime": 1760680000004,
+      "path": "Maps/Rings.canvas",
+      "title": "Rings canvas"
+    },
+    {
+      "type": "file",
+      "ctime": 1760680000005,
+      "path": "Maps/Adytum.canvas",
+      "title": "Adytum canvas"
+    },
+    {
+      "type": "file",
+      "ctime": 1760680000006,
+      "path": "Maps/Loopback.canvas",
+      "title": "Loopback canvas"
+    },
+    {
+      "type": "graph",
+      "ctime": 1760680000003,
+      "title": "Graph"
+    },
+    {
+      "type": "group",
+      "ctime": 1760680000010,
+      "title": "Canon",
+      "items": [
+        { "type": "file", "ctime": 1760680000011, "path": "Zoth OS.md" },
+        { "type": "file", "ctime": 1760680000012, "path": "Zoth Studio.md" },
+        { "type": "file", "ctime": 1760680000013, "path": "Zoth WebGen.md" },
+        { "type": "file", "ctime": 1760680000014, "path": "Zoth Memory.md" },
+        { "type": "file", "ctime": 1760680000015, "path": "MCP Catalog.md" },
+        { "type": "file", "ctime": 1760680000016, "path": "Workspaces.md" },
+        { "type": "file", "ctime": 1760680000017, "path": "Public Surfaces.md" },
+        { "type": "file", "ctime": 1760680000018, "path": "Credentials.md" },
+        { "type": "file", "ctime": 1760680000019, "path": "Agent permissions.md" }
+      ]
+    },
+    {
+      "type": "group",
+      "ctime": 1760680000020,
+      "title": "Bases",
+      "items": [
+        { "type": "file", "ctime": 1760680000021, "path": "Maps/Studio Tools.base", "title": "Studio tools" },
+        { "type": "file", "ctime": 1760680000022, "path": "Maps/MCP.base", "title": "MCP" },
+        { "type": "file", "ctime": 1760680000023, "path": "Maps/CLIs.base", "title": "CLIs" },
+        { "type": "file", "ctime": 1760680000024, "path": "Maps/Arsenal.base", "title": "Arsenal" },
+        { "type": "file", "ctime": 1760680000025, "path": "Maps/Skills.base", "title": "Skills" },
+        { "type": "file", "ctime": 1760680000026, "path": "Maps/Daemons.base", "title": "Daemons" }
+      ]
+    },
+    {
+      "type": "group",
+      "ctime": 1760680000030,
+      "title": "Searches",
+      "items": [
+        { "type": "search", "ctime": 1760680000031, "query": "tag:#tool", "title": "Studio tools" },
+        { "type": "search", "ctime": 1760680000032, "query": "tag:#mcp", "title": "MCP" },
+        { "type": "search", "ctime": 1760680000033, "query": "tag:#cli", "title": "CLIs" },
+        { "type": "search", "ctime": 1760680000034, "query": "tag:#daemon", "title": "Daemons" },
+        { "type": "search", "ctime": 1760680000035, "query": "tag:#skill", "title": "Skills" },
+        { "type": "search", "ctime": 1760680000036, "query": "path:OS/Rooms", "title": "Rooms" },
+        { "type": "search", "ctime": 1760680000037, "query": "file:MOC", "title": "MOCs" }
+      ]
+    }
+  ]
+}
