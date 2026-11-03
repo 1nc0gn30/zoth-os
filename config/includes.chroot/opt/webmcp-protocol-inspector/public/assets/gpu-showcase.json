@@ -1,0 +1,41 @@
+{
+  "repo_id": "webmcp-protocol-inspector",
+  "title": "Webmcp Protocol Inspector",
+  "engineered_by": "1nc0gn30 (@1nc0gn30) \u2022 NullAI Platform",
+  "gpu_engine": "NVIDIA A100 80GB PCIe (ComfyUI FLUX.1 + Qwen2.5-Coder-32B + Trimesh GLB)",
+  "archetype": "quorum",
+  "accent_hex": "#D4AF37",
+  "qwen32b_design_spec": "Design webmcp-protocol-inspector using 'quorum' archetype with #D4AF37 accent, clean UI, intuitive shader for data visualization.",
+  "assets": {
+    "hero_4k": "/assets/gpu-hero-4k.png",
+    "og_banner": "/og-banner.jpg",
+    "model_3d_glb": "/assets/gpu-artifact.glb",
+    "showreel_webm": "/assets/gpu-showreel.webm",
+    "ad_mp4": "/assets/gpu-ad-15s.mp4"
+  },
+  "benchmark_ms": {
+    "index": 79,
+    "total_repos": 99,
+    "repo_id": "webmcp-protocol-inspector",
+    "title": "Webmcp Protocol Inspector",
+    "archetype": "quorum",
+    "accent_hex": "#D4AF37",
+    "glb_ms": 1253,
+    "flux_hero_ms": 8562,
+    "flux_og_ms": 18153,
+    "video_ms": 4723,
+    "qwen32b_ms": 4790,
+    "total_ms": 37484,
+    "glb_kb": 126.9,
+    "hero_kb": 970.5,
+    "og_kb": 896.2,
+    "qwen32b_spec": "Design webmcp-protocol-inspector using 'quorum' archetype with #D4AF37 accent, clean UI, intuitive shader for data visualization.",
+    "hero_gallery_url": "/gallery/webmcp-protocol-inspector_gpu-hero-4k.png",
+    "og_gallery_url": "/gallery/webmcp-protocol-inspector_og-banner.jpg",
+    "glb_gallery_url": "/gallery/webmcp-protocol-inspector.glb",
+    "vram_used_mb": 55829,
+    "vram_total_mb": 81152,
+    "timestamp": "03:50:49 UTC"
+  },
+  "timestamp": "2026-11-01T03:50:49Z"
+}

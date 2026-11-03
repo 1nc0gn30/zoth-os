@@ -31,16 +31,19 @@ CADRE_COLORS = {
     "Swarm": GREEN
 }
 
-def api_request(path, method="GET", body=None, daemon_url=DEFAULT_DAEMON_URL):
-    url = f"{daemon_url.rstrip('/')}{path}"
-    data = json.dumps(body).encode("utf-8") if body else None
-    headers = {"Content-Type": "application/json"}
-    req = Request(url, data=data, headers=headers, method=method)
-    try:
-        with urlopen(req, timeout=4) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except URLError as e:
-        return None
+def api_request(path, method="GET", body=None, daemon_url=None):
+    urls = [daemon_url] if daemon_url else [f"http://127.0.0.1:8141", "http://127.0.0.1:8989"]
+    for base_url in urls:
+        url = f"{base_url.rstrip('/')}{path}"
+        data = json.dumps(body).encode("utf-8") if body else None
+        headers = {"Content-Type": "application/json"}
+        req = Request(url, data=data, headers=headers, method=method)
+        try:
+            with urlopen(req, timeout=3) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except Exception:
+            continue
+    return None
 
 def cmd_status(args, engine=None):
     if engine:
@@ -63,20 +66,34 @@ def cmd_status(args, engine=None):
     print(f"{BOLD}{'ID':<15} {'CADRE':<12} {'HARNESS':<14} {'MODEL':<18} {'MEM%':<6} {'STATUS':<8} {'WORKING DIR'}{RESET}")
     print("─" * 105)
 
-    for aid, a in agents.items():
-        if cadre_filter != "All" and a["cadre"] != cadre_filter:
+    if isinstance(agents, list):
+        agent_iter = [(a.get("id"), a) for a in agents]
+    else:
+        agent_iter = list(agents.items())
+
+    for aid, a in agent_iter:
+        if not a:
             continue
-        c_color = CADRE_COLORS.get(a["cadre"], RESET)
-        status_color = GREEN if a["status"] == "IDLE" else (GOLD if a["status"] == "RUNNING" else RED)
-        pwd_short = a["pwd"].replace(os.path.expanduser("~"), "~")
+        if cadre_filter != "All" and a.get("cadre") != cadre_filter:
+            continue
+        c_color = CADRE_COLORS.get(a.get("cadre"), RESET)
+        status = a.get("status", "IDLE")
+        status_color = GREEN if status == "IDLE" else (GOLD if status == "RUNNING" else RED)
+        pwd = a.get("pwd", "")
+        pwd_short = pwd.replace(os.path.expanduser("~"), "~")
         if len(pwd_short) > 35:
             pwd_short = "..." + pwd_short[-32:]
 
         pet_str = a.get("pet", "🤖")
-        print(f"{pet_str} {BOLD}{aid:<12}{RESET} {c_color}{a['cadre']:<12}{RESET} {a['harness']:<14} {a['model']:<18} {a['memory_score']:<6} {status_color}{a['status']:<8}{RESET} {pwd_short}")
+        if str(pet_str).startswith("/"):
+            pet_str = "🤖"
+        mem_val = a.get("memory_score", "95%")
+        harness_val = a.get("harness", "agy")
+        model_val = a.get("model", "default")
+        print(f"{pet_str} {BOLD}{str(aid):<12}{RESET} {c_color}{str(a.get('cadre', '')): <12}{RESET} {str(harness_val):<14} {str(model_val):<18} {str(mem_val):<6} {status_color}{status:<8}{RESET} {pwd_short}")
 
     print("─" * 105)
-    print(f"{BOLD}Total Agents:{RESET} {len(agents)}  ·  {BOLD}Cadres:{RESET} 5  ·  {BOLD}Loopback Port:{RESET} 8989\n")
+    print(f"{BOLD}Total Agents:{RESET} {len(agent_iter)}  ·  {BOLD}Cadres:{RESET} 5  ·  {BOLD}Loopback Port:{RESET} 8141\n")
 
 def cmd_exec(args):
     body = {"agent_id": args.agent, "command": args.command}

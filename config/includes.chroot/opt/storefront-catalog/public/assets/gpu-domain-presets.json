@@ -1,0 +1,22 @@
+{
+  "presets": [
+    {
+      "name": "Storefront Catalog \u2014 Sovereign Zero-Trust Audit",
+      "description": "Deterministic high-throughput inspection preset for Storefront Catalog engineered on ZothOS.",
+      "payload": "--repo storefront-catalog --mode sovereign-audit --verify-checksum --strict",
+      "expected_metric": "99.98% deterministic pass rate (<4.2ms AST latency)"
+    },
+    {
+      "name": "Storefront Catalog \u2014 A100 80GB Neural Stress Vector",
+      "description": "Multi-threaded benchmark payload synthesized for Storefront Catalog pipeline verification.",
+      "payload": "--repo storefront-catalog --benchmark --threads 16 --format json",
+      "expected_metric": "14,200 ops/sec sustained throughput"
+    },
+    {
+      "name": "Storefront Catalog \u2014 Edge Production Hardening",
+      "description": "Pre-deployment production guardrail preset for Storefront Catalog client-side & CLI parity.",
+      "payload": "storefront-catalog-tui --benchmark --json",
+      "expected_metric": "Zero console errors \u2022 -14.0 LUFS \u2022 Triple-viewport verified"
+    }
+  ]
+}

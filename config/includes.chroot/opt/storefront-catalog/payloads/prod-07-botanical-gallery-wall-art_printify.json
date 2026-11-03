@@ -1,0 +1,53 @@
+{
+  "title": "English Countryside Botanical Prints Set of 12 Wall Art Pack, Printable Wildflower Wall Art, Cottagecore Gallery Decor",
+  "description": "\ud83c\udf3f INSTANT COTTAGECORE CHARM: ENGLISH COUNTRYSIDE BOTANICAL GALLERY\n\nTransform your home into a tranquil English countryside cottage with this curated gallery set. Scanned from authentic antique naturalist herbarium plates and restored to pristine 300 DPI clarity, these botanical wildflowers add timeless elegance to living rooms, bedrooms, entryways, and powder baths.\n\n\u26a1 WHAT YOU RECEIVE IMMEDIATELY:\n\u2022 Instant access ZIP containing 5 ratio files per artwork (30+ total files).\n\u2022 Master Printing Gu",
+  "blueprint_id": 638,
+  "print_provider_id": 29,
+  "tags": [
+    "botanical wall art",
+    "vintage flower print",
+    "wildflower decor",
+    "digital download art",
+    "gallery wall set",
+    "cottagecore decor",
+    "printable wall art",
+    "farmhouse wall decor",
+    "living room prints",
+    "bathroom art print",
+    "vintage botanical",
+    "flower poster",
+    "large wall art"
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "price": 1499,
+      "is_enabled": true
+    }
+  ],
+  "print_areas": [
+    {
+      "position": "front",
+      "images": [
+        {
+          "id": "img_primary_design",
+          "src": "https://raw.githubusercontent.com/1nc0gn30/storefront-catalog/main/assets/canvases/prod-07-botanical-gallery-wall-art_canvas.png",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1.0,
+          "angle": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "etsy-connector",
+    "cadre": "apparel",
+    "canvas_specs": {
+      "width": 4500,
+      "height": 5400,
+      "dpi": 300
+    },
+    "target_demographic": "55+ Women Gifts & Cottagecore"
+  }
+}

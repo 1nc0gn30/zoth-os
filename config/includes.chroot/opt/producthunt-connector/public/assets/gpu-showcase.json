@@ -1,0 +1,41 @@
+{
+  "repo_id": "producthunt-connector",
+  "title": "Producthunt Connector",
+  "engineered_by": "1nc0gn30 (@1nc0gn30) \u2022 NullAI Platform",
+  "gpu_engine": "NVIDIA A100 80GB PCIe (ComfyUI FLUX.1 + Qwen2.5-Coder-32B + Trimesh GLB)",
+  "archetype": "globe_arcs",
+  "accent_hex": "#F59E0B",
+  "qwen32b_design_spec": "Design 'producthunt-connector' UI with globe_arcs archetype, #F59E0B hex accent, intuitive navigation, and seamless integration visuals.",
+  "assets": {
+    "hero_4k": "/assets/gpu-hero-4k.png",
+    "og_banner": "/og-banner.jpg",
+    "model_3d_glb": "/assets/gpu-artifact.glb",
+    "showreel_webm": "/assets/gpu-showreel.webm",
+    "ad_mp4": "/assets/gpu-ad-15s.mp4"
+  },
+  "benchmark_ms": {
+    "index": 59,
+    "total_repos": 99,
+    "repo_id": "producthunt-connector",
+    "title": "Producthunt Connector",
+    "archetype": "globe_arcs",
+    "accent_hex": "#F59E0B",
+    "glb_ms": 533,
+    "flux_hero_ms": 7270,
+    "flux_og_ms": 6201,
+    "video_ms": 1785,
+    "qwen32b_ms": 4406,
+    "total_ms": 20198,
+    "glb_kb": 126.9,
+    "hero_kb": 722.9,
+    "og_kb": 372.3,
+    "qwen32b_spec": "Design 'producthunt-connector' UI with globe_arcs archetype, #F59E0B hex accent, intuitive navigation, and seamless integration visuals.",
+    "hero_gallery_url": "/gallery/producthunt-connector_gpu-hero-4k.png",
+    "og_gallery_url": "/gallery/producthunt-connector_og-banner.jpg",
+    "glb_gallery_url": "/gallery/producthunt-connector.glb",
+    "vram_used_mb": 55829,
+    "vram_total_mb": 81152,
+    "timestamp": "03:40:49 UTC"
+  },
+  "timestamp": "2026-11-01T03:40:49Z"
+}

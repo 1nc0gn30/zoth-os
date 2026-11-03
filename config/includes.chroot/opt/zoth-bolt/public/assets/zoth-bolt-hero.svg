@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="boltBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06070C"/>
+      <stop offset="50%" stop-color="#0D101B"/>
+      <stop offset="100%" stop-color="#07080E"/>
+    </linearGradient>
+    <linearGradient id="boltGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E6AB"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#8C6D1F"/>
+    </linearGradient>
+    <radialGradient id="boltGlow" cx="20%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="boltGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(212,175,55,0.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="400" rx="20" fill="url(#boltBg)" stroke="#D4AF37" stroke-opacity="0.5" stroke-width="1.5"/>
+  <rect width="1200" height="400" rx="20" fill="url(#boltGrid)"/>
+  <rect width="1200" height="400" rx="20" fill="url(#boltGlow)"/>
+
+  <!-- Left Emblem Crest -->
+  <g transform="translate(55, 62)">
+    <rect width="96" height="96" rx="22" fill="url(#boltGold)"/>
+    <path d="M56 18 L28 52 H48 L42 78 L70 44 H50 Z" fill="#08080B"/>
+  </g>
+
+  <!-- Title & Subtitle -->
+  <g transform="translate(175, 76)">
+    <rect x="0" y="-14" width="380" height="24" rx="12" fill="rgba(212,175,55,0.14)" stroke="#D4AF37" stroke-opacity="0.45"/>
+    <text x="14" y="2" fill="#F5E6AB" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="1.1">ZOTH BOLT v3.5 // PORT :5173 // 18 MCP TOOLS</text>
+    <text x="0" y="42" fill="#FFFFFF" font-family="Syne, Space Grotesk, sans-serif" font-size="38" font-weight="800" letter-spacing="0.5">ZOTH BOLT — AI &amp; MOTION ARCHITECT</text>
+    <text x="0" y="68" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="14.5">Full-Stack WebContainer IDE, 6 Cinema Motion Templates, 200k+ Free SVG/Pixel-Art Assets &amp; 8-Point Guardrail Auto-Healer</text>
+    <text x="0" y="92" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="11.5">★ Supercharged for Zoth Studio &amp; ZothOS • Proudly built on the open-source bolt.diy foundation ★</text>
+  </g>
+
+  <!-- 5 Capability Pillars -->
+  <g transform="translate(45, 205)">
+    <g transform="translate(0, 0)">
+      <rect width="212" height="145" rx="12" fill="#10131F" stroke="#38BDF8" stroke-opacity="0.45"/>
+      <text x="16" y="28" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">01 // UNIVERSAL AI</text>
+      <text x="16" y="50" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="800">23+ LLMs &amp; 9 CLI Agents</text>
+      <text x="16" y="74" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Gemini, Claude, GPT, Groq</text>
+      <text x="16" y="94" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Ollama Local Quantized</text>
+      <text x="16" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• AGY, Hermes, Grok, Cline</text>
+      <text x="16" y="132" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+ Instant Offline Synth</text>
+    </g>
+
+    <g transform="translate(226, 0)">
+      <rect width="212" height="145" rx="12" fill="#10131F" stroke="#D4AF37" stroke-opacity="0.45"/>
+      <text x="16" y="28" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">02 // MOTION &amp; SHADERS</text>
+      <text x="16" y="50" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="800">6 Cinema Motion Cuts</text>
+      <text x="16" y="74" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• 15s Claude Motion Showreel</text>
+      <text x="16" y="94" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• @teknium Braille / Dither</text>
+      <text x="16" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• 16-Bit Pixel CRT Arcade</text>
+      <text x="16" y="132" fill="#F5E6AB" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+ Isometric Scroll Stage</text>
+    </g>
+
+    <g transform="translate(452, 0)">
+      <rect width="212" height="145" rx="12" fill="#10131F" stroke="#10B981" stroke-opacity="0.45"/>
+      <text x="16" y="28" fill="#34D399" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">03 // ASSET &amp; PIXEL VAULT</text>
+      <text x="16" y="50" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="800">200k+ Free Media Assets</text>
+      <text x="16" y="74" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Iconify Vector + PixelArt</text>
+      <text x="16" y="94" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• 16x16 Inline SVG Sprites</text>
+      <text x="16" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Multi-Layer Vector Crests</text>
+      <text x="16" y="132" fill="#34D399" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+ WebAudio Synth SFX</text>
+    </g>
+
+    <g transform="translate(678, 0)">
+      <rect width="212" height="145" rx="12" fill="#10131F" stroke="#C084FC" stroke-opacity="0.45"/>
+      <text x="16" y="28" fill="#C084FC" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">04 // REMIX &amp; MUTATE</text>
+      <text x="16" y="50" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="800">URL Clone &amp; Click-to-Edit</text>
+      <text x="16" y="74" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Live URL DOM Deconstruct</text>
+      <text x="16" y="94" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Relume Section Composer</text>
+      <text x="16" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Inline Click-to-Edit Text</text>
+      <text x="16" y="132" fill="#C084FC" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+ 1-Click Theme Swapper</text>
+    </g>
+
+    <g transform="translate(904, 0)">
+      <rect width="206" height="145" rx="12" fill="#10131F" stroke="#F59E0B" stroke-opacity="0.45"/>
+      <text x="16" y="28" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">05 // 100/100 GUARDRAIL</text>
+      <text x="16" y="50" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="800">Auto-Heal &amp; Edge Ship</text>
+      <text x="16" y="74" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• 8-Point Live AEO Score</text>
+      <text x="16" y="94" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• 3-Viewport Matrix Stage</text>
+      <text x="16" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="10.5">• Design Director Critique</text>
+      <text x="16" y="132" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+ Netlify / Vercel 1-Click</text>
+    </g>
+  </g>
+
+  <text x="600" y="380" text-anchor="middle" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="11">
+    ENGINEERED BY 1NC0GN30 • NULLAI (@1nc0gn30)  •  NULLAI PLATFORM  •  HTTP://127.0.0.1:5173
+  </text>
+</svg>

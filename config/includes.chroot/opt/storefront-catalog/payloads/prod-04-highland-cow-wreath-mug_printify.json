@@ -1,0 +1,53 @@
+{
+  "title": "Highland Cow Wildflower Mug Cute Farmhouse Animal Ceramic Cup, Bird Watcher Gift, Cozy Cottagecore Tea Cup, Nature Lover Ceramic Mug",
+  "description": "\ud83d\udc26 BRING THE SERENITY OF NATURE TO HER MORNING COFFEE\n\nStart every peaceful morning with our whimsical watercolor songbirds ceramic mug. Featuring fluffy chickadees, eastern bluebirds, and sweet backyard companions perched beside vintage tea porcelain, this mug brings nostalgic warmth to every sip of coffee, tea, or cocoa.\n\n\ud83c\udf3f PRODUCT HIGHLIGHTS:\n\u2022 Large 15oz size with ergonomic C-handle for cozy two-handed holding.\n\u2022 Vibrant dual-sided wraparound printing so the artwork is visible whether left- o",
+  "blueprint_id": 68,
+  "print_provider_id": 26,
+  "tags": [
+    "bird watcher gift",
+    "watercolor bird mug",
+    "cottagecore mug",
+    "bird lover gift",
+    "coffee mug 15oz",
+    "tea lover cup",
+    "cardinal mug",
+    "backyard birds",
+    "grandma mug",
+    "garden lover gift",
+    "ceramic coffee mug",
+    "nature coffee cup",
+    "cute bird gifts"
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "price": 2299,
+      "is_enabled": true
+    }
+  ],
+  "print_areas": [
+    {
+      "position": "front",
+      "images": [
+        {
+          "id": "img_primary_design",
+          "src": "https://raw.githubusercontent.com/1nc0gn30/storefront-catalog/main/assets/canvases/prod-04-highland-cow-wreath-mug_canvas.png",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1.0,
+          "angle": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "etsy-connector",
+    "cadre": "drinkware",
+    "canvas_specs": {
+      "width": 2400,
+      "height": 1100,
+      "dpi": 300
+    },
+    "target_demographic": "55+ Women Gifts & Cottagecore"
+  }
+}

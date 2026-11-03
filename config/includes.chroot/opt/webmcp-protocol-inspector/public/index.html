@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebMCP Protocol Suite | JSON-RPC 2.0 Inspector & Schema Firewall</title>
+  <meta name="description" content="Sovereign in-browser Model Context Protocol (MCP) JSON-RPC 2.0 inspector, tool schema dispatcher, token meter, and schema security firewall." />
+  <meta name="author" content="1nc0gn30 (@1nc0gn30) • 1nc0gn30 • NullAI" />
+
+  <!-- OpenGraph / Social Meta Tags -->
+  <meta property="og:title" content="WebMCP Protocol Suite | JSON-RPC 2.0 Inspector & Schema Firewall" />
+  <meta property="og:description" content="In-browser Model Context Protocol (MCP) JSON-RPC 2.0 inspector, tool schema dispatcher, and token meter with zero egress." />
+  <meta property="og:url" content="https://webmcp.nullai.tech" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://webmcp.nullai.tech/icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:title" content="WebMCP Protocol Suite" />
+  <meta name="twitter:description" content="In-browser Model Context Protocol (MCP) JSON-RPC 2.0 inspector and tool schema dispatcher." />
+  <meta name="twitter:image" content="https://webmcp.nullai.tech/icon.png" />
+
+  <!-- Schema.org JSON-LD AEO/SEO Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "WebMCP Protocol Suite",
+        "url": "https://webmcp.nullai.tech",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All modern browsers & ZothOS Bare Metal",
+        "description": "Sovereign Model Context Protocol (MCP) JSON-RPC 2.0 inspector, tool schema dispatcher, and schema security firewall.",
+        "creator": {
+          "@type": "Person",
+          "name": "1nc0gn30",
+          "url": "https://nullai.tech"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "1nc0gn30 • NullAI"
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is WebMCP Protocol Suite?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "WebMCP Protocol Suite is an open-access workstation for inspecting, testing, and simulating Model Context Protocol (MCP) JSON-RPC 2.0 tool schemas and dispatch messages."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is WebMCP Protocol Suite free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, it is 100% free and open-access with zero paywalls. Voluntary contributions can be made via Stripe Coffee or Solana tips."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #07080C;
+      --card: #0F111A;
+      --gold: #D4AF37;
+      --gold-light: #F5E6AB;
+      --emerald: #10B981;
+      --emerald-dark: #059669;
+      --text: #F3F4F6;
+      --muted: #9CA3AF;
+      --border: rgba(212,175,55,0.22);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; max-width: 100vw; overflow-x: hidden; background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; }
+    
+    .support-bar {
+      background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.16));
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 11px;
+      text-align: center;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: #08080B;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: inherit;
+      transition: background 0.15s ease;
+    }
+    .btn-gold:hover { background: var(--gold-light); }
+    .btn-sol {
+      background: rgba(20,241,149,0.12);
+      color: #14F195;
+      border: 1px solid rgba(20,241,149,0.4);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: inherit;
+    }
+    .btn-sol:hover { background: rgba(20,241,149,0.2); }
+
+    .wrap {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .header-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-gold { background: rgba(212,175,55,0.15); color: #F5E6AB; border: 1px solid rgba(212,175,55,0.3); }
+
+    h1 { font-size: 1.6rem; color: #F5E6AB; margin-bottom: 6px; font-weight: 800; }
+    p.sub { color: var(--muted); line-height: 1.5; font-size: 0.85rem; margin-bottom: 16px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 900px) {
+      .grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    }
+
+    html[data-theme="light"] {
+      --bg: #F8F6F0;
+      --card: #FFFFFF;
+      --gold: #8A6A1C;
+      --gold-light: #6B5114;
+      --emerald: #047857;
+      --emerald-dark: #065F46;
+      --text: #181612;
+      --muted: #57524A;
+      --border: rgba(138,106,28,0.28);
+    }
+    html[data-theme="light"] body {
+      background: #F8F6F0;
+      color: #181612;
+    }
+    html[data-theme="light"] h1 {
+      color: #181612;
+    }
+    html[data-theme="light"] .badge-gold {
+      background: rgba(138,106,28,0.12);
+      color: #6B5114;
+      border-color: rgba(138,106,28,0.35);
+    }
+    html[data-theme="light"] .badge-green {
+      background: rgba(4,120,87,0.12);
+      color: #047857;
+      border-color: rgba(4,120,87,0.35);
+    }
+    html[data-theme="light"] .btn-preset {
+      background: #F2EFE9;
+      color: #181612;
+      border-color: rgba(24,22,18,0.18);
+    }
+    html[data-theme="light"] .btn-preset.active {
+      background: rgba(138,106,28,0.16);
+      color: #6B5114;
+      border-color: #8A6A1C;
+    }
+    html[data-theme="light"] textarea {
+      background: #FDFBF7;
+      color: #065F46;
+      border-color: rgba(24,22,18,0.2);
+    }
+    html[data-theme="light"] pre {
+      background: #F2EFE9;
+      color: #181612;
+      border-color: rgba(138,106,28,0.28);
+    }
+    html[data-theme="light"] .status-meter {
+      background: #F2EFE9;
+      border-color: rgba(24,22,18,0.15);
+      color: #181612;
+    }
+    html[data-theme="light"] .meter-val {
+      color: #047857;
+    }
+    html[data-theme="light"] .btn-sol {
+      background: rgba(4,120,87,0.12);
+      color: #047857;
+      border-color: rgba(4,120,87,0.35);
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .panel-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .preset-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-preset {
+      background: #06080D;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-preset.active {
+      background: rgba(212,175,55,0.18);
+      color: var(--gold-light);
+      border-color: var(--gold);
+    }
+
+    textarea {
+      width: 100%;
+      background: #05060A;
+      color: #34D399;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: var(--gold); }
+
+    pre {
+      background: #05060A;
+      color: #F5E6AB;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(212,175,55,0.18);
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 380px;
+    }
+
+    .status-meter {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #06080D;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+    .meter-val { font-weight: 800; color: #34D399; }
+
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: var(--muted);
+      font-size: 11px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+  <!-- 100% Free Open-Access Bar -->
+  <div class="support-bar">
+    <span style="color:#10B981;font-weight:800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS · LOCAL DAEMON :8142</span>
+    <a class="btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
+    <a class="btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied Solana Tip!';">◎ Solana Tip: GG2e...dXoK</a>
+  </div>
+
+  <div class="wrap">
+    <!-- Header Card -->
+    <div class="header-card">
+      <div class="badge-row">
+        <span class="badge badge-green">DAEMON ONLINE :8142</span>
+        <span class="badge badge-gold">W3C WEBMCP &amp; ANTHROPIC MCP 2.0</span>
+        <span class="badge badge-gold">CLI /usr/local/bin/webmcp-protocol-inspector</span>
+      </div>
+      <h1>WebMCP Protocol Suite</h1>
+      <p class="sub">Model Context Protocol JSON-RPC 2.0 inspector, tool schema validator, safety scoring firewall, and wire simulation engine running directly on your sovereign local machine.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn-gold" href="http://127.0.0.1:3000/tools/webmcp-protocol-inspector">Open Zoth Studio God-Mode ↗</a>
+        <button class="btn-sol" onclick="testHealth()">Check Daemon /health ⚡</button>
+        <button class="btn-preset" id="themeToggleBtn" onclick="toggleLightDarkTheme()">☀️ Light Mode</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid-2">
+      <!-- Left Panel: Schema Definition -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>1. MCP Tool Schema (JSON)</span>
+          <span id="schemaGrade" style="color:#10B981;">GRADE: A+ (100/100)</span>
+        </div>
+        <div class="preset-bar">
+          <button class="btn-preset active" onclick="loadPreset(0)">Solana Tip</button>
+          <button class="btn-preset" onclick="loadPreset(1)">Stripe Coffee</button>
+          <button class="btn-preset" onclick="loadPreset(2)">System Diagnostics</button>
+        </div>
+        <textarea id="schemaInput" rows="14" oninput="auditLocal()">{
+  "name": "solana_tip_transfer",
+  "description": "Signs and broadcasts a non-custodial SOL tip transfer on the Solana blockchain.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "recipient": {
+        "type": "string",
+        "description": "Base58 encoded Solana wallet address"
+      },
+      "amountSol": {
+        "type": "number",
+        "description": "Amount in SOL (e.g. 0.05)"
+      },
+      "memo": {
+        "type": "string",
+        "description": "Optional on-chain memo string"
+      }
+    },
+    "required": [
+      "recipient",
+      "amountSol"
+    ]
+  }
+}</textarea>
+        <div class="status-meter">
+          <span>Tokens: <strong class="meter-val" id="tokenCount">~74</strong></span>
+          <span>Security Score: <strong class="meter-val" id="secScore">100 / 100</strong></span>
+          <span>Zero Egress: <strong class="meter-val">ENFORCED</strong></span>
+        </div>
+      </div>
+
+      <!-- Right Panel: Invocation Simulation & JSON-RPC Frame -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>2. Live JSON-RPC 2.0 Dispatch &amp; Wire Logs</span>
+          <button class="btn-gold" onclick="dispatchFrame()">Dispatch JSON-RPC Frame ⚡</button>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;">Parameters (JSON-RPC params):</label>
+          <textarea id="paramsInput" rows="4">{
+  "recipient": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+  "amountSol": 0.05,
+  "memo": "WebMCP Protocol Suite tip"
+}</textarea>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+          <label style="font-size:11px;color:var(--muted);">Wire Result Envelope:</label>
+          <button class="btn-preset" onclick="copyResult()">Copy Wire Log</button>
+        </div>
+        <pre id="resultOut">{
+  "jsonrpc": "2.0",
+  "status": "AWAITING_DISPATCH",
+  "daemon": "http://127.0.0.1:8142",
+  "note": "Click 'Dispatch JSON-RPC Frame' to test real backend server."
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform • ZothOS Sovereign Arsenal
+  </footer>
+
+  <script>
+    const presets = [
+      {
+        name: "solana_tip_transfer",
+        description: "Signs and broadcasts a non-custodial SOL tip transfer on the Solana blockchain.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            recipient: { type: "string", description: "Base58 encoded Solana wallet address" },
+            amountSol: { type: "number", description: "Amount in SOL (e.g. 0.05)" },
+            memo: { type: "string", description: "Optional on-chain memo string" }
+          },
+          required: ["recipient", "amountSol"]
+        },
+        params: {
+          recipient: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+          amountSol: 0.05,
+          memo: "WebMCP Protocol Suite tip"
+        }
+      },
+      {
+        name: "stripe_buy_coffee",
+        description: "Generates a sovereign 100% unlocked Stripe coffee checkout session.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            checkoutUrl: { type: "string", description: "Target checkout URL" },
+            currency: { type: "string", description: "Currency code (default: USD)" }
+          },
+          required: ["checkoutUrl"]
+        },
+        params: {
+          checkoutUrl: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+          currency: "USD"
+        }
+      },
+      {
+        name: "system_diagnostics",
+        description: "Queries sovereign local CPU, memory, process tree, and hardware telemetry.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            subsystem: { type: "string", enum: ["cpu", "memory", "storage", "daemons", "all"], description: "Subsystem target" },
+            verbose: { type: "boolean", description: "Return detailed telemetry" }
+          },
+          required: ["subsystem"]
+        },
+        params: {
+          subsystem: "daemons",
+          verbose: true
+        }
+      }
+    ];
+
+    function loadPreset(idx) {
+      document.querySelectorAll('.btn-preset').forEach((b, i) => {
+        if (i === idx) b.classList.add('active');
+        else if (i < 3) b.classList.remove('active');
+      });
+      const p = presets[idx];
+      document.getElementById('schemaInput').value = JSON.stringify({
+        name: p.name,
+        description: p.description,
+        inputSchema: p.inputSchema
+      }, null, 2);
+      document.getElementById('paramsInput').value = JSON.stringify(p.params, null, 2);
+      auditLocal();
+    }
+
+    async function auditLocal() {
+      const raw = document.getElementById('schemaInput').value;
+      try {
+        const parsed = JSON.parse(raw);
+        const tokens = Math.ceil(raw.length / 4);
+        document.getElementById('tokenCount').textContent = '~' + tokens;
+
+        // Try backend audit endpoint
+        const res = await fetch('/api/inspect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ schema: parsed })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.audit) {
+            document.getElementById('schemaGrade').textContent = `GRADE: ${data.audit.grade} (${data.audit.score}/100)`;
+            document.getElementById('secScore').textContent = `${data.audit.score} / 100`;
+            return;
+          }
+        }
+      } catch (e) {
+        document.getElementById('schemaGrade').textContent = 'SYNTAX ERROR';
+        document.getElementById('secScore').textContent = 'ERR';
+      }
+    }
+
+    async function dispatchFrame() {
+      const out = document.getElementById('resultOut');
+      out.textContent = "Dispatching frame to local daemon :8142...";
+      try {
+        const schema = JSON.parse(document.getElementById('schemaInput').value);
+        const params = JSON.parse(document.getElementById('paramsInput').value);
+
+        const res = await fetch('/api/rpc/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: Date.now(),
+            method: `tools/call/${schema.name || 'unnamed'}`,
+            params: params
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2);
+        } else {
+          out.textContent = `[ERROR ${res.status}] Failed to execute frame.`;
+        }
+      } catch (e) {
+        out.textContent = `[SYNTAX ERROR] Could not parse schema or params:\n${e.message}`;
+      }
+    }
+
+    async function testHealth() {
+      const out = document.getElementById('resultOut');
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = `[DAEMON UNREACHABLE] ${e.message}`;
+      }
+    }
+
+    function copyResult() {
+      const text = document.getElementById('resultOut').textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+        alert('Copied result envelope to clipboard!');
+      }
+    }
+
+    function toggleLightDarkTheme() {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = next === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+
+    // Run initial audit on load
+    window.addEventListener('DOMContentLoaded', auditLocal);
+  </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+</body>
+</html>

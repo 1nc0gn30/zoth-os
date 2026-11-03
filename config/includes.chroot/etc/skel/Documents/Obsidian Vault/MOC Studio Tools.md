@@ -72,7 +72,7 @@ Every published card in `toolsData.js` — fully audited, verified, and operatio
 - [[Studio ufo-sacred-geometry|UFO Sacred Geometry Studio]]
 - [[Studio likeness-desk|Likeness Desk (AI Video Double)]]
 - [[Studio osint-scout-skill|Domain Intel OSINT Scout]]
-- [[Studio bolt.diy|Zoth WebGen]]
+- [[Studio zoth-bolt|Zoth Bolt (bolt.diy)]]
 - [[Studio zoth-civilization|Zoth Civilization Hub]]
 - [[Studio storefront-catalog|YourDigitalSpace POD Showcase]]
 - [[Studio shodan-surface-sentinel|Shodan Attack Surface Sentinel]]

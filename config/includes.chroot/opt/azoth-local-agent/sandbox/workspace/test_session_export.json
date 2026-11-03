@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "exported_at": 1793463371.807608,
+  "exported_at_iso": "2026-10-31T16:16:11Z",
+  "url": "https://example.com/",
+  "origin": "https://example.com",
+  "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+  "cookies_count": 4,
+  "domains": [
+    ".google.com",
+    "example.com"
+  ],
+  "cookies": [
+    {
+      "name": "SEARCH_SAMESITE",
+      "value": "CgQIlKIB",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1808888157.508006,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "AEC",
+      "value": "Aaa9EJq3cUxfDMJnp4zhh50lcQ_AxJg44iir4yT1flQCm0di7N12J0JHSQ",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1808888157.508064,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "CqACCAES0gEBM9Agl8lXqcufd1dvAcCbO8hJGy1rFp59NEJAiEI72tbV1-UzdLazb9Nx69Sy9YGtvtAVVAntd7B4pDTRS7nym8i0AAXSWkVwkT8dL7REC-DmI2dMTFjTeq7pNDySqCzJCriI6_MRhJKTVKMHO02zhhBHJBfYWKpp8koYwq6uElsg8AoZ8xotjM0zqYF73kw-OpRv-fQICNGPiYJaS_RKhO82KW46RvKPg4PDbJYgRgYAz4r6Oe_kkCsSw4o_wJZT1AAm7xC8xTpyxzwR4TWkZyEoATJFAXBKQs-tfJgroKgld-PjOhyxmlcsn8Kr75xPaM9YiyfbxyGDVocvTmOnfmZifOesG_4EZ0vkW8hu_R52KdxKRdMmCbII",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1809274570.277535,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "abot_auth_token",
+      "value": "sec_token_xyz123_hardened",
+      "domain": "example.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "storage": {
+    "localStorage": {
+      "abot_user": "neal_1nc0gn30"
+    },
+    "sessionStorage": {}
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "title": "Wildflower Meadow Embroidery Pattern Hand Stitching Transfer PDF, Printable Patchwork Blueprint, Lone Star Cutting Guide",
+  "description": "\ud83e\uddf5 MASTER THE TIMELESS TRADITIONAL BARN STAR QUILT\n\nCreate an heirloom quilt that will be cherished across generations with our step-by-step Barn Star Blueprint. Engineered with clear vector diagrams, precision rotary cutting charts, and visual pressing arrows, this pattern takes all the frustration out of matching 8-point diamond seams.\n\n\u2728 WHAT'S INSIDE THE BLUEPRINT:\n\u2022 Complete fabric yardage requirements for Baby, Throw, and Queen sizes.\n\u2022 Color-coded strip piecing charts that save hours of ha",
+  "blueprint_id": 638,
+  "print_provider_id": 29,
+  "tags": [
+    "quilt pattern pdf",
+    "barn star quilt",
+    "lone star pattern",
+    "patchwork blueprint",
+    "quilting printable",
+    "quilt block pattern",
+    "quilter gift",
+    "traditional quilt",
+    "cutting guide pdf",
+    "quilt template",
+    "epp pattern",
+    "sewing project",
+    "craft blueprint"
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "price": 799,
+      "is_enabled": true
+    }
+  ],
+  "print_areas": [
+    {
+      "position": "front",
+      "images": [
+        {
+          "id": "img_primary_design",
+          "src": "https://raw.githubusercontent.com/1nc0gn30/storefront-catalog/main/assets/canvases/prod-10-wildflower-embroidery-pattern_canvas.png",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1.0,
+          "angle": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "etsy-connector",
+    "cadre": "apparel",
+    "canvas_specs": {
+      "width": 4500,
+      "height": 5400,
+      "dpi": 300
+    },
+    "target_demographic": "55+ Women Gifts & Cottagecore"
+  }
+}

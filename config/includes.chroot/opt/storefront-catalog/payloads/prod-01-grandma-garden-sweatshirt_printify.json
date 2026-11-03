@@ -1,0 +1,53 @@
+{
+  "title": "Grandma Garden Sweatshirt Custom Wildflower Crewneck Sweater, Custom Wildflower Sweater, Personalized Grandma Gift, Mothers Day Crewneck",
+  "description": "\ud83c\udf38 WELCOME TO GRANDMA'S GARDEN \u2014 WHERE LOVE BLOOMS!\n\nCelebrate the most cherished woman in your family with our handcrafted Grandma's Garden crewneck sweatshirt or garment-dyed tee. Each wildflower represents a grandchild's birth month, creating a deeply sentimental keepsake she will wear with pride.\n\n\u2728 WHY SHE WILL CHERISH THIS:\n\u2022 Ultra-soft Comfort Colors 1717 / Gildan 18000 heavy blend fleece (50% cotton / 50% polyester).\n\u2022 Premium direct-to-garment (DTG) print with eco-friendly water-based in",
+  "blueprint_id": 49,
+  "print_provider_id": 29,
+  "tags": [
+    "grandma sweatshirt",
+    "gardener gift",
+    "wildflower sweater",
+    "grandmas garden",
+    "grandma crewneck",
+    "mom birthday gift",
+    "cottagecore clothes",
+    "comfort colors tee",
+    "plant lover gift",
+    "gift for grandma",
+    "botanical shirt",
+    "grandkids names",
+    "mothers day gift"
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "price": 3499,
+      "is_enabled": true
+    }
+  ],
+  "print_areas": [
+    {
+      "position": "front",
+      "images": [
+        {
+          "id": "img_primary_design",
+          "src": "https://raw.githubusercontent.com/1nc0gn30/storefront-catalog/main/assets/canvases/prod-01-grandma-garden-sweatshirt_canvas.png",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1.0,
+          "angle": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "etsy-connector",
+    "cadre": "apparel",
+    "canvas_specs": {
+      "width": 4500,
+      "height": 5400,
+      "dpi": 300
+    },
+    "target_demographic": "55+ Women Gifts & Cottagecore"
+  }
+}

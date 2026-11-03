@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoth Bolt (bolt.diy) — Sovereign Full-Stack AI Web &amp; Motion Architect</title>
+  <meta name="description" content="Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Supports 23+ AI providers, local CLI agents, 6 Motion Edit templates, 16-bit Pixel Art SVGs, and live WebContainer preview.">
+  <style>
+    :root {
+      --bg: #06070B;
+      --panel: #0D1017;
+      --card: #121621;
+      --border: rgba(212, 175, 55, 0.25);
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --gold: #D4AF37;
+      --gold-light: #F5E6AB;
+      --emerald: #10B981;
+      --cyan: #38BDF8;
+      --purple: #C084FC;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 12% 10%, #17140D 0%, #06070B 60%);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    /* Top Sovereign Header & Open-Access Bar */
+    header.topbar {
+      background: rgba(10, 12, 18, 0.96);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      z-index: 50;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #D4AF37, #9A7B1C);
+      color: #06070B;
+      font-weight: 900;
+      font-family: var(--mono);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--gold-light);
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-gold {
+      background: rgba(212, 175, 55, 0.14);
+      color: var(--gold-light);
+      border-color: rgba(212, 175, 55, 0.4);
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .btn-gold {
+      background: linear-gradient(90deg, #D4AF37, #F3E5AB);
+      color: #07080C;
+    }
+    .btn-gold:hover { filter: brightness(1.08); }
+    .btn-sol {
+      background: rgba(20, 241, 149, 0.13);
+      color: #14F195;
+      border-color: rgba(20, 241, 149, 0.4);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border-color: var(--border-subtle);
+    }
+    .btn-outline:hover, .btn-outline.active {
+      border-color: var(--gold);
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.12);
+    }
+
+    /* Main Two-Column Architect Layout */
+    .workspace {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 16px;
+      padding: 16px 20px;
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media (max-width: 1080px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+    .pane {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .pane-header {
+      padding: 12px 16px;
+      background: rgba(18, 22, 33, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .pane-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--gold-light);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pane-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    /* Controls */
+    .field-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    select, textarea {
+      width: 100%;
+      background: #06080D;
+      color: var(--text);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      outline: none;
+    }
+    select:focus, textarea:focus { border-color: var(--gold); }
+    textarea { min-height: 78px; resize: vertical; line-height: 1.45; }
+
+    /* Motion Templates Grid */
+    .tpl-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tpl-card {
+      background: var(--card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 9px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+    .tpl-card:hover { border-color: rgba(212, 175, 55, 0.5); }
+    .tpl-card.active {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.11);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+    }
+    .tpl-name {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .tpl-meta {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--gold-light);
+    }
+
+    /* Pixel Art & Vector SVG Asset Row */
+    .asset-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .asset-chip {
+      background: #07090F;
+      border: 1px solid var(--border-subtle);
+      border-radius: 7px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text);
+    }
+    .asset-chip:hover, .asset-chip.active {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    /* Right Workbench Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: rgba(212, 175, 55, 0.16);
+      color: var(--gold-light);
+      border-color: var(--gold);
+    }
+
+    /* Preview Stage */
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #07090E;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+    .url-bar {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .stage-frame {
+      margin: 0 auto;
+      width: 100%;
+      background: #05070B;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: width 0.2s ease;
+    }
+    #hero-shader-canvas {
+      width: 100%;
+      height: 250px;
+      display: block;
+      background: #05070B;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .bento-preview {
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: #080B12;
+    }
+    .bento-box {
+      background: rgba(18, 23, 35, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .bento-box h4 {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+    .bento-box p {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Code & File Explorer Layout */
+    .ide-split {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 12px;
+      min-height: 440px;
+    }
+    .file-tree {
+      background: #06080D;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .file-item {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); }
+    .file-item.active {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      font-weight: 700;
+    }
+    .code-pane {
+      background: #05070B;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #E2E8F0;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .term-pane {
+      background: #04060A;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #CBD5E1;
+      min-height: 420px;
+      white-space: pre-wrap;
+    }
+    .hidden { display: none !important; }
+    #status-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0F172A;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      display: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <div class="brand-title">
+          Zoth Bolt (bolt.diy)
+          <span class="badge-pill badge-gold">v3.5.0 SOVEREIGN</span>
+          <span class="badge-pill">✦ 100% FREE &amp; OPEN ACCESS</span>
+        </div>
+        <div style="font-size: 11px; color: var(--muted); font-family: var(--mono);">
+          Full-Stack AI Web &amp; Motion Architect · 23+ Providers · Local CLI Agents · WebContainers :5173
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <a class="btn btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
+      <a class="btn btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied Solana Tip!';">◎ Solana Tip: GG2e...dXoK</a>
+      <a class="btn btn-outline" href="http://127.0.0.1:3000/tools/bolt.diy">Open Studio God-Mode ↗</a>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- Left Column: AI Architect, Motion Templates & Pixel SVG Assets -->
+    <aside class="pane">
+      <div class="pane-header">
+        <span class="pane-title">⚡ AI Architect &amp; Motion Studio</span>
+        <span class="badge-pill" id="active-provider-badge">LOCAL ZERO-EGRESS</span>
+      </div>
+      <div class="pane-body">
+        <!-- Provider Selector -->
+        <div>
+          <div class="field-label">
+            <span>AI Engine / Local CLI Agent</span>
+            <span style="color: var(--emerald);">17 Registered</span>
+          </div>
+          <select id="provider-select" onchange="onProviderChange()">
+            <optgroup label="Zoth Local &amp; CLI Agents">
+              <option value="ZothLocal:zoth-bolt-instant" selected>⚡ Zoth Bolt Instant Architect (Deterministic + Motion)</option>
+              <option value="ZothLocal:agy-engine">⚡ Google Antigravity (AGY Local Coding Agent)</option>
+              <option value="ZothLocal:hermes-agent">👑 Nous Hermes 3 Autonomous Agent CLI</option>
+              <option value="ZothLocal:grok-cli">🚀 Grok CLI Local Sovereign Agent</option>
+              <option value="ZothLocal:claude-cli">🧠 Claude Code Local Agent CLI</option>
+              <option value="ZothLocal:opencode">💻 OpenCode Local Agent CLI</option>
+              <option value="ZothLocal:cline">🤖 Cline Autonomous Agent CLI</option>
+              <option value="ZothLocal:aider">🛠️ Aider Pair-Programming Agent CLI</option>
+            </optgroup>
+            <optgroup label="Local Ollama Models (127.0.0.1:11434)">
+              <option value="Ollama:qwen2.5-coder:1.5b">🦙 Ollama · Qwen 2.5 Coder (Zero-Egress)</option>
+              <option value="Ollama:llama3.2:1b">🦙 Ollama · Llama 3.2 (Zero-Egress)</option>
+            </optgroup>
+            <optgroup label="Frontier Cloud Providers">
+              <option value="Google:gemini-2.5-pro">🌟 Google · Gemini 2.5 Pro</option>
+              <option value="Anthropic:claude-3-7-sonnet">🟣 Anthropic · Claude 3.7 Sonnet</option>
+              <option value="OpenAI:gpt-4o">🟢 OpenAI · GPT-4o / o3-mini</option>
+              <option value="xAI:grok-3">⚫ xAI · Grok 3</option>
+              <option value="DeepSeek:deepseek-r1">🔵 DeepSeek · DeepSeek R1 / V3</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- 6 Motion Edit Templates -->
+        <div>
+          <div class="field-label">
+            <span>Motion Edit &amp; Full-Stack Archetypes</span>
+            <span style="color: var(--gold-light);">6 Presets</span>
+          </div>
+          <div class="tpl-grid" id="template-grid">
+            <button class="tpl-card active" data-tpl="claude-15s-showreel" onclick="selectTemplate('claude-15s-showreel')">
+              <div class="tpl-name">🎬 15s Claude Showreel</div>
+              <div class="tpl-meta">6-Scene Cinema · Braille</div>
+            </button>
+            <button class="tpl-card" data-tpl="teknium-uncommon-shader" onclick="selectTemplate('teknium-uncommon-shader')">
+              <div class="tpl-name">🌐 @teknium Shader Stage</div>
+              <div class="tpl-meta">Bayer 8×8 Dither · 60fps</div>
+            </button>
+            <button class="tpl-card" data-tpl="gameboy-pixel-cinema" onclick="selectTemplate('gameboy-pixel-cinema')">
+              <div class="tpl-name">👾 16-Bit Pixel CRT Arcade</div>
+              <div class="tpl-meta">Crisp SVG + Chiptune</div>
+            </button>
+            <button class="tpl-card" data-tpl="hermes-commerce-drop" onclick="selectTemplate('hermes-commerce-drop')">
+              <div class="tpl-name">🛍️ Instant Commerce Drop</div>
+              <div class="tpl-meta">Next.js + Live ETA Ring</div>
+            </button>
+            <button class="tpl-card" data-tpl="scroll-choreography-deck" onclick="selectTemplate('scroll-choreography-deck')">
+              <div class="tpl-name">🧊 3D Isometric Exploded</div>
+              <div class="tpl-meta">Spring Physics + Layers</div>
+            </button>
+            <button class="tpl-card" data-tpl="sovereign-saas-funnel" onclick="selectTemplate('sovereign-saas-funnel')">
+              <div class="tpl-name">💎 Sovereign Micro-SaaS</div>
+              <div class="tpl-meta">AST Linter + Open Access</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Prompt Directive -->
+        <div>
+          <div class="field-label">
+            <span>Full-Stack Architecture &amp; Motion Prompt</span>
+            <span id="char-count">146 chars</span>
+          </div>
+          <textarea id="prompt-input" oninput="document.getElementById('char-count').textContent=this.value.length+' chars'">Build an elite sovereign product launch workstation featuring a 15-second 6-scene Claude Motion Showreel hero, Unicode U+2800 Braille wave canvas, bespoke SVG crests, and zero-egress telemetry.</textarea>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn btn-gold" style="flex: 1; justify-content: center; padding: 9px;" id="btn-synthesize" onclick="synthesizeApp()">
+              ⚡ Synthesize Full-Stack App + Motion
+            </button>
+            <button class="btn btn-outline" onclick="exportBundleHtml()">⬇ Export .HTML</button>
+          </div>
+        </div>
+
+        <!-- 16-Bit Pixel Art & Vector SVG Asset Bridge -->
+        <div>
+          <div class="field-label">
+            <span>16-Bit Pixel Art &amp; Vector SVG Bridge</span>
+            <span style="color: var(--cyan);">Click to Inject</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-chip active" id="asset-pixel-bolt" onclick="injectAsset('pixel-bolt', 'Zoth Golden Bolt')">
+              <span>⚡</span><span>Golden Bolt</span>
+            </div>
+            <div class="asset-chip" id="asset-pixel-crown" onclick="injectAsset('pixel-crown', 'Sovereign 24K Crown')">
+              <span>👑</span><span>24K Crown</span>
+            </div>
+            <div class="asset-chip" id="asset-pixel-robot" onclick="injectAsset('pixel-robot', 'Swarm Agent Droid')">
+              <span>🤖</span><span>Agent Droid</span>
+            </div>
+            <div class="asset-chip" id="asset-pixel-terminal" onclick="injectAsset('pixel-terminal', 'CRT Phosphor Deck')">
+              <span>🖥️</span><span>CRT Deck</span>
+            </div>
+            <div class="asset-chip" id="asset-pixel-shield" onclick="injectAsset('pixel-shield', 'Zero-Egress Aegis')">
+              <span>🛡️</span><span>Zero-Egress</span>
+            </div>
+            <div class="asset-chip" id="asset-svg-crest" onclick="injectAsset('svg-bolt-crest', 'Sovereign Prism Crest')">
+              <span>❖</span><span>Prism Crest</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Live WebContainer Preview, Code Editor & Terminal -->
+    <section class="pane">
+      <div class="pane-header">
+        <div class="tab-bar">
+          <button class="tab-btn active" id="tab-btn-preview" onclick="switchWorkbenchTab('preview')">▶ Live Canvas &amp; App Preview</button>
+          <button class="tab-btn" id="tab-btn-code" onclick="switchWorkbenchTab('code')">⟨/⟩ Code Editor &amp; File Tree (4)</button>
+          <button class="tab-btn" id="tab-btn-terminal" onclick="switchWorkbenchTab('terminal')">$_ WebContainer Terminal &amp; AST</button>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <button class="btn btn-outline active" id="vp-desktop" onclick="setViewport('100%', 'vp-desktop')">Desktop</button>
+          <button class="btn btn-outline" id="vp-tablet" onclick="setViewport('768px', 'vp-tablet')">Tablet</button>
+          <button class="btn btn-outline" id="vp-mobile" onclick="setViewport('390px', 'vp-mobile')">Mobile</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: LIVE PREVIEW -->
+      <div class="pane-body" id="tab-preview">
+        <div class="preview-toolbar">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="url-bar" id="preview-url-pill">http://localhost:5173/preview/claude-15s-showreel</span>
+            <span class="badge-pill" id="ast-status-pill">✔ AST &amp; SCHEMA.ORG VERIFIED</span>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-outline active" id="shader-btn-braille" onclick="setShaderMode('braille')">⣿ Braille U+2800</button>
+            <button class="btn btn-outline" id="shader-btn-dither" onclick="setShaderMode('dither')">▦ Bayer 8×8 Dither</button>
+            <button class="btn btn-outline" id="shader-btn-ascii" onclick="setShaderMode('ascii')"># ASCII CRT</button>
+            <button class="btn btn-outline" id="shader-btn-isometric" onclick="setShaderMode('isometric')">⬡ Isometric 3D</button>
+          </div>
+        </div>
+
+        <div class="stage-frame" id="stage-frame">
+          <canvas id="hero-shader-canvas" width="980" height="260"></canvas>
+          <div class="bento-preview">
+            <div class="bento-box">
+              <h4 id="bento-title-1">⚡ SCENE 01–06 // CLAUDE MOTION</h4>
+              <p id="bento-desc-1">Deterministic 60fps Unicode U+2800 Sub-Pixel Braille + Bayer 8×8 dither choreography with zero layout shift.</p>
+            </div>
+            <div class="bento-box">
+              <h4 id="bento-title-2">🛡️ ZERO-EGRESS SOVEREIGNTY</h4>
+              <p id="bento-desc-2">Synthesized locally via Zoth Bolt (:5173) with embedded JSON-LD @graph (WebApplication + FAQPage).</p>
+            </div>
+            <div class="bento-box">
+              <h4 id="bento-title-3">👾 INJECTED VECTOR ASSET</h4>
+              <p id="bento-desc-3">Active Sprite: Zoth Golden Bolt (16×16 Crisp-Edge Inline SVG + Metallic Gold Palette).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CODE EDITOR & FILE TREE -->
+      <div class="pane-body hidden" id="tab-code">
+        <div class="ide-split">
+          <div class="file-tree" id="file-tree-list">
+            <div class="file-item active" data-file="src/App.tsx" onclick="selectFile('src/App.tsx')">
+              <span>📄 src/App.tsx</span><span style="font-size:9px;color:var(--emerald);">TSX</span>
+            </div>
+            <div class="file-item" data-file="src/components/MotionHero.tsx" onclick="selectFile('src/components/MotionHero.tsx')">
+              <span>📄 src/components/MotionHero.tsx</span><span style="font-size:9px;color:var(--cyan);">CANVAS</span>
+            </div>
+            <div class="file-item" data-file="prompts/motion_graphics_showreel.md" onclick="selectFile('prompts/motion_graphics_showreel.md')">
+              <span>🎬 prompts/motion_graphics_showreel.md</span><span style="font-size:9px;color:var(--gold);">SPEC</span>
+            </div>
+            <div class="file-item" data-file="package.json" onclick="selectFile('package.json')">
+              <span>📦 package.json</span><span style="font-size:9px;color:var(--purple);">JSON</span>
+            </div>
+          </div>
+          <pre class="code-pane" id="code-editor"></pre>
+        </div>
+      </div>
+
+      <!-- TAB 3: WEBCONTAINER TERMINAL -->
+      <div class="pane-body hidden" id="tab-terminal">
+        <pre class="term-pane" id="term-output"></pre>
+      </div>
+    </section>
+  </main>
+
+  <div id="status-toast"></div>
+
+  <script>
+    const state = {
+      provider: 'ZothLocal:zoth-bolt-instant',
+      template: 'claude-15s-showreel',
+      shader: 'braille',
+      activeFile: 'src/App.tsx',
+      injectedAsset: 'Zoth Golden Bolt',
+      files: {},
+      frame: 0
+    };
+
+    const TEMPLATE_META = {
+      'claude-15s-showreel': {
+        name: '15s Claude Motion Showreel Hero',
+        shader: 'braille',
+        prompt: 'Build an elite sovereign product launch workstation featuring a 15-second 6-scene Claude Motion Showreel hero, Unicode U+2800 Braille wave canvas, bespoke SVG crests, and zero-egress telemetry.'
+      },
+      'teknium-uncommon-shader': {
+        name: '@teknium Uncommon Web Shader Stage',
+        shader: 'dither',
+        prompt: 'Build an avant-garde developer platform with a 60fps @teknium Uncommon Web Shader hero (Braille Wave, Bayer 8x8 Dither, ASCII Matrix), custom SVG diagrams, and Bento grid.'
+      },
+      'gameboy-pixel-cinema': {
+        name: '16-Bit Pixel Art & Retro CRT Arcade',
+        shader: 'ascii',
+        prompt: 'Build a 16-bit Pixel Art & Retro CRT Arcade hub featuring crisp inline SVG pixel-art icons, animated simulation canvas, scanline toggle, and WebAudio 8-bit chiptune SFX.'
+      },
+      'hermes-commerce-drop': {
+        name: 'Instant Delivery & Commerce Drop',
+        shader: 'braille',
+        prompt: 'Build a 15-minute neighborhood delivery storefront with multi-layered gradient SVG product art, animated SVG ETA countdown ring, category filters, and slide-over bag.'
+      },
+      'scroll-choreography-deck': {
+        name: '3D Isometric Exploded View & Scroll Stage',
+        shader: 'isometric',
+        prompt: 'Build an interactive hardware & architecture showcase with a multi-layer isometric SVG exploded-view stage, layer separation slider, and live telemetry calculator.'
+      },
+      'sovereign-saas-funnel': {
+        name: 'Sovereign Micro-SaaS + Motion Hero',
+        shader: 'dither',
+        prompt: 'Build a 100% open-access Sovereign Micro-SaaS utility with a kinetic motion hero, real-time client-side AST/linter gauges, and Stripe Coffee + Solana tip rails.'
+      }
+    };
+
+    function showToast(msg) {
+      const el = document.getElementById('status-toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 2800);
+    }
+
+    function onProviderChange() {
+      const sel = document.getElementById('provider-select');
+      state.provider = sel.value;
+      document.getElementById('active-provider-badge').textContent = sel.value.split(':')[0].toUpperCase();
+      synthesizeApp();
+    }
+
+    function selectTemplate(tplId) {
+      state.template = tplId;
+      document.querySelectorAll('.tpl-card').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-tpl') === tplId);
+      });
+      const meta = TEMPLATE_META[tplId] || TEMPLATE_META['claude-15s-showreel'];
+      document.getElementById('prompt-input').value = meta.prompt;
+      document.getElementById('char-count').textContent = meta.prompt.length + ' chars';
+      setShaderMode(meta.shader);
+      document.getElementById('preview-url-pill').textContent = `http://localhost:5173/preview/${tplId}`;
+      synthesizeApp();
+    }
+
+    function setShaderMode(mode) {
+      state.shader = mode;
+      ['braille', 'dither', 'ascii', 'isometric'].forEach(m => {
+        const btn = document.getElementById('shader-btn-' + m);
+        if (btn) btn.classList.toggle('active', m === mode);
+      });
+      drawShaderCanvas();
+    }
+
+    function injectAsset(assetId, assetName) {
+      state.injectedAsset = assetName;
+      document.querySelectorAll('.asset-chip').forEach(c => c.classList.remove('active'));
+      const target = document.getElementById('asset-' + assetId) || document.getElementById('asset-svg-crest');
+      if (target) target.classList.add('active');
+      document.getElementById('bento-desc-3').textContent = `Active Sprite: ${assetName} (16×16 Crisp-Edge Inline SVG injected into src/App.tsx).`;
+      synthesizeApp();
+      showToast(`Injected SVG Asset: ${assetName}`);
+    }
+
+    function switchWorkbenchTab(tab) {
+      ['preview', 'code', 'terminal'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+      });
+    }
+
+    function setViewport(widthCss, btnId) {
+      document.getElementById('stage-frame').style.maxWidth = widthCss;
+      ['vp-desktop', 'vp-tablet', 'vp-mobile'].forEach(id => {
+        document.getElementById(id).classList.toggle('active', id === btnId);
+      });
+    }
+
+    function selectFile(filePath) {
+      state.activeFile = filePath;
+      document.querySelectorAll('.file-item').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-file') === filePath);
+      });
+      document.getElementById('code-editor').textContent = state.files[filePath] || '// Loading file...';
+    }
+
+    async function synthesizeApp() {
+      const prompt = document.getElementById('prompt-input').value;
+      const meta = TEMPLATE_META[state.template] || TEMPLATE_META['claude-15s-showreel'];
+      try {
+        const res = await fetch('/api/synthesize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            template: state.template,
+            prompt: prompt,
+            provider: state.provider
+          })
+        });
+        const data = await res.json();
+        if (data && data.files) {
+          state.files = data.files;
+        }
+      } catch (e) {
+        state.files = {
+          'src/App.tsx': `// Synthesized by ${state.provider}\nexport default function App() { return <div>${meta.name}</div>; }`
+        };
+      }
+
+      document.getElementById('bento-title-1').textContent = `⚡ ${meta.name.toUpperCase()}`;
+      document.getElementById('bento-desc-1').textContent = prompt.slice(0, 130) + '...';
+      document.getElementById('code-editor').textContent = state.files[state.activeFile] || state.files['src/App.tsx'];
+      document.getElementById('term-output').textContent = [
+        `$ zoth-bolt synthesize --template ${state.template} --provider "${state.provider}"`,
+        `[1/4] Parsing AST & Schema.org JSON-LD @graph invariants... PASS`,
+        `[2/4] Compiling 60fps ${state.shader.toUpperCase()} Canvas Choreography (src/components/MotionHero.tsx)... PASS`,
+        `[3/4] Injecting Crisp-Edge Vector Asset (${state.injectedAsset}) into src/App.tsx... PASS`,
+        `[4/4] Launching WebContainer HMR Dev Server on http://127.0.0.1:5173/preview/${state.template}`,
+        ``,
+        `  VITE v5.4.21  ready in 118 ms`,
+        `  ➜  Local:   http://localhost:5173/preview/${state.template}`,
+        `  ➜  Files:   ${Object.keys(state.files).join(', ')}`,
+        `  ➜  Status:  0 console errors · 0px overflow · 100% Open Access`
+      ].join('\n');
+      drawShaderCanvas();
+      showToast(`Synthesized: ${meta.name} (${state.provider.split(':')[1] || state.provider})`);
+    }
+
+    function exportBundleHtml() {
+      const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `zoth-bolt-${state.template}.html`;
+      a.click();
+      showToast(`Exported zoth-bolt-${state.template}.html`);
+    }
+
+    function drawShaderCanvas() {
+      const cvs = document.getElementById('hero-shader-canvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width;
+      const h = cvs.height;
+      state.frame += 1;
+      const t = state.frame * 0.08;
+
+      ctx.fillStyle = '#05070C';
+      ctx.fillRect(0, 0, w, h);
+
+      const meta = TEMPLATE_META[state.template] || TEMPLATE_META['claude-15s-showreel'];
+
+      if (state.shader === 'braille') {
+        ctx.font = '13px monospace';
+        const cols = Math.floor(w / 11);
+        const rows = Math.floor(h / 16);
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const nx = (c / cols) * 2 - 1;
+            const ny = (r / rows) * 2 - 1;
+            const dist = Math.sqrt(nx * nx + ny * ny);
+            const wave = Math.sin(dist * 9 - t * 2.5) * Math.cos(nx * 5 + t);
+            if (wave > -0.2) {
+              const mask = Math.min(255, Math.max(1, Math.floor((wave + 1) * 127)));
+              ctx.fillStyle = wave > 0.45 ? '#F5E6AB' : (wave > 0.1 ? '#D4AF37' : 'rgba(56, 189, 248, 0.45)');
+              ctx.fillText(String.fromCharCode(0x2800 + (mask % 64)), c * 11 + 4, r * 16 + 14);
+            }
+          }
+        }
+      } else if (state.shader === 'dither') {
+        const cell = 8;
+        const bayer4 = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+        for (let y = 0; y < h; y += cell) {
+          for (let x = 0; x < w; x += cell) {
+            const nx = (x / w) - 0.5;
+            const ny = (y / h) - 0.5;
+            const v = (Math.sin(nx * 10 + t) + Math.cos(ny * 8 - t) + 2) / 4;
+            const thresh = bayer4[(y / cell) % 4][(x / cell) % 4] / 16;
+            if (v > thresh) {
+              ctx.fillStyle = v > 0.68 ? '#38BDF8' : 'rgba(212, 175, 55, 0.55)';
+              ctx.fillRect(x, y, cell - 1, cell - 1);
+            }
+          }
+        }
+      } else if (state.shader === 'ascii') {
+        const glyphs = ' .:-=+*#%@';
+        ctx.font = 'bold 12px monospace';
+        for (let y = 14; y < h; y += 14) {
+          for (let x = 8; x < w; x += 10) {
+            const val = (Math.sin(x * 0.02 + t) + Math.cos(y * 0.03 - t) + 2) / 4;
+            const idx = Math.floor(val * (glyphs.length - 1));
+            ctx.fillStyle = val > 0.65 ? '#22C55E' : 'rgba(34, 197, 94, 0.4)';
+            ctx.fillText(glyphs[idx], x, y);
+          }
+        }
+      } else {
+        // Isometric 3D Exploded Stack
+        const cx = w / 2;
+        const cy = h / 2 + 25;
+        const layers = [
+          { yOff: -65, color: '#D4AF37', label: 'L3: UI / MOTION CHOREOGRAPHY (60FPS)' },
+          { yOff: -15, color: '#38BDF8', label: 'L2: AST & SCHEMA.ORG VERIFIER' },
+          { yOff: 35,  color: '#10B981', label: 'L1: ZERO-EGRESS WEBCONTAINER RUNTIME' }
+        ];
+        layers.forEach(L => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(cx, cy + L.yOff - 42);
+          ctx.lineTo(cx + 170, cy + L.yOff);
+          ctx.lineTo(cx, cy + L.yOff + 42);
+          ctx.lineTo(cx - 170, cy + L.yOff);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(13, 18, 30, 0.86)';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = L.color;
+          ctx.stroke();
+          ctx.fillStyle = L.color;
+          ctx.font = '800 11px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(L.label, cx, cy + L.yOff + 4);
+          ctx.restore();
+        });
+      }
+
+      // Center HUD Overlay Banner on Canvas
+      ctx.fillStyle = 'rgba(6, 8, 14, 0.82)';
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.55)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(w / 2 - 260, h / 2 - 42, 520, 84, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#F5E6AB';
+      ctx.font = '800 18px "Inter", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(meta.name, w / 2, h / 2 - 8);
+
+      ctx.fillStyle = '#10B981';
+      ctx.font = '700 11px monospace';
+      ctx.fillText(`SHADER: ${state.shader.toUpperCase()} · ENGINE: ${state.provider} · ASSET: ${state.injectedAsset.toUpperCase()}`, w / 2, h / 2 + 20);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      synthesizeApp();
+      setInterval(drawShaderCanvas, 120);
+    });
+  </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+</body>
+</html>

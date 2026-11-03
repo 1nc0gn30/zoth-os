@@ -1,0 +1,211 @@
+/* Wave States — Accessible :focus-visible, hover, empty and error presentation */
+
+/* 1. Focus-Visible States */
+.btn-stripe:focus-visible,
+.btn-solana:focus-visible,
+.btn-action:focus-visible,
+.btn-export-payload:focus-visible,
+.filter-tab:focus-visible,
+.modal-close-btn:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.35);
+}
+
+.search-input:focus-visible,
+.modal-key-input:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 1px;
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+.activate-key-link:focus-visible,
+footer a:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+input[type=range]:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.card-media:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: -2px;
+}
+
+/* 2. Hover Presentation */
+.brand-logo-icon:hover {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.badge-tag:hover,
+.card-cadre-tag:hover {
+  border-color: var(--gold-bright);
+  color: #ffffff;
+}
+
+.banner-urgent-pill:hover {
+  border-color: rgba(244, 63, 94, 0.7);
+  background: rgba(244, 63, 94, 0.25);
+}
+
+.card-seo-tag:hover {
+  background: var(--emerald);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.tag-pill:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(63, 63, 70, 0.85);
+  color: #ffffff;
+}
+
+.bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.bento-card.highlight:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 24px -6px rgba(212, 175, 55, 0.2);
+}
+
+.banner-cta-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.card-media:hover {
+  filter: brightness(1.03);
+}
+
+.btn-action:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-export-payload:hover {
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);
+}
+
+.search-input:hover,
+.modal-key-input:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* 3. Empty Presentation */
+.products-grid:empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+  text-align: center;
+  grid-column: 1 / -1;
+  background: rgba(24, 24, 27, 0.4);
+}
+
+.products-grid:empty::before {
+  content: "No matching catalog products found";
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.products-grid:empty::after {
+  content: "Try adjusting your search terms or filter cadre to view master POD items.";
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.card-tags-cloud:empty::before,
+#modalTagsContainer:empty::before {
+  content: "No SEO tags available";
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.modal-copy-block:empty::before,
+#modalDescriptionText:empty::before {
+  content: "No description copy available";
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.blurred-content:empty::before {
+  content: "Payload data empty or loading...";
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* 4. Error Presentation */
+.modal-key-input:invalid,
+.modal-key-input.error,
+.modal-key-input[aria-invalid="true"],
+.modal-key-input:user-invalid {
+  border-color: var(--rose) !important;
+  background-color: rgba(244, 63, 94, 0.08) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
+}
+
+.search-input:invalid,
+.search-input.error,
+.search-input[aria-invalid="true"],
+.search-input:user-invalid {
+  border-color: var(--rose) !important;
+  background-color: rgba(244, 63, 94, 0.08) !important;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
+}
+
+.btn-action.error,
+.btn-stripe.error,
+.btn-solana.error {
+  border-color: var(--rose) !important;
+  background: rgba(244, 63, 94, 0.2) !important;
+  color: #fda4af !important;
+}
+
+/* 5. Prefers-Reduced-Motion */
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo-icon,
+  .badge-tag,
+  .banner-urgent-pill,
+  .card-cadre-tag,
+  .card-seo-tag,
+  .tag-pill,
+  .bento-card,
+  .calculator-section,
+  .paywall-section,
+  .banner-cta-card,
+  .modal-media-box,
+  .modal-copy-block,
+  .lock-icon-circle,
+  .card-media,
+  .modal-close-btn,
+  .activate-key-link,
+  footer a,
+  .search-input,
+  .modal-key-input,
+  .btn-action,
+  .btn-stripe,
+  .btn-solana,
+  .filter-tab {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

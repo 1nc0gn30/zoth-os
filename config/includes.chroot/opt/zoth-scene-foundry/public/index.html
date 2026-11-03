@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoth Scene Foundry — 1000 Procedural ASCII &amp; Pixel-Art Scenes</title>
+  <meta name="description" content="Procedural ZothOS-style ASCII + pixel-art scene engine. 1000 deterministic scenes with Bayer dither, tube palettes, and Three.js AsciiEffect stage on :8823." />
+  <link rel="canonical" href="https://zoth-scene-foundry.netlify.app/" />
+
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:title" content="Zoth Scene Foundry — 1000 ASCII &amp; Pixel-Art Scenes" />
+  <meta property="og:description" content="Procedural ZothOS-style ASCII + pixel-art scene engine. 1000 deterministic scenes with Bayer dither and tube palettes." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zoth-scene-foundry.netlify.app/" />
+  <meta property="og:image" content="https://zoth.nullai.tech/og-zoth.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:title" content="Zoth Scene Foundry — 1000 ASCII &amp; Pixel-Art Scenes" />
+  <meta name="twitter:description" content="Deterministic procedural ASCII + pixel-art scene foundry for Zoth OS." />
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-zoth.png" />
+
+  <!-- Fonts: Syne + Space Grotesk + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Zoth Scene Foundry",
+        "url": "https://zoth-scene-foundry.netlify.app/",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Linux, ZothOS, Web",
+        "description": "Procedural ZothOS-style ASCII and pixel-art scene engine generating 1000 deterministic scenes with Bayer dither and Three.js AsciiEffect.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "1nc0gn30 • NullAI",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Zoth Scene Foundry?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth Scene Foundry is a procedural scene synthesis tool that generates 1000 deterministic ASCII and pixel art compositions using ordered 8x8 Bayer dithering, cathode ray tube color profiles, and Three.js AsciiEffect."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are the 1000 scenes constructed?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Scenes are synthesized deterministically across 17 distinct sheet categories, combining parametric geometric primitives, raymarched signed distance fields (SDFs), and 3D ASCII meshes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Zoth Scene Foundry completely free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, it is 100% free and open-access with zero paywalls. You can support the project via Stripe Buy Us a Coffee or Solana tip."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #05060A;
+      --card: #0A0C13;
+      --card-border: rgba(212, 175, 55, 0.28);
+      --gold: #D4AF37;
+      --gold-bright: #F5E6AB;
+      --emerald: #10B981;
+      --cyan: #38BDF8;
+      --amber: #F59E0B;
+      --text: #F3F4F6;
+      --muted: #9CA3AF;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    html[data-theme="light"] {
+      --bg: #F8F6F0;
+      --card: #FFFFFF;
+      --card-border: rgba(146, 108, 21, 0.32);
+      --gold: #9A6B13;
+      --gold-bright: #78500A;
+      --emerald: #047857;
+      --text: #111827;
+      --muted: #4B5563;
+    }
+    html[data-theme="light"] h1 { color: #111827; }
+    html[data-theme="light"] .tube-chip { background: #F3EFE6; border-color: rgba(146,108,21,0.3); color: #111827; }
+    html[data-theme="light"] .tube-chip.active { background: #9A6B13; color: #FFFFFF; }
+    html[data-theme="light"] pre { background: #0F172A; color: #FDE68A; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .support-bar {
+      background: linear-gradient(90deg, rgba(16,185,129,0.15), rgba(212,175,55,0.18));
+      border-bottom: 1px solid rgba(212,175,55,0.35);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .badge-open { color: var(--emerald); font-weight: 800; }
+    .btn-gold {
+      background: var(--gold);
+      color: #08080B;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+    }
+    .btn-gold:hover { filter: brightness(1.15); }
+    .btn-sol {
+      background: rgba(20,241,149,0.12);
+      color: #14F195;
+      border: 1px solid rgba(20,241,149,0.45);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pill-cluster {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .pill-gold { color: var(--gold-bright); border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.1); }
+    .pill-emerald { color: var(--emerald); border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.1); }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #FFF;
+      line-height: 1.15;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      max-width: 820px;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 960px) {
+      .bento-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .canvas-box {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: #020306;
+      border-radius: 10px;
+      border: 1px solid rgba(212,175,55,0.25);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #foundryCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    /* Tube Palette Selector */
+    .tube-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tube-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .tube-chip.active {
+      border-color: var(--amber);
+      background: rgba(245,158,11,0.15);
+      color: #FFF;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      background: #040508;
+      color: #34D399;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    pre {
+      background: #040508;
+      color: var(--gold-bright);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(212,175,55,0.25);
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.45;
+      max-height: 160px;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 40px;
+      padding: 24px 0 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      align-items: center;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Support Bar -->
+  <div class="support-bar">
+    <span class="badge-open">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+    <span>Foundry Daemon: <code>:8823</code></span>
+    <a class="btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">
+      ☕ Buy Us a Coffee (Stripe)
+    </a>
+    <a class="btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...!';">
+      ◎ Solana Tip (GG2e...dXoK)
+    </a>
+    <button id="themeToggleBtn" type="button" class="btn-sol" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">☀ Light / Dark</button>
+  </div>
+
+  <main class="container">
+    <!-- Header -->
+    <header>
+      <div class="pill-cluster">
+        <span class="pill pill-emerald">● ACTIVE DAEMON :8823</span>
+        <span class="pill pill-gold">v1.0.0 · MEDIA &amp; 3D</span>
+        <span class="pill">1000 SCENES</span>
+        <span class="pill">BAYER 8×8 DITHER</span>
+      </div>
+      <h1>Zoth Scene Foundry</h1>
+      <p class="subtitle">
+        Procedural ZothOS-style ASCII + pixel-art scene engine. 1000 deterministic scenes generated with Bayer 8×8 dither matrix, cathode tube palettes, and Three.js AsciiEffect stage.
+      </p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+        <a class="btn-gold" href="/gallery.html">Open 1000-Scene Full Gallery ↗</a>
+        <a class="btn-sol" href="http://127.0.0.1:3000/tools/zoth-scene-foundry">Zoth Studio God-Mode Workbench ↗</a>
+      </div>
+    </header>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+      <!-- Left: Interactive Procedural Scene Preview -->
+      <div class="card">
+        <div class="card-title">
+          <span>Live Procedural ASCII/Pixel Stage</span>
+          <span style="font-size:11px; font-family:var(--font-mono); color:var(--amber);">● 60 FPS GENERATOR</span>
+        </div>
+        <div class="canvas-box">
+          <canvas id="foundryCanvas"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-size:12px; color:var(--muted); font-family:var(--font-mono);" id="sceneMetaLabel">
+            Scene #042 · Merkaba Vortex (Bayer 8x8)
+          </span>
+          <button type="button" class="btn-gold" style="padding:4px 10px; font-size:11px;" onclick="regenerateSeed()">
+            Randomize Seed ⚡
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Cathode Tube Palettes & Scene Controls -->
+      <div class="card">
+        <div class="card-title">
+          <span>Cathode Tube Palettes</span>
+          <span style="font-size:11px; font-family:var(--font-mono); color:var(--gold);" id="tubeNameLabel">AURUM GOLD</span>
+        </div>
+        <div class="tube-row">
+          <button type="button" class="tube-chip active" onclick="selectTube('gold', 'AURUM GOLD')">Gold</button>
+          <button type="button" class="tube-chip" onclick="selectTube('amber', 'RETRO AMBER')">Amber</button>
+          <button type="button" class="tube-chip" onclick="selectTube('cyan', 'CYBER CYAN')">Cyan</button>
+          <button type="button" class="tube-chip" onclick="selectTube('emerald', 'SOVEREIGN EMERALD')">Emerald</button>
+          <button type="button" class="tube-chip" onclick="selectTube('crimson', 'GHOST CRIMSON')">Crimson</button>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11px; font-family:var(--font-mono); color:var(--gold); margin-bottom:6px;">
+            FOUNDRY SEED CONFIGURATION:
+          </label>
+          <textarea id="foundryConfig">{
+  "scene_id": 42,
+  "field": "astrolabe_vortex",
+  "dither": "bayer_8x8",
+  "palette": "aurum_gold",
+  "resolution": "80x45"
+}</textarea>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn-gold" onclick="synthesizeScene()">Synthesize ASCII Scene ⚡</button>
+          <button type="button" class="btn-sol" onclick="navigator.clipboard.writeText(document.getElementById('cliOut').textContent)">Copy ASCII Output</button>
+        </div>
+        <pre id="cliOut">[FOUNDRY] Engine ready. 1000 deterministic scenes cataloged in out/index.json.</pre>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>
+        Engineered by <strong>1nc0gn30 (@1nc0gn30) • NullAI Platform</strong>
+      </div>
+      <div>
+        <a href="https://github.com/1nc0gn30/zoth-scene-foundry" target="_blank" rel="noopener noreferrer">GitHub: zoth-scene-foundry</a> ·
+        <a href="/gallery.html">1000-Scene Gallery</a> ·
+        <a href="https://zoth.nullai.tech" target="_blank" rel="noopener noreferrer">Zoth Studio</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('foundryCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resize() {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const TUBES = {
+      gold: { bg: '#070602', fg: '#D4AF37', hl: '#FFF5D0' },
+      amber: { bg: '#080501', fg: '#F59E0B', hl: '#FDE68A' },
+      cyan: { bg: '#010609', fg: '#38BDF8', hl: '#BAE6FD' },
+      emerald: { bg: '#010804', fg: '#10B981', hl: '#A7F3D0' },
+      crimson: { bg: '#090203', fg: '#EF4444', hl: '#FECACA' }
+    };
+    let currentTube = 'gold';
+    let seed = 42;
+    let t = 0;
+
+    function selectTube(id, name) {
+      currentTube = id;
+      document.querySelectorAll('.tube-chip').forEach(c => {
+        c.classList.toggle('active', c.textContent.toLowerCase() === id);
+      });
+      document.getElementById('tubeNameLabel').textContent = name;
+      updateConfig();
+    }
+
+    function regenerateSeed() {
+      seed = Math.floor(Math.random() * 999) + 1;
+      document.getElementById('sceneMetaLabel').textContent = `Scene #${String(seed).padStart(3, '0')} · Bayer Dither Matrix`;
+      updateConfig();
+    }
+
+    function updateConfig() {
+      const cfg = {
+        scene_id: seed,
+        field: "astrolabe_vortex",
+        dither: "bayer_8x8",
+        palette: currentTube,
+        resolution: "80x45"
+      };
+      document.getElementById('foundryConfig').value = JSON.stringify(cfg, null, 2);
+    }
+
+    // Bayer 4x4 matrix
+    const BAYER4 = [
+      [ 0,  8,  2, 10],
+      [12,  4, 14,  6],
+      [ 3, 11,  1,  9],
+      [15,  7, 13,  5]
+    ];
+
+    function drawFoundry() {
+      t += 0.03;
+      const palette = TUBES[currentTube] || TUBES.gold;
+      ctx.fillStyle = palette.bg;
+      ctx.fillRect(0, 0, width, height);
+
+      const cx = width / 2;
+      const cy = height / 2;
+      const step = 6;
+
+      for (let y = 0; y < height; y += step) {
+        for (let x = 0; x < width; x += step) {
+          const dx = (x - cx) / 70;
+          const dy = (y - cy) / 70;
+          const r = Math.sqrt(dx * dx + dy * dy);
+          const theta = Math.atan2(dy, dx);
+
+          // Procedural wave formula
+          const val = (Math.sin(r * 2.2 - t + Math.sin(theta * 4 + t * 0.5)) + 1) / 2;
+          const bx = Math.floor((x / step) % 4);
+          const by = Math.floor((y / step) % 4);
+          const threshold = BAYER4[by][bx] / 16;
+
+          if (val > threshold) {
+            ctx.fillStyle = val > 0.85 ? palette.hl : palette.fg;
+            ctx.fillRect(x, y, step - 1, step - 1);
+          }
+        }
+      }
+      requestAnimationFrame(drawFoundry);
+    }
+    drawFoundry();
+
+    function synthesizeScene() {
+      const out = document.getElementById('cliOut');
+      const chars = [' ', '░', '▒', '▓', '█'];
+      let ascii = `=== ZOTH SCENE FOUNDRY #${seed} ===\n`;
+      for (let r = 0; r < 8; r++) {
+        let line = '';
+        for (let c = 0; c < 36; c++) {
+          const idx = (r * c + seed) % chars.length;
+          line += chars[idx];
+        }
+        ascii += line + '\n';
+      }
+      ascii += `[TUBE: ${currentTube.toUpperCase()}] Deterministic render complete.`;
+      out.textContent = ascii;
+    }
+  </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+/* Wave 7 — Typographic Hierarchy, Accessible Focus & Micro-Motion Enhancement */
+
+/* 1. Clearer Type Hierarchy */
+h1 {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.banner-title {
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.calc-title {
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.paywall-header h2 {
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.lock-title {
+  letter-spacing: -0.02em;
+}
+
+.modal-title {
+  letter-spacing: -0.02em;
+}
+
+.sub-tagline {
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.banner-desc {
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.lock-desc {
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Category & Eyebrow Metadata Labels */
+.badge-tag,
+.banner-urgent-pill,
+.card-cadre-tag,
+.card-seo-tag {
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.bento-label,
+.calc-result-label,
+.fin-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Numeric & Financial Metric Readouts (Tabular Digits) */
+.bento-value,
+.calc-result-num,
+.calc-slider-val,
+.fin-val,
+.price-discounted {
+  font-variant-numeric: tabular-nums;
+}
+
+.bento-value {
+  letter-spacing: -0.02em;
+}
+
+.price-discounted {
+  letter-spacing: -0.02em;
+}
+
+/* 2. Visible Focus States */
+.btn-stripe:focus-visible,
+.btn-solana:focus-visible,
+.btn-action:focus-visible,
+.filter-tab:focus-visible,
+.modal-close-btn:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.35);
+}
+
+.search-input:focus-visible,
+.modal-key-input:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 1px;
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+.activate-key-link:focus-visible,
+footer a:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+input[type=range]:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* 3. Result Area Entrance Motion */
+@keyframes resultAreaEntrance {
+  0% {
+    opacity: 0.2;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calc-results {
+  animation: resultAreaEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.calc-result-box {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.calc-result-box:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-gold);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* 4. Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .calc-results {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .calc-result-box,
+  .btn-stripe,
+  .btn-solana,
+  .btn-action,
+  .product-card,
+  .card-media img,
+  .banner-beam,
+  .filter-tab {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

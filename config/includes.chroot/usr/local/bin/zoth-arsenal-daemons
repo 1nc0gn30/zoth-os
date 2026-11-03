@@ -92,6 +92,8 @@ def is_listening(port):
 def start_daemon(tool_id, repo_name, port):
     repo_dir = os.path.join(NULLAI_DIR, repo_name)
     if not os.path.isdir(repo_dir):
+        repo_dir = os.path.join("/opt", repo_name)
+    if not os.path.isdir(repo_dir):
         return False, "missing_repo"
 
     env = os.environ.copy()

@@ -27,6 +27,34 @@
       --font-mono: 'JetBrains Mono', monospace;
       --font-title: 'Cinzel', serif;
     }
+    html[data-theme="light"] {
+      --bg-void: #F8F6F0;
+      --bg-card: #FFFFFF;
+      --bg-term: #0F172A;
+      --border: rgba(146, 108, 21, 0.32);
+      --border-bright: rgba(146, 108, 21, 0.65);
+      --gold: #9A6B13;
+      --gold-light: #78500A;
+      --text-main: #111827;
+      --text-muted: #4B5563;
+    }
+    html[data-theme="light"] header,
+    html[data-theme="light"] .broadcast-container,
+    html[data-theme="light"] .filter-bar,
+    html[data-theme="light"] .term-header,
+    html[data-theme="light"] .term-meta,
+    html[data-theme="light"] .term-footer {
+      background: #F3EFE6 !important;
+      color: #111827 !important;
+    }
+    html[data-theme="light"] .meta-select,
+    html[data-theme="light"] .stdin-input,
+    html[data-theme="light"] .broadcast-input {
+      background: #FFFFFF !important;
+      color: #111827 !important;
+      border-color: rgba(146, 108, 21, 0.35) !important;
+    }
+    html[data-theme="light"] .term-viewport .log-user { color: #FDE68A !important; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -118,7 +146,7 @@
     }
     .broadcast-input-box {
       flex: 1;
-      min-width: 280px;
+      min-width: min(100%, 240px);
       position: relative;
     }
     .broadcast-input {
@@ -223,11 +251,12 @@
     }
     .terminals-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
       gap: 20px;
     }
     @media (max-width: 540px) {
-      .terminals-grid { grid-template-columns: 1fr; }
+      .terminals-grid { grid-template-columns: minmax(0, 1fr); }
+      header, .broadcast-container, .filter-bar, main { padding: 12px !important; }
     }
 
     /* Single Terminal Card */
@@ -421,6 +450,12 @@
 </head>
 <body>
 
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
+
   <!-- Top Navigation Header -->
   <header>
     <div class="brand">
@@ -431,12 +466,16 @@
       </div>
     </div>
     <div class="header-controls">
+      <div class="badge" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid #10B981;">
+        <span>✦ 100% UNLOCKED</span>
+      </div>
       <div class="badge">
         <div class="status-dot"></div>
-        <span id="daemon-status-text">DAEMON // LOOPBACK :8989</span>
+        <span id="daemon-status-text">DAEMON // LOOPBACK :8141</span>
       </div>
       <button class="btn btn-secondary" onclick="syncAllMemories()">🧠 Sync STDP Synapses</button>
       <button class="btn btn-secondary" onclick="exportTranscript()">📜 Export Logs</button>
+      <button id="themeToggleBtn" class="btn btn-secondary" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">☀ Light / Dark</button>
     </div>
   </header>
 
@@ -497,27 +536,27 @@
 
     // 21 Pantheon Agents Configuration
     const PANTHEON_AGENTS = [
-      { id: "AZOTH", name: "Azoth", role: "Sovereign Alchemist", cadre: "Architects", pet: "🐺", harness: "agy", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/.../zoth-studio-v2" },
-      { id: "NEXUS", name: "Nexus", role: "Lead Architect", cadre: "Architects", pet: "🌌", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/..." },
-      { id: "VIGIL", name: "Vigil", role: "AST Arbiter", cadre: "Architects", pet: "👁️", harness: "codex", model: "deepseek-r1:70b", pwd: "/mnt/workspace/.../zoth-micro-repos" },
-      { id: "MERCURY", name: "Mercury", role: "Tool Executor", cadre: "Architects", pet: "🐲", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/mnt/workspace/.../zoth-webgen" },
-      { id: "GHOSTBYTE", name: "Ghostbyte", role: "Vault Sentinel", cadre: "Architects", pet: "👻", harness: "agy", model: "claude-3-5-sonnet", pwd: "/mnt/workspace/.../envguard-secrets-vault" },
-      { id: "ATHENA", name: "Athena", role: "AEO Architect", cadre: "Architects", pet: "🦉", harness: "opencode", model: "gpt-4.5", pwd: "/mnt/workspace/.../aeo-graph-engine" },
-      { id: "CHRONOS", name: "Chronos", role: "Temporal DAG", cadre: "Code", pet: "⌛", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/.../cron-rhythm-studio" },
-      { id: "DRACO", name: "Draco", role: "Consensus Arbiter", cadre: "Code", pet: "🐉", harness: "codex", model: "deepseek-r1:70b", pwd: "/mnt/workspace/..." },
-      { id: "IGNIS", name: "Ignis", role: "Refactor Engine", cadre: "Code", pet: "🔥", harness: "hermes-agent", model: "qwen2.5-coder:32b", pwd: "/mnt/workspace/.../zoth-studio-v2" },
-      { id: "KAI", name: "Kai", role: "Static Analysis", cadre: "Code", pet: "⚔️", harness: "agy", model: "claude-3-5-sonnet", pwd: "/mnt/workspace/..." },
-      { id: "LYCAN", name: "Lycan", role: "OWASP Sentinel", cadre: "Security", pet: "🐺", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/mnt/workspace/.../web-security-guard" },
-      { id: "ONYX", name: "Onyx", role: "Threat Auditor", cadre: "Security", pet: "💎", harness: "codex", model: "deepseek-r1:70b", pwd: "/mnt/workspace/.../NullAI-HexStrike" },
-      { id: "SCORPIUS", name: "Scorpius", role: "Zero-Day Gate", cadre: "Security", pet: "🦂", harness: "agy", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/.../NullAI-HexStrike" },
-      { id: "PIXEL-SHIBA", name: "Pixel-Shiba", role: "Key Guardian", cadre: "Security", pet: "🐕", harness: "opencode", model: "llama3.3:70b", pwd: "/mnt/workspace/.../envguard-secrets-vault" },
-      { id: "KITSUNE", name: "Kitsune", role: "Motion & UI", cadre: "Creative", pet: "🦊", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/.../zoth-webgen" },
-      { id: "LEVIATHAN", name: "Leviathan", role: "Vector Memory", cadre: "Creative", pet: "🐋", harness: "agy", model: "claude-3-5-sonnet", pwd: "/mnt/workspace/.../vector-search-engine" },
-      { id: "AQUILA", name: "Aquila", role: "Edge Dispatch", cadre: "Creative", pet: "🦅", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/mnt/workspace/.../cwv-speed-engine" },
-      { id: "KRAKEN", name: "Kraken", role: "Packet Sniffer", cadre: "Swarm", pet: "🦑", harness: "opencode", model: "qwen2.5-coder:32b", pwd: "/mnt/workspace/.../sovereign-agent-bridge" },
-      { id: "AETHER", name: "Aether", role: "Swarm Overlord", cadre: "Swarm", pet: "⚡", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/mnt/workspace/.../agent-comms" },
-      { id: "PIXEL-NEKO", name: "Pixel-Neko", role: "Tool Connector", cadre: "Swarm", pet: "🐱", harness: "agy", model: "claude-3-5-sonnet", pwd: "/mnt/workspace/.../zoth-micro-repos" },
-      { id: "RADICAL-MINION", name: "Radical-Minion", role: "Subagent Runner", cadre: "Swarm", pet: "👾", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/mnt/workspace/..." }
+      { id: "AZOTH", name: "Azoth", role: "Sovereign Alchemist", cadre: "Architects", pet: "🐺", harness: "agy", model: "claude-3-7-sonnet", pwd: "/media/neo/.../zoth-studio-v2" },
+      { id: "NEXUS", name: "Nexus", role: "Lead Architect", cadre: "Architects", pet: "🌌", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/media/neo/..." },
+      { id: "VIGIL", name: "Vigil", role: "AST Arbiter", cadre: "Architects", pet: "👁️", harness: "codex", model: "deepseek-r1:70b", pwd: "/media/neo/.../zoth-micro-repos" },
+      { id: "MERCURY", name: "Mercury", role: "Tool Executor", cadre: "Architects", pet: "🐲", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/media/neo/.../zoth-webgen" },
+      { id: "GHOSTBYTE", name: "Ghostbyte", role: "Vault Sentinel", cadre: "Architects", pet: "👻", harness: "agy", model: "claude-3-5-sonnet", pwd: "/media/neo/.../envguard-secrets-vault" },
+      { id: "ATHENA", name: "Athena", role: "AEO Architect", cadre: "Architects", pet: "🦉", harness: "opencode", model: "gpt-4.5", pwd: "/media/neo/.../aeo-graph-engine" },
+      { id: "CHRONOS", name: "Chronos", role: "Temporal DAG", cadre: "Code", pet: "⌛", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/media/neo/.../cron-rhythm-studio" },
+      { id: "DRACO", name: "Draco", role: "Consensus Arbiter", cadre: "Code", pet: "🐉", harness: "codex", model: "deepseek-r1:70b", pwd: "/media/neo/..." },
+      { id: "IGNIS", name: "Ignis", role: "Refactor Engine", cadre: "Code", pet: "🔥", harness: "hermes-agent", model: "qwen2.5-coder:32b", pwd: "/media/neo/.../zoth-studio-v2" },
+      { id: "KAI", name: "Kai", role: "Static Analysis", cadre: "Code", pet: "⚔️", harness: "agy", model: "claude-3-5-sonnet", pwd: "/media/neo/..." },
+      { id: "LYCAN", name: "Lycan", role: "OWASP Sentinel", cadre: "Security", pet: "🐺", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/media/neo/.../web-security-guard" },
+      { id: "ONYX", name: "Onyx", role: "Threat Auditor", cadre: "Security", pet: "💎", harness: "codex", model: "deepseek-r1:70b", pwd: "/media/neo/.../NullAI-HexStrike" },
+      { id: "SCORPIUS", name: "Scorpius", role: "Zero-Day Gate", cadre: "Security", pet: "🦂", harness: "agy", model: "claude-3-7-sonnet", pwd: "/media/neo/.../NullAI-HexStrike" },
+      { id: "PIXEL-SHIBA", name: "Pixel-Shiba", role: "Key Guardian", cadre: "Security", pet: "🐕", harness: "opencode", model: "llama3.3:70b", pwd: "/media/neo/.../envguard-secrets-vault" },
+      { id: "KITSUNE", name: "Kitsune", role: "Motion & UI", cadre: "Creative", pet: "🦊", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/media/neo/.../zoth-webgen" },
+      { id: "LEVIATHAN", name: "Leviathan", role: "Vector Memory", cadre: "Creative", pet: "🐋", harness: "agy", model: "claude-3-5-sonnet", pwd: "/media/neo/.../vector-search-engine" },
+      { id: "AQUILA", name: "Aquila", role: "Edge Dispatch", cadre: "Creative", pet: "🦅", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/media/neo/.../cwv-speed-engine" },
+      { id: "KRAKEN", name: "Kraken", role: "Packet Sniffer", cadre: "Swarm", pet: "🦑", harness: "opencode", model: "qwen2.5-coder:32b", pwd: "/media/neo/.../sovereign-agent-bridge" },
+      { id: "AETHER", name: "Aether", role: "Swarm Overlord", cadre: "Swarm", pet: "⚡", harness: "claude-code", model: "claude-3-7-sonnet", pwd: "/media/neo/.../agent-comms" },
+      { id: "PIXEL-NEKO", name: "Pixel-Neko", role: "Tool Connector", cadre: "Swarm", pet: "🐱", harness: "agy", model: "claude-3-5-sonnet", pwd: "/media/neo/.../zoth-micro-repos" },
+      { id: "RADICAL-MINION", name: "Radical-Minion", role: "Subagent Runner", cadre: "Swarm", pet: "👾", harness: "hermes-agent", model: "hermes-3:70b", pwd: "/media/neo/..." }
     ];
 
     const HARNESSES = [
@@ -677,9 +716,9 @@
       appendLog(agentId, 'user', `$ ${cmd}`);
       appendLog(agentId, 'thought', `Synthesizing task via local harness...`);
 
-      // Try calling local daemon on :8989
+      // Try calling local daemon on relative /execute
       try {
-        const res = await fetch('http://127.0.0.1:8989/execute', {
+        const res = await fetch('/execute', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ agent_id: agentId, command: cmd })
@@ -743,7 +782,7 @@
     }
 
     function changePwd(agentId) {
-      const newPath = prompt(`Set working directory for ${agentId}:`, "~");
+      const newPath = prompt(`Set working directory for ${agentId}:`, "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908");
       if (newPath) {
         const agent = PANTHEON_AGENTS.find(a => a.id === agentId);
         if (agent) {
@@ -759,7 +798,6 @@
       PANTHEON_AGENTS.forEach(a => {
         appendLog(a.id, 'system', `⚡ STDP Long-Term Potentiation reinforced (+0.08). Synchronized with neuro-memory-daemon.`);
       });
-      alert("All 21 Agent STDP Synaptic Matrices Synchronized with neuro-memory-daemon (:8788)!");
     }
 
     function exportTranscript() {

@@ -1,0 +1,53 @@
+{
+  "title": "Vintage French Lavender Canvas Tote Bag Botanical Market Bag, Farmers Market Bag, Botanical Library Tote, Heavyweight Garden Shopper",
+  "description": "\ud83c\udf3b YOUR TIMELESS COMPANION FOR THE FARMERS MARKET & LIBRARY\n\nStep out in effortless French country style with our 12oz heavyweight cotton canvas tote bag. Featuring authentic 19th-century botanical seed catalog artwork with heirloom wildflowers and French lavender, this bag seamlessly balances vintage charm with everyday durability.\n\n\u2728 WHY YOU'LL REACH FOR THIS DAILY:\n\u2022 Heavy 12oz 100% natural cotton canvas holds heavy produce, books, and yarn without sagging.\n\u2022 Reinforced stitching on all stress",
+  "blueprint_id": 638,
+  "print_provider_id": 29,
+  "tags": [
+    "french seed packet",
+    "canvas tote bag",
+    "farmers market tote",
+    "botanical tote",
+    "library book tote",
+    "gardener gift",
+    "cottagecore bag",
+    "lavender tote",
+    "heavy canvas tote",
+    "market shopping bag",
+    "flower market bag",
+    "vintage botanical",
+    "eco friendly bag"
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "price": 2499,
+      "is_enabled": true
+    }
+  ],
+  "print_areas": [
+    {
+      "position": "front",
+      "images": [
+        {
+          "id": "img_primary_design",
+          "src": "https://raw.githubusercontent.com/1nc0gn30/storefront-catalog/main/assets/canvases/prod-05-french-lavender-tote_canvas.png",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1.0,
+          "angle": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "etsy-connector",
+    "cadre": "apparel",
+    "canvas_specs": {
+      "width": 4500,
+      "height": 5400,
+      "dpi": 300
+    },
+    "target_demographic": "55+ Women Gifts & Cottagecore"
+  }
+}

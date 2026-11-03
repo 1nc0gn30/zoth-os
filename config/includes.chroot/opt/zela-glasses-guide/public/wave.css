@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Wave Polish: Type Hierarchy, Visible Focus & Result Motion
+   Repository: zela-glasses-guide
+   ========================================================================== */
+
+/* 1. Clearer Type Hierarchy */
+.hero h1 {
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.hero-sub {
+  line-height: 1.62;
+  font-size: 0.98rem;
+  max-width: 60ch;
+  color: #94A3B8;
+}
+
+.eyebrow {
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.brand-title {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.funnel-title {
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.price-strike {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+}
+
+.price-now {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.badge {
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.metric-val {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-size: 1.35rem;
+}
+
+.metric-lbl {
+  letter-spacing: 0.09em;
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+
+.input-label {
+  letter-spacing: 0.09em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.hud-caption-strip {
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.hud-speech-bubble {
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+.bench-table th {
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.bench-table th,
+.bench-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.footer-links a {
+  letter-spacing: 0.02em;
+}
+
+/* 2. Visible Focus States */
+.btn:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.tab-btn:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.prompt-chip:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.scene-thumb:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.text-input:focus-visible,
+.textarea-input:focus-visible,
+.select-input:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 0;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.brand-lockup:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.footer-links a:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* 3. Short Transform/Opacity Motion on Existing Result Area */
+@keyframes resultDirectiveEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hud-speech-bubble {
+  animation: resultDirectiveEntrance 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 4. Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hud-speech-bubble {
+    animation: none !important;
+    transform: none !important;
+  }
+  .btn {
+    transition: none !important;
+    transform: none !important;
+  }
+}

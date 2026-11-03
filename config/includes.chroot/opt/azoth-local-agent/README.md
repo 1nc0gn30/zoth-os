@@ -1,0 +1,337 @@
+<div align="center">
+  <img src="assets/hero-banner.svg" alt="AZOTH Local Archon Agent — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
+# aZoth-local v2.5 — Autonomous Local Agent (Grok-Grade Intelligence)
+
+An **autonomous local AI agent** engineered with **Grok-grade intelligence**: real-time X (Twitter) intelligence, multi-source DeepSearch with verifiable citations, dynamic Grok persona modes, chain-of-thought (`<think>`) reasoning, sandbox Python code interpreter, and persistent **Sandboxed Browser** ("VM-ish vibes" with zero VM overhead).
+
+Built for 1nc0gn30 (1nc0gn30 • NullAI, Virginia Beach) to run locally with **Ollama** (offline, private, free) or cloud models via **xAI Grok**, **Hermes**, **AGY**, **Codex**, **Claude**, or **Gemini**.
+
+---
+
+## 🚀 What Makes aZoth Like (and Better Than) Grok Bot
+
+| Capability | Grok Bot (Cloud) | aZoth-local (Local Agent) |
+|---|---|---|
+| **Live X (Twitter) Search** | ✅ Cloud search | ✅ **Multi-engine live search + Authenticated Browser extraction** |
+| **Grok Modes (Fun / Truth / Think / Coder)** | ✅ Server-side | ✅ **Dynamic local modes (⚡ Regular, 🌶️ Fun, 🧠 Think, 💻 Coder)** |
+| **DeepSearch with Citations** | ✅ Server-side | ✅ **Parallel multi-query synthesis with numbered citations & source badges** |
+| **Chain-of-Thought (`<think>`)** | ✅ Shown in UI | ✅ **Parsed & rendered in collapsible thought drawers (CLI & Web UI)** |
+| **Python Code Interpreter** | ✅ Cloud sandbox | ✅ **Local sandbox workspace execution with instant stdout/stderr** |
+| **Dedicated Linux Guest OS** | ❌ None | ✅ **Isolated containerized OS (`azoth-guest-os`) + rootfs, packages, and process tree** |
+| **Interactive Browser Web Terminal** | ❌ None | ✅ **Full xterm.js PTY WebSocket terminal in Cockpit (`/ws/terminal`)** |
+| **Persistent 2FA Browser ("VM vibes")** | ❌ None | ✅ **Dedicated Chrome profile with saved sessions & DuckyScript macros** |
+| **Offline Privacy & Zero Cost** | ❌ Requires API credits | ✅ **100% free & offline via Ollama (`qwen2.5-coder`, `llama3.1`, `gemma4`)** |
+| **Multi-Engine CLI Routing** | ❌ Single provider | ✅ **Auto-routes between Ollama, Grok CLI, Hermes, AGY, Codex, Claude** |
+
+---
+
+## ⚡ Grok Modes
+
+Switch modes on the fly via CLI or the Web Cockpit:
+
+1. **⚡ Truth & Regular Mode (`/regular` or `/mode regular`):**
+   - Crisp, direct, objective, and grounded in verifiable reality. Zero corporate fluff or apologies.
+2. **🌶️ Fun Mode (`/fun` or `/mode fun`):**
+   - Classic Grok style: Witty, playful, irreverent, sharp, and unfiltered humor without sacrificing technical depth.
+3. **🧠 DeepSearch & Think Mode (`/think` or `/mode think`):**
+   - Exhaustive chain-of-thought reasoning, multi-angle source cross-referencing, and numbered inline citations (`[1]`, `[2]`).
+4. **💻 Coder & Builder Mode (`/coder` or `/mode coder`):**
+   - High-speed software engineering, sandbox script generation, automated testing, and execution.
+
+---
+
+## 🛠️ Tool Suite & Capabilities
+
+1. **Live X (Twitter) Intelligence:**
+   - `x_search(query)`: Search live posts, discussions, and handles on X.
+   - `x_trends(topic_focus)`: Scout trending topics and breaking discussions.
+   - `x_draft_thread(topic, tone)`: Draft high-signal, authentic X threads free of AI platitudes.
+   - Browser authenticated post inspection for private threads.
+2. **DeepSearch & Citation Engine:**
+   - `deep_search(topic, sub_queries, max_sources)`: Runs parallel search vectors, deduplicates sources, and generates structured citation bibliographies.
+3. **Python Code Interpreter:**
+   - `python_repl(code, timeout_sec)`: Run Python scripts inside `sandbox/workspace/`, capturing stdout, stderr, execution duration, and file outputs.
+4. **Persistent Sandboxed Browser ("VM-ish vibes"):**
+   - Dedicated Chrome profile in `sandbox/browser_profile/`.
+   - Log in once with 2FA (`/browser login https://x.com`), and sessions persist across runs.
+   - Zero-API control: navigation, DOM extraction, clicks, inputs, screenshots, and session backup/restore.
+5. **DuckyScript Hardware Macro Engine:**
+   - Human-like mouse and keyboard automation with random delays, variables, and presets.
+6. **Multi-Engine Routing & Auto-Fallback:**
+   - Seamlessly switch between Ollama, Hermes Agent CLI, Google AGY, OpenAI Codex, xAI Grok (CLI & API), Gemini, and Claude Code.
+
+---
+
+## 🏁 Quick Start
+
+### 1. Run with Local Ollama (Default & Offline)
+
+Ensure Ollama is running (`ollama serve`), then run:
+
+```bash
+cd azoth-local-agent
+python3 agent.py
+```
+
+### 2. Run the Web Cockpit UI
+
+```bash
+cd azoth-local-agent
+python3 agent.py --web
+```
+Open **`http://127.0.0.1:8136`** in your browser.
+
+### 3. Run with Grok Mode or Overrides
+
+```bash
+# Start directly in Grok Fun Mode
+python3 agent.py --mode fun
+
+# Start directly in DeepSearch & Think Mode
+python3 agent.py --mode think
+
+# Start with xAI Grok API
+python3 agent.py --engine xai --model grok-2-latest
+```
+
+---
+
+## 💻 REPL Commands
+
+| Command | Action |
+|---|---|
+| `/mode [name]` | Switch Grok mode: `regular` (⚡), `fun` (🌶️), `think` (🧠), `coder` (💻) |
+| `/modes` | Display all available operating modes and status |
+| `/fun` | Quick toggle to Grok Fun Mode |
+| `/think` | Quick toggle to DeepSearch & Think Mode |
+| `/coder` | Quick toggle to Coder & Builder Mode |
+| `/regular` | Quick toggle to Truth & Regular Mode |
+| `/deep [topic]` | Run an exhaustive multi-source DeepSearch with citations |
+| `/x [query]` | Search live posts, discussions, and handles on X (Twitter) |
+| `/trends [topic]` | Scout trending topics and breaking themes on X |
+| `/py [code]` | Execute Python code inside the sandbox workspace |
+| `/vm [cmd]` | Inspect Linux Guest OS status or execute command inside the isolated OS |
+| `/os [cmd]` | Alias for `/vm` |
+| `/engine [name]` | Switch engine (`ollama`, `hermes`, `agy`, `codex`, `grok_cli`, `xai`, `gemini`, `claude`) |
+| `/engines` | List installed CLI engines, paths, and status |
+| `/browser [url]` | Launch visible headed Sandboxed Chrome window to log into services |
+| `/workspace` | Inspect and list files in the sandbox workspace |
+| `/tools` | List all active agent tools and schemas |
+| `/model [name]` | View or switch active LLM model |
+| `/clear` | Reset conversation history (keeps system prompt + memory + mode) |
+| `/help` | Show command guide |
+| `/quit` or `/exit` | Exit the agent |
+
+---
+
+## 📁 Directory Structure
+
+```
+azoth-local-agent/
+├── agent.py               # Core ReAct agent engine, Grok CLI loop & thought parser
+├── web_ui.py              # FastAPI Web Cockpit UI with Grok modes, sparks & xterm terminal
+├── .env                   # Active environment configuration
+├── MEMORY.md              # Long-term persistent preferences & notes
+├── requirements.txt       # Dependencies
+├── docker/
+│   └── Dockerfile.guest_os # Dedicated Debian 12 containerized Micro-OS for agents
+├── prompts/
+│   ├── system.md          # aZoth-local persona & tool guidance
+│   └── modes.py           # Grok persona modes (Regular, Fun, Think, Coder)
+├── tools/
+│   ├── vm_manager.py      # Guest OS virtual environment orchestrator (Docker/Podman/KVM)
+│   ├── terminal_bridge.py # WebSocket PTY terminal bridge for browser interactive shell
+│   ├── deep_search.py     # Multi-source DeepSearch with citations
+│   ├── x_intelligence.py  # Live X / Twitter search & trend scouting
+│   ├── code_runner.py     # Sandbox Python code interpreter
+│   ├── browser.py         # Playwright persistent Chrome sandbox engine
+│   ├── duckyscript.py     # DuckyScript macro interpreter & engine
+│   ├── search.py          # Resilient multi-engine web search (DDG + Yahoo)
+│   ├── workspace.py       # Safe sandbox shell & file operations
+│   └── definitions.py     # Function calling schemas & dispatcher
+├── static/                # 100% Local offline assets (xterm.js, Tailwind, Highlight.js, Marked)
+└── sandbox/
+    ├── browser_profile/   # Persistent Chrome cookies, logins & storage
+    ├── workspace/         # Shared working directory mapped into /workspace of Guest OS
+    └── downloads/         # Browser downloads
+```
+
+---
+
+## 🔌 Model Context Protocol (MCP) Integration
+
+`azoth-local-agent` ships with a native **Model Context Protocol (MCP)** JSON-RPC 2.0 stdio server. This allows Claude Desktop, Cursor, Hermes Agent, OpenCode, and AGY to connect directly and invoke AZOTH's sandboxed browser, workspace shell, Python interpreter, X intelligence, and Linux VM guest operations without cloud dependencies.
+
+### Claude Desktop / Cursor Configuration
+
+Add to your `claude_desktop_config.json` or Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "azoth": {
+      "command": "python3",
+      "args": [
+        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/agent.py",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### Exposed MCP Tools
+
+- `azoth_agent_query`: Autonomous Archon meta-tool that executes end-to-end tasks with local/cloud engines.
+- `azoth_duckyscript`: Execute human-like macro payloads against browser or desktop.
+- `azoth_browser_navigate`: Navigate authenticated persistent Chrome sandbox.
+- `azoth_browser_extract`: Extract live text content and interactive inputs from webpage.
+- `azoth_browser_screenshot`: Capture full/viewport screenshots.
+- `azoth_python_repl`: Safe Python execution in isolated workspace.
+- `azoth_shell`: Execute shell commands inside `sandbox/workspace/`.
+- `azoth_deep_search`: Multi-source parallel search with verified citations.
+- `azoth_x_search` / `azoth_x_trends`: Live X/Twitter intelligence and trend scouting.
+- `azoth_vm_exec` / `azoth_vm_status`: Linux Guest OS container/VM inspection and execution.
+
+---
+
+## 🤖 Headless & AI Agent Scripting
+
+Execute single queries directly from the command line or bash scripts:
+
+```bash
+# Direct task resolution with local Ollama
+python3 agent.py --query "Summarize the files in sandbox/workspace"
+
+# Machine-readable JSON output for agent pipelines
+python3 agent.py --query "Check system status" --json
+
+# Run with a specific engine
+python3 agent.py --engine hermes --query "Refactor tests/test_mcp.py"
+```
+
+---
+
+## 💻 ZothOS CLI & MCP Commands
+
+`azoth-local-agent` is integrated directly into **ZothOS** as a system-wide executable (`azoth` and `azoth-local-agent` in `/usr/local/bin/` and `~/.local/bin/`).
+
+```bash
+# Check version and engine status
+azoth --version
+azoth status
+
+# List available Grok persona modes
+azoth modes
+
+# Execute an autonomous directive with JSON output
+azoth -q "Run a Python benchmark and test workspace files" --json
+
+# Run with a specific engine or persona mode
+azoth --engine hermes --mode coder -q "Refactor server endpoints"
+azoth --mode think -q "DeepSearch latest sovereign local agent breakthroughs"
+
+# Launch the FastAPI Web Cockpit Workstation (:8136)
+azoth web
+```
+
+---
+
+## ☕ 100% Free & Open-Access Architecture (Zero Paywalls)
+
+All tools, scripts, sandboxes, and export capabilities are **100% free and unlocked by default**.
+
+- **Buy Us a Coffee (Stripe)**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **Solana Wallet Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+# Run MCP protocol tests
+python3 -m pytest tests/test_mcp.py -v
+
+# Run all Grok intelligence tests
+python3 -m pytest tests/test_grok_intelligence.py -v
+
+# Run full core test suite (68 tests)
+python3 -m pytest tests/test_mcp.py tests/test_duckyscript.py tests/test_grok_intelligence.py tests/test_live_routing.py tests/test_manager.py tests/test_vm_os.py -v
+```
+
+---
+
+## 🛡️ Sovereign Invariants
+
+- **Zero-Egress by Default**: Operates completely local-first with Ollama or local container guest OS. No telemetry, no third-party phone-home.
+- **Sandboxed Execution**: Shell commands and Python interpreter operate in strictly constrained paths (`sandbox/workspace/`).
+- **Standardized RPC**: Uses official JSON-RPC 2.0 specs over standard stdio for universal AI interoperability.
+
+---
+
+## License
+
+MIT
+
+---
+
+## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
+
+```mermaid
+flowchart LR
+    subgraph ZothOS["🐧 ZothOS v3.4 CLI & Braille TUI"]
+        CLI["azoth-local-agent --help / --json"]
+        TUI["azoth-local-agent-tui<br/>Unicode U+2800 2x4 Braille"]
+    end
+
+    subgraph Workstation["⚡ Sovereign Workstation"]
+        WEB["http://127.0.0.1:3000<br/>REST API & /health"]
+    end
+
+    subgraph Studio["🌌 Zoth Studio v2 & ZothOS-Lite"]
+        GODMODE["http://127.0.0.1:3000/tools/azoth-local-agent<br/>God-Mode Workstation"]
+        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
+    end
+
+    subgraph SecondBrain["💎 Obsidian Second Brain & STDP"]
+        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
+        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
+        NOTE["Studio/Tools/Studio azoth-local-agent.md"]
+    end
+
+    CLI --> WEB
+    TUI --> WEB
+    WEB <--> GODMODE
+    WEB <--> LITE
+    WEB --> TRACKER
+    TRACKER <--> NOTE
+    NOTE <--> NEURO
+```
+
+### Cross-Surface Integration Matrix
+
+| Surface | Endpoint / Binary | Capabilities |
+| :--- | :--- | :--- |
+| **Standalone Workstation** | `http://127.0.0.1:3000` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
+| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/azoth-local-agent` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
+| **ZothOS v3.4 CLI & TUI** | `azoth-local-agent` / `azoth-local-agent-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
+| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
+| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio azoth-local-agent.md`) |
+| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
+
+```bash
+# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
+azoth-local-agent --help
+azoth-local-agent-tui --status
+azoth-local-agent-tui --json
+
+# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
+zoth-obsidian-tracker --verify
+```
+

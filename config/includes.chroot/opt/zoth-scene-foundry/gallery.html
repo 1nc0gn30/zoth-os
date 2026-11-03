@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ZothOS Scene Foundry — 1000 ASCII + pixel art scenes</title>
+<style>
+  :root{
+    --ink:#e9e2d0; --bg:#05060a; --panel:#0c0e14; --line:#1e2230;
+    --gold:#d4af37; --amber:#f59e0b; --cyan:#00f0ff; --dim:#6b7280;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  header{position:sticky;top:0;z-index:5;background:linear-gradient(#05060a,#05060af2);
+         border-bottom:1px solid var(--line);padding:12px 16px}
+  h1{margin:0 0 6px;font-size:15px;letter-spacing:.14em;color:var(--amber);font-weight:600}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .bar input,.bar select,.bar button{background:#0c0e14;color:var(--ink);
+       border:1px solid var(--line);border-radius:4px;padding:5px 8px;font:inherit}
+  .bar button{cursor:pointer}
+  .bar button:hover{border-color:var(--amber);color:var(--amber)}
+  .stats{color:var(--dim);margin-top:6px;font-size:12px}
+  .stats b{color:var(--cyan);font-weight:600}
+  progress{width:200px;height:8px}
+  main{padding:14px 16px 60px}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(430px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;
+        overflow:hidden}
+  .card h2{margin:0 0 2px;font-size:12px;color:var(--gold);letter-spacing:.06em}
+  .meta{color:var(--dim);font-size:11px;margin-bottom:6px}
+  .meta span{margin-right:8px}
+  pre.ascii{margin:0;padding:6px;background:#080a0f;border:1px solid var(--line);border-radius:4px;
+        font-size:6px;line-height:6px;letter-spacing:0;overflow:auto;max-height:260px;
+        color:#cfd6e4;white-space:pre}
+  pre.ascii.big{font-size:7px;line-height:7.4px;max-height:none}
+  canvas{display:block;width:100%;height:auto;image-rendering:pixelated;
+        image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;
+        border:1px solid var(--line);border-radius:4px;margin-top:6px;background:#05060a}
+  .row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .row button{flex:0 0 auto}
+  .col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .col.one{grid-template-columns:1fr}
+  .note{color:var(--dim);font-size:11px;margin:0 0 10px}
+  .badge{display:inline-block;border:1px solid var(--line);border-radius:3px;padding:0 4px;
+         color:var(--cyan);font-size:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ZOTHOS SCENE FOUNDRY · 1000 SCENES</h1>
+  <div class="bar">
+    <input id="q" placeholder="filter name / field / tube" size="26">
+    <select id="field"><option value="">all fields</option></select>
+    <select id="kind">
+      <option value="">all</option>
+      <option value="3d">3D ASCII only</option>
+      <option value="flat">2D only</option>
+    </select>
+    <select id="tube"><option value="">all tubes</option></select>
+    <button id="run60">render first 60</button>
+    <button id="runall">render all 1000</button>
+    <button id="stop">stop</button>
+    <button id="exportAscii">export ASCII+params (.jsonl)</button>
+    <button id="exportTxt">export glyph sheet (.txt)</button>
+    <button id="exportSvg">export SVG sheet</button>
+  </div>
+  <div class="stats" id="stats">booting…</div>
+  <progress id="prog" value="0" max="1000" hidden></progress>
+</header>
+<main>
+  <p class="note" id="howto"></p>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script src="src/zoth-fields.js"></script>
+<script src="src/zoth-ascii.js"></script>
+<script src="src/zoth-three-soft.js"></script>
+<script src="src/zoth-three-ascii.js"></script>
+<script src="src/zoth-pixel.js"></script>
+<script src="src/zoth-foundry.js"></script>
+<script>
+(function () {
+  'use strict';
+  var F = window.ZothFoundry, A = window.ZothAscii, P = window.ZothPixel, T = window.ZothThreeAscii;
+  var grid = document.getElementById('grid');
+  var statsEl = document.getElementById('stats');
+  var prog = document.getElementById('prog');
+  var rendered = {};          /* index -> render result */
+  var renderedOrder = [];
+  var hashes = {};
+  var glPath = (function () { try { return T.probe() ? 'webgl' : 'soft (' + T.glState.reason + ')'; } catch (e) { return 'soft'; } })();
+  var running = false;
+
+  function fillSelect(sel, vals) {
+    vals.forEach(function (v) { var o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); });
+  }
+  fillSelect(document.getElementById('field'), F.FIELDS);
+  fillSelect(document.getElementById('tube'), F.TUBES);
+  document.getElementById('howto').textContent =
+    'Render pipeline: scene index -> plain-JS procedural field (ZothFields) -> luminance grid -> ' +
+    '(a) glyph ramp + Bayer/diffusion + Sobel contour -> ASCII text, ' +
+    '(b) palette snap + dither -> integer nearest-neighbour upscale -> pixel-art canvas, ' +
+    '(c) every 8th scene: SDF raymarch in WebGL (CPU twin: zoth-three-soft.js) -> readPixels -> the SAME glyph stage = the three.js AsciiEffect idea. ' +
+    '3D stage on this machine: ' + glPath + '.';
+
+  function matches(spec) {
+    var q = document.getElementById('q').value.trim().toLowerCase();
+    if (document.getElementById('field').value && spec.field !== document.getElementById('field').value) return false;
+    if (document.getElementById('tube').value && spec.tube !== document.getElementById('tube').value) return false;
+    var k = document.getElementById('kind').value;
+    if (k === '3d' && !spec.three) return false;
+    if (k === 'flat' && spec.three) return false;
+    if (q) {
+      var hay = (spec.name + ' ' + spec.field + ' ' + spec.tube + ' ' + spec.ramp + ' ' + spec.id).toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  var t0 = performance.now();
+  function renderOne(i) {
+    var spec = F.sceneSpec(i);
+    if (!matches(spec)) return null;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-i', i);
+
+    var h = document.createElement('h2');
+    h.textContent = spec.id + ' · ' + spec.name;
+    card.appendChild(h);
+
+    var meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = '<span class="badge">' + spec.field + '</span>' +
+      '<span>ramp ' + spec.ramp + '</span><span>tube ' + spec.tube + '</span>' +
+      '<span>' + spec.cols + '×' + spec.rows + '</span>' +
+      '<span>' + (spec.sobel ? 'sobel' : 'no-edge') + '</span>' +
+      '<span>pixel ' + spec.pixel.w + '×' + spec.pixel.h + ' ×' + spec.pixel.scale + ' ' + spec.pixel.palette + '/' + spec.pixel.dither + '</span>';
+    card.appendChild(meta);
+
+    var cols = document.createElement('div');
+    cols.className = 'col' + (spec.three ? '' : ' one');
+
+    /* ASCII panel */
+    var a = F.asciiFor(spec);
+    var pre = document.createElement('pre');
+    pre.className = 'ascii';
+    pre.textContent = a.text;
+    cols.appendChild(pre);
+
+    /* pixel-art canvas */
+    var cv = document.createElement('canvas');
+    cols.appendChild(cv);
+
+    /* optional 3D ASCII panel */
+    var pre3 = null;
+    if (spec.three) {
+      var t3 = F.threeFor(spec);
+      pre3 = document.createElement('pre');
+      pre3.className = 'ascii three';
+      pre3.textContent = t3.text;
+      cols.appendChild(pre3);
+    } else {
+      var spacer = document.createElement('div');
+      cols.appendChild(spacer);
+    }
+    card.appendChild(cols);
+
+    F.pixelFor(spec, cv);
+
+    var row = document.createElement('div');
+    row.className = 'row';
+    var bPng = document.createElement('button');
+    bPng.textContent = 'download PNG';
+    bPng.onclick = function () {
+      var c = document.createElement('canvas');
+      F.pixelFor(spec, c);
+      var url = c.toDataURL('image/png');
+      var link = document.createElement('a');
+      link.href = url; link.download = spec.id + '-' + spec.field + '.png'; link.click();
+    };
+    var bCopy = document.createElement('button');
+    bCopy.textContent = 'copy ASCII';
+    bCopy.onclick = function () {
+      var txt = F.asciiFor(spec).text + (pre3 ? '\n---3D---\n' + F.threeFor(spec).text : '');
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
+    };
+    var bBig = document.createElement('button');
+    bBig.textContent = 'toggle size';
+    bBig.onclick = function () {
+      pre.className = pre.className.indexOf('big') === -1 ? 'ascii big' : 'ascii';
+      if (pre3) pre3.className = pre3.className.indexOf('big') === -1 ? 'ascii big three' : 'ascii three';
+    };
+    row.appendChild(bPng); row.appendChild(bCopy); row.appendChild(bBig);
+    card.appendChild(row);
+
+    grid.appendChild(card);
+    var res = F.renderScene(spec, {});
+    rendered[i] = { spec: spec, ascii: a, hash: res.hash, text3: pre3 ? pre3.textContent : null };
+    renderedOrder.push(i);
+    if (!hashes[res.hash]) hashes[res.hash] = 0;
+    hashes[res.hash]++;
+    return i;
+  }
+
+  function updateStats() {
+    var uniq = Object.keys(hashes).length;
+    var dupe = 0;
+    for (var k in hashes) if (hashes[k] > 1) dupe += hashes[k] - 1;
+    var el = (performance.now() - t0) / 1000;
+    statsEl.innerHTML = 'rendered <b>' + renderedOrder.length + '</b> / ' + F.TOTAL +
+      ' · distinct scene signatures <b>' + uniq + '</b>' +
+      ' · duplicate signatures <b>' + dupe + '</b>' +
+      ' · 3D-stage scenes <b>' + F.allSpecs().filter(function (s) { return s.three; }).length + '</b>' +
+      ' · ' + el.toFixed(1) + 's · 3D path <b>' + glPath + '</b>';
+    prog.value = renderedOrder.length;
+  }
+
+  function run(count) {
+    if (running) return;
+    running = true;
+    prog.hidden = false;
+    var i = 0, done = 0, t = performance.now();
+    function step() {
+      if (!running) return;
+      var budget = performance.now() - t;
+      while (i < F.TOTAL && (done < count || count === Infinity)) {
+        renderOne(i);
+        if (matches(F.sceneSpec(i))) done++;
+        i++;
+        if (performance.now() - t > 700) break;   /* keep the UI alive */
+      }
+      t = performance.now();
+      updateStats();
+      if (i < F.TOTAL && done < count) requestAnimationFrame(step);
+      else { running = false; updateStats(); }
+    }
+    step();
+  }
+
+  function download(name, text, type) {
+    var blob = new Blob([text], { type: type || 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  document.getElementById('run60').onclick = function () { run(60); };
+  document.getElementById('runall').onclick = function () { run(Infinity); };
+  document.getElementById('stop').onclick = function () { running = false; };
+
+  document.getElementById('exportAscii').onclick = function () {
+    var lines = renderedOrder.map(function (i) {
+      var r = rendered[i];
+      var spec = r.spec;
+      return JSON.stringify({
+        id: spec.id, name: spec.name, field: spec.field, ramp: spec.ramp, tube: spec.tube,
+        cols: spec.cols, rows: spec.rows, sobel: spec.sobel, threshold: spec.threshold,
+        three: spec.three, threeScene: spec.threeScene,
+        pixel: spec.pixel, hash: r.hash,
+        ascii: r.ascii.text, ascii3d: r.text3
+      });
+    });
+    download('zothos-foundry-scenes.jsonl', lines.join('\n') + '\n', 'application/jsonl');
+  };
+
+  document.getElementById('exportTxt').onclick = function () {
+    var out = [];
+    renderedOrder.forEach(function (i) {
+      var r = rendered[i];
+      out.push('===== ' + r.spec.id + '  ' + r.spec.name + '  [' + r.spec.field + '/' + r.spec.ramp + '/' + r.spec.tube + '] =====');
+      out.push(r.ascii.text);
+      if (r.text3) { out.push('--- 3D ASCII (SDF raymarch) ---'); out.push(r.text3); }
+      out.push('');
+    });
+    download('zothos-foundry-glyphs.txt', out.join('\n'));
+  };
+
+  document.getElementById('exportSvg').onclick = function () {
+    var cols = 5, cw = 320, ch = 220, n = renderedOrder.length;
+    var rows = Math.ceil(n / cols);
+    var parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="' + (cols * cw) + '" height="' + (rows * ch) + '">',
+      '<rect width="100%" height="100%" fill="#05060a"/>'];
+    renderedOrder.forEach(function (i, k) {
+      var r = rendered[i], x = (k % cols) * cw, y = Math.floor(k / cols) * ch;
+      var tube = A.TUBE_PALETTES[r.spec.tube] || [212, 175, 55];
+      parts.push('<text x="' + (x + 6) + '" y="' + (y + 12) + '" fill="#d4af37" font-family="monospace" font-size="9">' + r.spec.id + ' ' + r.spec.field + '</text>');
+      r.ascii.text.split('\n').slice(0, 24).forEach(function (ln, ri) {
+        var esc = ln.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        parts.push('<text x="' + (x + 6) + '" y="' + (y + 24 + ri * 7) + '" xml:space="preserve" fill="rgb(' + tube.join(',') + ')" font-family="monospace" font-size="6">' + esc + '</text>');
+      });
+    });
+    parts.push('</svg>');
+    download('zothos-foundry-sheet.svg', parts.join('\n'), 'image/svg+xml');
+  };
+
+  updateStats();
+  window.__foundry = {
+    F: F, A: A, P: P, T: T,
+    rendered: rendered, hashes: hashes, glPath: glPath,
+    render: renderOne, run: run, stats: updateStats
+  };
+  document.getElementById('stats').textContent += ' ready — press "render first 60" or "render all 1000".';
+})();
+</script>
+</body>
+</html>

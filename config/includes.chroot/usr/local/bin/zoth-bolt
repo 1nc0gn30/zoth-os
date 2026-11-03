@@ -14,9 +14,9 @@ TOOL_DESC = 'Flagship sovereign full-stack AI web, 3D shader, and motion archite
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'AI Agents & Dev'
 TOOL_PORT = 5173
-REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy')
-SERVER_PY = os.path.expanduser('~/NullAITech/bolt.diy/server.py')
-ELECTRON_MAIN = os.path.expanduser('~/NullAITech/bolt.diy/electron/main.cjs')
+REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy') if os.path.isdir(os.path.expanduser('~/NullAITech/bolt.diy')) else '/opt/zoth-bolt'
+SERVER_PY = os.path.join(REPO_DIR, 'server.py')
+ELECTRON_MAIN = os.path.join(REPO_DIR, 'electron', 'main.cjs')
 STUDIO_URL = "http://127.0.0.1:3000/tools/zoth-bolt"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 

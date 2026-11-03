@@ -1,0 +1,239 @@
+/* ==========================================================================
+   Wave States: Hover, Focus-Visible, Empty & Error Presentation
+   Repository: zela-glasses-guide
+   ========================================================================== */
+
+/* 1. Hover States for Existing Interactive Selectors */
+.btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--emerald);
+}
+
+.btn-emerald:hover {
+  background: #34D399;
+  border-color: #34D399;
+}
+
+.btn-gold:hover {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: var(--gold);
+  color: #FDE68A;
+}
+
+.btn-stripe:hover {
+  background: #4F46E5;
+  border-color: #4F46E5;
+  color: #FFFFFF;
+}
+
+.btn-solana:hover {
+  background: rgba(20, 241, 149, 0.22);
+  border-color: var(--solana);
+  color: var(--solana);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: var(--danger);
+  color: #FFFFFF;
+}
+
+.tab-btn:hover {
+  border-color: var(--emerald);
+  color: var(--text);
+}
+
+.tab-btn.active:hover {
+  background: var(--emerald-soft);
+  border-color: var(--emerald);
+  color: var(--emerald);
+}
+
+.prompt-chip:hover {
+  background: var(--emerald-soft);
+  border-color: var(--emerald);
+  color: var(--emerald);
+  transform: translateY(-1px);
+}
+
+.scene-thumb:hover {
+  border-color: var(--emerald);
+  transform: translateY(-2px);
+}
+
+.scene-thumb.active:hover {
+  border-color: var(--emerald);
+}
+
+.brand-lockup:hover {
+  opacity: 0.92;
+}
+
+.footer-links a:hover {
+  color: var(--emerald);
+  text-decoration: underline;
+}
+
+.text-input:hover,
+.textarea-input:hover,
+.select-input:hover {
+  border-color: rgba(148, 163, 184, 0.38);
+}
+
+/* 2. Focus-Visible States for Existing Interactive Selectors */
+.btn:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.btn-gold:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+.btn-stripe:focus-visible {
+  outline: 2px solid var(--stripe);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.25);
+}
+
+.btn-solana:focus-visible {
+  outline: 2px solid var(--solana);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(20, 241, 149, 0.25);
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.30);
+}
+
+.tab-btn:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.prompt-chip:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.scene-thumb:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.text-input:focus-visible,
+.textarea-input:focus-visible,
+.select-input:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 0;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.brand-lockup:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.footer-links a:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* 3. Empty Presentation for Existing Selectors */
+.stream-log:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stream-log:empty::before {
+  content: '// Live WebSocket frame stream idle — connect or trigger an utterance to observe packets.';
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.72rem;
+  text-align: center;
+  padding: 16px;
+}
+
+#markerParserOutput:empty::before {
+  content: 'No stream chunks parsed yet. Click "Parse Stream Chunks" to test.';
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 10px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+#sanitizerResultBox:empty::before {
+  content: 'Run Caption Sanitizer or choose a sample chip to view evaluation.';
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#liveRelayStatusBox:empty::before {
+  content: 'Status: Ready. Run zoth-guide up on zoth-pill to connect.';
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#benchTableBody:empty::after {
+  content: 'No benchmark telemetry rows recorded.';
+  display: table-caption;
+  caption-side: bottom;
+  padding: 16px;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+/* 4. Error Presentation for Existing Selectors */
+.log-warn {
+  color: var(--amber);
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 2px solid var(--amber);
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.text-input:invalid,
+.textarea-input:invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.18);
+}
+
+.text-input:invalid:focus-visible,
+.textarea-input:invalid:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 0;
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.30);
+}
+
+/* 5. Prefers-Reduced-Motion for Existing Selectors */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .tab-btn,
+  .tab-btn:hover,
+  .prompt-chip,
+  .prompt-chip:hover,
+  .scene-thumb,
+  .scene-thumb:hover,
+  .brand-lockup,
+  .footer-links a {
+    transition: none !important;
+    transform: none !important;
+  }
+}

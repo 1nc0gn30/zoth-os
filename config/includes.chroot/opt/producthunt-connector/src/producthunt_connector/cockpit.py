@@ -60,6 +60,7 @@ def _status() -> dict:
             "ok": False,
             "configured": False,
             "desired": desired,
+            "badges": client.badge_html(desired),
             "can_patch_via_api": False,
             "login": "zoth-ph login",
         }

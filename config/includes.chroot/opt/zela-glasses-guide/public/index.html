@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zela · Zoth Guide v0.5 — Sovereign Meta Glasses AI Mission Coach & Zoth Relay Demo</title>
+  <meta name="description" content="Full-duplex wearable AI mission coach connecting Ray-Ban Meta Smart Glasses to your Linux workstation over Tailscale WireGuard via Zoth Relay v0.5. Local Moondream vision, persistent AGY stream-json, and 24kHz Kokoro neural TTS with zero disk retention.">
+  <link rel="canonical" href="https://zela-glasses-guide.netlify.app/">
+
+  <!-- OpenGraph & Twitter Card Meta Tags -->
+  <meta property="og:title" content="Zela · Zoth Guide v0.5 — Sovereign Smart Glasses AI Mission Coach">
+  <meta property="og:description" content="Turn Ray-Ban Meta Smart Glasses into a zero-egress, full-duplex AI mission coach over Tailscale WireGuard. 1.34s ask-to-say latency, local Moondream vision, persistent AGY session rolling, and 24kHz Kokoro ONNX neural voice.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zela-glasses-guide.netlify.app/">
+  <meta property="og:image" content="https://zela-glasses-guide.netlify.app/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Zela · Zoth Guide v0.5 — Sovereign Smart Glasses AI Mission Coach">
+  <meta name="twitter:description" content="Full-duplex wearable AI mission coach over Zoth Relay. Local vision, persistent AGY stream-json, and 24kHz Kokoro ONNX TTS.">
+  <meta name="twitter:image" content="https://zela-glasses-guide.netlify.app/assets/banner.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+
+  <!-- Typography: Syne + Space Grotesk + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- AEO & SEO Schema.org @graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Zela · Zoth Guide (Zoth Relay Mobile v0.5.0)",
+        "url": "https://zela-glasses-guide.netlify.app/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, Android, ZothOS, Web",
+        "description": "Full-duplex sovereign wearable AI mission coach connecting Ray-Ban Meta Smart Glasses and Android to a local Linux workstation over Tailscale WireGuard via Zoth Relay v0.5.0.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "1nc0gn30 • NullAI",
+          "url": "https://nullai.tech",
+          "sameAs": [
+            "https://github.com/1nc0gn30"
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Zela connect Ray-Ban Meta Smart Glasses to Zoth Relay?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Zela / Zoth Guide Android companion captures scene-changed frames from the smart glasses and streams them over an encrypted Tailscale WireGuard WebSocket (100.106.132.5:8766/v1/guide/stream) to your local Linux workstation running zoth-relay-mobile."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are camera frames or spoken transcripts ever written to disk?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Camera frames, speech recognition transcripts, and spoken replies are held strictly in volatile RAM for the single active turn and never logged to disk. The audit log records byte sizes only."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Zoth Guide v0.5.0 eliminate streaming latency over long sessions?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth Guide v0.5.0 pre-warms a background spare AGY stream-json session and rolls over automatically every 14 turns or 6,000 characters while splitting spoken markers ([^ ... ^]) at the first comma to stream 24kHz Kokoro ONNX audio in 1.34s to 2.15s."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    @property --beam-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes beamRotate {
+      to { --beam-angle: 360deg; }
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+    @keyframes scanlineMove {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(500%); }
+    }
+
+    :root {
+      --bg: #07090E;
+      --bg-elevated: #0E121B;
+      --bg-card: rgba(15, 20, 30, 0.86);
+      --bg-hud: rgba(7, 10, 16, 0.78);
+      --text: #F3F6FC;
+      --text-muted: #94A3B8;
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(212, 175, 55, 0.38);
+      --emerald: #10B981;
+      --emerald-soft: rgba(16, 185, 129, 0.14);
+      --gold: #D4AF37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --indigo: #6366F1;
+      --amber: #F59E0B;
+      --danger: #EF4444;
+      --solana: #14F195;
+      --stripe: #635BFF;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html[data-theme="light"] {
+      --bg: #F8FAFC;
+      --bg-elevated: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-hud: rgba(15, 23, 42, 0.84);
+      --text: #0F172A;
+      --text-muted: #475569;
+      --border: rgba(15, 23, 42, 0.14);
+      --border-strong: rgba(180, 134, 11, 0.45);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.12);
+      --gold: #B48608;
+      --gold-soft: rgba(180, 134, 11, 0.12);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      min-width: 0;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-image:
+        radial-gradient(circle at 15% 5%, rgba(16, 185, 129, 0.08), transparent 40%),
+        radial-gradient(circle at 85% 12%, rgba(212, 175, 55, 0.08), transparent 42%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 9, 14, 0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    html[data-theme="light"] .site-header {
+      background: rgba(248, 250, 252, 0.88);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      flex-wrap: wrap;
+    }
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--emerald-soft);
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-emerald {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-gold {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--border-strong);
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulseDot 1.8s infinite;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background 0.15s ease;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--emerald);
+    }
+    .btn-emerald {
+      background: #10B981;
+      color: #04130D;
+      border-color: #10B981;
+      font-weight: 700;
+    }
+    .btn-emerald:hover {
+      background: #34D399;
+      border-color: #34D399;
+    }
+    .btn-stripe {
+      background: var(--stripe);
+      color: #FFFFFF;
+      border-color: var(--stripe);
+      font-weight: 700;
+    }
+    .btn-solana {
+      background: rgba(20, 241, 149, 0.14);
+      color: #10B981;
+      border-color: rgba(20, 241, 149, 0.45);
+      font-weight: 700;
+    }
+    html[data-theme="dark"] .btn-solana {
+      color: var(--solana);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: #F87171;
+      border-color: rgba(239, 68, 68, 0.45);
+      font-weight: 700;
+    }
+    .btn-gold {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border-color: var(--border-strong);
+      font-weight: 700;
+    }
+
+    /* Above-the-fold Sales Funnel Banner */
+    .funnel-banner {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .funnel-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--emerald), var(--gold), var(--indigo));
+    }
+    .funnel-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 680px;
+    }
+    .funnel-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .price-strike {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+    .price-now {
+      color: var(--emerald);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+    .funnel-ctas {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 22px 0 16px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      display: inline-block;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 0.96rem;
+      max-width: 60ch;
+      margin: 0 0 16px;
+    }
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 640px) {
+      .hero-metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--emerald);
+    }
+    .metric-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* Conic Border Beam Card */
+    .card-border-beam {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .card-border-beam::before {
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--beam-angle), transparent 15%, #10B981 30%, #D4AF37 50%, transparent 70%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: beamRotate 6s linear infinite;
+      pointer-events: none;
+    }
+
+    /* Architecture Pipeline Diagram */
+    .arch-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .arch-node {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    html[data-theme="light"] .arch-node {
+      background: #F1F5F9;
+    }
+
+    /* Tabs Navigation */
+    .tabs-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 24px 0 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .tab-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      border-color: var(--emerald);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.18);
+    }
+
+    .tab-panel {
+      display: none;
+      margin-bottom: 48px;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Simulator Layout */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    /* Smart Glasses Optical Viewfinder HUD */
+    .glasses-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      min-height: 320px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #05070B;
+      border: 2px solid rgba(16, 185, 129, 0.45);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
+    }
+    .glasses-stage img,
+    .glasses-stage video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.04) brightness(0.92);
+    }
+    .hud-scanline {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.08), transparent);
+      height: 25%;
+      animation: scanlineMove 6s linear infinite;
+      pointer-events: none;
+    }
+    .hud-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 45%, rgba(3, 6, 12, 0.68) 100%);
+    }
+    .hud-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .hud-pill {
+      background: rgba(7, 10, 16, 0.84);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #E2E8F0;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      backdrop-filter: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hud-reticle {
+      align-self: center;
+      width: 180px;
+      height: 90px;
+      border: 1px dashed rgba(212, 175, 55, 0.55);
+      border-radius: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hud-reticle::before,
+    .hud-reticle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 2px;
+      background: var(--gold);
+    }
+    .hud-reticle::before { left: -10px; }
+    .hud-reticle::after { right: -10px; }
+
+    .hud-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hud-speech-bubble {
+      background: rgba(7, 11, 18, 0.9);
+      border-left: 3px solid #10B981;
+      border-top: 1px solid rgba(16, 185, 129, 0.35);
+      border-right: 1px solid rgba(16, 185, 129, 0.35);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #F8FAFC;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+    }
+    .hud-caption-strip {
+      background: rgba(7, 11, 18, 0.82);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: #FDE68A;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+    }
+
+    /* Scene Thumbnails */
+    .scene-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    @media (max-width: 640px) {
+      .scene-strip {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .scene-thumb {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+      padding: 0;
+      position: relative;
+      height: 56px;
+    }
+    .scene-thumb.active {
+      border-color: var(--emerald);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    .scene-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .scene-thumb span {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    /* Inputs & Controls */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .input-label {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .text-input,
+    .textarea-input,
+    .select-input {
+      width: 100%;
+      padding: 10px 12px;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+    .textarea-input {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .prompt-chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      min-height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .prompt-chip:hover {
+      border-color: var(--emerald);
+      color: var(--emerald);
+    }
+
+    /* Stream Console Log */
+    .stream-log {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      background: #05070B;
+      color: #CBD5E1;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      height: 240px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .log-entry {
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .log-out { color: #38BDF8; }
+    .log-in { color: #10B981; }
+    .log-warn { color: #F59E0B; }
+    .log-pcm { color: #D4AF37; }
+
+    /* Benchmark Table */
+    .bench-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table.bench-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .bench-table th,
+    .bench-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .bench-table th {
+      color: var(--gold);
+      font-weight: 700;
+      background: rgba(212, 175, 55, 0.06);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 6, 12, 0.82);
+      backdrop-filter: none;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      margin-top: 48px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .footer-links a:hover {
+      color: var(--emerald);
+    }
+  </style>
+  <link rel="stylesheet" href="wave.css">
+  <link rel="stylesheet" href="wave-states.css">
+</head>
+<body>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
+
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand-lockup">
+        <div class="brand-icon">
+          <img src="/assets/icon.png" alt="Zela Zoth Guide wearable AI emblem" width="24" height="24" style="border-radius:4px;">
+        </div>
+        <div class="brand-title">
+          <span>Zela · Zoth Guide</span>
+          <span class="badge badge-emerald" id="headerProBadge">
+            <span class="live-dot"></span> v0.5.0 · Full-Duplex Relay
+          </span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a href="/possibilities.html" class="btn btn-emerald">
+          ◆ What Can It Do? (Non-Tech Guide)
+        </a>
+        <button type="button" class="btn" id="themeToggleBtn" aria-label="Toggle light and dark theme">
+          <span id="themeToggleLabel">Light Mode</span>
+        </button>
+        <button type="button" class="btn btn-gold" id="openShowreelBtn">
+          ▸ 15s Showreel
+        </button>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-stripe">
+          ☕ Buy Us a Coffee
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Sovereign 100% Free & Open-Access Support Banner -->
+    <section class="funnel-banner" aria-label="100% Free Open Access Sovereign Wearable AI">
+      <div class="funnel-copy">
+        <div class="funnel-title">
+          <span class="badge badge-gold">100% FREE &amp; OPEN ACCESS</span>
+          <span>Zela + Zoth Relay v0.5 Sovereign Wearable AI Mission Coach</span>
+          <span class="price-now">Zero Paywalls · Bare-Metal Private</span>
+        </div>
+        <div style="font-size: 0.84rem; color: var(--text-muted);">
+          Turn Ray-Ban Meta Smart Glasses &amp; Android into a zero-egress, full-duplex AI mission coach over Tailscale WireGuard. Local Moondream vision, persistent AGY session rolling, and 24kHz Kokoro ONNX neural voice.
+        </div>
+      </div>
+      <div class="funnel-ctas">
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-stripe">
+          ☕ Buy Us a Coffee (Stripe)
+        </a>
+        <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" class="btn btn-solana" style="text-decoration:none;">
+          ◎ Solana Tip (GG2eQb…dXoK)
+        </a>
+      </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div>
+        <div class="eyebrow">01 / WEARABLE SOVEREIGN COACHING · ZOTH-RELAY v0.5.0</div>
+        <h1>Full-duplex AI coaching through your smart glasses.</h1>
+        <p class="hero-sub">
+          <strong>Zela · Zoth Guide</strong> links Ray-Ban Meta Smart Glasses via your Android phone over an encrypted Tailscale WireGuard tunnel (<code>100.106.132.5:8766</code>) straight to your own Linux workstation. Local <strong>Moondream</strong> vision captions frames in RAM, a persistent <strong>AGY</strong> stream-json session coaches your mission, and <strong>Kokoro v1.0 ONNX</strong> streams 24kHz voice back to your ear with instant barge-in.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-emerald" id="heroRunDemoBtn">
+            ▸ Run Live Glasses Simulation
+          </button>
+          <a href="/possibilities.html" class="btn btn-gold">
+            ◆ Real-Life Possibilities (Plain English)
+          </a>
+          <button type="button" class="btn" id="heroPlayKokoroBtn">
+            ◉ Play Real Kokoro 24kHz Sample
+          </button>
+          <a href="https://github.com/1nc0gn30/zoth-relay" target="_blank" rel="noopener noreferrer" class="btn">
+            GitHub: zoth-relay
+          </a>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <div class="metric-val">1.34s</div>
+            <div class="metric-lbl">Fastest Ask → Say</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">2.04s</div>
+            <div class="metric-lbl">Median Turn (v0.5)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">0 Disk</div>
+            <div class="metric-lbl">RAM-Only Frames</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">24 kHz</div>
+            <div class="metric-lbl">Kokoro PCM16LE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Conic Border Beam Architecture Card -->
+      <div class="card-border-beam">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <span style="font-family:var(--font-mono); font-size:0.76rem; font-weight:700; color:var(--gold);">
+            WS /v1/guide/stream · FULL-DUPLEX PIPELINE
+          </span>
+          <span class="badge badge-emerald">TAILSCALE 100.106.132.5:8766</span>
+        </div>
+
+        <div class="arch-flow">
+          <div class="arch-node">
+            <span>◆ <strong>1. Ray-Ban Meta + Zela App</strong></span>
+            <span style="color:var(--emerald);">Scene-Diff JPEG + Mic</span>
+          </div>
+          <div class="arch-node">
+            <span>◆ <strong>2. Ollama Moondream Vision</strong></span>
+            <span style="color:var(--gold);">4 Threads · Sanitized</span>
+          </div>
+          <div class="arch-node">
+            <span>◆ <strong>3. Persistent AGY Stream-JSON</strong></span>
+            <span style="color:#38BDF8;">Pre-Warmed Roll @ 14t</span>
+          </div>
+          <div class="arch-node">
+            <span>◆ <strong>4. Streaming MarkerParser</strong></span>
+            <span style="color:var(--emerald);">[^ spoken ^] vs STEP</span>
+          </div>
+          <div class="arch-node">
+            <span>◆ <strong>5. Kokoro v1.0 ONNX (af_heart)</strong></span>
+            <span style="color:var(--gold);">4B Gen + PCM16LE</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; font-family:var(--font-mono); font-size:0.74rem; color:var(--text-muted);">
+          <span>Host: <strong>zoth-pill</strong> (CPU &lt; 88°C Guard)</span>
+          <span>Barge-In: <strong>Instant Gen Drop</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Workspace Tabs -->
+    <nav class="tabs-bar" aria-label="Zela Product Demo Workstations">
+      <button type="button" class="tab-btn active" data-tab="tab-simulator">
+        01 · Smart Glasses POV Simulator
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-parser">
+        02 · MarkerParser & Caption Sanitizer
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-benchmarks">
+        03 · v0.4 vs v0.5 Soak Benchmarks
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-bridge">
+        04 · Live Relay Bridge & Config Export
+      </button>
+    </nav>
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: SMART GLASSES POV SIMULATOR                                -->
+    <!-- ================================================================= -->
+    <section id="tab-simulator" class="tab-panel active">
+      <div class="sim-grid">
+
+        <!-- Left: Optical Glasses Viewfinder & Scene Selector -->
+        <div class="panel-card">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+            <div>
+              <div style="font-family:var(--font-display); font-weight:800; font-size:1.1rem;">
+                Ray-Ban Meta Optical HUD Viewfinder
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">
+                Click any captured glasses frame below, enable your live camera, or speak a prompt to trigger a full coaching turn.
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn" id="toggleWebcamBtn">
+                ◉ Live Camera
+              </button>
+              <button type="button" class="btn btn-danger" id="bargeInBtn" title="Send {'type':'barge'} to halt audio immediately">
+                ✕ Barge-In (Stop Audio)
+              </button>
+            </div>
+          </div>
+
+          <!-- Glasses Viewport -->
+          <div class="glasses-stage">
+            <img id="povImage" src="/assets/frame_0.jpg" alt="Smart glasses point-of-view camera frame inspected by local Moondream vision">
+            <video id="povVideo" autoplay playsinline muted style="display:none;"></video>
+            <div class="hud-scanline"></div>
+
+            <div class="hud-overlay">
+              <div class="hud-top">
+                <span class="hud-pill">
+                  <span class="live-dot"></span>
+                  <span id="hudModeLabel">WS /v1/guide/stream · GEN #1</span>
+                </span>
+                <span class="hud-pill" id="hudTempPill">
+                  CPU 52.0°C · MOONDREAM 4T · KOKORO 24kHz
+                </span>
+              </div>
+
+              <div class="hud-reticle">
+                <span style="font-family:var(--font-mono); font-size:0.65rem; color:var(--gold); background:rgba(0,0,0,0.65); padding:2px 6px; border-radius:4px;" id="hudLatencyBadge">
+                  TURN 1.74s
+                </span>
+              </div>
+
+              <div class="hud-bottom">
+                <div class="hud-caption-strip" id="hudSeenCaption">
+                  SEEN: Urns of red and white color are placed on the wall, with a green door partially visible to its right side.
+                </div>
+                <div class="hud-speech-bubble" id="hudSpokenDirective">
+                  ▸ "Target the switch plate on the wall. Step into the room and head straight to your workstation."
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6 Real Benchmark Frames -->
+          <div class="scene-strip" role="group" aria-label="Captured Smart Glasses Benchmark Scenes">
+            <button type="button" class="scene-thumb active" data-scene="0">
+              <img src="/assets/frame_0.jpg" alt="Scene 1: Hallway entry and wall switch plate">
+              <span>#1 Entry</span>
+            </button>
+            <button type="button" class="scene-thumb" data-scene="1">
+              <img src="/assets/frame_2.jpg" alt="Scene 2: Bookshelf and wooden cabinet">
+              <span>#2 Shelf</span>
+            </button>
+            <button type="button" class="scene-thumb" data-scene="2">
+              <img src="/assets/frame_4.jpg" alt="Scene 3: Corridor lighting and overhead projector">
+              <span>#3 Optics</span>
+            </button>
+            <button type="button" class="scene-thumb" data-scene="3">
+              <img src="/assets/frame_6.jpg" alt="Scene 4: Catering truck exterior signage">
+              <span>#4 Street</span>
+            </button>
+            <button type="button" class="scene-thumb" data-scene="4">
+              <img src="/assets/frame_7.jpg" alt="Scene 5: Interior room with floral decor">
+              <span>#5 Lounge</span>
+            </button>
+            <button type="button" class="scene-thumb" data-scene="5">
+              <img src="/assets/frame_10.jpg" alt="Scene 6: Dual monitor Linux workstation desk">
+              <span>#6 Desk</span>
+            </button>
+          </div>
+
+          <!-- Audio Waveform Visualizer Canvas -->
+          <div style="margin-top:14px; background:#05070B; border:1px solid var(--border); border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--emerald); display:flex; align-items:center; gap:8px;">
+              <span>PCM16LE STREAM</span>
+              <span id="audioStateBadge" style="color:var(--text-muted);">READY</span>
+            </div>
+            <canvas id="waveformCanvas" width="320" height="32" style="max-width:100%; height:32px;"></canvas>
+            <audio id="kokoroAudioEl" src="/assets/zoth-is-with-you.wav" preload="auto"></audio>
+          </div>
+        </div>
+
+        <!-- Right: Mission Control, Voice Input & Live Protocol Frame Log -->
+        <div class="panel-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:14px;">
+          <div>
+            <div class="input-group">
+              <label class="input-label" for="missionInput">ACTIVE MISSION (SEEDED INTO AGY PREFIX)</label>
+              <input type="text" id="missionInput" class="text-input" value="Enter workspace, inspect dual-monitor rig, and verify Zoth Relay telemetry">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="speechInput">NEAL SPOKEN INPUT (OR CLICK MIC / QUICK UTTERANCE)</label>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="speechInput" class="text-input" style="flex:1; min-width:180px;" placeholder="Say something to Zoth...">
+                <button type="button" class="btn btn-gold" id="micRecognizeBtn" title="Use browser Web Speech API">
+                  ◉ Mic
+                </button>
+                <button type="button" class="btn btn-emerald" id="sendSpeechBtn">
+                  Send Turn
+                </button>
+              </div>
+              <div class="chip-row">
+                <button type="button" class="prompt-chip" data-utterance="What should I do next?">"What should I do next?"</button>
+                <button type="button" class="prompt-chip" data-utterance="I wish I could zoom in with my Meta glasses">"Zoom in with Meta glasses"</button>
+                <button type="button" class="prompt-chip" data-utterance="Tell me more">"Tell me more"</button>
+                <button type="button" class="prompt-chip" data-utterance="Pause coaching">"Pause coaching"</button>
+                <button type="button" class="prompt-chip" data-utterance="Resume coaching">"Resume coaching"</button>
+              </div>
+            </div>
+
+            <!-- Silent Tactical Tracker Outside [^ ... ^] -->
+            <div style="background:rgba(16, 185, 129, 0.07); border:1px solid rgba(16, 185, 129, 0.3); border-radius:10px; padding:10px 12px; margin-bottom:14px; font-family:var(--font-mono); font-size:0.75rem;">
+              <div style="color:var(--gold); font-weight:700; margin-bottom:4px;">SILENT CONTEXT TRACKER (OUTSIDE [^ ... ^] MARKERS)</div>
+              <div id="tacticalTrackerText" style="color:var(--text);">
+                STEP 27: Enter and secure space | DONE: Connected glasses stream | NEXT: Walk to primary workstation desk
+              </div>
+            </div>
+
+            <div class="input-label" style="margin-bottom:6px;">LIVE WEBSOCKET FRAME STREAM (WS /v1/guide/stream)</div>
+            <div class="stream-log" id="wsStreamLog" aria-live="polite"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: MARKER PARSER & CAPTION SANITIZER PLAYGROUND               -->
+    <!-- ================================================================= -->
+    <section id="tab-parser" class="tab-panel">
+      <div class="sim-grid">
+        <div class="panel-card">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:1.15rem; margin-bottom:6px;">
+            Streaming <code>MarkerParser</code> Engine (<code>zoth_relay/markers.py</code>)
+          </div>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-top:0;">
+            AGY wraps lines to speak inside <code>[^ ... ^]</code>. Our streaming parser splits clauses early on commas (when <code>min_chunk_words &ge; 4</code>) so Kokoro TTS starts speaking before the LLM finishes generating, while keeping outside <code>STEP</code> notes silent for <em>"Tell me more"</em> queries.
+          </p>
+
+          <div class="input-group">
+            <label class="input-label" for="rawMarkerInput">RAW STREAMING AGY RESPONSE</label>
+            <textarea id="rawMarkerInput" class="textarea-input">STEP 29: Physical proximity compensation | DONE: Discussing hardware optics | NEXT: Walk closer to targets
+
+[^Fixed focal length on the Ray-Ban lens, so step two paces closer to resolve the serial label. Keep moving toward the desk.^]</textarea>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+            <label class="input-label" for="minChunkWordsInput">EARLY COMMA SPLIT (MIN WORDS):</label>
+            <input type="number" id="minChunkWordsInput" class="text-input" value="4" min="0" max="15" style="width:90px;">
+            <button type="button" class="btn btn-emerald" id="runMarkerParserBtn">
+              ✂️ Parse Stream Chunks
+            </button>
+          </div>
+
+          <div id="markerParserOutput" style="display:flex; flex-direction:column; gap:8px; font-family:var(--font-mono); font-size:0.78rem;"></div>
+        </div>
+
+        <div class="panel-card">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:1.15rem; margin-bottom:6px;">
+            Moondream <code>sanitize_caption()</code> Filter (<code>zoth_relay/guide.py</code>)
+          </div>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-top:0;">
+            Small vision models occasionally degenerate into bounding-box coordinate arrays (<code>[0.31, 0.44, ...]</code>) or repetition loops. Test the live regex + token-ratio sanitizer below:
+          </p>
+
+          <div class="input-group">
+            <label class="input-label" for="rawCaptionInput">RAW VISION MODEL OUTPUT</label>
+            <textarea id="rawCaptionInput" class="textarea-input">ids of objects: [0.31, 0.44, 0.82, 0.91] (0.12, 0.55) urns of books on a wooden shelf, arranged by size and color. Second sentence ignored.</textarea>
+          </div>
+
+          <div class="chip-row" style="margin-bottom:12px;">
+            <button type="button" class="prompt-chip" data-cap-sample="ids: [0.22, 0.31, 0.44, 0.88] Urn of water on a desk, with two computer monitors and keyboard.">Bounding Box Prefix</button>
+            <button type="button" class="prompt-chip" data-cap-sample="the the the the the wall wall wall wall">Repetition Loop (Rejected)</button>
+            <button type="button" class="prompt-chip" data-cap-sample="0.12, 0.44, 0.88, 0.91, 0.53, 0.11">Coordinate Array (Rejected)</button>
+          </div>
+
+          <button type="button" class="btn btn-gold" id="runSanitizerBtn" style="margin-bottom:14px;">
+            🛡️ Run Caption Sanitizer
+          </button>
+
+          <div id="sanitizerResultBox" style="padding:14px; border-radius:10px; background:var(--bg-elevated); border:1px solid var(--border); font-family:var(--font-mono); font-size:0.8rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: HARDWARE SOAK BENCHMARKS (v0.4.0 vs v0.5.0)                -->
+    <!-- ================================================================= -->
+    <section id="tab-benchmarks" class="tab-panel">
+      <div class="panel-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <div style="font-family:var(--font-display); font-weight:800; font-size:1.2rem;">
+              Real 12-Minute Soak Benchmark on <code>zoth-pill</code> (<code>zgbench/after.json</code>)
+            </div>
+            <div style="font-size:0.84rem; color:var(--text-muted);">
+              Measured with live Ollama <code>moondream</code> (4 threads), persistent <code>agy</code> stream-json, and local <code>kokoro-v1.0.onnx</code> fp32 voice.
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="badge badge-emerald">8 ZERO-STALL SESSION ROLLS</span>
+            <span class="badge badge-gold">0 DEGENERATE CAPTIONS</span>
+          </div>
+        </div>
+
+        <div class="bench-table-wrap">
+          <table class="bench-table">
+            <thead>
+              <tr>
+                <th>Minute</th>
+                <th>Ask → First Say (s)</th>
+                <th>Ask → First Audio (s)</th>
+                <th>Median Turn Latency</th>
+                <th>Turns</th>
+                <th>Captions</th>
+                <th>Spoken Clauses</th>
+                <th>CPU Temp</th>
+              </tr>
+            </thead>
+            <tbody id="benchTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: LIVE RELAY BRIDGE & CONFIG EXPORT -->
+    <!-- ================================================================= -->
+    <section id="tab-bridge" class="tab-panel">
+      <div class="sim-grid">
+        <div class="panel-card">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:1.15rem; margin-bottom:6px;">
+            Connect Browser Directly to Your Local / Tailscale Zoth Relay
+          </div>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-top:0;">
+            Your <code>zoth-relay-mobile</code> service is running on <code>100.106.132.5:8766</code> (Tailscale) and <code>127.0.0.1:8766</code>. Enter your endpoint and mobile token to test live WebSocket connectivity:
+          </p>
+
+          <div class="input-group">
+            <label class="input-label" for="relayUrlInput">ZOTH RELAY WEBSOCKET URL</label>
+            <input type="text" id="relayUrlInput" class="text-input" value="ws://127.0.0.1:8766/v1/guide/stream">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="relayTokenInput">MOBILE BEARER TOKEN (~/.config/zoth-relay/pixel-mobile.token)</label>
+            <input type="password" id="relayTokenInput" class="text-input" placeholder="zr_mobile_...">
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <button type="button" class="btn btn-emerald" id="connectLiveRelayBtn">
+              🔌 Connect Live WebSocket
+            </button>
+            <button type="button" class="btn" id="copyCliUpBtn">
+              📋 Copy: zoth-guide up
+            </button>
+          </div>
+
+          <div id="liveRelayStatusBox" style="padding:12px; border-radius:10px; background:var(--bg-elevated); border:1px solid var(--border); font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
+            Status: Ready. Run <code>zoth-guide up</code> on <code>zoth-pill</code> to warm Moondream + Kokoro TTS + persistent AGY.
+          </div>
+        </div>
+
+        <!-- Right: Exportable Production Config & Android Bridge Bundle -->
+        <div class="panel-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <div style="font-family:var(--font-display); font-weight:800; font-size:1.1rem;">
+              Production <code>config.yaml</code> & Systemd Bundle
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn" id="copyConfigBundleBtn">
+                📋 Copy Bundle
+              </button>
+              <button type="button" class="btn btn-gold" id="exportConfigBundleBtn">
+                ⬇ Export .yaml
+              </button>
+            </div>
+          </div>
+
+          <div style="border-radius: 14px; overflow: hidden; border: 1px solid var(--border);">
+            <pre id="configBundlePre" style="margin:0; padding:16px; background:#05070B; color:#10B981; font-family:var(--font-mono); font-size:0.74rem; overflow-x:auto; line-height:1.45;"># ~/.config/zoth-relay/mobile/config.yaml (zoth-pill v0.5.0)
+hosts:
+  - 127.0.0.1
+  - 100.106.132.5
+port: 8766
+agents_file: ~/.config/zoth-relay/mobile/agents.yaml
+audit_log: ~/.local/state/zoth-relay-mobile/audit.log
+guide:
+  max_tokens: 80
+  transcript_len: 12
+  local_vision:
+    base_url: http://127.0.0.1:11434
+    model: moondream
+    num_thread: 4
+    keep_alive: 10m
+    hot_c: 88
+  agy:
+    command: ~/.local/bin/agy
+    effort: low
+    timeout: 30
+  stream:
+    batch_interval: 3.0
+    caption_interval: 1.5
+    nudge_after: 12.0
+    roll_turns: 14
+    roll_chars: 6000
+    chunk_ms: 200
+  tts:
+    engine: kokoro
+    model: ~/.local/share/zoth-tts/kokoro-v1.0.onnx
+    voices: ~/.local/share/zoth-tts/voices-v1.0.bin
+    voice: af_heart
+    speed: 1.1
+    threads: 3</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        Engineered by <strong>1nc0gn30 (@1nc0gn30) • NullAI Platform</strong>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/1nc0gn30/zoth-relay" target="_blank" rel="noopener noreferrer">GitHub: zoth-relay</a>
+        <a href="https://zoth.nullai.tech" target="_blank" rel="noopener noreferrer">Zoth Studio</a>
+        <a href="https://zothos.nullai.tech" target="_blank" rel="noopener noreferrer">ZothOS</a>
+        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // -----------------------------------------------------------------------
+      // 1. Sovereign Open-Access Initializer
+      // -----------------------------------------------------------------------
+      console.log('Zela · Zoth Guide v0.5 initialized. 100% Free & Open-Access.');
+
+      // -----------------------------------------------------------------------
+      // 2. Theme Toggle (Dark / Light)
+      // -----------------------------------------------------------------------
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const themeToggleLabel = document.getElementById('themeToggleLabel');
+      themeToggleBtn.addEventListener('click', function() {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        themeToggleLabel.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+      });
+
+      // -----------------------------------------------------------------------
+      // 3. Tabs Switching
+      // -----------------------------------------------------------------------
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+      tabButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const target = btn.getAttribute('data-tab');
+          tabButtons.forEach(function(b) { b.classList.remove('active'); });
+          tabPanels.forEach(function(p) { p.classList.remove('active'); });
+          btn.classList.add('active');
+          const panel = document.getElementById(target);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
+      // -----------------------------------------------------------------------
+      // 4. Real Captured Smart Glasses POV Scenes & Coaching State Machine
+      // -----------------------------------------------------------------------
+      const SCENES = [
+        {
+          img: '/assets/frame_0.jpg',
+          caption: 'Urns of red and white color are placed on the wall, with a green door partially visible to its right side.',
+          spoken: 'Target the switch plate on the wall. Hit the bottom black switch, then step into the room toward your workstation.',
+          tracker: 'STEP 27: Enter and secure space | DONE: Connected glasses stream | NEXT: Walk to primary workstation desk',
+          latency: '1.74s',
+          temp: '52.0°C'
+        },
+        {
+          img: '/assets/frame_2.jpg',
+          caption: 'Urn of books on a wooden shelf, arranged by size and color beside a cabinet.',
+          spoken: 'Scan the top shelf for your hardware reference binder, then pivot right toward the main desk.',
+          tracker: 'STEP 28: Inspect reference shelf | DONE: Entered room | NEXT: Locate hardware binder or proceed to rig',
+          latency: '1.66s',
+          temp: '53.0°C'
+        },
+        {
+          img: '/assets/frame_4.jpg',
+          caption: 'Urns of water are on the floor, reflecting light from a ceiling lamp and projector screen mounted above.',
+          spoken: 'Fixed focal length on the Ray-Ban lens, so step two paces closer whenever you need fine details resolved.',
+          tracker: 'STEP 29: Physical proximity compensation | DONE: Discussed hardware optics | NEXT: Walk closer to targets',
+          latency: '1.59s',
+          temp: '54.0°C'
+        },
+        {
+          img: '/assets/frame_6.jpg',
+          caption: 'Iced tea and soda are available for purchase at the Superstar Catering truck with a blue and white color scheme.',
+          spoken: 'Outdoor signage resolved cleanly. Grab a cold drink if needed, or head back inside to your terminal.',
+          tracker: 'STEP 30: Exterior visual verification | DONE: Tested outdoor contrast | NEXT: Return to indoor workstation',
+          latency: '1.84s',
+          temp: '53.0°C'
+        },
+        {
+          img: '/assets/frame_7.jpg',
+          caption: 'Urns of white flowers and a vase with pink roses adorn the room, while two blue chairs sit nearby.',
+          spoken: 'Good. Clear path ahead through the lounge. Keep moving straight toward your dual-monitor setup.',
+          tracker: 'STEP 31: Traverse interior lounge | DONE: Verified scene diffing | NEXT: Sit at dual-monitor desk',
+          latency: '1.46s',
+          temp: '52.0°C'
+        },
+        {
+          img: '/assets/frame_10.jpg',
+          caption: 'Urn of water on a desk, with two computer monitors and keyboard ready for use by the operator.',
+          spoken: 'Pull out your chair and have a seat at the desk. Wake the primary monitor and verify Zoth Guide status.',
+          tracker: 'STEP 32: Settle at workstation | DONE: Reached dual-monitor desk | NEXT: Run zoth-guide status',
+          latency: '1.34s',
+          temp: '51.0°C'
+        }
+      ];
+
+      let currentGen = 1;
+      let coachingPaused = false;
+      let audioPlaying = false;
+
+      const povImage = document.getElementById('povImage');
+      const povVideo = document.getElementById('povVideo');
+      const hudModeLabel = document.getElementById('hudModeLabel');
+      const hudTempPill = document.getElementById('hudTempPill');
+      const hudLatencyBadge = document.getElementById('hudLatencyBadge');
+      const hudSeenCaption = document.getElementById('hudSeenCaption');
+      const hudSpokenDirective = document.getElementById('hudSpokenDirective');
+      const tacticalTrackerText = document.getElementById('tacticalTrackerText');
+      const wsStreamLog = document.getElementById('wsStreamLog');
+      const kokoroAudioEl = document.getElementById('kokoroAudioEl');
+      const audioStateBadge = document.getElementById('audioStateBadge');
+
+      function appendLog(dir, text, cls) {
+        const div = document.createElement('div');
+        div.className = 'log-entry ' + (cls || '');
+        const now = new Date().toLocaleTimeString();
+        div.textContent = '[' + now + '] ' + dir + ' ' + text;
+        wsStreamLog.prepend(div);
+      }
+
+      function speakText(text) {
+        audioPlaying = true;
+        audioStateBadge.textContent = 'STREAMING 24kHz PCM16LE (GEN #' + currentGen + ')';
+        audioStateBadge.style.color = '#10B981';
+        if ('speechSynthesis' in window) {
+          try {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 1.08;
+            utter.onend = function() {
+              audioPlaying = false;
+              audioStateBadge.textContent = 'IDLE · LISTENING';
+            };
+            window.speechSynthesis.speak(utter);
+          } catch (e) {
+            audioPlaying = false;
+          }
+        }
+        setTimeout(function() {
+          audioPlaying = false;
+          audioStateBadge.textContent = 'IDLE · LISTENING';
+        }, 3800);
+      }
+
+      function selectScene(index) {
+        const s = SCENES[index] || SCENES[0];
+        povImage.style.display = 'block';
+        povVideo.style.display = 'none';
+        povImage.src = s.img;
+        currentGen += 1;
+        hudModeLabel.textContent = 'WS /v1/guide/stream · GEN #' + currentGen;
+        hudTempPill.textContent = 'CPU ' + s.temp + ' · MOONDREAM 4T · KOKORO 24kHz';
+        hudLatencyBadge.textContent = 'TURN ' + s.latency;
+        hudSeenCaption.textContent = 'SEEN: ' + s.caption;
+        hudSpokenDirective.textContent = '🔊 "' + s.spoken + '"';
+        tacticalTrackerText.textContent = s.tracker;
+
+        appendLog('phone → relay', '{"type":"frame","image":"<b64 jpeg 48KB>"}', 'log-out');
+        appendLog('relay → phone', '{"type":"caption","text":"' + s.caption + '"}', 'log-in');
+        appendLog('relay → phone', '{"type":"say","gen":' + currentGen + ',"text":"' + s.spoken + '","tts":"kokoro"}', 'log-in');
+        appendLog('relay → phone', '[binary PCM16LE 24000Hz mono · gen #' + currentGen + ']', 'log-pcm');
+
+        document.querySelectorAll('.scene-thumb').forEach(function(btn, idx) {
+          btn.classList.toggle('active', idx === index);
+        });
+      }
+
+      document.querySelectorAll('.scene-thumb').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const idx = parseInt(btn.getAttribute('data-scene'), 10);
+          selectScene(idx);
+        });
+      });
+
+      // Initial log seed
+      appendLog('phone → relay', '{"type":"hello","mission":"Enter workspace and verify Zoth Relay telemetry","tts":"relay"}', 'log-out');
+      appendLog('relay → phone', '{"type":"ready","tts":"kokoro","rate":24000,"vision":"moondream"}', 'log-in');
+      appendLog('relay → phone', '{"type":"caption","text":"' + SCENES[0].caption + '"}', 'log-in');
+      appendLog('relay → phone', '{"type":"say","gen":1,"text":"' + SCENES[0].spoken + '"}', 'log-pcm');
+
+      // Handle User Speech Turn
+      function handleUserSpeech(speechText) {
+        const text = (speechText || '').trim();
+        if (!text) return;
+        currentGen += 1;
+        appendLog('phone → relay', '{"type":"speech","text":"' + text + '","final":true}', 'log-out');
+
+        let reply = '';
+        let tracker = '';
+        const lower = text.toLowerCase();
+
+        if (/pause|stop coaching|quiet/.test(lower)) {
+          coachingPaused = true;
+          reply = 'Paused.';
+          tracker = 'STEP 33: Coaching paused by operator | DONE: Muted proactive ticks | NEXT: Await resume command';
+        } else if (/resume|unpause|coach me/.test(lower)) {
+          coachingPaused = false;
+          reply = 'Back on. Look at your primary monitor so we can pick up the next step.';
+          tracker = 'STEP 33: Coaching resumed | DONE: Re-engaged visual stream | NEXT: Inspect primary screen';
+        } else if (/zoom|metal glasses|meta glasses/.test(lower)) {
+          reply = 'Fixed focal length. Just step two paces closer whenever you need fine details resolved.';
+          tracker = 'STEP 29: Physical proximity compensation | DONE: Answered optics query | NEXT: Step closer to target';
+        } else if (/tell me more|more detail|explain/.test(lower)) {
+          reply = 'Your current tracker state is: ' + tacticalTrackerText.textContent;
+          tracker = tacticalTrackerText.textContent;
+        } else if (/charge|see you later/.test(lower)) {
+          reply = 'Plug in and recharge. Catch you on the next run.';
+          tracker = 'STEP 34: Wrap session & dock gear | DONE: Moving to charge phone | NEXT: Stand by for next session';
+        } else {
+          const mission = document.getElementById('missionInput').value;
+          reply = 'Focus on your mission: ' + mission.slice(0, 65) + '. Check the terminal window on your left monitor now.';
+          tracker = 'STEP 33: Active mission directive | DONE: Processed spoken query | NEXT: Verify terminal output';
+        }
+
+        hudModeLabel.textContent = 'WS /v1/guide/stream · GEN #' + currentGen;
+        hudLatencyBadge.textContent = 'TURN 1.42s';
+        hudSpokenDirective.textContent = '🔊 "' + reply + '"';
+        tacticalTrackerText.textContent = tracker;
+
+        appendLog('relay → phone', '{"type":"say","gen":' + currentGen + ',"text":"' + reply + '","tts":"kokoro"}', 'log-in');
+        appendLog('relay → phone', '[binary PCM16LE 24000Hz mono · gen #' + currentGen + ']', 'log-pcm');
+        speakText(reply);
+      }
+
+      document.getElementById('sendSpeechBtn').addEventListener('click', function() {
+        const inp = document.getElementById('speechInput');
+        handleUserSpeech(inp.value);
+        inp.value = '';
+      });
+
+      document.getElementById('speechInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          handleUserSpeech(e.target.value);
+          e.target.value = '';
+        }
+      });
+
+      document.querySelectorAll('.prompt-chip[data-utterance]').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          handleUserSpeech(chip.getAttribute('data-utterance'));
+        });
+      });
+
+      // Barge-In Button
+      document.getElementById('bargeInBtn').addEventListener('click', function() {
+        const droppedGen = currentGen;
+        currentGen += 1;
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        kokoroAudioEl.pause();
+        kokoroAudioEl.currentTime = 0;
+        audioPlaying = false;
+        audioStateBadge.textContent = 'BARGE-IN · DROPPED GEN <=' + droppedGen;
+        audioStateBadge.style.color = '#F59E0B';
+        hudModeLabel.textContent = 'WS /v1/guide/stream · GEN #' + currentGen;
+        appendLog('phone → relay', '{"type":"barge"}', 'log-warn');
+        appendLog('relay → phone', '{"type":"stop_audio","gen":' + droppedGen + '}', 'log-warn');
+      });
+
+      // Play Real Kokoro 24kHz WAV Sample
+      function playRealKokoroSample() {
+        audioPlaying = true;
+        audioStateBadge.textContent = 'PLAYING KOKORO v1.0 ONNX (24kHz WAV)';
+        audioStateBadge.style.color = '#10B981';
+        kokoroAudioEl.currentTime = 0;
+        kokoroAudioEl.play().catch(function() {
+          speakText('Zoth is with you. Target the workstation ahead.');
+        });
+        kokoroAudioEl.onended = function() {
+          audioPlaying = false;
+          audioStateBadge.textContent = 'IDLE · LISTENING';
+        };
+      }
+
+      document.getElementById('heroPlayKokoroBtn').addEventListener('click', playRealKokoroSample);
+      document.getElementById('openShowreelBtn').addEventListener('click', function() {
+        playRealKokoroSample();
+        let i = 0;
+        const iv = setInterval(function() {
+          selectScene(i % SCENES.length);
+          i += 1;
+          if (i >= SCENES.length) clearInterval(iv);
+        }, 1800);
+      });
+      document.getElementById('heroRunDemoBtn').addEventListener('click', function() {
+        selectScene(5);
+        playRealKokoroSample();
+      });
+
+      // Live Camera WebRTC Toggle
+      let mediaStream = null;
+      document.getElementById('toggleWebcamBtn').addEventListener('click', async function() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(function(t) { t.stop(); });
+          mediaStream = null;
+          povVideo.style.display = 'none';
+          povImage.style.display = 'block';
+          document.getElementById('toggleWebcamBtn').textContent = '📷 Live Camera';
+          return;
+        }
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+            povVideo.srcObject = mediaStream;
+            povImage.style.display = 'none';
+            povVideo.style.display = 'block';
+            document.getElementById('toggleWebcamBtn').textContent = '⏹ Stop Camera';
+            appendLog('phone → relay', '[WebRTC Live Camera Stream Engaged · 1 fps scene-diff]', 'log-out');
+          } catch (err) {
+            appendLog('system', 'Camera permission unavailable in this environment; using captured Ray-Ban Meta POV frames.', 'log-warn');
+          }
+        }
+      });
+
+      // Browser Web Speech API Mic Recognition
+      document.getElementById('micRecognizeBtn').addEventListener('click', function() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          handleUserSpeech('What should I do next?');
+          return;
+        }
+        const rec = new SpeechRec();
+        rec.lang = 'en-US';
+        rec.interimResults = false;
+        rec.onresult = function(ev) {
+          const transcript = ev.results[0][0].transcript;
+          document.getElementById('speechInput').value = transcript;
+          handleUserSpeech(transcript);
+        };
+        rec.onerror = function() {
+          handleUserSpeech('What should I do next?');
+        };
+        rec.start();
+      });
+
+      // 60fps Waveform Canvas Animation
+      const canvas = document.getElementById('waveformCanvas');
+      const ctx = canvas.getContext('2d');
+      let phase = 0;
+      function drawWave() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        const mid = canvas.height / 2;
+        for (let x = 0; x < canvas.width; x += 3) {
+          const amp = audioPlaying ? (Math.sin(x * 0.08 + phase) * 10 + Math.cos(x * 0.03 - phase) * 4) : 1.5;
+          const y = mid + amp;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = audioPlaying ? '#10B981' : '#475569';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        phase += 0.22;
+        requestAnimationFrame(drawWave);
+      }
+      drawWave();
+
+      // -----------------------------------------------------------------------
+      // 5. Tab 2: Real MarkerParser & sanitize_caption() Port
+      // -----------------------------------------------------------------------
+      function runMarkerParser(rawText, minChunkWords) {
+        const OPEN = '[^';
+        const CLOSE = '^]';
+        const sentEnd = /[.!?…]+["')\]]*(?=\s)/;
+        let inside = false;
+        let buf = rawText;
+        let speech = '';
+        let first = true;
+        const events = [];
+
+        function emitSpeech(s) {
+          const clean = s.replace(/\s+/g, ' ').trim().replace(/^\^+|\^+$/g, '').trim();
+          if (clean && clean.toUpperCase().replace(/[.!]+$/, '') !== 'SILENT') {
+            first = false;
+            events.push({ type: 'speak', text: clean });
+          }
+        }
+
+        function flushSpeech(final) {
+          while (true) {
+            const m = sentEnd.exec(speech);
+            let cut = m ? (m.index + m[0].length) : -1;
+            if (cut < 0 && first && minChunkWords > 0) {
+              const c = speech.indexOf(', ');
+              if (c > 0 && speech.slice(0, c).trim().split(/\s+/).length >= minChunkWords) {
+                cut = c + 1;
+              }
+            }
+            if (cut < 0) break;
+            emitSpeech(speech.slice(0, cut));
+            speech = speech.slice(cut);
+          }
+          if (final) {
+            emitSpeech(speech);
+            speech = '';
+          }
+        }
+
+        while (buf.length > 0) {
+          const token = inside ? CLOSE : OPEN;
+          const i = buf.indexOf(token);
+          if (i < 0) {
+            if (inside) {
+              speech += buf;
+              flushSpeech(true);
+            } else if (buf.trim()) {
+              events.push({ type: 'context', text: buf.trim() });
+            }
+            buf = '';
+            break;
+          }
+          const head = buf.slice(0, i);
+          if (inside) {
+            speech += head;
+            flushSpeech(true);
+            events.push({ type: 'end_marker', text: 'Marker closed (^])' });
+          } else if (head.trim()) {
+            events.push({ type: 'context', text: head.trim() });
+          }
+          buf = buf.slice(i + 2);
+          inside = !inside;
+        }
+        return events;
+      }
+
+      function renderMarkerParser() {
+        const raw = document.getElementById('rawMarkerInput').value;
+        const minWords = parseInt(document.getElementById('minChunkWordsInput').value || '4', 10);
+        const out = runMarkerParser(raw, minWords);
+        const container = document.getElementById('markerParserOutput');
+        container.innerHTML = '';
+        out.forEach(function(item, idx) {
+          const div = document.createElement('div');
+          div.style.padding = '8px 12px';
+          div.style.borderRadius = '8px';
+          div.style.border = '1px solid var(--border)';
+          if (item.type === 'speak') {
+            div.style.background = 'rgba(16, 185, 129, 0.12)';
+            div.style.color = '#10B981';
+            div.textContent = '🔊 SPEAK CHUNK #' + (idx + 1) + ': "' + item.text + '"';
+          } else if (item.type === 'context') {
+            div.style.background = 'rgba(212, 175, 55, 0.10)';
+            div.style.color = '#D4AF37';
+            div.textContent = '🧠 SILENT CONTEXT: ' + item.text;
+          } else {
+            div.style.color = 'var(--text-muted)';
+            div.textContent = '✓ ' + item.text;
+          }
+          container.appendChild(div);
+        });
+      }
+
+      document.getElementById('runMarkerParserBtn').addEventListener('click', renderMarkerParser);
+      renderMarkerParser();
+
+      function sanitizeCaption(text) {
+        let t = (text || '').replace(/\s+/g, ' ').trim();
+        t = t.replace(/^(ids?|objects?|labels?)( of [a-z ]+)?\s*[:=-]\s*/i, '');
+        t = t.replace(/\[[^\]]*\]|\([\d.,\s]+\)|\{[^}]*\}/g, '');
+        t = t.replace(/(?:\b\d+(?:\.\d+)?\s*,\s*){2,}\d*(?:\.\d+)?/g, '');
+        t = t.replace(/^(ids?|uth|!)\b\W*/i, '').replace(/^[ ,;:\-!"']+|[ ,;:\-!"']+$/g, '');
+        t = t.replace(/^(and|of|with)\s+/i, '');
+        t = t.replace(/\s+([.,!?])/g, '$1');
+        const words = t.match(/[A-Za-z']+/g) || [];
+        if (words.length < 3) return { valid: false, reason: 'Too few valid words (< 3) after stripping coordinates', output: '' };
+        const digits = (t.match(/\d/g) || []).length;
+        if (digits > Math.max(4, t.length * 0.15)) return { valid: false, reason: 'Digit ratio exceeded threshold (>15% numeric noise)', output: '' };
+        const counts = {};
+        words.forEach(function(w) { const lw = w.toLowerCase(); counts[lw] = (counts[lw] || 0) + 1; });
+        const maxRep = Math.max.apply(null, Object.values(counts));
+        if (maxRep > Math.max(3, Math.floor(words.length / 3))) {
+          return { valid: false, reason: 'Degenerate repetition loop detected', output: '' };
+        }
+        const firstSent = t.split(/(?<=[.!?])\s/)[0].slice(0, 220).trim();
+        const finalOut = firstSent ? (firstSent[0].toUpperCase() + firstSent.slice(1)) : '';
+        return { valid: Boolean(finalOut), reason: 'Clean single-sentence caption passed to AGY', output: finalOut };
+      }
+
+      function renderSanitizer() {
+        const raw = document.getElementById('rawCaptionInput').value;
+        const res = sanitizeCaption(raw);
+        const box = document.getElementById('sanitizerResultBox');
+        if (res.valid) {
+          box.innerHTML = '<div style="color:#10B981; font-weight:700; margin-bottom:4px;">✅ ACCEPTED CAPTION</div>' +
+            '<div>"' + res.output + '"</div>' +
+            '<div style="color:var(--text-muted); font-size:0.72rem; margin-top:4px;">' + res.reason + '</div>';
+        } else {
+          box.innerHTML = '<div style="color:#EF4444; font-weight:700; margin-bottom:4px;">🛑 REJECTED DEGENERATE OUTPUT (RETURNS "")</div>' +
+            '<div style="color:var(--text-muted); font-size:0.75rem;">Reason: ' + res.reason + '</div>';
+        }
+      }
+
+      document.getElementById('runSanitizerBtn').addEventListener('click', renderSanitizer);
+      document.querySelectorAll('.prompt-chip[data-cap-sample]').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          document.getElementById('rawCaptionInput').value = chip.getAttribute('data-cap-sample');
+          renderSanitizer();
+        });
+      });
+      renderSanitizer();
+
+      // -----------------------------------------------------------------------
+      // 6. Tab 3: Populate Real 12-Minute Benchmark Data (zgbench/after.json)
+      // -----------------------------------------------------------------------
+      const BENCH_ROWS = [
+        { min: 0, askSay: '1.34s, 2.75s', askAud: '3.88s, 5.51s', med: '2.15s', turns: 7, caps: 2, says: 13, temp: '77.0°C' },
+        { min: 1, askSay: '1.82s, 3.82s', askAud: '3.33s, 6.37s', med: '1.84s', turns: 6, caps: 3, says: 10, temp: '79.0°C' },
+        { min: 2, askSay: '1.86s, 3.91s', askAud: '4.98s, 6.17s', med: '2.29s', turns: 8, caps: 3, says: 16, temp: '79.0°C' },
+        { min: 3, askSay: '1.70s, 4.45s', askAud: '4.38s, 7.30s', med: '2.22s', turns: 7, caps: 3, says: 12, temp: '81.0°C' },
+        { min: 4, askSay: '1.69s, 3.74s', askAud: '4.06s, 6.67s', med: '1.74s', turns: 10, caps: 7, says: 14, temp: '81.0°C' },
+        { min: 5, askSay: '6.19s (Roll #3)', askAud: '8.96s', med: '2.93s', turns: 8, caps: 7, says: 8, temp: '80.0°C' },
+        { min: 6, askSay: '1.46s, 2.04s', askAud: '4.71s, 5.85s', med: '2.13s', turns: 12, caps: 9, says: 18, temp: '76.0°C' },
+        { min: 7, askSay: '2.05s', askAud: '3.06s', med: '2.04s', turns: 10, caps: 11, says: 19, temp: '76.0°C' },
+        { min: 8, askSay: '1.46s, 2.07s', askAud: '4.03s, 4.67s', med: '2.02s', turns: 12, caps: 10, says: 18, temp: '74.0°C' },
+        { min: 9, askSay: '1.58s, 3.41s', askAud: '5.74s, 5.75s', med: '1.78s', turns: 12, caps: 9, says: 18, temp: '75.0°C' },
+        { min: 10, askSay: '1.93s', askAud: '2.96s', med: '1.85s', turns: 10, caps: 10, says: 18, temp: '74.0°C' },
+        { min: 11, askSay: '3.54s', askAud: '6.09s', med: '2.18s', turns: 12, caps: 10, says: 18, temp: '76.0°C' }
+      ];
+
+      const tbody = document.getElementById('benchTableBody');
+      BENCH_ROWS.forEach(function(r) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>Min ' + r.min + '</td>' +
+          '<td style="color:#10B981; font-weight:700;">' + r.askSay + '</td>' +
+          '<td>' + r.askAud + '</td>' +
+          '<td style="color:#D4AF37; font-weight:700;">' + r.med + '</td>' +
+          '<td>' + r.turns + '</td>' +
+          '<td>' + r.caps + '</td>' +
+          '<td>' + r.says + '</td>' +
+          '<td>' + r.temp + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      // -----------------------------------------------------------------------
+      // 7. Tab 4: Live Relay WebSocket Connector & Pro License Gate
+      // -----------------------------------------------------------------------
+      document.getElementById('connectLiveRelayBtn').addEventListener('click', function() {
+        const url = document.getElementById('relayUrlInput').value.trim();
+        const box = document.getElementById('liveRelayStatusBox');
+        box.style.color = '#38BDF8';
+        box.textContent = 'Dialing ' + url + ' ...';
+        try {
+          const ws = new WebSocket(url);
+          ws.onopen = function() {
+            box.style.color = '#10B981';
+            box.textContent = '✅ Connected to live zoth-relay-mobile stream at ' + url + '!';
+            ws.send(JSON.stringify({ type: 'hello', mission: document.getElementById('missionInput').value }));
+          };
+          ws.onerror = function() {
+            box.style.color = '#F59E0B';
+            box.textContent = 'ℹ️ Browser sandbox could not reach loopback/Tailscale directly (or token header required). Use simulator mode above or connect via the Zela Android app on 100.106.132.5:8766.';
+          };
+        } catch (err) {
+          box.style.color = '#F59E0B';
+          box.textContent = 'ℹ️ Using built-in browser simulation mode. On your Pixel phone, connect over Tailscale to http://100.106.132.5:8766.';
+        }
+      });
+
+      document.getElementById('copyCliUpBtn').addEventListener('click', function() {
+        if (navigator.clipboard) navigator.clipboard.writeText('zoth-guide up');
+        document.getElementById('copyCliUpBtn').textContent = '✓ Copied: zoth-guide up';
+      });
+
+      // 100% Free & Open-Access Config Bundle Handlers
+      document.getElementById('copyConfigBundleBtn').addEventListener('click', function() {
+        const text = document.getElementById('configBundlePre').textContent;
+        if (navigator.clipboard) navigator.clipboard.writeText(text);
+        document.getElementById('copyConfigBundleBtn').textContent = '✓ Copied!';
+        setTimeout(function() { document.getElementById('copyConfigBundleBtn').textContent = '📋 Copy Config'; }, 2000);
+      });
+
+      document.getElementById('exportConfigBundleBtn').addEventListener('click', function() {
+        const text = document.getElementById('configBundlePre').textContent;
+        const blob = new Blob([text], { type: 'text/yaml' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'zoth-guide-v0.5-config.yaml';
+        a.click();
+      });
+    })();
+  </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+</body>
+</html>
