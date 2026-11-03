@@ -13,8 +13,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 ort.set_default_logger_severity(3)
 from kokoro_onnx import Kokoro
 
-MODEL = os.environ.get("KOKORO_MODEL", os.path.expanduser("~/NullAITech/zoth-civilization/voice-models/kokoro-v1.0.fp16.onnx")
-VOICES = os.environ.get("KOKORO_VOICES", os.path.expanduser("~/NullAITech/zoth-civilization/voice-models/voices-v1.0.bin")
+MODEL = os.environ.get("KOKORO_MODEL", "/opt/zoth-civilization/voice-models/kokoro-v1.0.fp16.onnx")
+VOICES = os.environ.get("KOKORO_VOICES", "/opt/zoth-civilization/voice-models/voices-v1.0.bin")
 PORT = int(os.environ.get("KOKORO_PORT", "9394"))
 
 kokoro = Kokoro(MODEL, VOICES)

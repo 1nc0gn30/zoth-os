@@ -1,87 +1,19 @@
 #!/usr/bin/env python3
 """
-ZothOS Arsenal Daemon Orchestrator — Launches & verifies all 72 real local tool daemons.
-Never replaces a real server.py/server.js with a static http.server.
+ZothOS Core Daemon Orchestrator — Memory-Safe On-Demand Architecture
+Starts only the 5 core lightweight daemons by default (individual tools start on-demand when opened in Electron or CLI).
 """
-import os, re, sys, time, socket, subprocess
+import os, sys, time, socket, subprocess
 
 HOME = os.path.expanduser("~")
 NULLAI_DIR = os.path.join(HOME, "NullAITech")
-TOOLS_DATA = os.path.join(NULLAI_DIR, "zoth-studio-v2/src/data/toolsData.js")
 
-DAEMONS = [
-    ("pixel-cast", "pixel-cast", 8148),
-    ("adytum-alchemist-ai-workflow", "adytum-alchemist-ai-workflow", 8135),
-    ("azoth-local-agent", "azoth-local-agent", 8136),
-    ("sovereign-agent-bridge", "sovereign-agent-bridge", 8102),
-    ("neuro-memory-daemon", "neuro-memory-daemon", 8094),
-    ("zoth-os", "zoth-os", 8137),
-    ("vector-search-engine", "vector-search-engine", 8121),
-    ("deepsearch-research-agent", "deepsearch-research-agent", 8122),
-    ("promptmaster-studio", "promptmaster-studio", 8123),
-    ("hexstrike-arsenal", "NullAI-HexStrike-AI-Terminal", 8138),
-    ("envguard-secrets-vault", "envguard-secrets-vault", 8088),
-    ("jwt-inspector-guard", "jwt-inspector-guard", 8124),
-    ("payload-entropy-studio", "payload-entropy-studio", 8080),
-    ("web-security-guard", "web-security-guard", 8125),
-    ("polyglot-framework-exporter", "polyglot-framework-exporter", 8126),
-    ("aeo-graph-engine", "aeo-graph-engine", 8127),
-    ("cwv-speed-engine", "cwv-speed-engine", 8128),
-    ("vision-gesture-control", "vision-gesture-control", 8089),
-    ("subsweep-lead-scanner", "subsweep-lead-scanner", 8090),
-    ("omnipost-social-engine", "omnipost-social-engine", 8091),
-    ("cron-rhythm-studio", "cron-rhythm-studio", 5174),
-    ("certpath-roadmap-studio", "certpath-roadmap-studio", 8093),
-    ("pwa-manifest-builder", "pwa-manifest-builder", 8100),
-    ("regex-droid-builder", "regex-droid-builder", 8101),
-    ("schema-illustrator-studio", "schema-illustrator-studio", 8099),
+CORE_DAEMONS = [
+    ("zoth-bolt", "bolt.diy", 5173),
     ("zoth-webgen", "zoth-webgen", 8092),
-    ("zoth-swarm-multiplexer", "zoth-swarm-multiplexer", 8141),
-    ("webmcp-protocol-inspector", "webmcp-protocol-inspector", 8142),
-    ("anderson-security-sentinel", "anderson-security-sentinel", 8103),
-    ("badge3d-coin-generator", "badge3d-coin-generator", 8084),
-    ("robots-txt-auditor", "robots-txt-auditor", 8086),
-    ("city-desk", "city-desk", 8087),
-    ("agent-egress-sentinel", "agent-egress-sentinel", 8095),
-    ("agent-mock-twin", "agent-mock-twin", 8097),
-    ("agent-prompt-firewall", "agent-prompt-firewall", 8098),
-    ("agent-flight-recorder", "agent-flight-recorder", 8104),
-    ("agent-capsule-jail", "agent-capsule-jail", 8105),
-    ("agent-policy-auditor", "agent-policy-auditor", 8106),
-    ("etsy-pod-forge", "etsy-pod-forge", 8107),
-    ("etsy-connector", "etsy-connector", 8108),
-    ("mcp-lens", "mcp-lens", 8109),
-    ("agent-budget-sentinel", "agent-budget-sentinel", 8110),
-    ("agent-gods-eye", "agent-gods-eye", 8112),
-    ("shopify-connector", "shopify-connector", 8113),
-    ("printify-connector", "printify-connector", 8115),
-    ("gelato-connector", "gelato-connector", 8116),
-    ("agent-voice-call", "agent-voice-call", 8114),
-    ("pod-smart-router", "pod-smart-router", 8117),
-    ("digital-asset-forge", "digital-asset-forge", 8118),
-    ("pod-mockup-forge", "pod-mockup-forge", 8119),
-    ("pod-margin-sentinel", "pod-margin-sentinel", 8120),
-    ("audiocipher-stego-engine", "audiocipher-stego-engine", 8096),
-    ("cyber-turtle-studio", "cyber-turtle-studio", 8129),
-    ("datamosh-glitch-studio", "datamosh-glitch-studio", 8081),
-    ("nexus-3d-scene-studio", "nexus-3d-scene-studio", 8082),
-    ("ufo-sacred-geometry", "ufo-sacred-geometry", 8083),
-    ("likeness-desk", "likeness-desk", 9395),
-    ("osint-scout-skill", "osint-scout-skill", 8085),
-    ("bolt.diy", "bolt.diy", 5173),
     ("zoth-civilization", "zoth-civilization", 9393),
-    ("storefront-catalog", "storefront-catalog", 8143),
-    ("shodan-surface-sentinel", "shodan-surface-sentinel", 8130),
-    ("ghidra-mcp-bridge", "ghidra-mcp-bridge", 8131),
-    ("zoth-ascii-magic", "zoth-ascii-magic", 8132),
-    ("yara-sigma-forge", "yara-sigma-forge", 8133),
-    ("reality-shader-forge", "reality-shader-forge", 8134),
-    ("producthunt-connector", "producthunt-connector", 8139),
-    ("zoth-relay", "zoth-relay", 8765),
-    ("zela-glasses-guide", "zela-glasses-guide", 8144),
-    ("zoth-bot", "zoth-bot", 8146),
     ("zoth-bounty", "zoth-bounty", 9494),
-    ("zoth-scene-foundry", "zoth-scene-foundry", 8823),
+    ("zothos-lite", "zothos-lite", 8145),
 ]
 
 def is_listening(port):
@@ -94,60 +26,21 @@ def start_daemon(tool_id, repo_name, port):
     if not os.path.isdir(repo_dir):
         repo_dir = os.path.join("/opt", repo_name)
     if not os.path.isdir(repo_dir):
-        return False, "missing_repo"
-
+        return False
     env = os.environ.copy()
     env["PORT"] = str(port)
-    env["PYTHONUNBUFFERED"] = "1"
-
-    cmd = None
-    if os.path.isfile(os.path.join(repo_dir, "server.js")):
-        cmd = ["node", "server.js", "--port", str(port)]
-    elif os.path.isfile(os.path.join(repo_dir, "server.py")):
-        cmd = [sys.executable, "server.py", "--port", str(port)]
-    elif os.path.isfile(os.path.join(repo_dir, "zoth_relay/server.py")):
-        cmd = [sys.executable, "-m", "zoth_relay.server", "--port", str(port)]
-    elif os.path.isdir(os.path.join(repo_dir, "src")):
-        src_dir = os.path.join(repo_dir, "src")
-        for d in sorted(os.listdir(src_dir)):
-            if os.path.isfile(os.path.join(src_dir, d, "cli.py")):
-                env["PYTHONPATH"] = src_dir + os.pathsep + env.get("PYTHONPATH", "")
-                cmd = [sys.executable, "-m", f"{d}.cli", "serve", "--port", str(port)]
-                break
-
-    if not cmd:
-        return False, "no_entrypoint"
-
-    log_path = f"/tmp/zoth-daemon-{tool_id}.log"
-    with open(log_path, "ab") as logf:
-        subprocess.Popen(
-            cmd,
-            cwd=repo_dir,
-            env=env,
-            stdin=subprocess.DEVNULL,
-            stdout=logf,
-            stderr=logf,
-            close_fds=True,
-            start_new_session=True,
-        )
-    return True, "spawned"
+    cmd = ["node", "server.js", "--port", str(port)] if os.path.isfile(os.path.join(repo_dir, "server.js")) else [sys.executable, "server.py", "--port", str(port)]
+    with open(f"/tmp/zoth-daemon-{tool_id}.log", "ab") as logf:
+        subprocess.Popen(cmd, cwd=repo_dir, env=env, stdin=subprocess.DEVNULL, stdout=logf, stderr=logf, close_fds=True, start_new_session=True)
+    return True
 
 def main():
-    started = 0
-    already_up = 0
-    for tool_id, repo_name, port in DAEMONS:
-        if is_listening(port):
-            already_up += 1
-            continue
-        ok, _ = start_daemon(tool_id, repo_name, port)
-        if ok:
-            started += 1
-
-    if started > 0:
-        time.sleep(1.8)
-
-    online = sum(1 for _, _, p in DAEMONS if is_listening(p))
-    print(f"✦ Zoth Arsenal Daemons: {online}/{len(DAEMONS)} ONLINE (already_up={already_up}, newly_started={started})")
+    for tid, repo, port in CORE_DAEMONS:
+        if not is_listening(port):
+            start_daemon(tid, repo, port)
+    time.sleep(0.5)
+    online = sum(1 for _, _, p in CORE_DAEMONS if is_listening(p))
+    print(f"✦ Zoth Core Daemons: {online}/{len(CORE_DAEMONS)} ONLINE (Memory-Safe On-Demand Mode)")
 
 if __name__ == "__main__":
     main()

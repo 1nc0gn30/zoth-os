@@ -26,8 +26,8 @@ from .tts_bridge import VOICES, synthesize_speech_wav
 logger = logging.getLogger("agent_voice_call.call_engine")
 
 SIGNAL_SOCKET = "/tmp/signal-cli.sock"
-SIGNAL_ACCOUNT = os.environ.get("SIGNAL_ACCOUNT", "+19482047987")
-AZOTH_DIR = Path(os.path.expanduser("~/NullAITech/azoth-local-agent")
+SIGNAL_ACCOUNT = os.environ.get("SIGNAL_ACCOUNT", "+E164_PLACEHOLDER")
+AZOTH_DIR = Path("/opt/azoth-local-agent")
 WORKSPACE_DIR = Path("/root")
 
 

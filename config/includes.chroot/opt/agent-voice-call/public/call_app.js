@@ -820,7 +820,7 @@
       elModalDuration.textContent = `Session: ${s.session_id || 'active'} • Duration: ${durationStr} • Turns: ${s.total_turns || 2} • Voice: ${(s.voice || currentVoice).toUpperCase()}`;
       elModalDebrief.textContent = s.dialogue
         ? `${s.dialogue}\n\n✓ Synced to Neuro-Memory (:8094), Flight Recorder (:8104) & Signal/SimpleX.`
-        : `Transcript and key decisions have been delivered to your Signal (+19482047987) and SimpleX (@1nc0gn30) channels.`;
+        : `Transcript and key decisions have been delivered to your Signal (+E164_PLACEHOLDER) and SimpleX (@1nc0gn30) channels.`;
       elModalDebrief.style.whiteSpace = 'pre-wrap';
       elModalDebrief.style.textAlign = 'left';
       elModal.style.display = 'flex';

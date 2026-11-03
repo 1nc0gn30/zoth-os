@@ -188,7 +188,7 @@ Add to your `claude_desktop_config.json` or Cursor MCP settings:
     "azoth": {
       "command": "python3",
       "args": [
-        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/agent.py",
+        "/opt/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/agent.py",
         "--mcp"
       ]
     }

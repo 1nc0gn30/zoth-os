@@ -162,7 +162,7 @@
     const bizName = (document.getElementById('genBizName')?.value || 'Coastal Apex Roofing & Restoration').trim();
     const cityState = (document.getElementById('genCityState')?.value || 'Virginia Beach, VA').trim();
     const trade = document.getElementById('genTradeSelect')?.value || 'RoofingContractor';
-    const phone = (document.getElementById('genPhone')?.value || '(757) 555-0194').trim();
+    const phone = (document.getElementById('genPhone')?.value || '555-XXX-XXXX').trim();
     const swarmRole = document.getElementById('genSwarmSelect')?.value || 'lead-harvester';
 
     const tradeMeta = {

@@ -5,8 +5,8 @@ automatic fallback routing, and persistent .env configuration management.
 
 Supported Engines:
 1. Ollama (Local Offline Tool Calling & API / CLI)
-2. Hermes Agent CLI (/home/neo/.local/bin/hermes)
-3. AGY (Google Antigravity CLI /home/neo/.local/bin/agy)
+2. Hermes Agent CLI (/opt/.local/bin/hermes)
+3. AGY (Google Antigravity CLI /opt/.local/bin/agy)
 4. Codex CLI (/usr/bin/codex & OpenAI API)
 5. xAI Grok (CLI & API)
 6. Google Gemini (CLI & API)
@@ -295,7 +295,7 @@ def build_subagent_env(
     path_entries = env.get("PATH", "").split(os.pathsep)
     preferred_paths = [
         str(Path.home() / ".local" / "bin"),
-        "/home/neo/.local/bin",
+        "/opt/.local/bin",
         "/usr/local/bin",
         "/usr/bin",
         "/bin",

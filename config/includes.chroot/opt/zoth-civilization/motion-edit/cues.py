@@ -5,8 +5,8 @@ from sfx import synth, dsp
 
 SEED = 42
 TARGET_LUFS = -14.0
-TIMELINE = os.path.expanduser("~/NullAITech/zoth-civilization/motion-edit/timeline.json"
-OUT = os.path.expanduser("~/NullAITech/zoth-civilization/motion-edit/audio_master.wav"
+TIMELINE = "/opt/zoth-civilization/motion-edit/timeline.json"
+OUT = "/opt/zoth-civilization/motion-edit/audio_master.wav"
 
 
 def bass_pulse(freq, dur=0.36):

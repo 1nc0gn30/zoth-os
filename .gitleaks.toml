@@ -95,7 +95,7 @@ regexes = [
 description = "xterm.js FourKeyMap is a keyboard map, not an API key."
 targetRules = ["generic-api-key"]
 condition = "AND"
-paths = ['''(?:^|/)vendor/xterm/xterm\.js$''']
+paths = ['''(?:^|/)vendor/xterm/xterm\.js$''', '''(?:^|/).*xterm\.js$''']
 regexTarget = "match"
 regexes = ['''FourKeyMap''']
 

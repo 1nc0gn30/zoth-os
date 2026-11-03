@@ -58,7 +58,7 @@ class TestSubagentEnvironment:
         env = build_subagent_env(workspace_dir=ws, extra_env={"TEST_EXTRA": "12345"})
 
         assert "PATH" in env
-        assert "/home/neo/.local/bin" in env["PATH"] or str(Path.home() / ".local/bin") in env["PATH"]
+        assert "/opt/.local/bin" in env["PATH"] or str(Path.home() / ".local/bin") in env["PATH"]
         assert env["HOME"] == str(Path.home())
         assert env["CWD"] == str(ws)
         assert env["WORKSPACE_DIR"] == str(ws)

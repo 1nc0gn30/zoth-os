@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-REPO_DIR = Path(os.path.expanduser("~/NullAITech/likeness-desk")
+REPO_DIR = Path("/opt/likeness-desk")
 TEST_PORT = 19395
 BASE_URL = f"http://127.0.0.1:{TEST_PORT}"
 

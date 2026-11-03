@@ -28,9 +28,9 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 from playwright.sync_api import sync_playwright
 
-ROOT = Path(os.path.expanduser("~/NullAITech/zoth-civilization")
+ROOT = Path("/opt/zoth-civilization")
 FIREFOX_PROFILE = Path("/root/.mozilla/firefox/l5qtiz2i.default-esr")
-PROFILE_DIR = Path(os.path.expanduser("~/NullAITech/azoth-local-agent/sandbox/chrome_ai_studio_profile")
+PROFILE_DIR = Path("/opt/azoth-local-agent/sandbox/chrome_ai_studio_profile")
 PROFILE_DIR.mkdir(parents=True, exist_ok=True)
 BUILDS_DIR = ROOT / "builds"
 BUILDS_DIR.mkdir(parents=True, exist_ok=True)

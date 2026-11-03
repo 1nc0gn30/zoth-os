@@ -38,10 +38,10 @@ except ImportError:
     evdev = None
     ecodes = None
 
-CIV_ROOT = Path(os.path.expanduser("~/NullAITech/zoth-civilization")
+CIV_ROOT = Path("/opt/zoth-civilization")
 DATA_DIR = CIV_ROOT / "data" / "trajectories"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-PRESETS_DIR = Path(os.path.expanduser("~/NullAITech/azoth-local-agent/tools/presets")
+PRESETS_DIR = Path("/opt/azoth-local-agent/tools/presets")
 PRESETS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Keycode to ASCII mapping for human-readable DuckyScript compilation

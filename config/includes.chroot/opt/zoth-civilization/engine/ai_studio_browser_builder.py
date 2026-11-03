@@ -24,13 +24,13 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 
 # Connect to azoth-local-agent browser engine
-AZOTH_ROOT = Path(os.path.expanduser("~/NullAITech/azoth-local-agent")
+AZOTH_ROOT = Path("/opt/azoth-local-agent")
 if str(AZOTH_ROOT) not in sys.path:
     sys.path.insert(0, str(AZOTH_ROOT))
 
 from tools.browser import get_browser
 
-CIV_ROOT = Path(os.path.expanduser("~/NullAITech/zoth-civilization")
+CIV_ROOT = Path("/opt/zoth-civilization")
 BUILDS_DIR = CIV_ROOT / "builds"
 DOWNLOADS_DIR = AZOTH_ROOT / "sandbox" / "downloads"
 
