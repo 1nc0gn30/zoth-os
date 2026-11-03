@@ -1,0 +1,13 @@
+[Unit]
+Description=Zoth Sovereign Thermal Guard Daemon
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/zoth-thermal-guard
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

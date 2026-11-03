@@ -1,1688 +1,1629 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZothOS • 3D Alchemical Live Wallpaper & WebGL Engine v3.0 Ultra</title>
-    
-    <!-- Three.js and Post-Processing Vendor Pipeline -->
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/three.min.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/three.min.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/OrbitControls.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/OrbitControls.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/Pass.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/Pass.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/CopyShader.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/CopyShader.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/LuminosityHighPassShader.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/LuminosityHighPassShader.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/ShaderPass.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/ShaderPass.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/EffectComposer.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/EffectComposer.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/RenderPass.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/RenderPass.js'"></script>
-    <script src="../../../../opt/zoth-studio/public/assets/vendor/UnrealBloomPass.js" onerror="this.onerror=null;this.src='/opt/zoth-studio/public/assets/vendor/UnrealBloomPass.js'"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZothOS 3D Interactive Reality Wallpaper // Sovereign Engine</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    :root {
+      --bg: #08080B;
+      --gold: #D4AF37;
+      --gold-bright: #FFD700;
+      --ghost: #FF3355;
+      --ghost-purple: #A855F7;
+      --matrix: #00FF9D;
+      --matrix-cyan: #00E5FF;
+      --win11: #0078D4;
+      --win11-cyan: #38BDF8;
+      --text: #F3F4F6;
+      --dim: #9CA3AF;
+      --mono: "JetBrains Mono", "Fira Code", monospace;
+      --sans: system-ui, -apple-system, sans-serif;
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      font-family: var(--sans);
+      color: var(--text);
+      user-select: none;
+      cursor: none; /* Handled by custom avant-garde reticle */
+    }
 
-        :root {
-            --primary: #00ff9d;
-            --primary-glow: rgba(0, 255, 157, 0.4);
-            --secondary: #ffd700;
-            --bg-base: #010804;
-            --hud-bg: rgba(4, 12, 10, 0.85);
-            --hud-border: rgba(0, 255, 157, 0.35);
-            --text-main: #e2fdf1;
-            --text-dim: #7da592;
-        }
+    #webgl-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+    }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-base);
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-            color: var(--text-main);
-            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+    /* Avant-Garde Custom 3D Cursor Reticle */
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        #webgl-canvas {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            cursor: grab;
-        }
+    .reticle-core {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      box-shadow: 0 0 12px var(--gold-bright);
+      transition: all 0.25s ease;
+    }
 
-        #webgl-canvas:active {
-            cursor: grabbing;
-        }
+    .reticle-ring {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border: 1.5px dashed var(--gold);
+      border-radius: 50%;
+      animation: spin-slow 8s linear infinite;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+      transition: all 0.25s ease;
+    }
 
-        /* Scanline & CRT Phosphor Overlay */
-        .crt-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.3) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.02),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.02)
-            );
-            background-size: 100% 3px, 6px 100%;
-            opacity: 0.65;
-        }
+    .reticle-label {
+      position: absolute;
+      top: 26px;
+      left: 26px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      color: var(--gold-bright);
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      transition: color 0.25s ease;
+    }
 
-        .vignette {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 11;
-            background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
-        }
+    /* Reticle Mode Variations */
+    body.mode-gold .reticle-core { background: #FFD700; box-shadow: 0 0 14px #FFD700; }
+    body.mode-gold .reticle-ring { border: 1.5px dashed #D4AF37; box-shadow: 0 0 14px rgba(212, 175, 55, 0.45); }
+    body.mode-gold .reticle-label { color: #FFD700; }
 
-        /* Top Status Bar */
-        .top-bar {
-            position: absolute;
-            top: 18px;
-            left: 20px;
-            z-index: 25;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            pointer-events: auto;
-        }
+    body.mode-ghost .reticle-core { background: #FF3355; box-shadow: 0 0 14px #FF3355; border-radius: 2px; transform: rotate(45deg); }
+    body.mode-ghost .reticle-ring { border: 1.5px solid #FF3355; border-radius: 4px; animation: pulse-glitch 2s infinite ease-in-out; }
+    body.mode-ghost .reticle-label { color: #FF3355; }
 
-        .hud-pill {
-            background: var(--hud-bg);
-            border: 1px solid var(--hud-border);
-            border-radius: 20px;
-            padding: 7px 16px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            color: var(--primary);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px var(--primary-glow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
+    body.mode-matrix .reticle-core { background: #00FF9D; box-shadow: 0 0 14px #00FF9D; border-radius: 0; }
+    body.mode-matrix .reticle-ring { border: 1px solid #00FF9D; border-radius: 0; border-style: double; border-width: 3px; }
+    body.mode-matrix .reticle-label { color: #00FF9D; }
 
-        .hud-pill:hover {
-            transform: translateY(-1px);
-            border-color: var(--primary);
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 16px var(--primary-glow);
-        }
+    body.mode-incognito .reticle-core { background: #38BDF8; box-shadow: 0 0 14px #38BDF8; }
+    body.mode-incognito .reticle-ring { border: 1.5px solid rgba(56, 189, 248, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    body.mode-incognito .reticle-label { color: #38BDF8; }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--primary);
-            box-shadow: 0 0 8px var(--primary);
-            animation: pulse-dot 2s infinite ease-in-out;
-        }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.4); opacity: 1; filter: drop-shadow(0 0 4px var(--primary)); }
-        }
+    @keyframes pulse-glitch {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+      50% { transform: scale(1.15) rotate(180deg); opacity: 0.6; }
+    }
 
-        /* Main Cockpit HUD Overlay */
-        #hud-drawer {
-            position: absolute;
-            top: 18px;
-            right: 20px;
-            z-index: 25;
-            width: 340px;
-            background: var(--hud-bg);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--hud-border);
-            border-radius: 10px;
-            padding: 16px 20px;
-            color: var(--text-main);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), 0 0 20px var(--primary-glow);
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+    /* Glassmorphic Floating HUD */
+    .hud-panel {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      z-index: 10;
+      background: rgba(12, 14, 20, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 460px;
+      cursor: auto;
+    }
 
-        #hud-drawer.collapsed {
-            transform: translateX(380px);
-            opacity: 0;
-            pointer-events: none;
-        }
+    .hud-panel:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+    }
 
-        .hud-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--hud-border);
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
+    .character-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
 
-        .hud-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            color: var(--primary);
-            text-transform: uppercase;
-        }
+    .char-avatar-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
 
-        .hud-brand-icon {
-            color: var(--secondary);
-            font-size: 16px;
-            text-shadow: 0 0 10px var(--secondary);
-        }
+    .char-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
 
-        .hud-stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+    .char-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .hud-stat-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            padding: 8px 10px;
-        }
+    .char-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: 0.02em;
+    }
 
-        .stat-label {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-dim);
-            margin-bottom: 3px;
-        }
+    .char-tag {
+      font-size: 10px;
+      font-family: var(--mono);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      text-transform: uppercase;
+    }
 
-        .stat-value {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--primary);
-            font-variant-numeric: tabular-nums;
-        }
+    .char-title {
+      font-size: 11px;
+      color: var(--dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        /* Realtime Sparkline Graph */
-        .sparkline-container {
-            margin: 10px 0;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--hud-border);
-            border-radius: 6px;
-            padding: 8px;
-        }
+    .modes-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
 
-        .sparkline-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            color: var(--text-dim);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .mode-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      color: var(--dim);
+    }
 
-        #sparkline-canvas {
-            width: 100%;
-            height: 38px;
-            display: block;
-        }
+    .mode-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
 
-        /* Audio Visualizer Bars */
-        .audio-bars-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            height: 22px;
-            gap: 3px;
-            padding: 4px 6px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            margin: 8px 0;
-        }
+    .mode-btn.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+    }
 
-        .audio-bar {
-            flex: 1;
-            background: var(--primary);
-            height: 4px;
-            border-radius: 2px;
-            transition: height 0.08s ease, background-color 0.3s ease;
-            box-shadow: 0 0 6px var(--primary-glow);
-        }
+    .mode-btn.active.mode-ghost {
+      background: rgba(255, 51, 85, 0.15);
+      border-color: var(--ghost);
+      color: var(--ghost);
+      box-shadow: 0 0 12px rgba(255, 51, 85, 0.2);
+    }
 
-        /* Theme Selector Buttons */
-        .section-title {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin: 10px 0 6px;
-        }
+    .mode-btn.active.mode-matrix {
+      background: rgba(0, 255, 157, 0.15);
+      border-color: var(--matrix);
+      color: var(--matrix);
+      box-shadow: 0 0 12px rgba(0, 255, 157, 0.2);
+    }
 
-        .theme-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
+    .mode-btn.active.mode-incognito {
+      background: rgba(0, 120, 212, 0.15);
+      border-color: var(--win11);
+      color: #38BDF8;
+      box-shadow: 0 0 12px rgba(0, 120, 212, 0.2);
+    }
 
-        .theme-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #d1d5db;
-            padding: 7px 8px;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-        }
+    .mode-glyph { font-size: 15px; }
+    .mode-label { font-size: 11px; font-family: var(--mono); font-weight: 600; }
 
-        .theme-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
+    .hud-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--dim);
+      font-family: var(--mono);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 10px;
+    }
 
-        .theme-btn.active {
-            background: var(--primary-glow);
-            border-color: var(--primary);
-            color: #ffffff;
-            box-shadow: 0 0 12px var(--primary-glow);
-        }
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        /* Controls Grid */
-        .action-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
+    .hud-icon-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--dim);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-        .ctrl-action-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--hud-border);
-            color: var(--text-main);
-            padding: 8px 6px;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
+    .hud-icon-btn:hover, .hud-icon-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
 
-        .ctrl-action-btn:hover {
-            background: var(--primary-glow);
-            border-color: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 14px var(--primary-glow);
-        }
+    /* Top right telemetry banner */
+    .top-telemetry {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 10;
+      background: rgba(12, 14, 20, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--dim);
+      cursor: auto;
+    }
 
-        .ctrl-action-btn.active {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-            box-shadow: 0 0 16px var(--primary);
-        }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--matrix);
+      box-shadow: 0 0 8px var(--matrix);
+      animation: pulse 2s infinite;
+    }
 
-        /* Watermarks & Bottom Bar */
-        .bottom-watermark {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            z-index: 20;
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.35);
-            text-transform: uppercase;
-            pointer-events: none;
-        }
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.6; transform: scale(0.9); }
+    }
+  
+    /* Neural Comms Console Drawer */
+    .comms-drawer {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 360px;
+      max-height: calc(100vh - 48px);
+      z-index: 20;
+      background: rgba(12, 14, 20, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      transform: translateX(390px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: auto;
+    }
 
-        .bottom-watermark span {
-            color: var(--primary);
-            font-weight: bold;
-        }
+    .comms-drawer.open {
+      transform: translateX(0);
+    }
 
-        .bottom-shortcuts {
-            position: absolute;
-            bottom: 16px;
-            right: 20px;
-            z-index: 20;
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.45);
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 4px 12px;
-            pointer-events: none;
-            backdrop-filter: blur(8px);
-        }
+    .comms-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
 
-        .bottom-shortcuts kbd {
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--primary);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 9px;
-            font-weight: bold;
-        }
-    </style>
+    .comms-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comms-messages {
+      flex: 1;
+      min-height: 220px;
+      max-height: 380px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .msg-bubble {
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 90%;
+      word-break: break-word;
+    }
+
+    .msg-bot {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid var(--gold);
+      align-self: flex-start;
+      color: var(--text);
+    }
+
+    .msg-user {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: var(--gold-bright);
+      align-self: flex-end;
+    }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .quick-chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      font-family: var(--mono);
+      color: var(--dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-chip:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      border-color: var(--gold);
+    }
+
+    .comms-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .comms-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--sans);
+      outline: none;
+    }
+
+    .comms-input:focus {
+      border-color: var(--gold);
+    }
+
+    .comms-send-btn {
+      background: var(--gold);
+      color: #08080B;
+      border: none;
+      border-radius: 6px;
+      padding: 0 14px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .comms-send-btn:hover {
+      opacity: 0.9;
+    }
+
+    .tts-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--dim);
+    }
+  </style>
 </head>
-<body>
-    <canvas id="webgl-canvas"></canvas>
-    <div class="crt-overlay"></div>
-    <div class="vignette"></div>
+<body class="mode-gold">
 
-    <!-- Top Status Bar -->
-    <div class="top-bar">
-        <button id="toggle-hud-btn" class="hud-pill">
-            <div class="status-dot"></div>
-            <span>ZOTH HUD [H]</span>
-        </button>
-        <button id="quick-theme-btn" class="hud-pill" style="font-size: 10px; padding: 7px 12px;">
-            <span id="theme-glyph">🜂</span>
-            <span id="quick-theme-name">EMERALD MATRIX</span>
-        </button>
+  <!-- Custom 3D Cursor Reticle -->
+  <div id="custom-cursor">
+    <div class="reticle-core"></div>
+    <div class="reticle-ring"></div>
+    <div class="reticle-label" id="reticleLabel">☿ [GOLD: VORTEX ACTIVE]</div>
+  </div>
+
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Top Right Telemetry -->
+  <div class="top-telemetry">
+    <div style="display:flex; align-items:center; gap:6px;">
+      <span class="live-dot" id="telemetryDot"></span>
+      <span id="telemetryStatus" style="color:var(--text); font-weight:600;">3D REALITY ENGINE</span>
+    </div>
+    <div id="cursorCoordDisplay" style="color:var(--gold-bright);">X: 0.0 Y: 0.0</div>
+    <div id="fpsCounter">60 FPS</div>
+    <div id="timeClock">--:--:--</div>
+  </div>
+
+  <!-- Bottom Left HUD -->
+  <div class="hud-panel" id="hudPanel">
+    <div class="character-card">
+      <div class="char-avatar-box" id="avatarBox">
+        <span id="avatarGlyph">☿</span>
+      </div>
+      <div class="char-details">
+        <div class="char-name-row">
+          <span class="char-name" id="charName">Azoth Prime</span>
+          <span class="char-tag" id="charTag">SOLAR ARCHITECT</span>
+        </div>
+        <span class="char-title" id="charTitle">Hermetic sovereignty, strategic foresight, and verifiable reality.</span>
+      </div>
     </div>
 
-    <!-- Main Cockpit HUD Overlay -->
-    <div id="hud-drawer">
-        <div class="hud-header">
-            <div class="hud-brand">
-                <span class="hud-brand-icon">☉</span>
-                <span>ZOTH 3D ALCHEMICAL ENGINE</span>
-            </div>
-            <span id="fps-counter" style="font-size: 11px; font-weight: bold; color: var(--secondary);">60 FPS</span>
-        </div>
-
-        <div class="hud-stat-grid">
-            <div class="hud-stat-box">
-                <div class="stat-label">Quantum Flux</div>
-                <div id="val-flux" class="stat-value">99.8%</div>
-            </div>
-            <div class="hud-stat-box">
-                <div class="stat-label">Active Particles</div>
-                <div id="val-particles" class="stat-value">3,500</div>
-            </div>
-            <div class="hud-stat-box">
-                <div class="stat-label">Sacred Orbitals</div>
-                <div id="val-orbitals" class="stat-value">Metatron 12☉</div>
-            </div>
-            <div class="hud-stat-box">
-                <div class="stat-label">Harmonic Freq</div>
-                <div id="val-freq" class="stat-value">528 Hz 🜂</div>
-            </div>
-        </div>
-
-        <!-- Telemetry Oscilloscope Sparkline -->
-        <div class="sparkline-container">
-            <div class="sparkline-header">
-                <span>Alchemical Coherence</span>
-                <span id="coherence-pct">1.000 φ</span>
-            </div>
-            <canvas id="sparkline-canvas"></canvas>
-        </div>
-
-        <!-- Audio EQ Spectrum Visualizer -->
-        <div class="section-title">Harmonic Resonance [A]</div>
-        <div class="audio-bars-container" id="eq-bars">
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-            <div class="audio-bar"></div>
-        </div>
-
-        <!-- Alchemical Reality Themes -->
-        <div class="section-title">Alchemical Realities [M]</div>
-        <div class="theme-grid">
-            <button class="theme-btn active" data-theme="emerald">🜂 Emerald Matrix</button>
-            <button class="theme-btn" data-theme="gold">☉ 24k Aurum Gold</button>
-            <button class="theme-btn" data-theme="crimson">🜄 NullAI Ghostmode</button>
-            <button class="theme-btn" data-theme="cyan">☿ Quantum Cyber</button>
-        </div>
-
-        <!-- Quick Trigger Actions -->
-        <div class="section-title">Interactive Commands</div>
-        <div class="action-grid">
-            <button id="btn-nova" class="ctrl-action-btn">💥 Nova Burst [C]</button>
-            <button id="btn-audio" class="ctrl-action-btn">🔊 Synth Drone [A]</button>
-            <button id="btn-bloom" class="ctrl-action-btn active">✨ Bloom FX [B]</button>
-            <button id="btn-warp" class="ctrl-action-btn">🌌 Warp Surge [SPC]</button>
-        </div>
+    <!-- Mode Selector Grid -->
+    <div class="modes-selector">
+      <button class="mode-btn active" data-mode="gold" id="btn-gold" title="Sovereign Gold Master (Azoth Sanctum)">
+        <span class="mode-glyph">🜀</span>
+        <span class="mode-label">GOLD</span>
+      </button>
+      <button class="mode-btn mode-ghost" data-mode="ghost" id="btn-ghost" title="NullAI Ghostmode Stealth (Tor-Cloaked)">
+        <span class="mode-glyph">👻</span>
+        <span class="mode-label">GHOST</span>
+      </button>
+      <button class="mode-btn mode-matrix" data-mode="matrix" id="btn-matrix" title="Hermetic Matrix Emerald (STDP Spikes)">
+        <span class="mode-glyph">🜂</span>
+        <span class="mode-label">MATRIX</span>
+      </button>
+      <button class="mode-btn mode-incognito" data-mode="incognito" id="btn-incognito" title="Covert Chameleon Disguise (Windows 11 Fluent)">
+        <span class="mode-glyph">🪟</span>
+        <span class="mode-label">WIN11</span>
+      </button>
     </div>
 
-    <!-- Bottom Watermark & Shortcut Hints -->
-    <div class="bottom-watermark">
-        ZOTHOS <span>//</span> SOVEREIGN 3D WEBGL ENGINE <span>//</span> ☉ ☽ ☿ ♀ ♂ 🜂 🜄 🜁 🜃
+    <div class="hud-footer">
+      <span>ZOTH REALITY ENGINE v3.5 • 3D CURSOR FIELD</span>
+      <div class="hud-actions">
+        <button class="hud-icon-btn" id="btnDrone" title="Toggle Generative Ambient Drone [D]">🎵 DRONE: OFF</button>
+        <button class="hud-icon-btn" id="btnCommsToggle" title="Toggle Neural Comms Link [C]">💬 COMMS [C]</button>
+        <button class="hud-icon-btn" id="btnAudio" title="Toggle Synthesized Audio Cues">🔊 SFX ON</button>
+        <button class="hud-icon-btn" id="btnFullscreen" title="Toggle Fullscreen">⛶ FULL</button>
+      </div>
     </div>
-    <div class="bottom-shortcuts">
-        <kbd>Drag</kbd> Orbit &bull; <kbd>Scroll</kbd> Zoom &bull; <kbd>M</kbd> Theme &bull; <kbd>C</kbd> Nova &bull; <kbd>A</kbd> Audio &bull; <kbd>H</kbd> HUD
+  </div>
+
+  <script type="module">
+    import * as THREE from '/js/three.module.js';
+
+    // ── Global State & Character Profiles ──────────────────────────────────
+    const CHARACTERS = {
+      gold: {
+        name: "Azoth Prime",
+        tag: "SOLAR ARCHITECT",
+        title: "Hermetic sovereignty, strategic foresight, and verifiable reality.",
+        glyph: "☿",
+        color: "#FFD700",
+        accent: "#D4AF37",
+        cursorDesc: "☿ [GOLD: VORTEX & ASTROLABE FOCUS]"
+      },
+      ghost: {
+        name: "Ghostbyte",
+        tag: "AMNESIC SENTINEL",
+        title: "Tor-cloaked packet routing, RAM-only enclave, and zero telemetry.",
+        glyph: "👻",
+        color: "#FF3355",
+        accent: "#A855F7",
+        cursorDesc: "👻 [GHOST: SINGULARITY & LASER TRACE]"
+      },
+      matrix: {
+        name: "Lucy Netrunner",
+        tag: "STDP ORACLE",
+        title: "Biomorphic synaptic graph memory and matrix code infiltration.",
+        glyph: "🜂",
+        color: "#00FF9D",
+        accent: "#00E5FF",
+        cursorDesc: "🜂 [MATRIX: RAIN SHIELD & STDP BEAMS]"
+      },
+      incognito: {
+        name: "Chameleon 11",
+        tag: "FLUENT EXECUTIVE",
+        title: "Covert corporate operations, fluent aesthetics, and compliant guise.",
+        glyph: "🪟",
+        color: "#0078D4",
+        accent: "#38BDF8",
+        cursorDesc: "🪟 [WIN11: FLUENT SILK RIPPLE WAVE]"
+      }
+    };
+
+    let currentMode = 'gold';
+    let audioEnabled = true;
+
+    // ── Synthesized Procedural Audio Engine ────────────────────────────────
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playModeCue(mode) {
+      if (!audioEnabled || !audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (mode === 'gold') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(432, now);
+        osc.frequency.exponentialRampToValueAtTime(864, now + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(432, now + 0.9);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        osc.start(now);
+        osc.stop(now + 1.2);
+      } else if (mode === 'ghost') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.6);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+        osc.start(now);
+        osc.stop(now + 0.7);
+      } else if (mode === 'matrix') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.setValueAtTime(1320, now + 0.08);
+        osc.frequency.setValueAtTime(1760, now + 0.16);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      } else if (mode === 'incognito') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.12);
+        osc.frequency.setValueAtTime(783.99, now + 0.24);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.8);
+      }
+    }
+
+    // ── Three.js Scene Setup ───────────────────────────────────────────────
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x08080B);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 32);
+
+    // Dynamic Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0xFFD700, 2.5, 80);
+    pointLight1.position.set(12, 16, 20);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xD4AF37, 1.8, 80);
+    pointLight2.position.set(-16, -12, 15);
+    scene.add(pointLight2);
+
+    // ── Dedicated Dynamic 3D Cursor Light & Probe ─────────────────────────
+    const cursorLight = new THREE.PointLight(0xFFD700, 4.5, 30);
+    cursorLight.position.set(0, 0, 8);
+    scene.add(cursorLight);
+
+    // 3D Cursor Reticle Beacon in World Space
+    const beaconGeo = new THREE.RingGeometry(0.3, 0.42, 24);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xFFD700, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+    const cursorBeaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
+    scene.add(cursorBeaconMesh);
+
+    // ── Object Groups for Each Reality Mode ────────────────────────────────
+    const rootGroup = new THREE.Group();
+    scene.add(rootGroup);
+
+    // 1. GOLD MODE: Central Astrolabe & Torus Knot
+    const goldGroup = new THREE.Group();
+    rootGroup.add(goldGroup);
+
+    const torusGeo = new THREE.TorusKnotGeometry(6.5, 1.4, 160, 32, 2, 3);
+    const goldMat = new THREE.MeshStandardMaterial({
+      color: 0xFFD700,
+      roughness: 0.25,
+      metalness: 0.92,
+      wireframe: false
+    });
+    const goldTorus = new THREE.Mesh(torusGeo, goldMat);
+    goldGroup.add(goldTorus);
+
+    // Sacred Astrolabe Rings
+    const rings = [];
+    for (let r = 9; r <= 14; r += 2.5) {
+      const ringGeo = new THREE.TorusGeometry(r, 0.08, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37, wireframe: true });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      goldGroup.add(ringMesh);
+      rings.push(ringMesh);
+    }
+
+    // Gold Mode Cursor Trail: 100 Golden Celestial Stardust Particles
+    const goldTrailCount = 100;
+    const goldTrailGeo = new THREE.BufferGeometry();
+    const goldTrailPositions = new Float32Array(goldTrailCount * 3);
+    const goldTrailColors = new Float32Array(goldTrailCount * 3);
+    const goldTrailHistory = [];
+    for (let i = 0; i < goldTrailCount; i++) {
+      goldTrailHistory.push({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, life: 0 });
+      goldTrailPositions[i * 3] = 0;
+      goldTrailPositions[i * 3 + 1] = 0;
+      goldTrailPositions[i * 3 + 2] = 0;
+      goldTrailColors[i * 3] = 1.0;
+      goldTrailColors[i * 3 + 1] = 0.84;
+      goldTrailColors[i * 3 + 2] = 0.0;
+    }
+    goldTrailGeo.setAttribute('position', new THREE.BufferAttribute(goldTrailPositions, 3));
+    goldTrailGeo.setAttribute('color', new THREE.BufferAttribute(goldTrailColors, 3));
+    const goldTrailMat = new THREE.PointsMaterial({
+      size: 0.35,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending
+    });
+    const goldTrailPoints = new THREE.Points(goldTrailGeo, goldTrailMat);
+    goldGroup.add(goldTrailPoints);
+
+    // 2. GHOST MODE: Tor Onion Routing Mesh & Singularity Laser Tracers
+    const ghostGroup = new THREE.Group();
+    ghostGroup.visible = false;
+    rootGroup.add(ghostGroup);
+
+    const icosaGeo = new THREE.IcosahedronGeometry(7.5, 2);
+    const ghostMat = new THREE.MeshStandardMaterial({
+      color: 0xFF3355,
+      wireframe: true,
+      roughness: 0.2,
+      metalness: 0.8
+    });
+    const ghostMesh = new THREE.Mesh(icosaGeo, ghostMat);
+    ghostGroup.add(ghostMesh);
+
+    const innerIcosaGeo = new THREE.IcosahedronGeometry(4.8, 1);
+    const innerGhostMat = new THREE.MeshStandardMaterial({
+      color: 0xA855F7,
+      wireframe: true,
+      roughness: 0.3,
+      metalness: 0.9
+    });
+    const innerGhostMesh = new THREE.Mesh(innerIcosaGeo, innerGhostMat);
+    ghostGroup.add(innerGhostMesh);
+
+    // Dynamic Crimson Laser Tracer Lines (Connecting Cursor Singularity to Icosahedron Nodes)
+    const ghostLaserLineCount = 12;
+    const ghostLaserGeo = new THREE.BufferGeometry();
+    const ghostLaserPositions = new Float32Array(ghostLaserLineCount * 2 * 3);
+    ghostLaserGeo.setAttribute('position', new THREE.BufferAttribute(ghostLaserPositions, 3));
+    const ghostLaserMat = new THREE.LineBasicMaterial({
+      color: 0xFF3355,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    const ghostLaserLines = new THREE.LineSegments(ghostLaserGeo, ghostLaserMat);
+    ghostGroup.add(ghostLaserLines);
+
+    // 3. MATRIX MODE: Tumbling Voxel Code Cubes, Cascading Rain, & STDP Beams
+    const matrixGroup = new THREE.Group();
+    matrixGroup.visible = false;
+    rootGroup.add(matrixGroup);
+
+    const cubes = [];
+    const cubeGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+
+    for (let i = 0; i < 40; i++) {
+      const cMat = new THREE.MeshStandardMaterial({
+        color: 0x00FF9D,
+        emissive: 0x003318,
+        wireframe: true,
+        roughness: 0.1,
+        metalness: 0.95
+      });
+      const c = new THREE.Mesh(cubeGeo, cMat);
+      const basePos = new THREE.Vector3(
+        (Math.random() - 0.5) * 32,
+        (Math.random() - 0.5) * 22,
+        (Math.random() - 0.5) * 16
+      );
+      c.position.copy(basePos);
+      matrixGroup.add(c);
+      cubes.push({
+        mesh: c,
+        mat: cMat,
+        basePos: basePos.clone(),
+        rotSpeed: (Math.random() - 0.5) * 0.04,
+        connected: false
+      });
+    }
+
+    // Matrix STDP Synaptic Laser Beams (Connecting Cursor to Nearest 4 Cubes)
+    const matrixBeamGeo = new THREE.BufferGeometry();
+    const matrixBeamPositions = new Float32Array(4 * 2 * 3);
+    matrixBeamGeo.setAttribute('position', new THREE.BufferAttribute(matrixBeamPositions, 3));
+    const matrixBeamMat = new THREE.LineBasicMaterial({
+      color: 0x00FF9D,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending
+    });
+    const matrixBeamLines = new THREE.LineSegments(matrixBeamGeo, matrixBeamMat);
+    matrixGroup.add(matrixBeamLines);
+
+    // 4. INCOGNITO / WIN11 MODE: Fluent Bloom Silk Ribbon Wave
+    const win11Group = new THREE.Group();
+    win11Group.visible = false;
+    rootGroup.add(win11Group);
+
+    const planeGeo = new THREE.PlaneGeometry(36, 26, 64, 64);
+    const win11Mat = new THREE.MeshStandardMaterial({
+      color: 0x0078D4,
+      roughness: 0.35,
+      metalness: 0.65,
+      wireframe: false,
+      side: THREE.DoubleSide
+    });
+    const win11Mesh = new THREE.Mesh(planeGeo, win11Mat);
+    win11Group.add(win11Mesh);
+
+    // ── Global Ambient Starfield / Particle Cloud ──────────────────────────
+    const particleCount = 2000;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleBasePositions = new Float32Array(particleCount * 3);
+    const particleColors = new Float32Array(particleCount * 3);
+
+    const cGold = new THREE.Color(0xFFD700);
+    const cAmber = new THREE.Color(0xD4AF37);
+
+    for (let i = 0; i < particleCount; i++) {
+      const px = (Math.random() - 0.5) * 64;
+      const py = (Math.random() - 0.5) * 48;
+      const pz = (Math.random() - 0.5) * 40;
+
+      particlePositions[i * 3] = px;
+      particlePositions[i * 3 + 1] = py;
+      particlePositions[i * 3 + 2] = pz;
+
+      particleBasePositions[i * 3] = px;
+      particleBasePositions[i * 3 + 1] = py;
+      particleBasePositions[i * 3 + 2] = pz;
+
+      const col = Math.random() > 0.4 ? cGold : cAmber;
+      particleColors[i * 3] = col.r;
+      particleColors[i * 3 + 1] = col.g;
+      particleColors[i * 3 + 2] = col.b;
+    }
+
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+
+    const particleMat = new THREE.PointsMaterial({
+      size: 0.24,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    const particleSystem = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleSystem);
+
+    // ── Raycasting & 3D Cursor Space Tracker ───────────────────────────────
+    const raycaster = new THREE.Raycaster();
+    const mouseVec2 = new THREE.Vector2(0, 0);
+    const cursorPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const cursorWorldPos = new THREE.Vector3(0, 0, 0);
+    const cursorSmoothPos = new THREE.Vector3(0, 0, 0);
+    const cursorVelocity = new THREE.Vector3(0, 0, 0);
+
+    let screenMouseX = window.innerWidth / 2;
+    let screenMouseY = window.innerHeight / 2;
+    let normMouseX = 0, normMouseY = 0;
+    let isDragging = false;
+    let prevMouseX = 0, prevMouseY = 0;
+
+    const customCursorEl = document.getElementById('custom-cursor');
+    const cursorCoordDisplay = document.getElementById('cursorCoordDisplay');
+    const reticleLabel = document.getElementById('reticleLabel');
+
+    window.addEventListener('mousemove', (e) => {
+      screenMouseX = e.clientX;
+      screenMouseY = e.clientY;
+      normMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      normMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      // Update Custom Reticle Position
+      customCursorEl.style.left = `${screenMouseX}px`;
+      customCursorEl.style.top = `${screenMouseY}px`;
+
+      if (isDragging) {
+        const dx = e.clientX - prevMouseX;
+        const dy = e.clientY - prevMouseY;
+        rootGroup.rotation.y += dx * 0.005;
+        rootGroup.rotation.x += dy * 0.005;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
+    });
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target.closest('#hudPanel') || e.target.closest('.top-telemetry') || e.target.closest('#commsDrawer')) return;
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // ── Reality Mode Transition Controller ────────────────────────────────
+    async function setRealityMode(mode, triggerServer = true) {
+      if (!CHARACTERS[mode]) return;
+      currentMode = mode;
+
+      // Set Body class for custom cursor styling
+      document.body.className = `mode-${mode}`;
+
+      // Update Active UI buttons
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      // Update Character Card in HUD
+      const char = CHARACTERS[mode];
+      document.getElementById('charName').innerText = char.name;
+      document.getElementById('charTag').innerText = char.tag;
+      document.getElementById('charTitle').innerText = char.title;
+      document.getElementById('avatarGlyph').innerText = char.glyph;
+      document.getElementById('avatarBox').style.borderColor = char.color;
+      document.getElementById('avatarBox').style.boxShadow = `0 0 16px ${char.color}55`;
+      document.getElementById('telemetryDot').style.background = char.color;
+      document.getElementById('telemetryDot').style.boxShadow = `0 0 8px ${char.color}`;
+      reticleLabel.innerText = char.cursorDesc;
+      cursorCoordDisplay.style.color = char.color;
+
+      // Update 3D Object Visibilities & Lighting
+      goldGroup.visible = (mode === 'gold');
+      ghostGroup.visible = (mode === 'ghost');
+      matrixGroup.visible = (mode === 'matrix');
+      win11Group.visible = (mode === 'incognito');
+
+      if (mode === 'gold') {
+        scene.background.set(0x08080B);
+        pointLight1.color.set(0xFFD700);
+        pointLight2.color.set(0xD4AF37);
+        cursorLight.color.set(0xFFD700);
+        cursorBeaconMesh.material.color.set(0xFFD700);
+        particleMat.color.set(0xFFD700);
+      } else if (mode === 'ghost') {
+        scene.background.set(0x06080D);
+        pointLight1.color.set(0xFF3355);
+        pointLight2.color.set(0xA855F7);
+        cursorLight.color.set(0xFF3355);
+        cursorBeaconMesh.material.color.set(0xFF3355);
+        particleMat.color.set(0xFF3355);
+      } else if (mode === 'matrix') {
+        scene.background.set(0x040806);
+        pointLight1.color.set(0x00FF9D);
+        pointLight2.color.set(0x00E5FF);
+        cursorLight.color.set(0x00FF9D);
+        cursorBeaconMesh.material.color.set(0x00FF9D);
+        particleMat.color.set(0x00FF9D);
+      } else if (mode === 'incognito') {
+        scene.background.set(0x0B1329);
+        pointLight1.color.set(0x0078D4);
+        pointLight2.color.set(0x38BDF8);
+        cursorLight.color.set(0x38BDF8);
+        cursorBeaconMesh.material.color.set(0x38BDF8);
+        particleMat.color.set(0x38BDF8);
+      }
+
+      playModeCue(mode);
+
+      // Notify Zoth Studio API & OS Reality Switcher
+      if (triggerServer) {
+        try {
+          await fetch('/api/studio/reality', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode })
+          });
+        } catch (e) {
+          console.warn("Could not push reality change to OS:", e);
+        }
+      }
+    }
+
+    // Bind Mode Buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setRealityMode(btn.dataset.mode, true);
+      });
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === '1') setRealityMode('gold', true);
+      else if (e.key === '2') setRealityMode('ghost', true);
+      else if (e.key === '3') setRealityMode('matrix', true);
+      else if (e.key === '4') setRealityMode('incognito', true);
+      else if (e.key.toLowerCase() === 'f') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    document.getElementById('btnFullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    });
+
+    document.getElementById('btnAudio').addEventListener('click', (e) => {
+      audioEnabled = !audioEnabled;
+      e.target.innerText = audioEnabled ? '🔊 SFX ON' : '🔇 SFX MUTED';
+    });
+
+    // ── OS Reality Polling (Synchronize with terminal `zoth-mode`) ───────────
+    async function syncRealityFromOS() {
+      try {
+        const res = await fetch('/api/studio/reality');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.mode && data.mode !== currentMode) {
+            setRealityMode(data.mode, false);
+          }
+        }
+      } catch (e) {}
+    }
+    setInterval(syncRealityFromOS, 2500);
+
+    // ── Generative Ambient Drone Engine ────────────────────────────────────
+    let droneActive = false;
+    let droneOscs = [];
+    let droneGain = null;
+    let analyser = null;
+    let freqData = new Uint8Array(64);
+
+    function startDrone(mode) {
+      stopDrone();
+      if (!audioCtx) return;
+      if (audioCtx.state === "suspended") audioCtx.resume();
+
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 128;
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+
+      droneGain = audioCtx.createGain();
+      droneGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      droneGain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 2.0);
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(650, audioCtx.currentTime);
+
+      droneGain.connect(filter);
+      filter.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      let freqs = [108, 216, 432];
+      let oscType = "sine";
+
+      if (mode === "ghost") {
+        freqs = [40, 80, 120];
+        oscType = "sawtooth";
+        filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+      } else if (mode === "matrix") {
+        freqs = [55, 110, 220];
+        oscType = "square";
+        filter.frequency.setValueAtTime(450, audioCtx.currentTime);
+      } else if (mode === "incognito") {
+        freqs = [146.83, 220, 293.66];
+        oscType = "triangle";
+        filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+      }
+
+      freqs.forEach((f, idx) => {
+        const osc = audioCtx.createOscillator();
+        osc.type = oscType;
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+        osc.detune.setValueAtTime((idx - 1) * 3, audioCtx.currentTime);
+        osc.connect(droneGain);
+        osc.start();
+        droneOscs.push(osc);
+      });
+
+      droneActive = true;
+      document.getElementById("btnDrone").innerText = "🎵 DRONE: ON";
+      document.getElementById("btnDrone").classList.add("active");
+    }
+
+    function stopDrone() {
+      if (droneGain) {
+        try {
+          droneGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+          setTimeout(() => {
+            droneOscs.forEach(o => { try { o.stop(); } catch(e){} });
+            droneOscs = [];
+            droneGain = null;
+          }, 500);
+        } catch(e) {
+          droneOscs = [];
+          droneGain = null;
+        }
+      }
+      droneActive = false;
+      document.getElementById("btnDrone").innerText = "🎵 DRONE: OFF";
+      document.getElementById("btnDrone").classList.remove("active");
+    }
+
+    document.getElementById("btnDrone").addEventListener("click", () => {
+      if (droneActive) stopDrone();
+      else startDrone(currentMode);
+    });
+
+    // ── Gravitational Nova Pulse on Double Click ───────────────────────────
+    let novaActive = false;
+    let novaRadius = 0;
+    const novaRings = [];
+    for (let i = 0; i < 3; i++) {
+      const g = new THREE.RingGeometry(0.1, 0.4, 48);
+      const m = new THREE.MeshBasicMaterial({ color: 0xFFD700, transparent: true, opacity: 0, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(g, m);
+      scene.add(ring);
+      novaRings.push(ring);
+    }
+
+    window.addEventListener("dblclick", (e) => {
+      if (e.target.closest("#hudPanel") || e.target.closest("#commsDrawer")) return;
+      novaActive = true;
+      novaRadius = 0.1;
+      const col = currentMode === "ghost" ? 0xFF3355 : (currentMode === "matrix" ? 0x00FF9D : (currentMode === "incognito" ? 0x38BDF8 : 0xFFD700));
+      novaRings.forEach((r, idx) => {
+        r.position.copy(cursorSmoothPos);
+        r.material.color.set(col);
+        r.material.opacity = 0.9;
+        r.scale.setScalar(0.1 + idx * 0.2);
+      });
+      playModeCue(currentMode);
+    });
+
+    // ── Animation Loop with 3D Cursor Tracking & Field Interaction ─────────
+    let clock = new THREE.Clock();
+    let frameCount = 0;
+    let lastFpsUpdate = performance.now();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+      const time = clock.getElapsedTime();
+
+      // FPS tracking
+      frameCount++;
+      const now = performance.now();
+      if (now - lastFpsUpdate >= 1000) {
+        document.getElementById('fpsCounter').innerText = `${frameCount} FPS`;
+        frameCount = 0;
+        lastFpsUpdate = now;
+      }
+
+      // ── 1. Raycast Cursor from Screen to 3D World Plane ────────────────────
+      mouseVec2.set(normMouseX, normMouseY);
+      raycaster.setFromCamera(mouseVec2, camera);
+      raycaster.ray.intersectPlane(cursorPlane, cursorWorldPos);
+
+      // Smooth follower & velocity computation
+      const prevX = cursorSmoothPos.x;
+      const prevY = cursorSmoothPos.y;
+      cursorSmoothPos.lerp(cursorWorldPos, 0.14);
+      cursorVelocity.set(cursorSmoothPos.x - prevX, cursorSmoothPos.y - prevY, 0);
+
+      // Update Cursor Light & 3D Beacon
+      cursorLight.position.set(cursorSmoothPos.x, cursorSmoothPos.y, 6.0);
+      cursorBeaconMesh.position.set(cursorSmoothPos.x, cursorSmoothPos.y, 0.5);
+      cursorBeaconMesh.rotation.z += 0.04;
+
+      // Coordinate HUD Update
+      cursorCoordDisplay.innerText = `X: ${cursorSmoothPos.x.toFixed(1)} Y: ${cursorSmoothPos.y.toFixed(1)}`;
+
+      // Camera parallax tilt
+      if (!isDragging) {
+        const targetRotX = normMouseY * 0.32;
+        const targetRotY = normMouseX * 0.42;
+        rootGroup.rotation.x += (targetRotX - rootGroup.rotation.x) * 0.04;
+        rootGroup.rotation.y += (targetRotY - rootGroup.rotation.y) * 0.04;
+      }
+
+      // ── 2. Mode-Specific 3D Cursor Field Physics ───────────────────────────
+      const pPos = particleGeo.attributes.position.array;
+
+      if (currentMode === 'gold') {
+        // GOLD MODE: Astrolabe Orientation + Golden Stardust Trail + Magnetic Vortex
+        goldTorus.rotation.x += 0.008;
+        goldTorus.rotation.y += 0.012;
+        rings.forEach((r, idx) => {
+          r.rotation.x += 0.004 * (idx % 2 === 0 ? 1 : -1);
+          r.rotation.y += 0.006 * (idx % 2 === 0 ? -1 : 1);
+        });
+
+        // Astrolabe sacred tilt faces cursor
+        goldGroup.rotation.x = THREE.MathUtils.lerp(goldGroup.rotation.x, normMouseY * 0.4, 0.06);
+        goldGroup.rotation.y = THREE.MathUtils.lerp(goldGroup.rotation.y, normMouseX * 0.5, 0.06);
+
+        // Update 100 Stardust Comet Trail Particles
+        // Spawn sparks at cursor
+        const spark = goldTrailHistory[frameCount % goldTrailCount];
+        spark.x = cursorSmoothPos.x + (Math.random() - 0.5) * 0.5;
+        spark.y = cursorSmoothPos.y + (Math.random() - 0.5) * 0.5;
+        spark.z = (Math.random() - 0.5) * 0.8;
+        spark.vx = cursorVelocity.x * 0.2 + (Math.random() - 0.5) * 0.08;
+        spark.vy = cursorVelocity.y * 0.2 + (Math.random() - 0.5) * 0.08;
+        spark.life = 1.0;
+
+        for (let i = 0; i < goldTrailCount; i++) {
+          const sp = goldTrailHistory[i];
+          if (sp.life > 0) {
+            sp.life -= 0.02;
+            sp.x += sp.vx;
+            sp.y += sp.vy;
+            goldTrailPositions[i * 3] = sp.x;
+            goldTrailPositions[i * 3 + 1] = sp.y;
+            goldTrailPositions[i * 3 + 2] = sp.z;
+            // Color shifts from bright white to gold to void
+            goldTrailColors[i * 3] = 1.0;
+            goldTrailColors[i * 3 + 1] = 0.7 + sp.life * 0.3;
+            goldTrailColors[i * 3 + 2] = sp.life * 0.5;
+          } else {
+            goldTrailPositions[i * 3] = -9999;
+          }
+        }
+        goldTrailGeo.attributes.position.needsUpdate = true;
+        goldTrailGeo.attributes.color.needsUpdate = true;
+
+        // Ambient Starfield: Magnetic Orbital Vortex around Cursor
+        for (let i = 0; i < particleCount; i++) {
+          const px = pPos[i * 3];
+          const py = pPos[i * 3 + 1];
+          const dx = px - cursorSmoothPos.x;
+          const dy = py - cursorSmoothPos.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < 15.0 && dist > 0.4) {
+            const angle = Math.atan2(dy, dx) + 0.055;
+            const newDist = dist * 0.99;
+            pPos[i * 3] = cursorSmoothPos.x + Math.cos(angle) * newDist;
+            pPos[i * 3 + 1] = cursorSmoothPos.y + Math.sin(angle) * newDist;
+          } else {
+            // Restore back toward original coordinates gently
+            const bx = particleBasePositions[i * 3];
+            const by = particleBasePositions[i * 3 + 1];
+            pPos[i * 3] += (bx - px) * 0.015;
+            pPos[i * 3 + 1] += (by - py) * 0.015;
+          }
+        }
+        particleGeo.attributes.position.needsUpdate = true;
+
+      } else if (currentMode === 'ghost') {
+        // GHOST MODE: Gravitational Singularity Sink + Dynamic Crimson Laser Tracers
+        ghostMesh.rotation.x -= 0.01;
+        ghostMesh.rotation.y += 0.015;
+        innerGhostMesh.rotation.x += 0.018;
+        innerGhostMesh.rotation.y -= 0.012;
+
+        // Cybernetic Glitch Aberration when moving fast
+        if (cursorVelocity.length() > 0.18) {
+          ghostMesh.position.x = (Math.random() - 0.5) * 0.6;
+          ghostMesh.position.y = (Math.random() - 0.5) * 0.6;
+        } else {
+          ghostMesh.position.x = THREE.MathUtils.lerp(ghostMesh.position.x, 0, 0.1);
+          ghostMesh.position.y = THREE.MathUtils.lerp(ghostMesh.position.y, 0, 0.1);
+        }
+
+        // Singularity Gravitational Collapse (Particles pulled into Black Hole)
+        for (let i = 0; i < particleCount; i++) {
+          const px = pPos[i * 3];
+          const py = pPos[i * 3 + 1];
+          const dx = px - cursorSmoothPos.x;
+          const dy = py - cursorSmoothPos.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < 18.0) {
+            if (dist < 1.1) {
+              // Collapse & respawn outward at perimeter
+              const burstAngle = Math.random() * Math.PI * 2;
+              pPos[i * 3] = cursorSmoothPos.x + Math.cos(burstAngle) * 22.0;
+              pPos[i * 3 + 1] = cursorSmoothPos.y + Math.sin(burstAngle) * 22.0;
+            } else {
+              // Accelerate inward toward singularity
+              pPos[i * 3] -= (dx / dist) * 0.28;
+              pPos[i * 3 + 1] -= (dy / dist) * 0.28;
+            }
+          } else {
+            const bx = particleBasePositions[i * 3];
+            const by = particleBasePositions[i * 3 + 1];
+            pPos[i * 3] += (bx - px) * 0.02;
+            pPos[i * 3 + 1] += (by - py) * 0.02;
+          }
+        }
+        particleGeo.attributes.position.needsUpdate = true;
+
+        // Dynamic Crimson Laser Tracers (Connect cursor to 12 icosahedron vertices)
+        const ghostVerts = icosaGeo.attributes.position;
+        const lPos = ghostLaserGeo.attributes.position.array;
+        for (let l = 0; l < ghostLaserLineCount; l++) {
+          const vIdx = (l * 4) % ghostVerts.count;
+          const vLocal = new THREE.Vector3(
+            ghostVerts.getX(vIdx),
+            ghostVerts.getY(vIdx),
+            ghostVerts.getZ(vIdx)
+          );
+          vLocal.applyEuler(ghostMesh.rotation).add(ghostMesh.position);
+
+          // Point A: Cursor
+          lPos[l * 6] = cursorSmoothPos.x;
+          lPos[l * 6 + 1] = cursorSmoothPos.y;
+          lPos[l * 6 + 2] = cursorSmoothPos.z;
+
+          // Point B: Vertex
+          lPos[l * 6 + 3] = vLocal.x;
+          lPos[l * 6 + 4] = vLocal.y;
+          lPos[l * 6 + 5] = vLocal.z;
+        }
+        ghostLaserGeo.attributes.position.needsUpdate = true;
+
+      } else if (currentMode === 'matrix') {
+        // MATRIX MODE: Rain Deflection Bubble + STDP Synaptic Beams to Voxel Cubes
+        // Sort cubes by distance to cursor
+        cubes.sort((a, b) => a.mesh.position.distanceTo(cursorSmoothPos) - b.mesh.position.distanceTo(cursorSmoothPos));
+
+        // Connect STDP Synaptic Laser Beams to Nearest 4 Cubes
+        const bPos = matrixBeamGeo.attributes.position.array;
+        for (let b = 0; b < 4; b++) {
+          const targetCube = cubes[b];
+          if (targetCube) {
+            // Point A: Cursor
+            bPos[b * 6] = cursorSmoothPos.x;
+            bPos[b * 6 + 1] = cursorSmoothPos.y;
+            bPos[b * 6 + 2] = cursorSmoothPos.z;
+
+            // Point B: Cube
+            bPos[b * 6 + 3] = targetCube.mesh.position.x;
+            bPos[b * 6 + 4] = targetCube.mesh.position.y;
+            bPos[b * 6 + 5] = targetCube.mesh.position.z;
+
+            // STDP Synaptic Spike: Emissive Flash & 4x Rotational Speed
+            targetCube.mat.emissive.set(0x00FF9D);
+            targetCube.mat.emissiveIntensity = 2.4;
+            targetCube.mesh.rotation.x += targetCube.rotSpeed * 4.0;
+            targetCube.mesh.rotation.y += targetCube.rotSpeed * 6.0;
+          }
+        }
+        matrixBeamGeo.attributes.position.needsUpdate = true;
+
+        // Update Remaining Cubes with Normal Rotation & Electromagnetic Cursor Repulsion
+        cubes.forEach((item, idx) => {
+          if (idx >= 4) {
+            item.mat.emissive.set(0x002211);
+            item.mat.emissiveIntensity = 0.5;
+            item.mesh.rotation.x += item.rotSpeed;
+            item.mesh.rotation.y += item.rotSpeed * 1.5;
+          }
+
+          // Repulsion Forcefield Shield around Cursor
+          const d = item.mesh.position.distanceTo(cursorSmoothPos);
+          if (d < 12.0) {
+            const repel = item.mesh.position.clone().sub(cursorSmoothPos).normalize();
+            item.mesh.position.addScaledVector(repel, (12.0 - d) * 0.12);
+          } else {
+            // Drift gently back toward base anchor
+            item.mesh.position.lerp(item.basePos, 0.02);
+          }
+        });
+
+        // Matrix Digital Rain Deflection (Particles part around cursor shield)
+        for (let i = 0; i < particleCount; i++) {
+          // Cascading downward fall
+          pPos[i * 3 + 1] -= 0.35;
+          if (pPos[i * 3 + 1] < -24) pPos[i * 3 + 1] = 24;
+
+          const px = pPos[i * 3];
+          const py = pPos[i * 3 + 1];
+          const dx = px - cursorSmoothPos.x;
+          const dy = py - cursorSmoothPos.y;
+          const dist = Math.hypot(dx, dy);
+
+          // Deflect around cursor bubble
+          if (dist < 11.0) {
+            const push = (11.0 - dist) * 0.22;
+            pPos[i * 3] += (dx / Math.max(0.1, dist)) * push;
+          }
+        }
+        particleGeo.attributes.position.needsUpdate = true;
+
+      } else if (currentMode === 'incognito') {
+        // INCOGNITO / WIN11 MODE: Fluent Parametric Silk Ribbon Interactive Ripple Wave
+        const pos = planeGeo.attributes.position;
+        const cursorLocal = win11Group.worldToLocal(cursorSmoothPos.clone());
+
+        for (let i = 0; i < pos.count; i++) {
+          const u = pos.getX(i);
+          const v = pos.getY(i);
+          const dist = Math.hypot(u - cursorLocal.x, v - cursorLocal.y);
+
+          // Base elegant undulating satin wave
+          let z = Math.sin(u * 0.22 + time * 1.6) * Math.cos(v * 0.22 + time * 1.3) * 2.0;
+
+          // Dynamic Physical Cursor Water Ripple Wave Displacement
+          if (dist < 18.0) {
+            z += Math.sin(dist * 1.6 - time * 8.0) * Math.exp(-dist * 0.22) * 3.8;
+          }
+          pos.setZ(i, z);
+        }
+        pos.needsUpdate = true;
+        planeGeo.computeVertexNormals();
+
+        // Ribbon flexes toward cursor smoothly
+        win11Group.rotation.x = THREE.MathUtils.lerp(win11Group.rotation.x, normMouseY * 0.2, 0.05);
+        win11Group.rotation.y = THREE.MathUtils.lerp(win11Group.rotation.y, normMouseX * 0.25, 0.05);
+      }
+
+      // Slow particle field drift
+      particleSystem.rotation.y += 0.0006;
+      particleSystem.rotation.x += 0.0003;
+
+      // Audio frequency modulation if drone is on
+      if (droneActive && analyser) {
+        analyser.getByteFrequencyData(freqData);
+        const bass = freqData[2] / 255.0;
+        const mid = freqData[12] / 255.0;
+        const high = freqData[28] / 255.0;
+
+        pointLight1.intensity = 2.2 + bass * 2.5;
+        particleMat.size = 0.24 + high * 0.22;
+
+        if (currentMode === "gold") {
+          goldTorus.scale.setScalar(1.0 + bass * 0.12);
+        } else if (currentMode === "ghost") {
+          ghostMesh.scale.setScalar(1.0 + mid * 0.15);
+        } else if (currentMode === "matrix") {
+          cubes.forEach((c, idx) => {
+            const f = freqData[idx % 32] / 255.0;
+            c.mesh.scale.setScalar(0.8 + f * 0.7);
+          });
+        } else if (currentMode === "incognito") {
+          win11Mesh.scale.setScalar(1.0 + bass * 0.08);
+        }
+      }
+
+      // Nova pulse animation
+      if (novaActive) {
+        novaRadius += 0.8;
+        novaRings.forEach((r, idx) => {
+          const sc = Math.max(0.1, novaRadius - idx * 2.5);
+          r.scale.setScalar(sc);
+          r.material.opacity = Math.max(0, 0.9 - (novaRadius / 35.0));
+        });
+        if (novaRadius > 35) {
+          novaActive = false;
+          novaRings.forEach(r => r.material.opacity = 0);
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // Window Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Time Clock
+    function updateClock() {
+      document.getElementById('timeClock').innerText = new Date().toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ── Neural Comms Drawer & Local Ollama Companion ───────────────────────
+    const commsDrawer = document.getElementById("commsDrawer");
+    const commsMessages = document.getElementById("commsMessages");
+    const commsInput = document.getElementById("commsInput");
+    const btnCommsSend = document.getElementById("btnCommsSend");
+    const commsBotName = document.getElementById("commsBotName");
+    const commsGlyph = document.getElementById("commsGlyph");
+    const chkTTS = document.getElementById("chkTTS");
+
+    function toggleComms() {
+      commsDrawer.classList.toggle("open");
+      if (commsDrawer.classList.contains("open")) {
+        const char = CHARACTERS[currentMode];
+        commsBotName.innerText = char.name;
+        commsGlyph.innerText = char.glyph;
+        commsInput.focus();
+      }
+    }
+
+    async function sendCommsMessage(text) {
+      const msg = text || commsInput.value.trim();
+      if (!msg) return;
+
+      const uBubble = document.createElement("div");
+      uBubble.className = "msg-bubble msg-user";
+      uBubble.innerText = msg;
+      commsMessages.appendChild(uBubble);
+      commsInput.value = "";
+      commsMessages.scrollTop = commsMessages.scrollHeight;
+
+      const bBubble = document.createElement("div");
+      bBubble.className = "msg-bubble msg-bot";
+      bBubble.innerText = "Connecting synaptic neural weights...";
+      commsMessages.appendChild(bBubble);
+      commsMessages.scrollTop = commsMessages.scrollHeight;
+
+      try {
+        const res = await fetch("/api/studio/reality/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg, mode: currentMode })
+        });
+        const data = await res.json();
+        if (data.reply) {
+          bBubble.innerText = data.reply;
+          if (chkTTS.checked && "speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(data.reply);
+            utterance.rate = 1.05;
+            utterance.pitch = currentMode === "ghost" ? 0.8 : (currentMode === "matrix" ? 1.1 : 0.95);
+            window.speechSynthesis.speak(utterance);
+          }
+        } else {
+          bBubble.innerText = data.error || "No neural response received.";
+        }
+      } catch (err) {
+        bBubble.innerText = "Connection to local Ollama engine (:11434) timed out.";
+      }
+      commsMessages.scrollTop = commsMessages.scrollHeight;
+    }
+
+    document.getElementById("btnCommsToggle").addEventListener("click", toggleComms);
+    document.getElementById("btnCloseComms").addEventListener("click", toggleComms);
+    btnCommsSend.addEventListener("click", () => sendCommsMessage());
+    commsInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendCommsMessage();
+      else if (e.key === "Escape") toggleComms();
+    });
+
+    document.querySelectorAll(".quick-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        sendCommsMessage(chip.dataset.q);
+      });
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT") return;
+      if (e.key.toLowerCase() === "c") toggleComms();
+      else if (e.key.toLowerCase() === "d") {
+        if (droneActive) stopDrone(); else startDrone(currentMode);
+      }
+    });
+
+    // Start Engine
+    syncRealityFromOS();
+    animate();
+  </script>
+
+  <!-- Sliding Neural Comms Drawer -->
+  <div class="comms-drawer" id="commsDrawer">
+    <div class="comms-header">
+      <div class="comms-title">
+        <span id="commsGlyph">☿</span>
+        <span id="commsBotName">Azoth Prime</span>
+        <span style="font-size:10px; color:var(--matrix); font-family:var(--mono);">[LOCAL :11434]</span>
+      </div>
+      <button class="hud-icon-btn" id="btnCloseComms" style="padding:2px 6px;">✕</button>
     </div>
 
-    <!-- ========================================================================= -->
-    <!--  3D WEBGL ENGINE & ALCHEMICAL SCRIPT CORE                                -->
-    <!-- ========================================================================= -->
-    <script>
-    (function() {
-        'use strict';
+    <div class="comms-messages" id="commsMessages">
+      <div class="msg-bubble msg-bot" id="initialGreeting">
+        Greetings, sovereign operator. I am online via local neural weights. What is your intention?
+      </div>
+    </div>
+
+    <div class="quick-prompts">
+      <button class="quick-chip" data-q="Report sovereign system telemetry.">⚡ Telemetry</button>
+      <button class="quick-chip" data-q="Audit security perimeter and breaker.">🛡️ Audit</button>
+      <button class="quick-chip" data-q="State the Hermetic reality axiom.">🜄 Axiom</button>
+      <button class="quick-chip" data-q="Recall synaptic memory clusters.">🧠 Memory</button>
+    </div>
+
+    <div class="comms-input-row">
+      <input type="text" class="comms-input" id="commsInput" placeholder="Command companion..." />
+      <button class="comms-send-btn" id="btnCommsSend">Send</button>
+    </div>
+
+    <div class="tts-toggle-row">
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+        <input type="checkbox" id="chkTTS" checked />
+        <span>Voice Readout (TTS)</span>
+      </label>
+      <span>Esc / [C] to close</span>
+    </div>
+  </div>
 
-        // -------------------------------------------------------------------------
-        // 1. MASTER THEME SPECIFICATIONS
-        // -------------------------------------------------------------------------
-        const THEMES = {
-            emerald: {
-                id: 'emerald',
-                name: 'Emerald Matrix',
-                glyph: '🜂',
-                freq: '528 Hz 🜂',
-                primaryHex: '#00ff9d',
-                primaryNum: 0x00ff9d,
-                secondaryNum: 0xffd700,
-                tertiaryNum: 0x004724,
-                bgHex: '#010804',
-                bgClear: 0x010804,
-                hudGlow: 'rgba(0, 255, 157, 0.4)',
-                hudBorder: 'rgba(0, 255, 157, 0.35)',
-                textMain: '#e2fdf1',
-                textDim: '#7da592',
-                bloomStrength: 1.4,
-                bloomRadius: 0.65,
-                coreTexture: 'assets/mascot/azoth-code-matrix.jpg',
-                holos: [
-                    'assets/brand/azoth-seal-masterpiece.jpg',
-                    'assets/brand/zoth-seal-hermetic-hd.jpg',
-                    'assets/mascot/azoth-hermetic-seal.jpg',
-                    'assets/brand/zoth-golden-z-512.png'
-                ]
-            },
-            gold: {
-                id: 'gold',
-                name: '24k Aurum Gold',
-                glyph: '☉',
-                freq: '432 Hz ☉',
-                primaryHex: '#ffd700',
-                primaryNum: 0xffd700,
-                secondaryNum: 0xff9900,
-                tertiaryNum: 0x5c4000,
-                bgHex: '#090601',
-                bgClear: 0x090601,
-                hudGlow: 'rgba(255, 215, 0, 0.45)',
-                hudBorder: 'rgba(255, 215, 0, 0.35)',
-                textMain: '#fffbeb',
-                textDim: '#b49f6b',
-                bloomStrength: 1.6,
-                bloomRadius: 0.75,
-                coreTexture: 'assets/brand/zoth-golden-z-512.png',
-                holos: [
-                    'assets/brand/azoth-seal-masterpiece.jpg',
-                    'assets/brand/zoth-golden-z-emblem.png',
-                    'assets/brand/ai-math-pillars-emblem.jpg',
-                    'assets/brand/zoth-seal-hermetic-hd.jpg'
-                ]
-            },
-            crimson: {
-                id: 'crimson',
-                name: 'NullAI Ghostmode',
-                glyph: '🜄',
-                freq: '666 Hz 🜄',
-                primaryHex: '#ff0055',
-                primaryNum: 0xff0055,
-                secondaryNum: 0xff3366,
-                tertiaryNum: 0x4a0014,
-                bgHex: '#0c0205',
-                bgClear: 0x0c0205,
-                hudGlow: 'rgba(255, 0, 85, 0.45)',
-                hudBorder: 'rgba(255, 0, 85, 0.35)',
-                textMain: '#ffe4ea',
-                textDim: '#a86576',
-                bloomStrength: 1.5,
-                bloomRadius: 0.7,
-                coreTexture: 'assets/mascot/ghostbyte-nullai-icon.png',
-                holos: [
-                    'assets/mascot/azoth-ghostbyte.jpg',
-                    'assets/mascot/azoth-sanctum-throne.jpg',
-                    'assets/mascot/azoth-command-deck.jpg',
-                    'assets/mascot/azoth-cinematic.jpg'
-                ]
-            },
-            cyan: {
-                id: 'cyan',
-                name: 'Quantum Cyber',
-                glyph: '☿',
-                freq: '963 Hz ☿',
-                primaryHex: '#00f0ff',
-                primaryNum: 0x00f0ff,
-                secondaryNum: 0xa855f7,
-                tertiaryNum: 0x082f49,
-                bgHex: '#020713',
-                bgClear: 0x020713,
-                hudGlow: 'rgba(0, 240, 255, 0.4)',
-                hudBorder: 'rgba(0, 240, 255, 0.35)',
-                textMain: '#e0f2fe',
-                textDim: '#739bb5',
-                bloomStrength: 1.4,
-                bloomRadius: 0.65,
-                coreTexture: 'assets/mascot/azoth-quantum-orb.jpg',
-                holos: [
-                    'assets/mascot/azoth-quantum-arena.jpg',
-                    'assets/mascot/azoth-aether.jpg',
-                    'assets/mascot/azoth-cosmic-citadel.jpg',
-                    'assets/mascot/azoth-antigravity.jpg'
-                ]
-            }
-        };
-
-        let currentThemeKey = 'emerald';
-        let currentTheme = THEMES[currentThemeKey];
-
-        // -------------------------------------------------------------------------
-        // 2. ASSET PATH RESOLUTION & SMART TEXTURE LOADER
-        // -------------------------------------------------------------------------
-        function resolveAssetUrl(relPath) {
-            const prefixes = [
-                '../../../../opt/zoth-studio/public/',
-                '/opt/zoth-studio/public/',
-                '../',
-                './'
-            ];
-            return prefixes[0] + relPath;
-        }
-
-        const textureLoader = new THREE.TextureLoader();
-        const loadedTextures = {};
-
-        function loadSmartTexture(relPath, fallbackColor) {
-            if (loadedTextures[relPath]) return loadedTextures[relPath];
-
-            const primaryUrl = resolveAssetUrl(relPath);
-            const fallbackUrl = '/opt/zoth-studio/public/' + relPath;
-
-            const tex = textureLoader.load(
-                primaryUrl,
-                (t) => {
-                    t.wrapS = THREE.RepeatWrapping;
-                    t.wrapT = THREE.RepeatWrapping;
-                },
-                undefined,
-                () => {
-                    // Fallback attempt
-                    textureLoader.load(fallbackUrl, (t) => {
-                        tex.image = t.image;
-                        tex.needsUpdate = true;
-                    }, undefined, () => {
-                        // Procedural Canvas fallback if missing
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 512;
-                        canvas.height = 512;
-                        const c = canvas.getContext('2d');
-                        c.fillStyle = fallbackColor || '#00ff9d';
-                        c.fillRect(0, 0, 512, 512);
-                        c.strokeStyle = '#ffffff';
-                        c.lineWidth = 8;
-                        c.beginPath();
-                        c.arc(256, 256, 200, 0, Math.PI * 2);
-                        c.stroke();
-                        c.font = 'bold 160px monospace';
-                        c.fillStyle = '#ffffff';
-                        c.textAlign = 'center';
-                        c.textBaseline = 'middle';
-                        c.fillText('Z', 256, 256);
-                        tex.image = canvas;
-                        tex.needsUpdate = true;
-                    });
-                }
-            );
-            loadedTextures[relPath] = tex;
-            return tex;
-        }
-
-        // Preload key textures
-        const texMatrix = loadSmartTexture('assets/mascot/azoth-code-matrix.jpg', '#00ff9d');
-        const texGold = loadSmartTexture('assets/brand/zoth-golden-z-512.png', '#ffd700');
-        const texNullAI = loadSmartTexture('assets/mascot/ghostbyte-nullai-icon.png', '#ff0055');
-        const texQuantum = loadSmartTexture('assets/mascot/azoth-quantum-orb.jpg', '#00f0ff');
-        const texSealMaster = loadSmartTexture('assets/brand/azoth-seal-masterpiece.jpg', '#ffd700');
-        const texSealGhost = loadSmartTexture('assets/mascot/azoth-ghostbyte.jpg', '#ff0055');
-        const texSealArena = loadSmartTexture('assets/mascot/azoth-quantum-arena.jpg', '#00f0ff');
-        const texSealHermetic = loadSmartTexture('assets/brand/zoth-seal-hermetic-hd.jpg', '#00ff9d');
-
-        // -------------------------------------------------------------------------
-        // 3. THREE.JS SCENE, CAMERA, RENDERER & POSTPROCESSING SETUP
-        // -------------------------------------------------------------------------
-        const canvas = document.getElementById('webgl-canvas');
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(currentTheme.bgClear, 0.0006);
-
-        const camera = new THREE.PerspectiveCamera(55, width / height, 1, 8000);
-        camera.position.set(0, 30, 440);
-
-        const renderer = new THREE.WebGLRenderer({
-            canvas: canvas,
-            antialias: true,
-            alpha: false,
-            powerPreference: 'high-performance'
-        });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setSize(width, height);
-        renderer.setClearColor(currentTheme.bgClear, 1);
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.15;
-
-        // OrbitControls
-        let controls = null;
-        if (typeof THREE.OrbitControls === 'function') {
-            controls = new THREE.OrbitControls(camera, canvas);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.045;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 0.65;
-            controls.minDistance = 140;
-            controls.maxDistance = 1400;
-            controls.maxPolarAngle = Math.PI * 0.85;
-            controls.minPolarAngle = Math.PI * 0.15;
-        }
-
-        // EffectComposer & UnrealBloomPass
-        let composer = null;
-        let bloomPass = null;
-        let bloomEnabled = true;
-
-        if (typeof THREE.EffectComposer === 'function' && typeof THREE.UnrealBloomPass === 'function') {
-            composer = new THREE.EffectComposer(renderer);
-            const renderPass = new THREE.RenderPass(scene, camera);
-            composer.addPass(renderPass);
-
-            bloomPass = new THREE.UnrealBloomPass(
-                new THREE.Vector2(width, height),
-                currentTheme.bloomStrength,
-                currentTheme.bloomRadius,
-                0.12
-            );
-            composer.addPass(bloomPass);
-        }
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
-        scene.add(ambientLight);
-
-        const pointLightCore = new THREE.PointLight(currentTheme.primaryNum, 3.5, 900);
-        pointLightCore.position.set(0, 0, 0);
-        scene.add(pointLightCore);
-
-        const pointLightOrbital = new THREE.PointLight(currentTheme.secondaryNum, 2.0, 700);
-        pointLightOrbital.position.set(220, 160, 180);
-        scene.add(pointLightOrbital);
-
-        // -------------------------------------------------------------------------
-        // 4. CENTRAL 3D ALCHEMICAL AZOTH ORB
-        // -------------------------------------------------------------------------
-        const orbGroup = new THREE.Group();
-        scene.add(orbGroup);
-
-        // Custom Shader for Alchemical Plasma Core
-        const orbVertexShader = `
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            uniform float uTime;
-            uniform float uDistort;
-
-            void main() {
-                vUv = uv;
-                vNormal = normalize(normalMatrix * normal);
-                vPosition = position;
-
-                vec3 pos = position;
-                float wave = sin(pos.x * 0.08 + uTime * 2.5) * cos(pos.y * 0.08 + uTime * 2.0) * sin(pos.z * 0.08 + uTime * 1.8);
-                pos += normal * wave * uDistort;
-
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `;
-
-        const orbFragmentShader = `
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            uniform float uTime;
-            uniform vec3 uColorPrimary;
-            uniform vec3 uColorSecondary;
-            uniform sampler2D uTexture;
-            uniform float uNoiseIntensity;
-
-            void main() {
-                vec2 uv = vUv;
-                // Subtle animated UV swirl
-                uv.x += sin(uv.y * 6.0 + uTime * 0.8) * 0.015;
-                uv.y += cos(uv.x * 6.0 + uTime * 0.7) * 0.015;
-
-                vec4 texColor = texture2D(uTexture, uv);
-                
-                // Fresnel rim glow
-                vec3 viewDir = normalize(-vPosition);
-                float fresnel = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.2);
-
-                // Harmonic plasma bands
-                float band = sin(vPosition.y * 0.12 + uTime * 2.0) * 0.5 + 0.5;
-                vec3 plasma = mix(uColorPrimary, uColorSecondary, band);
-
-                // Rich alchemical blend preserving texture details
-                vec3 finalColor = mix(texColor.rgb, plasma, 0.35);
-                finalColor += uColorPrimary * fresnel * 0.85;
-                finalColor += uColorSecondary * pow(fresnel, 3.5) * 1.1;
-
-                gl_FragColor = vec4(finalColor, 0.98);
-            }
-        `;
-
-        const orbUniforms = {
-            uTime: { value: 0 },
-            uDistort: { value: 2.2 },
-            uColorPrimary: { value: new THREE.Color(currentTheme.primaryNum) },
-            uColorSecondary: { value: new THREE.Color(currentTheme.secondaryNum) },
-            uTexture: { value: texMatrix },
-            uNoiseIntensity: { value: 0.6 }
-        };
-
-        const orbGeo = new THREE.SphereGeometry(48, 64, 64);
-        const orbMat = new THREE.ShaderMaterial({
-            vertexShader: orbVertexShader,
-            fragmentShader: orbFragmentShader,
-            uniforms: orbUniforms,
-            transparent: true
-        });
-        const orbMesh = new THREE.Mesh(orbGeo, orbMat);
-        orbGroup.add(orbMesh);
-
-        // Nested Metatron Sacred Geometry & Wireframe Energy Rings
-        const ringMaterial1 = new THREE.MeshBasicMaterial({
-            color: currentTheme.primaryNum,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.55
-        });
-        const ringGeo1 = new THREE.TorusGeometry(74, 1.2, 16, 100);
-        const ringMesh1 = new THREE.Mesh(ringGeo1, ringMaterial1);
-        ringMesh1.rotation.x = Math.PI / 3;
-        orbGroup.add(ringMesh1);
-
-        const ringMaterial2 = new THREE.MeshBasicMaterial({
-            color: currentTheme.secondaryNum,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.5
-        });
-        const ringGeo2 = new THREE.TorusGeometry(92, 0.9, 16, 100);
-        const ringMesh2 = new THREE.Mesh(ringGeo2, ringMaterial2);
-        ringMesh2.rotation.y = Math.PI / 4;
-        orbGroup.add(ringMesh2);
-
-        const ringMaterial3 = new THREE.MeshBasicMaterial({
-            color: currentTheme.primaryNum,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.4
-        });
-        const ringGeo3 = new THREE.TorusGeometry(110, 0.7, 16, 100);
-        const ringMesh3 = new THREE.Mesh(ringGeo3, ringMaterial3);
-        ringMesh3.rotation.z = Math.PI / 6;
-        orbGroup.add(ringMesh3);
-
-        // Outer Metatron Sacred Icosahedron Cage
-        const cageGeo = new THREE.IcosahedronGeometry(130, 1);
-        const cageMat = new THREE.MeshBasicMaterial({
-            color: currentTheme.primaryNum,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.25
-        });
-        const cageMesh = new THREE.Mesh(cageGeo, cageMat);
-        orbGroup.add(cageMesh);
-
-        // -------------------------------------------------------------------------
-        // 5. ROTATING 3D PLANETARY & ALCHEMICAL GLYPH SPRITES
-        // -------------------------------------------------------------------------
-        const GLYPH_LIST = ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '🜂', '🜄', '🜁', '🜃', '🝠'];
-        const glyphGroup = new THREE.Group();
-        orbGroup.add(glyphGroup);
-
-        function createGlyphTexture(char, colorHex) {
-            const gCanvas = document.createElement('canvas');
-            gCanvas.width = 128;
-            gCanvas.height = 128;
-            const gCtx = gCanvas.getContext('2d');
-            gCtx.clearRect(0, 0, 128, 128);
-
-            // Subtle outer glow
-            gCtx.shadowColor = colorHex;
-            gCtx.shadowBlur = 18;
-
-            gCtx.font = 'bold 64px sans-serif';
-            gCtx.fillStyle = '#ffffff';
-            gCtx.textAlign = 'center';
-            gCtx.textBaseline = 'middle';
-            gCtx.fillText(char, 64, 64);
-
-            // Second pass for inner tint
-            gCtx.shadowBlur = 4;
-            gCtx.fillStyle = colorHex;
-            gCtx.fillText(char, 64, 64);
-
-            const gTexture = new THREE.CanvasTexture(gCanvas);
-            return gTexture;
-        }
-
-        const glyphSprites = [];
-        const glyphRadius = 165;
-
-        GLYPH_LIST.forEach((glyph, index) => {
-            const angle = (index / GLYPH_LIST.length) * Math.PI * 2;
-            const texture = createGlyphTexture(glyph, currentTheme.primaryHex);
-            const spriteMat = new THREE.SpriteMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0.85,
-                blending: THREE.AdditiveBlending
-            });
-            const sprite = new THREE.Sprite(spriteMat);
-            sprite.scale.set(32, 32, 1);
-            sprite.userData = {
-                baseAngle: angle,
-                speed: 0.008 + (index % 3) * 0.003,
-                radius: glyphRadius + (index % 2) * 20,
-                elevation: (Math.sin(index) * 45)
-            };
-            glyphGroup.add(sprite);
-            glyphSprites.push(sprite);
-        });
-
-        // -------------------------------------------------------------------------
-        // 6. HOLOGRAPHIC PROJECTION PLANES WITH AUTHENTIC SEALS
-        // -------------------------------------------------------------------------
-        const holoGroup = new THREE.Group();
-        orbGroup.add(holoGroup);
-
-        const holoTextures = [texSealMaster, texSealHermetic, texSealGhost, texSealArena];
-        const holoMeshes = [];
-
-        holoTextures.forEach((tex, i) => {
-            const planeGeo = new THREE.PlaneGeometry(55, 55);
-            const planeMat = new THREE.MeshBasicMaterial({
-                map: tex,
-                transparent: true,
-                opacity: 0.45,
-                side: THREE.DoubleSide,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            const plane = new THREE.Mesh(planeGeo, planeMat);
-            const orbitAngle = (i / holoTextures.length) * Math.PI * 2;
-            plane.userData = { orbitAngle: orbitAngle, distance: 210, speed: 0.012 * (i % 2 === 0 ? 1 : -1) };
-            holoGroup.add(plane);
-            holoMeshes.push(plane);
-        });
-
-        // -------------------------------------------------------------------------
-        // 7. 3D MATRIX RAIN & PARTICLE STORM ENGINE WITH Z-DEPTH
-        // -------------------------------------------------------------------------
-        const MATRIX_CHARS = '0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈ☉☽☿♀♂🜂🜄🜁🜃';
-        const STREAM_COUNT = 180;
-        const STREAM_LENGTH = 14;
-
-        // Construct 3D matrix particle system
-        const totalMatrixParticles = STREAM_COUNT * STREAM_LENGTH;
-        const matrixPositions = new Float32Array(totalMatrixParticles * 3);
-        const matrixColors = new Float32Array(totalMatrixParticles * 3);
-        const matrixSizes = new Float32Array(totalMatrixParticles);
-
-        const streams = [];
-        for (let s = 0; s < STREAM_COUNT; s++) {
-            const x = (Math.random() - 0.5) * 2400;
-            const y = (Math.random() - 0.5) * 1800 + 400;
-            const z = (Math.random() - 0.5) * 2000;
-            const speed = 2.8 + Math.random() * 4.5;
-            streams.push({ x, y, z, speed, length: STREAM_LENGTH });
-        }
-
-        const matrixGeo = new THREE.BufferGeometry();
-        matrixGeo.setAttribute('position', new THREE.BufferAttribute(matrixPositions, 3));
-        matrixGeo.setAttribute('color', new THREE.BufferAttribute(matrixColors, 3));
-        matrixGeo.setAttribute('size', new THREE.BufferAttribute(matrixSizes, 1));
-
-        // Create Matrix glyph texture atlas
-        function createMatrixPointTexture() {
-            const pCanvas = document.createElement('canvas');
-            pCanvas.width = 64;
-            pCanvas.height = 64;
-            const pCtx = pCanvas.getContext('2d');
-            const grad = pCtx.createRadialGradient(32, 32, 4, 32, 32, 30);
-            grad.addColorStop(0, '#ffffff');
-            grad.addColorStop(0.3, '#00ff9d');
-            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-            pCtx.fillStyle = grad;
-            pCtx.beginPath();
-            pCtx.arc(32, 32, 30, 0, Math.PI * 2);
-            pCtx.fill();
-            return new THREE.CanvasTexture(pCanvas);
-        }
-
-        const matrixTexture = createMatrixPointTexture();
-
-        const matrixMat = new THREE.PointsMaterial({
-            size: 8,
-            map: matrixTexture,
-            vertexColors: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        const matrixPoints = new THREE.Points(matrixGeo, matrixMat);
-        scene.add(matrixPoints);
-
-        // 3D Ambient Stardust Galaxy Field
-        const STAR_COUNT = 3200;
-        const starPositions = new Float32Array(STAR_COUNT * 3);
-        const starColors = new Float32Array(STAR_COUNT * 3);
-        const starVelocities = [];
-
-        const pColorObj = new THREE.Color(currentTheme.primaryNum);
-        const sColorObj = new THREE.Color(currentTheme.secondaryNum);
-
-        for (let i = 0; i < STAR_COUNT; i++) {
-            const rad = 100 + Math.random() * 1200;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = (Math.random() - 0.5) * Math.PI * 0.75;
-
-            const x = rad * Math.cos(phi) * Math.cos(theta);
-            const y = rad * Math.sin(phi);
-            const z = rad * Math.cos(phi) * Math.sin(theta);
-
-            starPositions[i * 3] = x;
-            starPositions[i * 3 + 1] = y;
-            starPositions[i * 3 + 2] = z;
-
-            const col = Math.random() > 0.3 ? pColorObj : sColorObj;
-            starColors[i * 3] = col.r;
-            starColors[i * 3 + 1] = col.g;
-            starColors[i * 3 + 2] = col.b;
-
-            starVelocities.push({
-                radius: rad,
-                angle: theta,
-                speed: (0.001 + (1200 - rad) * 0.00001) * (Math.random() > 0.5 ? 1 : -1),
-                yVel: (Math.random() - 0.5) * 0.3
-            });
-        }
-
-        const starGeo = new THREE.BufferGeometry();
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-
-        const starMat = new THREE.PointsMaterial({
-            size: 4.5,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.75,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        const starPoints = new THREE.Points(starGeo, starMat);
-        scene.add(starPoints);
-
-        // -------------------------------------------------------------------------
-        // 8. NOVA EXPLOSION & BURST PARTICLES ENGINE
-        // -------------------------------------------------------------------------
-        const NOVA_COUNT = 600;
-        const novaPositions = new Float32Array(NOVA_COUNT * 3);
-        const novaColors = new Float32Array(NOVA_COUNT * 3);
-        const novaVelocities = [];
-        let novaActive = false;
-        let novaProgress = 0;
-
-        for (let i = 0; i < NOVA_COUNT; i++) {
-            novaPositions[i * 3] = 0;
-            novaPositions[i * 3 + 1] = 0;
-            novaPositions[i * 3 + 2] = 0;
-
-            novaColors[i * 3] = 1;
-            novaColors[i * 3 + 1] = 1;
-            novaColors[i * 3 + 2] = 1;
-
-            const u = Math.random();
-            const v = Math.random();
-            const theta = u * 2.0 * Math.PI;
-            const phi = Math.acos(2.0 * v - 1.0);
-            const speed = 12 + Math.random() * 28;
-
-            const vx = speed * Math.sin(phi) * Math.cos(theta);
-            const vy = speed * Math.sin(phi) * Math.sin(theta);
-            const vz = speed * Math.cos(phi);
-
-            novaVelocities.push({ vx, vy, vz, life: 1.0 });
-        }
-
-        const novaGeo = new THREE.BufferGeometry();
-        novaGeo.setAttribute('position', new THREE.BufferAttribute(novaPositions, 3));
-        novaGeo.setAttribute('color', new THREE.BufferAttribute(novaColors, 3));
-
-        const novaMat = new THREE.PointsMaterial({
-            size: 8.0,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.0,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        const novaPoints = new THREE.Points(novaGeo, novaMat);
-        scene.add(novaPoints);
-
-        // Expanding Shockwave Ring Mesh
-        const shockGeo = new THREE.RingGeometry(1, 14, 64);
-        const shockMat = new THREE.MeshBasicMaterial({
-            color: currentTheme.primaryNum,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: 0.0,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-        const shockMesh = new THREE.Mesh(shockGeo, shockMat);
-        shockMesh.rotation.x = Math.PI / 2;
-        scene.add(shockMesh);
-
-        function triggerNovaBurst() {
-            novaActive = true;
-            novaProgress = 0;
-            novaMat.opacity = 1.0;
-            shockMat.opacity = 0.9;
-            shockMesh.scale.set(1, 1, 1);
-
-            const posArr = novaGeo.attributes.position.array;
-            const colArr = novaGeo.attributes.color.array;
-            const pCol = new THREE.Color(currentTheme.primaryNum);
-
-            for (let i = 0; i < NOVA_COUNT; i++) {
-                posArr[i * 3] = 0;
-                posArr[i * 3 + 1] = 0;
-                posArr[i * 3 + 2] = 0;
-
-                colArr[i * 3] = pCol.r;
-                colArr[i * 3 + 1] = pCol.g;
-                colArr[i * 3 + 2] = pCol.b;
-            }
-            novaGeo.attributes.position.needsUpdate = true;
-            novaGeo.attributes.color.needsUpdate = true;
-
-            // Spike bloom temporarily
-            if (bloomPass) {
-                bloomPass.strength = currentTheme.bloomStrength * 2.5;
-            }
-
-            // Play Nova Sound
-            playNovaSound();
-        }
-
-        // -------------------------------------------------------------------------
-        // 9. PROCEDURAL WEB AUDIO ALCHEMICAL SYNTHESIZER
-        // -------------------------------------------------------------------------
-        let audioCtx = null;
-        let isAudioPlaying = false;
-        let droneOsc1 = null;
-        let droneOsc2 = null;
-        let filterNode = null;
-        let masterGain = null;
-        let analyserNode = null;
-
-        function initWebAudio() {
-            if (audioCtx) return;
-            try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContextClass();
-
-                masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-
-                analyserNode = audioCtx.createAnalyser();
-                analyserNode.fftSize = 64;
-
-                filterNode = audioCtx.createBiquadFilter();
-                filterNode.type = 'lowpass';
-                filterNode.frequency.setValueAtTime(800, audioCtx.currentTime);
-                filterNode.Q.setValueAtTime(4.0, audioCtx.currentTime);
-
-                // Sub Drone (Solfeggio 432 / 528 Hz base harmonic)
-                droneOsc1 = audioCtx.createOscillator();
-                droneOsc1.type = 'sawtooth';
-                droneOsc1.frequency.setValueAtTime(54.0, audioCtx.currentTime); // A1 Sub-drone
-
-                droneOsc2 = audioCtx.createOscillator();
-                droneOsc2.type = 'sine';
-                droneOsc2.frequency.setValueAtTime(108.0, audioCtx.currentTime); // Harmonic
-
-                const droneGain = audioCtx.createGain();
-                droneGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-
-                droneOsc1.connect(filterNode);
-                droneOsc2.connect(filterNode);
-                filterNode.connect(analyserNode);
-                analyserNode.connect(masterGain);
-                masterGain.connect(audioCtx.destination);
-
-                droneOsc1.start();
-                droneOsc2.start();
-                isAudioPlaying = true;
-            } catch (err) {
-                console.warn('Web Audio init suppressed:', err);
-            }
-        }
-
-        function toggleAudio() {
-            if (!audioCtx) {
-                initWebAudio();
-            } else {
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                    isAudioPlaying = true;
-                } else if (audioCtx.state === 'running') {
-                    audioCtx.suspend();
-                    isAudioPlaying = false;
-                }
-            }
-            updateAudioButtonUI();
-        }
-
-        function playNovaSound() {
-            if (!audioCtx || audioCtx.state !== 'running') return;
-            try {
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(260, now);
-                osc.frequency.exponentialRampToValueAtTime(32, now + 0.9);
-
-                gain.gain.setValueAtTime(0.6, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
-
-                osc.connect(gain);
-                gain.connect(masterGain);
-
-                osc.start(now);
-                osc.stop(now + 1.0);
-            } catch (e) {}
-        }
-
-        function updateAudioButtonUI() {
-            const btn = document.getElementById('btn-audio');
-            if (isAudioPlaying && audioCtx && audioCtx.state === 'running') {
-                btn.classList.add('active');
-                btn.innerHTML = '🔊 Synth ON [A]';
-            } else {
-                btn.classList.remove('active');
-                btn.innerHTML = '🔇 Synth OFF [A]';
-            }
-        }
-
-        // -------------------------------------------------------------------------
-        // 10. REALTIME HUD SPARKLINE & TELEMETRY
-        // -------------------------------------------------------------------------
-        const sparkCanvas = document.getElementById('sparkline-canvas');
-        const sparkCtx = sparkCanvas.getContext('2d');
-        const sparkHistory = new Array(60).fill(0.5);
-
-        function updateSparkline(val) {
-            sparkHistory.push(val);
-            sparkHistory.shift();
-
-            const w = sparkCanvas.width = sparkCanvas.clientWidth * (window.devicePixelRatio || 1);
-            const h = sparkCanvas.height = sparkCanvas.clientHeight * (window.devicePixelRatio || 1);
-
-            sparkCtx.clearRect(0, 0, w, h);
-
-            // Grid lines
-            sparkCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-            sparkCtx.lineWidth = 1;
-            sparkCtx.beginPath();
-            sparkCtx.moveTo(0, h * 0.5);
-            sparkCtx.lineTo(w, h * 0.5);
-            sparkCtx.stroke();
-
-            // Waveform path
-            sparkCtx.strokeStyle = currentTheme.primaryHex;
-            sparkCtx.lineWidth = 2;
-            sparkCtx.beginPath();
-
-            const step = w / (sparkHistory.length - 1);
-            sparkHistory.forEach((pt, i) => {
-                const y = h - pt * h * 0.85 - h * 0.075;
-                if (i === 0) sparkCtx.moveTo(0, y);
-                else sparkCtx.lineTo(i * step, y);
-            });
-            sparkCtx.stroke();
-
-            // Glow under fill
-            sparkCtx.lineTo(w, h);
-            sparkCtx.lineTo(0, h);
-            sparkCtx.fillStyle = currentTheme.hudGlow;
-            sparkCtx.fill();
-        }
-
-        // -------------------------------------------------------------------------
-        // 11. THEME SWITCHING ENGINE
-        // -------------------------------------------------------------------------
-        function applyTheme(themeKey) {
-            if (!THEMES[themeKey]) return;
-            currentThemeKey = themeKey;
-            currentTheme = THEMES[themeKey];
-
-            // Update CSS Root Variables
-            document.documentElement.style.setProperty('--primary', currentTheme.primaryHex);
-            document.documentElement.style.setProperty('--primary-glow', currentTheme.hudGlow);
-            document.documentElement.style.setProperty('--secondary', currentTheme.primaryHex === '#ffd700' ? '#ff9900' : '#ffd700');
-            document.documentElement.style.setProperty('--bg-base', currentTheme.bgHex);
-            document.documentElement.style.setProperty('--hud-border', currentTheme.hudBorder);
-            document.documentElement.style.setProperty('--text-main', currentTheme.textMain);
-            document.documentElement.style.setProperty('--text-dim', currentTheme.textDim);
-
-            // Update UI Badges
-            document.getElementById('theme-glyph').textContent = currentTheme.glyph;
-            document.getElementById('quick-theme-name').textContent = currentTheme.name.toUpperCase();
-            document.getElementById('val-freq').textContent = currentTheme.freq;
-
-            // Update Active Theme Pill
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                if (btn.dataset.theme === themeKey) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-
-            // Update WebGL Scene & Materials
-            renderer.setClearColor(currentTheme.bgClear, 1);
-            scene.fog.color.setHex(currentTheme.bgClear);
-
-            pointLightCore.color.setHex(currentTheme.primaryNum);
-            pointLightOrbital.color.setHex(currentTheme.secondaryNum);
-
-            ringMaterial1.color.setHex(currentTheme.primaryNum);
-            ringMaterial2.color.setHex(currentTheme.secondaryNum);
-            ringMaterial3.color.setHex(currentTheme.primaryNum);
-            cageMat.color.setHex(currentTheme.primaryNum);
-            shockMat.color.setHex(currentTheme.primaryNum);
-
-            orbUniforms.uColorPrimary.value.setHex(currentTheme.primaryNum);
-            orbUniforms.uColorSecondary.value.setHex(currentTheme.secondaryNum);
-
-            if (themeKey === 'emerald') orbUniforms.uTexture.value = texMatrix;
-            else if (themeKey === 'gold') orbUniforms.uTexture.value = texGold;
-            else if (themeKey === 'crimson') orbUniforms.uTexture.value = texNullAI;
-            else if (themeKey === 'cyan') orbUniforms.uTexture.value = texQuantum;
-
-            // Update Hologram projection discs for current theme
-            if (currentTheme.holos && currentTheme.holos.length > 0) {
-                holoMeshes.forEach((mesh, idx) => {
-                    const holoPath = currentTheme.holos[idx % currentTheme.holos.length];
-                    mesh.material.map = loadSmartTexture(holoPath, currentTheme.primaryHex);
-                    mesh.material.needsUpdate = true;
-                });
-            }
-
-            if (bloomPass) {
-                bloomPass.strength = currentTheme.bloomStrength;
-                bloomPass.radius = currentTheme.bloomRadius;
-            }
-
-            // Update glyph sprites tint
-            glyphSprites.forEach((sprite, idx) => {
-                sprite.material.map = createGlyphTexture(GLYPH_LIST[idx], currentTheme.primaryHex);
-                sprite.material.needsUpdate = true;
-            });
-
-            // Update Star Particle Colors
-            const starColArr = starGeo.attributes.color.array;
-            const pCol = new THREE.Color(currentTheme.primaryNum);
-            const sCol = new THREE.Color(currentTheme.secondaryNum);
-
-            for (let i = 0; i < STAR_COUNT; i++) {
-                const c = Math.random() > 0.35 ? pCol : sCol;
-                starColArr[i * 3] = c.r;
-                starColArr[i * 3 + 1] = c.g;
-                starColArr[i * 3 + 2] = c.b;
-            }
-            starGeo.attributes.color.needsUpdate = true;
-        }
-
-        function cycleNextTheme() {
-            const keys = Object.keys(THEMES);
-            const nextIdx = (keys.indexOf(currentThemeKey) + 1) % keys.length;
-            applyTheme(keys[nextIdx]);
-        }
-
-        // -------------------------------------------------------------------------
-        // 12. EVENT LISTENERS & INTERACTION CONTROLS
-        // -------------------------------------------------------------------------
-        // HUD Collapse Toggle
-        const hudDrawer = document.getElementById('hud-drawer');
-        const toggleHudBtn = document.getElementById('toggle-hud-btn');
-
-        function toggleHud() {
-            hudDrawer.classList.toggle('collapsed');
-        }
-        toggleHudBtn.addEventListener('click', toggleHud);
-
-        // Theme Pills Click
-        document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
-        });
-        document.getElementById('quick-theme-btn').addEventListener('click', cycleNextTheme);
-
-        // Buttons
-        document.getElementById('btn-nova').addEventListener('click', triggerNovaBurst);
-        document.getElementById('btn-audio').addEventListener('click', toggleAudio);
-
-        const btnBloom = document.getElementById('btn-bloom');
-        btnBloom.addEventListener('click', () => {
-            bloomEnabled = !bloomEnabled;
-            btnBloom.classList.toggle('active', bloomEnabled);
-            btnBloom.innerHTML = bloomEnabled ? '✨ Bloom ON [B]' : '✨ Bloom OFF [B]';
-        });
-
-        let warpActive = false;
-        const btnWarp = document.getElementById('btn-warp');
-        function toggleWarp() {
-            warpActive = !warpActive;
-            btnWarp.classList.toggle('active', warpActive);
-        }
-        btnWarp.addEventListener('click', toggleWarp);
-
-        // Canvas Click -> Nova Burst
-        canvas.addEventListener('click', (e) => {
-            // Trigger nova on click if not dragging
-            triggerNovaBurst();
-        });
-
-        // Keyboard Shortcuts
-        window.addEventListener('keydown', (e) => {
-            const key = e.key.toUpperCase();
-            if (key === 'M') cycleNextTheme();
-            if (key === 'C') triggerNovaBurst();
-            if (key === 'A') toggleAudio();
-            if (key === 'H') toggleHud();
-            if (key === 'B') btnBloom.click();
-            if (key === ' ') {
-                e.preventDefault();
-                toggleWarp();
-            }
-            if (key === 'R' && controls) {
-                camera.position.set(0, 30, 440);
-                controls.target.set(0, 0, 0);
-            }
-        });
-
-        // Resize Listener
-        function onResize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize(width, height);
-            if (composer) composer.setSize(width, height);
-            if (bloomPass) bloomPass.resolution.set(width, height);
-        }
-        window.addEventListener('resize', onResize);
-
-        // -------------------------------------------------------------------------
-        // 13. ANIMATION RENDER LOOP & TELEMETRY UPDATE
-        // -------------------------------------------------------------------------
-        let lastTime = performance.now();
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-        const fpsDisplay = document.getElementById('fps-counter');
-        const eqBars = document.querySelectorAll('.audio-bar');
-        const audioFreqArray = new Uint8Array(32);
-
-        function animate(timestamp) {
-            requestAnimationFrame(animate);
-
-            const dt = (timestamp - lastTime) * 0.001;
-            lastTime = timestamp;
-
-            // Calculate FPS
-            frameCount++;
-            if (timestamp - lastFpsUpdate >= 500) {
-                const fps = Math.round((frameCount * 1000) / (timestamp - lastFpsUpdate));
-                fpsDisplay.textContent = fps + ' FPS';
-                frameCount = 0;
-                lastFpsUpdate = timestamp;
-            }
-
-            const time = timestamp * 0.001;
-            const warpMultiplier = warpActive ? 3.8 : 1.0;
-
-            // Update Shader Uniforms
-            orbUniforms.uTime.value = time * warpMultiplier;
-
-            // Rotate Orb & Metatron Energy Rings
-            orbMesh.rotation.y = time * 0.35 * warpMultiplier;
-            ringMesh1.rotation.x += 0.012 * warpMultiplier;
-            ringMesh1.rotation.y += 0.008 * warpMultiplier;
-            ringMesh2.rotation.y -= 0.015 * warpMultiplier;
-            ringMesh2.rotation.z += 0.010 * warpMultiplier;
-            ringMesh3.rotation.z += 0.009 * warpMultiplier;
-            cageMesh.rotation.x = time * 0.12 * warpMultiplier;
-            cageMesh.rotation.y = time * 0.18 * warpMultiplier;
-
-            // Breathe Cage Geometry
-            const cageScale = 1.0 + Math.sin(time * 2.0) * 0.06;
-            cageMesh.scale.set(cageScale, cageScale, cageScale);
-
-            // Orbit 3D Glyphs
-            glyphSprites.forEach((sprite) => {
-                const data = sprite.userData;
-                data.baseAngle += data.speed * warpMultiplier;
-                const gx = Math.cos(data.baseAngle) * data.radius;
-                const gz = Math.sin(data.baseAngle) * data.radius;
-                const gy = data.elevation + Math.sin(time * 2.0 + data.baseAngle) * 12;
-                sprite.position.set(gx, gy, gz);
-            });
-
-            // Orbit Hologram Seals
-            holoMeshes.forEach((holo) => {
-                const d = holo.userData;
-                d.orbitAngle += d.speed * warpMultiplier;
-                holo.position.x = Math.cos(d.orbitAngle) * d.distance;
-                holo.position.z = Math.sin(d.orbitAngle) * d.distance;
-                holo.position.y = Math.sin(time * 1.5 + d.orbitAngle) * 35;
-                holo.lookAt(camera.position);
-            });
-
-            // Update 3D Matrix Rain Streams
-            const mPos = matrixGeo.attributes.position.array;
-            const mCol = matrixGeo.attributes.color.array;
-            const pCol = new THREE.Color(currentTheme.primaryNum);
-            const sCol = new THREE.Color(currentTheme.secondaryNum);
-
-            let pIdx = 0;
-            streams.forEach((stream) => {
-                stream.y -= stream.speed * warpMultiplier;
-                if (stream.y < -900) {
-                    stream.y = 900 + Math.random() * 200;
-                    stream.x = (Math.random() - 0.5) * 2400;
-                    stream.z = (Math.random() - 0.5) * 2000;
-                }
-
-                for (let k = 0; k < stream.length; k++) {
-                    const particleY = stream.y + k * 22;
-                    mPos[pIdx * 3] = stream.x;
-                    mPos[pIdx * 3 + 1] = particleY;
-                    mPos[pIdx * 3 + 2] = stream.z;
-
-                    // Lead character is glowing white/bright gold, trailing characters fade
-                    if (k === 0) {
-                        mCol[pIdx * 3] = 1.0;
-                        mCol[pIdx * 3 + 1] = 1.0;
-                        mCol[pIdx * 3 + 2] = 1.0;
-                    } else {
-                        const alpha = 1.0 - k / stream.length;
-                        mCol[pIdx * 3] = pCol.r * alpha;
-                        mCol[pIdx * 3 + 1] = pCol.g * alpha;
-                        mCol[pIdx * 3 + 2] = pCol.b * alpha;
-                    }
-                    pIdx++;
-                }
-            });
-            matrixGeo.attributes.position.needsUpdate = true;
-            matrixGeo.attributes.color.needsUpdate = true;
-
-            // Update 3D Galaxy Stardust Swirl
-            const starPos = starGeo.attributes.position.array;
-            for (let i = 0; i < STAR_COUNT; i++) {
-                const vel = starVelocities[i];
-                vel.angle += vel.speed * warpMultiplier;
-                starPos[i * 3] = vel.radius * Math.cos(vel.angle);
-                starPos[i * 3 + 2] = vel.radius * Math.sin(vel.angle);
-                starPos[i * 3 + 1] += vel.yVel * warpMultiplier;
-
-                if (starPos[i * 3 + 1] > 600) starPos[i * 3 + 1] = -600;
-                if (starPos[i * 3 + 1] < -600) starPos[i * 3 + 1] = 600;
-            }
-            starGeo.attributes.position.needsUpdate = true;
-
-            // Update Nova Burst Physics
-            if (novaActive) {
-                novaProgress += dt * 1.8;
-                const nPos = novaGeo.attributes.position.array;
-                const nCol = novaGeo.attributes.color.array;
-
-                for (let i = 0; i < NOVA_COUNT; i++) {
-                    const vel = novaVelocities[i];
-                    nPos[i * 3] += vel.vx * (1.0 - novaProgress * 0.45);
-                    nPos[i * 3 + 1] += vel.vy * (1.0 - novaProgress * 0.45);
-                    nPos[i * 3 + 2] += vel.vz * (1.0 - novaProgress * 0.45);
-                }
-                novaGeo.attributes.position.needsUpdate = true;
-
-                novaMat.opacity = Math.max(0, 1.0 - novaProgress);
-                shockMesh.scale.multiplyScalar(1.08);
-                shockMat.opacity = Math.max(0, 0.9 - novaProgress * 1.2);
-
-                // Restore Bloom smoothly
-                if (bloomPass) {
-                    bloomPass.strength = THREE.MathUtils.lerp(
-                        bloomPass.strength,
-                        currentTheme.bloomStrength,
-                        0.05
-                    );
-                }
-
-                if (novaProgress >= 1.0) {
-                    novaActive = false;
-                    novaMat.opacity = 0;
-                    shockMat.opacity = 0;
-                }
-            }
-
-            // Update OrbitControls
-            if (controls) controls.update();
-
-            // Audio EQ Analysis or Synthetic Fallback
-            if (analyserNode && isAudioPlaying) {
-                analyserNode.getByteFrequencyData(audioFreqArray);
-                eqBars.forEach((bar, idx) => {
-                    const val = audioFreqArray[idx] || 0;
-                    const h = Math.max(3, (val / 255) * 22);
-                    bar.style.height = h + 'px';
-                });
-            } else {
-                // Procedural rhythmic bounce
-                eqBars.forEach((bar, idx) => {
-                    const h = Math.max(3, (Math.sin(time * 5 + idx * 0.6) * 0.5 + 0.5) * 18);
-                    bar.style.height = h + 'px';
-                });
-            }
-
-            // Update Sparkline
-            const sparkVal = Math.sin(time * 3.5) * 0.35 + Math.cos(time * 7.2) * 0.15 + 0.5;
-            updateSparkline(sparkVal);
-
-            // Render Frame
-            if (composer && bloomEnabled) {
-                composer.render();
-            } else {
-                renderer.render(scene, camera);
-            }
-        }
-
-        // Expose public API for system scripting & telemetry
-        window.applyTheme = applyTheme;
-        window.triggerNovaBurst = triggerNovaBurst;
-        window.toggleAudio = toggleAudio;
-        window.cycleNextTheme = cycleNextTheme;
-        window.ZothEngine = {
-            applyTheme,
-            triggerNovaBurst,
-            toggleAudio,
-            cycleNextTheme,
-            getCurrentTheme: () => currentTheme,
-            getThemes: () => THEMES,
-            getScene: () => scene,
-            getCamera: () => camera,
-            getControls: () => controls,
-            getRenderer: () => renderer
-        };
-
-        // Initialize Theme & Start Engine Loop
-        applyTheme('emerald');
-        requestAnimationFrame(animate);
-
-    })();
-    </script>
 </body>
 </html>
