@@ -540,6 +540,22 @@ XCURSOR_SIZE=24
     }
   </script>
   <script src="/zothos_a100_kernel_deck.js" defer></script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "zoth-os",
+          toolName: "Zoth OS v3.4.0",
+          tagline: "The ultimate Debian Linux distribution built from the ground up for AI agents and humans!",
+          accentColor: "#10B981",
+          steps: [{"icon": "\ud83d\udc27", "title": "What is ZothOS?", "desc": "A bootable, sovereign Linux operating system loaded with 43 AI workstations, 23 local daemons, and zero corporate telemetry."}, {"icon": "\ud83e\udd16", "title": "Built for AI Agents", "desc": "Pre-configured with local Ollama, PyTorch, Ghidra, HexStrike, and native MCP servers out-of-the-box."}, {"icon": "\ud83d\udcbe", "title": "Download Live ISO", "desc": "Boot directly from a USB stick without touching your hard drive, or install it permanently as your daily driver."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
