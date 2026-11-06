@@ -228,37 +228,55 @@ WallpaperItem {
                 }
             }
 
-            // ── B. 1nc0gn30.si 3D Braille Lattice Hologram Figure ──────────
+            // ── B. 1nc0gn30.si 3D Braille Lattice Hologram Figure (Prominent Backdrop) ──
+            var poses = HologramData.hologramPoses;
             var frames = HologramData.hologramFrames;
-            if (frames && frames.length > 0) {
+            var hLines = null;
+
+            // Display the iconic 1nc0gn30 Braille Sentinel / Hero figure with dynamic mouse parallax
+            if (poses && poses.hero && poses.hero.length > 0) {
+                // If cursor is actively swung horizontally, cycle through turntable frames; otherwise display hero pose
+                if (Math.abs(normMx) > 0.45 && frames && frames.length > 0) {
+                    var totalF = frames.length;
+                    var curF = (Math.floor(t * 3.0) + Math.floor(normMx * 8.0) + totalF * 40) % totalF;
+                    hLines = frames[curF];
+                } else {
+                    hLines = poses.hero;
+                }
+            } else if (frames && frames.length > 0) {
                 var totalF = frames.length;
-                // Rotate smoothly over time, influenced interactively by mouse position
-                var curF = (Math.floor(t * 2.4) + Math.floor(normMx * 6.0) + totalF * 20) % totalF;
-                var hLines = frames[curF];
-                var hcx = W * 0.5;
-                var hcy = H * 0.44 - 35;
-                var lineH = 11.0;
+                var curF = (Math.floor(t * 2.5) + Math.floor(normMx * 6.0) + totalF * 20) % totalF;
+                hLines = frames[curF];
+            }
+
+            if (hLines && hLines.length > 0) {
+                var hcx = W * 0.5 + normMx * 32.0;
+                var hcy = H * 0.44 - 30 + normMy * 20.0;
+                var lineH = 12.0;
                 var startHY = hcy - (hLines.length * lineH) * 0.5;
 
-                ctx.font = '10px "JetBrains Mono", "DejaVu Sans Mono", monospace';
+                ctx.font = 'bold 12px "JetBrains Mono", "DejaVu Sans Mono", monospace';
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
+
+                // Holographic vertical laser scan beam
+                var sweepY = ((t * 0.45) % 1.3) - 0.15;
 
                 for (var hli = 0; hli < hLines.length; hli++) {
                     var hLine = hLines[hli];
                     if (!hLine || hLine.trim().length === 0) continue;
 
-                    // Holographic phosphor sweep across the 3D figure
                     var lineNormY = hli / hLines.length;
-                    var scanLineGlow = Math.max(0.0, 1.0 - Math.abs(lineNormY - ((t * 0.55) % 1.25 - 0.12)) * 4.5);
-                    var hAlpha = Math.min(0.85, 0.28 + scanLineGlow * 0.42 + act * 0.22);
+                    var scanDist = Math.abs(lineNormY - sweepY);
+                    var scanGlow = Math.max(0.0, 1.0 - scanDist * 4.2);
+                    var hAlpha = Math.min(0.96, 0.48 + scanGlow * 0.48 + act * 0.16);
 
-                    if (scanLineGlow > 0.38) {
-                        ctx.fillStyle = "rgba(255, 248, 220, " + hAlpha.toFixed(3) + ")";
-                    } else if (hli % 6 === 0) {
-                        ctx.fillStyle = "rgba(57, 211, 83, " + (hAlpha * 0.85).toFixed(3) + ")"; // GitHub Emerald accent
+                    if (scanGlow > 0.35) {
+                        ctx.fillStyle = "rgba(255, 255, 255, " + hAlpha.toFixed(3) + ")";
+                    } else if (hli % 5 === 0) {
+                        ctx.fillStyle = "rgba(57, 211, 83, " + (hAlpha * 0.90).toFixed(3) + ")";
                     } else {
-                        ctx.fillStyle = "rgba(212, 175, 55, " + hAlpha.toFixed(3) + ")"; // 24K Gold phosphor
+                        ctx.fillStyle = "rgba(245, 184, 46, " + hAlpha.toFixed(3) + ")";
                     }
                     ctx.fillText(hLine, hcx, startHY + hli * lineH);
                 }
