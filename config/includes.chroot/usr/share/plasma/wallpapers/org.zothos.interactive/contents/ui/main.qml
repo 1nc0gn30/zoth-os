@@ -2,6 +2,7 @@ import QtQuick
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import "HologramData.js" as HologramData
+import "CharacterBoardData.js" as CharacterBoardData
 
 WallpaperItem {
     id: root
@@ -228,57 +229,88 @@ WallpaperItem {
                 }
             }
 
-            // ── B. 1nc0gn30.si 3D Braille Lattice Hologram Figure (Prominent Backdrop) ──
-            var poses = HologramData.hologramPoses;
-            var frames = HologramData.hologramFrames;
-            var hLines = null;
-
-            // Display the iconic 1nc0gn30 Braille Sentinel / Hero figure with dynamic mouse parallax
-            if (poses && poses.hero && poses.hero.length > 0) {
-                // If cursor is actively swung horizontally, cycle through turntable frames; otherwise display hero pose
-                if (Math.abs(normMx) > 0.45 && frames && frames.length > 0) {
-                    var totalF = frames.length;
-                    var curF = (Math.floor(t * 3.0) + Math.floor(normMx * 8.0) + totalF * 40) % totalF;
-                    hLines = frames[curF];
-                } else {
-                    hLines = poses.hero;
+            // ── B. 1nc0gn30 Hooded Builder Character Board (Braille/ASCII/Dither) ──
+            var board = CharacterBoardData.characterBoard;
+            if (board) {
+                // Character Sequence / Pose Sequencer
+                var seqs = board.sequences || [];
+                var totalCycleDuration = 0;
+                for (var si = 0; si < seqs.length; si++) {
+                    totalCycleDuration += seqs[si].duration;
                 }
-            } else if (frames && frames.length > 0) {
-                var totalF = frames.length;
-                var curF = (Math.floor(t * 2.5) + Math.floor(normMx * 6.0) + totalF * 20) % totalF;
-                hLines = frames[curF];
-            }
 
-            if (hLines && hLines.length > 0) {
-                var hcx = W * 0.5 + normMx * 32.0;
-                var hcy = H * 0.44 - 30 + normMy * 20.0;
-                var lineH = 12.0;
-                var startHY = hcy - (hLines.length * lineH) * 0.5;
+                // If user is actively moving mouse horizontally across the screen, spin through the 360 turntable
+                var isSpinningTurntable = Math.abs(normMx) > 0.40;
+                var currentLines = null;
+                var currentAsciiLines = null;
+                var poseTag = "1NC0GN30 · SENTINEL";
 
-                ctx.font = 'bold 12px "JetBrains Mono", "DejaVu Sans Mono", monospace';
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-
-                // Holographic vertical laser scan beam
-                var sweepY = ((t * 0.45) % 1.3) - 0.15;
-
-                for (var hli = 0; hli < hLines.length; hli++) {
-                    var hLine = hLines[hli];
-                    if (!hLine || hLine.trim().length === 0) continue;
-
-                    var lineNormY = hli / hLines.length;
-                    var scanDist = Math.abs(lineNormY - sweepY);
-                    var scanGlow = Math.max(0.0, 1.0 - scanDist * 4.2);
-                    var hAlpha = Math.min(0.96, 0.48 + scanGlow * 0.48 + act * 0.16);
-
-                    if (scanGlow > 0.35) {
-                        ctx.fillStyle = "rgba(255, 255, 255, " + hAlpha.toFixed(3) + ")";
-                    } else if (hli % 5 === 0) {
-                        ctx.fillStyle = "rgba(57, 211, 83, " + (hAlpha * 0.90).toFixed(3) + ")";
-                    } else {
-                        ctx.fillStyle = "rgba(245, 184, 46, " + hAlpha.toFixed(3) + ")";
+                if (isSpinningTurntable && board.latticeFrames && board.latticeFrames.length > 0) {
+                    var lFrames = board.latticeFrames;
+                    var curFrameIdx = (Math.floor(t * 3.2) + Math.floor(normMx * 12.0) + lFrames.length * 40) % lFrames.length;
+                    currentLines = lFrames[curFrameIdx];
+                    poseTag = "TURNTABLE · 360° 3D LATTICE";
+                } else {
+                    // Sequence through character board poses: hero -> type -> walk -> front -> three-quarter -> side -> back -> idle
+                    var cycleT = (t * 0.8) % totalCycleDuration;
+                    var accT = 0;
+                    var curSeq = seqs[0];
+                    for (var sIdx = 0; sIdx < seqs.length; sIdx++) {
+                        accT += seqs[sIdx].duration;
+                        if (cycleT <= accT) {
+                            curSeq = seqs[sIdx];
+                            break;
+                        }
                     }
-                    ctx.fillText(hLine, hcx, startHY + hli * lineH);
+                    var pKey = curSeq ? curSeq.pose : "hero";
+                    poseTag = curSeq ? curSeq.tag : "1NC0GN30";
+                    currentLines = (board.braillePoses && board.braillePoses[pKey]) ? board.braillePoses[pKey] : board.braillePoses["hero"];
+                    currentAsciiLines = (board.asciiPoses && board.asciiPoses[pKey]) ? board.asciiPoses[pKey] : null;
+                }
+
+                if (currentLines && currentLines.length > 0) {
+                    // Position character prominently behind the 3D Z centerpiece
+                    var hcx = W * 0.5 + normMx * 28.0;
+                    var hcy = H * 0.44 - 38 + normMy * 16.0;
+                    var lineH = 11.8;
+                    var startHY = hcy - (currentLines.length * lineH) * 0.5;
+
+                    ctx.font = 'bold 12.5px "JetBrains Mono", "DejaVu Sans Mono", monospace';
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+
+                    // Vertical laser scan sweep
+                    var sweepY = ((t * 0.50) % 1.35) - 0.18;
+
+                    // Draw the 1nc0gn30 Braille / Bayer Dither Character
+                    for (var cli = 0; cli < currentLines.length; cli++) {
+                        var cLine = currentLines[cli];
+                        if (!cLine || cLine.trim().length === 0) continue;
+
+                        var lineNormY = cli / currentLines.length;
+                        var scanDist = Math.abs(lineNormY - sweepY);
+                        var scanGlow = Math.max(0.0, 1.0 - scanDist * 4.0);
+                        var cAlpha = Math.min(0.96, 0.48 + scanGlow * 0.50 + act * 0.18);
+
+                        // If high scan glow: specular white-gold laser beam
+                        if (scanGlow > 0.38) {
+                            ctx.fillStyle = "rgba(255, 255, 255, " + cAlpha.toFixed(3) + ")";
+                        } else if (cli % 5 === 0) {
+                            // 1nc0gn30 GitHub Emerald Matrix accent
+                            ctx.fillStyle = "rgba(57, 211, 83, " + (cAlpha * 0.92).toFixed(3) + ")";
+                        } else {
+                            // 24K Gold phosphor body
+                            ctx.fillStyle = "rgba(245, 184, 46, " + cAlpha.toFixed(3) + ")";
+                        }
+
+                        var renderY = startHY + cli * lineH;
+                        ctx.fillText(cLine, hcx, renderY);
+                    }
+
+                    // Tactical HUD telemetry pill under character feet
+                    ctx.font = 'bold 9.5px "JetBrains Mono", "DejaVu Sans Mono", monospace';
+                    ctx.fillStyle = "rgba(57, 211, 83, 0.82)";
+                    ctx.fillText("⣿ " + poseTag + " · U+2800 DITHER", hcx, startHY + currentLines.length * lineH + 12);
                 }
             }
 
