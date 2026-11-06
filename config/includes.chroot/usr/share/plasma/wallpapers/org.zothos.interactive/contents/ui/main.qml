@@ -163,6 +163,94 @@ WallpaperItem {
         }
     }
 
+    
+    // ── 2B. 1nc0gn30 Hooded Builder Stage (Flanked to the Right of Center) ─
+    property string activePoseName: "hero"
+    property string activePoseTag: "1NC0GN30 · SENTINEL"
+
+    Item {
+        id: characterFlankStage
+        // Positioned cleanly to the right of the center Z
+        x: (parent.width * 0.5) + Math.min(parent.width * 0.25, 480) + (root.smoothMouseX - parent.width * 0.5) * 0.02
+        y: (parent.height * 0.44 - 35) - height * 0.5 + (root.smoothMouseY - parent.height * 0.5) * 0.015
+        width: 320
+        height: 440
+
+        // Holographic Emerald & Gold Halo
+        Rectangle {
+            anchors.centerIn: parent
+            width: parent.width * 0.95
+            height: parent.height * 0.95
+            radius: 18
+            color: "#180d1a12"
+            border.color: "#3839d353"
+            border.width: 1.5
+        }
+
+        // 1nc0gn30 Character Image (Full Resolution Color/Lighting Art)
+        Image {
+            id: characterPhotoImg
+            anchors.centerIn: parent
+            source: "character/" + root.activePoseName + ".jpg"
+            width: parent.width * 0.82
+            height: parent.height * 0.82
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+            opacity: 0.88
+            smooth: true
+        }
+
+        // 1nc0gn30 High-Contrast Bayer Dither Layer Overlaid
+        Image {
+            id: characterDitherImg
+            anchors.centerIn: parent
+            source: "character/dither-" + root.activePoseName + ".png"
+            width: parent.width * 0.82
+            height: parent.height * 0.82
+            fillMode: Image.PreserveAspectFit
+            smooth: false
+            asynchronous: true
+            opacity: 0.95
+        }
+
+        // Holographic Vertical Scan Beam
+        Rectangle {
+            anchors.fill: characterDitherImg
+            color: "transparent"
+            clip: true
+
+            Rectangle {
+                width: parent.width
+                height: 4
+                y: ((root.breathingPhase * 75) % parent.height)
+                color: "#9939d353"
+            }
+        }
+
+        // Cybernetic Telemetry Badge under character
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 6
+            width: charBadgeText.implicitWidth + 28
+            height: 24
+            radius: 12
+            color: "#ee080c0a"
+            border.color: "#d4af37"
+            border.width: 1.5
+
+            Text {
+                id: charBadgeText
+                anchors.centerIn: parent
+                text: "⣿ " + root.activePoseTag
+                font.family: "JetBrains Mono"
+                font.pixelSize: 11
+                font.bold: true
+                color: "#39d353"
+            }
+        }
+    }
+
     // ── 3. Master GPU Canvas: Metallic Blocks + 1nc0gn30 Hologram + 3D Z ───
     Canvas {
         id: mainGraphicCanvas
@@ -232,26 +320,24 @@ WallpaperItem {
             // ── B. 1nc0gn30 Hooded Builder Character Board (Braille/ASCII/Dither) ──
             var board = CharacterBoardData.characterBoard;
             if (board) {
-                // Character Sequence / Pose Sequencer
                 var seqs = board.sequences || [];
                 var totalCycleDuration = 0;
                 for (var si = 0; si < seqs.length; si++) {
                     totalCycleDuration += seqs[si].duration;
                 }
 
-                // If user is actively moving mouse horizontally across the screen, spin through the 360 turntable
                 var isSpinningTurntable = Math.abs(normMx) > 0.40;
                 var currentLines = null;
-                var currentAsciiLines = null;
-                var poseTag = "1NC0GN30 · SENTINEL";
+                var pKey = "hero";
+                var pTag = "1NC0GN30 · SENTINEL";
 
                 if (isSpinningTurntable && board.latticeFrames && board.latticeFrames.length > 0) {
                     var lFrames = board.latticeFrames;
                     var curFrameIdx = (Math.floor(t * 3.2) + Math.floor(normMx * 12.0) + lFrames.length * 40) % lFrames.length;
                     currentLines = lFrames[curFrameIdx];
-                    poseTag = "TURNTABLE · 360° 3D LATTICE";
+                    pTag = "TURNTABLE · 360° 3D LATTICE";
+                    pKey = "hero";
                 } else {
-                    // Sequence through character board poses: hero -> type -> walk -> front -> three-quarter -> side -> back -> idle
                     var cycleT = (t * 0.8) % totalCycleDuration;
                     var accT = 0;
                     var curSeq = seqs[0];
@@ -262,27 +348,28 @@ WallpaperItem {
                             break;
                         }
                     }
-                    var pKey = curSeq ? curSeq.pose : "hero";
-                    poseTag = curSeq ? curSeq.tag : "1NC0GN30";
+                    pKey = curSeq ? curSeq.pose : "hero";
+                    pTag = curSeq ? curSeq.tag : "1NC0GN30";
                     currentLines = (board.braillePoses && board.braillePoses[pKey]) ? board.braillePoses[pKey] : board.braillePoses["hero"];
-                    currentAsciiLines = (board.asciiPoses && board.asciiPoses[pKey]) ? board.asciiPoses[pKey] : null;
                 }
 
+                if (root.activePoseName !== pKey) root.activePoseName = pKey;
+                if (root.activePoseTag !== pTag) root.activePoseTag = pTag;
+
+                // Render the Braille lattice matrix surrounding the right-flanked character stage
                 if (currentLines && currentLines.length > 0) {
-                    // Position character prominently behind the 3D Z centerpiece
-                    var hcx = W * 0.5 + normMx * 28.0;
-                    var hcy = H * 0.44 - 38 + normMy * 16.0;
-                    var lineH = 11.8;
+                    var flankOffset = Math.min(W * 0.24, 460);
+                    var hcx = W * 0.5 + flankOffset + normMx * 18.0;
+                    var hcy = H * 0.44 - 35 + normMy * 12.0;
+                    var lineH = 9.8;
                     var startHY = hcy - (currentLines.length * lineH) * 0.5;
 
-                    ctx.font = 'bold 12.5px "JetBrains Mono", "DejaVu Sans Mono", monospace';
+                    ctx.font = '9.5px "JetBrains Mono", "DejaVu Sans Mono", monospace';
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
 
-                    // Vertical laser scan sweep
-                    var sweepY = ((t * 0.50) % 1.35) - 0.18;
+                    var sweepY = ((t * 0.55) % 1.35) - 0.18;
 
-                    // Draw the 1nc0gn30 Braille / Bayer Dither Character
                     for (var cli = 0; cli < currentLines.length; cli++) {
                         var cLine = currentLines[cli];
                         if (!cLine || cLine.trim().length === 0) continue;
@@ -290,27 +377,18 @@ WallpaperItem {
                         var lineNormY = cli / currentLines.length;
                         var scanDist = Math.abs(lineNormY - sweepY);
                         var scanGlow = Math.max(0.0, 1.0 - scanDist * 4.0);
-                        var cAlpha = Math.min(0.96, 0.48 + scanGlow * 0.50 + act * 0.18);
+                        var cAlpha = Math.min(0.85, 0.28 + scanGlow * 0.45 + act * 0.15);
 
-                        // If high scan glow: specular white-gold laser beam
                         if (scanGlow > 0.38) {
                             ctx.fillStyle = "rgba(255, 255, 255, " + cAlpha.toFixed(3) + ")";
-                        } else if (cli % 5 === 0) {
-                            // 1nc0gn30 GitHub Emerald Matrix accent
-                            ctx.fillStyle = "rgba(57, 211, 83, " + (cAlpha * 0.92).toFixed(3) + ")";
+                        } else if (cli % 4 === 0) {
+                            ctx.fillStyle = "rgba(57, 211, 83, " + (cAlpha * 0.90).toFixed(3) + ")";
                         } else {
-                            // 24K Gold phosphor body
                             ctx.fillStyle = "rgba(245, 184, 46, " + cAlpha.toFixed(3) + ")";
                         }
 
-                        var renderY = startHY + cli * lineH;
-                        ctx.fillText(cLine, hcx, renderY);
+                        ctx.fillText(cLine, hcx, startHY + cli * lineH);
                     }
-
-                    // Tactical HUD telemetry pill under character feet
-                    ctx.font = 'bold 9.5px "JetBrains Mono", "DejaVu Sans Mono", monospace';
-                    ctx.fillStyle = "rgba(57, 211, 83, 0.82)";
-                    ctx.fillText("⣿ " + poseTag + " · U+2800 DITHER", hcx, startHY + currentLines.length * lineH + 12);
                 }
             }
 
