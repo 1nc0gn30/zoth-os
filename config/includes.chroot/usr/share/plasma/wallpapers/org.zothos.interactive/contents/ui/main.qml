@@ -1,6 +1,7 @@
 import QtQuick
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import "HologramData.js" as HologramData
 
 WallpaperItem {
     id: root
@@ -50,18 +51,14 @@ WallpaperItem {
     // 1. Moving Metallic Gold Pixel Blocks
     property var goldPixelBlocks: []
 
-    // 2. 1nc0gn30.si Background 3D Hyper-Lattice (N=3: 64 points, 144 edges)
-    property var bgLatticePoints: []
-    property var bgLatticeEdges: []
-
-    // 3. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
+    // 2. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
     property var zLatticePoints: []
     property var zLatticeEdges: []
 
-    // 4. Floating Braille/ASCII sparks pool
+    // 3. Floating Braille/ASCII sparks pool
     property var brailleSparks: []
 
-    // 5. Pre-computed active pixel coordinates for ZOTHOS wordmark
+    // 4. Pre-computed active pixel coordinates for ZOTHOS wordmark
     property var wordmarkPixels: []
 
     function triggerShockwave(wx, wy, intensityScale) {
@@ -98,7 +95,7 @@ WallpaperItem {
         cache: true
     }
 
-    // ── 2. Sacred Hermetic Rings & Ambient Bloom Behind 3D Z ───────────────
+    // ── 2. Sacred Hermetic Rings & Ambient Bloom Behind Hologram & 3D Z ────
     Item {
         id: sacredCenterBackdrop
         anchors.centerIn: parent
@@ -165,7 +162,7 @@ WallpaperItem {
         }
     }
 
-    // ── 3. Master GPU Canvas: Metallic Blocks + 1nc0gn30 Lattice + 3D Z ───
+    // ── 3. Master GPU Canvas: Metallic Blocks + 1nc0gn30 Hologram + 3D Z ───
     Canvas {
         id: mainGraphicCanvas
         anchors.fill: parent
@@ -231,54 +228,39 @@ WallpaperItem {
                 }
             }
 
-            // ── B. 1nc0gn30.si 3D Hyper-Lattice Figure in Background ─────
-            var bgPts = root.bgLatticePoints;
-            var bgEdges = root.bgLatticeEdges;
-            if (bgPts.length > 0 && bgEdges.length > 0) {
-                var bcx = W * 0.5;
-                var bcy = H * 0.43 - 35;
-                var bScale = Math.min(W * 0.20, 260);
+            // ── B. 1nc0gn30.si 3D Braille Lattice Hologram Figure ──────────
+            var frames = HologramData.hologramFrames;
+            if (frames && frames.length > 0) {
+                var totalF = frames.length;
+                // Rotate smoothly over time, influenced interactively by mouse position
+                var curF = (Math.floor(t * 2.4) + Math.floor(normMx * 6.0) + totalF * 20) % totalF;
+                var hLines = frames[curF];
+                var hcx = W * 0.5;
+                var hcy = H * 0.44 - 35;
+                var lineH = 11.0;
+                var startHY = hcy - (hLines.length * lineH) * 0.5;
 
-                // Slower majestic background counter-rotation
-                var bYaw = -t * 0.22 + normMx * 0.45;
-                var bPitch = 0.38 + Math.sin(t * 0.25) * 0.12 + normMy * 0.35;
-                var bcosY = Math.cos(bYaw), bsinY = Math.sin(bYaw);
-                var bcosX = Math.cos(bPitch), bsinX = Math.sin(bPitch);
+                ctx.font = '10px "JetBrains Mono", "DejaVu Sans Mono", monospace';
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
 
-                var bProj = [];
-                for (var bpi = 0; bpi < bgPts.length; bpi++) {
-                    var bp = bgPts[bpi];
-                    var bpx = bp[0], bpy = bp[1], bpz = bp[2];
-                    var bX = bpx * bcosY - bpz * bsinY;
-                    var bZ = bpx * bsinY + bpz * bcosY;
-                    var bY = bpy * bcosX - bZ * bsinX;
-                    bZ = bpy * bsinX + bZ * bcosX;
-                    var bf = 2.8 / (3.6 + bZ);
-                    bProj.push([bcx + bX * bScale * bf, bcy + bY * bScale * bf, bZ]);
-                }
+                for (var hli = 0; hli < hLines.length; hli++) {
+                    var hLine = hLines[hli];
+                    if (!hLine || hLine.trim().length === 0) continue;
 
-                // Render 1nc0gn30.si lattice filaments
-                ctx.lineWidth = 0.9;
-                for (var bei = 0; bei < bgEdges.length; bei++) {
-                    var bEdge = bgEdges[bei];
-                    var bpA = bProj[bEdge[0]];
-                    var bpB = bProj[bEdge[1]];
-                    var bAvgZ = (bpA[2] + bpB[2]) * 0.5;
-                    var bDepthAlpha = Math.max(0.04, Math.min(0.35, 0.12 + ((2.0 - bAvgZ) / 4.0) * 0.25));
-                    ctx.strokeStyle = "rgba(212, 175, 55, " + bDepthAlpha.toFixed(3) + ")";
-                    ctx.beginPath();
-                    ctx.moveTo(bpA[0], bpA[1]);
-                    ctx.lineTo(bpB[0], bpB[1]);
-                    ctx.stroke();
-                }
+                    // Holographic phosphor sweep across the 3D figure
+                    var lineNormY = hli / hLines.length;
+                    var scanLineGlow = Math.max(0.0, 1.0 - Math.abs(lineNormY - ((t * 0.55) % 1.25 - 0.12)) * 4.5);
+                    var hAlpha = Math.min(0.85, 0.28 + scanLineGlow * 0.42 + act * 0.22);
 
-                // 1nc0gn30 node points (Bayer-dithered ambient nodes)
-                for (var bvi = 0; bvi < bProj.length; bvi++) {
-                    var bvPt = bProj[bvi];
-                    if (bvPt[2] < 0.2 && bvi % 2 === 0) {
-                        ctx.fillStyle = "rgba(255, 215, 0, 0.28)";
-                        ctx.fillRect(bvPt[0] - 1.2, bvPt[1] - 1.2, 2.4, 2.4);
+                    if (scanLineGlow > 0.38) {
+                        ctx.fillStyle = "rgba(255, 248, 220, " + hAlpha.toFixed(3) + ")";
+                    } else if (hli % 6 === 0) {
+                        ctx.fillStyle = "rgba(57, 211, 83, " + (hAlpha * 0.85).toFixed(3) + ")"; // GitHub Emerald accent
+                    } else {
+                        ctx.fillStyle = "rgba(212, 175, 55, " + hAlpha.toFixed(3) + ")"; // 24K Gold phosphor
                     }
+                    ctx.fillText(hLine, hcx, startHY + hli * lineH);
                 }
             }
 
@@ -287,7 +269,7 @@ WallpaperItem {
             var zEdges = root.zLatticeEdges;
             if (zPts.length > 0 && zEdges.length > 0) {
                 var zcx = W * 0.5;
-                var zcy = H * 0.43 - 35;
+                var zcy = H * 0.44 - 35;
                 var zScale = Math.min(W * 0.16, 210);
 
                 // High-responsiveness mouse-tracking yaw and pitch
@@ -472,7 +454,7 @@ WallpaperItem {
                 ctx.stroke();
             }
 
-            // ── G. Sub-Pixel Braille / Bayer Dither Wordmark "ZOTHOS" ─────
+            // ── G. Clean Sub-Pixel Braille / Bayer Dither Wordmark "ZOTHOS"
             var wPixels = root.wordmarkPixels;
             if (wPixels && wPixels.length > 0) {
                 var wordH = 7;
@@ -504,13 +486,6 @@ WallpaperItem {
                         ctx.fillRect(wpx, wpy, wScale - 0.7, wScale - 0.7);
                     }
                 }
-
-                // ── H. Micro-Telemetry Technical Sub-Deck ──────────────────
-                ctx.font = 'bold 11px "JetBrains Mono", "DejaVu Sans Mono", monospace';
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillStyle = "rgba(212, 175, 55, 0.88)";
-                ctx.fillText("⣿ U+2800 UNICODE BRAILLE  ·  3D Z-LATTICE  ·  1NC0GN30 HYPERSTRUCTURE  ·  ZOTHOS LINUX", W * 0.5, startY + wordH * wScale + 24);
             }
         }
     }
@@ -843,31 +818,7 @@ WallpaperItem {
         }
         root.goldPixelBlocks = blist;
 
-        // C. 1nc0gn30.si Background 3D Hyper-Lattice (N=3: 64 points, 144 edges)
-        var bgP = [];
-        var bgE = [];
-        var N = 3;
-        for (var i = 0; i <= N; i++) {
-            for (var j = 0; j <= N; j++) {
-                for (var k = 0; k <= N; k++) {
-                    bgP.push([i / N * 2 - 1, j / N * 2 - 1, k / N * 2 - 1]);
-                }
-            }
-        }
-        var bgLid = function(ii, jj, kk) { return (ii * (N + 1) + jj) * (N + 1) + kk; };
-        for (var ii = 0; ii <= N; ii++) {
-            for (var jj = 0; jj <= N; jj++) {
-                for (var kk = 0; kk <= N; kk++) {
-                    if (ii < N) bgE.push([bgLid(ii, jj, kk), bgLid(ii + 1, jj, kk)]);
-                    if (jj < N) bgE.push([bgLid(ii, jj, kk), bgLid(ii, jj + 1, kk)]);
-                    if (kk < N) bgE.push([bgLid(ii, jj, kk), bgLid(ii, jj, kk + 1)]);
-                }
-            }
-        }
-        root.bgLatticePoints = bgP;
-        root.bgLatticeEdges = bgE;
-
-        // D. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
+        // C. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
         var zContour = [
             [-0.75, -0.75],
             [ 0.75, -0.75],
@@ -929,7 +880,7 @@ WallpaperItem {
         root.zLatticePoints = zP;
         root.zLatticeEdges = zE;
 
-        // E. Constellation Ley-Line Star Nodes
+        // D. Constellation Ley-Line Star Nodes
         var cNodes = [];
         for (var ni = 0; ni < root.nodeCount; ni++) {
             cNodes.push({
@@ -943,7 +894,7 @@ WallpaperItem {
         }
         root.constellationNodes = cNodes;
 
-        // F. Floating Braille & Hex Sparks
+        // E. Floating Braille & Hex Sparks
         var glyphRoster = ["⣿", "⠿", "⠇", "⠋", "0", "1", "/", ">", "_", "#", "*", "λ", "⬡"];
         var spks = [];
         for (var spi = 0; spi < 36; spi++) {
