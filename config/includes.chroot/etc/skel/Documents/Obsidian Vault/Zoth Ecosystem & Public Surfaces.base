@@ -1,0 +1,57 @@
+filters:
+  and:
+    - file.hasTag("canon")
+    - 'file.ext == "md"'
+
+formulas:
+  cluster_badge: 'if(cluster == "Canon", "🏛️ Canon Hub", if(cluster == "OS", "🛡️ Sovereign OS", if(cluster == "Studio", "⚡ Studio & 3D World", if(cluster == "Mesh", "🧅 ZothNet Mesh", if(cluster == "Consensus", "◈ Vaelor L1", "📦 Ecosystem")))))'
+  weight_pct: 'if(stdp_weight, (stdp_weight * 100).round(0).toString() + "%", "100%")'
+  verified_badge: 'if(status == "verified", "✅ Verified", "🟢 Active")'
+  days_since_update: '(now() - file.mtime).days.round(1)'
+
+properties:
+  file.name:
+    displayName: "Canon Note"
+  title:
+    displayName: "Architectural Title"
+  formula.cluster_badge:
+    displayName: "Sovereign Cluster"
+  formula.verified_badge:
+    displayName: "Verification Status"
+  formula.weight_pct:
+    displayName: "STDP Synaptic Weight"
+  author:
+    displayName: "Architect"
+  date:
+    displayName: "Audit Date"
+
+views:
+  - type: table
+    name: "Master Sovereign Ecosystem Canon"
+    order:
+      - file.name
+      - title
+      - formula.cluster_badge
+      - formula.verified_badge
+      - formula.weight_pct
+      - date
+      - author
+    groupBy:
+      property: cluster
+      direction: ASC
+
+  - type: cards
+    name: "Sovereign Pillars Gallery"
+    order:
+      - file.name
+      - title
+      - formula.cluster_badge
+      - formula.verified_badge
+      - formula.weight_pct
+
+  - type: list
+    name: "Quick Canon Index"
+    order:
+      - file.name
+      - formula.cluster_badge
+      - formula.verified_badge

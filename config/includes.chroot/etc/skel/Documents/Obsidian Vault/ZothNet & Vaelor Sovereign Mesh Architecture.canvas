@@ -1,0 +1,226 @@
+{
+  "nodes": [
+    {
+      "id": "zn_grp_mixnet001",
+      "type": "group",
+      "x": -1400,
+      "y": -820,
+      "width": 1300,
+      "height": 740,
+      "label": "🧅 ZothNet v1.2.2 Sphinx 1,280B Mixnet & P2P Radio (:9900 / UDP :42069)",
+      "color": "4"
+    },
+    {
+      "id": "zn_file_canon001",
+      "type": "file",
+      "file": "ZothNet Sovereign Mesh.md",
+      "x": -1360,
+      "y": -760,
+      "width": 420,
+      "height": 300,
+      "color": "4"
+    },
+    {
+      "id": "zn_txt_sphinx001",
+      "type": "text",
+      "x": -900,
+      "y": -760,
+      "width": 760,
+      "height": 300,
+      "color": "5",
+      "text": "### 🛡️ Rigid 1,280-Byte Constant-Size Sphinx Onion Packets\n- **3-Hop Cryptographic Peeling**: `Origin ➔ Guard Node ➔ Mix Relay ➔ Exit Node ➔ Recipient`\n- **ChaCha20-Poly1305 + X25519 + Ed25519**: Per-hop ephemeral ECDH keys with authenticated AEAD framing.\n- **Fixed 1,280-Byte Wire MTU**: Every packet is padded to the exact IPv6 minimum MTU — zero packet-size correlation or DPI leaks.\n- **Kademlia α=3 XOR DHT + RFC 5389 STUN**: 256 buckets (k=20), UDP :42069 local broadcast beacons, and 500-slot ZASF store-and-forward offline mailbox."
+    },
+    {
+      "id": "zn_txt_gossip001",
+      "type": "text",
+      "x": -1360,
+      "y": -420,
+      "width": 1220,
+      "height": 300,
+      "color": "3",
+      "text": "### 📡 6 Broadcast Mesh Channels & 5 \"Regular Joe\" First Flight Scenarios\n- **GossipSub (D=6) Channels**: 🌐 `#all` · 📢 `#general` · 🚨 `#emergency` · 🤝 `#trade` · 🌲 `#off-grid` · 🛠️ `#dev`\n- **Quick Signal Toolbar**: `🚨 SOS Alert` · `◈ Request VLR` · `📍 Drop Pin` · `🤝 Barter` · `📎 CAS File` (1h / 24h / 7d / perm TTL)\n- **5 Interactive First Flight Scenarios**:\n  1. 🌪️ **Hurricane & Grid Outage**: 0-Bar phone-to-phone walkie-talkie hop chain (60 yds ➔ 140 yds ➔ 300 yds).\n  2. 🏟️ **Stadium 5G Congestion**: 75,000-fan crowd-surfing wave text (8ms hop vs 99.4% jammed cell tower).\n  3. 🤝 **Yard Sale & Farmers Market**: $0.00 fee offline bicycle checkout (35.00 VLR) + +25.00 VLR instant faucet.\n  4. ☕ **Public Wi-Fi Snooper Shield**: Live byte-weight gauge proving constant 1,280-byte Sphinx wire padding.\n  5. 🚨 **Neighborhood SOS & Beacon**: Zero-account community hazard & lost-pet local broadcast."
+    },
+    {
+      "id": "zn_grp_vaelor002",
+      "type": "group",
+      "x": 0,
+      "y": -820,
+      "width": 1300,
+      "height": 740,
+      "label": "◈ Vaelor L1 Feeless Account-Lattice DAG & ZML Studio",
+      "color": "3"
+    },
+    {
+      "id": "zn_file_wiki0002",
+      "type": "file",
+      "file": "06-Wiki/ZothNet v1.2.2 Sovereign Mesh, Vaelor L1 DAG & ZML Architecture.md",
+      "x": 40,
+      "y": -760,
+      "width": 440,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "zn_txt_vaelor002",
+      "type": "text",
+      "x": 520,
+      "y": -760,
+      "width": 740,
+      "height": 300,
+      "color": "4",
+      "text": "### ◈ Vaelor L1 Feeless DAG & Proof-of-Relay (+5.00 VLR)\n- **0.00 VLR ($0.00) Gas Fees Forever**: Asynchronous dual-state (`SEND` + `RECV`) per-account Ed25519 micro-chains.\n- **14.2ms (<18ms) Finality**: Instant frontier confirmation with strict mathematical balance conservation ($\\sum \\Delta B = 0$).\n- **+5.00 VLR Proof-of-Relay (PoR)**: Automatic protocol rewards credited to relay nodes routing Sphinx & GossipSub packets.\n- **+15.9 VLR Proof-of-Useful-Work (PoUW)**: Minted for Neuro-Memory STDP & Obsidian Second Brain cognitive indexing (:8094)."
+    },
+    {
+      "id": "zn_txt_zml000002",
+      "type": "text",
+      "x": 40,
+      "y": -420,
+      "width": 740,
+      "height": 300,
+      "color": "5",
+      "text": "### ⚡ ZML (Zoth Markup Language) & 11 Built-In ZothApps\n- **1.4ms Client-Side AST Compiler**: Authors complete zero-cloud P2P apps in 5–15 lines (`HEADER`, `AMBIENT_DEVICE_AUTH`, `GRID`, `ITEM`, `PAY_LINK`, `CART_BAR`, `RECEIPT_BOX`).\n- **11 Built-in ZothApps (`zoth://<slug>`)**: `welcome`, `ghost-notes`, `mesh-board`, `storefront`, `zoth-drive`, `zoth-radio`, `zoth-chat`, `zoth-wallet`, `names` (.zoth ZNS), `zoth-vault`, `zoth-pub`."
+    },
+    {
+      "id": "zn_lnk_zml000002",
+      "type": "link",
+      "url": "https://zml.nullai.tech",
+      "x": 820,
+      "y": -420,
+      "width": 440,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "zn_grp_mobile003",
+      "type": "group",
+      "x": -1400,
+      "y": 20,
+      "width": 2700,
+      "height": 520,
+      "label": "📱 Android 17 API 37 PIE APK, Multi-Platform Binaries & 24/7 Relay Node Fleet",
+      "color": "6"
+    },
+    {
+      "id": "zn_txt_apk000003",
+      "type": "text",
+      "x": -1360,
+      "y": 80,
+      "width": 860,
+      "height": 420,
+      "color": "6",
+      "text": "### 🤖 Android 17 (API 37) PIE Native APK (`zothnet-arm64.apk`)\n- **Verified on Google Pixel 10 Pro**: Cross-compiled `CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build -buildmode=pie` packaged as `lib/arm64-v8a/libzothnet.so` (SELinux W^X compliant).\n- **`ZothNetService.java` ForegroundService**: Persistent notification channel (`zothnet_mesh_channel`) prevents OS background freeze.\n- **Deep Sleep Resilience**: `PowerManager.PARTIAL_WAKE_LOCK` (`ZothNet::MeshKeepAlive`) + `WifiManager.MulticastLock` (`ZothNetMulticast`) keep UDP :42069 & DHT active with screen off.\n- **Signed v1+v2+v3+v4**: `4600915e5837a6cf504401dbc158d02f5fd0d02d33e9de7097c9ed264332e69c`"
+    },
+    {
+      "id": "zn_txt_relay0003",
+      "type": "text",
+      "x": -460,
+      "y": 80,
+      "width": 880,
+      "height": 420,
+      "color": "4",
+      "text": "### 📡 24/7 Dedicated Relay Node Guide (Moto G 2025 / Moto G Stylus / VPS)\n1. **Moto G 2025 & Moto G Stylus 24/7 Home/Field Relay**:\n   - Install `zothnet-arm64.apk` via ADB or `zothnet.nullai.tech/downloads/zothnet-arm64.apk`.\n   - Set Android **Battery Usage ➔ Unrestricted** so `PARTIAL_WAKE_LOCK` stays active 24/7.\n   - Leaves UDP :42069 beacon, 3-hop Sphinx relay, and 500-slot ZASF offline mailbox running continuously while earning `+5.00 VLR` PoR rewards.\n2. **Linux VPS 24/7 WAN Relay Anchor**:\n   - `curl -fsSL https://zothnet.nullai.tech/install.sh | bash`\n   - `zothnet run --alias \"VPS-Relay-Anchor\" --port 42069`"
+    },
+    {
+      "id": "zn_lnk_portal003",
+      "type": "link",
+      "url": "https://zothnet.nullai.tech",
+      "x": 460,
+      "y": 80,
+      "width": 800,
+      "height": 420,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "zn_edg_000000001",
+      "fromNode": "zn_file_canon001",
+      "fromSide": "right",
+      "toNode": "zn_txt_sphinx001",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "4",
+      "label": "1,280B Constant MTU"
+    },
+    {
+      "id": "zn_edg_000000002",
+      "fromNode": "zn_txt_sphinx001",
+      "fromSide": "bottom",
+      "toNode": "zn_txt_gossip001",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "color": "3",
+      "label": "GossipSub D=6 & First Flight"
+    },
+    {
+      "id": "zn_edg_000000003",
+      "fromNode": "zn_txt_sphinx001",
+      "fromSide": "right",
+      "toNode": "zn_file_wiki0002",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "5",
+      "label": "RFC-ZOTH-0102 Spec"
+    },
+    {
+      "id": "zn_edg_000000004",
+      "fromNode": "zn_file_wiki0002",
+      "fromSide": "right",
+      "toNode": "zn_txt_vaelor002",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "4",
+      "label": "+5.00 VLR PoR & 0.00 Gas"
+    },
+    {
+      "id": "zn_edg_000000005",
+      "fromNode": "zn_txt_vaelor002",
+      "fromSide": "bottom",
+      "toNode": "zn_txt_zml000002",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "color": "3",
+      "label": "PAY_LINK Instant Settlement"
+    },
+    {
+      "id": "zn_edg_000000006",
+      "fromNode": "zn_txt_zml000002",
+      "fromSide": "right",
+      "toNode": "zn_lnk_zml000002",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "3",
+      "label": "Live ZML IDE"
+    },
+    {
+      "id": "zn_edg_000000007",
+      "fromNode": "zn_txt_gossip001",
+      "fromSide": "bottom",
+      "toNode": "zn_txt_apk000003",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "color": "6",
+      "label": "Pixel 10 Pro PIE APK"
+    },
+    {
+      "id": "zn_edg_000000008",
+      "fromNode": "zn_txt_apk000003",
+      "fromSide": "right",
+      "toNode": "zn_txt_relay0003",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "4",
+      "label": "24/7 Moto G & VPS Relays"
+    },
+    {
+      "id": "zn_edg_000000009",
+      "fromNode": "zn_txt_relay0003",
+      "fromSide": "right",
+      "toNode": "zn_lnk_portal003",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "5",
+      "label": "Global 3D Mixnet Portal"
+    }
+  ]
+}

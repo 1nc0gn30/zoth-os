@@ -5,9 +5,9 @@ filters:
 
 formulas:
   port_label: 'if(port, ":" + port.toString(), "Dynamic")'
-  status_badge: 'if(status == "active", "🟢 Active", if(status == "standby", "🟡 Standby", "⚪ Idle"))'
+  status_badge: 'if(status == "active" || status == "verified", "🟢 Active", if(status == "standby", "🟡 Standby", "⚪ Idle"))'
   health_endpoint: 'if(health_url, health_url, if(port, "http://127.0.0.1:" + port.toString() + "/health", ""))'
-  is_core_fleet: 'if(port == 8094 || port == 8140 || port == 3000 || port == 5173 || port == 9393, true, false)'
+  is_core_fleet: 'if(port == 8094 || port == 8140 || port == 3000 || port == 5173 || port == 8120 || port == 8145 || port == 8151 || port == 9393 || port == 9900 || port == 9990, true, false)'
   core_badge: 'if(formula.is_core_fleet, "⭐ Core Fleet", "📦 Service")'
   days_since_audit: '(now() - file.ctime).days.round(1)'
 
@@ -31,7 +31,7 @@ properties:
 
 views:
   - type: table
-    name: "Core Fleet (:8094, :8140, :3000, :5173, :9393)"
+    name: "Core Fleet (:3000, :5173, :8094, :8120, :8140, :8145, :8151, :9393, :9900, :9990)"
     filters:
       and:
         - 'formula.is_core_fleet == true'

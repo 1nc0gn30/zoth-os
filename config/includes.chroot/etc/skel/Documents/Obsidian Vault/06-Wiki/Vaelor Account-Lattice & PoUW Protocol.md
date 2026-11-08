@@ -1,7 +1,7 @@
 ---
 title: "Vaelor Account-Lattice & PoUW Protocol"
-created: "2026-10-31T20:43:29Z"
-updated: "2026-10-31T20:43:29Z"
+created: "2026-11-03T06:16:41Z"
+updated: "2026-11-03T06:16:41Z"
 category: "LLM-Wiki"
 tags: [wiki, llm-synthesized, karpathy-wiki, vaelor, consensus, pouw, account-lattice]
 stdp_engrams: 6
@@ -106,7 +106,7 @@ Where $\mathcal{C}(\text{Task})$ represents computational entropy units and $\be
 - [[Zoth Autonomous Agents & Hermes Fleet.canvas]] — Multi-agent mesh connecting PoUW workers
 
 ### Database Registries
-- [[Zoth 72 Sovereign Tools.base]] — Core tool database with monetization status
+- [[Zoth 71 Sovereign Tools.base]] — Core tool database with monetization status
 - [[Zoth Fleet & Daemons.base]] — Service ports and health probe endpoints
 - [[Zoth Autonomous Agents.base]] — Agent fleet registry
 

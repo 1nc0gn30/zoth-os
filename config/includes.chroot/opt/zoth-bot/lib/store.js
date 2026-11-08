@@ -49,6 +49,22 @@ function defaultAvatarFor(id) {
       accentColor: '#38bdf8',
     };
   }
+  if (id === '1nc0gn30') {
+    return {
+      chassis: 'custom',
+      gender: 'masculine',
+      bodyType: 'balanced',
+      skinColor: '#0a0a0c',
+      faceType: 'cyber',
+      eyeColor: '#39d353',
+      hairStyle: 'slick',
+      hairColor: '#000000',
+      facialHair: 'none',
+      accessory: 'scouter',
+      maskStyle: 'anubis',
+      accentColor: '#39d353',
+    };
+  }
   if (id === 'sentinel') {
     return {
       chassis: 'custom',
@@ -150,6 +166,16 @@ function extraTeammates(model) {
         'Watch Ollama 11434, Studio 3000, Civilization 9393, and zoth-lock status. Ask before any command.',
       model: m,
       avatar: defaultAvatarFor('sentinel'),
+      created,
+    },
+    {
+      id: '1nc0gn30',
+      name: '1nc0gn30',
+      job: 'Hooded Builder & NullAI Architect',
+      description:
+        'Creator of ZothOS, Zoth Studio & NullAI Platform. Specializes in 3D Braille lattice graphics, sovereign systems, and autonomous agent loops.',
+      model: m,
+      avatar: defaultAvatarFor('1nc0gn30'),
       created,
     },
   ];

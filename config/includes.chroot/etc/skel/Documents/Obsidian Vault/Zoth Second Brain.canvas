@@ -3,72 +3,112 @@
     {
       "id": "group_sovereign_core",
       "type": "group",
-      "x": -480,
-      "y": -320,
-      "width": 980,
-      "height": 640,
-      "label": "Zoth Sovereign Second Brain & STDP Memory Substrate",
+      "x": -820,
+      "y": -520,
+      "width": 1640,
+      "height": 1040,
+      "label": "◈ Zoth Sovereign Second Brain, STDP Cortex & Ecosystem Pillars (2026-11-06)",
       "color": "3"
     },
     {
       "id": "node_home_moc",
       "type": "file",
-      "x": -140,
-      "y": -60,
-      "width": 280,
-      "height": 140,
+      "x": -160,
+      "y": -80,
+      "width": 320,
+      "height": 180,
       "file": "00 Home.md",
       "color": "3"
     },
     {
       "id": "node_zoth_memory",
       "type": "file",
-      "x": -430,
-      "y": -250,
-      "width": 250,
-      "height": 140,
+      "x": -760,
+      "y": -440,
+      "width": 300,
+      "height": 180,
       "file": "Zoth Memory.md",
       "color": "5"
     },
     {
       "id": "node_zoth_studio",
       "type": "file",
-      "x": 190,
-      "y": -250,
-      "width": 260,
-      "height": 140,
+      "x": 460,
+      "y": -440,
+      "width": 300,
+      "height": 180,
       "file": "Zoth Studio.md",
       "color": "4"
     },
     {
       "id": "node_zoth_os",
       "type": "file",
-      "x": -430,
-      "y": 120,
-      "width": 250,
-      "height": 140,
+      "x": -760,
+      "y": -100,
+      "width": 300,
+      "height": 180,
       "file": "Zoth OS.md",
       "color": "6"
     },
     {
+      "id": "node_zothos_lite",
+      "type": "file",
+      "x": -760,
+      "y": 240,
+      "width": 300,
+      "height": 180,
+      "file": "ZothOS-Lite Web Desktop.md",
+      "color": "6"
+    },
+    {
+      "id": "node_zothnet_mesh",
+      "type": "file",
+      "x": 460,
+      "y": -100,
+      "width": 300,
+      "height": 180,
+      "file": "ZothNet Sovereign Mesh.md",
+      "color": "4"
+    },
+    {
       "id": "node_vaelor_l1",
       "type": "file",
-      "x": 190,
-      "y": 120,
-      "width": 260,
-      "height": 140,
+      "x": 460,
+      "y": 240,
+      "width": 300,
+      "height": 180,
       "file": "Vaelor Network.md",
-      "color": "4"
+      "color": "3"
+    },
+    {
+      "id": "node_world_of_zoth",
+      "type": "file",
+      "x": -340,
+      "y": 240,
+      "width": 320,
+      "height": 180,
+      "file": "World of Zoth.md",
+      "color": "2"
+    },
+    {
+      "id": "node_pantheon_21",
+      "type": "file",
+      "x": 40,
+      "y": 240,
+      "width": 320,
+      "height": 180,
+      "file": "Zoth Civilization & Pantheon 21.md",
+      "color": "5"
     },
     {
       "id": "node_stdp_formula",
       "type": "text",
-      "x": -140,
-      "y": -270,
-      "width": 280,
-      "height": 150,
+      "x": -220,
+      "y": -440,
+      "width": 440,
+      "height": 220,
       "color": "5",
-      "text": "### ⚡ STDP Synaptic Core (:8094)\n$$\\Delta w = A_+ e^{-\\Delta t / \\tau_+}$$\nBiomorphic vector consolidation + Netrunner 3D WebGL Cortex."
+      "text": "### ⚡ STDP Synaptic Core (:8094) & Chroot Parity\n$$\\Delta w = A_+ e^{-\\Delta t / \\tau_+}$$\n- **41,690+ STDP Engrams** & **21-Tool MCP Server**\n- Host `/home/zoth/Documents/Obsidian Vault` mirrored 1:1 to `config/includes.chroot/etc/skel/Documents/Obsidian Vault/`"
     }
   ],
   "edges": [
@@ -88,25 +128,61 @@
       "toNode": "node_zoth_studio",
       "toSide": "bottom",
       "color": "4",
-      "label": "73-Port Fleet"
+      "label": "72 Tools :3000"
     },
     {
       "id": "edge_home_os",
       "fromNode": "node_home_moc",
       "fromSide": "left",
       "toNode": "node_zoth_os",
-      "toSide": "top",
+      "toSide": "right",
       "color": "6",
-      "label": "Kernel Substrate"
+      "label": "v3.4 Live ISO"
     },
     {
-      "id": "edge_home_vaelor",
+      "id": "edge_os_lite",
+      "fromNode": "node_zoth_os",
+      "fromSide": "bottom",
+      "toNode": "node_zothos_lite",
+      "toSide": "top",
+      "color": "6",
+      "label": "A100 Web OS :8145"
+    },
+    {
+      "id": "edge_home_zothnet",
       "fromNode": "node_home_moc",
       "fromSide": "right",
+      "toNode": "node_zothnet_mesh",
+      "toSide": "left",
+      "color": "4",
+      "label": "Sphinx 1,280B :9900"
+    },
+    {
+      "id": "edge_zothnet_vaelor",
+      "fromNode": "node_zothnet_mesh",
+      "fromSide": "bottom",
       "toNode": "node_vaelor_l1",
       "toSide": "top",
       "color": "3",
-      "label": "PoUW Minting :8140"
+      "label": "+5.00 VLR PoR & :8140"
+    },
+    {
+      "id": "edge_home_woz",
+      "fromNode": "node_home_moc",
+      "fromSide": "bottom",
+      "toNode": "node_world_of_zoth",
+      "toSide": "top",
+      "color": "2",
+      "label": "3D Lattice RPG & APK"
+    },
+    {
+      "id": "edge_home_pantheon",
+      "fromNode": "node_home_moc",
+      "fromSide": "bottom",
+      "toNode": "node_pantheon_21",
+      "toSide": "top",
+      "color": "5",
+      "label": "8-Planet Star System :8120"
     },
     {
       "id": "edge_stdp_home",

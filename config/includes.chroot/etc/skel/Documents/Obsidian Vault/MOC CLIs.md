@@ -1,14 +1,36 @@
 ---
-title: "MOC \u00b7 Image CLIs"
-tags: [moc, os]
+title: "MOC · Image CLIs & Braille TUIs"
+date: 2026-11-06
+author: "Neal Frazier (@1nc0gn30)"
+status: verified
+tags:
+  - moc
+  - os
+  - cli
+  - braille-tui
+cluster: OS
+stdp_weight: 0.98
 ---
 
-# MOC · Image CLIs
+# 💻 MOC · Image CLIs & Braille TUIs (`/usr/local/bin`)
 
-Every file in the ISO chroot `/usr/local/bin`.
+Every binary and portable launcher in `/usr/local/bin`, `~/.local/bin`, and the ZothOS v3.4 Live ISO chroot `config/includes.chroot/usr/local/bin`. All 72 Sovereign Studio tools also provide a paired `<tool>-tui` Unicode `U+2800` 2×4 Sub-Pixel Braille TUI (`--status`, `--json`).
 
-**155 notes.**
+> [!tip] Flagship Nov 2026 CLI Additions
+> - **`zothnet`**: [[ZothNet Sovereign Mesh]] (`zothnet run`, `zothnet monitor` 60fps Braille radar TUI, `zothnet status`, `zothnet id --json`, `zothnet apps compile`, `zothnet ledger`, `zothnet zns`, `zothnet cas`)
+> - **`zoth-cursorz`**: Multi-agent virtual cursor engine (`zoth-cursorz list`, `spawn`, `move`, `click`, `overlay`, `dashboard`, `train`, `android build/install`)
+> - **`zoth-obsidian-tracker`**: Second Brain & 72-Tool Verification Server (`:8151`)
+> - **`zoth-second-brain`**: Bidirectional Obsidian Vault & STDP Neuro-Memory (`:8094`) synchronizer
+> - **`zoth-comm`** & **`zoth-node`**: Vaelor L1 encrypted messaging & enterprise BFT cluster controller
 
+## Core CLI Index
+
+- [[ZothNet Sovereign Mesh|zothnet]]
+- [[1nc0gn30 Sovereign Hub|zoth-cursorz]]
+- [[CLI zoth-second-brain|zoth-second-brain]]
+- [[CLI zoth-obsidian-tracker|zoth-obsidian-tracker]]
+- [[05-Telemetry/ZothNet Encrypted Comms|zoth-comm]]
+- [[05-Telemetry/ZothNet Encrypted Comms|zoth-node]]
 - [[CLI agent-budget|agent-budget]]
 - [[CLI agent-capsule|agent-capsule]]
 - [[CLI agent-egress|agent-egress]]
@@ -156,15 +178,8 @@ Every file in the ISO chroot `/usr/local/bin`.
 - [[CLI zoth-webgen|zoth-webgen]]
 - [[CLI zoth-workspaces|zoth-workspaces]]
 - [[CLI zoth-yara-forge|zoth-yara-forge]]
+- [[CLI certipy|certipy]] · [[CLI httpx|httpx]] · [[CLI inspect|inspect]] · [[CLI netlify|netlify]] · [[CLI npm|npm]] · [[CLI npx|npx]] · [[CLI theHarvester|theHarvester]]
 
 ## See also
 
-[[00 Home]]
-- [[CLI certipy|certipy]]
-- [[CLI httpx|httpx]]
-- [[CLI inspect|inspect]]
-- [[CLI netlify|netlify]]
-- [[CLI npm|npm]]
-- [[CLI npx|npx]]
-- [[CLI theHarvester|theHarvester]]
-- [[CLI theharvester|theharvester]]
+[[00 Home]] · [[Zoth OS]] · [[Repo vs Live OS]] · [[MOC Studio Tools]] · [[Maps/CLIs.base]]

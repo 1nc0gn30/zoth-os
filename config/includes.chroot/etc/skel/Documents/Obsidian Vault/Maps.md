@@ -1,6 +1,8 @@
 ---
-title: "Maps"
-date: 2026-11-02
+title: "Maps — Spatial Canvases (.canvas) & Database Views (.base)"
+date: 2026-11-06
+author: "Neal Frazier (@1nc0gn30)"
+status: verified
 tags:
   - canon
   - moc
@@ -8,26 +10,28 @@ tags:
   - bases
 aliases:
   - "Obsidian maps"
+  - "Maps"
 cluster: Canon
 stdp_weight: 0.99
 ---
 
 # 🗺️ Maps — Spatial Canvases (`.canvas`) & Database Views (`.base`)
 
-Native Obsidian spatial and relational views over the **1,768+ Sovereign Second Brain Notes**. Graph is the constellation. Canvas is the operator board. Bases are the live filterable databases.
+Native Obsidian spatial and relational views over the **1,780+ Sovereign Second Brain Notes**. Graph is the constellation. Canvas is the operator board. Bases are the live filterable databases.
 
 ---
 
 ## 1. JSON Canvas 1.0 Boards (`.canvas`)
 
 ### Root Sovereign Architecture Canvases
-- [[Zoth Second Brain.canvas|Zoth Second Brain Master Canvas]] — Biomorphic STDP memory & Karpathy LLM Wiki flow
+- [[ZothNet & Vaelor Sovereign Mesh Architecture.canvas|ZothNet & Vaelor Sovereign Mesh Architecture Canvas]] — **NEW**: Sphinx 1,280B Mixnet, Vaelor L1 DAG (`+5.00 VLR` PoR), ZML Studio, Android 17 API 37 PIE APK, & 24/7 Moto G / VPS Relay fleet
+- [[Zoth Second Brain.canvas|Zoth Second Brain Master Canvas]] — Biomorphic STDP memory, Karpathy LLM Wiki, ZothNet, World of Zoth & Core Pillars
+- [[Vaelor Layer-1 Complete Architecture.canvas|Vaelor Layer-1 Complete Architecture Canvas]] — Feeless Account-Lattice DAG, PoR & PoUW
+- [[Vaelor & Sovereign Economy.canvas|Vaelor & Sovereign Economy Canvas]] — Open-access patronage & treasury architecture
 - [[Zoth 6 Mathematical Pillars.canvas|Zoth 6 Mathematical Pillars Canvas]] — Cryptographic, STDP, BFT & RT-kernel equations
 - [[ZothOS & Studio Supply-Chain Trust Stack.canvas|ZothOS & Studio Supply-Chain Trust Stack Canvas]] — Cosign, SLSA, VirusTotal & SBOM pipeline
-- [[Vaelor Layer-1 Complete Architecture.canvas|Vaelor Layer-1 Complete Architecture Canvas]] — Feeless Account-Lattice DAG & PoUW
-- [[Vaelor & Sovereign Economy.canvas|Vaelor & Sovereign Economy Canvas]] — Open-access patronage & treasury architecture
 - [[Zoth Autonomous Agents & Hermes Fleet.canvas|Zoth Autonomous Agents & Hermes Fleet Canvas]] — Pantheon 21 & Hermes orchestration
-- [[Zoth Plugin & Connector Marketplace.canvas|Zoth Plugin & Connector Marketplace Canvas]] — 34 Ring-0 MCP tools & connectors
+- [[Zoth Plugin & Connector Marketplace.canvas|Zoth Plugin & Connector Marketplace Canvas]] — 34+ Ring-0 MCP tools & connectors
 - [[Netrunner Cyber-Cortex Knowledge Map.canvas|Netrunner Cyber-Cortex Knowledge Map Canvas]] — 3D synaptic cortex topology
 - [[Epistemic Quorum & Byzantine Consensus Arena Knowledge Map.canvas|Epistemic Quorum & Byzantine Consensus Canvas]]
 - [[Biomorphic Netrunner Synaptic Map Knowledge Map.canvas|Biomorphic Netrunner Synaptic Map Canvas]]
@@ -47,12 +51,13 @@ Native Obsidian spatial and relational views over the **1,768+ Sovereign Second 
 ## 2. Obsidian Bases (`.base` Relational Views)
 
 ### Root Databases
+- [[Zoth Ecosystem & Public Surfaces.base|Zoth Ecosystem & Public Surfaces Database]] — **NEW**: Unified relational view of all Canon notes, public domains, ports, and Android APKs
+- [[Zoth Fleet & Daemons.base|Zoth Fleet & Daemons Database]] — Core fleet (`:3000`, `:8094`, `:8120`, `:8140`, `:8145`, `:8151`, `:9393`, `:9900`, `:9990`) & all sub-daemons
 - [[Zoth 72 Sovereign Tools.base|Zoth 72 Sovereign Tools Database]]
 - [[Zoth 72 Sovereign Tools Tracker.base|Zoth 72 Sovereign Tools Verification Matrix]]
 - [[Sovereign MCP Tools & Agent Catalog.base|Sovereign MCP Tools & Agent Catalog Database]]
 - [[Vaelor Ecosystem & Patronage Ledger.base|Vaelor Ecosystem & Patronage Ledger Database]]
 - [[Zoth Autonomous Agents.base|Zoth Autonomous Agents Database]]
-- [[Zoth Fleet & Daemons.base|Zoth Fleet & Daemons Database]]
 - [[Zoth LLM Wiki Index.base|Zoth LLM Wiki Index Database]]
 - [[Zoth Memory Stratum.base|Zoth Memory Stratum Database]]
 
@@ -63,4 +68,4 @@ Native Obsidian spatial and relational views over the **1,768+ Sovereign Second 
 
 ## See Also
 
-[[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[Public Surfaces]]
+[[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothNet Sovereign Mesh]] · [[World of Zoth]] · [[Public Surfaces]]

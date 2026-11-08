@@ -1,0 +1,77 @@
+filters:
+  and:
+    - file.inFolder("Mobile")
+    - file.hasTag("android-apk")
+    - 'file.ext == "md"'
+
+formulas:
+  fdroid_official_badge: 'if(fdroid_official == "READY", "🟢 Ready (FOSS)", if(fdroid_official == "TWEAK", "🟡 Minor Tweak", "🔴 Custom Repo / Flavor"))'
+  fdroid_sovereign_badge: 'if(fdroid_sovereign == "READY", "⚡ Live / Ready", "🟡 Pending")'
+  play_store_badge: 'if(play_store == "READY", "🟢 Ready", if(play_store == "DECLARATION", "🟡 Needs FGS/Acc Video", "🔴 Blocked (SDK 28)"))'
+  sdk_summary: 'concat("min ", string(min_sdk), " / target ", string(target_sdk))'
+  repo_link: 'if(github, link(github, "GitHub ↗"), "")'
+
+properties:
+  file.name:
+    displayName: "Android App"
+  package_id:
+    displayName: "Current Package ID"
+  prod_package_id:
+    displayName: "Target Prod ID"
+  version_name:
+    displayName: "Version"
+  build_system:
+    displayName: "Build System"
+  formula.sdk_summary:
+    displayName: "SDK Levels"
+  formula.fdroid_official_badge:
+    displayName: "Official F-Droid"
+  formula.fdroid_sovereign_badge:
+    displayName: "Sovereign F-Droid"
+  formula.play_store_badge:
+    displayName: "Google Play Store"
+  formula.repo_link:
+    displayName: "Source"
+
+views:
+  - type: table
+    name: "Table: All 9 Zoth & NullAI Android APKs"
+    limit: 50
+    order:
+      - file.name
+      - package_id
+      - prod_package_id
+      - version_name
+      - formula.sdk_summary
+      - build_system
+      - formula.fdroid_official_badge
+      - formula.fdroid_sovereign_badge
+      - formula.play_store_badge
+      - formula.repo_link
+    summaries:
+      formula.fdroid_official_badge: Unique
+      formula.play_store_badge: Unique
+
+  - type: cards
+    name: "Cards: By Official F-Droid Readiness"
+    groupBy:
+      property: formula.fdroid_official_badge
+      direction: ASC
+    order:
+      - file.name
+      - prod_package_id
+      - version_name
+      - formula.play_store_badge
+      - formula.repo_link
+
+  - type: cards
+    name: "Cards: By Google Play Store Track"
+    groupBy:
+      property: formula.play_store_badge
+      direction: ASC
+    order:
+      - file.name
+      - prod_package_id
+      - version_name
+      - formula.fdroid_official_badge
+      - formula.repo_link

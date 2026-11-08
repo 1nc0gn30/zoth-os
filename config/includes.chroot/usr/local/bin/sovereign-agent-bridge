@@ -8,15 +8,16 @@ elif [ "$1" = "tui" ] || [ "$1" = "--tui" ]; then
   exec /usr/local/bin/sovereign-agent-bridge-tui "$@"
 fi
 REPO_DIR="$HOME/NullAITech/sovereign-agent-bridge"
+export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
 PYTHON_BIN="$REPO_DIR/.venv/bin/python"
 if [ ! -f "$PYTHON_BIN" ]; then
   PYTHON_BIN="python3"
 fi
 
 if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
-  exec "$PYTHON_BIN" -m sovereign_agent_bridge.cli channels --json
+  exec "$PYTHON_BIN" -m sovereign_agent_bridge.cli agents --json
 elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
-  echo "sovereign-agent-bridge v3.2.0 (Sovereign Agent Signal Bridge)"
+  echo "sovereign-agent-bridge v3.3.0 (Sovereign Agent Signal & Cross-Agent Introspection Bridge)"
   exit 0
 elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
   exec "$PYTHON_BIN" -m sovereign_agent_bridge.cli --help
