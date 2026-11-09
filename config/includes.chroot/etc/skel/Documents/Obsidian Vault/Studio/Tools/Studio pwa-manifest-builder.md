@@ -1,19 +1,24 @@
 ---
 type: studio-tool
-id: "pwa-manifest-builder"
-title: "PWA Manifest Studio"
-category: "Autonomous Web"
-status: "verified"
-repo: "pwa-manifest-builder"
+id: pwa-manifest-builder
+title: PWA Manifest Studio
+category: Autonomous Web
+status: verified
+repo: pwa-manifest-builder
 localPort: 8100
-localUrl: "http://127.0.0.1:8100"
-studioUrl: "http://127.0.0.1:3000/tools/pwa-manifest-builder"
-github: "https://github.com/1nc0gn30/pwa-manifest-builder"
-liveUrl: "https://pwabuilder.nullai.tech"
-version: "2.5.0"
-pricing: "100% Free & Open-Access"
-tags: [zoth-studio, sovereign-tool, autonomous-web, verified-gallery]
-updated: "2026-10-31"
+localUrl: http://127.0.0.1:8100
+studioUrl: http://127.0.0.1:3000/tools/pwa-manifest-builder
+github: https://github.com/1nc0gn30/pwa-manifest-builder
+liveUrl: https://pwabuilder.nullai.tech
+version: 2.5.0
+pricing: 100% Free & Open-Access
+tags:
+- zoth-studio
+- sovereign-tool
+- autonomous-web
+- verified-gallery
+- tool
+updated: '2026-10-31'
 ---
 
 # PWA Manifest Studio (`pwa-manifest-builder`)

@@ -1,11 +1,13 @@
 ---
-title: "Studio Tool — shopify-connector (Shopify Connector)"
-tool_id: "shopify-connector"
-category: "Commerce & MCP"
+title: "Studio Tool \u2014 shopify-connector (Shopify Connector)"
+tool_id: shopify-connector
+category: Commerce & MCP
 port: 8113
-version: "2.5.0"
-status: "Verified • 100% Open Access"
-updated: "2026-10-31"
+version: 2.5.0
+status: "Verified \u2022 100% Open Access"
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # 🛍️ Shopify Connector (`shopify-connector`) — Sovereign Developer & End-User Walkthrough

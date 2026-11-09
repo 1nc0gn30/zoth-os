@@ -1,17 +1,28 @@
 ---
 type: tool-intake
-tool_id: "robots-txt-auditor"
-name: "Robots.txt & AEO Auditor"
-category: "Growth & SEO"
+tool_id: robots-txt-auditor
+name: Robots.txt & AEO Auditor
+category: Growth & SEO
 local_port: 8086
-studio_url: "http://127.0.0.1:3000/tools/robots-txt-auditor"
-standalone_url: "http://127.0.0.1:8086"
-repo_path: "~/NullAITech/robots-txt-auditor"
-cli_binary: "/usr/local/bin/robots-txt-auditor"
-status: "VERIFIED_100_PERCENT_OPEN_ACCESS"
+studio_url: http://127.0.0.1:3000/tools/robots-txt-auditor
+standalone_url: http://127.0.0.1:8086
+repo_path: ~/NullAITech/robots-txt-auditor
+cli_binary: /usr/local/bin/robots-txt-auditor
+status: VERIFIED_100_PERCENT_OPEN_ACCESS
 step_screenshots: 12
-verified_at: "2026-10-31"
-tags: [zoth-studio, sovereign-arsenal, step-by-step-walkthrough, developer-guide, user-guide, robots-txt, rfc-9309, aeo, seo, ai-crawlers]
+verified_at: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-arsenal
+- step-by-step-walkthrough
+- developer-guide
+- user-guide
+- robots-txt
+- rfc-9309
+- aeo
+- seo
+- ai-crawlers
+- tool
 ---
 
 # ⚡ Robots.txt & AEO Auditor (`robots-txt-auditor`) — Complete Developer & User Walkthrough

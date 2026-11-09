@@ -7,6 +7,8 @@ version: 2.5.0
 status: Verified
 open_access: true
 screenshots: 12
+tags:
+- tool
 ---
 
 # 🏛️ Schema Illustrator Studio (`schema-illustrator-studio`)

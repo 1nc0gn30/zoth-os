@@ -1,17 +1,27 @@
 ---
 type: tool-intake
-tool_id: "reality-shader-forge"
-name: "Zoth Reality Shader & Theme Forge"
-category: "Media & 3D"
+tool_id: reality-shader-forge
+name: Zoth Reality Shader & Theme Forge
+category: Media & 3D
 local_port: 8134
-studio_url: "http://127.0.0.1:3000/tools/reality-shader-forge"
-standalone_url: "http://127.0.0.1:8134"
-repo_path: "~/NullAITech/reality-shader-forge"
-cli_binary: "/usr/local/bin/reality-shader-forge"
-status: "VERIFIED_100_PERCENT_OPEN_ACCESS"
+studio_url: http://127.0.0.1:3000/tools/reality-shader-forge
+standalone_url: http://127.0.0.1:8134
+repo_path: ~/NullAITech/reality-shader-forge
+cli_binary: /usr/local/bin/reality-shader-forge
+status: VERIFIED_100_PERCENT_OPEN_ACCESS
 step_screenshots: 12
-verified_at: "2026-10-31"
-tags: [zoth-studio, sovereign-arsenal, step-by-step-walkthrough, developer-guide, user-guide, media-3d, kde-plasma, alacritty, css-tokens]
+verified_at: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-arsenal
+- step-by-step-walkthrough
+- developer-guide
+- user-guide
+- media-3d
+- kde-plasma
+- alacritty
+- css-tokens
+- tool
 ---
 
 # 🌌 Zoth Reality Shader & Theme Forge (`reality-shader-forge`) — Complete Developer & User Walkthrough

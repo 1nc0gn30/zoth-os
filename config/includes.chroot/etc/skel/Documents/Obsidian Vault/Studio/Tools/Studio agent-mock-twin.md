@@ -1,17 +1,19 @@
 ---
-tool_id: "agent-mock-twin"
-name: "Agent Mock Twin"
-category: "Simulation & Testing"
+tool_id: agent-mock-twin
+name: Agent Mock Twin
+category: Simulation & Testing
 local_port: 8097
-studio_route: "http://127.0.0.1:3000/tools/agent-mock-twin"
-web_url: "https://agent-mock-twin.nullai.tech"
-repo: "https://github.com/1nc0gn30/agent-mock-twin"
-cli_binary: "/usr/local/bin/agent-mock-twin"
-test_status: "PASS (12-Step Gallery Verified)"
-access_tier: "100% Free & Open Access (Zero Paywalls)"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-last_verified: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/agent-mock-twin
+web_url: https://agent-mock-twin.nullai.tech
+repo: https://github.com/1nc0gn30/agent-mock-twin
+cli_binary: /usr/local/bin/agent-mock-twin
+test_status: PASS (12-Step Gallery Verified)
+access_tier: 100% Free & Open Access (Zero Paywalls)
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+last_verified: '2026-10-31'
+tags:
+- tool
 ---
 
 # Agent Mock Twin (`agent-mock-twin`)

@@ -1,25 +1,26 @@
 ---
 type: studio-tool
-tool_id: "pod-smart-router"
-title: "POD Smart Router"
-category: "Commerce & MCP"
+tool_id: pod-smart-router
+title: POD Smart Router
+category: Commerce & MCP
 local_port: 8117
-studio_route: "http://127.0.0.1:3000/tools/pod-smart-router"
-standalone_url: "http://127.0.0.1:8117"
-cli_command: "pod-smart-router"
-repo_path: "~/NullAITech/pod-smart-router"
-status: "verified"
-verification_level: "12-point-real-walkthrough"
+studio_route: http://127.0.0.1:3000/tools/pod-smart-router
+standalone_url: http://127.0.0.1:8117
+cli_command: pod-smart-router
+repo_path: ~/NullAITech/pod-smart-router
+status: verified
+verification_level: 12-point-real-walkthrough
 screenshots_count: 12
-updated: "2026-10-31"
+updated: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - studio-tool
-  - commerce-and-mcp
-  - printify
-  - gelato
-  - fulfillment-router
-  - walkthrough-verified
+- sovereign-arsenal
+- studio-tool
+- commerce-and-mcp
+- printify
+- gelato
+- fulfillment-router
+- walkthrough-verified
+- tool
 ---
 
 # POD Smart Router — Complete Developer & User Walkthrough

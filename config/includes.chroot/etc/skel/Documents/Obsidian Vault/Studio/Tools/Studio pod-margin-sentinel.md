@@ -1,15 +1,17 @@
 ---
-tool_id: "pod-margin-sentinel"
-name: "POD Margin Sentinel"
-category: "Commerce & MCP"
+tool_id: pod-margin-sentinel
+name: POD Margin Sentinel
+category: Commerce & MCP
 local_port: 8120
-studio_route: "http://127.0.0.1:3000/tools/pod-margin-sentinel"
-standalone_url: "http://127.0.0.1:8120"
-cli_binary: "/usr/local/bin/pod-margin-sentinel"
-repo_path: "~/NullAITech/pod-margin-sentinel"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/pod-margin-sentinel
+standalone_url: http://127.0.0.1:8120
+cli_binary: /usr/local/bin/pod-margin-sentinel
+repo_path: ~/NullAITech/pod-margin-sentinel
+test_status: PASS (12-Step Gallery Verified)
 zero_paywalls: true
-updated_at: "2026-10-31"
+updated_at: '2026-10-31'
+tags:
+- tool
 ---
 
 # POD Margin Sentinel (`pod-margin-sentinel`) — Full Developer & End-User Walkthrough

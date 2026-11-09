@@ -1,23 +1,24 @@
 ---
-tool_id: "neuro-memory-daemon"
-title: "Neuro-Memory Daemon"
-category: "AI & Agents"
-pillar: "ai_agents"
+tool_id: neuro-memory-daemon
+title: Neuro-Memory Daemon
+category: AI & Agents
+pillar: ai_agents
 local_port: 8094
-studio_url: "http://127.0.0.1:3000/tools/neuro-memory-daemon"
-standalone_url: "http://127.0.0.1:8094"
-repo_path: "~/NullAITech/neuro-memory-daemon"
-cli_binary: "/usr/local/bin/neuro-memory-daemon"
-test_status: "PASS (12-Step Gallery Verified)"
-access_model: "100% Free & Open Access (Zero Paywalls)"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-verified_at: "2026-10-31"
+studio_url: http://127.0.0.1:3000/tools/neuro-memory-daemon
+standalone_url: http://127.0.0.1:8094
+repo_path: ~/NullAITech/neuro-memory-daemon
+cli_binary: /usr/local/bin/neuro-memory-daemon
+test_status: PASS (12-Step Gallery Verified)
+access_model: 100% Free & Open Access (Zero Paywalls)
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+verified_at: '2026-10-31'
 tags:
-  - zoth-studio
-  - sovereign-tool
-  - step-by-step-walkthrough
-  - neuro-memory-daemon
+- zoth-studio
+- sovereign-tool
+- step-by-step-walkthrough
+- neuro-memory-daemon
+- tool
 ---
 
 # Neuro-Memory Daemon (`neuro-memory-daemon`)

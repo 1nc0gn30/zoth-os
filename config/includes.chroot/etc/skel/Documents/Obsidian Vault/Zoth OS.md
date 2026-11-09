@@ -1,6 +1,6 @@
 ---
 title: "Zoth OS v3.4 — Sovereign Linux Workstation & Live ISO"
-date: 2026-11-06
+date: 2026-11-08
 author: "Neal Frazier (@1nc0gn30)"
 status: verified
 tags:
@@ -125,6 +125,21 @@ Laptop `eDP-1` (`0,0`) + extended monitor `DP-3` (`1920,0`). Run `zoth-workspace
 | `zoth-ghost` | Amnesic Tor routing & MAC/hostname anonymizer |
 | `zoth-doctor` | Full system health, port & daemon diagnostic verifier |
 | `zoth-workspaces` | Multi-monitor + 8 virtual desktop layout configurator |
+
+---
+
+## 6. Multiboot, Storage Optimization & Host Security Hardening (Nov 8, 2026)
+
+- **GRUB Multiboot Synchronization**:
+  - Configured GRUB 2.12 across NVMe (`/dev/nvme0n1`) and SATA SSD (`/dev/sda`) with **Parrot OS 7** as the default work environment (Entry 0, 5-second timeout).
+  - Added dedicated, non-destructive boot options for **ZothOS Full Workstation**, **ZothOS-Lite Monotone**, and **ZothOS-Lite Amnesic RAM (`toram`)**.
+- **113+ GB Storage Recovery**:
+  - Reclaimed 113+ GB of disk space across root partitions by pruning obsolete build scratch directories, stale Gradle/Android caches, old pip caches, expired systemd journals, and inactive container images.
+- **Host Security Hardening**:
+  - Enforced strict loopback binding (`127.0.0.1`) across all background daemons (`zothos-lite` `:8145`, `zothnet` `:9900`), eliminating rogue public listeners.
+  - Applied `0600` access permissions across all environment credentials (`.env`).
+  - Integrated the **Kokoro ONNX Neural Speech Engine (`:9394`)** into `zoth-osint` (`--voice` / `--announce`).
+  - Built and signed `zothnet-arm64.apk` (3.2 MB) with verified v2+v3 signatures for hardware deployment.
 
 ---
 

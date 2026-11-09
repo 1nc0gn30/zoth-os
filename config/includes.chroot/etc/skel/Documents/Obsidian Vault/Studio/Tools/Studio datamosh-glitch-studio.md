@@ -1,22 +1,23 @@
 ---
-tool_id: "datamosh-glitch-studio"
-title: "Datamosh Glitch Studio"
-category: "Media & 3D"
-version: "2.5.0"
-status: "Production Live"
-test_status: "PASS (12-Step Gallery Verified)"
+tool_id: datamosh-glitch-studio
+title: Datamosh Glitch Studio
+category: Media & 3D
+version: 2.5.0
+status: Production Live
+test_status: PASS (12-Step Gallery Verified)
 standalone_port: 8081
-studio_route: "/tools/datamosh-glitch-studio"
-cli_binary: "datamosh-glitch-studio"
-repo_path: "~/NullAITech/datamosh-glitch-studio"
-live_url: "https://datamosh-glitch-studio.netlify.app"
-verified_at: "2026-10-31"
+studio_route: /tools/datamosh-glitch-studio
+cli_binary: datamosh-glitch-studio
+repo_path: ~/NullAITech/datamosh-glitch-studio
+live_url: https://datamosh-glitch-studio.netlify.app
+verified_at: '2026-10-31'
 tags:
-  - zoth-studio
-  - tool-audit
-  - step-by-step-walkthrough
-  - datamosh-glitch-studio
-  - glitch-art
+- zoth-studio
+- tool-audit
+- step-by-step-walkthrough
+- datamosh-glitch-studio
+- glitch-art
+- tool
 ---
 
 # Datamosh Glitch Studio (`datamosh-glitch-studio`)

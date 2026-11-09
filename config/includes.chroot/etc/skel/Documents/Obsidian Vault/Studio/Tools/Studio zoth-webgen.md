@@ -1,11 +1,13 @@
 ---
-title: "Studio zoth-webgen"
-tool_id: "zoth-webgen"
-category: "Autonomous Web & SaaS"
+title: Studio zoth-webgen
+tool_id: zoth-webgen
+category: Autonomous Web & SaaS
 port: 8092
-status: "verified"
+status: verified
 screenshots: 12
-updated: "2026-10-31"
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # Zoth QuickSite Starter (`zoth-webgen`) — Complete Developer & End-User Walkthrough

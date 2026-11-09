@@ -1,20 +1,28 @@
 ---
 type: studio-tool
-tool_id: "zoth-bot"
-name: "Zoth Bot Desktop Companion"
-category: "Swarm & Core"
-version: "1.0.0"
+tool_id: zoth-bot
+name: Zoth Bot Desktop Companion
+category: Swarm & Core
+version: 1.0.0
 local_port: 8146
-local_url: "http://127.0.0.1:8146"
-studio_url: "http://127.0.0.1:3000/tools/zoth-bot"
-github_url: "https://github.com/1nc0gn30/zoth-bot"
-repo_path: "~/NullAITech/zoth-bot"
-status: "verified"
-access: "100% Free & Open Access"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-updated: "2026-10-31"
-tags: [zoth-studio, sovereign-tool, swarm-core, zoth-bot, desktop-companion, security-rings, mcp-hub]
+local_url: http://127.0.0.1:8146
+studio_url: http://127.0.0.1:3000/tools/zoth-bot
+github_url: https://github.com/1nc0gn30/zoth-bot
+repo_path: ~/NullAITech/zoth-bot
+status: verified
+access: 100% Free & Open Access
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+updated: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-tool
+- swarm-core
+- zoth-bot
+- desktop-companion
+- security-rings
+- mcp-hub
+- tool
 ---
 
 # Zoth Bot Desktop Companion (`zoth-bot`)

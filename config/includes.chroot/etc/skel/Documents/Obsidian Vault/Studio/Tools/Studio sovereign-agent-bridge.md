@@ -1,11 +1,13 @@
 ---
-title: "Studio Tool — sovereign-agent-bridge (Sovereign Agent Signal Bridge)"
-tool_id: "sovereign-agent-bridge"
-category: "Swarm & Core"
+title: "Studio Tool \u2014 sovereign-agent-bridge (Sovereign Agent Signal Bridge)"
+tool_id: sovereign-agent-bridge
+category: Swarm & Core
 port: 8102
-version: "3.2.0"
-status: "Verified • 100% Open Access"
-updated: "2026-10-31"
+version: 3.2.0
+status: "Verified \u2022 100% Open Access"
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # 🏛️ Sovereign Agent Signal Bridge (`sovereign-agent-bridge`) — Sovereign Developer & End-User Walkthrough

@@ -1,25 +1,26 @@
 ---
 type: studio-tool
-tool_id: "printify-connector"
-title: "Printify Connector"
-category: "Commerce & MCP"
+tool_id: printify-connector
+title: Printify Connector
+category: Commerce & MCP
 local_port: 8115
-studio_route: "http://127.0.0.1:3000/tools/printify-connector"
-standalone_url: "http://127.0.0.1:8115"
-cli_command: "printify-connector"
-repo_path: "~/NullAITech/printify-connector"
-status: "verified"
-verification_level: "12-point-real-walkthrough"
+studio_route: http://127.0.0.1:3000/tools/printify-connector
+standalone_url: http://127.0.0.1:8115
+cli_command: printify-connector
+repo_path: ~/NullAITech/printify-connector
+status: verified
+verification_level: 12-point-real-walkthrough
 screenshots_count: 12
-updated: "2026-10-31"
+updated: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - studio-tool
-  - commerce-and-mcp
-  - printify
-  - pod-margin-engine
-  - artwork-auditor
-  - walkthrough-verified
+- sovereign-arsenal
+- studio-tool
+- commerce-and-mcp
+- printify
+- pod-margin-engine
+- artwork-auditor
+- walkthrough-verified
+- tool
 ---
 
 # Printify Connector — Complete Developer & User Walkthrough

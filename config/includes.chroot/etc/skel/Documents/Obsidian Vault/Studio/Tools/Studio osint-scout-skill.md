@@ -1,21 +1,22 @@
 ---
-title: "Domain Intel OSINT Scout"
-tool_id: "osint-scout-skill"
-category: "Security & Recon"
+title: Domain Intel OSINT Scout
+tool_id: osint-scout-skill
+category: Security & Recon
 local_port: 8085
-studio_route: "http://127.0.0.1:3000/tools/osint-scout-skill"
-repo_path: "~/NullAITech/osint-scout-skill"
-cli_binary: "/usr/local/bin/osint-scout-skill"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/osint-scout-skill
+repo_path: ~/NullAITech/osint-scout-skill
+cli_binary: /usr/local/bin/osint-scout-skill
+test_status: PASS (12-Step Gallery Verified)
 open_access: true
-last_verified: "2026-10-31"
+last_verified: '2026-10-31'
 tags:
-  - zoth-studio
-  - sovereign-arsenal
-  - security-recon
-  - osint-scout
-  - passive-dns
-  - verified-gallery
+- zoth-studio
+- sovereign-arsenal
+- security-recon
+- osint-scout
+- passive-dns
+- verified-gallery
+- tool
 ---
 
 # Domain Intel OSINT Scout (`osint-scout-skill`)

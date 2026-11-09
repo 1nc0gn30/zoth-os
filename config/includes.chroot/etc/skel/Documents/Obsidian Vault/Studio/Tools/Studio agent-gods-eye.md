@@ -1,21 +1,22 @@
 ---
-id: "agent-gods-eye"
-name: "Agent God's Eye"
-category: "Security & Recon"
+id: agent-gods-eye
+name: Agent God's Eye
+category: Security & Recon
 port: 8112
-local_url: "http://127.0.0.1:8112"
-studio_url: "http://127.0.0.1:3000/tools/agent-gods-eye"
-github: "https://github.com/1nc0gn30/agent-gods-eye"
-test_status: "PASS (12-Step Gallery Verified)"
+local_url: http://127.0.0.1:8112
+studio_url: http://127.0.0.1:3000/tools/agent-gods-eye
+github: https://github.com/1nc0gn30/agent-gods-eye
+test_status: PASS (12-Step Gallery Verified)
 overflow_px: 0
 console_errors: 0
 free_open_access: true
-last_audited: "2026-10-31"
+last_audited: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - zoth-studio
-  - verified
-  - step-by-step-gallery
+- sovereign-arsenal
+- zoth-studio
+- verified
+- step-by-step-gallery
+- tool
 ---
 
 # ✦ Agent God's Eye (`agent-gods-eye`)

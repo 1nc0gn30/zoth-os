@@ -1,19 +1,24 @@
 ---
 type: studio-tool
-id: "promptmaster-studio"
-title: "PromptMaster Studio"
-category: "AI & Knowledge"
-status: "verified"
-repo: "promptmaster-studio"
+id: promptmaster-studio
+title: PromptMaster Studio
+category: AI & Knowledge
+status: verified
+repo: promptmaster-studio
 localPort: 8123
-localUrl: "http://127.0.0.1:8123"
-studioUrl: "http://127.0.0.1:3000/tools/promptmaster-studio"
-github: "https://github.com/1nc0gn30/promptmaster-studio"
-liveUrl: "https://promptmaster-studio.netlify.app"
-version: "3.2.0"
-pricing: "100% Free & Open-Access"
-tags: [zoth-studio, sovereign-tool, ai-and-knowledge, verified-gallery]
-updated: "2026-10-31"
+localUrl: http://127.0.0.1:8123
+studioUrl: http://127.0.0.1:3000/tools/promptmaster-studio
+github: https://github.com/1nc0gn30/promptmaster-studio
+liveUrl: https://promptmaster-studio.netlify.app
+version: 3.2.0
+pricing: 100% Free & Open-Access
+tags:
+- zoth-studio
+- sovereign-tool
+- ai-and-knowledge
+- verified-gallery
+- tool
+updated: '2026-10-31'
 ---
 
 # PromptMaster Studio (`promptmaster-studio`)

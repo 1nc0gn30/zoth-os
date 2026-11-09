@@ -1,13 +1,15 @@
 ---
-title: "Zoth Relay (MCP Agent Bridge) — Complete Developer & End-User Walkthrough"
-tool_id: "zoth-relay"
-category: "Swarm & Core"
+title: "Zoth Relay (MCP Agent Bridge) \u2014 Complete Developer & End-User Walkthrough"
+tool_id: zoth-relay
+category: Swarm & Core
 local_port: 8765
-studio_route: "http://127.0.0.1:3000/tools/zoth-relay"
-cli_binary: "/usr/local/bin/zoth-relay"
-repo_path: "~/NullAITech/zoth-relay"
-status: "VERIFIED_12_STEP_GALLERY"
-updated: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/zoth-relay
+cli_binary: /usr/local/bin/zoth-relay
+repo_path: ~/NullAITech/zoth-relay
+status: VERIFIED_12_STEP_GALLERY
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # Zoth Relay (`zoth-relay`) — Complete Developer & End-User Walkthrough

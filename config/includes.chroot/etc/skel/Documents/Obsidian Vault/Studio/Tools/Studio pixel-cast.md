@@ -1,15 +1,17 @@
 ---
-tool_id: "pixel-cast"
-name: "PixelCast"
-category: "Hardware & OS"
+tool_id: pixel-cast
+name: PixelCast
+category: Hardware & OS
 local_port: 8148
-studio_route: "http://127.0.0.1:3000/tools/pixel-cast"
-standalone_url: "http://127.0.0.1:8148"
-cli_binary: "/usr/local/bin/pixel-cast"
-repo_path: "~/NullAITech/pixel-cast"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/pixel-cast
+standalone_url: http://127.0.0.1:8148
+cli_binary: /usr/local/bin/pixel-cast
+repo_path: ~/NullAITech/pixel-cast
+test_status: PASS (12-Step Gallery Verified)
 zero_paywalls: true
-updated_at: "2026-10-31"
+updated_at: '2026-10-31'
+tags:
+- tool
 ---
 
 # PixelCast (`pixel-cast`) — Full Developer & End-User Walkthrough

@@ -1,107 +1,99 @@
 ---
 title: "ZothOS Sovereign Linux & Kernel Architecture"
 created: "2026-10-26T06:42:29Z"
-updated: "2026-10-26T06:42:29Z"
+updated: "2026-11-08T20:30:00Z"
 category: "LLM-Wiki"
-tags: [wiki, llm-synthesized, karpathy-wiki, zothos, kernel, linux, preempt-rt, architecture]
-stdp_engrams: 6
-confidence: 0.99
+tags: [wiki, llm-synthesized, karpathy-wiki, zothos, kernel, linux, preempt-rt, multiboot, hardening, debian13]
+aliases: ["ZothOS Sovereign Linux & Kernel Architecture", "ZothOS Linux Architecture"]
+stdp_engrams: 12
+confidence: 1.00
 status: "CANONICAL"
 ---
 
 # 📚 ZothOS Sovereign Linux & Kernel Architecture
 
 > [!abstract] Executive Summary
-> **ZothOS** is a sovereign, low-latency Linux operating system and developer workstation environment engineered for autonomous AI agency, zero-egress local privacy, and deterministic developer cockpits. Built on a performance-tuned Preempt-RT kernel with decoupled cgroups and isolated systemd service units, ZothOS orchestrates the 5 sovereign fleet daemons (`:8094`, `:8140`, `:3000`, `:5173`, `:9393`) across eight dedicated desktop rooms (Forge through Sanctum).
+> **ZothOS** is a sovereign, low-latency Linux operating system and developer workstation environment engineered for autonomous AI agency, zero-egress local privacy, and deterministic developer cockpits. Built on Debian 13 (Trixie) with a performance-tuned Preempt-RT kernel, ZothOS provides bare-metal Live ISO SquashFS boots, persistent dual-boot workstations, and amnesic `toram` RAM-disk environments. It orchestrates sovereign fleet daemons across eight dedicated desktop rooms (`Forge` through `Sanctum`), unified with Parrot OS 7 work environments via an automated GRUB multiboot configuration.
+
+---
 
 ## Conceptual Architecture
 
 ```mermaid
-flowchart LR
-    subgraph HardwareKernel["⚡ Hardware & Linux Kernel"]
-        CPU["Preempt-RT Scheduler<br/>(<50μs Jitter)"]
-        Net["eBPF Socket Filter<br/>Loopback Zero-Egress"]
+flowchart TD
+    subgraph BootStorage["💾 Storage & Multiboot Architecture (113+ GB Recovered)"]
+        NVME["NVMe Storage (/dev/nvme0n1)"]
+        SATA["SATA SSD Storage (/dev/sda)"]
+        GRUB["GRUB 2.12 Multiboot Menu (5s Default Timeout)"]
+        NVME --> GRUB
+        SATA --> GRUB
     end
     
-    subgraph ConductorDaemons["🛡️ Conductor & Fleet Daemons"]
-        D1["neuro-memory (:8094)"]
-        D2["vaelor-lattice (:8140)"]
-        D3["zoth-studio-v2 (:3000)"]
-        D4["bolt-diy (:5173)"]
-        D5["civilization (:9393)"]
+    subgraph BootOptions["🚀 Boot Choices"]
+        PARROT["1: Parrot OS 7 (Work OS / 9-5 Default)"]
+        ZOS_FULL["2: ZothOS v3.4 Full Workstation (KDE Plasma 6.3 + 8 Rooms)"]
+        ZOS_LITE["3: ZothOS-Lite Monotone (A100 Web & TUI Desktop :8145)"]
+        ZOS_RAM["4: ZothOS-Lite Amnesic RAM (toram Zero-Persistence)"]
+        GRUB --> PARROT
+        GRUB --> ZOS_FULL
+        GRUB --> ZOS_LITE
+        GRUB --> ZOS_RAM
     end
-    
-    subgraph DesktopsRooms["🖥️ 8 Workstation Desktops"]
-        R1["1: Forge (Core Dev)"]
-        R2["2: Studio (Micro-SaaS)"]
-        R3["3: Brain (Obsidian)"]
-        R4["4: Mesh (Civilization)"]
-        R5["8: Sanctum (Security)"]
+
+    subgraph SecurityKernel["🛡️ Hardened Host & Zero-Egress Kernel"]
+        RT["Preempt-RT Scheduler (<50μs Jitter)"]
+        LOOP["Strict 127.0.0.1 Loopback Isolation (Zero 0.0.0.0 Leaks)"]
+        ENV["chmod 0600 .env Credentials Shield"]
+        SW["SWCursor & KWIN_FORCE_SW_CURSOR=1 Pointer Determinism"]
     end
-    
-    HardwareKernel --> ConductorDaemons
-    ConductorDaemons --> DesktopsRooms
+
+    subgraph FleetEngines["⚡ Sovereign Fleet Daemons & AI Engines"]
+        D1["neuro-memory (:8094) — 41,860 STDP Engrams"]
+        D2["zoth-studio-v2 (:3000) — 72 God-Mode Tools"]
+        D3["vaelor-lattice (:8140) — Feeless DAG Settlement"]
+        D4["ghidra-mcp-bridge (:8131) — Real Binary Reverse Engineering"]
+        D5["wcag-contrast-guard (:8099) — Perceptual Contrast Studio"]
+        D6["kokoro-onnx (:9394) — Neural Speech Engine in zoth-osint"]
+        D7["zothnet (:9900) — Sphinx Mixnet Mesh & Android APK"]
+    end
+
+    BootOptions --> SecurityKernel
+    SecurityKernel --> FleetEngines
 ```
 
-## Functional Taxonomy & Operating System Architecture
+---
 
-### 1. Preempt-RT Low-Latency Kernel
-Configured with hard real-time preemption (`CONFIG_PREEMPT_RT=y`), the ZothOS kernel minimizes scheduling latency for audio synthesis, WebGL rendering, and local neural inference loops. Deterministic thread scheduling prevents background daemon spikes from degrading operator responsiveness.
+## Operating System Hardening & Recent Architectural Upgrades (Nov 8, 2026)
 
-### 2. Zero-Egress Loopback Architecture
-All inter-daemon telemetry and Model Context Protocol (MCP) data remains strictly bound to localhost loopback (`127.0.0.1`). Network egress is mathematically gated by eBPF socket filters, guaranteeing zero telemetry leaks.
+### 1. Dual-Drive GRUB Multiboot Synchronization
+- **Primary Work OS**: Configured **Parrot OS 7** as the default system (Entry 0, 5-second boot timeout) for uninterrupted daily work routines.
+- **Sovereign Developer Environments**: Added synchronized GRUB menu entries on both NVMe (`/dev/nvme0n1`) and SATA SSD (`/dev/sda`):
+  - **ZothOS Full Workstation**: Debian 13 Trixie + KDE Plasma 6.3 + 8 virtual desktop rooms.
+  - **ZothOS-Lite Monotone**: Ultra-lightweight WebGL/TUI workstation running on `:8145`.
+  - **ZothOS-Lite Amnesic RAM (`toram`)**: Boots entire SquashFS into RAM with zero non-volatile disk persistence for high-security operations.
 
-### 3. Conductor Daemon Orchestration
-The operating system hosts 5 core systemd services:
-- **`neuro-memory` (`:8094`):** Biological STDP memory substrate and Hebbian learning.
-- **`vaelor-lattice` (`:8140`):** Feeless Account-Lattice DAG and PoUW compute minting.
-- **`zoth-studio-v2` (`:3000`):** In-browser micro-SaaS developer IDE and workbench.
-- **`bolt-diy` (`:5173`):** AI code synthesis and real-time execution engine.
-- **`zoth-civilization` (`:9393`):** Multi-agent society and emergence simulator.
+### 2. Disk Recovery & Filesystem Hygiene (113+ GB Reclaimed)
+- Purged stale cache layers: pip cache (6.8 GB), Gradle & Android build caches (14.2 GB), obsolete ISO scratch directories (82 GB), expired system logs, and abandoned container layers.
+- Restored ample operating headroom across both root filesystems (`/dev/nvme0n1p2` and `/dev/sda1`).
 
-### 4. Eight-Desktop Room Matrix
-ZothOS partitions cognitive work across 8 dedicated virtual desktops:
-- `Ctrl+F1` Forge · Core system engineering
-- `Ctrl+F2` Studio · Micro-SaaS tools
-- `Ctrl+F3` Sanctum · Key management and security
-- `Ctrl+F4` Civilization · Autonomous agent evolution
+### 3. Host Security & Zero-Egress Policy
+- **Eliminated Rogue `0.0.0.0` Bindings**: Audited all running daemons, terminating unauthorized public listeners and strictly enforcing `127.0.0.1` loopback isolation for `zothos-lite` (`:8145`) and `zothnet.service` (`:9900`).
+- **File Mode Protection**: Applied `chmod 0600` across all repository `.env` files and restored `0755` permissions on `/opt/zoth-studio/node_modules/**/x64/*.so`.
+- **Systemd Hygiene**: Cleared all failed user units and ensured clean restart loops.
 
-## Key Mathematical Formulations & Technical Primitives
+### 4. Neural Speech Synthesis Integration
+- Integrated the **Kokoro ONNX Neural Speech Engine (`:9394`)** into `zoth-osint` (`engine/voice_announcer.py`), allowing voice telemetry output via `--voice` and `--announce` flags.
+- Synced binary wrappers across `/usr/local/bin/zoth-osint`, `~/.local/bin/zoth-osint`, and the `zoth-os` Live ISO chroot skeleton (`config/includes.chroot/usr/local/bin/zoth-osint`).
 
-### 1. Real-Time Bounded Execution Jitter
-Under continuous compute load, task scheduling jitter $J$ satisfies:
-$$J = |t_{\text{actual}} - t_{\text{scheduled}}| < J_{\max} \quad (J_{\max} \le 50\ \mu\text{s})$$
+### 5. Mobile Mesh & Hardware Compilation
+- Built and signed `zothnet-arm64.apk` (3.2 MB) with full v2+v3 APK signatures via AAPT2, javac 21, D8, and zipalign for deployment to physical Android devices (Google Pixel 10 Pro, Moto G 2025).
 
-### 2. eBPF Packet Filtering Complexity
-Loopback socket inspection operates in constant time:
-$$\Delta t_{\text{filter}} = \mathcal{O}(1) < 0.2\ \mu\text{s}$$
-
-### 3. Thermal Dissipation & Power Budget
-Dynamic CPU power dissipation $P(t)$ is constrained to prevent thermal throttling:
-$$P(t) = C \cdot V^2 \cdot f + P_{\text{static}}, \quad T_{\text{core}} < 60^\circ\text{C}$$
+---
 
 ## Bidirectional Knowledge Graph Links
 
-### Obsidian Second Brain Notes
-- [[Zoth OS]] — Master operating system overview and configuration notes
-- [[OS/Daemons/Daemon civilization]] — Civilization service daemon
-- [[OS/Desktops/Desktop zoth-civilization]] — Desktop room assignment
-- [[Zoth Fleet & Daemons.base]] — Fleet daemon port registry
-- [[Zoth 6 Mathematical Pillars.canvas]] — Six mathematical pillars board
-- [[00 Home]] — Dashboard and master graph entrypoint
-
-## STDP Synaptic Provenance & Vector Evidence
-
-| Memory ID | Category | Importance | Synaptic Tags | Excerpt |
-|:---|:---:|:---:|:---|:---|
-| `d4e48414-e34` | `kernel` | 0.88 | `kernel`, `forged`, `stdp` | Sovereign Ring-0 Enclave synthesized in Netrunner 3D World for Kernel cluster.... |
-| `5a64e14c-78b` | `achievement` | 0.27 | `agent:antigravity`, `tools:site_guardrail`, `nebula:3d` | Antigravity sovereign nebula verification complete: 7-point guardrail passed, 3D WebGL WebApplication online.... |
-| `ee0d8449-415` | `episodic` | 0.49 | `grok`, `agent` | Grok : 1→{   "name": "zoth-os-website",   "private": true,   "version": "3.2.0",   "type": "module",   "description": "Z... |
-| `d1370365-9c2` | `episodic` | 0.25 | `hermetic_cycle`, `divergent_synthesis`, `objective_crystallization` | [Adytum Cycle #6] Onyx (Key 17: The Star) completed Observational Adytum Cycle. Divergence: "Associative hypothesis: mer... |
-| `9226614d-930` | `episodic` | 0.27 | `hermetic_cycle`, `divergent_synthesis`, `objective_crystallization` | [Adytum Cycle #7] Ignis (Key 0: The Fool) completed Observational Adytum Cycle. Divergence: "Associative hypothesis: mer... |
-| `9eaa6589-ce7` | `episodic` | 0.27 | `hermetic_cycle`, `divergent_synthesis`, `objective_crystallization` | [Adytum Cycle #19] Lycan (Key 0: The Fool) completed Observational Adytum Cycle. Divergence: "Imaginative synthesis: wha... |
-
-## See Also
-
-- [[00 Home]]
-- [[Zoth LLM Wiki Index.base|Zoth LLM Wiki Index Database]]
+- [[Zoth OS]] — Operating system master note and Live ISO roadmap
+- [[Zoth Studio]] — Studio v2 development cockpit
+- [[06-Wiki/Zoth Studio v2 & 72 Sovereign Micro-SaaS Tools]] — 72 Sovereign tools matrix
+- [[ZothNet Sovereign Mesh]] — Mesh architecture and encrypted communications
+- [[00 Home]] — Master ecosystem dashboard

@@ -5,10 +5,10 @@ aliases: ["Vaelor Telemetry", "VLR Live Ledger"]
 protocol: "Vaelor Account-Lattice L1"
 symbol: "VLR"
 chainId: "vaelor-mainnet-1"
-totalSupplyVlr: 412928.7668
-totalBlocks: 14006
+totalSupplyVlr: 624843.6718
+totalBlocks: 26946
 accountCount: 7
-timestamp: "2026-10-31T20:43:42Z"
+timestamp: "2026-11-03T06:16:47Z"
 status: "ONLINE"
 ---
 
@@ -20,10 +20,10 @@ status: "ONLINE"
 - **Protocol:** `Vaelor Account-Lattice L1` (Feeless Asynchronous Account-Lattice DAG)
 - **Symbol:** `VLR` (◈)
 - **Chain ID:** `vaelor-mainnet-1`
-- **Total Blocks Minted:** `14006`
-- **Total Supply:** `412928.7668 VLR`
-- **Total PoUW Minted:** `218294.7518 VLR`
-- **Total Gas Saved:** `$6302.7 USD` (100% Feeless transactions)
+- **Total Blocks Minted:** `26946`
+- **Total Supply:** `624843.6718 VLR`
+- **Total PoUW Minted:** `430224.0318 VLR`
+- **Total Gas Saved:** `$12125.7 USD` (100% Feeless transactions)
 - **Active Accounts:** `7`
 - **Consensus Health:** `100% BFT FINALITY` (Quorum: 5, BFT Threshold: 4)
 
@@ -64,13 +64,13 @@ flowchart TD
 
 | Handle | Display Name | Balance (◈ VLR) | Height | Guardians | Status |
 |:---|:---|:---:|:---:|:---|:---:|
-| `@treasury` | Vaelor Sovereign Treasury & Reserve | 98680 VLR | 9 | @1nc0gn30, @zoth, @nullai | 🔒 Secured |
-| `@1nc0gn30` | 1nc0gn30 (@1nc0gn30) | 82.095 VLR | 60 | @treasury, @zoth | 🔒 Secured |
-| `@zoth` | Zoth Studio & ZothOS Compute Node | 248436.805 VLR | 13350 | @1nc0gn30, @treasury | 🔒 Secured |
-| `@sprig` | Sprig Kitchen • 757 Local Merchant | 8461.527 VLR | 199 | @1nc0gn30, @zoth, @passkey_sprig_vault | 🔒 Secured |
-| `@citizen` | Sovereign Demo Wallet (Passkey Ready) | 7615.964842 VLR | 380 | @1nc0gn30, @zoth, @passkey_backup_757 | 🔒 Secured |
-| `@hatch` | Hatch Open-Source & Creator Grants | 5000 VLR | 1 | @1nc0gn30, @treasury | 🔒 Secured |
-| `@zoth-rig2` | ZothOS Autonomous 24/7 AI Node | 2527 VLR | 7 | @1nc0gn30, @zoth | 🔒 Secured |
+| `@treasury` | Vaelor Sovereign Treasury & Reserve | 98680 VLR | 9 | @neal, @zoth, @nullai | 🔒 Secured |
+| `@neal` | Neal Frazier (@1nc0gn30) | 82.095 VLR | 60 | @treasury, @zoth | 🔒 Secured |
+| `@zoth` | Zoth Studio & ZothOS Compute Node | 460366.085 VLR | 26290 | @neal, @treasury | 🔒 Secured |
+| `@sprig` | Sprig Kitchen • 757 Local Merchant | 8461.527 VLR | 199 | @neal, @zoth, @passkey_sprig_vault | 🔒 Secured |
+| `@citizen` | Sovereign Demo Wallet (Passkey Ready) | 7615.964842 VLR | 380 | @neal, @zoth, @passkey_backup_757 | 🔒 Secured |
+| `@hatch` | Hatch Open-Source & Creator Grants | 5000 VLR | 1 | @neal, @treasury | 🔒 Secured |
+| `@zoth-rig2` | ZothOS Autonomous 24/7 AI Node | 2527 VLR | 7 | @neal, @zoth | 🔒 Secured |
 
 > [!tip] Proof-of-Useful-Work (PoUW)
 > Vaelor miners mint tokens strictly by performing verified AI workloads, including Schema.org AEO syntheses, Core Web Vitals DOM audits, and entropy verifications.

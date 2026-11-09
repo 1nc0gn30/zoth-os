@@ -1,15 +1,17 @@
 ---
-tool_id: "payload-entropy-studio"
-name: "Payload Entropy Studio"
-category: "Cybersecurity & Forensics"
+tool_id: payload-entropy-studio
+name: Payload Entropy Studio
+category: Cybersecurity & Forensics
 local_port: 8195
-studio_route: "http://127.0.0.1:3000/tools/payload-entropy-studio"
-standalone_url: "http://127.0.0.1:8195"
-cli_binary: "/usr/local/bin/payload-entropy-studio"
-repo_path: "~/NullAITech/payload-entropy-studio"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/payload-entropy-studio
+standalone_url: http://127.0.0.1:8195
+cli_binary: /usr/local/bin/payload-entropy-studio
+repo_path: ~/NullAITech/payload-entropy-studio
+test_status: PASS (12-Step Gallery Verified)
 zero_paywalls: true
-updated_at: "2026-10-31"
+updated_at: '2026-10-31'
+tags:
+- tool
 ---
 
 # Payload Entropy Studio (`payload-entropy-studio`) — Full Developer & End-User Walkthrough

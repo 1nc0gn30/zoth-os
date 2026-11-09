@@ -1,20 +1,28 @@
 ---
 type: studio-tool
-tool_id: "zela-glasses-guide"
-name: "Zela Glasses Guide"
-category: "Swarm & Core"
-version: "0.5.0"
+tool_id: zela-glasses-guide
+name: Zela Glasses Guide
+category: Swarm & Core
+version: 0.5.0
 local_port: 8144
-local_url: "http://127.0.0.1:8144"
-studio_url: "http://127.0.0.1:3000/tools/zela-glasses-guide"
-github_url: "https://github.com/1nc0gn30/zela-glasses-guide"
-repo_path: "~/NullAITech/zela-glasses-guide"
-status: "verified"
-access: "100% Free & Open Access"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-updated: "2026-10-31"
-tags: [zoth-studio, sovereign-tool, swarm-core, zela-glasses-guide, ray-ban-meta, moondream, kokoro-tts]
+local_url: http://127.0.0.1:8144
+studio_url: http://127.0.0.1:3000/tools/zela-glasses-guide
+github_url: https://github.com/1nc0gn30/zela-glasses-guide
+repo_path: ~/NullAITech/zela-glasses-guide
+status: verified
+access: 100% Free & Open Access
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+updated: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-tool
+- swarm-core
+- zela-glasses-guide
+- ray-ban-meta
+- moondream
+- kokoro-tts
+- tool
 ---
 
 # Zela Glasses Guide (`zela-glasses-guide`)

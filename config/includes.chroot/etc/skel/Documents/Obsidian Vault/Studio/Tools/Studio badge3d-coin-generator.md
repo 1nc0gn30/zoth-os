@@ -1,15 +1,17 @@
 ---
-tool_id: "badge3d-coin-generator"
-name: "Badge3D Coin Generator"
-category: "Media & 3D"
-version: "v2.5.0"
-port: "8084"
-cli_bin: "badge3d-coin-generator"
-github_url: "https://github.com/1nc0gn30/badge3d-coin-generator"
-stripe_tip: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-open_access: "true"
-test_status: "PASS (12-Step Gallery Verified)"
+tool_id: badge3d-coin-generator
+name: Badge3D Coin Generator
+category: Media & 3D
+version: v2.5.0
+port: '8084'
+cli_bin: badge3d-coin-generator
+github_url: https://github.com/1nc0gn30/badge3d-coin-generator
+stripe_tip: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+open_access: 'true'
+test_status: PASS (12-Step Gallery Verified)
+tags:
+- tool
 ---
 
 # Badge3D Coin Generator (`badge3d-coin-generator`)

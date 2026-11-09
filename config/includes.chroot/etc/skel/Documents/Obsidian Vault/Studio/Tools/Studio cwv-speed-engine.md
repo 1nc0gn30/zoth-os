@@ -1,22 +1,23 @@
 ---
-tool_id: "cwv-speed-engine"
-title: "CWV Speed Engine"
-category: "Web Architecture & SEO"
-version: "2.4.0"
-status: "Production Live"
-test_status: "PASS (12-Step Gallery Verified)"
+tool_id: cwv-speed-engine
+title: CWV Speed Engine
+category: Web Architecture & SEO
+version: 2.4.0
+status: Production Live
+test_status: PASS (12-Step Gallery Verified)
 standalone_port: 8128
-studio_route: "/tools/cwv-speed-engine"
-cli_binary: "cwv-speed-engine"
-repo_path: "~/NullAITech/cwv-speed-engine"
-live_url: "https://cwv-speed-engine.nullai.tech"
-verified_at: "2026-10-31"
+studio_route: /tools/cwv-speed-engine
+cli_binary: cwv-speed-engine
+repo_path: ~/NullAITech/cwv-speed-engine
+live_url: https://cwv-speed-engine.nullai.tech
+verified_at: '2026-10-31'
 tags:
-  - zoth-studio
-  - tool-audit
-  - step-by-step-walkthrough
-  - cwv-speed-engine
-  - core-web-vitals
+- zoth-studio
+- tool-audit
+- step-by-step-walkthrough
+- cwv-speed-engine
+- core-web-vitals
+- tool
 ---
 
 # CWV Speed Engine (`cwv-speed-engine`)

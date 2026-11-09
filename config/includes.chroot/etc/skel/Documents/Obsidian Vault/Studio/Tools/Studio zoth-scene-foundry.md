@@ -1,13 +1,15 @@
 ---
-title: "Zoth Scene Foundry — Complete Developer & End-User Walkthrough"
-tool_id: "zoth-scene-foundry"
-category: "Media & 3D"
+title: "Zoth Scene Foundry \u2014 Complete Developer & End-User Walkthrough"
+tool_id: zoth-scene-foundry
+category: Media & 3D
 local_port: 8823
-studio_route: "http://127.0.0.1:3000/tools/zoth-scene-foundry"
-cli_binary: "/usr/local/bin/zoth-scene-foundry"
-repo_path: "~/NullAITech/zoth-scene-foundry"
-status: "VERIFIED_12_STEP_GALLERY"
-updated: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/zoth-scene-foundry
+cli_binary: /usr/local/bin/zoth-scene-foundry
+repo_path: ~/NullAITech/zoth-scene-foundry
+status: VERIFIED_12_STEP_GALLERY
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # Zoth Scene Foundry (`zoth-scene-foundry`) — Complete Developer & End-User Walkthrough

@@ -1,17 +1,28 @@
 ---
 type: tool-intake
-tool_id: "regex-droid-builder"
-name: "Regex Droid Studio"
-category: "Automation"
+tool_id: regex-droid-builder
+name: Regex Droid Studio
+category: Automation
 local_port: 8101
-studio_url: "http://127.0.0.1:3000/tools/regex-droid-builder"
-standalone_url: "http://127.0.0.1:8101"
-repo_path: "~/NullAITech/regex-droid-builder"
-cli_binary: "/usr/local/bin/regex-droid-builder"
-status: "VERIFIED_100_PERCENT_OPEN_ACCESS"
+studio_url: http://127.0.0.1:3000/tools/regex-droid-builder
+standalone_url: http://127.0.0.1:8101
+repo_path: ~/NullAITech/regex-droid-builder
+cli_binary: /usr/local/bin/regex-droid-builder
+status: VERIFIED_100_PERCENT_OPEN_ACCESS
 step_screenshots: 12
-verified_at: "2026-10-31"
-tags: [zoth-studio, sovereign-arsenal, step-by-step-walkthrough, developer-guide, user-guide, regex, ast, redos, dfa-minimization, transpiler]
+verified_at: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-arsenal
+- step-by-step-walkthrough
+- developer-guide
+- user-guide
+- regex
+- ast
+- redos
+- dfa-minimization
+- transpiler
+- tool
 ---
 
 # 🤖 Regex Droid Studio (`regex-droid-builder`) — Complete Developer & User Walkthrough

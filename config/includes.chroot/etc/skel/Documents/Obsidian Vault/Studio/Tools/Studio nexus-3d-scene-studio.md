@@ -1,21 +1,22 @@
 ---
-title: "Nexus 3D Scene Studio"
-tool_id: "nexus-3d-scene-studio"
-category: "Media & 3D"
+title: Nexus 3D Scene Studio
+tool_id: nexus-3d-scene-studio
+category: Media & 3D
 local_port: 8082
-studio_route: "http://127.0.0.1:3000/tools/nexus-3d-scene-studio"
-repo_path: "~/NullAITech/nexus-3d-scene-studio"
-cli_binary: "/usr/local/bin/nexus-3d-scene-studio"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/nexus-3d-scene-studio
+repo_path: ~/NullAITech/nexus-3d-scene-studio
+cli_binary: /usr/local/bin/nexus-3d-scene-studio
+test_status: PASS (12-Step Gallery Verified)
 open_access: true
-last_verified: "2026-10-31"
+last_verified: '2026-10-31'
 tags:
-  - zoth-studio
-  - sovereign-arsenal
-  - media-3d
-  - webgl-geometry
-  - tesseract-4d
-  - verified-gallery
+- zoth-studio
+- sovereign-arsenal
+- media-3d
+- webgl-geometry
+- tesseract-4d
+- verified-gallery
+- tool
 ---
 
 # Nexus 3D Scene Studio (`nexus-3d-scene-studio`)

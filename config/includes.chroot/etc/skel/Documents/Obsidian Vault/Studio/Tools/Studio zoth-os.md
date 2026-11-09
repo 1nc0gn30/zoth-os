@@ -1,13 +1,15 @@
 ---
-title: "Zoth OS v3.4.0 — Complete Developer & End-User Walkthrough"
-tool_id: "zoth-os"
-category: "Swarm & Core"
+title: "Zoth OS v3.4.0 \u2014 Complete Developer & End-User Walkthrough"
+tool_id: zoth-os
+category: Swarm & Core
 local_port: 8137
-studio_route: "http://127.0.0.1:3000/tools/zoth-os"
-cli_binary: "/usr/local/bin/zoth-os"
-repo_path: "~/NullAITech/zoth-os"
-status: "VERIFIED_12_STEP_GALLERY"
-updated: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/zoth-os
+cli_binary: /usr/local/bin/zoth-os
+repo_path: ~/NullAITech/zoth-os
+status: VERIFIED_12_STEP_GALLERY
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # Zoth OS v3.4.0 (`zoth-os`) — Complete Developer & End-User Walkthrough

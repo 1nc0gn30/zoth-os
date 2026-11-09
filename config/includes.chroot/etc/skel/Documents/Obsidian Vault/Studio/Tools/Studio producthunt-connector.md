@@ -1,25 +1,26 @@
 ---
 type: studio-tool
-tool_id: "producthunt-connector"
-title: "ProductHunt Connector"
-category: "Commerce & POD"
+tool_id: producthunt-connector
+title: ProductHunt Connector
+category: Commerce & POD
 local_port: 8139
-studio_route: "http://127.0.0.1:3000/tools/producthunt-connector"
-standalone_url: "http://127.0.0.1:8139"
-cli_command: "producthunt-connector"
-repo_path: "~/NullAITech/producthunt-connector"
-status: "verified"
-verification_level: "12-point-real-walkthrough"
+studio_route: http://127.0.0.1:3000/tools/producthunt-connector
+standalone_url: http://127.0.0.1:8139
+cli_command: producthunt-connector
+repo_path: ~/NullAITech/producthunt-connector
+status: verified
+verification_level: 12-point-real-walkthrough
 screenshots_count: 12
-updated: "2026-10-31"
+updated: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - studio-tool
-  - commerce-and-pod
-  - producthunt
-  - graphql-v2
-  - url-drift-auditor
-  - walkthrough-verified
+- sovereign-arsenal
+- studio-tool
+- commerce-and-pod
+- producthunt
+- graphql-v2
+- url-drift-auditor
+- walkthrough-verified
+- tool
 ---
 
 # ProductHunt Connector (`zoth-ph`) — Complete Developer & User Walkthrough

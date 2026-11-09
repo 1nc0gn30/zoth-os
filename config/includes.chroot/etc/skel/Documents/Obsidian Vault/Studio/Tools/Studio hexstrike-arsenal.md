@@ -1,16 +1,18 @@
 ---
-tool_id: "hexstrike-arsenal"
-name: "HexStrike Security Arsenal"
-category: "Security & Enclave"
-version: "3.1.0"
+tool_id: hexstrike-arsenal
+name: HexStrike Security Arsenal
+category: Security & Enclave
+version: 3.1.0
 local_port: 8138
-studio_route: "http://127.0.0.1:3000/tools/hexstrike-arsenal"
-standalone_url: "http://127.0.0.1:8138/"
-cli_binary: "/usr/local/bin/hexstrike-arsenal"
-repo_path: "~/NullAITech/NullAI-HexStrike-AI-Terminal"
-test_status: "PASS (12-Step Gallery Verified)"
-access_model: "100% Free & Open-Access (Zero Paywalls)"
-last_verified: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/hexstrike-arsenal
+standalone_url: http://127.0.0.1:8138/
+cli_binary: /usr/local/bin/hexstrike-arsenal
+repo_path: ~/NullAITech/NullAI-HexStrike-AI-Terminal
+test_status: PASS (12-Step Gallery Verified)
+access_model: 100% Free & Open-Access (Zero Paywalls)
+last_verified: '2026-10-31'
+tags:
+- tool
 ---
 
 # HexStrike Security Arsenal (`hexstrike-arsenal`)

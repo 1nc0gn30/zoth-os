@@ -7,6 +7,8 @@ version: 3.5.0
 status: Verified
 open_access: true
 screenshots: 12
+tags:
+- tool
 ---
 
 # 🛡️ Shodan Attack Surface Sentinel (`shodan-surface-sentinel`)

@@ -8,6 +8,8 @@ status: Verified
 access: 100% Free & Open Access (Zero Paywalls)
 stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
 solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+tags:
+- tool
 ---
 
 # YARA-X & Sigma Threat Rule Forge (`yara-sigma-forge`)

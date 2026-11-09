@@ -5,27 +5,28 @@ title: Agent Capsule Jail
 category: Security & Enclave
 version: 2.5.0
 port: 8105
-local_url: "http://127.0.0.1:8105"
-studio_url: "http://127.0.0.1:3000/tools/agent-capsule-jail"
-live_url: "https://capsule.nullai.tech"
-github_url: "https://github.com/1nc0gn30/agent-capsule-jail"
+local_url: http://127.0.0.1:8105
+studio_url: http://127.0.0.1:3000/tools/agent-capsule-jail
+live_url: https://capsule.nullai.tech
+github_url: https://github.com/1nc0gn30/agent-capsule-jail
 cli_bin: /usr/local/bin/agent-capsule-jail
 repo_path: ~/NullAITech/agent-capsule-jail
-license: "100% Free & Open Access"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+license: 100% Free & Open Access
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
 solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
 status: VERIFIED_5_LAYERS
 overflow_px: 0
 console_errors: 0
-test_status: "PASS (12-Step Gallery Verified)"
-last_audited: "2026-10-31T14:58:30Z"
+test_status: PASS (12-Step Gallery Verified)
+last_audited: '2026-10-31T14:58:30Z'
 tags:
-  - sovereign-arsenal
-  - zoth-studio
-  - open-access
-  - security-enclave
-  - bubblewrap
-  - kernel-sandbox
+- sovereign-arsenal
+- zoth-studio
+- open-access
+- security-enclave
+- bubblewrap
+- kernel-sandbox
+- tool
 ---
 
 # Agent Capsule Jail (`agent-capsule-jail`)

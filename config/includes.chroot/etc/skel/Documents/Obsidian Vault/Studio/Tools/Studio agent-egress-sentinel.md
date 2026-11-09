@@ -6,27 +6,28 @@ category: Security & Network
 version: 2.5.0
 port: 8095
 proxy_port: 8195
-local_url: "http://127.0.0.1:8095"
-studio_url: "http://127.0.0.1:3000/tools/agent-egress-sentinel"
-live_url: "https://agent-egress.nullai.tech"
-github_url: "https://github.com/1nc0gn30/agent-egress-sentinel"
+local_url: http://127.0.0.1:8095
+studio_url: http://127.0.0.1:3000/tools/agent-egress-sentinel
+live_url: https://agent-egress.nullai.tech
+github_url: https://github.com/1nc0gn30/agent-egress-sentinel
 cli_bin: /usr/local/bin/agent-egress-sentinel
 repo_path: ~/NullAITech/agent-egress-sentinel
-license: "100% Free & Open Access"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+license: 100% Free & Open Access
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
 solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
 status: VERIFIED_5_LAYERS
 overflow_px: 0
 console_errors: 0
-test_status: "PASS (12-Step Gallery Verified)"
-last_audited: "2026-10-31T15:08:30Z"
+test_status: PASS (12-Step Gallery Verified)
+last_audited: '2026-10-31T15:08:30Z'
 tags:
-  - sovereign-arsenal
-  - zoth-studio
-  - open-access
-  - security-network
-  - egress-firewall
-  - sni-sniffer
+- sovereign-arsenal
+- zoth-studio
+- open-access
+- security-network
+- egress-firewall
+- sni-sniffer
+- tool
 ---
 
 # Agent Egress Sentinel (`agent-egress-sentinel`)

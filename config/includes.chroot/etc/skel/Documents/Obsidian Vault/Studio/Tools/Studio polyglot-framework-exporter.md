@@ -1,25 +1,26 @@
 ---
 type: studio-tool
-tool_id: "polyglot-framework-exporter"
-title: "Polyglot Framework Exporter"
-category: "Autonomous Web"
+tool_id: polyglot-framework-exporter
+title: Polyglot Framework Exporter
+category: Autonomous Web
 local_port: 8126
-studio_route: "http://127.0.0.1:3000/tools/polyglot-framework-exporter"
-standalone_url: "http://127.0.0.1:8126"
-cli_command: "polyglot-framework-exporter"
-repo_path: "~/NullAITech/polyglot-framework-exporter"
-status: "verified"
-verification_level: "12-point-real-walkthrough"
+studio_route: http://127.0.0.1:3000/tools/polyglot-framework-exporter
+standalone_url: http://127.0.0.1:8126
+cli_command: polyglot-framework-exporter
+repo_path: ~/NullAITech/polyglot-framework-exporter
+status: verified
+verification_level: 12-point-real-walkthrough
 screenshots_count: 12
-updated: "2026-10-31"
+updated: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - studio-tool
-  - autonomous-web
-  - framework-scaffolder
-  - ast-transpiler
-  - pkzip
-  - walkthrough-verified
+- sovereign-arsenal
+- studio-tool
+- autonomous-web
+- framework-scaffolder
+- ast-transpiler
+- pkzip
+- walkthrough-verified
+- tool
 ---
 
 # Polyglot Framework Exporter — Complete Developer & User Walkthrough

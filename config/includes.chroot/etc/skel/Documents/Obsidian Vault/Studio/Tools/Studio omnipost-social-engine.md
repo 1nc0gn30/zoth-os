@@ -1,21 +1,22 @@
 ---
-title: "OmniPost Social Engine"
-tool_id: "omnipost-social-engine"
-category: "Automation"
+title: OmniPost Social Engine
+tool_id: omnipost-social-engine
+category: Automation
 local_port: 8091
-studio_route: "http://127.0.0.1:3000/tools/omnipost-social-engine"
-repo_path: "~/NullAITech/omnipost-social-engine"
-cli_binary: "/usr/local/bin/omnipost-social-engine"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/omnipost-social-engine
+repo_path: ~/NullAITech/omnipost-social-engine
+cli_binary: /usr/local/bin/omnipost-social-engine
+test_status: PASS (12-Step Gallery Verified)
 open_access: true
-last_verified: "2026-10-31"
+last_verified: '2026-10-31'
 tags:
-  - zoth-studio
-  - sovereign-arsenal
-  - social-automation
-  - thread-splitter
-  - virality-scorer
-  - verified-gallery
+- zoth-studio
+- sovereign-arsenal
+- social-automation
+- thread-splitter
+- virality-scorer
+- verified-gallery
+- tool
 ---
 
 # OmniPost Social Engine (`omnipost-social-engine`)

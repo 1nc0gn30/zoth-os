@@ -1,20 +1,27 @@
 ---
 type: studio-tool
-tool_id: "zoth-bounty"
-name: "Zoth Bounty Research Hub"
-category: "Security & Enclave"
-version: "1.0.0"
+tool_id: zoth-bounty
+name: Zoth Bounty Research Hub
+category: Security & Enclave
+version: 1.0.0
 local_port: 9494
-local_url: "http://127.0.0.1:9494"
-studio_url: "http://127.0.0.1:3000/tools/zoth-bounty"
-github_url: "https://github.com/1nc0gn30/zoth-bounty"
-repo_path: "~/NullAITech/zoth-bounty"
-status: "verified"
-access: "100% Free & Open Access"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-updated: "2026-10-31"
-tags: [zoth-studio, sovereign-tool, security-enclave, zoth-bounty, bug-bounty, responsible-disclosure]
+local_url: http://127.0.0.1:9494
+studio_url: http://127.0.0.1:3000/tools/zoth-bounty
+github_url: https://github.com/1nc0gn30/zoth-bounty
+repo_path: ~/NullAITech/zoth-bounty
+status: verified
+access: 100% Free & Open Access
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+updated: '2026-10-31'
+tags:
+- zoth-studio
+- sovereign-tool
+- security-enclave
+- zoth-bounty
+- bug-bounty
+- responsible-disclosure
+- tool
 ---
 
 # Zoth Bounty Research Hub (`zoth-bounty`)

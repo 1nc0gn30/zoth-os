@@ -1,15 +1,17 @@
 ---
-tool_id: "pod-mockup-forge"
-name: "POD Mockup Forge"
-category: "Commerce & MCP"
+tool_id: pod-mockup-forge
+name: POD Mockup Forge
+category: Commerce & MCP
 local_port: 8119
-studio_route: "http://127.0.0.1:3000/tools/pod-mockup-forge"
-standalone_url: "http://127.0.0.1:8119"
-cli_binary: "/usr/local/bin/pod-mockup-forge"
-repo_path: "~/NullAITech/pod-mockup-forge"
-test_status: "PASS (12-Step Gallery Verified)"
+studio_route: http://127.0.0.1:3000/tools/pod-mockup-forge
+standalone_url: http://127.0.0.1:8119
+cli_binary: /usr/local/bin/pod-mockup-forge
+repo_path: ~/NullAITech/pod-mockup-forge
+test_status: PASS (12-Step Gallery Verified)
 zero_paywalls: true
-updated_at: "2026-10-31"
+updated_at: '2026-10-31'
+tags:
+- tool
 ---
 
 # POD Mockup Forge (`pod-mockup-forge`) — Full Developer & End-User Walkthrough

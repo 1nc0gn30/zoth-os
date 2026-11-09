@@ -1,21 +1,22 @@
 ---
-id: "agent-flight-recorder"
-name: "Agent Flight Recorder"
-category: "Forensics & Telemetry"
+id: agent-flight-recorder
+name: Agent Flight Recorder
+category: Forensics & Telemetry
 port: 8104
-local_url: "http://127.0.0.1:8104"
-studio_url: "http://127.0.0.1:3000/tools/agent-flight-recorder"
-github: "https://github.com/1nc0gn30/agent-flight-recorder"
-test_status: "PASS (12-Step Gallery Verified)"
+local_url: http://127.0.0.1:8104
+studio_url: http://127.0.0.1:3000/tools/agent-flight-recorder
+github: https://github.com/1nc0gn30/agent-flight-recorder
+test_status: PASS (12-Step Gallery Verified)
 overflow_px: 0
 console_errors: 0
 free_open_access: true
-last_audited: "2026-10-31"
+last_audited: '2026-10-31'
 tags:
-  - sovereign-arsenal
-  - zoth-studio
-  - verified
-  - step-by-step-gallery
+- sovereign-arsenal
+- zoth-studio
+- verified
+- step-by-step-gallery
+- tool
 ---
 
 # ✦ Agent Flight Recorder (`agent-flight-recorder`)

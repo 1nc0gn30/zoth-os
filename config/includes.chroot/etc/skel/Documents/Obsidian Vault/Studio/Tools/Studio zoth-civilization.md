@@ -1,13 +1,15 @@
 ---
-title: "Zoth Civilization Hub — Complete Developer & End-User Walkthrough"
-tool_id: "zoth-civilization"
-category: "Swarm & Core"
+title: "Zoth Civilization Hub \u2014 Complete Developer & End-User Walkthrough"
+tool_id: zoth-civilization
+category: Swarm & Core
 local_port: 9393
-studio_route: "http://127.0.0.1:3000/tools/zoth-civilization"
-cli_binary: "/usr/local/bin/zoth-civilization"
-repo_path: "~/NullAITech/zoth-civilization"
-status: "VERIFIED_12_STEP_GALLERY"
-updated: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/zoth-civilization
+cli_binary: /usr/local/bin/zoth-civilization
+repo_path: ~/NullAITech/zoth-civilization
+status: VERIFIED_12_STEP_GALLERY
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # Zoth Civilization Hub (`zoth-civilization`) — Complete Developer & End-User Walkthrough

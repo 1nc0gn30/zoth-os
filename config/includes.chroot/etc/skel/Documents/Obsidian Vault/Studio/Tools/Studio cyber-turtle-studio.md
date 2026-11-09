@@ -1,23 +1,24 @@
 ---
-tool_id: "cyber-turtle-studio"
-title: "Cyber Turtle Studio"
-category: "Media & 3D"
-version: "2.5.0"
-status: "Production Live"
-test_status: "PASS (12-Step Gallery Verified)"
+tool_id: cyber-turtle-studio
+title: Cyber Turtle Studio
+category: Media & 3D
+version: 2.5.0
+status: Production Live
+test_status: PASS (12-Step Gallery Verified)
 standalone_port: 8129
-studio_route: "/tools/cyber-turtle-studio"
-cli_binary: "cyber-turtle-studio"
-repo_path: "~/NullAITech/cyber-turtle-studio"
-live_url: "https://cyber-turtle-studio.netlify.app"
-verified_at: "2026-10-31"
+studio_route: /tools/cyber-turtle-studio
+cli_binary: cyber-turtle-studio
+repo_path: ~/NullAITech/cyber-turtle-studio
+live_url: https://cyber-turtle-studio.netlify.app
+verified_at: '2026-10-31'
 tags:
-  - zoth-studio
-  - tool-audit
-  - step-by-step-walkthrough
-  - cyber-turtle-studio
-  - l-system
-  - gcode
+- zoth-studio
+- tool-audit
+- step-by-step-walkthrough
+- cyber-turtle-studio
+- l-system
+- gcode
+- tool
 ---
 
 # Cyber Turtle Studio (`cyber-turtle-studio`)

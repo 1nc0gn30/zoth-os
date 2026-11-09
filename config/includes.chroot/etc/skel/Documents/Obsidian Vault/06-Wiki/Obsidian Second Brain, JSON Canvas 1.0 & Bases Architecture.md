@@ -1,7 +1,7 @@
 ---
 title: "Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture"
 created: "2026-10-26T08:27:00Z"
-updated: "2026-10-26T08:27:00Z"
+updated: "2026-11-08T20:30:00Z"
 category: "LLM-Wiki"
 tags: [wiki, llm-synthesized, karpathy-wiki, obsidian, json-canvas, obsidian-bases, kepano, stdp-sync, second-brain]
 stdp_engrams: 9
@@ -27,9 +27,9 @@ flowchart TD
 
     subgraph VaultSubstrate["📂 Sovereign Vault Filesystem"]
         direction TB
-        V1["1,726+ Markdown Notes"]
-        V2["16 JSON Canvas Maps"]
-        V3["18 Obsidian Bases Databases"]
+        V1["1,799+ Markdown Notes"]
+        V2["21 JSON Canvas Maps"]
+        V3["24 Obsidian Bases Databases"]
         V4["05-Telemetry Live Daemons"]
         V5["07-Daily Sovereign Journals"]
         V1 & V2 & V3 & V4 & V5

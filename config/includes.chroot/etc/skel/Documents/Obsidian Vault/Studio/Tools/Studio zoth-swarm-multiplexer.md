@@ -1,13 +1,15 @@
 ---
-title: "21-Agent Swarm Multiplexer — Complete Developer & End-User Walkthrough"
-tool_id: "zoth-swarm-multiplexer"
-category: "Swarm & Core"
+title: "21-Agent Swarm Multiplexer \u2014 Complete Developer & End-User Walkthrough"
+tool_id: zoth-swarm-multiplexer
+category: Swarm & Core
 local_port: 8141
-studio_route: "http://127.0.0.1:3000/tools/zoth-swarm-multiplexer"
-cli_binary: "/usr/local/bin/zoth-swarm-multiplexer"
-repo_path: "~/NullAITech/zoth-swarm-multiplexer"
-status: "VERIFIED_12_STEP_GALLERY"
-updated: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/zoth-swarm-multiplexer
+cli_binary: /usr/local/bin/zoth-swarm-multiplexer
+repo_path: ~/NullAITech/zoth-swarm-multiplexer
+status: VERIFIED_12_STEP_GALLERY
+updated: '2026-10-31'
+tags:
+- tool
 ---
 
 # 21-Agent Swarm Multiplexer (`zoth-swarm-multiplexer`) — Complete Developer & End-User Walkthrough

@@ -1,15 +1,17 @@
 ---
-tool_id: "azoth-local-agent"
-name: "AZOTH Local Archon Agent"
-category: "Swarm & Core"
-version: "v3.0.0"
-port: "8136"
-cli_bin: "azoth-local-agent"
-github_url: "https://github.com/NullAITech/azoth-local-agent"
-stripe_tip: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-open_access: "true"
-test_status: "PASS (12-Step Gallery Verified)"
+tool_id: azoth-local-agent
+name: AZOTH Local Archon Agent
+category: Swarm & Core
+version: v3.0.0
+port: '8136'
+cli_bin: azoth-local-agent
+github_url: https://github.com/NullAITech/azoth-local-agent
+stripe_tip: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+open_access: 'true'
+test_status: PASS (12-Step Gallery Verified)
+tags:
+- tool
 ---
 
 # AZOTH Local Archon Agent (`azoth-local-agent`)

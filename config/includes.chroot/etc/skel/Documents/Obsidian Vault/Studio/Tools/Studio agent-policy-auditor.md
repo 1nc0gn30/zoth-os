@@ -1,17 +1,19 @@
 ---
-tool_id: "agent-policy-auditor"
-name: "Agent Policy Auditor"
-category: "Security & Enclave"
+tool_id: agent-policy-auditor
+name: Agent Policy Auditor
+category: Security & Enclave
 local_port: 8106
-studio_route: "http://127.0.0.1:3000/tools/agent-policy-auditor"
-web_url: "https://agent-policy-auditor.nullai.tech"
-repo: "https://github.com/1nc0gn30/agent-policy-auditor"
-cli_binary: "/usr/local/bin/agent-policy-auditor"
-test_status: "PASS (12-Step Gallery Verified)"
-access_tier: "100% Free & Open Access (Zero Paywalls)"
-stripe_coffee: "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
-solana_tip: "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-last_verified: "2026-10-31"
+studio_route: http://127.0.0.1:3000/tools/agent-policy-auditor
+web_url: https://agent-policy-auditor.nullai.tech
+repo: https://github.com/1nc0gn30/agent-policy-auditor
+cli_binary: /usr/local/bin/agent-policy-auditor
+test_status: PASS (12-Step Gallery Verified)
+access_tier: 100% Free & Open Access (Zero Paywalls)
+stripe_coffee: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X
+solana_tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK
+last_verified: '2026-10-31'
+tags:
+- tool
 ---
 
 # Agent Policy Auditor (`agent-policy-auditor`)

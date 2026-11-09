@@ -2,11 +2,11 @@
 title: "Neuro-Memory Cortex Telemetry"
 tags: [telemetry, neuro-memory, stdp, synapses, engrams, knap-rendered]
 aliases: ["Cortex Telemetry", "STDP Memory Stats"]
-total_memories: 41670
-total_synapses: 2016688
-synaptic_density: 48.4
-average_importance: 0.798
-timestamp: "2026-10-31T20:43:42Z"
+total_memories: 61670
+total_synapses: 2963736
+synaptic_density: 48.06
+average_importance: 0.602
+timestamp: "2026-11-03T06:16:47Z"
 status: "ACTIVE"
 ---
 
@@ -15,11 +15,11 @@ status: "ACTIVE"
 > [!important] Biological Synaptic Substrate (:8094)
 > Real-time neural telemetry compiled directly from the Neuro-Memory biological substrate daemon via `@kepano/knap` structured template synthesis.
 
-- **Total Memories (Engrams):** `41670`
-- **Total Synaptic Connections:** `2016688` (Spike-Timing-Dependent Plasticity)
-- **Synaptic Density:** `48.4` synapses / memory
-- **Average Importance Rating:** `0.798`
-- **Average Access Replays:** `1.72`
+- **Total Memories (Engrams):** `61670`
+- **Total Synaptic Connections:** `2963736` (Spike-Timing-Dependent Plasticity)
+- **Synaptic Density:** `48.06` synapses / memory
+- **Average Importance Rating:** `0.602`
+- **Average Access Replays:** `1.8`
 - **Working Memory Cache:** `0 bytes`
 
 ## Biological Cortex Architecture
@@ -34,12 +34,12 @@ flowchart TD
     
     subgraph BiologicalCortex["🧠 STDP Synaptic Substrate (:8094)"]
         direction TB
-        Insight["Insight Engrams<br/>0 memories"]
-        Egress["Network Egress<br/>0 memories"]
-        Episodic["Episodic Experiences<br/>0 memories"]
-        Security["Security Chains<br/>0 memories"]
-        Semantic["Semantic Vault Notes<br/>0 memories"]
-        Procedural["Procedural Canvases & Bases<br/>0 memories"]
+        Insight["Insight Engrams<br/>47494 memories"]
+        Egress["Network Egress<br/>10056 memories"]
+        Episodic["Episodic Experiences<br/>3801 memories"]
+        Security["Security Chains<br/>262 memories"]
+        Semantic["Semantic Vault Notes<br/>25 memories"]
+        Procedural["Procedural Canvases & Bases<br/>18 memories"]
     end
     
     subgraph MetacognitionDream["🌙 Sleep Replay & Dream Consolidator"]
@@ -58,12 +58,12 @@ flowchart TD
 
 | Category | Engram Count | Primary Role in Cognitive Substrate |
 |:---|:---:|:---|
-| `insight` | 0 | Algorithmic breakthroughs, architecture designs & syntheses |
-| `network_egress` | 0 | HTTP audit traces, RPC attestations & network transactions |
-| `episodic` | 0 | Interaction histories, tool executions & timestamped events |
-| `security_chain` | 0 | Cryptographic keys, Ed25519 signatures & security audits |
-| `semantic` | 0 | Obsidian Second Brain MOCs & canonical concepts |
-| `procedural` | 0 | JSON Canvas 1.0 & Obsidian Bases schema workflows |
+| `insight` | 47494 | Algorithmic breakthroughs, architecture designs & syntheses |
+| `network_egress` | 10056 | HTTP audit traces, RPC attestations & network transactions |
+| `episodic` | 3801 | Interaction histories, tool executions & timestamped events |
+| `security_chain` | 262 | Cryptographic keys, Ed25519 signatures & security audits |
+| `semantic` | 25 | Obsidian Second Brain MOCs & canonical concepts |
+| `procedural` | 18 | JSON Canvas 1.0 & Obsidian Bases schema workflows |
 
 > [!tip] Spike-Timing-Dependent Plasticity (STDP)
 > Pre-synaptic spikes preceding post-synaptic firing induce Long-Term Potentiation (LTP), strengthening associative recall pathways, while delayed spikes trigger Long-Term Depression (LTD).
