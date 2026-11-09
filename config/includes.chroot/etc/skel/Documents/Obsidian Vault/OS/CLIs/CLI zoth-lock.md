@@ -30,6 +30,10 @@ zoth-lock [OPTIONS]
 - `--preview`: Displays a closeable preview of the lock screen without locking the session.
 - `--render-preview PNG`: Renders a still snapshot of the lock UI to an image file.
 - `--selftest`: Runs cryptographic hashing and UI smoke checks without engaging the lock.
+- `--room-sentry`: Launches OpenCV motion sentry and Tailscale live view (:8499).
+- `--lock-gated`: Strictly gates motion detection and camera capture to active lock sessions (releases `/dev/video0` and idles at 0% CPU when unlocked).
+- `--standalone`: Allows motion detection without locking the session (manual room watch).
+- `--audit-log`: Displays recent lock sessions and intruder sentry events.
 
 ## Implementation Details
 
