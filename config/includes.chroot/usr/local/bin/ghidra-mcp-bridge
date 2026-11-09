@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse, urllib.request, urllib.error, urllib.parse
+"""GhidraMCP Binary Reverse Engineering CLI.
+
+Command line interface for autonomous binary analysis, decompilation,
+disassembly, string extraction, and cross-reference analysis.
+"""
+
+import sys
+import os
+import json
+import argparse
+import subprocess
+import urllib.request
+import urllib.parse
+from pathlib import Path
 
 TOOL_ID = 'ghidra-mcp-bridge'
 TOOL_REPO = 'ghidra-mcp-bridge'
@@ -8,54 +21,71 @@ TOOL_DESC = 'LaurieWired Ghidra Model Context Protocol bridge for autonomous bin
 TOOL_VERSION = '3.5.0'
 TOOL_CATEGORY = 'Security & Enclave'
 TOOL_PORT = 8131
-REPO_DIR = os.path.expanduser('~/NullAITech/ghidra-mcp-bridge')
-SERVER_PY = os.path.expanduser('~/NullAITech/ghidra-mcp-bridge/server.py')
+
+# Locate repository root containing analyzer.py
+REPO_DIR = Path(__file__).resolve().parent.parent
+candidates = [
+    Path(__file__).resolve().parent.parent,
+    Path(os.path.expanduser('~/NullAITech/ghidra-mcp-bridge')),
+    Path('/opt/ghidra-mcp-bridge')
+]
+for c in candidates:
+    if (c / 'analyzer.py').exists():
+        REPO_DIR = c
+        break
+
+SERVER_PY = REPO_DIR / 'server.py'
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+if str(REPO_DIR) not in sys.path:
+    sys.path.insert(0, str(REPO_DIR))
+
+try:
+    from analyzer import BinaryAnalyzer, PROGRAMS_DB, MCP_TOOLS
+    ANALYZER = BinaryAnalyzer()
+except ImportError:
+    ANALYZER = None
+    PROGRAMS_DB = []
+    MCP_TOOLS = []
+
 
 def query_health():
     try:
         req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={'User-Agent': 'ZothOS-CLI'})
-        with urllib.request.urlopen(req, timeout=3.0) as r:
+        with urllib.request.urlopen(req, timeout=2.0) as r:
             return json.loads(r.read().decode('utf-8'))
     except Exception as e:
         return {"error": str(e)}
 
-def query_decompile(program: str, func: str):
+
+def query_daemon(endpoint: str):
     try:
-        url = f"{LOCAL_PORT_URL}/api/decompile?program={urllib.parse.quote(program)}&fn={urllib.parse.quote(func)}"
-        req = urllib.request.Request(url, headers={'User-Agent': 'ZothOS-CLI'})
-        with urllib.request.urlopen(req, timeout=4.0) as r:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}", headers={'User-Agent': 'ZothOS-CLI'})
+        with urllib.request.urlopen(req, timeout=10.0) as r:
             return json.loads(r.read().decode('utf-8'))
     except Exception as e:
         return {"error": str(e)}
 
-def query_tools():
-    try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/tools", headers={'User-Agent': 'ZothOS-CLI'})
-        with urllib.request.urlopen(req, timeout=3.0) as r:
-            return json.loads(r.read().decode('utf-8'))
-    except Exception as e:
-        return {"error": str(e)}
-
-def query_programs():
-    try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/programs", headers={'User-Agent': 'ZothOS-CLI'})
-        with urllib.request.urlopen(req, timeout=3.0) as r:
-            return json.loads(r.read().decode('utf-8'))
-    except Exception as e:
-        return {"error": str(e)}
 
 def main():
     args = sys.argv[1:]
+
+    # Electron launch shortcut
     if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
         import shutil as _sh
         rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
         elec = _sh.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
+        main_cjs = REPO_DIR / 'electron' / 'main.cjs'
+        if main_cjs.exists():
+            sys.exit(subprocess.run([elec, str(main_cjs)] + rem, cwd=str(REPO_DIR)).returncode)
+
+    # TUI launch shortcut
     if '--tui' in args or (args and args[0] == 'tui'):
         rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
+        tui_bin = REPO_DIR / 'bin' / 'ghidra-mcp-bridge-tui'
+        target_tui = str(tui_bin) if tui_bin.exists() else f'/usr/local/bin/{TOOL_ID}-tui'
+        sys.exit(subprocess.run([target_tui] + rem).returncode)
 
     parser = argparse.ArgumentParser(
         prog=TOOL_ID,
@@ -65,51 +95,244 @@ def main():
     parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
     parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
     parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('--jail', action='store_true', help='Run binary analysis inside agent-capsule-jail')
 
     subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands')
-    dec_p = subparsers.add_parser('decompile', help='Decompile target binary function via MCP')
-    dec_p.add_argument('program', nargs='?', default='zoth-vault-daemon', help='Program id')
-    dec_p.add_argument('func', nargs='?', default='main', help='Function name to decompile')
 
+    # analyze
+    ana_p = subparsers.add_parser('analyze', help='Inspect binary metadata, format, architecture, and symbols')
+    ana_p.add_argument('target', help='Binary filesystem path or demo ID (e.g. /bin/ls or zoth-vault-daemon)')
+    ana_p.add_argument('--methods', action='store_true', help='Enumerate functions and symbols')
+    ana_p.add_argument('--strings', nargs='?', const='', default=None, help='Extract strings (optional substring filter)')
+    ana_p.add_argument('--xrefs', metavar='TARGET', help='Search cross-references to symbol')
+
+    # disasm
+    dis_p = subparsers.add_parser('disasm', help='Disassemble function in binary')
+    dis_p.add_argument('target', help='Binary path or demo ID')
+    dis_p.add_argument('func', nargs='?', default='main', help='Function symbol or address (default: main)')
+    dis_p.add_argument('--syntax', choices=['intel', 'att'], default='intel', help='Disassembly syntax')
+
+    # decompile
+    dec_p = subparsers.add_parser('decompile', help='Decompile target binary function to C pseudocode AST')
+    dec_p.add_argument('target', nargs='?', default='zoth-vault-daemon', help='Binary path or program ID')
+    dec_p.add_argument('func', nargs='?', default='main', help='Function symbol or address to decompile')
+    dec_p.add_argument('--engine', choices=['auto', 'r2', 'ghidra'], default='auto', help='Decompilation engine')
+
+    # methods
+    meth_p = subparsers.add_parser('methods', help='List exported and internal function symbols')
+    meth_p.add_argument('target', help='Binary path or demo ID')
+    meth_p.add_argument('--filter', '-f', help='Substring filter for symbol names')
+
+    # strings
+    str_p = subparsers.add_parser('strings', help='Extract strings with hexadecimal file offsets')
+    str_p.add_argument('target', help='Binary path or demo ID')
+    str_p.add_argument('--query', '-q', help='String substring search query')
+    str_p.add_argument('--min-len', '-n', type=int, default=4, help='Minimum string length')
+
+    # xrefs
+    xref_p = subparsers.add_parser('xrefs', help='Search cross-references or calls to symbol')
+    xref_p.add_argument('target', help='Binary path or demo ID')
+    xref_p.add_argument('symbol', help='Symbol name or address to find callers for')
+
+    # tools
     subparsers.add_parser('tools', help='List available Ghidra MCP tools')
+
+    # programs
     subparsers.add_parser('programs', help='List indexed binary targets')
 
-    serve_p = subparsers.add_parser('serve', help='Run GhidraMCP bridge server daemon')
-    serve_p.add_argument('--port', type=int, default=TOOL_PORT, help='Port to bind')
+    # serve
+    srv_p = subparsers.add_parser('serve', help='Run GhidraMCP bridge server daemon')
+    srv_p.add_argument('--host', default='127.0.0.1', help='Host interface to bind')
+    srv_p.add_argument('--port', type=int, default=TOOL_PORT, help='Port to bind')
 
-    parsed, unknown = parser.parse_known_args(args)
+    parsed = parser.parse_args(args)
 
+    # 1. serve subcommand
     if parsed.subcommand == 'serve':
-        cmd = [sys.executable, SERVER_PY, '--port', str(parsed.port or TOOL_PORT)]
-        print(f"✦ Starting {TOOL_NAME} on http://127.0.0.1:{parsed.port or TOOL_PORT} ...")
-        proc = subprocess.run(cmd, cwd=REPO_DIR)
+        cmd = [sys.executable, str(SERVER_PY), '--host', parsed.host, '--port', str(parsed.port)]
+        print(f"✦ Starting {TOOL_NAME} on http://{parsed.host}:{parsed.port} ...")
+        proc = subprocess.run(cmd, cwd=str(REPO_DIR))
         sys.exit(proc.returncode)
 
+    # 2. tools subcommand
     if parsed.subcommand == 'tools':
-        t = query_tools()
-        print(json.dumps(t, indent=2))
+        print(json.dumps(MCP_TOOLS, indent=2))
         sys.exit(0)
 
+    # 3. programs subcommand
     if parsed.subcommand == 'programs':
-        p = query_programs()
-        print(json.dumps(p, indent=2))
+        summaries = []
+        for p in PROGRAMS_DB:
+            summaries.append({
+                "id": p["id"],
+                "name": p["name"],
+                "arch": p["arch"],
+                "format": p["format"],
+                "compiler": p["compiler"],
+                "entry_point": p["entry_point"],
+                "functions": list(p["functions"].keys()),
+                "is_demo": True
+            })
+        print(json.dumps(summaries, indent=2))
         sys.exit(0)
 
-    if parsed.subcommand == 'decompile':
-        res = query_decompile(parsed.program, parsed.func)
-        if "error" in res:
-            print(f"Decompilation Error: {res['error']}")
+    # 4. analyze subcommand
+    if parsed.subcommand == 'analyze':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
             sys.exit(1)
-        if parsed.json:
-            print(json.dumps(res, indent=2))
-        else:
-            print(f"✦ GhidraMCP Decompiled [{res.get('program')}]::{res.get('function')}() ({res.get('arch')}):")
-            print(f"  Address: {res.get('address')} | Size: {res.get('size_bytes')} bytes\n")
-            print(res.get('pseudocode', ''))
-        sys.exit(0)
+        try:
+            meta = ANALYZER.inspect_binary(parsed.target, force_jail=parsed.jail)
+            if parsed.methods:
+                meta['methods'] = ANALYZER.list_methods(parsed.target, force_jail=parsed.jail)
+            if parsed.strings is not None:
+                meta['strings'] = ANALYZER.search_strings(parsed.target, query=parsed.strings or None, force_jail=parsed.jail)
+            if parsed.xrefs:
+                meta['xrefs'] = ANALYZER.get_xrefs(parsed.target, parsed.xrefs, force_jail=parsed.jail)
 
+            if parsed.json:
+                print(json.dumps(meta, indent=2))
+            else:
+                print(f"✦ Target Binary Analysis: {meta.get('name')} ({meta.get('format')})")
+                print(f"  Path        : {meta.get('path', 'Demo DB')}")
+                print(f"  Architecture: {meta.get('arch')}")
+                print(f"  Entry Point : {meta.get('entry_point')}")
+                print(f"  Size        : {meta.get('size_bytes', 0):,} bytes")
+                if 'sha256' in meta:
+                    print(f"  SHA-256     : {meta.get('sha256')}")
+                print(f"  Functions   : {meta.get('total_functions', 0)}")
+
+                if 'methods' in meta:
+                    print(f"\n  --- Function Symbols ({len(meta['methods'])}) ---")
+                    for m in meta['methods'][:25]:
+                        print(f"    {m['address']:<18} {m['type']:<10} {m['name']} ({m.get('size', 0)} bytes)")
+                    if len(meta['methods']) > 25:
+                        print(f"    ... and {len(meta['methods']) - 25} more")
+
+                if 'strings' in meta:
+                    print(f"\n  --- Extracted Strings ({len(meta['strings'])}) ---")
+                    for s in meta['strings'][:20]:
+                        print(f"    {s['offset']:<12} {s['value']}")
+
+                if 'xrefs' in meta:
+                    print(f"\n  --- Cross References to '{parsed.xrefs}' ({len(meta['xrefs'])}) ---")
+                    for x in meta['xrefs'][:15]:
+                        print(f"    {x['address']:<18} [{x['type']}] {x['caller_function']}: {x['instruction']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Analysis Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # 5. disasm subcommand
+    if parsed.subcommand == 'disasm':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.disassemble_function(
+                parsed.target,
+                parsed.func,
+                syntax=parsed.syntax,
+                force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Disassembly [{res.get('program')}]::{res.get('function')}() ({res.get('arch')}, {res.get('syntax')}):")
+                print(f"  Address: {res.get('address')} | Engine: {res.get('engine')}\n")
+                for line in res.get('disasm', []):
+                    print(f"  {line}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Disassembly Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # 6. decompile subcommand
+    if parsed.subcommand == 'decompile':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.decompile_function(
+                parsed.target,
+                parsed.func,
+                engine=parsed.engine,
+                force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Decompiled [{res.get('program')}]::{res.get('function')}() ({res.get('arch')}):")
+                print(f"  Address: {res.get('address')} | Engine: {res.get('engine_used')} | Size: {res.get('size_bytes')} bytes\n")
+                print(res.get('pseudocode', '// No decompilation generated'))
+            sys.exit(0)
+        except Exception as e:
+            print(f"Decompilation Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # 7. methods subcommand
+    if parsed.subcommand == 'methods':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            methods = ANALYZER.list_methods(parsed.target, filter_query=parsed.filter, force_jail=parsed.jail)
+            if parsed.json:
+                print(json.dumps(methods, indent=2))
+            else:
+                print(f"✦ Function Symbols for {parsed.target} ({len(methods)} total):")
+                for m in methods:
+                    print(f"  {m['address']:<18} {m['type']:<10} {m['name']} ({m.get('size', 0)} bytes)")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Methods Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # 8. strings subcommand
+    if parsed.subcommand == 'strings':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            strs = ANALYZER.search_strings(
+                parsed.target,
+                query=parsed.query,
+                min_len=parsed.min_len,
+                force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(strs, indent=2))
+            else:
+                print(f"✦ Strings for {parsed.target} ({len(strs)} matches):")
+                for s in strs:
+                    print(f"  {s['offset']:<12} {s['value']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Strings Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # 9. xrefs subcommand
+    if parsed.subcommand == 'xrefs':
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            xrefs = ANALYZER.get_xrefs(parsed.target, parsed.symbol, force_jail=parsed.jail)
+            if parsed.json:
+                print(json.dumps(xrefs, indent=2))
+            else:
+                print(f"✦ Cross references to '{parsed.symbol}' in {parsed.target} ({len(xrefs)} found):")
+                for x in xrefs:
+                    print(f"  {x['address']:<18} [{x['type']}] {x['caller_function']}: {x['instruction']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Xrefs Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # Default / Status info
     health = query_health()
     is_online = health.get("error") is None
+    engines = ANALYZER.get_engines_status() if ANALYZER else {}
 
     info = {
         "id": TOOL_ID,
@@ -117,12 +340,13 @@ def main():
         "name": TOOL_NAME,
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
+        "installed": os.path.exists(str(REPO_DIR)),
+        "repo_path": str(REPO_DIR),
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
         "daemon_active": is_online,
         "daemon_telemetry": health if is_online else None,
+        "engines": engines,
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
@@ -140,9 +364,9 @@ def main():
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL}")
     print(f"  Daemon     : {'ONLINE (Live)' if is_online else 'OFFLINE'}")
-    if is_online:
-        print(f"  Protocol   : {health.get('protocol')} | Ghidra: {health.get('ghidra_headless')}")
+    print(f"  Engines    : Ghidra={engines.get('ghidra_headless')} | r2={engines.get('radare2')} | objdump={engines.get('objdump')} | jail={engines.get('agent_capsule_jail')}")
     print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+
 
 if __name__ == '__main__':
     main()
