@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Sovereign Agent Bridge Mandatory Gatekeeper Wrapper
+set -euo pipefail
+if [[ $# -lt 2 ]]; then
+  echo "Usage: zoth-bridge-gate <tool_name> <target_bin> [args...]" >&2
+  exit 1
+fi
+TOOL_NAME="$1"
+TARGET_BIN="$2"
+shift 2
+exec /home/zoth/.local/bin/sovereign-agent-bridge gatekeep "$TOOL_NAME" --target "$TARGET_BIN" -- "$@"

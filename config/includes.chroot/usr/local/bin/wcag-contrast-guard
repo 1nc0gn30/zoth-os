@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""wcag-contrast-guard: Universal WCAG 2.2 & APCA Color Accessibility Engine & Studio CLI Wrapper."""
+import sys, os, json, subprocess, argparse
+
+TOOL_ID = 'wcag-contrast-guard'
+TOOL_REPO = 'wcag-contrast-guard'
+TOOL_NAME = 'WCAG & APCA Contrast Guard Studio'
+TOOL_DESC = 'Universal WCAG 2.2 Level AA/AAA & APCA perceptual contrast evaluation, 8-deficiency color vision deficiency simulation, CIEDE2000 Delta-E auto-remediation, harmonic palette generator, and focus appearance auditing.'
+TOOL_VERSION = '2.5.0'
+TOOL_CATEGORY = 'accessibility'
+TOOL_PORT = 8099
+REPO_DIR = os.path.expanduser('~/NullAITech/wcag-contrast-guard')
+PKG_DIR = os.path.expanduser('~/NullAITech/wcag-contrast-guard/src')
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+def main():
+    args = sys.argv[1:]
+    subcommands = {
+        'check', 'harmonic', 'palette', 'matrix', 'apca', 'simulate',
+        'suggest', 'remediate', 'scan', 'palettes', 'audit', 'serve',
+        'mcp', 'focus', 'target', 'scrim', 'diagnostics', 'doctor', 'test'
+    }
+
+    if args and (args[0] in subcommands or (args[0] in ('-h', '--help') and len(args) > 1)):
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        cli_args = ['suggest' if a == 'remediate' else a for a in args]
+        res = subprocess.run([sys.executable, '-m', 'wcag_contrast_guard.cli'] + cli_args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+    )
+    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
+    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
+    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument('payload', nargs='*', help='Optional subcommands (check, harmonic, apca, simulate, suggest, scan, palettes, serve, mcp, focus, target, scrim)')
+    parsed, unknown = parser.parse_known_args(args)
+
+    if parsed.payload and parsed.payload[0] in subcommands:
+        env = os.environ.copy()
+        env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
+        cli_args = ['suggest' if a == 'remediate' else a for a in args]
+        res = subprocess.run([sys.executable, '-m', 'wcag_contrast_guard.cli'] + cli_args, cwd=REPO_DIR, env=env)
+        sys.exit(res.returncode)
+
+    is_live = False
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"http://127.0.0.1:{TOOL_PORT}/health", timeout=1.0) as resp:
+            if resp.status == 200:
+                is_live = True
+    except Exception:
+        pass
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.exists(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": os.path.join(PKG_DIR, "wcag_contrast_guard", "cli.py"),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_live": is_live,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        },
+        "status": "ACTIVE" if is_live else "READY"
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY.upper()}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Web Studio : {LOCAL_PORT_URL} (Daemon: {'ACTIVE' if is_live else 'OFFLINE'})")
+    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"\nSubcommands available via native CLI ({TOOL_ID}):")
+    print("  wcag-contrast-guard check <fg> <bg> [--json]       Evaluate WCAG 2.2 Level AA/AAA ratio")
+    print("  wcag-contrast-guard apca <fg> <bg> [--json]        Calculate APCA perceptual lightness contrast")
+    print("  wcag-contrast-guard harmonic <seed> [--css/--svg]   Generate compliant N-color harmonic palette")
+    print("  wcag-contrast-guard simulate <fg> <bg> [--json]    Simulate 8 color vision deficiencies")
+    print("  wcag-contrast-guard suggest <fg> <bg> [--ratio 4.5] CIEDE2000 minimal shift auto-remediation")
+    print("  wcag-contrast-guard focus [--thickness 2]          WCAG 2.2 SC 2.4.13 Focus Appearance evaluation")
+    print("  wcag-contrast-guard target [--width 44 --height 44] WCAG 2.2 SC 2.5.8 Target Size evaluation")
+    print("  wcag-contrast-guard scrim <text>                   Solve text-over-image background scrim")
+    print("  wcag-contrast-guard scan <file.css> [--json]       Audit CSS stylesheet color pairs")
+    print("  wcag-contrast-guard serve [--port 8099]            Launch Web Studio & REST API server")
+    print("  wcag-contrast-guard mcp                            Run Model Context Protocol stdio server")
+
+if __name__ == '__main__':
+    main()
