@@ -26,10 +26,10 @@ WallpaperItem {
     property real cursorSpeed: 0.0
     property real cursorActivity: 0.20
     property double lastLocalMouseTime: 0
+    property double lastFrameTime: 0
     property real breathingPhase: 0.0
     property real sacredRotation: 0.0
     property real sheenProgress: -0.4
-    property int idleThrottle: 0
 
     // Shockwave Ring Pool (4 expanding pulse rings on click or whip-burst)
     readonly property int waveCount: 4
@@ -37,11 +37,12 @@ WallpaperItem {
     property var waveItems: []
     property double lastWhipWaveTime: 0
 
-    // Constellation ley-line nodes
-    readonly property int nodeCount: 22
+    // Constellation ley-line nodes & twinkling pixel stars
+    readonly property int nodeCount: 26
     property var constellationNodes: []
+    property var twinkleStars: []
 
-    // Mathematical Constants & Data Grids for Uncommon Web Engine
+    // Mathematical Constants & Bayer Matrix
     readonly property var bayer4: [
         0.03125, 0.53125, 0.15625, 0.65625,
         0.78125, 0.28125, 0.90625, 0.40625,
@@ -52,15 +53,18 @@ WallpaperItem {
     // 1. Moving Metallic Gold Pixel Blocks
     property var goldPixelBlocks: []
 
-    // 2. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
-    property var zLatticePoints: []
-    property var zLatticeEdges: []
+    // 2. Centerpiece: True 3D Volumetric Sculpted Monolith "Z" Mesh
+    property var zMonolithMesh: null
 
     // 3. Floating Braille/ASCII sparks pool
     property var brailleSparks: []
 
     // 4. Pre-computed active pixel coordinates for ZOTHOS wordmark
     property var wordmarkPixels: []
+
+    // 1nc0gn30 Hooded Builder Stage active pose state
+    property string activePoseName: "hero"
+    property string activePoseTag: "1NC0GN30 · SENTINEL"
 
     function triggerShockwave(wx, wy, intensityScale) {
         if (root.waveItems.length === 0) {
@@ -96,81 +100,33 @@ WallpaperItem {
         cache: true
     }
 
-    // ── 2. Sacred Hermetic Rings & Ambient Bloom Behind Hologram & 3D Z ────
+    // ── 2. Ambient Golden Nebula Bloom (Coin Image Completely Removed) ─────
     Item {
         id: sacredCenterBackdrop
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -45
-        width: Math.min(root.width * 0.52, 640)
+        anchors.verticalCenterOffset: -35
+        width: Math.min(root.width * 0.48, 560)
         height: width
 
-        property real centerDist: Math.hypot(root.smoothMouseX - (parent.width / 2), root.smoothMouseY - (parent.height / 2 - 45))
+        property real centerDist: Math.hypot(root.smoothMouseX - (parent.width / 2), root.smoothMouseY - (parent.height / 2 - 35))
         property real centerProximity: Math.max(0.0, 1.0 - centerDist / 650.0)
 
-        // Outer Alchemical Ring
-        Image {
-            id: sacredOuterRing
-            source: "images/ring.png"
-            anchors.centerIn: parent
-            width: parent.width * (0.92 + sacredCenterBackdrop.centerProximity * 0.06)
-            height: width
-            opacity: 0.16 + sacredCenterBackdrop.centerProximity * 0.22 + 0.04 * Math.sin(root.breathingPhase)
-            rotation: -root.sacredRotation * 0.6
-            asynchronous: true
-            cache: true
-            smooth: true
-        }
-
-        // Inner Hermetic Seal (slow rotation + 3D parallax)
-        Image {
-            id: sacredSeal
-            source: "images/seal.png"
-            anchors.centerIn: parent
-            width: parent.width * 0.68
-            height: width
-            opacity: 0.13 + sacredCenterBackdrop.centerProximity * 0.18 + 0.03 * Math.cos(root.breathingPhase * 0.7)
-            rotation: root.sacredRotation * 0.35
-            asynchronous: true
-            cache: true
-            smooth: true
-
-            transform: [
-                Rotation {
-                    origin.x: sacredSeal.width / 2
-                    origin.y: sacredSeal.height / 2
-                    axis { x: 0; y: 1; z: 0 }
-                    angle: (root.smoothMouseX - root.width / 2) * 0.009
-                },
-                Rotation {
-                    origin.x: sacredSeal.width / 2
-                    origin.y: sacredSeal.height / 2
-                    axis { x: 1; y: 0; z: 0 }
-                    angle: -(root.smoothMouseY - root.height / 2) * 0.009
-                }
-            ]
-        }
-
-        // Central Golden Bloom
+        // Soft, ethereal central golden bloom breathing in deep space
         Image {
             id: centerBloom
             source: "images/glow.png"
             anchors.centerIn: parent
-            width: parent.width * 1.15
+            width: parent.width * 1.25
             height: width
-            opacity: 0.30 + 0.12 * Math.sin(root.breathingPhase * 0.8) + sacredCenterBackdrop.centerProximity * 0.20
+            opacity: 0.28 + 0.10 * Math.sin(root.breathingPhase * 0.8) + sacredCenterBackdrop.centerProximity * 0.22
             asynchronous: true
             cache: true
         }
     }
 
-    
     // ── 2B. 1nc0gn30 Hooded Builder Stage (Flanked to the Right of Center) ─
-    property string activePoseName: "hero"
-    property string activePoseTag: "1NC0GN30 · SENTINEL"
-
     Item {
         id: characterFlankStage
-        // Positioned cleanly to the right of the center Z
         x: (parent.width * 0.5) + Math.min(parent.width * 0.25, 480) + (root.smoothMouseX - parent.width * 0.5) * 0.02
         y: (parent.height * 0.44 - 35) - height * 0.5 + (root.smoothMouseY - parent.height * 0.5) * 0.015
         width: 320
@@ -187,7 +143,7 @@ WallpaperItem {
             border.width: 1.5
         }
 
-        // 1nc0gn30 Character Image (Full Resolution Color/Lighting Art)
+        // 1nc0gn30 Character Image
         Image {
             id: characterPhotoImg
             anchors.centerIn: parent
@@ -200,7 +156,7 @@ WallpaperItem {
             smooth: true
         }
 
-        // 1nc0gn30 High-Contrast Bayer Dither Layer Overlaid
+        // 1nc0gn30 High-Contrast Bayer Dither Layer
         Image {
             id: characterDitherImg
             anchors.centerIn: parent
@@ -251,7 +207,7 @@ WallpaperItem {
         }
     }
 
-    // ── 3. Master GPU Canvas: Metallic Blocks + 1nc0gn30 Hologram + 3D Z ───
+    // ── 3. Master GPU Canvas: 3D Z Monolith + Pixel Stars + ZOTHOS Wordmark
     Canvas {
         id: mainGraphicCanvas
         anchors.fill: parent
@@ -270,10 +226,32 @@ WallpaperItem {
             var mx = root.smoothMouseX;
             var my = root.smoothMouseY;
             var act = root.cursorActivity;
-            var normMx = (mx - W * 0.5) / (W * 0.5);
-            var normMy = (my - H * 0.5) / (H * 0.5);
+            var normMx = Math.max(-1.0, Math.min(1.0, (mx - W * 0.5) / (W * 0.5)));
+            var normMy = Math.max(-1.0, Math.min(1.0, (my - H * 0.5) / (H * 0.5)));
 
-            // ── A. Moving Metallic Gold Pixel Blocks (Background Field) ───
+            // ── A. Ambient Twinkling Pixel Stars Field ─────────────────────
+            var stars = root.twinkleStars;
+            if (stars && stars.length > 0) {
+                for (var ti = 0; ti < stars.length; ti++) {
+                    var st = stars[ti];
+                    var stWave = Math.sin(t * 1.8 + st.phase);
+                    var stAlpha = 0.20 + stWave * 0.25;
+                    if (stAlpha > 0.08) {
+                        ctx.fillStyle = st.isGold ?
+                            "rgba(255, 225, 120, " + Math.min(0.9, stAlpha).toFixed(2) + ")" :
+                            "rgba(255, 255, 255, " + Math.min(0.95, stAlpha).toFixed(2) + ")";
+                        ctx.fillRect(st.x, st.y, st.sz, st.sz);
+                        // Subtle 4-point cross glint on brightest twinkle peak
+                        if (stWave > 0.75 && st.sz >= 2.0) {
+                            ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+                            ctx.fillRect(st.x - 2, st.y, st.sz + 4, 1);
+                            ctx.fillRect(st.x, st.y - 2, 1, st.sz + 4);
+                        }
+                    }
+                }
+            }
+
+            // ── B. Moving Metallic Gold Pixel Blocks (Drifting Space) ──────
             var blocks = root.goldPixelBlocks;
             if (blocks && blocks.length > 0) {
                 for (var bi = 0; bi < blocks.length; bi++) {
@@ -281,32 +259,31 @@ WallpaperItem {
                     var distM = Math.hypot(mx - (b.x + b.sz * 0.5), my - (b.y + b.sz * 0.5));
                     var mBoost = distM < 240.0 ? (1.0 - distM / 240.0) : 0.0;
 
-                    // Wave shimmer phase
                     var bPhase = Math.sin(t * 1.2 + b.phase + (b.x + b.y) * 0.004);
                     var bAlpha = Math.max(0.12, Math.min(0.85, 0.18 + bPhase * 0.12 + mBoost * 0.45));
 
-                    // Metallic Gold Fill Gradient
-                    var grad = ctx.createLinearGradient(b.x, b.y, b.x + b.sz, b.y + b.sz);
+                    // Metallic Gold Linear Gradient
+                    var bGrad = ctx.createLinearGradient(b.x, b.y, b.x + b.sz, b.y + b.sz);
                     if (mBoost > 0.35) {
-                        grad.addColorStop(0.0, "rgba(255, 253, 240, " + bAlpha.toFixed(2) + ")");
-                        grad.addColorStop(0.5, "rgba(255, 225, 120, " + bAlpha.toFixed(2) + ")");
-                        grad.addColorStop(1.0, "rgba(165, 125, 20, " + bAlpha.toFixed(2) + ")");
+                        bGrad.addColorStop(0.0, "rgba(255, 253, 240, " + bAlpha.toFixed(2) + ")");
+                        bGrad.addColorStop(0.5, "rgba(255, 225, 120, " + bAlpha.toFixed(2) + ")");
+                        bGrad.addColorStop(1.0, "rgba(165, 125, 20, " + bAlpha.toFixed(2) + ")");
                     } else {
-                        grad.addColorStop(0.0, "rgba(255, 232, 158, " + (bAlpha * 0.9).toFixed(2) + ")");
-                        grad.addColorStop(0.5, "rgba(212, 175, 55, " + (bAlpha * 0.85).toFixed(2) + ")");
-                        grad.addColorStop(1.0, "rgba(107, 80, 8, " + (bAlpha * 0.75).toFixed(2) + ")");
+                        bGrad.addColorStop(0.0, "rgba(255, 232, 158, " + (bAlpha * 0.9).toFixed(2) + ")");
+                        bGrad.addColorStop(0.5, "rgba(212, 175, 55, " + (bAlpha * 0.85).toFixed(2) + ")");
+                        bGrad.addColorStop(1.0, "rgba(107, 80, 8, " + (bAlpha * 0.75).toFixed(2) + ")");
                     }
-                    ctx.fillStyle = grad;
+                    ctx.fillStyle = bGrad;
                     ctx.fillRect(b.x, b.y, b.sz, b.sz);
 
-                    // 3D Metallic Bevel Edges
+                    // 3D Bevel Highlights
                     ctx.fillStyle = "rgba(255, 253, 240, " + (bAlpha * 0.95).toFixed(2) + ")";
-                    ctx.fillRect(b.x, b.y, b.sz, 1.0); // top light
-                    ctx.fillRect(b.x, b.y, 1.0, b.sz); // left light
+                    ctx.fillRect(b.x, b.y, b.sz, 1.0);
+                    ctx.fillRect(b.x, b.y, 1.0, b.sz);
 
                     ctx.fillStyle = "rgba(35, 25, 3, " + (bAlpha * 0.90).toFixed(2) + ")";
-                    ctx.fillRect(b.x, b.y + b.sz - 1.0, b.sz, 1.0); // bottom shade
-                    ctx.fillRect(b.x + b.sz - 1.0, b.y, 1.0, b.sz); // right shade
+                    ctx.fillRect(b.x, b.y + b.sz - 1.0, b.sz, 1.0);
+                    ctx.fillRect(b.x + b.sz - 1.0, b.y, 1.0, b.sz);
 
                     // Bayer 4x4 sub-pixel metallic dither core
                     var bayerThresh = root.bayer4[((bi * 3) & 3) * 4 + ((bi * 5) & 3)];
@@ -317,7 +294,7 @@ WallpaperItem {
                 }
             }
 
-            // ── B. 1nc0gn30 Hooded Builder Character Board (Braille/ASCII/Dither) ──
+            // ── C. 1nc0gn30 Hooded Builder Character Board (Flank Matrix) ──
             var board = CharacterBoardData.characterBoard;
             if (board) {
                 var seqs = board.sequences || [];
@@ -326,7 +303,7 @@ WallpaperItem {
                     totalCycleDuration += seqs[si].duration;
                 }
 
-                var isSpinningTurntable = Math.abs(normMx) > 0.40;
+                var isSpinningTurntable = Math.abs(normMx) > 0.45;
                 var currentLines = null;
                 var pKey = "hero";
                 var pTag = "1NC0GN30 · SENTINEL";
@@ -337,8 +314,8 @@ WallpaperItem {
                     currentLines = lFrames[curFrameIdx];
                     pTag = "TURNTABLE · 360° 3D LATTICE";
                     pKey = "hero";
-                } else {
-                    var cycleT = (t * 0.8) % totalCycleDuration;
+                } else if (seqs.length > 0) {
+                    var cycleT = (t * 0.8) % Math.max(1, totalCycleDuration);
                     var accT = 0;
                     var curSeq = seqs[0];
                     for (var sIdx = 0; sIdx < seqs.length; sIdx++) {
@@ -356,7 +333,6 @@ WallpaperItem {
                 if (root.activePoseName !== pKey) root.activePoseName = pKey;
                 if (root.activePoseTag !== pTag) root.activePoseTag = pTag;
 
-                // Render the Braille lattice matrix surrounding the right-flanked character stage
                 if (currentLines && currentLines.length > 0) {
                     var flankOffset = Math.min(W * 0.24, 460);
                     var hcx = W * 0.5 + flankOffset + normMx * 18.0;
@@ -392,107 +368,187 @@ WallpaperItem {
                 }
             }
 
-            // ── C. Centerpiece: 3D Unicode Braille Lattice Letter "Z" ─────
-            var zPts = root.zLatticePoints;
-            var zEdges = root.zLatticeEdges;
-            if (zPts.length > 0 && zEdges.length > 0) {
+            // ── D. Centerpiece: True 3D Volumetric Sculpted Monolith "Z" ──
+            var zModel = root.zMonolithMesh;
+            if (zModel && zModel.vertices && zModel.vertices.length > 0) {
                 var zcx = W * 0.5;
                 var zcy = H * 0.44 - 35;
-                var zScale = Math.min(W * 0.16, 210);
+                var zScale = Math.min(W * 0.17, 235);
 
-                // High-responsiveness mouse-tracking yaw and pitch
-                var zYaw = t * 0.42 + normMx * 0.95;
-                var zPitch = 0.28 + Math.sin(t * 0.45) * 0.10 + normMy * 0.70;
+                // Fluid continuous yaw and pitch + responsive cursor tracking
+                var zYaw = t * 0.38 + normMx * 0.85;
+                var zPitch = 0.24 + Math.sin(t * 0.42) * 0.08 + normMy * 0.65;
+                var zRoll = -normMx * 0.15;
 
-                var zcosY = Math.cos(zYaw), zsinY = Math.sin(zYaw);
-                var zcosX = Math.cos(zPitch), zsinX = Math.sin(zPitch);
+                var cosY = Math.cos(zYaw), sinY = Math.sin(zYaw);
+                var cosX = Math.cos(zPitch), sinX = Math.sin(zPitch);
+                var cosZ = Math.cos(zRoll), sinZ = Math.sin(zRoll);
 
-                var zProj = [];
-                for (var zpi = 0; zpi < zPts.length; zpi++) {
-                    var zp = zPts[zpi];
-                    var zx = zp[0], zy = zp[1], zz = zp[2];
-                    var zX = zx * zcosY - zz * zsinY;
-                    var zZ = zx * zsinY + zz * zcosY;
-                    var zY = zy * zcosX - zZ * zsinX;
-                    zZ = zy * zsinX + zZ * zcosX;
-                    var zf = 2.9 / (3.4 + zZ);
-                    zProj.push([zcx + zX * zScale * zf, zcy + zY * zScale * zf, zZ, zp[2]]);
+                // Transform 3D vertices
+                var worldV = [];
+                var projV = [];
+                var verts = zModel.vertices;
+                for (var vi = 0; vi < verts.length; vi++) {
+                    var vp = verts[vi];
+                    var vx = vp[0], vy = vp[1], vz = vp[2];
+                    // Yaw (around Y)
+                    var x1 = vx * cosY - vz * sinY;
+                    var z1 = vx * sinY + vz * cosY;
+                    // Pitch (around X)
+                    var y2 = vy * cosX - z1 * sinX;
+                    var z2 = vy * sinX + z1 * cosX;
+                    // Roll (around Z)
+                    var x3 = x1 * cosZ - y2 * sinZ;
+                    var y3 = x1 * sinZ + y2 * cosZ;
+                    var z3 = z2;
+                    worldV.push([x3, y3, z3]);
+                    // Perspective projection
+                    var pf = 3.2 / (3.6 + z3);
+                    projV.push([zcx + x3 * zScale * pf, zcy + y3 * zScale * pf, z3]);
                 }
 
-                // 1. Draw 3D Z Lattice Edges / Struts with Depth Attenuation
-                ctx.lineWidth = 1.6;
-                for (var zei = 0; zei < zEdges.length; zei++) {
-                    var zEdge = zEdges[zei];
-                    var zpA = zProj[zEdge[0]];
-                    var zpB = zProj[zEdge[1]];
-                    var zAvgZ = (zpA[2] + zpB[2]) * 0.5;
-                    var isFrontEdge = (zpA[3] < -0.1 && zpB[3] < -0.1);
+                // Interactive key light source + cursor point light
+                var lx = -0.40 + normMx * 0.35;
+                var ly = -0.68 + normMy * 0.35;
+                var lz = -0.62;
+                var lLen = Math.sqrt(lx * lx + ly * ly + lz * lz);
+                lx /= lLen; ly /= lLen; lz /= lLen;
 
-                    var zEdgeAlpha = Math.max(0.15, Math.min(0.95, (isFrontEdge ? 0.65 : 0.30) + ((1.5 - zAvgZ) / 3.0) * 0.45));
-                    ctx.strokeStyle = isFrontEdge ?
-                        "rgba(255, 248, 220, " + zEdgeAlpha.toFixed(3) + ")" :
-                        "rgba(255, 215, 0, " + zEdgeAlpha.toFixed(3) + ")";
+                // Blinn-Phong specular halfway vector
+                var hx = lx, hy = ly, hz = lz - 1.0;
+                var hLen = Math.sqrt(hx * hx + hy * hy + hz * hz);
+                hx /= hLen; hy /= hLen; hz /= hLen;
+
+                // Sort faces by depth (Painter's Algorithm) with Screen-Space Back-Face Culling
+                var fDefs = zModel.faces;
+                var renderFaces = [];
+                for (var fi = 0; fi < fDefs.length; fi++) {
+                    var fIdxs = fDefs[fi];
+                    var p0 = projV[fIdxs[0]];
+                    var p1 = projV[fIdxs[1]];
+                    var p2 = projV[fIdxs[2]];
+
+                    // Screen-space 2D cross product for perfect back-face culling (Y-down)
+                    var cross2D = (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p1[1] - p0[1]) * (p2[0] - p0[0]);
+                    if (cross2D <= 0) continue; // Face is pointing away from viewer -> cull!
+
+                    var pA = worldV[fIdxs[0]], pB = worldV[fIdxs[1]], pC = worldV[fIdxs[2]];
+                    var avgDepth = (worldV[fIdxs[0]][2] + worldV[fIdxs[1]][2] + worldV[fIdxs[2]][2] + worldV[fIdxs[3]][2]) * 0.25;
+
+                    // Face normal via cross product in world coordinates
+                    var v1x = pB[0] - pA[0], v1y = pB[1] - pA[1], v1z = pB[2] - pA[2];
+                    var v2x = pC[0] - pA[0], v2y = pC[1] - pA[1], v2z = pC[2] - pA[2];
+                    var fnx = v1y * v2z - v1z * v2y;
+                    var fny = v1z * v2x - v1x * v2z;
+                    var fnz = v1x * v2y - v1y * v2x;
+                    var fnLen = Math.sqrt(fnx * fnx + fny * fny + fnz * fnz);
+                    if (fnLen > 0.0001) {
+                        fnx /= fnLen; fny /= fnLen; fnz /= fnLen;
+                    } else {
+                        fnx = 0; fny = 0; fnz = -1;
+                    }
+
+                    // Diffuse & Specular lighting (Blinn-Phong)
+                    var dotLight = Math.max(0.0, -(fnx * lx + fny * ly + fnz * lz));
+                    var dotSpec = Math.pow(Math.max(0.0, -(fnx * hx + fny * hy + fnz * hz)), 26);
+
+                    renderFaces.push({
+                        depth: avgDepth,
+                        indices: fIdxs,
+                        dot: dotLight,
+                        spec: dotSpec
+                    });
+                }
+
+                // Sort back to front (largest depth drawn first)
+                renderFaces.sort(function(a, b) { return b.depth - a.depth; });
+
+                // Render each polygonal face with luxury metallic gold gradient
+                for (var rfi = 0; rfi < renderFaces.length; rfi++) {
+                    var rf = renderFaces[rfi];
+                    var polyPts = [];
+                    for (var pi = 0; pi < 4; pi++) {
+                        polyPts.push(projV[rf.indices[pi]]);
+                    }
+
+                    var dLight = rf.dot;
+                    var sGleam = rf.spec;
+
+                    var fGrad = ctx.createLinearGradient(polyPts[0][0], polyPts[0][1], polyPts[2][0], polyPts[2][1]);
+                    if (dLight > 0.55 || sGleam > 0.40) {
+                        // Radiant champagne-to-24K gold facet
+                        var hiAlpha = Math.min(1.0, 0.78 + sGleam * 0.22).toFixed(2);
+                        fGrad.addColorStop(0.0, "rgba(255, 253, 240, " + hiAlpha + ")");
+                        fGrad.addColorStop(0.35, "rgba(255, 226, 122, 0.96)");
+                        fGrad.addColorStop(0.70, "rgba(212, 175, 55, 0.94)");
+                        fGrad.addColorStop(1.0, "rgba(142, 108, 22, 0.92)");
+                    } else if (dLight > 0.25) {
+                        // Lustrous deep gold body facet
+                        fGrad.addColorStop(0.0, "rgba(235, 196, 78, 0.94)");
+                        fGrad.addColorStop(0.50, "rgba(195, 155, 42, 0.92)");
+                        fGrad.addColorStop(1.0, "rgba(102, 76, 14, 0.90)");
+                    } else {
+                        // Burnished dark bronze/gold shadow facet
+                        fGrad.addColorStop(0.0, "rgba(155, 120, 32, 0.90)");
+                        fGrad.addColorStop(0.50, "rgba(96, 70, 16, 0.88)");
+                        fGrad.addColorStop(1.0, "rgba(48, 34, 8, 0.86)");
+                    }
+
+                    ctx.fillStyle = fGrad;
                     ctx.beginPath();
-                    ctx.moveTo(zpA[0], zpA[1]);
-                    ctx.lineTo(zpB[0], zpB[1]);
+                    ctx.moveTo(polyPts[0][0], polyPts[0][1]);
+                    for (var step = 1; step < 4; step++) {
+                        ctx.lineTo(polyPts[step][0], polyPts[step][1]);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Crisp specular bevel outline on front-facing edges
+                    var edgeGlow = Math.min(1.0, 0.40 + dLight * 0.40 + sGleam * 0.35);
+                    ctx.strokeStyle = sGleam > 0.35 ?
+                        "rgba(255, 255, 255, " + edgeGlow.toFixed(2) + ")" :
+                        "rgba(255, 242, 195, " + edgeGlow.toFixed(2) + ")";
+                    ctx.lineWidth = sGleam > 0.5 ? 2.0 : 1.2;
                     ctx.stroke();
                 }
 
-                // 2. Render Unicode Braille & 24K Gold Glyphs at 3D Z Vertices
-                ctx.font = 'bold 12px "JetBrains Mono", "DejaVu Sans Mono", monospace';
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
+                // Orbiting Celestial Stardust Rings circling the 3D Z
+                var orbPts = zModel.orbitParticles;
+                if (orbPts && orbPts.length > 0) {
+                    for (var oi = 0; oi < orbPts.length; oi++) {
+                        var op = orbPts[oi];
+                        var opRad = op.angle + t * op.speed;
+                        var opX = Math.cos(opRad) * op.radius;
+                        var opZ = Math.sin(opRad) * op.radius;
+                        var opY = Math.sin(opRad * 2.0 + op.phase) * (op.radius * 0.22);
 
-                var brailleZSymbols = ["⣿", "⠿", "⬡", "⠇", "⠋", "⠸", "⠹", "⠼", "⠿", "⣿", "⬡", "⠇"];
-                for (var zvi = 0; zvi < zProj.length; zvi++) {
-                    var zvNode = zProj[zvi];
-                    var isFront = zvNode[3] < -0.1;
-                    var zDepthAlpha = Math.min(1.0, (isFront ? 0.70 : 0.35) + (1.2 - zvNode[2]) * 0.40);
+                        // Rotate with 3D Z orientation
+                        var orx1 = opX * cosY - opZ * sinY;
+                        var orz1 = opX * sinY + opZ * cosY;
+                        var ory2 = opY * cosX - orz1 * sinX;
+                        var orz2 = opY * sinX + orz1 * cosX;
+                        var orx3 = orx1 * cosZ - ory2 * sinZ;
+                        var ory3 = orx1 * sinZ + ory2 * cosZ;
 
-                    // Specular light sweep on 3D Z nodes
-                    var scanWave = Math.sin(t * 1.5 + zvNode[0] * 0.02);
-                    var hasGlint = scanWave > 0.65;
+                        var orf = 3.2 / (3.6 + orz2);
+                        var orScreenX = zcx + orx3 * zScale * orf;
+                        var orScreenY = zcy + ory3 * zScale * orf;
 
-                    if (hasGlint || isFront) {
-                        ctx.fillStyle = hasGlint ? "#FFFFFF" : "rgba(255, 248, 220, " + zDepthAlpha.toFixed(2) + ")";
-                    } else {
-                        ctx.fillStyle = "rgba(212, 175, 55, " + zDepthAlpha.toFixed(2) + ")";
+                        var orAlpha = Math.max(0.15, Math.min(0.95, 0.45 + (1.2 - orz2) * 0.40));
+                        var isFrontGlow = orz2 < 0;
+
+                        ctx.fillStyle = isFrontGlow ?
+                            "rgba(255, 250, 225, " + orAlpha.toFixed(2) + ")" :
+                            "rgba(212, 175, 55, " + (orAlpha * 0.70).toFixed(2) + ")";
+
+                        ctx.beginPath();
+                        ctx.arc(orScreenX, orScreenY, isFrontGlow ? (2.2 * orf) : (1.4 * orf), 0, 6.28318);
+                        ctx.fill();
                     }
-                    ctx.fillText(brailleZSymbols[zvi % brailleZSymbols.length], zvNode[0], zvNode[1]);
                 }
-
-                // 3. Extruded Specular 24K Gold Monolith Front Bevel
-                var zArm = zScale * 0.46;
-                var zRise = zScale * 0.52;
-                ctx.save();
-                ctx.translate(zcx, zcy);
-                ctx.scale(Math.cos(zYaw) * 0.18 + 0.90, Math.cos(zPitch) * 0.14 + 0.92);
-                ctx.lineCap = "square";
-                ctx.lineJoin = "miter";
-
-                // Drop shadow extrusion
-                ctx.strokeStyle = "rgba(92, 67, 8, 0.85)";
-                ctx.lineWidth = 5.0;
-                ctx.beginPath();
-                ctx.moveTo(-zArm + 3.0, -zRise + 3.0);
-                ctx.lineTo(zArm + 3.0, -zRise + 3.0);
-                ctx.lineTo(-zArm + 3.0, zRise + 3.0);
-                ctx.lineTo(zArm + 3.0, zRise + 3.0);
-                ctx.stroke();
-
-                // Specular 24K Gold stroke
-                ctx.strokeStyle = "#FFE89E";
-                ctx.lineWidth = 3.6;
-                ctx.beginPath();
-                ctx.moveTo(-zArm, -zRise);
-                ctx.lineTo(zArm, -zRise);
-                ctx.lineTo(-zArm, zRise);
-                ctx.lineTo(zArm, zRise);
-                ctx.stroke();
-                ctx.restore();
             }
 
-            // ── D. Interactive Ley-Line Filaments ─────────────────────────
+            // ── E. Interactive Ley-Line Filaments & Star Nodes ─────────────
             var nodes = root.constellationNodes;
             if (nodes && nodes.length > 0) {
                 var cursorConnectDist = 260.0;
@@ -535,14 +591,16 @@ WallpaperItem {
                     // Star node dot
                     var nBoost = ndm < cursorConnectDist ? (1.0 - ndm / cursorConnectDist) : 0.0;
                     var nA = Math.min(1.0, 0.20 + 0.20 * Math.sin(t + na.phase) + nBoost * 0.55);
-                    ctx.fillStyle = nBoost > 0.3 ? "rgba(255, 248, 220, " + nA.toFixed(3) + ")" : "rgba(212, 175, 55, " + nA.toFixed(3) + ")";
+                    ctx.fillStyle = nBoost > 0.3 ?
+                        "rgba(255, 248, 220, " + nA.toFixed(3) + ")" :
+                        "rgba(212, 175, 55, " + nA.toFixed(3) + ")";
                     ctx.beginPath();
                     ctx.arc(na.x, na.y, na.r + nBoost * 2.0, 0, 6.28318);
                     ctx.fill();
                 }
             }
 
-            // ── E. Floating Braille & Hex Sparks (Uncommon Web Embers) ────
+            // ── F. Floating Braille & Hex Sparks (Embers) ──────────────────
             var sparks = root.brailleSparks;
             if (sparks.length > 0 && root.showEmbers) {
                 ctx.font = 'bold 11px "JetBrains Mono", "DejaVu Sans Mono", monospace';
@@ -559,7 +617,7 @@ WallpaperItem {
                 }
             }
 
-            // ── F. Dynamic Comet Wake from Cursor Motion ──────────────────
+            // ── G. Dynamic Comet Wake from Cursor Motion ──────────────────
             var cvx = root.smoothMouseX - root.trailMouseX;
             var cvy = root.smoothMouseY - root.trailMouseY;
             var trailDist = Math.sqrt(cvx * cvx + cvy * cvy);
@@ -582,14 +640,14 @@ WallpaperItem {
                 ctx.stroke();
             }
 
-            // ── G. Clean Sub-Pixel Braille / Bayer Dither Wordmark "ZOTHOS"
+            // ── H. Animated Pixel Wordmark "ZOTHOS" (Bayer Dither Sheen) ───
             var wPixels = root.wordmarkPixels;
             if (wPixels && wPixels.length > 0) {
                 var wordH = 7;
                 var wordW = 47;
                 var wScale = Math.min(W * 0.0075, 9.5);
                 var startX = W * 0.5 - (wordW * wScale) * 0.5;
-                var startY = H * 0.74;
+                var startY = H * 0.73;
 
                 var scanX = ((root.sheenProgress + 0.4) * 0.7);
 
@@ -612,6 +670,11 @@ WallpaperItem {
                     if (wLum > bVal * 0.45) {
                         ctx.fillStyle = sheenGlow > 0.35 ? "#FFFDF0" : (isBorder ? "#FFE57F" : "#D4AF37");
                         ctx.fillRect(wpx, wpy, wScale - 0.7, wScale - 0.7);
+
+                        // Subtle specular bevel edge on each pixel
+                        ctx.fillStyle = "rgba(255, 255, 255, " + (0.15 + sheenGlow * 0.35).toFixed(2) + ")";
+                        ctx.fillRect(wpx, wpy, wScale - 0.7, 1.0);
+                        ctx.fillRect(wpx, wpy, 1.0, wScale - 0.7);
                     }
                 }
             }
@@ -723,7 +786,7 @@ WallpaperItem {
 
     Timer {
         id: globalCursorTimer
-        interval: 60
+        interval: 50
         running: true
         repeat: true
 
@@ -735,6 +798,7 @@ WallpaperItem {
             root.xhrInFlight = true;
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "http://127.0.0.1:9989/");
+            xhr.timeout = 250;
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     root.xhrInFlight = false;
@@ -745,7 +809,6 @@ WallpaperItem {
                                 var gx = data.x;
                                 var gy = data.y;
 
-                                // Map global desktop coordinates to this screen's local space
                                 var lx = gx;
                                 var ly = gy;
                                 try {
@@ -757,18 +820,24 @@ WallpaperItem {
                                         }
                                     } else {
                                         lx = gx % root.width;
-                                        ly = gy;
+                                        ly = gy % root.height;
                                     }
                                 } catch (err) {
                                     lx = gx % root.width;
-                                    ly = gy;
+                                    ly = gy % root.height;
                                 }
 
-                                if (Math.abs(lx - root.rawMouseX) > 2.0 || Math.abs(ly - root.rawMouseY) > 2.0) {
-                                    root.cursorActivity = 0.75;
+                                // If cursor is off-screen, smoothly ease toward a gentle floating center orbit
+                                if (lx < -120 || lx > root.width + 120 || ly < -120 || ly > root.height + 120) {
+                                    root.rawMouseX = root.width * 0.5 + Math.sin(root.breathingPhase * 0.5) * 80;
+                                    root.rawMouseY = root.height * 0.44 + Math.cos(root.breathingPhase * 0.4) * 45;
+                                } else {
+                                    if (Math.abs(lx - root.rawMouseX) > 2.0 || Math.abs(ly - root.rawMouseY) > 2.0) {
+                                        root.cursorActivity = 0.75;
+                                    }
+                                    root.rawMouseX = lx;
+                                    root.rawMouseY = ly;
                                 }
-                                root.rawMouseX = lx;
-                                root.rawMouseY = ly;
                             }
                         } catch (e) {}
                     }
@@ -778,28 +847,36 @@ WallpaperItem {
         }
     }
 
-    // ── 7. Master Physics & Render Loop (Dynamic Adaptive) ─────────────────
+    // ── 7. Master Physics & Render Loop (60 FPS Seamless Continuous) ───────
     Timer {
         id: masterRenderTimer
-        interval: 20 // 50 FPS smooth render loop
+        interval: 16 // 60 FPS buttery smooth render loop
         running: true
         repeat: true
 
         onTriggered: {
-            root.breathingPhase += (root.cursorActivity > 0.05 ? 0.024 : 0.012);
-            root.sacredRotation = (root.sacredRotation + 0.16 + root.cursorActivity * 0.65) % 360.0;
+            var now = Date.now();
+            var dt = root.lastFrameTime > 0 ? Math.min((now - root.lastFrameTime) / 1000.0, 0.05) : 0.016;
+            root.lastFrameTime = now;
+
+            // Advance phases smoothly based on real delta time
+            root.breathingPhase += dt * (root.cursorActivity > 0.05 ? 1.5 : 0.9);
+            root.sacredRotation = (root.sacredRotation + dt * (18.0 + root.cursorActivity * 40.0)) % 360.0;
 
             // Sweeping specular sheen on wordmark
-            root.sheenProgress += (root.cursorActivity > 0.05 ? 0.010 : 0.004);
+            root.sheenProgress += dt * (root.cursorActivity > 0.05 ? 0.60 : 0.35);
             if (root.sheenProgress > 1.8) {
                 root.sheenProgress = -0.4;
             }
 
-            // Smoothly interpolate cursor position
-            root.smoothMouseX += (root.rawMouseX - root.smoothMouseX) * 0.22;
-            root.smoothMouseY += (root.rawMouseY - root.smoothMouseY) * 0.22;
-            root.trailMouseX += (root.smoothMouseX - root.trailMouseX) * 0.10;
-            root.trailMouseY += (root.smoothMouseY - root.trailMouseY) * 0.10;
+            // Exponential dampening for physical silk cursor smoothing
+            var damp = 1.0 - Math.exp(-14.0 * dt);
+            root.smoothMouseX += (root.rawMouseX - root.smoothMouseX) * damp;
+            root.smoothMouseY += (root.rawMouseY - root.smoothMouseY) * damp;
+
+            var trailDamp = 1.0 - Math.exp(-7.0 * dt);
+            root.trailMouseX += (root.smoothMouseX - root.trailMouseX) * trailDamp;
+            root.trailMouseY += (root.smoothMouseY - root.trailMouseY) * trailDamp;
 
             // Velocity & activity decay
             var dxMouse = root.smoothMouseX - root.prevSmoothX;
@@ -811,12 +888,12 @@ WallpaperItem {
             root.prevSmoothX = root.smoothMouseX;
             root.prevSmoothY = root.smoothMouseY;
 
-            var targetAct = Math.min(moveDist / 14.0, 1.0);
+            var targetAct = Math.min(moveDist / 12.0, 1.0);
             if (targetAct > root.cursorActivity) {
                 root.cursorActivity += (targetAct - root.cursorActivity) * 0.35;
             } else {
-                root.cursorActivity *= 0.94;
-                if (root.cursorActivity < 0.02) root.cursorActivity = 0.02;
+                root.cursorActivity *= Math.exp(-3.0 * dt);
+                if (root.cursorActivity < 0.03) root.cursorActivity = 0.03;
             }
 
             // Rapid whip motion shockwave trigger
@@ -833,7 +910,7 @@ WallpaperItem {
                 for (var wi = 0; wi < root.waveCount; wi++) {
                     var wItem = root.waveItems[wi];
                     if (wItem && wItem.wLife > 0.005) {
-                        wItem.wLife *= 0.92;
+                        wItem.wLife *= Math.exp(-4.5 * dt);
                         if (wItem.wLife <= 0.01) wItem.wLife = 0.0;
                     }
                 }
@@ -842,10 +919,11 @@ WallpaperItem {
             // Drift metallic gold pixel blocks
             var blocks = root.goldPixelBlocks;
             if (blocks && blocks.length > 0 && root.width > 0) {
+                var dtSpeed = dt * 60.0;
                 for (var bi = 0; bi < blocks.length; bi++) {
                     var b = blocks[bi];
-                    b.x += b.vx;
-                    b.y += b.vy;
+                    b.x += b.vx * dtSpeed;
+                    b.y += b.vy * dtSpeed;
                     if (b.x > root.width + 40) b.x = -40;
                     else if (b.x < -40) b.x = root.width + 40;
                     if (b.y > root.height + 40) b.y = -40;
@@ -853,20 +931,21 @@ WallpaperItem {
                 }
             }
 
-            // Drift constellation nodes
+            // Drift constellation star nodes
             var nodes = root.constellationNodes;
             if (nodes && nodes.length > 0) {
+                var dtSpeed = dt * 60.0;
                 for (var ci = 0; ci < nodes.length; ci++) {
                     var cn = nodes[ci];
-                    cn.x += cn.vx;
-                    cn.y += cn.vy;
+                    cn.x += cn.vx * dtSpeed;
+                    cn.y += cn.vy * dtSpeed;
 
                     // Swirl around cursor when near
                     var cdx = root.smoothMouseX - cn.x;
                     var cdy = root.smoothMouseY - cn.y;
                     var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
                     if (cdist > 25.0 && cdist < 240.0) {
-                        var pull = (1.0 - cdist / 240.0) * 0.40;
+                        var pull = (1.0 - cdist / 240.0) * 0.40 * dtSpeed;
                         cn.x += (cdx / cdist) * pull + (-cdy / cdist) * pull * 0.60;
                         cn.y += (cdy / cdist) * pull + (cdx / cdist) * pull * 0.60;
                     }
@@ -881,25 +960,19 @@ WallpaperItem {
             // Drift floating Braille sparks
             var sparks = root.brailleSparks;
             if (sparks && sparks.length > 0) {
+                var dtSpeed = dt * 60.0;
                 for (var si = 0; si < sparks.length; si++) {
                     var sp = sparks[si];
-                    sp.x += sp.vx;
-                    sp.y += sp.vy;
+                    sp.x += sp.vx * dtSpeed;
+                    sp.y += sp.vy * dtSpeed;
                     if (sp.x > root.width + 20) sp.x = -20;
                     if (sp.y > root.height + 20) sp.y = -20;
                     else if (sp.y < -20) sp.y = root.height + 20;
                 }
             }
 
-            // Throttle idle canvas repaints to keep CPU near 0%
-            if (root.cursorActivity > 0.05) {
-                mainGraphicCanvas.requestPaint();
-            } else {
-                root.idleThrottle = (root.idleThrottle + 1) % 2;
-                if (root.idleThrottle === 0) {
-                    mainGraphicCanvas.requestPaint();
-                }
-            }
+            // Flawless, continuous 60fps canvas paint request
+            mainGraphicCanvas.requestPaint();
         }
     }
 
@@ -931,7 +1004,20 @@ WallpaperItem {
         }
         root.wordmarkPixels = pixList;
 
-        // B. Generate Moving Metallic Gold Pixel Blocks
+        // B. Generate Twinkling Pixel Stars Field
+        var tStars = [];
+        for (var si = 0; si < 64; si++) {
+            tStars.push({
+                x: Math.random() * refW,
+                y: Math.random() * refH,
+                sz: (si % 3 === 0) ? 2.5 : 1.5,
+                phase: Math.random() * 6.28,
+                isGold: (si % 2 === 0)
+            });
+        }
+        root.twinkleStars = tStars;
+
+        // C. Generate Moving Metallic Gold Pixel Blocks
         var blist = [];
         var blockCount = 42;
         for (var bi = 0; bi < blockCount; bi++) {
@@ -940,75 +1026,74 @@ WallpaperItem {
                 y: Math.random() * refH,
                 vx: 0.15 + (bi % 4) * 0.08,
                 vy: (Math.sin(bi * 1.3) * 0.12),
-                sz: 18 + (bi % 5) * 6, // 18px to 42px
+                sz: 18 + (bi % 5) * 6,
                 phase: bi * 0.75
             });
         }
         root.goldPixelBlocks = blist;
 
-        // C. Centerpiece: 3D Unicode Braille Lattice Letter "Z" (78 points, 156 edges)
+        // D. CENTERPIECE: 3D Volumetric Sculpted Monolith "Z" Mesh (TLC Upgrade)
         var zContour = [
-            [-0.75, -0.75],
-            [ 0.75, -0.75],
-            [ 0.75, -0.50],
-            [-0.35,  0.50],
-            [ 0.75,  0.50],
-            [ 0.75,  0.75],
-            [-0.75,  0.75],
-            [-0.75,  0.50],
-            [ 0.35, -0.50],
-            [-0.75, -0.50]
+            [-0.65, -0.65],
+            [ 0.65, -0.65],
+            [ 0.65, -0.35],
+            [-0.25,  0.35],
+            [ 0.65,  0.35],
+            [ 0.65,  0.65],
+            [-0.65,  0.65],
+            [-0.65,  0.35],
+            [ 0.25, -0.35],
+            [-0.65, -0.35]
         ];
 
-        var zDepths = [-0.30, 0.0, 0.30];
-        var edgeSubdiv = [4, 1, 4, 3, 1, 4, 1, 4, 3, 1];
-        var ring2D = [];
-        for (var eIdx = 0; eIdx < zContour.length; eIdx++) {
-            var pA = zContour[eIdx];
-            var pB = zContour[(eIdx + 1) % zContour.length];
-            var nSteps = edgeSubdiv[eIdx];
-            for (var s = 0; s < nSteps; s++) {
-                var u = s / nSteps;
-                ring2D.push([pA[0] + (pB[0] - pA[0]) * u, pA[1] + (pB[1] - pA[1]) * u]);
-            }
+        var zDepth = 0.22;
+        var zVerts = [];
+        // Front vertices (0..9 at z = -zDepth)
+        for (var fvi = 0; fvi < 10; fvi++) {
+            zVerts.push([zContour[fvi][0], zContour[fvi][1], -zDepth]);
+        }
+        // Back vertices (10..19 at z = +zDepth)
+        for (var bvi = 0; bvi < 10; bvi++) {
+            zVerts.push([zContour[bvi][0], zContour[bvi][1], zDepth]);
         }
 
-        var nRing = ring2D.length; // 26 perimeter vertices per layer
-        var zP = [];
-        var zE = [];
+        // Polygon face index lists (4 vertices per quad)
+        var zFaces = [];
+        // Correct outward-pointing front faces (facing -Z towards camera)
+        zFaces.push([0, 9, 2, 1]);   // Top horizontal bar
+        zFaces.push([7, 3, 2, 8]);   // Diagonal shear bar
+        zFaces.push([6, 5, 4, 7]);   // Bottom horizontal bar
 
-        // Generate 3 layers of vertices (front, mid, back) -> 26 * 3 = 78 vertices
-        for (var lIdx = 0; lIdx < zDepths.length; lIdx++) {
-            var zVal = zDepths[lIdx];
-            for (var rIdx = 0; rIdx < nRing; rIdx++) {
-                zP.push([ring2D[rIdx][0], ring2D[rIdx][1], zVal]);
-            }
+        // Correct outward-pointing back faces (facing +Z away from camera)
+        zFaces.push([10, 11, 12, 19]); // Top bar back
+        zFaces.push([18, 12, 13, 17]); // Diagonal back
+        zFaces.push([17, 14, 15, 16]); // Bottom bar back
+
+        // 10 Extruded side bevel faces connecting perimeter edges front-to-back
+        for (var sei = 0; sei < 10; sei++) {
+            var seiNext = (sei + 1) % 10;
+            zFaces.push([sei, seiNext, 10 + seiNext, 10 + sei]);
         }
 
-        // Intra-layer perimeter edges -> 26 * 3 = 78 edges
-        for (var lIdx = 0; lIdx < zDepths.length; lIdx++) {
-            var base = lIdx * nRing;
-            for (var rIdx = 0; rIdx < nRing; rIdx++) {
-                zE.push([base + rIdx, base + ((rIdx + 1) % nRing)]);
-            }
+        // Orbiting celestial stardust particles encircling the 3D Z
+        var orbitParticles = [];
+        for (var opi = 0; opi < 36; opi++) {
+            var aRad = (opi / 36.0) * 6.28318;
+            orbitParticles.push({
+                angle: aRad,
+                radius: 1.25 + (opi % 3) * 0.15,
+                phase: opi * 0.6,
+                speed: 0.35 + (opi % 2) * 0.15
+            });
         }
 
-        // Inter-layer longitudinal and cross-lattice struts -> 26 * 2 + 26 = 78 edges
-        for (var lIdx = 0; lIdx < zDepths.length - 1; lIdx++) {
-            var baseA = lIdx * nRing;
-            var baseB = (lIdx + 1) * nRing;
-            for (var rIdx = 0; rIdx < nRing; rIdx++) {
-                zE.push([baseA + rIdx, baseB + rIdx]);
-                if (rIdx % 2 === 0) {
-                    zE.push([baseA + rIdx, baseB + ((rIdx + 1) % nRing)]);
-                }
-            }
-        }
+        root.zMonolithMesh = {
+            vertices: zVerts,
+            faces: zFaces,
+            orbitParticles: orbitParticles
+        };
 
-        root.zLatticePoints = zP;
-        root.zLatticeEdges = zE;
-
-        // D. Constellation Ley-Line Star Nodes
+        // E. Constellation Ley-Line Star Nodes
         var cNodes = [];
         for (var ni = 0; ni < root.nodeCount; ni++) {
             cNodes.push({
@@ -1022,7 +1107,7 @@ WallpaperItem {
         }
         root.constellationNodes = cNodes;
 
-        // E. Floating Braille & Hex Sparks
+        // F. Floating Braille & Hex Sparks
         var glyphRoster = ["⣿", "⠿", "⠇", "⠋", "0", "1", "/", ">", "_", "#", "*", "λ", "⬡"];
         var spks = [];
         for (var spi = 0; spi < 36; spi++) {
