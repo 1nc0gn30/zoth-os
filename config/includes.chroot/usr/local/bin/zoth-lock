@@ -375,6 +375,23 @@ class CameraMotionSentry:
         self.triggered_count = 0
         self.last_photo: Path | None = None
 
+    def is_lock_engaged(self) -> bool:
+        """Return True only if lock is actively engaged.
+
+        - If in-process lock state is attached:
+            state['unlocked'] True means the user successfully unlocked -> False.
+            state['unlocked'] False means lock screen is up -> True.
+        - If require_lock is True (e.g. background daemon):
+            Check is_session_locked().
+        - If require_lock is False (e.g. manual standalone sentry):
+            Always True.
+        """
+        if self.state is not None:
+            return not self.state.get("unlocked", False)
+        if self.require_lock:
+            return is_session_locked()
+        return True
+
     def start(self) -> None:
         if self._thread is not None and self._thread.is_alive():
             return
@@ -410,11 +427,7 @@ class CameraMotionSentry:
         try:
             while not self._stop_evt.is_set():
                 now_m = time.monotonic()
-                lock_engaged = (
-                    (self.state is not None and not self.state.get("unlocked", False))
-                    or lock_is_active()
-                    or (not self.require_lock)
-                )
+                lock_engaged = self.is_lock_engaged()
                 viewer_active = (now_m - _LAST_STREAM_VIEWER_MONO) < 6.0
 
                 # Thermal & Power Optimization: if laptop is unlocked and nobody is viewing Tailscale stream,
@@ -526,11 +539,7 @@ class CameraMotionSentry:
                 self.last_bbox = best_bbox
 
                 # Strictly enforce that detection only fires when Zoth Lock is active
-                lock_engaged = (
-                    (self.state is not None and not self.state.get("unlocked", False))
-                    or lock_is_active()
-                    or (not self.require_lock)
-                )
+                lock_engaged = self.is_lock_engaged()
                 if lock_engaged and not was_locked:
                     was_locked = True
                     locked_since_mono = now_m
@@ -1067,7 +1076,8 @@ class TailscaleLiveSentryServer:
                             "armed": parent.cam_sentry.armed,
                             "motion_pct": parent.cam_sentry.last_motion_pct,
                             "triggered_count": parent.cam_sentry.triggered_count,
-                            "screen_locked": lock_is_active(),
+                            "screen_locked": is_session_locked(),
+                            "lock_engaged": parent.cam_sentry.is_lock_engaged(),
                             "live_url": get_live_view_url(),
                             "recent_photos": photos,
                         }
@@ -1084,8 +1094,12 @@ class TailscaleLiveSentryServer:
                 path = parsed.path
                 qs = urllib.parse.parse_qs(parsed.query)
 
-                if path == "/api/toggle-arm":
-                    if "arm" in qs:
+                if path in ("/api/toggle-arm", "/api/arm", "/api/disarm"):
+                    if path == "/api/arm":
+                        parent.cam_sentry.armed = True
+                    elif path == "/api/disarm":
+                        parent.cam_sentry.armed = False
+                    elif "arm" in qs:
                         parent.cam_sentry.armed = qs["arm"][0] in ("1", "true", "yes")
                     else:
                         parent.cam_sentry.armed = not parent.cam_sentry.armed
@@ -1258,7 +1272,70 @@ def lock_is_active() -> bool:
         pid = int(PID_PATH.read_text(encoding="utf-8").strip())
     except (OSError, ValueError):
         return False
-    return _pid_alive(pid)
+    if not _pid_alive(pid):
+        clear_pid()
+        return False
+    try:
+        cmdline = Path(f"/proc/{pid}/cmdline").read_bytes().decode("utf-8", errors="ignore")
+        if "zoth-lock" not in cmdline:
+            clear_pid()
+            return False
+    except OSError:
+        return False
+    return True
+
+
+def is_session_locked() -> bool:
+    """Return True if zoth-lock is active, quicklock is engaged, or KDE session is locked."""
+    if lock_is_active():
+        return True
+    if Path("/tmp/.zoth-quicklock-active").is_file():
+        return True
+    for cmd in (
+        ["qdbus6", "org.freedesktop.ScreenSaver", "/ScreenSaver", "GetActive"],
+        ["qdbus", "org.freedesktop.ScreenSaver", "/ScreenSaver", "GetActive"],
+    ):
+        try:
+            proc = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                timeout=0.6,
+                text=True,
+            )
+            if proc.returncode == 0 and proc.stdout.strip().lower() == "true":
+                return True
+        except Exception:
+            pass
+    return False
+
+
+def arm_background_sentry() -> bool:
+    """Notify local background sentry daemon on :8499 to arm when screen is locked."""
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{SENTRY_LIVE_PORT}/api/toggle-arm?arm=1",
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=0.8) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
+def disarm_background_sentry() -> bool:
+    """Notify local background sentry daemon on :8499 to disarm when screen is unlocked."""
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{SENTRY_LIVE_PORT}/api/toggle-arm?arm=0",
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=0.8) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
 
 
 def write_pid() -> None:
@@ -1916,21 +1993,14 @@ def gui_lock(preview: bool = False) -> int:
             live_view=get_live_view_url(),
         )
         # If background Tailscale Live Sentry daemon is already running on :8499, arm it; else start in-process
-        daemon_running = False
-        try:
-            import urllib.request
-            req = urllib.request.Request(f"http://127.0.0.1:{SENTRY_LIVE_PORT}/api/toggle-arm?arm=1", method="POST")
-            with urllib.request.urlopen(req, timeout=1.0) as resp:
-                if resp.status == 200:
-                    daemon_running = True
-        except Exception:
-            pass
+        daemon_running = arm_background_sentry()
         if not daemon_running:
             cam_sentry = CameraMotionSentry(
                 grace_sec=SENTRY_GRACE_SEC,
                 cooldown_sec=SENTRY_COOLDOWN_SEC,
                 state=state,
                 armed=True,
+                require_lock=True,
             )
             cam_sentry.start()
             live_srv = TailscaleLiveSentryServer(cam_sentry, port=SENTRY_LIVE_PORT)
@@ -1978,6 +2048,7 @@ def gui_lock(preview: bool = False) -> int:
         pw_var.set("")
         if verify_password(guess):
             state["unlocked"] = True
+            disarm_background_sentry()
             sentry_log_event(
                 "unlock_success",
                 duration_sec=round(time.monotonic() - state["locked_at_mono"], 1),
@@ -2248,6 +2319,7 @@ def gui_lock(preview: bool = False) -> int:
         if cam_sentry is not None:
             cam_sentry.stop()
         if not preview:
+            disarm_background_sentry()
             screensaver_uninhibit(state["ss_cookie"])
             clear_pid()
     return 0 if preview or state["unlocked"] else 1
@@ -2269,6 +2341,7 @@ def cmd_unlock() -> int:
             pass
         clear_pid()
     subprocess.run(["pkill", "-f", "zoth-lock --lock"], check=False)
+    disarm_background_sentry()
     print("Unlocked." if killed else "No active lock found (cleaned up PID if stale).")
     return 0
 
@@ -2330,14 +2403,24 @@ def cmd_audit_log() -> int:
     return 0
 
 
-def cmd_room_sentry(grace_sec: float = 2.0, duration_sec: float = 0.0, stop_after_first: bool = False) -> int:
+def cmd_room_sentry(
+    grace_sec: float = 2.0,
+    duration_sec: float = 0.0,
+    stop_after_first: bool = False,
+    require_lock: bool = True,
+) -> int:
     live_url = get_live_view_url()
+    mode_desc = "LOCK-GATED (Alerts active only while locked)" if require_lock else "STANDALONE / ALWAYS-ON"
     print("Zoth Room & Doorway Camera Sentry + Tailscale Live View")
+    print(f"  mode:      {mode_desc}")
     print(f"  webcam:    {WEBCAM_DEV}")
     print(f"  signal:    {SIGNAL_RECIPIENT}")
     print(f"  live view: {live_url}  (Tailscale private mesh only)")
     print(f"  captures:  {SENTRY_DIR}")
-    print(f"  calibrating background for {grace_sec:.1f}s — step in front of the door/camera after calibration...")
+    if require_lock:
+        print("  lock check: watching screen lock state (0.0% CPU and camera released while unlocked)")
+    else:
+        print(f"  calibrating background for {grace_sec:.1f}s — step in front of the door/camera after calibration...")
     sys.stdout.flush()
 
     detected_events: list[tuple[dict, Path]] = []
@@ -2355,7 +2438,7 @@ def cmd_room_sentry(grace_sec: float = 2.0, duration_sec: float = 0.0, stop_afte
         stop_after_first=stop_after_first,
         on_detect_callback=_on_detect,
         armed=True,
-        require_lock=False,
+        require_lock=require_lock,
     )
     sentry.start()
     live_srv = TailscaleLiveSentryServer(sentry, port=SENTRY_LIVE_PORT)
@@ -2369,7 +2452,10 @@ def cmd_room_sentry(grace_sec: float = 2.0, duration_sec: float = 0.0, stop_afte
             elapsed = time.monotonic() - start_m
             if not armed_printed and elapsed >= grace_sec + 0.6:
                 armed_printed = True
-                print("  [ARMED] Watching doorway/room for movement now...")
+                if require_lock:
+                    print("  [ARMED] Lock-gated sentry active. Awaiting screen lock...")
+                else:
+                    print("  [ARMED] Watching doorway/room for movement now...")
                 sys.stdout.flush()
             if duration_sec > 0 and elapsed >= duration_sec:
                 break
@@ -2578,6 +2664,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="watch camera for doorway/room entry motion and send Signal photo alert",
     )
     p.add_argument(
+        "--lock-gated",
+        dest="lock_gated",
+        action="store_true",
+        default=None,
+        help="strictly gate camera sentry alerts to active lock sessions (default: true for continuous / daemon mode)",
+    )
+    p.add_argument(
+        "--standalone",
+        dest="standalone",
+        action="store_true",
+        help="allow motion detection without locking the session (manual room watch)",
+    )
+    p.add_argument(
         "--grace",
         type=float,
         default=2.0,
@@ -2625,10 +2724,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.sentry_test:
         return cmd_sentry_test()
     if args.room_sentry:
+        if args.standalone:
+            req_lock = False
+        elif args.lock_gated is not None:
+            req_lock = bool(args.lock_gated)
+        elif args.duration == 0.0:
+            req_lock = True
+        else:
+            req_lock = False
         return cmd_room_sentry(
             grace_sec=args.grace,
             duration_sec=args.duration,
             stop_after_first=not args.continuous,
+            require_lock=req_lock,
         )
     if args.audit_log:
         return cmd_audit_log()

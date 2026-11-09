@@ -1,0 +1,13 @@
+[Unit]
+Description=Zoth Sentry Tailscale Live View & Lock-Gated Motion Detector (:8499)
+After=network.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+ExecStart=/usr/local/bin/zoth-lock --room-sentry --lock-gated --grace 8.0 --duration 0 --continuous
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
