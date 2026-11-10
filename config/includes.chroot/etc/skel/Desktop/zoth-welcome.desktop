@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Welcome to ZothOS
+Comment=Learn ZothOS: Amnesic RAM Hygiene, Multi-Model AI Config, Storage & ZothNet
+Exec=/usr/local/bin/zoth-konsole --title 'Welcome to ZothOS' -- /usr/local/bin/zoth-welcome
+Icon=system-help
+Terminal=false
+Categories=System;Documentation;Education;
+Keywords=welcome;zothos;guide;amnesic;ram;ai;models;storage;network;zothnet;
+StartupNotify=true

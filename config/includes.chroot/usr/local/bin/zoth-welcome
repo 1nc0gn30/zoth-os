@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""
+🛡️ ZOTHOS WELCOME & ONBOARDING GUIDE
+=====================================================================
+Interactive guide to ZothOS:
+- Amnesic RAM-Only Hygiene (toram)
+- External USB & Cloud Storage Persistence
+- Multi-Model Intelligence Configuration (40+ Models across OpenRouter, Hermes, Claude, OpenAI, Groq, Gemini, DeepSeek, Ollama)
+- ZothNet P2P Communication & Sovereign Agent Bridge
+- Modular Tool Installation (zoth-pull)
+
+Author: Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+
+import os
+import sys
+import json
+import shutil
+
+GOLD = '\033[38;2;212;175;55m'
+CYAN = '\033[38;2;56;189;248m'
+EMERALD = '\033[38;2;16;185;129m'
+WHITE = '\033[1;37m'
+GRAY = '\033[38;2;148;163;184m'
+RESET = '\033[0m'
+BOLD = '\033[1m'
+
+CONFIG_DIR = os.path.expanduser('~/.config/zoth')
+AI_CONFIG_FILE = os.path.join(CONFIG_DIR, 'ai_providers.json')
+
+def clear():
+    os.system('clear' if os.name == 'posix' else 'cls')
+
+def header():
+    print(f"{GOLD}╔════════════════════════════════════════════════════════════════════════════╗{RESET}")
+    print(f"{GOLD}║{WHITE}{BOLD}   🛡️  ZOTHOS SOVEREIGN WORKSTATION & AMNESIC AGENT OS                    {GOLD}║{RESET}")
+    print(f"{GOLD}║{GRAY}   Debian 13 Live · Universal x86_64 · 100% Free & Open-Access              {GOLD}║{RESET}")
+    print(f"{GOLD}╚════════════════════════════════════════════════════════════════════════════╝{RESET}\n")
+
+def menu_amnesic():
+    clear()
+    header()
+    print(f"{CYAN}{BOLD}1. AMNESIC RAM-ONLY HYGIENE & POWER-OFF BEHAVIOR{RESET}\n")
+    print(f"{WHITE}• How ZothOS Boots:{RESET}")
+    print(f"  ZothOS loads entirely into volatile system RAM ({EMERALD}toram noswap{RESET}).")
+    print(f"  Once the desktop appears, the boot USB or drive is completely unmounted.")
+    print(f"  You can safely unplug the boot media while the OS is running.\n")
+    print(f"{WHITE}• What Happens When You Shut Off or Close the Machine:{RESET}")
+    print(f"  {EMERALD}Zero Forensic Footprint:{RESET} Because everything runs in volatile RAM, turning off the")
+    print(f"  machine instantaneously wipes all processes, temporary files, and RAM contents.")
+    print(f"  Nothing is ever written to internal host hard drives unless explicitly mounted by you.\n")
+    print(f"{WHITE}• Universal Hardware Compatibility:{RESET}")
+    print(f"  No proprietary GPU locks or special hardware required. Runs smoothly on Intel UHD/Iris,")
+    print(f"  AMD Radeon, NVIDIA GPUs, or pure CPU Mesa software rendering on any 64-bit PC or VM.\n")
+    input(f"{GRAY}Press Enter to return to menu...{RESET}")
+
+def menu_storage():
+    clear()
+    header()
+    print(f"{EMERALD}{BOLD}2. PERSISTENCE: EXTERNAL HARD DRIVES & CLOUD SYNC{RESET}\n")
+    print(f"{WHITE}Because the OS resets cleanly on power-down, persist your work externally:{RESET}\n")
+    print(f"{GOLD}Option A: External USB Flash Drives & Hard Drives (Recommended){RESET}")
+    print(f"  1. Plug in any formatted USB drive or external SSD (exFAT, ext4, NTFS).")
+    print(f"  2. It will automatically mount at: {CYAN}/media/$USER/<DriveName>{RESET}")
+    print(f"  3. Save your repositories, LLM weights, and workspaces to this directory.")
+    print(f"  4. Command shortcut: {BOLD}zoth-backup /media/$USER/my-drive{RESET}\n")
+    print(f"{GOLD}Option B: External Cloud Storage & Remote Drives{RESET}")
+    print(f"  1. Use {BOLD}rclone{RESET} to link to Google Drive, Dropbox, Nextcloud, AWS S3, or WebDAV:")
+    print(f"     {CYAN}$ rclone config{RESET}")
+    print(f"  2. Mount remote cloud storage seamlessly as a local directory:")
+    print(f"     {CYAN}$ rclone mount mydrive: ~/CloudDrive &{RESET}")
+    print(f"  3. Use Git with GitHub / GitLab / Codeberg to push all project commits.\n")
+    input(f"{GRAY}Press Enter to return to menu...{RESET}")
+
+def menu_ai_providers():
+    clear()
+    header()
+    print(f"{GOLD}{BOLD}3. MULTI-MODEL AI CONFIGURATION (40+ MODELS ACROSS 8 PROVIDERS){RESET}\n")
+    print(f"{WHITE}ZothOS empowers your autonomous agents with multi-provider access:{RESET}\n")
+    providers = [
+        ("OpenRouter", "300+ models with 1 key (Claude 3.5, Hermes 3 405B, DeepSeek-V3, Llama 3.3)"),
+        ("Nous Hermes Swarm", "Native Hermes-3 Agent Reasoner with tool-use & STDP memory"),
+        ("Anthropic Claude", "Claude 3.5 Sonnet & Haiku for elite coding and agent architecture"),
+        ("OpenAI", "GPT-4o, GPT-4o-mini & o1 reasoning enclaves"),
+        ("Groq LPU", "Ultra-fast 800+ tokens/sec LPUs for lightning-fast agent loops"),
+        ("Google Gemini", "Gemini 2.0 Flash & Pro with massive context windows"),
+        ("DeepSeek", "DeepSeek-V3 & DeepSeek-R1 reasoner at high cost efficiency"),
+        ("Local / LAN Ollama", "100% offline local inference on :11434 with zero network egress")
+    ]
+    for idx, (name, desc) in enumerate(providers, 1):
+        print(f"  {CYAN}{idx}. {name:<18}{RESET} {GRAY}— {desc}{RESET}")
+    print(f"\n{WHITE}Configuration File:{RESET} {CYAN}{AI_CONFIG_FILE}{RESET}")
+    print(f"{WHITE}CLI Command:{RESET}        {BOLD}zoth-ai-config{RESET} (enter keys or test endpoints)\n")
+
+    choice = input(f"{GOLD}Would you like to configure an AI provider now? (y/N): {RESET}").strip().lower()
+    if choice == 'y':
+        run_ai_config()
+
+def run_ai_config():
+    os.makedirs(CONFIG_DIR, exist_ok=True)
+    cfg = {}
+    if os.path.exists(AI_CONFIG_FILE):
+        try:
+            with open(AI_CONFIG_FILE, 'r') as f:
+                cfg = json.load(f)
+        except Exception:
+            cfg = {}
+
+    print(f"\n{CYAN}Select provider to configure:{RESET}")
+    print("1. OpenRouter (Recommended)")
+    print("2. Nous Hermes Swarm")
+    print("3. Anthropic Claude")
+    print("4. OpenAI")
+    print("5. Groq")
+    print("6. Google Gemini")
+    print("7. DeepSeek")
+    print("8. Local Ollama (Set endpoint)")
+    p_choice = input(f"{GOLD}Choose [1-8]: {RESET}").strip()
+
+    p_map = {
+        '1': ('openrouter', 'OpenRouter API Key (sk-or-v1-...): '),
+        '2': ('nous_hermes', 'Nous Hermes Swarm Key (nous_live_...): '),
+        '3': ('anthropic', 'Anthropic API Key (sk-ant-...): '),
+        '4': ('openai', 'OpenAI API Key (sk-proj-...): '),
+        '5': ('groq', 'Groq API Key (gsk_...): '),
+        '6': ('gemini', 'Google Gemini API Key (AIzaSy...): '),
+        '7': ('deepseek', 'DeepSeek API Key (sk-...): '),
+        '8': ('ollama', 'Ollama Base URL [http://127.0.0.1:11434]: ')
+    }
+
+    if p_choice in p_map:
+        key_id, prompt = p_map[p_choice]
+        val = input(prompt).strip()
+        if val or key_id == 'ollama':
+            if key_id == 'ollama' and not val:
+                val = 'http://127.0.0.1:11434'
+            cfg[key_id] = {'key': val, 'updated_at': os.times()[4]}
+            with open(AI_CONFIG_FILE, 'w') as f:
+                json.dump(cfg, f, indent=2)
+            print(f"{EMERALD}✓ Saved {key_id} configuration to {AI_CONFIG_FILE}!{RESET}")
+    input(f"{GRAY}Press Enter to continue...{RESET}")
+
+def menu_zothnet():
+    clear()
+    header()
+    print(f"{CYAN}{BOLD}4. ZOTHNET: HOW TO TALK TO ANOTHER ZOTH USER ON THE NETWORK{RESET}\n")
+    print(f"{WHITE}ZothOS includes built-in sovereign peer-to-peer and LAN communications:{RESET}\n")
+    print(f"{GOLD}1. Sovereign Agent Bridge (Port 8102){RESET}")
+    print(f"   • Background daemon connecting local tools and external nodes.")
+    print(f"   • Real-time WebSocket and HTTP signal exchange for agent coordination.")
+    print(f"   • Send signal: {CYAN}curl -X POST http://127.0.0.1:8102/api/send -d '{{\"type\":\"chat\",\"text\":\"hello\"}}'{RESET}\n")
+    print(f"{GOLD}2. Zoth Mesh Chat (CLI){RESET}")
+    print(f"   • Encrypted zero-config LAN chat with any other ZothOS machine:")
+    print(f"     {CYAN}$ zoth-chat{RESET}")
+    print(f"   • Automatically discovers neighboring ZothOS nodes on the local WiFi/Ethernet subnet.")
+    print(f"   • Supports end-to-end encrypted messaging with zero central relay servers.\n")
+    print(f"{GOLD}3. Zoth Node Remote Federation{RESET}")
+    print(f"   • Join the public civilization mesh: {CYAN}$ zoth-node --join https://civilization.nullai.tech{RESET}\n")
+    input(f"{GRAY}Press Enter to return to menu...{RESET}")
+
+def menu_extra_tools():
+    clear()
+    header()
+    print(f"{EMERALD}{BOLD}5. MODULAR TOOL INSTALLATION ON DEMAND{RESET}\n")
+    print(f"{WHITE}To keep ZothOS Lite ultra-light (< 2.4GB), tools are modular:{RESET}\n")
+    print(f"{GOLD}1. On-Demand Tool Puller (zoth-pull){RESET}")
+    print(f"   • Download and mount any of the 77 sovereign tools instantly without rebuilding:")
+    print(f"     {CYAN}$ zoth-pull zoth-studio{RESET}")
+    print(f"     {CYAN}$ zoth-pull adytum-alchemist{RESET}")
+    print(f"     {CYAN}$ zoth-pull zoth-civilization{RESET}\n")
+    print(f"{GOLD}2. Standard Linux Package Managers{RESET}")
+    print(f"   • Standard Debian APT works out-of-the-box:")
+    print(f"     {CYAN}$ sudo apt update && sudo apt install <package-name>{RESET}")
+    print(f"   • Python Pip (isolated environments):")
+    print(f"     {CYAN}$ pip install <library>{RESET}")
+    print(f"   • Node / NPM:")
+    print(f"     {CYAN}$ npm install -g <package>{RESET}\n")
+    print(f"{GRAY}Note: Packages installed via APT exist in volatile RAM and will reset on reboot.{RESET}")
+    print(f"{GRAY}Use external drives to keep scripts and binary payloads persistent.{RESET}\n")
+    input(f"{GRAY}Press Enter to return to menu...{RESET}")
+
+def main():
+    while True:
+        clear()
+        header()
+        print(f"{WHITE}{BOLD}SELECT AN ONBOARDING MODULE:{RESET}\n")
+        print(f"  {CYAN}1.{RESET} {BOLD}Amnesic RAM-Only Hygiene & Power-Off Behavior{RESET}")
+        print(f"  {CYAN}2.{RESET} {BOLD}Persistence: External Hard Drives & Cloud Sync{RESET}")
+        print(f"  {CYAN}3.{RESET} {BOLD}Multi-Model AI Configuration (40+ Models across 8 Providers){RESET}")
+        print(f"  {CYAN}4.{RESET} {BOLD}ZothNet: Talk to Other Zoth Users on the Network{RESET}")
+        print(f"  {CYAN}5.{RESET} {BOLD}Modular Tool Installation on Demand (zoth-pull){RESET}")
+        print(f"  {CYAN}6.{RESET} {BOLD}Launch Zoth Control Center{RESET}")
+        print(f"  {GRAY}0.{RESET} Exit to Desktop / Shell\n")
+
+        print(f"{GOLD}☕ Support Sovereign Development:{RESET} {CYAN}https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X{RESET}")
+        print(f"{GRAY}Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform{RESET}\n")
+
+        choice = input(f"{GOLD}Enter choice [0-6]: {RESET}").strip()
+        if choice == '1':
+            menu_amnesic()
+        elif choice == '2':
+            menu_storage()
+        elif choice == '3':
+            menu_ai_providers()
+        elif choice == '4':
+            menu_zothnet()
+        elif choice == '5':
+            menu_extra_tools()
+        elif choice == '6':
+            os.system('/usr/local/bin/zoth-control-center || true')
+            break
+        elif choice in ('0', 'q', 'exit'):
+            break
+
+if __name__ == '__main__':
+    main()
