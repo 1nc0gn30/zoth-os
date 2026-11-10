@@ -1,0 +1,19 @@
+[Unit]
+Description=ZothOS Sovereign Agent Bridge & Inter-Agent SSE Message Bus (:8102)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=/opt/sovereign-agent-bridge
+ExecStart=/usr/bin/python3 /opt/sovereign-agent-bridge/server.py --port 8102
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

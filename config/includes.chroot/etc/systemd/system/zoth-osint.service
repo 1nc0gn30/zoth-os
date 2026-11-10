@@ -1,0 +1,19 @@
+[Unit]
+Description=Zoth OSINT Reconnaissance Workstation (:8149)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=/opt/zoth-osint
+ExecStart=/usr/bin/python3 /opt/zoth-osint/server.py --port 8149
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

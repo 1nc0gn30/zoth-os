@@ -1,0 +1,19 @@
+[Unit]
+Description=Zoth Studio v2 Sovereign Web Workstation (:3000)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=/opt/zoth-studio
+ExecStart=/usr/bin/node /opt/zoth-studio/server.js --port 3000
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
