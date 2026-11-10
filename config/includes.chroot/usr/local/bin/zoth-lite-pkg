@@ -158,7 +158,7 @@ OPTIONAL_PULLABLE_TOOLS = [
     {
         "id": "zoth-swarm-multiplexer",
         "binary": "zoth-swarm",
-        "name": "21-Agent TUI Swarm Multiplexer",
+        "name": "23-Agent TUI Swarm Multiplexer",
         "category": "Swarm & Automation",
         "sizeMb": 38,
         "repo": "https://github.com/NullAITech/zoth-swarm-multiplexer",

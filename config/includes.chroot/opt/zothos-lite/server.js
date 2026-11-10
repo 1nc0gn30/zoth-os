@@ -185,7 +185,7 @@ const ZOTHOS_DAEMONS = [
   {
     id: 'swarm-conductor-daemon',
     unit: 'zoth-agent-conductor.service',
-    name: '21-Agent Swarm Conductor Daemon',
+    name: '23-Agent Swarm Conductor Daemon',
     port: 8790,
     ramMb: 38,
     preinstalled: false,
@@ -299,7 +299,7 @@ const OPTIONAL_PULLABLE_TOOLS = [
   {
     id: 'zoth-swarm-multiplexer',
     binary: 'zoth-swarm',
-    name: '21-Agent TUI Swarm Multiplexer',
+    name: '23-Agent TUI Swarm Multiplexer',
     category: 'Swarm & Automation',
     sizeMb: 38,
     port: 8790,
@@ -1179,13 +1179,14 @@ const server = http.createServer(async (req, res) => {
   const AI_PROVIDERS = [
     { id: 'ollama-hermes', name: 'Ollama // Zoth-Hermes 3 (Local Sovereign)', model: 'zoth-hermes:latest', type: 'local', badge: 'LOCAL 0ms' },
     { id: 'ollama-teknium', name: 'Ollama // Hermes-3 Teknium (Local 8B)', model: 'hermes3-teknium:latest', type: 'local', badge: 'LOCAL 8B' },
-    { id: 'ollama-coder', name: 'Ollama // Zoth-Coder (Local Exploit/Code)', model: 'zoth-coder:latest', type: 'local', badge: 'LOCAL CODE' },
-    { id: 'ollama-qwen', name: 'Ollama // Qwen 2.5 1.5B (Ultra-Fast Local)', model: 'qwen2.5:1.5b', type: 'local', badge: 'TURBO' },
-    { id: 'anthropic', name: 'Anthropic // Claude 3.7 Sonnet', model: 'claude-3-7-sonnet-20250219', type: 'cloud', badge: 'CLAUDE' },
-    { id: 'openai', name: 'OpenAI // GPT-4o Omni', model: 'gpt-4o', type: 'cloud', badge: 'GPT-4O' },
-    { id: 'xai', name: 'xAI // Grok-3 Sovereign', model: 'grok-3-latest', type: 'cloud', badge: 'GROK-3' },
-    { id: 'gemini', name: 'Google // Gemini 2.5 Pro', model: 'gemini-2.5-pro', type: 'cloud', badge: 'GEMINI' },
-    { id: 'deepseek', name: 'DeepSeek // R1 Reasoning', model: 'deepseek-chat', type: 'cloud', badge: 'R1' }
+    { id: 'ollama-coder', name: 'Ollama // Qwen 2.5 Coder 7B (Local Code)', model: 'qwen2.5-coder:7b', type: 'local', badge: 'LOCAL CODE' },
+    { id: 'hermes', name: 'Hermes / Nous // DeepSeek Flash (Hermes Agent)', model: 'deepseek-flash', type: 'cloud', badge: 'RECOMMENDED' },
+    { id: 'deepseek', name: 'DeepSeek // R1 & V3', model: 'deepseek-chat', type: 'cloud', badge: 'DEEPSEEK' },
+    { id: 'openrouter', name: 'OpenRouter // Unified Frontier Gateway', model: 'deepseek/deepseek-chat-v3-0324', type: 'cloud', badge: 'OPENROUTER' },
+    { id: 'openai', name: 'OpenAI // GPT-4.1 & o3', model: 'gpt-4o', type: 'cloud', badge: 'OPENAI' },
+    { id: 'anthropic', name: 'Anthropic // Claude Sonnet 4', model: 'claude-3-7-sonnet-20250219', type: 'cloud', badge: 'CLAUDE' },
+    { id: 'gemini', name: 'Google // Gemini 2.5 Pro & Flash', model: 'gemini-2.5-pro', type: 'cloud', badge: 'GEMINI' },
+    { id: 'groq', name: 'Groq // Llama 3.3 70B LPU', model: 'llama-3.3-70b-versatile', type: 'cloud', badge: 'GROQ LPU' }
   ];
 
   function buildVisemeTimeline(text) {
@@ -1539,10 +1540,12 @@ const server = http.createServer(async (req, res) => {
           replyText = d.content && d.content[0] ? d.content[0].text : '';
           usedModel = 'claude-3-7-sonnet';
         }
-      } else if ((providerId === 'openai' || providerId === 'xai' || providerId === 'deepseek') && (apiKey || process.env.OPENAI_API_KEY || process.env.XAI_API_KEY || process.env.DEEPSEEK_API_KEY)) {
+      } else if ((providerId === 'openai' || providerId === 'hermes' || providerId === 'openrouter' || providerId === 'groq' || providerId === 'deepseek') && (apiKey || process.env.OPENAI_API_KEY || process.env.NOUS_API_KEY || process.env.OPENROUTER_API_KEY || process.env.GROQ_API_KEY || process.env.DEEPSEEK_API_KEY)) {
         const endpoints = {
           openai: { url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o', env: process.env.OPENAI_API_KEY },
-          xai: { url: 'https://api.x.ai/v1/chat/completions', model: 'grok-3-latest', env: process.env.XAI_API_KEY },
+          hermes: { url: 'https://inference-api.nousresearch.com/v1/chat/completions', model: 'deepseek-flash', env: process.env.NOUS_API_KEY },
+          openrouter: { url: 'https://openrouter.ai/api/v1/chat/completions', model: 'deepseek/deepseek-chat-v3-0324', env: process.env.OPENROUTER_API_KEY },
+          groq: { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile', env: process.env.GROQ_API_KEY },
           deepseek: { url: 'https://api.deepseek.com/v1/chat/completions', model: 'deepseek-chat', env: process.env.DEEPSEEK_API_KEY }
         };
         const cfg = endpoints[providerId];

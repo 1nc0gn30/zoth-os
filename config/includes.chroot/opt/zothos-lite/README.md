@@ -15,14 +15,14 @@
 
 ### 1. ⚡ 56 Curated AI Models Across 8 Providers (`zoth-lite-models`)
 - **8 Native Provider Backends**:
-  1. **OpenRouter** (12 flagships + optional live catalog fetch)
-  2. **OpenAI** (`gpt-4.1`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `o3`, `o4-mini`, `o3-mini`)
-  3. **Anthropic Claude** (`claude-sonnet-4`, `claude-opus-4`, `claude-3-7-sonnet`, `claude-3-5-sonnet`, `claude-3-5-haiku`, `claude-3-opus`)
-  4. **Google Gemini** (`gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-2.0-flash-lite`, `gemini-1.5-pro`, `gemini-1.5-flash`)
-  5. **DeepSeek** (`deepseek-chat` V3, `deepseek-reasoner` R1, `deepseek-coder`)
-  6. **xAI Grok** (`grok-3`, `grok-3-mini`, `grok-3-fast`, `grok-2-1212`, `grok-2-vision-1212`)
-  7. **Groq LPU** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `deepseek-r1-distill-llama-70b`, `qwen-qwq-32b`, `qwen-2.5-coder-32b`, `gemma2-9b-it`, `mixtral-8x7b-32768`)
-  8. **Ollama / LAN Local Agents** (`hermes3:8b`, `hermes3:70b`, `qwen2.5-coder:32b`, `qwen2.5-coder:7b`, `deepseek-r1:14b`, `deepseek-r1:8b`, `llama3.3:70b`, `llama3.2:3b`, `mistral-small:24b`, `phi4:14b`) — configurable to any `127.0.0.1` or LAN IP (`http://192.168.x.x:11434/v1/chat/completions`).
+  1. **Ollama Local** (10 models: `qwen2.5-coder:7b` ★ Recommended Local, `qwen2.5-coder:32b`, `deepseek-r1:8b`, `deepseek-r1:14b`, `hermes3:8b`, `hermes3:70b`, `llama3.3:70b`, `llama3.2:3b`, `mistral-small:24b`, `phi4:14b`) — configurable to `127.0.0.1` or any LAN IP (`http://192.168.x.x:11434/v1/chat/completions`)
+  2. **Hermes / Nous Research** (5 models: `deepseek-flash` ★ Recommended Lightweight Cloud Path via Hermes Agent, `hermes-4-405b`, `hermes-3-llama-3.1-405b`, `hermes-3-llama-3.1-70b`, `hermes-3-llama-3.1-8b`)
+  3. **DeepSeek** (4 models: `deepseek-flash`, `deepseek-chat` V3, `deepseek-reasoner` R1, `deepseek-coder`)
+  4. **OpenRouter** (11 flagships + optional live catalog fetch)
+  5. **OpenAI** (7 models: `gpt-4.1`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `o3`, `o4-mini`, `o3-mini`)
+  6. **Anthropic Claude** (6 models: `claude-sonnet-4`, `claude-opus-4`, `claude-3-7-sonnet`, `claude-3-5-sonnet`, `claude-3-5-haiku`, `claude-3-opus`)
+  7. **Google Gemini** (6 models: `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-2.0-flash-lite`, `gemini-1.5-pro`, `gemini-1.5-flash`)
+  8. **Groq LPU** (7 models: `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `deepseek-r1-distill-llama-70b`, `qwen-qwq-32b`, `qwen-2.5-coder-32b`, `gemma2-9b-it`, `mixtral-8x7b-32768`)
 - **Volatile RAM Key Enclave**: `zoth-lite-models --set-key <provider>` writes keys with `0600` permissions strictly to `/run/user/$UID/zoth-keys.env` or `/dev/shm` so keys vanish automatically on shutdown unless explicitly exported via `--export-keys`.
 
 ### 2. 📖 First-Boot Interactive Onboarding (`zoth-lite-welcome`)

@@ -67,7 +67,7 @@
             "name": "How many AI models and providers does ZothOS-Lite v1.2 support?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "ZothOS-Lite v1.2 comes pre-configured with 56 curated frontier and open-weight models across 8 providers: OpenRouter, OpenAI, Anthropic Claude, Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local endpoints, managed via the built-in zoth-lite-models CLI and browser console."
+              "text": "ZothOS-Lite v1.2 comes pre-configured with 56 curated frontier and open-weight models across 8 providers: Ollama Local, Hermes / Nous Research (featuring DeepSeek Flash via Hermes Agent as the recommended lightweight cloud path), DeepSeek, OpenRouter, OpenAI, Anthropic Claude, Google Gemini, and Groq LPU, managed via the built-in zoth-lite-models CLI and browser console."
             }
           },
           {
@@ -264,24 +264,24 @@ $ zoth-lite-models --wipe-keys</pre>
           <div class="guide-pane-item" id="tabAI">
             <h3>2. Connecting 56 Curated Models Across 8 Cloud &amp; LAN Providers</h3>
             <p>
-              ZothOS-Lite runs on any lightweight laptop or VM because heavy inference can route either to <strong>cloud APIs</strong> or to a <strong>local/LAN Ollama or vLLM server</strong> on your network. Keys set via <code>zoth-lite-models</code> are stored in volatile RAM (<code>/run/user/$UID/zoth-keys.env</code> or <code>/dev/shm</code>, mode <code>0600</code>)—never written to internal disks.
+              ZothOS-Lite runs fast on any lightweight laptop or thin client because inference routes either to <strong>DeepSeek Flash via Hermes Agent (Nous Research)</strong> and 7 other cloud gateways, or to a <strong>local/LAN Ollama server</strong> on your subnet. Keys set via <code>zoth-lite-models</code> live strictly in volatile RAM (<code>/run/user/$UID/zoth-keys.env</code> or <code>/dev/shm</code>, mode <code>0600</code>)—never touching internal disks.
             </p>
             <div class="code-terminal-box">
-              <pre># List all 56 curated models across 8 providers (OpenRouter, OpenAI, Anthropic,
-# Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local):
+              <pre># List all 56 curated models across 8 providers (Ollama Local, Hermes / Nous,
+# DeepSeek, OpenRouter, OpenAI, Anthropic, Google Gemini, and Groq):
 $ zoth-lite-models --providers
 $ zoth-lite-models --list
 
 # Store an API key in volatile RAM (wiped on shutdown):
+$ zoth-lite-models --set-key hermes
 $ zoth-lite-models --set-key openrouter
-$ zoth-lite-models --set-key anthropic
 
-# Point to an AI server on your local network (zero cloud needed):
+# Point to an Ollama server on your local network (zero cloud needed):
 $ zoth-lite-models --set-endpoint ollama http://192.168.1.50:11434/v1/chat/completions
 
-# Test providers &amp; run an agent task directly from CLI:
+# Test providers &amp; run DeepSeek Flash via Hermes Agent directly from CLI:
 $ zoth-lite-models --test
-$ zoth-lite-models --run deepseek/deepseek-r1 "Generate a hardened Dockerfile"</pre>
+$ zoth-lite-models --run hermes:deepseek-flash "Generate a hardened Dockerfile"</pre>
             </div>
           </div>
 
@@ -339,10 +339,35 @@ $ zoth-lite-pkg list
 $ zoth-lite-pkg install promptmaster-security-lab
 $ zoth-lite-pkg install bolt-diy-sandbox
 
-# Standard Debian 13, Python &amp; Node packages also install cleanly into RAM:
-$ sudo apt update &amp;&amp; sudo apt install ffmpeg ripgrep
-$ pip install --break-system-packages httpx</pre>
+# Install local .deb packages or portable .AppImage binaries into RAM OverlayFS:
+$ sudo dpkg -i ./my-tool_amd64.deb || sudo apt -f install -y
+$ chmod +x ./Cursor.AppImage &amp;&amp; ./Cursor.AppImage --appimage-extract-and-run</pre>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Hardware Tier & Model Path Recommender -->
+      <div style="margin-top:18px; background:var(--bg-card); border:2px solid var(--border-bold); border-radius:var(--radius-sm); padding:16px 18px; box-shadow:var(--hard-shadow);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+          <div>
+            <span style="font-family:var(--font-mono); font-size:10px; font-weight:700; background:#000; color:#F7F7F4; padding:2px 6px;">INTERACTIVE HARDWARE RECOMMENDER</span>
+            <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800; margin-top:4px;">Match Your RAM &amp; CPU Tier to the Optimal AI Agent Setup</h3>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl is-dark hw-tier-btn" data-tier="thin">💻 2–4 GB Thin Client / VM</button>
+            <button type="button" class="btn-pill-ctrl hw-tier-btn" data-tier="laptop">⚡ 8–16 GB Daily Laptop</button>
+            <button type="button" class="btn-pill-ctrl hw-tier-btn" data-tier="workstation">🖥️ 32+ GB Workstation / LAN Host</button>
+          </div>
+        </div>
+        <p id="hwTierSummary" style="font-size:12.5px; color:var(--ink-secondary); margin-bottom:8px;">
+          <strong>Recommended for 2–4 GB RAM:</strong> Boot ZothOS-Lite in lightweight RAM mode and route coding/research tasks to <strong>DeepSeek Flash via Hermes Agent (Nous Research)</strong> or a LAN Ollama host—zero local VRAM overhead.
+        </p>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:8px 12px;">
+          <code id="hwTierCmd" style="font-size:11.5px; word-break:break-all;">zoth-lite-models --set-key hermes &amp;&amp; zoth-lite-models --run hermes:deepseek-flash "Audit workspace"</code>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl" id="btnCopyHwTierCmd">📋 Copy Setup Cmd</button>
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnDownloadHwTierSh">⬇ Download Setup .sh</button>
           </div>
         </div>
       </div>
@@ -382,19 +407,32 @@ $ pip install --break-system-packages httpx</pre>
 
       <!-- TOOL 1: 56-Model AI Agent Runner -->
       <div class="tool-pane is-active" id="toolAgentConsole">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
           <div>
             <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Multi-Provider AI Agent Console (<span id="modelDropdownCountBadge">56 Models in Dropdown</span>)</h3>
-            <p style="font-size:12.5px; color:var(--ink-secondary);">Every model listed below is directly selectable across OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local.</p>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Every model below is directly selectable across <strong>Ollama Local</strong>, <strong>Hermes / Nous</strong> (featuring <code>deepseek-flash</code> via Hermes Agent), <strong>DeepSeek</strong>, <strong>OpenRouter</strong>, <strong>OpenAI</strong>, <strong>Anthropic</strong>, <strong>Google Gemini</strong>, and <strong>Groq</strong>.</p>
           </div>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
             <button type="button" class="btn-pill-ctrl" id="btnCopyCliCmd" title="Copy equivalent zoth-lite-models CLI command">
               📋 Copy OS CLI Command
             </button>
+            <button type="button" class="btn-pill-ctrl" id="btnDownloadModelConfig" title="Download zoth-lite-models JSON configuration">
+              ⬇ Config (.json)
+            </button>
+            <button type="button" class="btn-pill-ctrl" id="btnDownloadModelEnv" title="Download volatile RAM .env key template">
+              ⬇ RAM .env Template
+            </button>
             <button type="button" class="btn-pill-ctrl is-dark" id="btnFetchLiveModels" title="Optionally pull extended dynamic model IDs from OpenRouter API">
-              ⟳ Optional: Sync Live OpenRouter List
+              ⟳ Sync Live OpenRouter
             </button>
           </div>
+        </div>
+
+        <!-- Recommended Lightweight Cloud + Local Quick Picks -->
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:7px 10px; margin-bottom:10px;">
+          <span style="font-family:var(--font-mono); font-size:10.5px; font-weight:800;">★ RECOMMENDED PATHS:</span>
+          <button type="button" class="btn-pill-ctrl is-dark" id="btnPickHermesFlash">⚡ Cloud Light: DeepSeek Flash (Hermes / Nous)</button>
+          <button type="button" class="btn-pill-ctrl" id="btnPickLocalOllama">🏠 Local Zero-Cloud: Ollama qwen2.5-coder:7b</button>
         </div>
 
         <!-- Provider Filter Chips (Defaults to ALL 8 Providers = 56 Models) -->
@@ -405,24 +443,24 @@ $ pip install --break-system-packages httpx</pre>
           <div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
               <label for="modelSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono);">SELECT AI MODEL (<span id="visibleModelCount">56</span>)</label>
-              <span id="activeProviderLabel" style="font-size:10px; color:var(--ink-muted); font-family:var(--font-mono);">openrouter</span>
+              <span id="activeProviderLabel" style="font-size:10px; color:var(--ink-muted); font-family:var(--font-mono);">hermes</span>
             </div>
             <select id="modelSelect" class="monotone-input" style="width:100%;"></select>
           </div>
 
           <div>
             <label for="modelSearchInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">FILTER DROPDOWN</label>
-            <input type="text" id="modelSearchInput" class="monotone-input" placeholder="Filter 56 models (e.g. claude, grok, hermes, o3, qwen)..." style="width:100%;">
+            <input type="text" id="modelSearchInput" class="monotone-input" placeholder="Filter 56 models (e.g. deepseek-flash, hermes, qwen, claude, o3)..." style="width:100%;">
           </div>
 
           <div>
             <label for="aiEndpointInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">PROVIDER / LAN ENDPOINT URL</label>
-            <input type="text" id="aiEndpointInput" class="monotone-input" value="https://openrouter.ai/api/v1/chat/completions" style="width:100%;">
+            <input type="text" id="aiEndpointInput" class="monotone-input" value="https://inference-api.nousresearch.com/v1/chat/completions" style="width:100%;">
           </div>
 
           <div>
             <label for="aiKeyInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">API KEY (SESSION RAM ONLY)</label>
-            <input type="password" id="aiKeyInput" class="monotone-input" placeholder="sk-... (optional; blank runs offline verifier)" style="width:100%;">
+            <input type="password" id="aiKeyInput" class="monotone-input" placeholder="sk-... (optional; blank runs offline enclave)" style="width:100%;">
           </div>
         </div>
 
@@ -460,15 +498,17 @@ $ pip install --break-system-packages httpx</pre>
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
             <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">ZothNet Encrypted P2P Mesh Explorer (<code>zothnet</code>)</h3>
-            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect how ZothOS-Lite nodes discover peers on LAN (<code>:8102</code>) or Onion mesh and seal end-to-end encrypted peer messages.</p>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Seal real WebCrypto <code>AES-256-GCM</code> + <code>SHA-256</code> peer envelopes in-browser, verify round-trip decryption, or copy the <code>zothnet</code> LAN/Onion CLI command.</p>
           </div>
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
             <button type="button" class="btn-pill-ctrl is-dark" id="btnZothNetScan">📡 Scan Mesh Peers</button>
+            <button type="button" class="btn-pill-ctrl" id="btnZothNetVerify">🔓 Verify &amp; Decrypt Packet</button>
+            <button type="button" class="btn-pill-ctrl" id="btnZothNetDownload">⬇ Export .zothpkt.json</button>
             <button type="button" class="btn-pill-ctrl" id="btnZothNetCopyCmd">📋 Copy zothnet chat CLI</button>
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:10px; margin-bottom:12px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap:10px; margin-bottom:12px;">
           <div>
             <label for="zothNetPeerSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">SELECT PEER NODE</label>
             <select id="zothNetPeerSelect" class="monotone-input" style="width:100%;">
@@ -480,37 +520,44 @@ $ pip install --break-system-packages httpx</pre>
           <div>
             <label for="zothNetChannelSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">TRANSPORT &amp; CIPHER</label>
             <select id="zothNetChannelSelect" class="monotone-input" style="width:100%;">
-              <option value="ChaCha20-Poly1305 (LAN :8102)">ChaCha20-Poly1305 (Zero-Cloud LAN :8102)</option>
-              <option value="X25519 + Ed25519 (Tor v3 Onion)">X25519 + Ed25519 (Tor v3 Ephemeral Onion)</option>
+              <option value="AES-256-GCM + ChaCha20 (LAN :8102)">AES-256-GCM + ChaCha20 (Zero-Cloud LAN :8102)</option>
+              <option value="AES-256-GCM + X25519 (Tor v3 Onion)">AES-256-GCM + X25519 (Tor v3 Ephemeral Onion)</option>
             </select>
+          </div>
+          <div>
+            <label for="zothNetKeyInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">EPHEMERAL SESSION KEY</label>
+            <input type="text" id="zothNetKeyInput" class="monotone-input" value="zothnet-ram-ephemeral-v12" style="width:100%;">
           </div>
         </div>
 
         <div class="input-block-row">
           <input type="text" id="zothNetMsgInput" class="monotone-input" aria-label="ZothNet P2P message" value="Agent build finished in /dev/shm/work — SHA-256 verified, ready to sync.">
           <button type="button" id="btnZothNetSend" class="btn-monotone-primary" style="white-space:nowrap; padding:8px 18px;">
-            <span>🔐</span> Seal &amp; Send P2P Packet
+            <span>🔐</span> Seal &amp; Encrypt P2P Packet
           </button>
         </div>
 
         <div id="zothNetConsoleOutput" class="monotone-console" style="min-height:170px;">[ZOTHNET P2P MESH // PORT :8102]
 Local Ephemeral Identity : zoth-ephemeral-ram
 OS CLI Equivalent        : zothnet status  |  zothnet peers  |  zothnet chat @zoth-relay-lan01 "Hello"
-Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1305 peer envelope.</div>
+Click "Seal &amp; Encrypt P2P Packet" to generate a genuine WebCrypto AES-256-GCM ciphertext &amp; SHA-256 envelope.</div>
       </div>
 
-      <!-- TOOL 3: External Storage & Cloud Packager -->
+      <!-- TOOL 3: External Storage Packager & Modular zoth-lite-pkg Installer -->
       <div class="tool-pane" id="toolStoragePackager">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
-            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">External Drive &amp; Cloud Persistence Packager (<code>zoth-lite-storage</code>)</h3>
-            <p style="font-size:12.5px; color:var(--ink-secondary);">Generate exact OS mount/sync commands for USB, NVMe, or cloud drives, or bundle local files into a CRC-32 verified ZIP archive in-browser.</p>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">External Persistence (<code>zoth-lite-storage</code>) &amp; Package Builder (<code>zoth-lite-pkg</code>)</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Mount USB/NVMe or rclone cloud targets, build on-demand <code>zoth-lite-pkg</code> / <code>.deb</code> / <code>.AppImage</code> RAM install scripts, or bundle local files into PKZIP or WebCrypto AES-256-GCM encrypted archives.</p>
           </div>
-          <button type="button" class="btn-pill-ctrl is-dark" id="btnStageSampleFiles">➕ Stage Sample Build Files</button>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl" id="btnCopyStorageCmd">📋 Copy Storage Cmd</button>
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnStageSampleFiles">➕ Stage Sample Build Files</button>
+          </div>
         </div>
 
         <!-- Quick Command Builder for External USB / Cloud -->
-        <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:12px; margin-bottom:14px;">
+        <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:12px; margin-bottom:12px;">
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap:10px; margin-bottom:8px;">
             <div>
               <label for="storageTargetType" style="font-size:10.5px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">PERSISTENCE TARGET</label>
@@ -529,10 +576,42 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
           <pre id="storageCmdPreview" style="background:#000; color:#F7F7F4; padding:10px 12px; font-size:11.5px; overflow-x:auto; border:1px solid #000;">sudo zoth-lite-storage mount /dev/sdb1 &amp;&amp; zoth-lite-storage sync ./agent-workspace /mnt/zoth-ext/sdb1/builds</pre>
         </div>
 
+        <!-- Modular On-Demand Tool & .deb / AppImage Installer Builder (zoth-lite-pkg) -->
+        <div id="pkgModuleBuilder" style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:12px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <strong style="font-family:var(--font-mono); font-size:11.5px;">🧰 ON-DEMAND RAM PACKAGE BUILDER (<code>zoth-lite-pkg</code> · <code>.deb</code> · <code>.AppImage</code>)</strong>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn-pill-ctrl" id="btnCopyPkgScript">📋 Copy Install Script</button>
+              <button type="button" class="btn-pill-ctrl is-dark" id="btnDownloadPkgScript">⬇ Download install-ram.sh</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="promptmaster-security-lab" checked style="accent-color:#000;"> promptmaster-security-lab
+            </label>
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="neuro-memory-daemon" checked style="accent-color:#000;"> neuro-memory-daemon
+            </label>
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="bolt-diy-sandbox" style="accent-color:#000;"> bolt-diy-sandbox
+            </label>
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="zoth-swarm-multiplexer" style="accent-color:#000;"> 23-agent-swarm
+            </label>
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="deb-bundle" style="accent-color:#000;"> Local .deb Package
+            </label>
+            <label style="font-family:var(--font-mono); font-size:11px; display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" class="pkg-mod-chk" value="appimage-bundle" style="accent-color:#000;"> Portable .AppImage
+            </label>
+          </div>
+          <pre id="pkgScriptPreview" style="background:#000; color:#F7F7F4; padding:9px 12px; font-size:11px; overflow-x:auto; border:1px solid #000;"></pre>
+        </div>
+
         <div class="monotone-dropzone" id="pkgDropzone">
           <div style="font-size:26px; margin-bottom:6px;">💾</div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:3px;">Drop files here to create a portable PKZIP bundle</h4>
-          <p style="font-size:11.5px; color:var(--ink-muted); margin-bottom:10px;">100% client-side compression — zero uploads to any server</p>
+          <h4 style="font-size:14px; font-weight:700; margin-bottom:3px;">Drop files here to create a portable PKZIP or AES-256-GCM Encrypted Bundle</h4>
+          <p style="font-size:11.5px; color:var(--ink-muted); margin-bottom:10px;">100% client-side compression &amp; WebCrypto encryption — zero uploads to any server</p>
           <label class="btn-monotone-primary" style="cursor:pointer; display:inline-flex; font-size:11.5px; padding:6px 14px;">
             <span>📁</span> Browse Local Files
             <input type="file" id="pkgFileInput" multiple style="display:none;">
@@ -544,9 +623,15 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-          <button type="button" id="btnBuildZip" class="btn-monotone-primary" disabled>
-            <span>📦</span> Build &amp; Download ZIP
-          </button>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <button type="button" id="btnBuildZip" class="btn-monotone-primary" disabled>
+              <span>📦</span> Build &amp; Download ZIP
+            </button>
+            <input type="password" id="pkgEncryptPass" class="monotone-input" aria-label="Optional encryption passphrase" placeholder="Optional AES-256-GCM passphrase" style="padding:7px 10px; font-size:11.5px; width:220px;">
+            <button type="button" id="btnBuildEncryptedZip" class="btn-monotone-secondary" disabled style="padding:8px 14px; font-size:12px;">
+              <span>🔐</span> Build AES-256-GCM .zip.enc
+            </button>
+          </div>
           <span id="pkgStatus" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700;"></span>
         </div>
       </div>
@@ -555,29 +640,29 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
       <div class="tool-pane" id="toolMediaPlayer">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
-            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Local Video &amp; Audio Player</h3>
-            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect local MP4/WebM/WAV/MP3 files in RAM with +/-1 frame stepping, speed control, spectrum bar, and PNG frame capture.</p>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Local Video, Boot Stream &amp; Audio Synth Player</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect local MP4/WebM/WAV/MP3 files in RAM, preview procedural 30fps Monotone OS boot streams, or synthesize downloadable 16-bit PCM <code>.wav</code> test tones.</p>
           </div>
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button type="button" class="btn-pill-ctrl is-dark" id="btnLoadHermesShowcase">🎬 OS Demo Clip A</button>
-            <button type="button" class="btn-pill-ctrl" id="btnLoadLaunchFilm">🎞️ OS Demo Clip B</button>
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnLoadHermesShowcase">🎬 Monotone Boot Stream A</button>
+            <button type="button" class="btn-pill-ctrl" id="btnLoadLaunchFilm">🎞️ Braille Router Stream B</button>
+            <button type="button" class="btn-pill-ctrl" id="btnMediaSynthTone">🔊 Synth Tone</button>
+            <button type="button" class="btn-pill-ctrl" id="btnDownloadTestWav">⬇ Test .wav</button>
             <label class="btn-pill-ctrl" style="cursor:pointer;">
               📁 Open Local Media <input type="file" id="mediaFileInput" accept="video/*,audio/*" style="display:none;">
             </label>
           </div>
         </div>
 
-        <div class="media-viewport-box">
-          <video id="mediaPlayerVideo" playsinline preload="metadata" poster="og-banner.jpg">
-            <source src="assets/zothos-lite-hero-showreel.mp4" type="video/mp4">
-            Your browser does not support HTML5 video.
-          </video>
+        <div class="media-viewport-box" style="position:relative;">
+          <canvas id="monotoneBootStreamCanvas" width="960" height="420" style="width:100%; height:auto; max-height:380px; display:block; background:#F7F7F4;"></canvas>
+          <video id="mediaPlayerVideo" playsinline muted preload="none" poster="og-banner.jpg" style="display:none; width:100%; max-height:380px;"></video>
         </div>
 
         <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); border-radius:var(--radius-sm); padding:10px 14px;">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
-            <button type="button" class="btn-monotone-primary" id="btnMediaPlay" style="padding:5px 12px; font-size:11.5px;">▶ Play</button>
-            <span id="mediaTimeDisplay" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; min-width:85px;">0.0s / 0.0s</span>
+            <button type="button" class="btn-monotone-primary" id="btnMediaPlay" style="padding:5px 12px; font-size:11.5px;">⏸ Pause</button>
+            <span id="mediaTimeDisplay" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; min-width:95px;">0.0s / 12.0s</span>
             <input type="range" id="mediaScrubber" aria-label="Media timeline scrubber" min="0" max="100" value="0" step="0.1" style="flex:1; min-width:140px; accent-color:#000000; cursor:pointer;">
           </div>
 
@@ -607,8 +692,8 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
       <div class="tool-pane" id="toolImageViewer">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
-            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Image &amp; Bayer Dither Inspector</h3>
-            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect diagrams, screenshots, or local images with zoom, 90° rotation, 1-bit Bayer dither preview, and RAM footprint calculation.</p>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Image, EXIF Sanitizer &amp; Bayer 8×8 Dither Inspector</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect diagrams or local photos with zoom, 90° rotation, genuine 1-bit Ordered Bayer 8×8 pixel dithering, and zero-EXIF clean PNG export.</p>
           </div>
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
             <button type="button" class="btn-pill-ctrl is-dark btn-wp-preset" data-preset="amnesic-monotone">🖼️ OS Master</button>
@@ -630,9 +715,11 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
             <button type="button" class="btn-pill-ctrl" id="btnImgZoomIn">🔍 Zoom +25%</button>
             <button type="button" class="btn-pill-ctrl" id="btnImgZoomOut">🔍 Zoom -25%</button>
             <button type="button" class="btn-pill-ctrl" id="btnImgRotate">🔄 Rotate 90°</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgBayer">▦ 1-Bit Bayer Dither</button>
             <button type="button" class="btn-pill-ctrl" id="btnImgGray">◐ Grayscale</button>
             <button type="button" class="btn-pill-ctrl" id="btnImgInvert">◑ Invert</button>
             <button type="button" class="btn-pill-ctrl" id="btnImgReset">⟲ Reset</button>
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnImgExportClean">🛡️ Strip EXIF &amp; Save PNG</button>
           </div>
           <div id="imageMetadata" style="font-family:var(--font-mono); font-size:11px; display:flex; gap:10px; flex-wrap:wrap;">
             <span><strong>File:</strong> amnesic-monotone.jpg</span>
@@ -647,9 +734,12 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap:18px;">
           <!-- Left: CoT Merkle DAG -->
           <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
               <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800;">Zoth-CoT Working Memory DAG</h3>
-              <button type="button" class="btn-pill-ctrl is-dark" id="btnCopyCotDag">📋 Copy JSON</button>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-pill-ctrl" id="btnCopyCotDag">📋 Copy JSON</button>
+                <button type="button" class="btn-pill-ctrl is-dark" id="btnDownloadCotDag">⬇ Export .json</button>
+              </div>
             </div>
             <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:7px 10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
               <strong id="cotMerkleRoot" style="font-family:var(--font-mono); font-size:11px;">MERKLE ROOT COMPUTING...</strong>
@@ -669,7 +759,10 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
 
           <!-- Right: Air-Gapped Cold Signer -->
           <div>
-            <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800; margin-bottom:8px;">Air-Gapped Ed25519 Braille Signer</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+              <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800;">Air-Gapped Ed25519 Braille Signer</h3>
+              <button type="button" class="btn-pill-ctrl" id="btnDownloadColdSeal">⬇ Export Seal (.txt)</button>
+            </div>
             <p style="font-size:12px; color:var(--ink-secondary); margin-bottom:8px;">Generate deterministic SHA-256 digests &amp; Unicode <code>U+2800</code> Braille RandomArt seals offline.</p>
             <div class="input-block-row">
               <input type="text" id="coldSignInput" aria-label="Payload to sign" class="monotone-input" value="Verify release zothos-lite-1.2.0-monotone-amd64.iso (@1nc0gn30)">
@@ -705,7 +798,7 @@ Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1
           <div class="pillar-icon">⚡</div>
           <h3 class="pillar-title">56 AI Models · 8 Providers</h3>
           <p class="pillar-text">
-            Pre-wired via <code>zoth-lite-models</code> for OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq LPU, and local/LAN Ollama servers—so even modest 4 GB RAM laptops can orchestrate frontier agents.
+            Pre-wired via <code>zoth-lite-models</code> for Ollama Local, Hermes / Nous (<code>deepseek-flash</code> via Hermes Agent), DeepSeek, OpenRouter, OpenAI, Anthropic, Gemini, and Groq—so even 4 GB laptops orchestrate frontier agents.
           </p>
         </div>
 
@@ -776,6 +869,40 @@ $ sudo dd if=zothos-lite-1.2.0-monotone-amd64.iso of=/dev/sdX bs=4M status=progr
     </div>
   </section>
 
+  <!-- NullAI & 1nc0gn30 Ecosystem Directory (100% Monotone) -->
+  <section class="section" style="padding-top:8px; padding-bottom:28px;">
+    <div class="wrapper">
+      <div style="background:var(--bg-card); border:2px solid var(--border-bold); padding:18px 20px; box-shadow:var(--hard-shadow);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <strong style="font-family:var(--font-mono); font-size:13px; letter-spacing:0.05em;">⣿⣿⣿⣿⣿⣿⣿⣿ SOVEREIGN ECOSYSTEM DIRECTORY (1NC0GN30 · NULLAI PLATFORM)</strong>
+          <span style="font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted);">100% Open-Access · Zero Paywalls</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap:10px; font-family:var(--font-mono); font-size:11.5px;">
+          <a href="https://zothos.nullai.tech" target="_blank" rel="noopener" style="display:block; padding:10px; border:1.5px solid var(--border-bold); text-decoration:none;">
+            <strong>ZothOS v3.4.0</strong><br>
+            <span style="font-size:10.5px; opacity:0.8;">Full Distro · 23 Loopback Daemons · 163 MCP</span>
+          </a>
+          <a href="https://zoth.nullai.tech" target="_blank" rel="noopener" style="display:block; padding:10px; border:1.5px solid var(--border-bold); text-decoration:none;">
+            <strong>Zoth Studio v2</strong><br>
+            <span style="font-size:10.5px; opacity:0.8;">77 Free Tools (55 Web + 22 CLI) · 74 Repos</span>
+          </a>
+          <a href="https://zoth-civilization.netlify.app" target="_blank" rel="noopener" style="display:block; padding:10px; border:1.5px solid var(--border-bold); text-decoration:none;">
+            <strong>Zoth Civilization v3.0</strong><br>
+            <span style="font-size:10.5px; opacity:0.8;">23 Pantheon Agents &amp; 22-Key Sanctuary</span>
+          </a>
+          <a href="https://1nc0gn30.si" target="_blank" rel="noopener" style="display:block; padding:10px; border:1.5px solid var(--border-bold); text-decoration:none;">
+            <strong>1nc0gn30.si</strong><br>
+            <span style="font-size:10.5px; opacity:0.8;">Sovereign Systems &amp; AI Research Hub</span>
+          </a>
+          <a href="https://nullai.tech" target="_blank" rel="noopener" style="display:block; padding:10px; border:1.5px solid var(--border-bold); text-decoration:none;">
+            <strong>NullAI Platform</strong><br>
+            <span style="font-size:10.5px; opacity:0.8;">Open Frontier Tooling &amp; Architecture</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Support & Footer (Strictly 1nc0gn30 & NullAI Platform Only) -->
   <footer class="footer">
     <div class="wrapper footer-inner">
@@ -794,7 +921,10 @@ $ sudo dd if=zothos-lite-1.2.0-monotone-amd64.iso of=/dev/sdX bs=4M status=progr
       <ul class="footer-links">
         <li><a href="https://github.com/1nc0gn30/zothos-lite" target="_blank" rel="noopener">GitHub (1nc0gn30)</a></li>
         <li><a href="https://github.com/NullAITech/zothos-lite" target="_blank" rel="noopener">NullAITech Org</a></li>
-        <li><a href="https://zothos.nullai.tech" target="_blank" rel="noopener">Full ZothOS v3.4</a></li>
+        <li><a href="https://zothos.nullai.tech" target="_blank" rel="noopener">ZothOS v3.4</a></li>
+        <li><a href="https://zoth.nullai.tech" target="_blank" rel="noopener">Zoth Studio (77 Tools)</a></li>
+        <li><a href="https://zoth-civilization.netlify.app" target="_blank" rel="noopener">Civilization (23 Agents)</a></li>
+        <li><a href="https://1nc0gn30.si" target="_blank" rel="noopener">1nc0gn30.si</a></li>
         <li><a href="https://nullai.tech" target="_blank" rel="noopener">NullAI</a></li>
         <li><a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener">☕ Buy Us a Coffee</a></li>
       </ul>

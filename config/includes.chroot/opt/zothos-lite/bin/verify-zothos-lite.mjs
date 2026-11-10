@@ -551,7 +551,7 @@ function checkOsCliAndHygiene() {
     'public/style.css',
     'public/sovereign_tutorial.js',
   ];
-  const banned = /frazie[r]|fraze[r]|nealfrazie[r]|a100[0]|#d4af3[7]|#08080[b]|3009\+/i;
+  const banned = /frazier|frazer|nealfrazier|a1000|#d4af37|#08080b|3009\+/i;
   let violations = [];
   for (const rel of filesToAudit) {
     const txt = fs.readFileSync(path.join(ROOT, rel), 'utf8');

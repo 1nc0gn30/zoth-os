@@ -19,14 +19,14 @@ CHAPTERS = [
         "summary": "Connect cloud frontier models or local/LAN Ollama & vLLM servers with RAM-only API keys.",
         "details": [
             "ZothOS-Lite ships pre-configured for 56 curated models across 8 providers:",
-            "  OpenRouter, OpenAI, Anthropic Claude, Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local.",
+            "  Ollama Local, Hermes / Nous Research (DeepSeek Flash via Hermes Agent), DeepSeek, OpenRouter, OpenAI, Anthropic, Google Gemini, and Groq.",
             "API keys live strictly in volatile RAM (/run/user/$UID/zoth-keys.env or /dev/shm) with 0600 permissions.",
         ],
         "commands": [
             "zoth-lite-models --list",
-            "zoth-lite-models --set-key openrouter",
+            "zoth-lite-models --set-key hermes",
             "zoth-lite-models --set-endpoint ollama http://192.168.1.50:11434/v1/chat/completions",
-            'zoth-lite-models --run deepseek/deepseek-r1 "Audit this bash script"',
+            'zoth-lite-models --run hermes:deepseek-flash "Audit this bash script"',
         ],
     },
     {

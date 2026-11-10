@@ -44,21 +44,57 @@ REPO_DIR = (
 )
 
 SUPPORTED_PROVIDERS = {
+    "ollama": {
+        "name": "Ollama Local (LAN & Loopback)",
+        "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+        "models": [
+            "qwen2.5-coder:7b",
+            "qwen2.5-coder:32b",
+            "deepseek-r1:8b",
+            "deepseek-r1:14b",
+            "hermes3:8b",
+            "hermes3:70b",
+            "llama3.3:70b",
+            "llama3.2:3b",
+            "mistral-small:24b",
+            "phi4:14b",
+        ],
+    },
+    "hermes": {
+        "name": "Hermes / Nous Research (Hermes Agent)",
+        "endpoint": "https://inference-api.nousresearch.com/v1/chat/completions",
+        "models": [
+            "deepseek-flash",
+            "hermes-4-405b",
+            "hermes-3-llama-3.1-405b",
+            "hermes-3-llama-3.1-70b",
+            "hermes-3-llama-3.1-8b",
+        ],
+    },
+    "deepseek": {
+        "name": "DeepSeek",
+        "endpoint": "https://api.deepseek.com/v1/chat/completions",
+        "models": [
+            "deepseek-flash",
+            "deepseek-chat",
+            "deepseek-reasoner",
+            "deepseek-coder",
+        ],
+    },
     "openrouter": {
         "name": "OpenRouter (Unified Gateway)",
         "endpoint": "https://openrouter.ai/api/v1/chat/completions",
         "models": [
+            "deepseek/deepseek-chat-v3-0324",
+            "deepseek/deepseek-r1",
+            "nousresearch/hermes-3-llama-3.1-405b",
+            "nousresearch/hermes-3-llama-3.1-70b",
             "anthropic/claude-3.7-sonnet",
             "anthropic/claude-3.5-sonnet",
             "openai/gpt-4o",
             "openai/o3-mini",
-            "deepseek/deepseek-r1",
-            "deepseek/deepseek-chat",
-            "nousresearch/hermes-3-llama-3.1-405b",
-            "nousresearch/hermes-3-llama-3.1-70b",
             "meta-llama/llama-3.3-70b-instruct",
             "qwen/qwen-2.5-coder-32b-instruct",
-            "mistralai/codestral-2501",
             "google/gemini-2.0-flash-001",
         ],
     },
@@ -99,26 +135,6 @@ SUPPORTED_PROVIDERS = {
             "gemini-1.5-flash",
         ],
     },
-    "deepseek": {
-        "name": "DeepSeek",
-        "endpoint": "https://api.deepseek.com/v1/chat/completions",
-        "models": [
-            "deepseek-chat",
-            "deepseek-reasoner",
-            "deepseek-coder",
-        ],
-    },
-    "xai": {
-        "name": "xAI Grok",
-        "endpoint": "https://api.x.ai/v1/chat/completions",
-        "models": [
-            "grok-3",
-            "grok-3-mini",
-            "grok-3-fast",
-            "grok-2-1212",
-            "grok-2-vision-1212",
-        ],
-    },
     "groq": {
         "name": "Groq LPU",
         "endpoint": "https://api.groq.com/openai/v1/chat/completions",
@@ -130,22 +146,6 @@ SUPPORTED_PROVIDERS = {
             "qwen-2.5-coder-32b",
             "gemma2-9b-it",
             "mixtral-8x7b-32768",
-        ],
-    },
-    "ollama": {
-        "name": "Ollama / LAN Local Agents",
-        "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
-        "models": [
-            "hermes3:8b",
-            "hermes3:70b",
-            "qwen2.5-coder:32b",
-            "qwen2.5-coder:7b",
-            "deepseek-r1:14b",
-            "deepseek-r1:8b",
-            "llama3.3:70b",
-            "llama3.2:3b",
-            "mistral-small:24b",
-            "phi4:14b",
         ],
     },
 }
@@ -197,7 +197,7 @@ GUIDE_TOPICS = [
     {
         "id": "ai-setup",
         "title": "56 AI Models Across 8 Providers & LAN Agents (zoth-lite-models)",
-        "summary": "Configure OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq, or LAN Ollama with volatile RAM keys.",
+        "summary": "Configure Ollama Local, Hermes / Nous (DeepSeek Flash), DeepSeek, OpenRouter, OpenAI, Anthropic, Google Gemini, or Groq with volatile RAM keys.",
     },
     {
         "id": "zothnet",
