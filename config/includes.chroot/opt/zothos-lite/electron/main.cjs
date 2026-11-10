@@ -13,7 +13,7 @@ app.commandLine.appendSwitch('ozone-platform', 'x11');
 
 const IS_SMOKE = process.argv.includes('--smoke-test');
 const TOOL_ID = "zothos-lite";
-const TOOL_NAME = "ZothOS-Lite v1.1 Amnesic Monotone Desktop";
+const TOOL_NAME = "ZothOS-Lite v1.2 Amnesic Monotone OS";
 const BACKEND_PORT = Number(process.env.PORT || 8145);
 const BACKEND_URL = `http://127.0.0.1:${BACKEND_PORT}`;
 
@@ -65,8 +65,8 @@ function createWindow() {
     minWidth: 1024,
     minHeight: 700,
     show: !IS_SMOKE,
-    backgroundColor: '#000000',
-    title: `${TOOL_NAME} // ZothOS Sovereign Workstation (:${BACKEND_PORT})`,
+    backgroundColor: '#F7F7F4',
+    title: `${TOOL_NAME} // Paper Ivory & Black Ink Workstation (:${BACKEND_PORT})`,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

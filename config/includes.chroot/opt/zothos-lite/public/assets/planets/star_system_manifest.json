@@ -12,7 +12,7 @@
       "orbit_radius": 0,
       "radius_scale": 1.0,
       "atmo_color": "#38bdf8",
-      "accent_color": "#D4AF37",
+      "accent_color": "#000000",
       "ring_type": "kepler_station",
       "moons": 1,
       "population": "142 Autonomous Citizens",
@@ -54,7 +54,7 @@
           "color": "#f97316"
         }
       ],
-      "texture_prompt": "Equirectangular 360 seamless planetary surface map texture of Zoth Prime, lush emerald-teal deep oceans, dark obsidian tectonic continents veined with glowing golden #D4AF37 cybernetic highway networks and illuminated megacity clusters, top-down satellite albedo projection, ultra-detailed 8k planetary cartography, no borders, edge-to-edge texture",
+      "texture_prompt": "Equirectangular 360 seamless planetary surface map texture of Zoth Prime, lush emerald-teal deep oceans, dark obsidian tectonic continents veined with glowing golden #000000 cybernetic highway networks and illuminated megacity clusters, top-down satellite albedo projection, ultra-detailed 8k planetary cartography, no borders, edge-to-edge texture",
       "video_prompt": "Cinematic orbital spacecraft flyby over Zoth Prime, glowing golden cybernetic megacities on dark obsidian continents surrounded by emerald oceans and a rotating golden orbital ring in deep space, volumetric atmospheric glow, 60fps sci-fi cinema",
       "texture_url": "/assets/planets/zoth_prime_texture.jpg",
       "glb_url": "/assets/planets/zoth_prime.glb",

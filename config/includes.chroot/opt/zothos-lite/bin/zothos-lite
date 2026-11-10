@@ -1,17 +1,32 @@
 #!/usr/bin/env python3
 """
-ZothOS-Lite v1.1 — Amnesic Monotone Desktop GUI, A100 80GB Foundry & Enclave CLI (:8145)
+ZothOS-Lite v1.2 — Universal Amnesic Monotone Security OS & 56-Model AI Workstation CLI (:8145)
 Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """
 import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
-if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/zothos-lite') if _z_os.path.exists(_z_os.path.expanduser('~/NullAITech/zothos-lite/electron/main.cjs')) else '/opt/zothos-lite'
-    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
-    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
-if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
-    _z_sys.exit(_z_sp.run(['/usr/local/bin/zothos-lite-tui'] + _z_rem).returncode)
+
+_BIN_DIR = _z_os.path.dirname(_z_os.path.abspath(__file__))
+
+if "--electron" in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ("desktop", "electron")):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ("--electron", "desktop", "electron")]
+    _z_cand = _z_os.path.abspath(_z_os.path.join(_BIN_DIR, ".."))
+    _z_rdir = _z_cand if _z_os.path.exists(_z_os.path.join(_z_cand, "electron", "main.cjs")) else (
+        _z_os.path.expanduser("~/NullAITech/zothos-lite")
+        if _z_os.path.exists(_z_os.path.expanduser("~/NullAITech/zothos-lite/electron/main.cjs"))
+        else "/opt/zothos-lite"
+    )
+    _z_el = _z_sh.which("electron") or "/usr/local/bin/electron"
+    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, "electron", "main.cjs")] + _z_rem, cwd=_z_rdir).returncode)
+
+if "--tui" in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == "tui"):
+    _z_rem = [a for a in _z_sys.argv[1:] if a not in ("--tui", "tui")]
+    _z_tui = _z_os.path.join(_BIN_DIR, "zothos-lite-tui") if _z_os.path.exists(_z_os.path.join(_BIN_DIR, "zothos-lite-tui")) else (_z_sh.which("zothos-lite-tui") or "/usr/local/bin/zothos-lite-tui")
+    _z_sys.exit(_z_sp.run([_z_tui] + _z_rem).returncode)
+
+for _sub_name, _bin_target in (("welcome", "zoth-lite-welcome"), ("storage", "zoth-lite-storage"), ("pkg", "zoth-lite-pkg")):
+    if _z_sys.argv[1:] and _z_sys.argv[1] == _sub_name:
+        _target = _z_os.path.join(_BIN_DIR, _bin_target) if _z_os.path.exists(_z_os.path.join(_BIN_DIR, _bin_target)) else (_z_sh.which(_bin_target) or f"/usr/local/bin/{_bin_target}")
+        _z_sys.exit(_z_sp.run([_target] + _z_sys.argv[2:]).returncode)
 
 import argparse
 import json
@@ -21,10 +36,181 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPO_DIR = Path("/opt/zothos-lite") if Path("/opt/zothos-lite/server.js").exists() else (Path.home() / "NullAITech/zothos-lite")
-PANTHEON_MANIFEST = REPO_DIR / "public" / "assets" / "pantheon" / "pantheon_21_manifest.json"
-PLANETS_MANIFEST = REPO_DIR / "public" / "assets" / "planets" / "star_system_manifest.json"
-TAROT_MANIFEST = REPO_DIR / "public" / "assets" / "tarot3d" / "adytum_22_tarot_manifest.json"
+_CAND_REPO = Path(__file__).resolve().parent.parent
+REPO_DIR = (
+    _CAND_REPO
+    if (_CAND_REPO / "server.js").exists()
+    else (Path("/opt/zothos-lite") if Path("/opt/zothos-lite/server.js").exists() else (Path.home() / "NullAITech/zothos-lite"))
+)
+
+SUPPORTED_PROVIDERS = {
+    "openrouter": {
+        "name": "OpenRouter (Unified Gateway)",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "models": [
+            "anthropic/claude-3.7-sonnet",
+            "anthropic/claude-3.5-sonnet",
+            "openai/gpt-4o",
+            "openai/o3-mini",
+            "deepseek/deepseek-r1",
+            "deepseek/deepseek-chat",
+            "nousresearch/hermes-3-llama-3.1-405b",
+            "nousresearch/hermes-3-llama-3.1-70b",
+            "meta-llama/llama-3.3-70b-instruct",
+            "qwen/qwen-2.5-coder-32b-instruct",
+            "mistralai/codestral-2501",
+            "google/gemini-2.0-flash-001",
+        ],
+    },
+    "openai": {
+        "name": "OpenAI",
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "models": [
+            "gpt-4.1",
+            "gpt-4.1-mini",
+            "gpt-4o",
+            "gpt-4o-mini",
+            "o3",
+            "o4-mini",
+            "o3-mini",
+        ],
+    },
+    "anthropic": {
+        "name": "Anthropic Claude",
+        "endpoint": "https://api.anthropic.com/v1/messages",
+        "models": [
+            "claude-sonnet-4-20250514",
+            "claude-opus-4-20250514",
+            "claude-3-7-sonnet-20250219",
+            "claude-3-5-sonnet-20241022",
+            "claude-3-5-haiku-20241022",
+            "claude-3-opus-20240229",
+        ],
+    },
+    "gemini": {
+        "name": "Google Gemini",
+        "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        "models": [
+            "gemini-2.5-pro",
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
+            "gemini-1.5-pro",
+            "gemini-1.5-flash",
+        ],
+    },
+    "deepseek": {
+        "name": "DeepSeek",
+        "endpoint": "https://api.deepseek.com/v1/chat/completions",
+        "models": [
+            "deepseek-chat",
+            "deepseek-reasoner",
+            "deepseek-coder",
+        ],
+    },
+    "xai": {
+        "name": "xAI Grok",
+        "endpoint": "https://api.x.ai/v1/chat/completions",
+        "models": [
+            "grok-3",
+            "grok-3-mini",
+            "grok-3-fast",
+            "grok-2-1212",
+            "grok-2-vision-1212",
+        ],
+    },
+    "groq": {
+        "name": "Groq LPU",
+        "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+        "models": [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "deepseek-r1-distill-llama-70b",
+            "qwen-qwq-32b",
+            "qwen-2.5-coder-32b",
+            "gemma2-9b-it",
+            "mixtral-8x7b-32768",
+        ],
+    },
+    "ollama": {
+        "name": "Ollama / LAN Local Agents",
+        "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+        "models": [
+            "hermes3:8b",
+            "hermes3:70b",
+            "qwen2.5-coder:32b",
+            "qwen2.5-coder:7b",
+            "deepseek-r1:14b",
+            "deepseek-r1:8b",
+            "llama3.3:70b",
+            "llama3.2:3b",
+            "mistral-small:24b",
+            "phi4:14b",
+        ],
+    },
+}
+
+IN_BROWSER_TOOLS = [
+    {
+        "id": "swarm",
+        "name": "Multi-Model AI Agent Swarm Console",
+        "desc": "Universal model runner across 56 curated models and 8 providers with RAM/client key isolation.",
+    },
+    {
+        "id": "av-player",
+        "name": "Precision Video & Audio Player",
+        "desc": "Frame-accurate scrubbing, 26-band real-time Web Audio API spectrum, and PNG frame capture.",
+    },
+    {
+        "id": "image-viewer",
+        "name": "Precision Image Inspector & Dither Viewer",
+        "desc": "In-browser pan, zoom, grayscale/invert inspection, rotation, and uncompressed RAM footprint analysis.",
+    },
+    {
+        "id": "storage-packager",
+        "name": "External Storage & Cloud Drive Packager",
+        "desc": "Zero-dependency client-side PKZIP compressor with CRC-32 / SHA-256 verification for USB or rclone sync.",
+    },
+    {
+        "id": "cot-dag",
+        "name": "Zoth-CoT Merkle Thought DAG",
+        "desc": "Cryptographic multi-turn working memory chain with SHA-256 Merkle root verification.",
+    },
+    {
+        "id": "zothnet-p2p",
+        "name": "ZothNet Encrypted P2P Mesh & Cold Signer",
+        "desc": "Peer-to-peer ZothNet message envelope builder and air-gapped Ed25519 Unicode U+2800 Braille RandomArt signer.",
+    },
+]
+
+GUIDE_TOPICS = [
+    {
+        "id": "amnesic",
+        "title": "Amnesic Hygiene & Power-Off Wipe (toram noswap)",
+        "summary": "Boots Debian 13 Live into volatile RAM. Boot USB can be unplugged after boot. Power-off wipes RAM with 0 forensic trace.",
+    },
+    {
+        "id": "persistence",
+        "title": "External Drive & Cloud Persistence (zoth-lite-storage)",
+        "summary": "Save builds intentionally to external USB/NVMe drives (/mnt/zoth-ext) or sync via rclone to S3, Google Drive, Dropbox, or WebDAV.",
+    },
+    {
+        "id": "ai-setup",
+        "title": "56 AI Models Across 8 Providers & LAN Agents (zoth-lite-models)",
+        "summary": "Configure OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq, or LAN Ollama with volatile RAM keys.",
+    },
+    {
+        "id": "zothnet",
+        "title": "ZothNet Encrypted P2P Communication (zothnet)",
+        "summary": "Talk peer-to-peer to other Zoth nodes via `zothnet status`, `zothnet peers`, and `zothnet chat <peer>`.",
+    },
+    {
+        "id": "tools",
+        "title": "Modular On-Demand Tools (zoth-lite-pkg)",
+        "summary": "Keep the ISO ultra-light and install extra tools into RAM on demand via `zoth-lite-pkg install <id>` or `apt`.",
+    },
+]
+
 
 def get_status():
     live = {}
@@ -35,37 +221,60 @@ def get_status():
             online = True
     except Exception:
         live = {"ok": True, "mode": "standalone"}
+
+    total_models = sum(len(p["models"]) for p in SUPPORTED_PROVIDERS.values())
     return {
         "id": "zothos-lite",
-        "os": "ZothOS-Lite v1.1 (Amnesic Monotone Desktop GUI)",
+        "os": "ZothOS-Lite v1.2 (Tails-Style Amnesic Monotone OS)",
+        "theme": "Paper Ivory #F7F7F4 / Black Ink #000000 / Bayer Dither / Unicode U+2800 Braille",
+        "kernel": "Linux 6.12.x amd64 (toram noswap)",
         "port": 8145,
         "url": "http://127.0.0.1:8145",
-        "studio_workbench_url": "http://127.0.0.1:3000/tools/zothos-lite",
+        "production_url": "https://zothos-lite.nullai.tech",
         "daemon_active": online,
-        "a100_gpu": "NVIDIA A100-SXM4-80GB (qwen3.8:27b + gemma3:27b + FLUX.1 + LTX-Video 2B)",
-        "pantheon_agents": 21,
-        "helios_planets": 6,
-        "adytum_tarot_keys": 22,
-        "desktop_scenes": ["torus-monolith", "singularity", "cyber-cathedral", "helios-planets", "tarot-sanctum"],
+        "hardware_support": "Universal x86_64 (Intel, AMD, NVIDIA, DRM/KMS, Mesa LLVMpipe)",
+        "ai_providers_count": len(SUPPORTED_PROVIDERS),
+        "ai_models_count": total_models,
+        "built_in_tools_count": len(IN_BROWSER_TOOLS),
+        "guide_topics_count": len(GUIDE_TOPICS),
+        "os_cli_utilities": [
+            "zothos-lite",
+            "zothos-lite-tui",
+            "zoth-lite-models",
+            "zoth-lite-welcome",
+            "zoth-lite-storage",
+            "zoth-lite-pkg",
+        ],
         "system_status": live,
         "engineered_by": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
-        "license": "100% Free & Open Access (Zero Paywalls)"
+        "support": {
+            "buy_us_a_coffee_stripe": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_tip_address": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+        "license": "100% Free & Open Access (Zero Paywalls)",
     }
 
+
 def main():
-    parser = argparse.ArgumentParser(description="ZothOS-Lite v1.1 — Amnesic Monotone Desktop & A100 Foundry CLI (:8145)")
-    parser.add_argument("action", nargs="?", choices=["status", "pantheon", "planets", "tarot", "serve", "desktop", "tui"], help="Action command")
-    parser.add_argument("--status", action="store_true", help="Query ZothOS-Lite (:8145) live status and A100 telemetry")
-    parser.add_argument("--pantheon", action="store_true", help="List the 21 Pantheon Agent Rigs (U+2800 Braille + 48-Frame Pixel + GLB)")
-    parser.add_argument("--planets", action="store_true", help="List the 6 Helios-Zoth Star System planets")
-    parser.add_argument("--tarot", action="store_true", help="List the 22 Adytum Tarot Arcana Keys")
+    parser = argparse.ArgumentParser(description="ZothOS-Lite v1.2 — Amnesic Monotone OS & 56-Model AI CLI (:8145)")
+    parser.add_argument(
+        "action",
+        nargs="?",
+        choices=["status", "models", "providers", "tools", "guide", "welcome", "storage", "pkg", "serve", "desktop", "tui"],
+        help="Action command",
+    )
+    parser.add_argument("--status", action="store_true", help="Query ZothOS-Lite (:8145) live status and OS metadata")
+    parser.add_argument("--models", action="store_true", help="List all 56 curated models across 8 providers")
+    parser.add_argument("--providers", action="store_true", help="List all 8 supported AI providers and endpoints")
+    parser.add_argument("--tools", action="store_true", help="List built-in browser & OS utilities")
+    parser.add_argument("--guide", action="store_true", help="Display the 5-topic onboarding & amnesic guide")
     parser.add_argument("--port", type=int, default=8145, help="Port to bind when serving")
     parser.add_argument("--json", action="store_true", help="Output deterministic JSON")
     parser.add_argument("--version", "-v", action="store_true", help="Show version")
     args = parser.parse_args()
 
     if args.version:
-        print("zothos-lite v1.1 (Amnesic Monotone Desktop GUI • A100 80GB Foundry :8145)")
+        print("zothos-lite v1.2 (Amnesic Monotone OS • 56 AI Models / 8 Providers • :8145)")
         return
 
     if args.action == "serve":
@@ -73,31 +282,44 @@ def main():
         env["PORT"] = str(args.port or 8145)
         sys.exit(subprocess.run(["node", str(REPO_DIR / "server.js")], cwd=str(REPO_DIR), env=env).returncode)
 
-    if args.pantheon or args.action == "pantheon":
-        data = json.loads(PANTHEON_MANIFEST.read_text()) if PANTHEON_MANIFEST.exists() else {"count": 21, "agents": []}
+    if args.models or args.action == "models":
         if args.json:
-            print(json.dumps({"count": data.get("count", 21), "states": data.get("states", []), "agents": [{"id": a["id"], "name": a["name"], "role": a["role"], "tarotKey": a.get("tarotKey"), "glbUrl": a.get("glbUrl")} for a in data.get("agents", [])]}, indent=2))
+            print(json.dumps(SUPPORTED_PROVIDERS, indent=2))
         else:
-            for a in data.get("agents", []):
-                print(f"{a.get('petIcon','❖')} {a['id']:10s} | {a['name']:12s} | {a['role']} ({a.get('tarotKey')})")
+            total = sum(len(p["models"]) for p in SUPPORTED_PROVIDERS.values())
+            print(f"=== ZothOS-Lite v1.2 • {total} Curated AI Models Across {len(SUPPORTED_PROVIDERS)} Providers ===")
+            for pid, prov in SUPPORTED_PROVIDERS.items():
+                print(f"\n[{prov['name']} ({pid})] Endpoint: {prov['endpoint']}")
+                for m in prov["models"]:
+                    print(f"  • {m}")
         return
 
-    if args.planets or args.action == "planets":
-        data = json.loads(PLANETS_MANIFEST.read_text()) if PLANETS_MANIFEST.exists() else {"planets": []}
+    if args.providers or args.action == "providers":
         if args.json:
-            print(json.dumps(data, indent=2))
+            print(json.dumps([{"id": k, **v} for k, v in SUPPORTED_PROVIDERS.items()], indent=2))
         else:
-            for p in data.get("planets", []):
-                print(f"🪐 {p['name']:16s} | {p['biome']} | Orbit: {p['orbit_radius']} AU-k | {p['glb_url']}")
+            print("=== ZothOS-Lite v1.2 Supported AI Providers (8) ===")
+            for pid, prov in SUPPORTED_PROVIDERS.items():
+                print(f"  • {pid:12s} | {prov['name']:<29} ({len(prov['models']):>2} models) -> {prov['endpoint']}")
         return
 
-    if args.tarot or args.action == "tarot":
-        data = json.loads(TAROT_MANIFEST.read_text()) if TAROT_MANIFEST.exists() else {"keys": []}
+    if args.tools or args.action == "tools":
         if args.json:
-            print(json.dumps({"count": data.get("count", 22), "keys": [{"keyNumber": k["keyNumber"], "roman": k["roman"], "name": k["name"], "guardianAgent": k["guardianAgent"], "glbUrl": k["glbUrl"]} for k in data.get("keys", [])]}, indent=2))
+            print(json.dumps(IN_BROWSER_TOOLS, indent=2))
         else:
-            for k in data.get("keys", []):
-                print(f"🃏 Key {k['roman']:4s} | {k['name']:20s} | Guardian: {k['guardianAgent']}")
+            print("=== ZothOS-Lite v1.2 Workstation Utilities ===")
+            for t in IN_BROWSER_TOOLS:
+                print(f"  • {t['id']:18s} | {t['name']}\n    {t['desc']}")
+        return
+
+    if args.guide or args.action == "guide":
+        if args.json:
+            print(json.dumps(GUIDE_TOPICS, indent=2))
+        else:
+            print("=== ZothOS-Lite v1.2 Amnesic Onboarding Guide ===")
+            for g in GUIDE_TOPICS:
+                print(f"\n[ {g['title']} ]")
+                print(f"  {g['summary']}")
         return
 
     data = get_status()
@@ -105,6 +327,7 @@ def main():
         print(json.dumps(data, indent=2))
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()

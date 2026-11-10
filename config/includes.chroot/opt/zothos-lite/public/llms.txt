@@ -9,6 +9,6 @@
 - **ZothNet (Zero-Cloud Encrypted Mesh Network)**: https://zothnet.nullai.tech | https://github.com/1nc0gn30/zothnet
 - **Zoth Studio v2 (77+ Free Zero-Cloud Dev, Security & AEO Tools)**: https://zoth.nullai.tech | https://github.com/1nc0gn30/zoth-studio-v2
 - **Hermes-Zoth (Nous Research Hermes Agent Plugin)**: https://github.com/1nc0gn30/hermes-zoth
-- **1nc0gn30 · World of Zoth**: https://www.nealfrazier.tech | https://github.com/1nc0gn30
+- **1nc0gn30**: https://github.com/1nc0gn30
 - **NullAI Platform**: https://nullai.tech | https://github.com/1nc0gn30/nullai2026
 - **Support Open-Access Engineering (Buy Us a Coffee)**: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | Solana: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`

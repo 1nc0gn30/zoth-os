@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""
+zoth-ci-gate v1.0.0 — Sovereign Pre-Push CI & Hygiene Verification Gate
+=======================================================================
+Blocks `git push` if ANY of the following fail in the target repository:
+  1. Invalid YAML syntax or EOL Python ('3.8', '3.9') in .github/workflows/*.yml
+  2. Secret / PII leak detected by tools/scan-secrets.sh or gitleaks (when configured)
+  3. Failing unit tests (pytest on tests/ or npm test when a real test script exists)
+
+Pass ZOTH_SKIP_TESTS=1 only when re-pushing pure docs/metadata after tests already passed,
+but YAML & secret hygiene checks ALWAYS run unconditionally.
+"""
+
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+
+def fail(msg: str) -> None:
+    sys.stderr.write(f"\n[zoth-ci-gate] BLOCKED PUSH: {msg}\n")
+    sys.exit(1)
+
+
+def info(msg: str) -> None:
+    sys.stderr.write(f"[zoth-ci-gate] {msg}\n")
+
+
+def check_workflows(repo: Path) -> None:
+    wf_dir = repo / ".github" / "workflows"
+    if not wf_dir.is_dir():
+        return
+    try:
+        import yaml
+    except ImportError:
+        yaml = None
+
+    for wf in sorted(wf_dir.glob("*.y*ml")):
+        text = wf.read_text(encoding="utf-8", errors="replace")
+        # Catch collapsed YAML list bug like `python-version: - "3.10"`
+        if re.search(r"^[ \t]*[\w-]+:[ \t]+-[ \t]+", text, re.MULTILINE):
+            fail(f"Malformed inline YAML sequence in {wf.relative_to(repo)}")
+        if yaml is not None:
+            try:
+                parsed = yaml.safe_load(text)
+                if not isinstance(parsed, dict):
+                    fail(f"Workflow {wf.relative_to(repo)} did not parse to a YAML mapping")
+            except Exception as exc:
+                fail(f"YAML syntax error in {wf.relative_to(repo)}: {exc}")
+        # Disallow EOL Python 3.8 / 3.9 in GitHub Actions matrix on Ubuntu 24/26
+        if re.search(r'["\']3\.[89]["\']', text):
+            fail(f"EOL Python 3.8/3.9 detected in {wf.relative_to(repo)} (breaks Ubuntu 26.04 runners)")
+
+
+def check_secrets(repo: Path) -> None:
+    scan_script = repo / "tools" / "scan-secrets.sh"
+    if scan_script.is_file() and shutil.which("gitleaks"):
+        info("Running tools/scan-secrets.sh ...")
+        res = subprocess.run(["bash", str(scan_script)], cwd=str(repo))
+        if res.returncode != 0:
+            fail("tools/scan-secrets.sh detected secret/PII leak!")
+        return
+
+    gitleaks_cfg = repo / ".gitleaks.toml"
+    has_gitleaks_wf = (repo / ".github" / "workflows" / "gitleaks.yml").is_file()
+    if (gitleaks_cfg.is_file() or has_gitleaks_wf) and shutil.which("gitleaks"):
+        info("Running gitleaks tracked-tree hygiene scan ...")
+        # Scan git-tracked files quickly via git archive or gitleaks git
+        cmd = ["gitleaks", "git", "--no-banner", "--redact"]
+        if gitleaks_cfg.is_file():
+            cmd.extend(["--config", str(gitleaks_cfg)])
+        # Only check HEAD commit to keep pre-push fast and accurate
+        cmd.extend(["--log-opts=-1"])
+        res = subprocess.run(cmd, cwd=str(repo))
+        if res.returncode != 0:
+            fail("gitleaks detected a secret or PII violation in HEAD commit!")
+
+
+def check_tests(repo: Path) -> None:
+    if os.environ.get("ZOTH_SKIP_TESTS") == "1":
+        info("ZOTH_SKIP_TESTS=1 set; skipping unit test re-run (YAML + secrets passed).")
+        return
+
+    pkg_json = repo / "package.json"
+    if pkg_json.is_file() and shutil.which("npm"):
+        try:
+            pkg = json.loads(pkg_json.read_text(encoding="utf-8"))
+            test_cmd = (pkg.get("scripts") or {}).get("test", "")
+        except Exception:
+            test_cmd = ""
+        if test_cmd and "no test specified" not in test_cmd.lower():
+            # Skip heavy multi-minute Puppeteer suite inside git hook only if ZOTH_FAST_HOOK=1,
+            # otherwise run registry-check or full npm test
+            if "test:e2e" in test_cmd and (pkg.get("scripts") or {}).get("test:registry"):
+                info("Running npm run test:registry ...")
+                res = subprocess.run(["npm", "run", "test:registry"], cwd=str(repo))
+                if res.returncode != 0:
+                    fail("npm run test:registry failed!")
+            else:
+                info(f"Running npm test ({test_cmd}) ...")
+                res = subprocess.run(["npm", "test"], cwd=str(repo))
+                if res.returncode != 0:
+                    fail("npm test failed!")
+
+    tests_dir = repo / "tests"
+    has_py = (repo / "pyproject.toml").is_file() or (repo / "setup.py").is_file() or (repo / "pytest.ini").is_file()
+    if tests_dir.is_dir() and has_py and shutil.which("pytest"):
+        py_tests = list(tests_dir.rglob("test_*.py")) + list(tests_dir.rglob("*_test.py"))
+        if py_tests:
+            info(f"Running pytest ({len(py_tests)} test files) ...")
+            env = os.environ.copy()
+            src_dir = repo / "src"
+            if src_dir.is_dir():
+                env["PYTHONPATH"] = f"{src_dir}:{repo}" + (f":{env['PYTHONPATH']}" if env.get("PYTHONPATH") else "")
+            else:
+                env["PYTHONPATH"] = str(repo) + (f":{env['PYTHONPATH']}" if env.get("PYTHONPATH") else "")
+            res = subprocess.run(["pytest", "-q", "tests"], cwd=str(repo), env=env)
+            if res.returncode != 0:
+                fail("pytest test suite failed!")
+
+
+def main() -> None:
+    repo = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 and Path(sys.argv[1]).is_dir() else Path.cwd().resolve()
+    info(f"Verifying {repo.name} ...")
+    check_workflows(repo)
+    check_secrets(repo)
+    check_tests(repo)
+    info(f"PASS: {repo.name} cleared all pre-push quality & hygiene gates.")
+
+
+if __name__ == "__main__":
+    main()

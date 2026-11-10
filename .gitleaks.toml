@@ -101,9 +101,13 @@ regexes = ['''FourKeyMap''']
 
 # Vendored sovereign daemon bundles in config/includes.chroot/opt/ and studio workspace
 [[allowlists]]
-description = "Vendored sovereign daemons, studio workspace, and Python bytecode."
+description = "Vendored sovereign daemons, studio workspace, gitignored local ISO/SBOM build artifacts, and Python bytecode."
 paths = [
   '''(?:^|/)build/live_workspace/.*''',
+  '''(?:^|/)build/cosign\.key$''',
+  '''(?:^|/)build/parts/.*''',
+  '''(?:^|/)build/.*\.iso(?:\.part[0-9a-zA-Z_-]+)?$''',
+  '''(?:^|/)build/.*-sbom\..*\.json$''',
   '''(?:^|/)config/includes\.chroot/opt/vaelor-network/.*''',
   '''(?:^|/)config/includes\.chroot/opt/neuro-memory-daemon/.*''',
   '''(?:^|/)config/includes\.chroot/opt/zoth-studio/.*''',

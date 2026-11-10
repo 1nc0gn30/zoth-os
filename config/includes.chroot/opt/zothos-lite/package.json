@@ -1,26 +1,25 @@
 {
   "name": "zothos-lite",
-  "version": "1.1.0",
-  "description": "ZothOS-Lite v1.1 — 1-Bit Monotone Amnesic Security & AI Workstation (toram noswap) with AZOTH Embodied Braille AI, Kokoro ONNX Voice, Chain of Thoughts DAG, 3D Perspective Desktop & 45 Kali/Parrot CLI Tools",
+  "version": "1.2.0",
+  "description": "ZothOS-Lite v1.2 — Tails-Style Amnesic Monotone Security & AI Operating System (Debian 13 Live · toram noswap) with 56 AI Models Across 8 Providers, First-Boot Onboarding, ZothNet P2P Mesh, and External USB/Cloud Sync",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "node bin/verify-zothos-lite.mjs",
+    "iso:dry-run": "./build/build-zothos-lite-iso.sh --dry-run",
     "vm:build": "./vm/build-vm-image.sh",
     "vm:launch": "./vm/launch-vm.sh"
   },
   "keywords": [
-    "zothos",
+    "zothos-lite",
     "amnesic-os",
     "tails-linux",
-    "kali-linux",
-    "parrot-os",
-    "embodied-ai",
-    "kokoro-tts",
-    "chain-of-thought",
+    "debian-live",
+    "toram",
+    "ai-agents",
+    "zothnet",
     "braille-ui",
     "bayer-dither",
-    "3d-ascii",
     "nullai"
   ],
   "author": "1nc0gn30 <1nc0gn30@users.noreply.github.com> (https://nullai.tech)",
@@ -29,5 +28,5 @@
     "type": "git",
     "url": "https://github.com/1nc0gn30/zothos-lite.git"
   },
-  "homepage": "https://zoth.nullai.tech"
+  "homepage": "https://zothos-lite.nullai.tech"
 }

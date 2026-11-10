@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+"""
+zoth-lite-welcome — ZothOS-Lite v1.2 First-Boot Amnesic Monotone Onboarding Guide
+Tails-Style Paper Ivory / Black Ink Terminal Walkthrough
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+import os
+import shutil
+import sys
+from pathlib import Path
+
+CHAPTERS = [
+    {
+        "step": 1,
+        "id": "models",
+        "title": "1. AI Agents: 56+ Models Across 8 Providers & LAN Endpoints",
+        "summary": "Connect cloud frontier models or local/LAN Ollama & vLLM servers with RAM-only API keys.",
+        "details": [
+            "ZothOS-Lite ships pre-configured for 56 curated models across 8 providers:",
+            "  OpenRouter, OpenAI, Anthropic Claude, Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local.",
+            "API keys live strictly in volatile RAM (/run/user/$UID/zoth-keys.env or /dev/shm) with 0600 permissions.",
+        ],
+        "commands": [
+            "zoth-lite-models --list",
+            "zoth-lite-models --set-key openrouter",
+            "zoth-lite-models --set-endpoint ollama http://192.168.1.50:11434/v1/chat/completions",
+            'zoth-lite-models --run deepseek/deepseek-r1 "Audit this bash script"',
+        ],
+    },
+    {
+        "step": 2,
+        "id": "shutdown",
+        "title": "2. Power-Off, Lid Close & Amnesic RAM Hygiene (toram noswap)",
+        "summary": "Understand exactly what disappears when you shut down, reboot, or pull the USB.",
+        "details": [
+            "ZothOS-Lite boots entirely into volatile system RAM using Debian Live `toram noswap`.",
+            "Once the desktop appears, you can physically unplug the boot USB drive.",
+            "Host internal NVMe/SATA drives are NEVER mounted automatically and swap is strictly disabled.",
+            "When you shut off or reboot the machine, RAM loses power and EVERY session file, history entry, and RAM API key vanishes with zero forensic trace.",
+        ],
+        "commands": [
+            "cat /proc/cmdline   # Verify toram noswap slab_nomerge init_on_free=1",
+            "free -h             # Verify Swap: 0B",
+            "zoth-lite-models --wipe-keys",
+        ],
+    },
+    {
+        "step": 3,
+        "id": "packages",
+        "title": "3. Installing Extra Tools On-Demand Without Bloating the ISO",
+        "summary": "Pull modular security/dev packages into RAM tmpfs whenever needed.",
+        "details": [
+            "ZothOS-Lite stays lean and fast (~958 MB minimal / <2.4 GB live image) by keeping heavy suites modular.",
+            "Install extra Zoth modules into volatile RAM via `zoth-lite-pkg`, or install any Debian 13, Python, or Node tool directly into RAM OverlayFS.",
+        ],
+        "commands": [
+            "zoth-lite-pkg list",
+            "zoth-lite-pkg install promptmaster-security-lab",
+            "zoth-lite-pkg install neuro-memory-daemon",
+            "sudo apt update && sudo apt install <package>",
+        ],
+    },
+    {
+        "step": 4,
+        "id": "zothnet",
+        "title": "4. Talking Peer-to-Peer to Other Zoth Users on ZothNet",
+        "summary": "Zero-cloud encrypted LAN & mesh discovery, peer status, and direct operator/agent messaging.",
+        "details": [
+            "Every ZothOS-Lite node speaks the encrypted ZothNet P2P protocol (Ed25519 identity + ChaCha20-Poly1305 / Onion mesh).",
+            "Discover peers on your local Wi-Fi/Ethernet subnet or federated relays and exchange encrypted messages or agent tasks.",
+        ],
+        "commands": [
+            "zothnet status",
+            "zothnet peers",
+            'zothnet chat @peer-node "Ready to sync build artifacts"',
+        ],
+    },
+    {
+        "step": 5,
+        "id": "storage",
+        "title": "5. Saving Builds & Agent Outputs to External Drives or Cloud",
+        "summary": "Persist code, builds, and checkpoints intentionally to USB/NVMe drives or rclone cloud remotes.",
+        "details": [
+            "Because RAM wipes cleanly on shutdown, save anything you want to keep onto an external USB/SSD/NVMe partition or encrypted cloud bucket.",
+            "`zoth-lite-storage` lists external block devices safely, mounts them under /mnt/zoth-ext/<label>, and syncs workspaces with SHA-256 manifests.",
+        ],
+        "commands": [
+            "zoth-lite-storage list",
+            "sudo zoth-lite-storage mount /dev/sdb1",
+            "zoth-lite-storage sync ./my-agent-build /mnt/zoth-ext/sdb1/builds",
+            "zoth-lite-storage sync ./my-agent-build gdrive:zoth-builds",
+        ],
+    },
+]
+
+
+def system_amnesia_probe() -> dict:
+    cmdline = ""
+    try:
+        cmdline = Path("/proc/cmdline").read_text(encoding="utf-8").strip()
+    except Exception:
+        cmdline = "host-workstation"
+
+    swap_total_kb = 0
+    mem_total_mb = 0
+    try:
+        for line in Path("/proc/meminfo").read_text(encoding="utf-8").splitlines():
+            if line.startswith("MemTotal:"):
+                mem_total_mb = int(line.split()[1]) // 1024
+            elif line.startswith("SwapTotal:"):
+                swap_total_kb = int(line.split()[1])
+    except Exception:
+        pass
+
+    return {
+        "os": "ZothOS-Lite v1.2 (Amnesic Monotone Edition)",
+        "palette": "Paper Ivory #F7F7F4 / Black Ink #000000",
+        "toram_flag": "toram" in cmdline,
+        "noswap_enforced": swap_total_kb == 0 or "noswap" in cmdline,
+        "mem_total_mb": mem_total_mb,
+        "swap_total_kb": swap_total_kb,
+        "cli_utilities": {
+            name: bool(shutil.which(name) or (Path(__file__).resolve().parent / name).exists())
+            for name in ("zoth-lite-models", "zoth-lite-welcome", "zoth-lite-storage", "zoth-lite-pkg", "zothnet")
+        },
+    }
+
+
+def render_header(probe: dict):
+    print("┌──────────────────────────────────────────────────────────────────────────────┐")
+    print("│ ░░▒▒▓▓██ WELCOME TO ZOTHOS-LITE v1.2 // AMNESIC MONOTONE OS ██▓▓▒▒░░         │")
+    print("│ ⣿⣿⣿⣿⣿⣿⣿⣿  PAPER IVORY #F7F7F4 • BLACK INK #000000 • TORAM NOSWAP  ⣿⣿⣿⣿⣿⣿⣿⣿   │")
+    print("├──────────────────────────────────────────────────────────────────────────────┤")
+    ram_str = f"{probe['mem_total_mb']} MB RAM" if probe["mem_total_mb"] else "Volatile RAM"
+    swap_str = "0 KB (NOSWAP)" if probe["swap_total_kb"] == 0 else f"{probe['swap_total_kb']} KB (HOST)"
+    print(f"│ Memory: {ram_str:<20} │ Swap: {swap_str:<18} │ Models: 56 / 8 Prov │")
+    print("└──────────────────────────────────────────────────────────────────────────────┘")
+
+
+def render_chapter(ch: dict):
+    print(f"\n┏━━ {ch['title']} ━━┓")
+    print(f"┃ {ch['summary']}")
+    print("┠──────────────────────────────────────────────────────────────────────────────┨")
+    for line in ch["details"]:
+        print(f"┃ • {line}")
+    print("┃")
+    print("┃ Quick Commands:")
+    for cmd in ch["commands"]:
+        print(f"┃   $ {cmd}")
+    print("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
+
+
+def interactive_loop(probe: dict):
+    render_header(probe)
+    while True:
+        print("\nSelect an onboarding topic (1-5), [a]ll chapters, [c]heck system, or [q]uit:")
+        for ch in CHAPTERS:
+            print(f"  [{ch['step']}] {ch['title'].split('. ', 1)[1]}")
+        try:
+            choice = input("\n[zoth-lite-welcome]> ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+        if choice in ("q", "quit", "exit", ""):
+            break
+        if choice in ("a", "all"):
+            for ch in CHAPTERS:
+                render_chapter(ch)
+        elif choice in ("c", "check"):
+            print(json.dumps(probe, indent=2))
+        elif choice.isdigit() and 1 <= int(choice) <= len(CHAPTERS):
+            render_chapter(CHAPTERS[int(choice) - 1])
+        else:
+            print("Enter 1-5, 'a' for all, 'c' for system check, or 'q' to exit.")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="ZothOS-Lite v1.2 — Interactive Amnesic Monotone First-Boot Onboarding Guide"
+    )
+    parser.add_argument("--all", "--guide", dest="show_all", action="store_true", help="Print complete 5-part onboarding manual")
+    parser.add_argument("--topic", help="Show a specific topic by number (1-5) or id (models, shutdown, packages, zothnet, storage)")
+    parser.add_argument("--check", action="store_true", help="Run amnesic RAM & CLI readiness check")
+    parser.add_argument("--interactive", action="store_true", help="Launch interactive step-by-step terminal guide")
+    parser.add_argument("--json", action="store_true", help="Output onboarding guide & probe as JSON")
+    args = parser.parse_args()
+
+    probe = system_amnesia_probe()
+
+    if args.json:
+        print(json.dumps({"ok": True, "probe": probe, "chapters": CHAPTERS}, indent=2))
+        return
+
+    if args.check:
+        render_header(probe)
+        for k, v in probe["cli_utilities"].items():
+            mark = "█ INSTALLED" if v else "░ MISSING"
+            print(f"  [{mark}] {k}")
+        return
+
+    if args.topic:
+        t = args.topic.strip().lower()
+        match = next(
+            (ch for ch in CHAPTERS if str(ch["step"]) == t or ch["id"] == t),
+            None,
+        )
+        if not match:
+            sys.stderr.write(f"[!] Unknown topic '{args.topic}'. Choose 1-5 or: models, shutdown, packages, zothnet, storage\n")
+            sys.exit(1)
+        render_header(probe)
+        render_chapter(match)
+        return
+
+    if args.interactive and sys.stdin.isatty():
+        interactive_loop(probe)
+        return
+
+    # Default non-blocking behavior (or --all): render header + all 5 chapters cleanly
+    render_header(probe)
+    for ch in CHAPTERS:
+        render_chapter(ch)
+    if sys.stdin.isatty() and not args.show_all:
+        print("\nTip: Run `zoth-lite-welcome --interactive` for the interactive menu.")
+
+
+if __name__ == "__main__":
+    main()

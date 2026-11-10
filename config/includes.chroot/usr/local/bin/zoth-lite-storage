@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+"""
+zoth-lite-storage — ZothOS-Lite v1.2 External Drive & Cloud Persistence Helper
+Safely mount external USB/SSD/NVMe partitions and sync agent builds to external drives or rclone cloud remotes
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+DEFAULT_MOUNT_BASE = Path("/mnt/zoth-ext")
+
+
+def list_block_devices() -> list:
+    devices = []
+    try:
+        res = subprocess.run(
+            ["lsblk", "-J", "-o", "NAME,PATH,SIZE,FSTYPE,LABEL,RM,TRAN,MOUNTPOINT,TYPE"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if res.returncode == 0 and res.stdout.strip():
+            tree = json.loads(res.stdout)
+
+            def walk(nodes, parent_tran="", parent_rm=False):
+                for n in nodes or []:
+                    tran = n.get("tran") or parent_tran or ""
+                    rm = bool(n.get("rm")) or parent_rm
+                    ntype = n.get("type") or ""
+                    fstype = n.get("fstype") or ""
+                    mp = n.get("mountpoint") or ""
+                    if ntype == "part" or (ntype == "disk" and fstype):
+                        is_external_candidate = rm or tran == "usb" or (mp and mp.startswith(("/mnt/", "/media/", "/run/media/")))
+                        devices.append({
+                            "name": n.get("name"),
+                            "path": n.get("path") or f"/dev/{n.get('name')}",
+                            "size": n.get("size"),
+                            "fstype": fstype or "raw",
+                            "label": n.get("label") or "",
+                            "transport": tran or "block",
+                            "removable": rm,
+                            "external_candidate": bool(is_external_candidate),
+                            "mountpoint": mp,
+                        })
+                    walk(n.get("children"), tran, rm)
+
+            walk(tree.get("blockdevices", []))
+    except Exception:
+        pass
+    return devices
+
+
+def list_rclone_remotes() -> list:
+    rclone_bin = shutil.which("rclone")
+    if not rclone_bin:
+        return []
+    try:
+        res = subprocess.run([rclone_bin, "listremotes"], capture_output=True, text=True, timeout=4)
+        if res.returncode == 0:
+            return [r.strip() for r in res.stdout.splitlines() if r.strip()]
+    except Exception:
+        pass
+    return []
+
+
+def build_sha256_manifest(root: Path) -> dict:
+    entries = []
+    if root.is_file():
+        h = hashlib.sha256(root.read_bytes()).hexdigest()
+        entries.append({"file": root.name, "bytes": root.stat().st_size, "sha256": h})
+    elif root.is_dir():
+        for p in sorted(root.rglob("*")):
+            if p.is_file() and p.name != "SHA256SUMS.manifest.json":
+                h = hashlib.sha256(p.read_bytes()).hexdigest()
+                entries.append({
+                    "file": str(p.relative_to(root)),
+                    "bytes": p.stat().st_size,
+                    "sha256": h,
+                })
+    return {
+        "generator": "zoth-lite-storage v1.2",
+        "created_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "files_count": len(entries),
+        "entries": entries,
+    }
+
+
+def print_banner():
+    print("┌──────────────────────────────────────────────────────────────────────────────┐")
+    print("│ ░░▒▒▓▓██ ZOTHOS-LITE v1.2 // EXTERNAL DRIVE & CLOUD PERSISTENCE ██▓▓▒▒░░     │")
+    print("│ ⣿⣿⣿⣿⣿⣿⣿⣿  USB / NVME SAFE MOUNT • RCLONE S3/WEBDAV • SHA-256 SYNC  ⣿⣿⣿⣿⣿⣿⣿⣿ │")
+    print("└──────────────────────────────────────────────────────────────────────────────┘")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="ZothOS-Lite v1.2 — External USB/SSD Mount & Cloud Sync Helper"
+    )
+    sub = parser.add_subparsers(dest="cmd")
+
+    sub.add_parser("status", help="Show external storage & cloud remote status")
+    sub.add_parser("list", help="List block partitions and highlight external/USB drives")
+    sub.add_parser("remotes", help="List configured rclone cloud remotes (S3, GDrive, WebDAV, Dropbox)")
+
+    mp = sub.add_parser("mount", help="Mount an external partition (e.g. /dev/sdb1) to /mnt/zoth-ext/<name>")
+    mp.add_argument("device", help="Partition device path, e.g. /dev/sdb1")
+    mp.add_argument("target", nargs="?", help="Optional target mount directory")
+
+    ump = sub.add_parser("unmount", help="Flush buffers and cleanly unmount an external target")
+    ump.add_argument("target", help="Mountpoint or device path to unmount")
+
+    sp = sub.add_parser("sync", help="Sync a workspace folder to a mounted external drive or rclone cloud remote")
+    sp.add_argument("source", help="Local workspace directory or file in RAM")
+    sp.add_argument("destination", help="External drive path (/mnt/zoth-ext/...) or cloud remote (remote:bucket/path)")
+    sp.add_argument("--dry-run", action="store_true", help="Verify manifest and target without writing")
+
+    parser.add_argument("--list", dest="flag_list", action="store_true", help="List partitions and remotes")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON")
+    args = parser.parse_args()
+
+    cmd = args.cmd or ("list" if args.flag_list else "status")
+
+    if cmd == "mount":
+        dev = args.device
+        label_slug = Path(dev).name
+        target = Path(args.target) if args.target else (DEFAULT_MOUNT_BASE / label_slug)
+        if os.geteuid() != 0:
+            udisks = shutil.which("udisksctl")
+            if udisks:
+                res = subprocess.run([udisks, "mount", "-b", dev], capture_output=True, text=True)
+                ok = res.returncode == 0
+                msg = (res.stdout or res.stderr).strip()
+                print(json.dumps({"ok": ok, "device": dev, "detail": msg}) if args.json else f"[{'███' if ok else '!!!'}] {msg}")
+                sys.exit(0 if ok else 1)
+            sys.stderr.write(f"[!] Root required for direct mount. Run: sudo zoth-lite-storage mount {dev}\n")
+            sys.exit(1)
+        target.mkdir(parents=True, exist_ok=True)
+        res = subprocess.run(["mount", dev, str(target)], capture_output=True, text=True)
+        ok = res.returncode == 0
+        out = {"ok": ok, "device": dev, "mountpoint": str(target), "error": res.stderr.strip() if not ok else None}
+        print(json.dumps(out, indent=2) if args.json else (f"[███] Mounted {dev} -> {target}" if ok else f"[!] Mount failed: {res.stderr.strip()}"))
+        sys.exit(0 if ok else 1)
+
+    if cmd == "unmount":
+        subprocess.run(["sync"], check=False)
+        res = subprocess.run(["umount", args.target], capture_output=True, text=True)
+        ok = res.returncode == 0
+        out = {"ok": ok, "target": args.target, "error": res.stderr.strip() if not ok else None}
+        print(json.dumps(out, indent=2) if args.json else (f"[███] Synced & unmounted {args.target}" if ok else f"[!] Unmount failed: {res.stderr.strip()}"))
+        sys.exit(0 if ok else 1)
+
+    if cmd == "sync":
+        src = Path(args.source).resolve()
+        dest_str = args.destination
+        if not src.exists():
+            sys.stderr.write(f"[!] Source path does not exist: {src}\n")
+            sys.exit(1)
+
+        manifest = build_sha256_manifest(src)
+        is_cloud = ":" in dest_str and not dest_str.startswith(("/", "./", "../"))
+
+        if args.dry_run:
+            out = {
+                "ok": True,
+                "dry_run": True,
+                "mode": "cloud-rclone" if is_cloud else "external-filesystem",
+                "source": str(src),
+                "destination": dest_str,
+                "files_count": manifest["files_count"],
+                "manifest": manifest,
+            }
+            print(json.dumps(out, indent=2) if args.json else f"[▓▒░] Dry-run verified {manifest['files_count']} file(s) from {src} -> {dest_str}")
+            return
+
+        if is_cloud:
+            rclone_bin = shutil.which("rclone")
+            if not rclone_bin:
+                sys.stderr.write("[!] rclone is not installed. Run `sudo apt install rclone` or sync to a mounted USB path.\n")
+                sys.exit(1)
+            res = subprocess.run([rclone_bin, "copy", str(src), dest_str], capture_output=True, text=True)
+            ok = res.returncode == 0
+            out = {"ok": ok, "mode": "cloud-rclone", "source": str(src), "destination": dest_str, "files_count": manifest["files_count"]}
+            if not ok:
+                out["error"] = res.stderr.strip()
+            print(json.dumps(out, indent=2) if args.json else (f"[███] Synced {manifest['files_count']} file(s) to cloud remote {dest_str}" if ok else f"[!] rclone error: {res.stderr.strip()}"))
+            sys.exit(0 if ok else 1)
+
+        dest = Path(dest_str)
+        dest.mkdir(parents=True, exist_ok=True)
+        rsync_bin = shutil.which("rsync")
+        if rsync_bin and src.is_dir():
+            res = subprocess.run([rsync_bin, "-a", f"{src}/", f"{dest}/"], capture_output=True, text=True)
+            if res.returncode != 0:
+                sys.stderr.write(f"[!] rsync failed: {res.stderr.strip()}\n")
+                sys.exit(1)
+        elif src.is_dir():
+            shutil.copytree(src, dest, dirs_exist_ok=True)
+        else:
+            shutil.copy2(src, dest / src.name)
+
+        manifest_file = dest / "SHA256SUMS.manifest.json"
+        manifest_file.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        subprocess.run(["sync"], check=False)
+
+        out = {
+            "ok": True,
+            "mode": "external-filesystem",
+            "source": str(src),
+            "destination": str(dest),
+            "files_count": manifest["files_count"],
+            "manifest_file": str(manifest_file),
+        }
+        print(json.dumps(out, indent=2) if args.json else f"[███] Synced {manifest['files_count']} file(s) + SHA-256 manifest -> {dest}")
+        return
+
+    devices = list_block_devices()
+    remotes = list_rclone_remotes()
+    rclone_installed = bool(shutil.which("rclone"))
+
+    payload = {
+        "ok": True,
+        "os": "ZothOS-Lite v1.2",
+        "rclone_installed": rclone_installed,
+        "cloud_remotes": remotes,
+        "devices": devices,
+        "external_candidates": [d for d in devices if d["external_candidate"]],
+    }
+
+    if args.json:
+        print(json.dumps(payload, indent=2))
+        return
+
+    print_banner()
+    if cmd == "remotes":
+        print(f"rclone binary : {'INSTALLED' if rclone_installed else 'NOT FOUND (apt install rclone)'}")
+        if remotes:
+            for r in remotes:
+                print(f"  █ {r}")
+        else:
+            print("  ░ No cloud remotes configured yet. Run `rclone config` (supports S3, Google Drive, Dropbox, WebDAV).")
+        return
+
+    print("\n[BLOCK PARTITIONS — INTERNAL DISKS LEFT UNTOUCHED BY DEFAULT]")
+    if not devices:
+        print("  ░ No block partitions enumerated in current namespace.")
+    for d in devices:
+        tag = "█ EXTERNAL/MOUNTED" if d["external_candidate"] else "░ INTERNAL (SKIP)"
+        mp_txt = f" -> {d['mountpoint']}" if d["mountpoint"] else " (unmounted)"
+        print(f"  [{tag}] {d['path']:<14} {str(d['size']):>7}  {d['fstype']:<8} {d['transport']:<6}{mp_txt}")
+
+    print("\n[CLOUD REMOTES (RCLONE S3 / WEBDAV / GDRIVE)]")
+    if remotes:
+        for r in remotes:
+            print(f"  █ {r}")
+    else:
+        print("  ░ 0 remotes configured in volatile RAM (`rclone config` to add S3/WebDAV/GDrive)")
+
+    print("\nQuick Persistence Examples:")
+    print("  $ sudo zoth-lite-storage mount /dev/sdb1")
+    print("  $ zoth-lite-storage sync ./agent-workspace /mnt/zoth-ext/sdb1/builds")
+    print("  $ zoth-lite-storage sync ./agent-workspace s3remote:zoth-builds")
+
+
+if __name__ == "__main__":
+    main()

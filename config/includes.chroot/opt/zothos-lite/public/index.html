@@ -3,96 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZOTHOS LITE — The Amnesic Agent Operating System (Debian 13 Live)</title>
-  <meta name="description" content="ZothOS Lite: Ultra-lightweight amnesic Debian 13 Live OS for autonomous AI agents. Boots into volatile RAM (toram) in <15s with universal x86_64 compatibility, zero forensic trace, multi-model AI runner (40+ models), and ZothNet P2P mesh.">
-  <link rel="canonical" href="https://zothos-lite.nullai.tech/">
+  <title>ZOTHOS-LITE v1.2 — Tails-Style Amnesic Monotone Linux OS (Debian 13 Live · RAM-Only)</title>
 
-  <!-- OpenGraph Metadata -->
+  <!-- OpenGraph & Twitter Meta Tags -->
+  <meta name="description" content="ZothOS-Lite v1.2: Ultra-lightweight Tails-style amnesic RAM-only Linux OS (Debian 13 Live · toram noswap). Pre-configured for 56 curated AI models across 8 cloud & LAN providers, first-boot onboarding, ZothNet encrypted P2P mesh, and external USB/cloud persistence.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://zothos-lite.nullai.tech/">
-  <meta property="og:title" content="ZOTHOS LITE — The Amnesic Agent Operating System">
-  <meta property="og:description" content="RAM-only amnesic security OS. Universal x86_64 hardware compatibility, multi-model AI agent runner (40+ models), external USB/cloud persistence, and zero disk trace.">
+  <meta property="og:title" content="ZOTHOS-LITE v1.2 — Tails-Style Amnesic Monotone Linux OS">
+  <meta property="og:description" content="Boots entirely into volatile RAM (toram noswap) with zero disk forensics. Run AI agents across 56 curated models & 8 providers (cloud or LAN), chat over ZothNet P2P, and sync builds to external drives or cloud.">
+  <meta property="og:url" content="https://zothos-lite.nullai.tech">
   <meta property="og:image" content="https://zothos-lite.nullai.tech/og-banner.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="ZothOS Lite Amnesic Agent Operating System">
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
-  <meta name="twitter:title" content="ZOTHOS LITE — The Amnesic Agent Operating System">
-  <meta name="twitter:description" content="RAM-only amnesic security OS. Universal x86_64 hardware compatibility, multi-model AI agent runner (40+ models), external USB/cloud persistence, and zero disk trace.">
+  <meta name="twitter:title" content="ZOTHOS-LITE v1.2 — Tails-Style Amnesic Monotone Linux OS">
+  <meta name="twitter:description" content="Debian 13 Live RAM-only OS (toram noswap): 56 curated AI models across 8 providers, volatile RAM key enclave, ZothNet P2P mesh, and external USB/cloud persistence.">
   <meta name="twitter:image" content="https://zothos-lite.nullai.tech/og-banner.jpg">
-  <meta name="twitter:image:alt" content="ZothOS Lite Amnesic Agent Operating System">
+  <meta name="theme-color" content="#F7F7F4">
 
-  <!-- Fonts -->
+  <!-- Monotone Typography: IBM Plex Mono, JetBrains Mono, Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="/og-banner.jpg" type="image/jpeg">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Schema.org JSON-LD Graph -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- AEO & SEO Schema.org Graph (1nc0gn30 & NullAI Platform Only) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "SoftwareApplication",
-        "@id": "https://zothos-lite.nullai.tech/#app",
-        "name": "ZothOS Lite",
-        "url": "https://zothos-lite.nullai.tech/",
+        "name": "ZOTHOS-LITE v1.2 (Amnesic Monotone Linux OS)",
+        "url": "https://zothos-lite.nullai.tech",
         "applicationCategory": "OperatingSystem",
-        "operatingSystem": "Linux (Debian 13 Live RAM-Only / x86_64)",
-        "creator": {
-          "@type": "Person",
-          "name": "Neal Frazier",
-          "alternateName": "1nc0gn30",
-          "url": "https://nealfrazier.tech"
-        },
+        "operatingSystem": "Linux (Debian 13 Trixie Live RAM-Only / x86_64)",
+        "softwareVersion": "1.2.0",
+        "description": "Ultra-lightweight Tails-style RAM-only amnesic Linux operating system (toram noswap) designed in Paper Ivory (#F7F7F4) and Black Ink (#000000). Ships with 56 curated AI models across 8 cloud & LAN providers, interactive first-boot onboarding, ZothNet P2P mesh, and external USB/cloud persistence.",
         "offers": {
           "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
+          "price": "0.00",
+          "priceCurrency": "USD"
         },
-        "description": "Ultra-lightweight amnesic Debian 13 Live OS for autonomous AI agents. Boots entirely to volatile RAM (toram noswap) with zero forensic trace, universal x86_64 hardware support, multi-model AI runner (40+ models), and ZothNet P2P mesh."
+        "creator": {
+          "@type": "Organization",
+          "name": "1nc0gn30 • NullAI Platform",
+          "url": "https://nullai.tech"
+        }
       },
       {
         "@type": "FAQPage",
-        "@id": "https://zothos-lite.nullai.tech/#faq",
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What happens when I shut off or reboot ZothOS Lite?",
+            "name": "What happens when I shut off or reboot a machine running ZothOS-Lite?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "ZothOS Lite runs entirely in volatile system RAM (toram noswap). When you power down or restart, all memory contents are instantaneously wiped. No browser cookies, terminal logs, or files are ever written to the host computer's internal storage."
+              "text": "ZothOS-Lite boots entirely into volatile system RAM using Debian Live toram noswap flags. Internal host drives are never mounted automatically, and swap is disabled. When you shut off, reboot, or lose power, volatile RAM physically discharges—wiping session files, history, and RAM-stored API keys with zero forensic trace left on host disks."
             }
           },
           {
             "@type": "Question",
-            "name": "How do I save files, code, and agent memories?",
+            "name": "How many AI models and providers does ZothOS-Lite v1.2 support?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Plug in any external USB flash drive or external SSD (auto-mounted at /media/$USER/*), or synchronize your workspace with external cloud drives (Google Drive, AWS S3, Dropbox, Nextcloud) using rclone or standard Git repositories."
+              "text": "ZothOS-Lite v1.2 comes pre-configured with 56 curated frontier and open-weight models across 8 providers: OpenRouter, OpenAI, Anthropic Claude, Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local endpoints, managed via the built-in zoth-lite-models CLI and browser console."
             }
           },
           {
             "@type": "Question",
-            "name": "Which AI models can ZothOS Lite run?",
+            "name": "How do I save agent builds or talk to another Zoth user?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "ZothOS Lite supports over 40 frontier and open-weight models across 8 providers: OpenRouter (300+ models with 1 key), Nous Hermes Swarm, Anthropic Claude, OpenAI, Groq, Google Gemini, DeepSeek, and local/network Ollama or vLLM."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does ZothOS Lite require a specific GPU or A1000 hardware?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. ZothOS Lite has universal hardware compatibility. It runs on any standard 64-bit x86_64 PC, laptop, or VM using standard Linux 6.12 DRM/KMS graphics (Intel UHD/Iris, AMD Radeon, NVIDIA, or pure CPU Mesa software rendering)."
+              "text": "Use zoth-lite-storage to mount external USB/NVMe drives under /mnt/zoth-ext or sync workspaces to S3, Google Drive, Dropbox, or WebDAV via rclone. To communicate with other Zoth operators on LAN or mesh, use zothnet status, zothnet peers, and zothnet chat."
             }
           }
         ]
@@ -103,537 +86,722 @@
 </head>
 <body>
 
-  <!-- Ambient Backdrop -->
-  <div class="bg-ambient"></div>
+  <!-- Paper Ivory Graph Grid Backdrop -->
+  <div class="bg-grid" aria-hidden="true"></div>
 
-  <!-- Top Navigation Bar -->
+  <!-- Top Tails-Style Amnesic Status HUD Bar -->
+  <aside class="amnesic-top-hud" aria-label="Amnesic OS Status Bar">
+    <div class="wrapper hud-inner">
+      <div class="hud-left">
+        <span class="hud-badge">● TORAM NOSWAP: ARMED</span>
+        <span>Volatile RAM: <strong id="shellRamDisplay">2.42 GB / 32.0 GB (toram)</strong></span>
+        <span>⚡ <strong id="hudModelCountLabel">56 Models · 8 Providers (Cloud + LAN)</strong></span>
+      </div>
+      <div class="hud-right">
+        <span>⏱ <span id="shellClockDisplay">00:00:00 UTC</span> · <strong id="shellBeatsDisplay">@000.beats</strong></span>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" class="hud-link" title="Buy Us a Coffee">
+          ☕ Buy Us a Coffee
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Primary Monotone Navigation Bar -->
   <nav class="navbar" role="navigation" aria-label="Main Navigation">
     <div class="wrapper nav-inner">
       <div class="brand">
-        <span>🛡️ ZOTHOS LITE</span>
-        <span class="brand-badge">v1.2 · RAM-ONLY</span>
+        <span>🛡️ ZOTHOS-LITE</span>
+        <span class="brand-badge">v1.2 · MONOTONE OS</span>
       </div>
 
       <ul class="nav-links">
-        <li><a href="#about">About OS</a></li>
-        <li><a href="#guide">User Guide</a></li>
-        <li><a href="#tools">In-Browser Tools</a></li>
-        <li><a href="#download">Download ISO</a></li>
+        <li><a href="#about">The OS</a></li>
+        <li><a href="#guide">Onboarding Guide</a></li>
+        <li><a href="#tools">Live OS Tools</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#download">Get ISO</a></li>
       </ul>
 
       <div class="nav-actions">
-        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" class="btn-coffee" title="Support Sovereign Open-Source Tools">
-          <span>☕</span> Buy Us a Coffee
-        </a>
-        <a href="#download" class="btn-iso-nav">
-          <span>⬇</span> Get ISO (2.4 GB)
+        <button type="button" id="btnLaunchQuickstart" class="btn-nav-action btn-nav-support" title="Open Interactive First-Boot Tour">
+          📖 First-Boot Tour
+        </button>
+        <a href="#download" class="btn-nav-action btn-nav-iso">
+          ⬇ Download ISO
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- Hero Section: About the Operating System -->
   <header class="hero" id="about">
     <div class="wrapper">
       <div class="hero-pill">
-        <span>⚡</span> 100% AMNESIC LIVE LINUX · ZERO FORENSIC TRACE · UNIVERSAL X86_64
+        <span>⣿⣿⣿⣿⣿⣿⣿⣿</span> DEBIAN 13 LIVE ISO · TAILS-STYLE AMNESIC MONOTONE (#F7F7F4 / #000000) · UNIVERSAL X86_64 <span>⣿⣿⣿⣿⣿⣿⣿⣿</span>
       </div>
 
       <h1 class="hero-title">
-        The Amnesic Agent <br>
-        <span class="gradient-gold">Operating System.</span>
+        Ultra-Light Amnesic Linux <br>
+        <span class="tag-highlight">Built for AI Agents.</span>
       </h1>
 
       <p class="hero-desc">
-        Boots entirely into volatile system RAM in &lt;15 seconds. Designed for privacy, speed, and 
-        autonomous AI agent swarms running in the cloud or across local networks. Universal hardware compatibility—zero proprietary locks.
+        <strong>ZothOS-Lite v1.2</strong> boots entirely into volatile RAM (<code>toram noswap</code>) from a USB stick or VM with zero internal disk writes.
+        Run autonomous AI agents across <strong>56 curated models &amp; 8 providers</strong> (cloud APIs or local LAN servers), collaborate peer-to-peer on <strong>ZothNet</strong>, and save finished builds to external drives or cloud storage whenever you choose. Shut off the machine and RAM wipes clean.
       </p>
 
       <div class="hero-buttons">
-        <a href="#download" class="btn-primary">
-          <span>⬇</span> Download Live ISO (2.4 GB)
+        <a href="#download" class="btn-monotone-primary">
+          <span>⬇</span> Get ZothOS-Lite v1.2 ISO
         </a>
-        <a href="#guide" class="btn-secondary">
-          <span>📖</span> Read Sovereign Guide
+        <a href="#guide" class="btn-monotone-secondary">
+          <span>📖</span> How the OS Works (5-Step Guide)
         </a>
-        <a href="#tools" class="btn-secondary">
-          <span>⚡</span> Launch In-Browser Dev Tools
+        <a href="#tools" class="btn-monotone-secondary">
+          <span>⚡</span> Try 56-Model Console &amp; Quick Tools
         </a>
       </div>
 
-      <!-- Specs Bar -->
+      <!-- Authentic OS Specification Strip -->
       <div class="specs-bar">
         <div class="spec-item">
-          <div class="spec-label">Base Stack</div>
-          <div class="spec-val">Debian 13 · Linux 6.12</div>
+          <div class="spec-label">OS Base &amp; Kernel</div>
+          <div class="spec-val">Debian 13 Live · Linux 6.12</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Boot Architecture</div>
-          <div class="spec-val">toram noswap (RAM-Only)</div>
+          <div class="spec-label">Shutdown Hygiene</div>
+          <div class="spec-val">toram noswap (0 Disk Trace)</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">ISO Footprint</div>
-          <div class="spec-val">2.4 GB (4 GB RAM rec.)</div>
+          <div class="spec-label">AI Compatibility</div>
+          <div class="spec-val">56 Curated Models · 8 Providers</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">AI Intelligence</div>
-          <div class="spec-val">40+ Models · 8 Providers</div>
+          <div class="spec-label">OS CLI Utilities</div>
+          <div class="spec-val">welcome · models · storage · pkg</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Hardware Profile</div>
-          <div class="spec-val">Universal x86_64 (No Locks)</div>
+          <div class="spec-label">Hardware Support</div>
+          <div class="spec-val">Any 64-bit PC / Laptop / VM</div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Core Pillars Section -->
-  <section class="section">
+  <!-- AZOTH Embodied Braille Kernel Status Card (1:1 Monotone E-Ink) -->
+  <section class="section" style="padding-bottom:10px;">
+    <div class="wrapper">
+      <div class="azoth-eink-card">
+        <div class="azoth-canvas-frame">
+          <pre id="azothBrailleCanvas" class="azoth-braille-text" aria-label="AZOTH Unicode U+2800 Braille Agent Display"></pre>
+          <div class="azoth-mood-row">
+            <button type="button" class="azoth-mood-btn is-active" data-mood="IDLE">IDLE</button>
+            <button type="button" class="azoth-mood-btn" data-mood="THINKING">THINK</button>
+            <button type="button" class="azoth-mood-btn" data-mood="REASONING">COT</button>
+            <button type="button" class="azoth-mood-btn" data-mood="ALERT">GUARD</button>
+            <button type="button" class="azoth-mood-btn" data-mood="AMNESIC">TORAM</button>
+            <button type="button" class="azoth-mood-btn" data-mood="TRANSMITTING">ZOTHNET</button>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+            <strong style="font-family:var(--font-mono); font-size:16px;">1:1 OS &amp; Website Design Parity — Paper Ivory (#F7F7F4) &amp; Black Ink (#000000)</strong>
+            <span style="font-family:var(--font-mono); font-size:10.5px; font-weight:700; background:#000; color:#F7F7F4; padding:2px 7px;">● TAILS-STYLE MONOTONE</span>
+          </div>
+          <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:10px;">
+            What you see on this website matches the actual ZothOS-Lite v1.2 Openbox/GTK3 desktop, Electron shell, and Unicode <code>U+2800</code> Braille TUI inside the Live ISO—crisp high-contrast e-ink typography, 2px borders, Bayer halftones, and zero heavy GPU bloat.
+          </p>
+          <div id="azothThoughtText" class="azoth-readout-box">
+            <strong>[ZOTH-LITE KERNEL]</strong> Volatile tmpfs initialized. 56 models across 8 providers indexed. First-boot guide ready via <code>zoth-lite-welcome</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive First-Boot Onboarding Guide (1:1 Match with `bin/zoth-lite-welcome`) -->
+  <section class="section" id="guide" style="padding-top:24px;">
+    <div class="wrapper">
+      <div class="section-head">
+        <span class="section-tag">FIRST-BOOT ONBOARDING · ZOTH-LITE-WELCOME</span>
+        <h2 class="section-title">Learn ZothOS-Lite in 5 Practical Steps</h2>
+        <p class="section-sub">Every Live ISO boots into this interactive guide automatically so new users know exactly what happens on shutdown, how to connect 56+ cloud or LAN models, install extra tools, chat on ZothNet, and save work outside RAM.</p>
+      </div>
+
+      <div class="guide-container">
+        <div class="guide-tabs-col">
+          <button type="button" class="guide-tab-link is-active" data-tab="tabAmnesic">1. Shutdown &amp; RAM Wipe</button>
+          <button type="button" class="guide-tab-link" data-tab="tabAI">2. 56 AI Models &amp; API Keys</button>
+          <button type="button" class="guide-tab-link" data-tab="tabPersistence">3. External Drives &amp; Cloud</button>
+          <button type="button" class="guide-tab-link" data-tab="tabZothNet">4. Talk on ZothNet P2P</button>
+          <button type="button" class="guide-tab-link" data-tab="tabModular">5. Install Extra Tools</button>
+        </div>
+
+        <div class="guide-pane-content">
+          <!-- Step 1: Shutdown & RAM Wipe -->
+          <div class="guide-pane-item is-active" id="tabAmnesic">
+            <h3>1. What Happens When You Shut Off, Reboot, or Close the Machine?</h3>
+            <p>
+              ZothOS-Lite boots using the Debian Live <code>toram noswap slab_nomerge init_on_free=1</code> kernel parameters. At boot, the SquashFS operating system image loads completely into volatile system RAM.
+            </p>
+            <p>
+              <strong>Zero Disk Forensics on Power-Off:</strong> Internal NVMe/SATA drives are never mounted automatically, and disk swap is strictly disabled (<code>0 B</code>). Once the desktop appears, you can even unplug your boot USB stick. When you power off or reboot, RAM loses electrical charge—permanently erasing temporary workspaces, shell history, browser cache, and RAM-only API keys.
+            </p>
+            <div class="code-terminal-box">
+              <pre># Launch the built-in onboarding check anytime inside the OS:
+$ zoth-lite-welcome --check
+
+# Verify amnesic kernel flags &amp; zero swap:
+$ cat /proc/cmdline     # -> boot=live components toram noswap ...
+$ free -h               # -> Swap: 0B
+
+# Instantly shred volatile API keys before powering off:
+$ zoth-lite-models --wipe-keys</pre>
+            </div>
+          </div>
+
+          <!-- Step 2: 56 AI Models & API Keys -->
+          <div class="guide-pane-item" id="tabAI">
+            <h3>2. Connecting 56 Curated Models Across 8 Cloud &amp; LAN Providers</h3>
+            <p>
+              ZothOS-Lite runs on any lightweight laptop or VM because heavy inference can route either to <strong>cloud APIs</strong> or to a <strong>local/LAN Ollama or vLLM server</strong> on your network. Keys set via <code>zoth-lite-models</code> are stored in volatile RAM (<code>/run/user/$UID/zoth-keys.env</code> or <code>/dev/shm</code>, mode <code>0600</code>)—never written to internal disks.
+            </p>
+            <div class="code-terminal-box">
+              <pre># List all 56 curated models across 8 providers (OpenRouter, OpenAI, Anthropic,
+# Google Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local):
+$ zoth-lite-models --providers
+$ zoth-lite-models --list
+
+# Store an API key in volatile RAM (wiped on shutdown):
+$ zoth-lite-models --set-key openrouter
+$ zoth-lite-models --set-key anthropic
+
+# Point to an AI server on your local network (zero cloud needed):
+$ zoth-lite-models --set-endpoint ollama http://192.168.1.50:11434/v1/chat/completions
+
+# Test providers &amp; run an agent task directly from CLI:
+$ zoth-lite-models --test
+$ zoth-lite-models --run deepseek/deepseek-r1 "Generate a hardened Dockerfile"</pre>
+            </div>
+          </div>
+
+          <!-- Step 3: External USB/NVMe & Cloud Storage -->
+          <div class="guide-pane-item" id="tabPersistence">
+            <h3>3. Saving Agent Builds to External Hard Drives or Cloud Storage</h3>
+            <p>
+              Because RAM clears on shutdown, anything you want to keep—codebases, agent outputs, or exported key vaults—should be synced to an <strong>external USB/SSD/NVMe drive</strong> or an <strong>encrypted cloud remote</strong> using <code>zoth-lite-storage</code>.
+            </p>
+            <div class="code-terminal-box">
+              <pre># 1. Inspect partitions safely (internal OS disks are marked SKIP):
+$ zoth-lite-storage list
+
+# 2. Mount an external USB/NVMe drive to /mnt/zoth-ext/sdb1:
+$ sudo zoth-lite-storage mount /dev/sdb1
+
+# 3. Sync your RAM workspace + generate a verified SHA-256 manifest:
+$ zoth-lite-storage sync ./agent-build /mnt/zoth-ext/sdb1/builds
+
+# 4. Or sync to Google Drive, AWS S3, Dropbox, or WebDAV via rclone:
+$ rclone config
+$ zoth-lite-storage sync ./agent-build s3remote:zoth-builds</pre>
+            </div>
+          </div>
+
+          <!-- Step 4: ZothNet P2P -->
+          <div class="guide-pane-item" id="tabZothNet">
+            <h3>4. Talking to Another Zoth User on ZothNet (Encrypted P2P)</h3>
+            <p>
+              ZothOS-Lite includes the lightweight <code>zothnet</code> P2P mesh CLI so operators and AI agents can discover peers on the same Wi-Fi/LAN subnet or Tor/WireGuard mesh and exchange ChaCha20-Poly1305 encrypted messages with ephemeral RAM keys.
+            </p>
+            <div class="code-terminal-box">
+              <pre># 1. Check your ephemeral ZothNet node ID &amp; port (:8102):
+$ zothnet status
+
+# 2. List active Zoth peers discovered on LAN or Onion mesh:
+$ zothnet peers
+
+# 3. Send an end-to-end encrypted message to another Zoth user:
+$ zothnet chat @zoth-relay-lan01 "Build passed SHA-256 check, ready to pull"</pre>
+            </div>
+          </div>
+
+          <!-- Step 5: Installing Extra Tools -->
+          <div class="guide-pane-item" id="tabModular">
+            <h3>5. Installing Extra Tools On-Demand Without Bloating the OS</h3>
+            <p>
+              ZothOS-Lite keeps its base footprint minimal so it boots fast and stays responsive. Pull extra Zoth modules or standard Debian/Python/Node packages into RAM OverlayFS only when a task calls for them.
+            </p>
+            <div class="code-terminal-box">
+              <pre># View core locked security tools &amp; optional on-demand modules:
+$ zoth-lite-pkg list
+
+# Mount an optional module into volatile RAM_TMPFS:
+$ zoth-lite-pkg install promptmaster-security-lab
+$ zoth-lite-pkg install bolt-diy-sandbox
+
+# Standard Debian 13, Python &amp; Node packages also install cleanly into RAM:
+$ sudo apt update &amp;&amp; sudo apt install ffmpeg ripgrep
+$ pip install --break-system-packages httpx</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightweight In-Browser OS Utilities (Zero Bloat, 100% Working) -->
+  <section class="section" id="tools">
+    <div class="wrapper">
+      <div class="section-head" id="agent-swarm">
+        <span class="section-tag">LIVE OS UTILITIES · ZERO BLOAT</span>
+        <h2 class="section-title">Interactive Workstation &amp; Quick Dev Tools</h2>
+        <p class="section-sub">Matched 1:1 to ZothOS-Lite v1.2: test all 56 curated models across 8 providers, simulate ZothNet P2P envelopes, package builds for external drives, and inspect media locally in your browser.</p>
+      </div>
+
+      <!-- Tools Tab Bar -->
+      <div class="tools-tab-bar" role="tablist" aria-label="ZothOS-Lite Utilities">
+        <button type="button" class="tool-tab is-active" data-tool="toolAgentConsole">
+          <span>⚡</span> 56-Model AI Runner (8 Providers)
+        </button>
+        <button type="button" class="tool-tab" data-tool="toolZothNet">
+          <span>🌐</span> ZothNet P2P Chat &amp; Peers
+        </button>
+        <button type="button" class="tool-tab" data-tool="toolStoragePackager">
+          <span>💾</span> External Drive &amp; Cloud Packager
+        </button>
+        <button type="button" class="tool-tab" data-tool="toolMediaPlayer">
+          <span>🎬</span> Quick Video &amp; Audio Player
+        </button>
+        <button type="button" class="tool-tab" data-tool="toolImageViewer">
+          <span>🖼️</span> Quick Image &amp; Dither Viewer
+        </button>
+        <button type="button" class="tool-tab" data-tool="toolColdSigner">
+          <span>🔐</span> CoT DAG &amp; Ed25519 Cold Signer
+        </button>
+      </div>
+
+      <!-- TOOL 1: 56-Model AI Agent Runner -->
+      <div class="tool-pane is-active" id="toolAgentConsole">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Multi-Provider AI Agent Console (<span id="modelDropdownCountBadge">56 Models in Dropdown</span>)</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Every model listed below is directly selectable across OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq LPU, and Ollama / LAN Local.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl" id="btnCopyCliCmd" title="Copy equivalent zoth-lite-models CLI command">
+              📋 Copy OS CLI Command
+            </button>
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnFetchLiveModels" title="Optionally pull extended dynamic model IDs from OpenRouter API">
+              ⟳ Optional: Sync Live OpenRouter List
+            </button>
+          </div>
+        </div>
+
+        <!-- Provider Filter Chips (Defaults to ALL 8 Providers = 56 Models) -->
+        <div class="provider-chips-row" id="providerChips"></div>
+
+        <!-- Model, Search, Endpoint, Role, Key Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap:10px; margin-bottom:12px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+              <label for="modelSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono);">SELECT AI MODEL (<span id="visibleModelCount">56</span>)</label>
+              <span id="activeProviderLabel" style="font-size:10px; color:var(--ink-muted); font-family:var(--font-mono);">openrouter</span>
+            </div>
+            <select id="modelSelect" class="monotone-input" style="width:100%;"></select>
+          </div>
+
+          <div>
+            <label for="modelSearchInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">FILTER DROPDOWN</label>
+            <input type="text" id="modelSearchInput" class="monotone-input" placeholder="Filter 56 models (e.g. claude, grok, hermes, o3, qwen)..." style="width:100%;">
+          </div>
+
+          <div>
+            <label for="aiEndpointInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">PROVIDER / LAN ENDPOINT URL</label>
+            <input type="text" id="aiEndpointInput" class="monotone-input" value="https://openrouter.ai/api/v1/chat/completions" style="width:100%;">
+          </div>
+
+          <div>
+            <label for="aiKeyInput" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">API KEY (SESSION RAM ONLY)</label>
+            <input type="password" id="aiKeyInput" class="monotone-input" placeholder="sk-... (optional; blank runs offline verifier)" style="width:100%;">
+          </div>
+        </div>
+
+        <!-- Role & Quick Task Presets -->
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; align-items:center;">
+          <label for="agentRoleSelect" style="font-family:var(--font-mono); font-size:10.5px; font-weight:700;">ROLE:</label>
+          <select id="agentRoleSelect" class="monotone-input" style="padding:4px 8px; font-size:11px;">
+            <option value="System Architect">System Architect (Debian Live &amp; Daemons)</option>
+            <option value="Code Builder">Code Builder (Python / Rust / Node)</option>
+            <option value="Security Auditor">Security Auditor (OpSec &amp; Secrets)</option>
+            <option value="Storage Sync Agent">Storage &amp; Cloud Sync Planner</option>
+          </select>
+          <span style="font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); font-weight:700; margin-left:4px;">PRESETS:</span>
+          <button type="button" class="btn-pill-ctrl btn-quick-prompt" data-prompt="Write a concise shell script that checks volatile RAM usage in toram mode and syncs ./build to /mnt/zoth-ext/sdb1 if RAM exceeds 80%.">RAM + USB Auto-Sync</button>
+          <button type="button" class="btn-pill-ctrl btn-quick-prompt" data-prompt="Show how to run a local Ollama server on LAN IP 192.168.1.50 and connect ZothOS-Lite agents to it.">LAN Agent Setup</button>
+          <button type="button" class="btn-pill-ctrl btn-quick-prompt" data-prompt="Audit a repository directory for leaked API keys or private keys before pushing to GitHub.">Pre-Push Secret Scan</button>
+        </div>
+
+        <!-- Prompt Row -->
+        <div class="input-block-row">
+          <input type="text" id="agentPromptInput" class="monotone-input" aria-label="Agent task instruction" value="Write a concise shell script that checks volatile RAM usage in toram mode and syncs ./build to /mnt/zoth-ext/sdb1 if RAM exceeds 80%.">
+          <button type="button" id="btnRunAgent" class="btn-monotone-primary" style="white-space:nowrap; padding:8px 18px;">
+            <span>⚡</span> Run Agent
+          </button>
+        </div>
+
+        <div id="agentConsoleOutput" class="monotone-console">[ZOTH-LITE v1.2 // 56-MODEL ROUTER READY]
+• All 56 curated models across 8 providers are loaded in the SELECT AI MODEL dropdown above.
+• Supply a provider API key (or point Ollama/LAN Endpoint URL to your local server) for live responses, or click "Run Agent" with no key to test offline execution.
+• Session keys stay in volatile tab memory (sessionStorage) and clear automatically when you close the tab.</div>
+      </div>
+
+      <!-- TOOL 2: ZothNet P2P Mesh & Chat Simulator -->
+      <div class="tool-pane" id="toolZothNet">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">ZothNet Encrypted P2P Mesh Explorer (<code>zothnet</code>)</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect how ZothOS-Lite nodes discover peers on LAN (<code>:8102</code>) or Onion mesh and seal end-to-end encrypted peer messages.</p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnZothNetScan">📡 Scan Mesh Peers</button>
+            <button type="button" class="btn-pill-ctrl" id="btnZothNetCopyCmd">📋 Copy zothnet chat CLI</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:10px; margin-bottom:12px;">
+          <div>
+            <label for="zothNetPeerSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">SELECT PEER NODE</label>
+            <select id="zothNetPeerSelect" class="monotone-input" style="width:100%;">
+              <option value="@zoth-relay-lan01">@zoth-relay-lan01 (LAN UDP :8102 · 1.8ms)</option>
+              <option value="@zoth-builder-box">@zoth-builder-box (LAN WireGuard · 3.1ms)</option>
+              <option value="@zoth-onion-v3">@zoth-onion-v3 (Tor v3 Onion Mesh · 42ms)</option>
+            </select>
+          </div>
+          <div>
+            <label for="zothNetChannelSelect" style="font-size:11px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">TRANSPORT &amp; CIPHER</label>
+            <select id="zothNetChannelSelect" class="monotone-input" style="width:100%;">
+              <option value="ChaCha20-Poly1305 (LAN :8102)">ChaCha20-Poly1305 (Zero-Cloud LAN :8102)</option>
+              <option value="X25519 + Ed25519 (Tor v3 Onion)">X25519 + Ed25519 (Tor v3 Ephemeral Onion)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-block-row">
+          <input type="text" id="zothNetMsgInput" class="monotone-input" aria-label="ZothNet P2P message" value="Agent build finished in /dev/shm/work — SHA-256 verified, ready to sync.">
+          <button type="button" id="btnZothNetSend" class="btn-monotone-primary" style="white-space:nowrap; padding:8px 18px;">
+            <span>🔐</span> Seal &amp; Send P2P Packet
+          </button>
+        </div>
+
+        <div id="zothNetConsoleOutput" class="monotone-console" style="min-height:170px;">[ZOTHNET P2P MESH // PORT :8102]
+Local Ephemeral Identity : zoth-ephemeral-ram
+OS CLI Equivalent        : zothnet status  |  zothnet peers  |  zothnet chat @zoth-relay-lan01 "Hello"
+Click "Seal &amp; Send P2P Packet" to generate a signed SHA-256 / ChaCha20-Poly1305 peer envelope.</div>
+      </div>
+
+      <!-- TOOL 3: External Storage & Cloud Packager -->
+      <div class="tool-pane" id="toolStoragePackager">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">External Drive &amp; Cloud Persistence Packager (<code>zoth-lite-storage</code>)</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Generate exact OS mount/sync commands for USB, NVMe, or cloud drives, or bundle local files into a CRC-32 verified ZIP archive in-browser.</p>
+          </div>
+          <button type="button" class="btn-pill-ctrl is-dark" id="btnStageSampleFiles">➕ Stage Sample Build Files</button>
+        </div>
+
+        <!-- Quick Command Builder for External USB / Cloud -->
+        <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:12px; margin-bottom:14px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap:10px; margin-bottom:8px;">
+            <div>
+              <label for="storageTargetType" style="font-size:10.5px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">PERSISTENCE TARGET</label>
+              <select id="storageTargetType" class="monotone-input" style="width:100%;">
+                <option value="usb">External USB / NVMe Partition (/dev/sdb1)</option>
+                <option value="s3">AWS S3 / Cloudflare R2 (rclone)</option>
+                <option value="gdrive">Google Drive Remote (rclone)</option>
+                <option value="webdav">Nextcloud / WebDAV Remote (rclone)</option>
+              </select>
+            </div>
+            <div>
+              <label for="storageSourceDir" style="font-size:10.5px; font-weight:700; font-family:var(--font-mono); display:block; margin-bottom:3px;">RAM WORKSPACE FOLDER</label>
+              <input type="text" id="storageSourceDir" class="monotone-input" value="./agent-workspace" style="width:100%;">
+            </div>
+          </div>
+          <pre id="storageCmdPreview" style="background:#000; color:#F7F7F4; padding:10px 12px; font-size:11.5px; overflow-x:auto; border:1px solid #000;">sudo zoth-lite-storage mount /dev/sdb1 &amp;&amp; zoth-lite-storage sync ./agent-workspace /mnt/zoth-ext/sdb1/builds</pre>
+        </div>
+
+        <div class="monotone-dropzone" id="pkgDropzone">
+          <div style="font-size:26px; margin-bottom:6px;">💾</div>
+          <h4 style="font-size:14px; font-weight:700; margin-bottom:3px;">Drop files here to create a portable PKZIP bundle</h4>
+          <p style="font-size:11.5px; color:var(--ink-muted); margin-bottom:10px;">100% client-side compression — zero uploads to any server</p>
+          <label class="btn-monotone-primary" style="cursor:pointer; display:inline-flex; font-size:11.5px; padding:6px 14px;">
+            <span>📁</span> Browse Local Files
+            <input type="file" id="pkgFileInput" multiple style="display:none;">
+          </label>
+        </div>
+
+        <div id="pkgFileList" style="margin-bottom:12px; max-height:140px; overflow-y:auto;">
+          <span style="color:var(--ink-muted); font-family:var(--font-mono); font-size:12px;">No files staged yet. Drop files above or click "Stage Sample Build Files".</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <button type="button" id="btnBuildZip" class="btn-monotone-primary" disabled>
+            <span>📦</span> Build &amp; Download ZIP
+          </button>
+          <span id="pkgStatus" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700;"></span>
+        </div>
+      </div>
+
+      <!-- TOOL 4: Quick Video & Audio Player -->
+      <div class="tool-pane" id="toolMediaPlayer">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Local Video &amp; Audio Player</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect local MP4/WebM/WAV/MP3 files in RAM with +/-1 frame stepping, speed control, spectrum bar, and PNG frame capture.</p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl is-dark" id="btnLoadHermesShowcase">🎬 OS Demo Clip A</button>
+            <button type="button" class="btn-pill-ctrl" id="btnLoadLaunchFilm">🎞️ OS Demo Clip B</button>
+            <label class="btn-pill-ctrl" style="cursor:pointer;">
+              📁 Open Local Media <input type="file" id="mediaFileInput" accept="video/*,audio/*" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="media-viewport-box">
+          <video id="mediaPlayerVideo" playsinline preload="metadata" poster="og-banner.jpg">
+            <source src="assets/zothos-lite-hero-showreel.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+
+        <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); border-radius:var(--radius-sm); padding:10px 14px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-monotone-primary" id="btnMediaPlay" style="padding:5px 12px; font-size:11.5px;">▶ Play</button>
+            <span id="mediaTimeDisplay" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; min-width:85px;">0.0s / 0.0s</span>
+            <input type="range" id="mediaScrubber" aria-label="Media timeline scrubber" min="0" max="100" value="0" step="0.1" style="flex:1; min-width:140px; accent-color:#000000; cursor:pointer;">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn-pill-ctrl" id="btnMediaStepBack">⏪ -1 Frame</button>
+              <button type="button" class="btn-pill-ctrl" id="btnMediaStepFwd">⏩ +1 Frame</button>
+              <select id="mediaSpeedSelect" aria-label="Playback speed" class="monotone-input" style="padding:3px 6px; font-size:11px;">
+                <option value="0.5">0.5x Speed</option>
+                <option value="1.0" selected>1.0x Normal</option>
+                <option value="1.25">1.25x Speed</option>
+                <option value="1.5">1.5x Speed</option>
+                <option value="2.0">2.0x Speed</option>
+              </select>
+              <button type="button" class="btn-pill-ctrl" id="btnMediaSnapshot">📸 Snapshot PNG</button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); font-weight:700;">SPECTRUM:</span>
+              <canvas id="audioVisualizerCanvas" width="180" height="26" style="background:#000000; border:1px solid var(--border-bold); border-radius:2px;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOL 5: Quick Image & Bayer Dither Inspector -->
+      <div class="tool-pane" id="toolImageViewer">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:17px; font-weight:800;">Lightweight Image &amp; Bayer Dither Inspector</h3>
+            <p style="font-size:12.5px; color:var(--ink-secondary);">Inspect diagrams, screenshots, or local images with zoom, 90° rotation, 1-bit Bayer dither preview, and RAM footprint calculation.</p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl is-dark btn-wp-preset" data-preset="amnesic-monotone">🖼️ OS Master</button>
+            <button type="button" class="btn-pill-ctrl btn-wp-preset" data-preset="bayer-dither">▦ Bayer 8×8</button>
+            <button type="button" class="btn-pill-ctrl btn-wp-preset" data-preset="zothnet-schematic">🌐 ZothNet Map</button>
+            <button type="button" class="btn-pill-ctrl btn-wp-preset" data-preset="toram-enclave">🛡️ RAM Map</button>
+            <label class="btn-pill-ctrl" style="cursor:pointer;">
+              📁 Open Image <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="media-viewport-box" style="background:#EFEFEB;">
+          <canvas id="imageCanvas"></canvas>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <button type="button" class="btn-pill-ctrl" id="btnImgZoomIn">🔍 Zoom +25%</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgZoomOut">🔍 Zoom -25%</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgRotate">🔄 Rotate 90°</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgGray">◐ Grayscale</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgInvert">◑ Invert</button>
+            <button type="button" class="btn-pill-ctrl" id="btnImgReset">⟲ Reset</button>
+          </div>
+          <div id="imageMetadata" style="font-family:var(--font-mono); font-size:11px; display:flex; gap:10px; flex-wrap:wrap;">
+            <span><strong>File:</strong> amnesic-monotone.jpg</span>
+            <span><strong>Res:</strong> 1920 × 1080</span>
+            <span><strong>RAM:</strong> ~7.9 MB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOL 6: CoT Merkle DAG & Ed25519 Cold Signer -->
+      <div class="tool-pane" id="toolColdSigner">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap:18px;">
+          <!-- Left: CoT Merkle DAG -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800;">Zoth-CoT Working Memory DAG</h3>
+              <button type="button" class="btn-pill-ctrl is-dark" id="btnCopyCotDag">📋 Copy JSON</button>
+            </div>
+            <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-bold); padding:7px 10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+              <strong id="cotMerkleRoot" style="font-family:var(--font-mono); font-size:11px;">MERKLE ROOT COMPUTING...</strong>
+              <span style="font-family:var(--font-mono); font-size:10px; font-weight:700;">● SHA-256 LINKED</span>
+            </div>
+            <div id="cotDagNodes" style="margin-bottom:10px; max-height:190px; overflow-y:auto;"></div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <select id="cotTagSelect" aria-label="Thought node tag" class="monotone-input" style="padding:6px 8px;">
+                <option value="MISSION">MISSION</option>
+                <option value="MEMORY">MEMORY</option>
+                <option value="AUDIT">AUDIT</option>
+              </select>
+              <input type="text" id="cotThoughtInput" aria-label="New thought node" class="monotone-input" style="flex:1; min-width:160px;" value="Verify toram page cache flush before unmount.">
+              <button type="button" id="btnAddCotThought" class="btn-monotone-primary" style="padding:6px 12px;">➕ Append</button>
+            </div>
+          </div>
+
+          <!-- Right: Air-Gapped Cold Signer -->
+          <div>
+            <h3 style="font-family:var(--font-mono); font-size:15.5px; font-weight:800; margin-bottom:8px;">Air-Gapped Ed25519 Braille Signer</h3>
+            <p style="font-size:12px; color:var(--ink-secondary); margin-bottom:8px;">Generate deterministic SHA-256 digests &amp; Unicode <code>U+2800</code> Braille RandomArt seals offline.</p>
+            <div class="input-block-row">
+              <input type="text" id="coldSignInput" aria-label="Payload to sign" class="monotone-input" value="Verify release zothos-lite-1.2.0-monotone-amd64.iso (@1nc0gn30)">
+              <button type="button" id="btnColdSign" class="btn-monotone-primary" style="white-space:nowrap; padding:8px 14px;">🔐 Sign</button>
+            </div>
+            <pre id="coldSignSeal" class="monotone-console" style="min-height:165px;">Press "Sign" to compute SHA-256 digest and Unicode U+2800 Braille RandomArt seal.</pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Architectural Invariants Section -->
+  <section class="section" id="architecture" style="background:var(--bg-card); border-top:2px solid var(--border-bold); border-bottom:2px solid var(--border-bold);">
     <div class="wrapper">
       <div class="section-head">
         <span class="section-tag">ARCHITECTURAL INVARIANTS</span>
-        <h2 class="section-title">Why ZothOS Lite Exists</h2>
-        <p class="section-sub">A sovereign workstation engineered to eliminate digital bloat, vendor lock-in, and forensic surveillance.</p>
+        <h2 class="section-title">Why ZothOS-Lite Stays Ultra-Light</h2>
+        <p class="section-sub">Engineered specifically for fast RAM-only boot, multi-provider AI agent execution, and clean separation between volatile memory and intentional external persistence.</p>
       </div>
 
       <div class="pillars-grid">
         <div class="pillar-card">
           <div class="pillar-icon">🛡️</div>
-          <h3 class="pillar-title">Amnesic RAM Hygiene</h3>
+          <h3 class="pillar-title">True RAM-Only Amnesia</h3>
           <p class="pillar-text">
-            Runs exclusively in volatile RAM. Once booted, the boot USB can be disconnected. When you shut off or restart the machine, all processes and memory vanish instantly. Zero bytes are ever written to the host computer's internal disk.
+            Runs strictly inside volatile RAM OverlayFS (<code>toram noswap</code>). Unplug the boot USB after startup. Powering off physically discharges memory—leaving zero logs, swap blocks, or keys on internal drives.
           </p>
         </div>
 
         <div class="pillar-card">
-          <div class="pillar-icon">🧠</div>
-          <h3 class="pillar-title">40+ Multi-Model AI Hub</h3>
+          <div class="pillar-icon">⚡</div>
+          <h3 class="pillar-title">56 AI Models · 8 Providers</h3>
           <p class="pillar-text">
-            Empower autonomous swarms across OpenRouter, Nous Hermes Swarm, Anthropic Claude, OpenAI, Groq, Google Gemini, DeepSeek, and local/network Ollama endpoints. Keys remain client-side with zero cloud telemetry.
+            Pre-wired via <code>zoth-lite-models</code> for OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, xAI Grok, Groq LPU, and local/LAN Ollama servers—so even modest 4 GB RAM laptops can orchestrate frontier agents.
           </p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-icon">💾</div>
-          <h3 class="pillar-title">External & Cloud Persistence</h3>
+          <h3 class="pillar-title">External USB &amp; Cloud Sync</h3>
           <p class="pillar-text">
-            Plug in an external USB flash drive or SSD to persist your repositories, code, and model weights across sessions. Sync effortlessly to Google Drive, AWS S3, Dropbox, or Nextcloud via built-in rclone.
+            Keep only what you choose: <code>zoth-lite-storage</code> mounts external USB/NVMe drives cleanly under <code>/mnt/zoth-ext</code> and syncs builds with SHA-256 manifests or <code>rclone</code> cloud remotes.
           </p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-icon">🌐</div>
-          <h3 class="pillar-title">ZothNet P2P Mesh</h3>
+          <h3 class="pillar-title">ZothNet Encrypted P2P</h3>
           <p class="pillar-text">
-            Communicate peer-to-peer with other Zoth users on the network without central servers. Built-in Sovereign Agent Bridge (:8102) and encrypted LAN mesh discovery enable effortless multi-agent collaboration.
+            Talk directly to other Zoth users and coordinate multi-machine agent swarms over encrypted LAN UDP (<code>:8102</code>), WireGuard, or Tor v3 Onion relays via <code>zothnet</code>.
           </p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-icon">🧰</div>
-          <h3 class="pillar-title">Modular On-Demand Tools</h3>
+          <h3 class="pillar-title">Modular On-Demand Packages</h3>
           <p class="pillar-text">
-            Keep the base ISO lean (< 2.4 GB). Pull any of 77 sovereign tools on the fly using <code>zoth-pull &lt;tool&gt;</code> without bloating your system. Standard APT, Pip, and NPM work out-of-the-box in volatile RAM.
+            Zero pre-installed bloatware. Pull extra Zoth security/dev tools into RAM tmpfs with <code>zoth-lite-pkg install &lt;module&gt;</code> or standard <code>apt</code> only when needed.
           </p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-icon">💻</div>
-          <h3 class="pillar-title">Universal Hardware Compatibility</h3>
+          <h3 class="pillar-title">Universal Hardware &amp; Thermal Guard</h3>
           <p class="pillar-text">
-            Zero proprietary hardware requirements. Automatically boots on any 64-bit PC, laptop, or VM with Intel UHD/Iris, AMD Radeon, NVIDIA, or pure CPU software rendering (Mesa LLVMpipe).
+            Works on any x86_64 Intel, AMD, or VM setup with X11 <code>SWCursor</code> visibility hardening and server-enforced 80°C throttle / 85°C pause CPU thermal protection.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Interactive User Guide & Knowledge Base -->
-  <section class="section" id="guide">
-    <div class="wrapper">
-      <div class="section-head">
-        <span class="section-tag">SOVEREIGN KNOWLEDGE BASE</span>
-        <h2 class="section-title">Interactive User Onboarding Guide</h2>
-        <p class="section-sub">Essential operations for mastering your amnesic workstation and swarm operations.</p>
-      </div>
-
-      <div class="guide-container">
-        <div class="guide-tabs">
-          <button type="button" class="guide-tab-btn is-active" data-tab="tabAmnesic">1. Amnesic Hygiene & Shutdown</button>
-          <button type="button" class="guide-tab-btn" data-tab="tabPersistence">2. External Storage & Cloud Sync</button>
-          <button type="button" class="guide-tab-btn" data-tab="tabAI">3. 40+ Model AI Configuration</button>
-          <button type="button" class="guide-tab-btn" data-tab="tabZothNet">4. ZothNet P2P Communications</button>
-          <button type="button" class="guide-tab-btn" data-tab="tabModular">5. Modular Tools (zoth-pull)</button>
-        </div>
-
-        <div class="guide-content">
-          <!-- Pane 1: Amnesic Hygiene -->
-          <div class="guide-pane is-active" id="tabAmnesic">
-            <h3>⚡ What Happens When You Shut Off or Close the Machine?</h3>
-            <p>
-              ZothOS Lite boots using the Debian Live <code>toram noswap</code> kernel flags. The entire operating system image is decompressed into your computer's volatile RAM memory at startup.
-            </p>
-            <p>
-              <strong>Complete Physical Memory Discharge:</strong> Because volatile RAM requires continuous electrical power to retain state, the instant your machine is powered off, rebooted, or the battery is removed, every byte of data in memory is erased permanently.
-            </p>
-            <div class="code-box">
-              <pre># The Boot Media is Safe to Remove:
-1. Boot the PC from your ZothOS Lite USB.
-2. When the desktop appears, you can unplug the USB thumb drive.
-3. The entire OS, desktop, and tools run 100% inside RAM.
-4. On shutdown, 0 trace remains on the host PC.</pre>
-            </div>
-            <p>
-              Internal hard drives (NVMe/SATA) remain untouched and unmounted by default. ZothOS never writes log files, browser history, or swap files to host disks.
-            </p>
-          </div>
-
-          <!-- Pane 2: Persistence & Cloud Sync -->
-          <div class="guide-pane" id="tabPersistence">
-            <h3>💾 How to Save Your Work, Code & Agent Memories</h3>
-            <p>
-              Because RAM clears on shutdown, you must save persistent work to external storage or cloud endpoints:
-            </p>
-            <p><strong>Option A: External USB Drives & SSDs (Recommended)</strong></p>
-            <div class="code-box">
-              <pre># 1. Plug in any formatted USB drive (exFAT, NTFS, ext4)
-# 2. It will auto-mount under:
-/media/zoth/&lt;YourDriveName&gt;
-
-# 3. Store your Git repos, LLM checkpoints, and files directly on the drive.
-# 4. Instant backup helper:
-$ zoth-backup /media/zoth/MyUSB</pre>
-            </div>
-            <p><strong>Option B: Cloud Storage Synchronization (rclone)</strong></p>
-            <div class="code-box">
-              <pre># Configure Google Drive, AWS S3, Dropbox, or Nextcloud:
-$ rclone config
-
-# Mount your cloud storage directly into your home folder:
-$ mkdir -p ~/CloudDrive && rclone mount mydrive: ~/CloudDrive &amp;</pre>
-            </div>
-          </div>
-
-          <!-- Pane 3: Multi-Model AI Config -->
-          <div class="guide-pane" id="tabAI">
-            <h3>🧠 Connecting Over 40 Frontier & Local Models</h3>
-            <p>
-              ZothOS Lite allows autonomous agents to reason through 8 distinct provider backends with over 40 frontier models:
-            </p>
-            <div class="code-box">
-              <pre># Run the interactive AI Configuration Wizard inside ZothOS:
-$ zoth-welcome
-# Or directly configure provider keys:
-$ zoth-ai-config
-
-# Configuration is stored locally at:
-~/.config/zoth/ai_providers.json
-
-# Supported Providers:
-• OpenRouter (300+ models with 1 key: Claude 3.5, Hermes 3 405B, DeepSeek-V3, Llama 3.3)
-• Nous Hermes Swarm (Native Hermes-3 Agent Reasoner)
-• Anthropic Claude (Claude 3.5 Sonnet & Haiku)
-• OpenAI (GPT-4o, GPT-4o-mini & o1)
-• Groq LPU (Ultra-fast 800+ tokens/sec LPUs)
-• Google Gemini (Gemini 2.0 Flash & Pro)
-• DeepSeek (DeepSeek-V3 & Reasoner R1)
-• Local/LAN Ollama & vLLM (100% offline at http://127.0.0.1:11434)</pre>
-            </div>
-          </div>
-
-          <!-- Pane 4: ZothNet P2P Communications -->
-          <div class="guide-pane" id="tabZothNet">
-            <h3>🌐 ZothNet: Talking to Other Zoth Users on the Network</h3>
-            <p>
-              ZothOS machines form a decentralized, sovereign communication mesh across local networks and remote federation:
-            </p>
-            <div class="code-box">
-              <pre># 1. Zero-Config Local Encrypted Mesh Chat:
-$ zoth-chat
-# Discovers neighboring Zoth nodes on your local WiFi/Ethernet subnet.
-# All messages are end-to-end encrypted with zero central servers.
-
-# 2. Sovereign Agent Bridge Daemon (Port 8102):
-$ curl -X POST http://127.0.0.1:8102/api/send \
-  -H "Content-Type: application/json" \
-  -d '{"type":"agent_signal","data":{"action":"coordinate_swarm"}}'
-
-# 3. Join the Public Civilization Mesh:
-$ zoth-node --join https://civilization.nullai.tech</pre>
-            </div>
-          </div>
-
-          <!-- Pane 5: Modular Tools -->
-          <div class="guide-pane" id="tabModular">
-            <h3>🧰 Modular Tool Installation On-Demand (zoth-pull)</h3>
-            <p>
-              To maintain an ultra-lightweight 2.4 GB ISO footprint, advanced suites are pulled on demand:
-            </p>
-            <div class="code-box">
-              <pre># Mount and execute full tools without rebuilding the ISO:
-$ zoth-pull zoth-studio        # Launches 77+ tool developer workstation
-$ zoth-pull zoth-civilization   # Launches 3D multi-agent civilization engine
-$ zoth-pull adytum-alchemist    # Launches AI workflow studio
-
-# Standard Linux package management works inside RAM:
-$ sudo apt update && sudo apt install &lt;package&gt;
-$ pip install &lt;python-package&gt;
-$ npm install -g &lt;node-tool&gt;</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive In-Browser Dev Tools Suite -->
-  <section class="section" id="tools">
-    <div class="wrapper">
-      <div class="section-head">
-        <span class="section-tag">IN-BROWSER WORKSTATION</span>
-        <h2 class="section-title">Lightweight Built-In Developer Tools</h2>
-        <p class="section-sub">Zero-bloat, 100% client-side utilities. Test agents, inspect media, and package files directly in your browser.</p>
-      </div>
-
-      <!-- Tools Tab Selector -->
-      <div class="tools-tabs">
-        <button type="button" class="tool-tab-btn is-active" data-tool="toolAgentConsole">
-          <span>⚡</span> Multi-Model AI Agent Swarm Console
-        </button>
-        <button type="button" class="tool-tab-btn" data-tool="toolImageViewer">
-          <span>🖼️</span> Precision Image Viewer & Inspector
-        </button>
-        <button type="button" class="tool-tab-btn" data-tool="toolMediaPlayer">
-          <span>🎬</span> Precision Video & Audio Player
-        </button>
-        <button type="button" class="tool-tab-btn" data-tool="toolStoragePackager">
-          <span>💾</span> External Storage & Cloud Packager
-        </button>
-      </div>
-
-      <!-- WORKSTATION 1: AI Swarm Console -->
-      <div class="tool-workstation is-active" id="toolAgentConsole">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-          <div>
-            <h3 style="font-size:18px; font-weight:800; color:#FFF;">Autonomous Agent Swarm Console</h3>
-            <p style="font-size:12.5px; color:#94A3B8;">Connect to 40+ models across 8 providers. Stored 100% client-side with zero telemetry.</p>
-          </div>
-          <span style="font-size:11px; color:#10B981; font-family:var(--font-mono); font-weight:700;">🔒 ENCRYPTED LOCAL STORAGE</span>
-        </div>
-
-        <!-- Provider Chips -->
-        <div class="provider-chips" id="providerChips"></div>
-
-        <!-- Inputs Row -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
-          <div>
-            <label style="font-size:11.5px; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">MODEL PRESET</label>
-            <select id="modelSelect" style="width:100%; background:#04050A; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; color:#FFF; font-family:var(--font-mono); font-size:12px; outline:none;"></select>
-          </div>
-          <div>
-            <label style="font-size:11.5px; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">AGENT ROLE</label>
-            <select id="agentRoleSelect" style="width:100%; background:#04050A; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; color:#FFF; font-family:var(--font-mono); font-size:12px; outline:none;">
-              <option value="System Architect">🏛️ System Architect</option>
-              <option value="Code Builder">🔨 Code Builder</option>
-              <option value="Security Auditor">🛡️ Security Auditor</option>
-              <option value="Swarm Scout">🔭 Swarm Scout</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:11.5px; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">API KEY / ENDPOINT</label>
-            <input type="password" id="aiKeyInput" class="input-text" placeholder="Enter API Key (sk-...)" style="width:100%;">
-          </div>
-        </div>
-
-        <!-- Prompt Row -->
-        <div class="input-row">
-          <input type="text" id="agentPromptInput" class="input-text" placeholder="Enter task instruction (e.g. Generate a lightweight bash monitor for toram RAM hygiene)..." value="Write a concise shell script that checks RAM usage and alerts if &gt; 80% in toram mode.">
-          <button type="button" id="btnRunAgent" class="btn-primary" style="white-space:nowrap;">
-            <span>⚡</span> Run Agent
-          </button>
-        </div>
-
-        <div id="agentConsoleOutput" class="agent-console-out">[ZOTH-AGENT-BRIDGE] Workstation Ready. Select a model and press "Run Agent" to stream thought output.</div>
-      </div>
-
-      <!-- WORKSTATION 2: Image Viewer -->
-      <div class="tool-workstation" id="toolImageViewer">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-          <div>
-            <h3 style="font-size:18px; font-weight:800; color:#FFF;">Precision Image Viewer & Metadata Inspector</h3>
-            <p style="font-size:12.5px; color:#94A3B8;">Smooth canvas pan/zoom, rotation, filters, and metadata inspection without heavy dependencies.</p>
-          </div>
-          <label class="btn-ctrl" style="cursor:pointer;">
-            📁 Open Image <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
-          </label>
-        </div>
-
-        <div class="media-canvas-wrap" id="imageDropzone">
-          <canvas id="imageCanvas"></canvas>
-        </div>
-
-        <div class="toolbar-row">
-          <button type="button" class="btn-ctrl" id="btnImgZoomIn">🔍 Zoom +</button>
-          <button type="button" class="btn-ctrl" id="btnImgZoomOut">🔍 Zoom -</button>
-          <button type="button" class="btn-ctrl" id="btnImgRotate">🔄 Rotate 90°</button>
-          <button type="button" class="btn-ctrl" id="btnImgGray">◐ Grayscale</button>
-          <button type="button" class="btn-ctrl" id="btnImgReset">⟲ Reset</button>
-          <button type="button" class="btn-ctrl" id="btnImgExport" style="margin-left:auto; background:rgba(16,185,129,0.15); border-color:#10B981; color:#6EE7B7;">💾 Export PNG</button>
-        </div>
-
-        <div id="imageMetaBox" style="background:#04050A; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-family:var(--font-mono); font-size:12px; color:#94A3B8; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
-          <div>Drop any image file onto the canvas above.</div>
-        </div>
-      </div>
-
-      <!-- WORKSTATION 3: Video & Audio Player -->
-      <div class="tool-workstation" id="toolMediaPlayer">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-          <div>
-            <h3 style="font-size:18px; font-weight:800; color:#FFF;">Precision Video & Audio Player</h3>
-            <p style="font-size:12.5px; color:#94A3B8;">Frame-accurate scrubber, real-time frequency spectrum visualizer, and frame snapshots.</p>
-          </div>
-          <label class="btn-ctrl" style="cursor:pointer;">
-            📁 Load Media <input type="file" id="mediaFileInput" accept="video/*,audio/*" style="display:none;">
-          </label>
-        </div>
-
-        <div class="player-viewport" id="mediaDropzone">
-          <video id="mediaPlayerVideo" playsinline preload="metadata">
-            <source src="" type="video/mp4">
-            Your browser does not support HTML5 video.
-          </video>
-        </div>
-
-        <!-- Real-Time Web Audio Frequency Canvas -->
-        <canvas id="audioVisCanvas" class="audio-visualizer-canvas" width="600" height="90"></canvas>
-
-        <div class="toolbar-row" style="margin-top:10px;">
-          <button type="button" class="btn-ctrl" id="btnMediaPlay">▶ Play</button>
-          <button type="button" class="btn-ctrl" id="btnMediaStepBack">⏪ Frame -1</button>
-          <button type="button" class="btn-ctrl" id="btnMediaStepFwd">⏩ Frame +1</button>
-          <select id="mediaSpeedSelect" class="btn-ctrl" style="outline:none;">
-            <option value="0.25">0.25x</option>
-            <option value="0.5">0.5x</option>
-            <option value="1" selected>1.0x (Normal)</option>
-            <option value="1.25">1.25x</option>
-            <option value="1.5">1.5x</option>
-            <option value="2">2.0x</option>
-          </select>
-          <span id="mediaTimeDisplay" style="font-family:var(--font-mono); font-size:12px; color:#94A3B8; margin-left:8px;">0.0s / 0.0s</span>
-          <button type="button" class="btn-ctrl" id="btnMediaSnap" style="margin-left:auto; background:rgba(212,175,55,0.15); border-color:var(--gold); color:#FFF;">📸 Snapshot Frame</button>
-        </div>
-
-        <input type="range" id="mediaScrubber" min="0" max="100" value="0" style="width:100%; margin-top:8px; cursor:pointer;">
-      </div>
-
-      <!-- WORKSTATION 4: Storage & Cloud Packager -->
-      <div class="tool-workstation" id="toolStoragePackager">
-        <div style="margin-bottom:12px;">
-          <h3 style="font-size:18px; font-weight:800; color:#FFF;">External Storage & Cloud Packager</h3>
-          <p style="font-size:12.5px; color:#94A3B8;">Package your workspaces, repos, and notes into an amnesic backup ZIP directly in the browser.</p>
-        </div>
-
-        <div class="dropzone" id="pkgDropzone">
-          <div style="font-size:32px; margin-bottom:8px;">📁</div>
-          <div style="font-weight:700; color:#FFF; margin-bottom:4px;">Drag & Drop Files Here to Package</div>
-          <div style="font-size:12px; color:#94A3B8; margin-bottom:12px;">Files are packaged 100% in-browser using pure client-side PKZIP compression.</div>
-          <label class="btn-secondary" style="display:inline-block; cursor:pointer;">
-            Select Files <input type="file" id="pkgFileInput" multiple style="display:none;">
-          </label>
-        </div>
-
-        <div style="background:#04050A; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:14px;">
-          <div style="font-size:11px; font-weight:700; color:#94A3B8; text-transform:uppercase; margin-bottom:8px;">Staged Files for Backup Archive:</div>
-          <div id="pkgFileList" style="max-height:160px; overflow-y:auto;">
-            <span style="color:#64748B;">No files staged. Drop files above to package.</span>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-          <button type="button" id="btnBuildZip" class="btn-primary" disabled>
-            <span>📦</span> Build & Download Backup ZIP
-          </button>
-          <div id="pkgStatus" style="font-family:var(--font-mono); font-size:12px; color:#38BDF8;"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Download ISO Section -->
+  <!-- Download & Build ISO Section -->
   <section class="section" id="download">
     <div class="wrapper">
-      <div class="section-head">
-        <span class="section-tag">SOVEREIGN DISTRIBUTION</span>
-        <h2 class="section-title">Get ZothOS Lite</h2>
-        <p class="section-sub">Universal x86_64 amnesic live operating system. 100% free and open-access.</p>
-      </div>
-
-      <div class="dl-card">
-        <div style="font-size:42px; margin-bottom:12px;">💿</div>
-        <h3 style="font-size:24px; font-weight:800; color:#FFF; margin-bottom:8px;">ZothOS Lite v1.2 (Debian 13 Live)</h3>
-        <p style="color:#94A3B8; font-size:14px; max-width:600px; margin:0 auto 20px;">
-          Universal amnesic ISO image for BIOS & UEFI systems. Boots entirely to volatile RAM on any 64-bit PC, laptop, or virtual machine.
+      <div class="download-card-monotone">
+        <span class="section-tag">BOOTABLE LIVE ISO &amp; SOURCE BUILDER</span>
+        <h2 style="font-family:var(--font-mono); font-size:24px; font-weight:800; margin-bottom:10px;">Get ZothOS-Lite v1.2 (Amnesic Monotone ISO)</h2>
+        <p style="font-size:13.5px; color:var(--ink-secondary); max-width:660px; margin:0 auto 18px;">
+          Flash to any USB stick with BalenaEtcher or <code>dd</code>, boot in QEMU/KVM or VirtualBox with zero virtual hard disks attached, or build reproducibly from source using <code>build-zothos-lite-iso.sh</code>.
         </p>
 
-        <a href="https://github.com/1nc0gn30/zoth-os/releases/download/v3.4.0/zothos-3.4-amd64.iso" class="btn-primary" style="padding:14px 32px; font-size:15px; margin-bottom:16px;">
-          <span>⬇</span> Download Live ISO (2.4 GB)
-        </a>
-
-        <div class="dl-meta-grid">
-          <div class="spec-item">
-            <div class="spec-label">File Size</div>
-            <div class="spec-val">2.41 GB</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">Architecture</div>
-            <div class="spec-val">x86_64 (UEFI + BIOS)</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">Kernel</div>
-            <div class="spec-val">Linux 6.12 amd64</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">License</div>
-            <div class="spec-val">MIT · Open Access</div>
-          </div>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+          <a href="https://github.com/1nc0gn30/zothos-lite/releases" target="_blank" rel="noopener" class="btn-monotone-primary" style="font-size:13px; padding:12px 24px;">
+            <span>⬇</span> Download zothos-lite-1.2.0-monotone-amd64.iso
+          </a>
+          <a href="https://github.com/1nc0gn30/zothos-lite" target="_blank" rel="noopener" class="btn-monotone-secondary">
+            <span>📦</span> Source &amp; ISO Builder on GitHub
+          </a>
         </div>
 
-        <div class="code-box" style="text-align:left;">
-          <pre># Verify SHA256 Checksum:
-$ sha256sum zothos-3.4-amd64.iso
-8a7f9c2d4e8b1a3f6c5e7d9b2a4c6e8f0a2b4c6e8d0f2a4b6c8e0a2d4f6b8a0c
+        <div class="code-terminal-box" style="text-align:left; max-width:720px; margin:0 auto;">
+          <pre># Build &amp; verify the Live ISO or QEMU RAM image directly from source:
+$ git clone https://github.com/1nc0gn30/zothos-lite.git &amp;&amp; cd zothos-lite
+$ ./build/build-zothos-lite-iso.sh --stage-chroot   # Debian 13 Live-Build chroot + Monotone desktop
+$ ./vm/build-vm-image.sh &amp;&amp; ./vm/launch-vm.sh        # Instant QEMU/KVM RAM-only bootable ISO (:8145)
 
-# Quick Flash to USB via terminal (Linux/macOS):
-$ sudo dd if=zothos-3.4-amd64.iso of=/dev/sdX bs=4M status=progress conv=fsync</pre>
+# Flash ISO to external boot USB (replace /dev/sdX with target USB stick):
+$ sudo dd if=zothos-lite-1.2.0-monotone-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</pre>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- Support & Footer (Strictly 1nc0gn30 & NullAI Platform Only) -->
   <footer class="footer">
     <div class="wrapper footer-inner">
       <div>
-        <div style="font-weight:800; font-size:15px; color:#FFF; margin-bottom:4px;">
-          🛡️ ZOTHOS LITE · Sovereign Amnesic OS
+        <div style="font-weight:800; font-size:15px; margin-bottom:4px;">
+          🛡️ ZOTHOS-LITE v1.2 · AMNESIC MONOTONE OS
         </div>
-        <div class="footer-text">
-          Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a>
-        </div>
+        <p style="color:var(--ink-muted); font-size:12px;">
+          Engineered by <a href="https://github.com/1nc0gn30" target="_blank" rel="noopener" style="text-decoration:none; font-weight:700;">1nc0gn30 (@1nc0gn30)</a> • <a href="https://nullai.tech" target="_blank" rel="noopener" style="text-decoration:none; font-weight:700;">NullAI Platform</a>
+        </p>
+        <p style="color:var(--ink-muted); font-size:11px; margin-top:4px;">
+          100% Free &amp; Open-Access · Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
+        </p>
       </div>
 
-      <div class="footer-support">
-        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" class="btn-coffee">
-          <span>☕</span> Buy Us a Coffee
-        </a>
-        <div class="sol-badge" title="Solana Tip Address">
-          SOL: GG2e...xdXoK
-        </div>
-      </div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/1nc0gn30/zothos-lite" target="_blank" rel="noopener">GitHub (1nc0gn30)</a></li>
+        <li><a href="https://github.com/NullAITech/zothos-lite" target="_blank" rel="noopener">NullAITech Org</a></li>
+        <li><a href="https://zothos.nullai.tech" target="_blank" rel="noopener">Full ZothOS v3.4</a></li>
+        <li><a href="https://nullai.tech" target="_blank" rel="noopener">NullAI</a></li>
+        <li><a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener">☕ Buy Us a Coffee</a></li>
+      </ul>
     </div>
   </footer>
 
+  <script src="sovereign_tutorial.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

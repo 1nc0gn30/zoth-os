@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * ZothOS-Lite v1.1 — Amnesic Monotone Security & Dev OS Server (:8145)
- * "Tails-Style RAM-Only Security Meets ZothOS — Pure 1-Bit Black & White ASCII/Braille/Dither"
+ * ZothOS-Lite v1.2 — Amnesic Monotone Security & Dev OS Server (:8145)
+ * "Tails-Style RAM-Only Security — Paper Ivory (#F7F7F4) & Black Ink (#000000) + Bayer Dither + U+2800 Braille"
  */
 const http = require('http');
 const fs = require('fs');
@@ -442,9 +442,9 @@ function buildSnapshot() {
     ok: true,
     // Mission invariant, surfaced on every telemetry contract so a client can never infer it is optional.
     absoluteGuard: { throttleC: ABSOLUTE_THROTTLE_C, pauseC: ABSOLUTE_PAUSE_C, enforced: 'server-side' },
-    osName: 'ZothOS-Lite v1.1 (Amnesic Monotone Edition)',
-    codename: 'OBSIDIAN-TAILS-1BIT',
-    palette: '1-Bit Monotone (#000000 / #FFFFFF) + Ordered Bayer 4x4 + Unicode U+2800 Braille',
+    osName: 'ZothOS-Lite v1.2 (Amnesic Monotone Edition)',
+    codename: 'AMNESIC-TAILS-MONOTONE',
+    palette: 'Paper Ivory (#F7F7F4) + Black Ink (#000000) + Ordered Bayer Dither + Unicode U+2800 Braille',
     signingPubKey: PUBKEY_HEX,
     manifestHash,
     manifestSignature: signatureHex,
@@ -553,7 +553,8 @@ const server = http.createServer(async (req, res) => {
     const memTotalMb = Math.round(os.totalmem() / (1024 ** 2));
     const memFreeMb = Math.round(os.freemem() / (1024 ** 2));
     const memUsedMb = memTotalMb - memFreeMb;
-    const isoPath = path.join(__dirname, 'vm', 'zothos-lite-1.0-amd64.iso');
+    const isoV12 = path.join(__dirname, 'vm', 'zothos-lite-1.2-amd64.iso');
+    const isoPath = fs.existsSync(isoV12) ? isoV12 : path.join(__dirname, 'vm', 'zothos-lite-1.0-amd64.iso');
     return sendJson(res, 200, {
       ok: true,
       absoluteGuard: { throttleC: ABSOLUTE_THROTTLE_C, pauseC: ABSOLUTE_PAUSE_C, enforced: 'server-side' },
@@ -2025,7 +2026,8 @@ print(json.dumps({"transcript": transcript, "peakDb": peak_db, "engine": engine}
   if (pathname === '/api/vm/status' && req.method === 'GET') {
     const pidFile = '/tmp/zothos-lite-vm.pid';
     const serialLog = '/tmp/zothos-lite-vm-console.log';
-    const isoPath = path.join(__dirname, 'vm', 'zothos-lite-1.0-amd64.iso');
+    const isoV12 = path.join(__dirname, 'vm', 'zothos-lite-1.2-amd64.iso');
+    const isoPath = fs.existsSync(isoV12) ? isoV12 : path.join(__dirname, 'vm', 'zothos-lite-1.0-amd64.iso');
     const initrdPath = path.join(__dirname, 'vm', 'initrd-zothos-lite.img');
     let running = false;
     let pid = null;
@@ -2961,6 +2963,6 @@ print(json.dumps({"transcript": transcript, "peakDb": peak_db, "engine": engine}
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`░░▒▒▓▓██ ZothOS-Lite v1.1 (Amnesic Monotone OS) listening on http://127.0.0.1:${PORT} ██▓▓▒▒░░`);
+server.listen(PORT, process.env.HOST || '127.0.0.1', () => {
+  console.log(`░░▒▒▓▓██ ZothOS-Lite v1.2 (Amnesic Monotone OS) listening on http://127.0.0.1:${PORT} ██▓▓▒▒░░`);
 });

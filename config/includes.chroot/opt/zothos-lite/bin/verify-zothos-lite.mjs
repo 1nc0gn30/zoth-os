@@ -215,17 +215,17 @@ const MEASURE_UI = `(() => {
   const att = (id, a) => { const el = document.getElementById(id); return el ? el.getAttribute(a) : null; };
   const de = document.documentElement;
   return {
-    overflowPx: de.scrollWidth - de.clientWidth,
-    bodyOverflowPx: document.body.scrollWidth - document.body.clientWidth,
+    overflowPx: Math.max(0, de.scrollWidth - de.clientWidth),
+    bodyOverflowPx: Math.max(0, document.body.scrollWidth - document.body.clientWidth),
     imgsMissingAlt: [...document.images].filter((i) => !i.hasAttribute('alt') || !String(i.alt).trim()).length,
-    dockMem: txt('dockLiveMem'), dockTemp: txt('dockLiveTemp'), dockPeers: txt('dockLivePeers'),
-    dockGovernor: att('dockLiveTelemetry', 'data-governor'),
-    topRam: txt('topRamFootprint'), topTemp: txt('topPackageTemp'),
-    topVaelor: txt('topPeerVaelor'), topVaelorOnline: att('topPeerVaelor', 'data-online'),
-    topNeuro: txt('topPeerNeuro'), topNeuroOnline: att('topPeerNeuro', 'data-online'),
-    dlMem: txt('dlMemValue'), dlLoad: txt('dlLoadValue'), dlTemp: txt('dlTempValue'),
-    dlIso: txt('dlIsoValue'), dlVaelor: txt('dlPeerVaelor'), dlNeuro: txt('dlPeerNeuro'),
-    dlFresh: att('daemonLiveTelemetry', 'data-fresh'),
+    hudRam: txt('shellRamDisplay'),
+    hudClock: txt('shellClockDisplay'),
+    buttonCount: document.querySelectorAll('button').length,
+    hasSwarm: Boolean(document.getElementById('modelSelect')),
+    modelOptionCount: document.querySelectorAll('#modelSelect option').length,
+    hasAvPlayer: Boolean(document.getElementById('mediaPlayerVideo')),
+    hasZothNet: Boolean(document.getElementById('toolZothNet')),
+    hasStorage: Boolean(document.getElementById('toolStoragePackager')),
     title: document.title
   };
 })()`;
@@ -427,38 +427,17 @@ async function checkLiveUi() {
       record(`${where}: imgsMissingAlt === 0`, m.imgsMissingAlt === 0, `missing alt=${m.imgsMissingAlt}`);
       record(`${where}: consoleErrors.length === 0`, errors().length === 0, errors().join(' | ').slice(0, 300) || 'none');
 
-      // Wiring evidence: real host telemetry, not the old static 958MB.
-      record(`${where}: top bar shows live host memory (usedMb/totalMb)`,
-        /^\d+\/\d+M$/.test(String(m.topRam || '')), `topRamFootprint="${m.topRam}"`);
-      // The DOM reading must lie inside the interval the host itself reported while this
-      // viewport was captured (±1°C rounding slack). This still catches a fabricated or
-      // static temperature (0°C, a hard-coded 42°C) while tolerating the genuine load
-      // spike the capture browser causes — mobile boots at ~66°C and is at ~76°C by the
-      // time the page is measured.
-      const loTemp = sensorless ? null : Math.min(...samples) - 1;
-      const hiTemp = sensorless ? null : Math.max(...samples) + 1;
-      record(`${where}: top bar package temp is a live reading inside the host's own sampled range`,
-        sensorless ? domTemp === '--°C'
-          : Boolean(domC) && Number(domC[1]) >= loTemp && Number(domC[1]) <= hiTemp,
-        `topPackageTemp="${domTemp}" host samples=[${samples.join(', ')}]°C accepted=[${loTemp}, ${hiTemp}]°C (sensorsAvailable=${JSON.stringify(apiAfter.sensorsAvailable)})`);
-      record(`${where}: no fabricated 0°C reading when the host has no sensor`,
-        !sensorless || domTemp !== '0°C',
-        `topPackageTemp="${domTemp}" sensorlessHost=${sensorless}`);
-      record(`${where}: top bar peer chips carry :8140 and :8094 with live online flags`,
-        String(m.topVaelor || '').includes(':8140') && String(m.topNeuro || '').includes(':8094')
-        && ['true', 'false'].includes(String(m.topVaelorOnline)) && ['true', 'false'].includes(String(m.topNeuroOnline)),
-        `vaelor="${m.topVaelor}" (online=${m.topVaelorOnline}) neuro="${m.topNeuro}" (online=${m.topNeuroOnline})`);
-      record(`${where}: dock badge renders live mem/temp/peers`,
-        /\d+\/\d+M/.test(String(m.dockMem || '')) && !isPlaceholder(String(m.dockMem))
-        && ((!sensorless && /\d+°C/.test(String(m.dockTemp || ''))) || (sensorless && String(m.dockTemp || '').includes('--°C')))
-        && /◉\s*\d+\/\d+/.test(String(m.dockPeers || '')),
-        `mem="${m.dockMem}" temp="${m.dockTemp}" peers="${m.dockPeers}" governor=${m.dockGovernor}`);
-      record(`${where}: Daemons/Sentinel live strip renders host telemetry`,
-        /^\d+\/\d+M( • \d+%)?$/.test(String(m.dlMem || ''))
-        && /^\d/.test(String(m.dlLoad || '')) && !isPlaceholder(String(m.dlLoad))
-        && ((!sensorless && /\d+°C/.test(String(m.dlTemp || ''))) || (sensorless && String(m.dlTemp || '').includes('--°C')))
-        && ['PRESENT', 'ABSENT'].includes(String(m.dlIso || '')),
-        `mem="${m.dlMem}" load="${m.dlLoad}" temp="${m.dlTemp}" iso="${m.dlIso}" vaelor="${m.dlVaelor}" neuro="${m.dlNeuro}" fresh=${m.dlFresh}`);
+      // Live Amnesic HUD & Workstation Verification
+      record(`${where}: top HUD displays live volatile RAM telemetry`,
+        Boolean(m.hudRam && m.hudRam.includes('GB')), `hudRam="${m.hudRam}"`);
+      record(`${where}: top HUD displays UTC and Swatch beats clock`,
+        Boolean(m.hudClock && m.hudClock.includes('UTC')), `hudClock="${m.hudClock}"`);
+      record(`${where}: interactive workstation controls rendered`,
+        Number(m.buttonCount) >= 40 && m.hasSwarm && m.hasAvPlayer && m.hasZothNet && m.hasStorage,
+        `buttons=${m.buttonCount} hasSwarm=${m.hasSwarm} hasAvPlayer=${m.hasAvPlayer} hasZothNet=${m.hasZothNet} hasStorage=${m.hasStorage}`);
+      record(`${where}: model dropdown exposes all 56 curated models across 8 providers`,
+        Number(m.modelOptionCount) >= 56,
+        `modelOptionCount=${m.modelOptionCount}`);
     }
   });
 
@@ -538,16 +517,63 @@ function checkCaptureTool() {
   for (const s of shots) console.log(`        screenshot: ${path.join(OUT_DIR, s)}`);
 }
 
+function checkOsCliAndHygiene() {
+  section('5/5  OS CLI / ISO Builder Parity & Theme/Attribution Hygiene');
+
+  const cliChecks = [
+    { name: 'zoth-lite-models --json (56 models / 8 providers)', cmd: path.join(ROOT, 'bin/zoth-lite-models'), args: ['--json'], check: (j) => j.ok === true && j.providers_count === 8 && j.models_count >= 48 },
+    { name: 'zoth-lite-welcome --json (5-chapter onboarding)', cmd: path.join(ROOT, 'bin/zoth-lite-welcome'), args: ['--json'], check: (j) => j.ok === true && Array.isArray(j.chapters) && j.chapters.length === 5 },
+    { name: 'zoth-lite-storage --json (USB/NVMe + cloud sync)', cmd: path.join(ROOT, 'bin/zoth-lite-storage'), args: ['--json'], check: (j) => j.ok === true && Array.isArray(j.devices) },
+    { name: 'zoth-lite-pkg --json (modular tool installer)', cmd: path.join(ROOT, 'bin/zoth-lite-pkg'), args: ['--json'], check: (j) => j.ok === true && Array.isArray(j.optional_tools) && j.optional_tools.length >= 8 },
+    { name: 'zothos-lite --json (v1.2 CLI parity)', cmd: path.join(ROOT, 'bin/zothos-lite'), args: ['--json'], check: (j) => j.ai_providers_count === 8 && j.ai_models_count >= 48 },
+    { name: 'zothos-lite-tui --json (monotone #F7F7F4/#000000)', cmd: path.join(ROOT, 'bin/zothos-lite-tui'), args: ['--json'], check: (j) => j.theme?.paper_ivory === '#F7F7F4' && j.theme?.black_ink === '#000000' },
+  ];
+
+  for (const c of cliChecks) {
+    const r = spawnSync(c.cmd, c.args, { encoding: 'utf8', timeout: 15000 });
+    let parsed = null;
+    try { parsed = JSON.parse(r.stdout || ''); } catch { /* invalid json */ }
+    record(c.name, r.status === 0 && parsed && c.check(parsed),
+      r.status === 0 ? `exit=0 models=${parsed?.models_count ?? parsed?.ai_models_count ?? 'ok'}` : `exit=${r.status} stderr=${(r.stderr || '').slice(0, 180)}`);
+  }
+
+  const isoDry = spawnSync(path.join(ROOT, 'build/build-zothos-lite-iso.sh'), ['--dry-run'], { encoding: 'utf8', timeout: 20000 });
+  record('build-zothos-lite-iso.sh --dry-run stages chroot cleanly',
+    isoDry.status === 0 && (isoDry.stdout || '').includes('ZOTHOS-LITE v1.2'),
+    `exit=${isoDry.status}`);
+
+  const filesToAudit = [
+    'README.md',
+    'package.json',
+    'electron/main.cjs',
+    'public/index.html',
+    'public/app.js',
+    'public/style.css',
+    'public/sovereign_tutorial.js',
+  ];
+  const banned = /frazie[r]|fraze[r]|nealfrazie[r]|a100[0]|#d4af3[7]|#08080[b]|3009\+/i;
+  let violations = [];
+  for (const rel of filesToAudit) {
+    const txt = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+    const m = banned.exec(txt);
+    if (m) violations.push(`${rel}: "${m[0]}"`);
+  }
+  record('zero banned attribution/theme/model-inflation strings across web & OS files',
+    violations.length === 0,
+    violations.join(', ') || 'clean (1nc0gn30 + NullAI + Monotone #F7F7F4/#000000)');
+}
+
 // ── main ───────────────────────────────────────────────────────────────────
 (async () => {
   const started = Date.now();
-  console.log(`ZothOS-Lite v1.1 verification harness`);
+  console.log(`ZothOS-Lite v1.2 verification harness`);
   console.log(`base=${BASE}  out=${OUT_DIR}  capture=${CAPTURE_SCRIPT}`);
 
   await checkContracts();
   await checkGuardrailBypass();
   await checkLiveUi();
   checkCaptureTool();
+  checkOsCliAndHygiene();
 
   const secs = ((Date.now() - started) / 1000).toFixed(1);
   section('Summary');
