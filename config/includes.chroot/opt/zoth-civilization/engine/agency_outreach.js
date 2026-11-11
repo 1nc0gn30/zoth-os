@@ -55,17 +55,17 @@ const AGENCY_PROSPECTS = [
   },
   {
     agencyName: 'Bryant Digital',
-    city: 'Virginia Beach, VA',
+    city: 'Austin, TX',
     url: 'https://bryantdigital.com',
     email: 'hello@bryantdigital.com',
-    finding: 'I saw Bryant Digital builds performance-driven websites and digital strategy right here in Virginia Beach.'
+    finding: 'I saw Bryant Digital builds performance-driven websites and digital strategy right here in Austin.'
   },
   {
     agencyName: 'VISIONEFX',
-    city: 'Virginia Beach, VA',
+    city: 'Austin, TX',
     url: 'https://visionefx.net',
     email: 'rick@visionefx.net',
-    finding: 'I saw VISIONEFX builds custom websites, e-commerce solutions, and regional SEO campaigns across Virginia Beach and Hampton Roads.'
+    finding: 'I saw VISIONEFX builds custom websites, e-commerce solutions, and regional SEO campaigns across Austin and Hampton Roads.'
   },
   {
     agencyName: 'Loud Canvas Media',

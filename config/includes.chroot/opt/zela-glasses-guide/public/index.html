@@ -63,7 +63,7 @@
             "name": "How does Zela connect Ray-Ban Meta Smart Glasses to Zoth Relay?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The Zela / Zoth Guide Android companion captures scene-changed frames from the smart glasses and streams them over an encrypted Tailscale WireGuard WebSocket (100.106.132.5:8766/v1/guide/stream) to your local Linux workstation running zoth-relay-mobile."
+              "text": "The Zela / Zoth Guide Android companion captures scene-changed frames from the smart glasses and streams them over an encrypted Tailscale WireGuard WebSocket (100.64.0.10:8766/v1/guide/stream) to your local Linux workstation running zoth-relay-mobile."
             }
           },
           {
@@ -948,7 +948,7 @@
         <div class="eyebrow">01 / WEARABLE SOVEREIGN COACHING · ZOTH-RELAY v0.5.0</div>
         <h1>Full-duplex AI coaching through your smart glasses.</h1>
         <p class="hero-sub">
-          <strong>Zela · Zoth Guide</strong> links Ray-Ban Meta Smart Glasses via your Android phone over an encrypted Tailscale WireGuard tunnel (<code>100.106.132.5:8766</code>) straight to your own Linux workstation. Local <strong>Moondream</strong> vision captions frames in RAM, a persistent <strong>AGY</strong> stream-json session coaches your mission, and <strong>Kokoro v1.0 ONNX</strong> streams 24kHz voice back to your ear with instant barge-in.
+          <strong>Zela · Zoth Guide</strong> links Ray-Ban Meta Smart Glasses via your Android phone over an encrypted Tailscale WireGuard tunnel (<code>100.64.0.10:8766</code>) straight to your own Linux workstation. Local <strong>Moondream</strong> vision captions frames in RAM, a persistent <strong>AGY</strong> stream-json session coaches your mission, and <strong>Kokoro v1.0 ONNX</strong> streams 24kHz voice back to your ear with instant barge-in.
         </p>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button type="button" class="btn btn-emerald" id="heroRunDemoBtn">
@@ -991,7 +991,7 @@
           <span style="font-family:var(--font-mono); font-size:0.76rem; font-weight:700; color:var(--gold);">
             WS /v1/guide/stream · FULL-DUPLEX PIPELINE
           </span>
-          <span class="badge badge-emerald">TAILSCALE 100.106.132.5:8766</span>
+          <span class="badge badge-emerald">TAILSCALE 100.64.0.10:8766</span>
         </div>
 
         <div class="arch-flow">
@@ -1293,7 +1293,7 @@
             Connect Browser Directly to Your Local / Tailscale Zoth Relay
           </div>
           <p style="font-size:0.84rem; color:var(--text-muted); margin-top:0;">
-            Your <code>zoth-relay-mobile</code> service is running on <code>100.106.132.5:8766</code> (Tailscale) and <code>127.0.0.1:8766</code>. Enter your endpoint and mobile token to test live WebSocket connectivity:
+            Your <code>zoth-relay-mobile</code> service is running on <code>100.64.0.10:8766</code> (Tailscale) and <code>127.0.0.1:8766</code>. Enter your endpoint and mobile token to test live WebSocket connectivity:
           </p>
 
           <div class="input-group">
@@ -1340,7 +1340,7 @@
             <pre id="configBundlePre" style="margin:0; padding:16px; background:#05070B; color:#10B981; font-family:var(--font-mono); font-size:0.74rem; overflow-x:auto; line-height:1.45;"># ~/.config/zoth-relay/mobile/config.yaml (zothos v0.5.0)
 hosts:
   - 127.0.0.1
-  - 100.106.132.5
+  - 100.64.0.10
 port: 8766
 agents_file: ~/.config/zoth-relay/mobile/agents.yaml
 audit_log: ~/.local/state/zoth-relay-mobile/audit.log
@@ -1936,11 +1936,11 @@ guide:
           };
           ws.onerror = function() {
             box.style.color = '#F59E0B';
-            box.textContent = 'ℹ️ Browser sandbox could not reach loopback/Tailscale directly (or token header required). Use simulator mode above or connect via the Zela Android app on 100.106.132.5:8766.';
+            box.textContent = 'ℹ️ Browser sandbox could not reach loopback/Tailscale directly (or token header required). Use simulator mode above or connect via the Zela Android app on 100.64.0.10:8766.';
           };
         } catch (err) {
           box.style.color = '#F59E0B';
-          box.textContent = 'ℹ️ Using built-in browser simulation mode. On your Pixel phone, connect over Tailscale to http://100.106.132.5:8766.';
+          box.textContent = 'ℹ️ Using built-in browser simulation mode. On your Pixel phone, connect over Tailscale to http://100.64.0.10:8766.';
         }
       });
 

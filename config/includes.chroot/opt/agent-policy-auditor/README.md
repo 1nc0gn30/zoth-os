@@ -37,7 +37,7 @@ Enforces time-bound, cryptographically signed capability leases (HMAC-SHA256) ac
 - **Mesh Telemetry Pipeline**:
   - Forwards violations and lease grants to **Agent Flight Recorder (:8104)** and **Neuro-Memory Daemon (:8094)**.
 - **Dual Monetization Rails**:
-  - $19 Founding Member lifetime access via Stripe and DePay Solana Web3 payment rails.
+  - $19 Founding Member lifetime access via Stripe and Solana Tip Web3 payment rails.
 
 ---
 

@@ -40,7 +40,7 @@ class PixelDevice:
 
 @dataclass
 class StreamOptions:
-    serial: str = "100.106.39.46:5555"
+    serial: str = "100.64.0.20:5555"
     bitrate: str = "8M"
     max_size: int = 1080
     max_fps: int = 60
@@ -59,7 +59,7 @@ class PixelCastManager:
         self.active_stream_process: Optional[subprocess.Popen] = None
         self.stream_start_time: Optional[float] = None
         self.last_screenshot_path: Optional[str] = None
-        self.known_pixel_ip: str = "100.106.39.46"
+        self.known_pixel_ip: str = "100.64.0.20"
 
     # =========================================================================
     # Tailscale Peer Discovery & Telemetry

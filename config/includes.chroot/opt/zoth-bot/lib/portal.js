@@ -43,7 +43,7 @@ function detectTailscalePeer() {
       peers.find((p) => p.OS === 'android');
     if (androidPeer) {
       const host = (androidPeer.DNSName || androidPeer.HostName || 'pixel-10-pro').split('.')[0];
-      const ip = (androidPeer.TailscaleIPs && androidPeer.TailscaleIPs[0]) || '100.106.39.46';
+      const ip = (androidPeer.TailscaleIPs && androidPeer.TailscaleIPs[0]) || '100.64.0.20';
       cachedPeer = {
         name: host,
         ip,
@@ -56,7 +56,7 @@ function detectTailscalePeer() {
   } catch {
     /* fallback */
   }
-  cachedPeer = { name: 'pixel-10-pro', ip: '100.106.39.46', os: 'android', online: true };
+  cachedPeer = { name: 'pixel-10-pro', ip: '100.64.0.20', os: 'android', online: true };
   cachedPeerTs = now;
   return cachedPeer;
 }
@@ -90,7 +90,7 @@ function getAddresses() {
   for (const [name, addrs] of Object.entries(nets)) {
     for (const a of addrs || []) {
       if (a.family !== 'IPv4' || a.internal) continue;
-      if (name.startsWith('tailscale') || a.address.startsWith('100.106.') || a.address.startsWith('100.')) {
+      if (name.startsWith('tailscale') || a.address.startsWith('100.64.') || a.address.startsWith('100.')) {
         if (name.startsWith('tailscale')) tailscale = a.address;
         else if (!lan) lan = a.address;
       } else if (!lan) {

@@ -1,12 +1,12 @@
 <div align="center">
 
-  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux 3.3 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
+  <img src="assets/brand/zothos-x-launch-banner.jpg" alt="ZOTHOS Linux v3.4.0 banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);" />
 
   <br />
   <br />
 
-  <h1>🜂 &nbsp; Z O T H O S &nbsp; L I N U X &nbsp; 3 . 3 &nbsp; 🜄</h1>
-  <h3><em>The Sovereign Alchemical Intelligence, Cryptographic Vault & Offensive Security Operating System</em></h3>
+  <h1>Z O T H O S &nbsp; L I N U X &nbsp; v 3 . 4 . 0</h1>
+  <h3><em>Debian 13 (Trixie) + KDE Plasma 6.3 Wayland Operating System for Local AI Agents, Cryptographic Secrets & Security Engineering</em></h3>
 
   <p>
     <strong>KDE Plasma 6.3 Wayland &bull; Debian 13 Trixie &bull; Kali Rolling &bull; Parrot OS &bull; Debian Linux 6.12 kernel</strong>
@@ -45,40 +45,40 @@
   <br />
 
   <p>
-    <a href="#-system-specifications-at-a-glance"><b>Specification</b></a> &bull;
-    <a href="#-visual-gallery--system-tour"><b>Visual Tour</b></a> &bull;
-    <a href="#-system-architecture"><b>Architecture</b></a> &bull;
-    <a href="#-environment--stealth-profiles"><b>Stealth Profiles</b></a> &bull;
-    <a href="#-sovereign-cryptographic-vault-engine"><b>Vault Engine</b></a> &bull;
-    <a href="#-frontier-ai--coding-agent-workstations"><b>Frontier AI</b></a> &bull;
-    <a href="#-built-in-tools--applications"><b>Tool Arsenal</b></a> &bull;
-    <a href="#-installation--live-boot"><b>Installation</b></a>
+    <a href="#system-specifications-at-a-glance"><b>Specification</b></a> &bull;
+    <a href="#visual-gallery--system-tour"><b>Visual Tour</b></a> &bull;
+    <a href="#system-architecture"><b>Architecture</b></a> &bull;
+    <a href="#environment--stealth-profiles"><b>Stealth Profiles</b></a> &bull;
+    <a href="#sovereign-cryptographic-vault-engine"><b>Vault Engine</b></a> &bull;
+    <a href="#ai--coding-agent-workstations"><b>AI Workstations</b></a> &bull;
+    <a href="#built-in-tools--applications"><b>Tool Arsenal</b></a> &bull;
+    <a href="#installation--live-boot"><b>Installation</b></a>
   </p>
 
 </div>
 
 ---
 
-## ✦ System Specifications at a Glance
+## System Specifications at a Glance
 
 | Pillar | Technology | Implementation Details |
 | :--- | :--- | :--- |
 | **Desktop Core** | **KDE Plasma 6.3 Wayland** | Deterministic 4-Folder Desktop (`01-AI-Agents-and-Dev`, `02-Security-and-Privacy`, `03-ZothOS-Daemons`, `04-Media-and-Utilities`), 7 root flagships, verified 166KB multi-size `Zoth-Gold-Cursors` + `SWCursor` window visibility invariant, and custom golden cursor trails. |
-| **Companion Edition** | **[ZothOS-Lite v1.1 (`:8145`)](https://github.com/NullAITech/zothos-lite)** | Tails-style Amnesic Monotone RAM-only edition featuring **AZOTH** (Embodied `U+2800` Braille AI Agent with 6 mood rigs & phoneme lip-sync), **[Chain of Thoughts (`zoth-cot`)](https://github.com/NullAITech/chain-of-thoughts)**, **Kokoro 82M ONNX Voice + Mic STT**, **3D Perspective Braille Matrix**, **Sovereign Horology Niche Clock** (`Braille BCD + .beats + GMST`), and **75+ Kali/Parrot CLI tools**. |
+| **Companion Edition** | **[ZothOS-Lite v1.2 (`:8145`)](https://github.com/NullAITech/zothos-lite)** | Tails-style Amnesic Monotone RAM-only edition featuring **AZOTH** (Embodied `U+2800` Braille AI Agent with 6 mood rigs & phoneme lip-sync), **[Chain of Thoughts (`zoth-cot`)](https://github.com/NullAITech/chain-of-thoughts)**, **Kokoro 82M ONNX Voice + Mic STT**, **3D Perspective Braille Matrix**, **Sovereign Horology Niche Clock** (`Braille BCD + .beats + GMST`), and **75+ Kali/Parrot CLI tools**. |
 | **Chain of Thoughts** | **[`zoth-cot` Working Memory DAG](https://github.com/NullAITech/chain-of-thoughts)** | Persistent multi-turn context & cryptographic SHA-256 Merkle thought chain (`N00 -> N01 -> N02...`), automatic semantic fact extraction (`IDENTITY`, `MEMORY`, `MISSION`, `SECRET`), and 60fps Animated Braille/Bayer Synaptic DAG window (`winCoT`). |
-| **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for 100% package cohesion. |
-| **Kernel Stack** | **Debian Linux 6.12 (stock)** | Debian's standard `linux-image-amd64` kernel with universal KMS/DRM graphics (Intel UHD/Iris, AMD Radeon, NVIDIA, and Mesa software rendering fallback) for 100% universal hardware compatibility across all PCs, laptops, and virtual machines. |
-| **Sovereign Vault** | **Local secrets daemon** | Resident daemon on `127.0.0.1:8787` (described as Argon2id + ChaCha20-Poly1305). It ships as a prebuilt binary whose source is not yet in this repo, so these crypto claims cannot be independently audited. |
-| **Frontier AI Forge** | **Autonomous Agent Swarm** | Google Antigravity CLI, Aider AI, Cursor AI, Grok Bot, Claude Code, Cline, and Ollama offline LLM model runner. |
-| **Cloud Workstations** | **Full-Stack Developer Deck** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.13, Rust, Go, Foundry, and Solana. |
+| **System Base** | **Debian 13 (Trixie)** | Surgical tri-repository overlay with **Kali Rolling** and **Parrot OS Security** APT pinning for package cohesion. |
+| **Kernel Stack** | **Debian Linux 6.12 (stock)** | Debian's standard `linux-image-amd64` kernel with KMS/DRM graphics (Intel UHD/Iris, AMD Radeon, NVIDIA, and Mesa software rendering fallback) across desktops, laptops, and virtual machines. |
+| **Sovereign Vault** | **Local secrets daemon** | Resident daemon on `127.0.0.1:8787` (Argon2id + ChaCha20-Poly1305). Ships as a prebuilt binary whose source is tracked separately; see `SECURITY.md` for audit scope. |
+| **AI Agent Stack** | **Local & Multi-Model Agents** | Google Antigravity CLI, Aider AI, Cursor AI, Nous Hermes Agent, Grok Bot, Claude Code, Cline, and Ollama offline LLM model runner. |
+| **Developer Runtime** | **Full-Stack Toolchain** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.12/3.13, Rust, Go, Foundry, and Solana CLI. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
-| **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD exploitation, web auditing, binary reverse engineering, wireless warfare, and credential extraction (from the `30-opsec` + `40-security` package lists). |
-| **Sovereign Tool Matrix** | **72 Studio Tools (72 with public repos) & 23 Enclave Daemons**<!-- TODO: verify the 22 daemon count --> | 100% interactive workstation coverage in Zoth Studio v2 (53 in-browser + 19 local CLI) on loopback ports :8094–:8120, :9393, :5225, :8787. |
-| **Live Boot & Install** | **Calamares 24K Sovereign** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
+| **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD enumeration, web auditing, binary reverse engineering, wireless auditing, and credential inspection (from `30-opsec` + `40-security` package lists). |
+| **Zoth Studio Arsenal** | **75 First-Party Tool Repos & 22 Loopback Daemons** | Full CLI and local daemon integration with [Zoth Studio](https://zoth.nullai.tech) (`127.0.0.1:3000`) across loopback ports `:8094`–`:8151`, `:8765`, `:8787`, `:9393`, `:9395`. |
+| **Live Boot & Install** | **Calamares 24K Installer** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
 
-## ✦ Visual Gallery & System Tour
+## Visual Gallery & System Tour
 
 <details open>
 <summary><b>1. Sovereign 24K Celtic Gold Master Desktop</b></summary>
@@ -187,7 +187,7 @@ Comprehensive offline documentation codex preloaded directly inside the operatin
 
 ---
 
-## ✦ System Architecture
+## System Architecture
 
 ```mermaid
 graph TB
@@ -236,7 +236,7 @@ graph TB
 
 ---
 
-## ✦ Environment & Stealth Profiles
+## Environment & Stealth Profiles
 
 ZOTHOS allows instantaneous switching between operational states with zero logout or reboot required:
 
@@ -264,7 +264,7 @@ flowchart TD
 
 ---
 
-## ✦ Sovereign Cryptographic Vault Engine
+## Sovereign Cryptographic Vault Engine
 
 The **Zoth Sovereign Vault** protects sensitive API keys, SSH credentials, private keys, and blockchain seeds. Decrypted secrets are injected directly into child process memory via RAM, ensuring zero secrets ever touch persistent disk storage.
 
@@ -309,7 +309,7 @@ zoth-vault
 
 ---
 
-## ✦ Frontier AI & Coding Agent Workstations
+## AI & Coding Agent Workstations
 
 ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 
@@ -327,7 +327,7 @@ ZOTHOS ships with an autonomous AI developer stack configured out-of-the-box:
 | **[Chain of Thoughts (`zoth-cot`)](https://github.com/NullAITech/chain-of-thoughts)** | `zoth-cot` | 100% Offline | Multi-turn working memory & cryptographic SHA-256 Merkle thought DAG (`N00 -> N01...`), auto-fact extraction (`IDENTITY`/`MEMORY`/`MISSION`/`SECRET`), and `winCoT` visual synaptic canvas. |
 | **[AZOTH Embodied Braille AI](https://github.com/NullAITech/zothos-lite)** | `winAgent` (`:8145`) | Hybrid (Ollama + 8 Providers) | Animated `U+2800` Braille & Bayer Dither AI Agent with 6 full-body mood rigs, real-time mouth phoneme lip-sync, Kokoro 82M ONNX Neural TTS (`af_bella`, `am_adam`), and full-duplex mic STT. |
 
-### ◈ Chain of Thoughts (`zoth-cot`) — Cryptographic Working Memory DAG
+### Chain of Thoughts (`zoth-cot`) — Cryptographic Working Memory DAG
 To eliminate stateless context loss across local Ollama (`qwen2.5-coder`) and cloud LLM providers, ZOTHOS includes **[Chain of Thoughts (`1nc0gn30/chain-of-thoughts`)](https://github.com/NullAITech/chain-of-thoughts)**:
 - **True Multi-Turn `/api/chat` Context Assembly**: Injects pinned semantic facts + rolling 16-turn dialogue history into every model turn.
 - **Automatic Semantic Fact Extraction**: Parses user statements (`my name is...`, `codename is...`, `target is...`, `remember that...`) into persistent categorized memory tags (`IDENTITY`, `MEMORY`, `MISSION`, `SECRET`).
@@ -336,9 +336,9 @@ To eliminate stateless context loss across local Ollama (`qwen2.5-coder`) and cl
 
 ---
 
-## ✦ Sovereign Tool Matrix & Resident Loopback Daemons
+## Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux 3.3 integrates with Zoth Studio v2 to provide **43 interactive workstations across all 72 Studio tools** (53 in-browser + 19 local CLI):
+ZOTHOS Linux v3.4.0 integrates with [Zoth Studio](https://zoth.nullai.tech) across **75 open-source tool repositories and 22 resident loopback daemons**:
 
 ### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
@@ -376,7 +376,7 @@ Recent sovereign hardening cadences have ported key tools (`aeo-graph-engine`, `
 - **Triple-Viewport Automated Verification**: Headless Chrome tests verify 0 console errors and 0px horizontal overflow across mobile (390px), tablet (820px), and desktop (1425px).
 
 ### 3. Model Context Protocol (MCP) Server Architecture & 4-Tier Security Rings
-ZOTHOS Linux 3.3 implements the native **Model Context Protocol (MCP)** master catalog in `/etc/zothos/mcp-servers.json` managed via `zoth-mcp`. Tools are governed by strict mathematical privilege rings:
+ZOTHOS Linux v3.4.0 implements the native **Model Context Protocol (MCP)** master catalog in `/etc/zothos/mcp-servers.json` managed via `zoth-mcp`. Tools are governed by strict privilege rings:
 
 | Security Ring | Level | Isolation Boundary | Assigned MCP Servers |
 | :--- | :--- | :--- | :--- |
@@ -404,7 +404,7 @@ See the complete 72-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 
 ---
 
-## ✦ Built-in Tools & Applications
+## Built-in Tools & Applications
 
 ### 1. Active Directory & Enterprise Red Team
 - **`certipy` / `certipy-ad`**: Active Directory Certificate Services (AD CS) enumeration and abuse tool (ESC1–ESC13).
@@ -415,10 +415,10 @@ See the complete 72-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 - **`impacket-scripts` & `responder`**: Complete NTLM relaying, SMB capture, and RPC protocol manipulation.
 - **`evil-winrm` & `netexec`**: Modern Windows remote execution and post-exploitation.
 
-### 2. Next-Gen Web Recon & Attack Surface
+### 2. Web Recon & Attack Surface
 - **`httpx`**: ProjectDiscovery multi-purpose HTTP probe toolkit (resolutions, ports, TLS, status, technology detection).
 - **`subfinder`**: Fast passive subdomain discovery aggregating 40+ OSINT sources.
-- **`katana`**: Next-generation crawler and spidering framework with headless browser parsing.
+- **`katana`**: Web crawler and spidering framework with headless browser parsing.
 - **`gowitness`**: Automated web screenshotting utility via headless Chromium for rapid visual triage.
 - **`trufflehog`**: High-entropy secret and private key scanner with live key verification across repos and filesystems.
 - **`caido`**: Modern, fast Rust-based intercepting proxy and web security suite.
@@ -437,7 +437,7 @@ See the complete 72-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_T
 
 ---
 
-## ✦ Installation & Live Boot
+## Installation & Live Boot
 
 ZOTHOS is delivered as a bootable hybrid ISO compatible with UEFI and legacy BIOS systems.
 
@@ -466,7 +466,7 @@ Features automated GPT partition initialization, dedicated 1GB FAT32 EFI System 
 
 ---
 
-## ✦ Global Hotkeys & Cheatsheet
+## Global Hotkeys & Cheatsheet
 
 | Shortcut / Command | Context | Action |
 | :--- | :--- | :--- |
@@ -489,7 +489,7 @@ Features automated GPT partition initialization, dedicated 1GB FAT32 EFI System 
 
 ---
 
-## ✦ Architecture & Build System
+## Architecture & Build System
 
 ZOTHOS is built using a customized Debian Live Build framework with surgical repository overlay:
 - `config/includes.chroot/`: In-tree root filesystem overlay for custom binaries, icon themes, Plasma configs, and systemd units.
@@ -497,22 +497,22 @@ ZOTHOS is built using a customized Debian Live Build framework with surgical rep
 - `build/pack-iso.sh`: High-density XZ SquashFS compressor and xorriso ISO packager.
 
 ---
- 
-## ✦ Verification & Security Status (honest)
+
+## Verification & Security Status
 
 What is in place today, and what is not:
 
 | Item | Status |
 | :--- | :--- |
-| **Release checksums** | ✅ SHA-256 published for every release. Detects corruption, not tampering. |
-| **Release signatures** | ✅ v3.2.0 and v3.4.0 ship `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
-| **Reproducible builds** | ⏳ In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
-| **OpenSSF Scorecard** | ✅ Workflow runs and publishes results (score was 1.0/10 at the Oct 2026 audit; fixes since then should raise it). |
-| **Static analysis** | ✅ CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
-| **SBOM** | ✅ SPDX + CycloneDX of the source tree on every push and release (`sbom.yml`). |
-| **OpenSSF Best Practices badge** | ❌ Not registered yet. |
-| **VirusTotal** | ❌ Not submitted (files are too large for VirusTotal). |
-| **Third-party audit** | An automated third-party audit (Scorecard, CodeQL, Semgrep, secret scanning, SBOM/vuln scans) was run in Oct 2026; its P0 findings are fixed in `main`. Not a human pentest. |
+| **Release checksums** | SHA-256 published for every release. Detects corruption, not tampering. |
+| **Release signatures** | v3.2.0 and v3.4.0 ship `SHA256SUMS.cosign.bundle`. `release-sign.yml` signs `SHA256SUMS` with Sigstore cosign (keyless, GitHub OIDC). v3.1.0 and earlier are checksums only. See [`docs/VERIFYING.md`](docs/VERIFYING.md). |
+| **Reproducible builds** | In progress: `SOURCE_DATE_EPOCH`, deterministic squashfs, optional snapshot.debian.org pin. Not bit-for-bit reproducible yet. See [`REPRODUCIBLE_BUILDS.md`](REPRODUCIBLE_BUILDS.md). |
+| **OpenSSF Scorecard** | Workflow runs and publishes results (`scorecard.yml`). |
+| **Static analysis** | CodeQL (JS/TS, Python, Actions) and Semgrep on every push. |
+| **SBOM** | SPDX + CycloneDX of the source tree on every push and release (`sbom.yml`). |
+| **OpenSSF Best Practices badge** | Not registered yet. |
+| **VirusTotal** | Not submitted (ISO artifacts exceed VirusTotal upload limits). |
+| **Third-party audit** | Automated static/supply-chain audit (Scorecard, CodeQL, Semgrep, Gitleaks, SBOM/vuln scans) with P0 findings resolved in `main`. Not a manual penetration test. |
 
 Known live-image defaults you should understand before using ZOTHOS on a real network
 (fixed passwords reset at boot, passwordless sudo) are documented in [`SECURITY.md`](SECURITY.md).
@@ -527,33 +527,27 @@ sha256sum --ignore-missing -c SHA256SUMS
 
 ---
 
-## ✦ License & Attributions
+## License & Attribution
 
-- **ZOTHOS Linux**: MIT — see LICENSE. Upstream components keep their own licenses.
+- **ZOTHOS Linux**: MIT — see `LICENSE`. Upstream components retain their own licenses.
 - **Website**: [zothos.nullai.tech](https://zothos.nullai.tech)
-- **Core Engine & Architecture**: Engineered by **NullAI Tech** ([nullai.tech](https://nullai.tech)).
+- **Engineering**: Engineered by **1nc0gn30** ([@1nc0gn30](https://github.com/1nc0gn30) · [1nc0gn30.si](https://1nc0gn30.si)) · [NullAI](https://nullai.tech).
+- **Support**: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
 - **Upstream Foundations**: Debian GNU/Linux, KDE Plasma, Kali Linux, and Parrot Security OS.
-
-<br />
-
-<div align="center">
-  <p><em>✦ Sovereign Mind. Sovereign Code. Sovereign Silicon. ✦</em></p>
-  <img src="assets/brand/zoth-mark.png" alt="Zoth Sigil" width="48" height="48" />
-</div>
 
 ---
 
-## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
+## ZothOS v3.4, Zoth Studio & Obsidian Second Brain Ecosystem
 
 ### Cross-Surface Integration Matrix
 
 | Surface | Endpoint / Binary | Capabilities |
 | :--- | :--- | :--- |
-| **Standalone Workstation** | `http://127.0.0.1:8137` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
-| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/zoth-os` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
+| **Standalone Workstation** | `http://127.0.0.1:8137` | Local status & build telemetry deck |
+| **Zoth Studio Showcase** | `https://zoth.nullai.tech/tools/zoth-os` | Ground-truth specification & local workflow reference |
 | **ZothOS v3.4 CLI & TUI** | `zoth-os` / `zoth-os-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
-| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
-| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio zoth-os.md`) |
+| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native window manager & terminal launcher ([zothos-lite.nullai.tech](https://zothos-lite.nullai.tech)) |
+| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio zoth-os.md`) |
 | **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
 
 ```bash
@@ -562,7 +556,8 @@ zoth-os --help
 zoth-os-tui --status
 zoth-os-tui --json
 
-# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
+# Verify Second Brain Vault on :8151
 zoth-obsidian-tracker --verify
 ```
+
 

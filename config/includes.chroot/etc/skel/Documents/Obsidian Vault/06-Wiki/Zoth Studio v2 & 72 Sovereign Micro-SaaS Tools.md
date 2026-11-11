@@ -40,7 +40,7 @@ flowchart TD
         Free["All Tools 100% Unlocked by Default ($0.00)"]
         Coffee["☕ Buy Us a Coffee (Stripe Checkout)"]
         Solana["Solana Wallet Tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)"]
-        Attribution["Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"]
+        Attribution["Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform"]
     end
     
     StudioFrontend --> SovereignTools
@@ -55,13 +55,13 @@ flowchart TD
 Every tool within the 72-tool catalog functions genuinely. AST transformations, SVG transpilations, cryptographic key generations, and WCAG/APCA contrast math execute client-side or communicate with local sovereign loopback daemons (`127.0.0.1`). There are zero fake `setTimeout` placeholders or canned mock responses.
 
 ### 2. Directive 3 Support Architecture (Zero Paywalls)
-In accordance with Neal Frazier Tech Autonomous Directive 3:
+In accordance with 1nc0gn30 Autonomous Directive 3:
 - **Zero Paywalls**: Never gate functionality behind paywalls, blurred output masks (`filter: blur(...)`), license key modals, or feature paywalls.
 - **Unencumbered Utility**: Copying payloads, exporting CSV matrices, downloading SVG diagrams, and generating production configurations run unconditionally.
 - **Support Rails**: Non-intrusive support options are provided across all footers and headers:
   - **Stripe "Buy Us a Coffee"**: `https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X`
   - **Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
-- **Professional Attribution**: `Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform`.
+- **Professional Attribution**: `Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform`.
 
 ### 3. Key Tool Highlights (Updated Nov 8, 2026)
 - **WCAG & APCA Contrast Guard Studio (`:8099`)**: Real WCAG 2.2 AA/AAA luminance contrast, APCA-W3 0.98G-4g perceptual lightness contrast ($L_c$), 8-deficiency Color Vision Deficiency simulation, CIEDE2000 auto-remediation, Focus Appearance (SC 2.4.13), and Target Size (SC 2.5.8) checkers. Integrated into Studio at `/tools/wcag-contrast-guard`.

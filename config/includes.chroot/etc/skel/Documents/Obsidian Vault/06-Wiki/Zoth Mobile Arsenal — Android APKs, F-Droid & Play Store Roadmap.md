@@ -15,7 +15,7 @@ status: "CANONICAL"
 > The **Zoth Mobile Arsenal** comprises **9 native and hybrid Android applications** (28 compiled `.apk` binaries across ARM64, ARMv7, x86, x86_64, and Wear OS) plus **8 mobile-first PWAs** across the `1nc0gn30` and `NullAITech` GitHub organizations. This canonical architectural specification documents every application's `applicationId`, SDK targets, permissions, cryptographic signing status, and the **3-Track Distribution Roadmap**:
 > 1. **Track 1 — Official F-Droid Main Repository (`gitlab.com/fdroid/fdroiddata`)**
 > 2. **Track 2 — Sovereign Self-Hosted F-Droid Repository (`https://fdroid.nullai.tech/repo`)**
-> 3. **Track 3 — Google Play Store Production (`Neal Frazier Tech` Organization Console)**
+> 3. **Track 3 — Google Play Store Production (`1nc0gn30` Organization Console)**
 
 ## Conceptual Distribution Architecture
 
@@ -36,7 +36,7 @@ flowchart LR
     subgraph Distribution["🚀 3-Track Release Pipeline"]
         SovereignFDroid["⚡ Track 2: Sovereign F-Droid<br/>(fdroid.nullai.tech/repo)<br/>All 9 Apps Immediate"]
         OfficialFDroid["🟢 Track 1: Official F-Droid<br/>(fdroiddata GitLab)<br/>100% FOSS Reproducible"]
-        GooglePlay["🔵 Track 3: Google Play Store<br/>(Neal Frazier Tech DUNS)<br/>AAB + Target SDK 35"]
+        GooglePlay["🔵 Track 3: Google Play Store<br/>(1nc0gn30 DUNS)<br/>AAB + Target SDK 35"]
     end
 
     Arsenal --> SovereignFDroid

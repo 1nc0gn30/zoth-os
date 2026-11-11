@@ -35,7 +35,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- DePay Web3 Payments Widget v13 -->
+  <!-- Solana Tip Payments Widget v13 -->
 
   <!-- Schema.org JSON-LD Graph for Frontier Crawlers & SGE -->
   <script type="application/ld+json">
@@ -91,7 +91,7 @@
             "name": "What payment rails are supported for founding licenses?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Founding member lifetime licenses ($19 vs $79 regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the DePay Solana Web3 payment widget."
+              "text": "Founding member lifetime licenses (100% Free regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the Solana Tip Web3 payment widget."
             }
           }
         ]
@@ -687,7 +687,7 @@
     <span>⚡ Autonomous Agent Policy Broker & Capability Leaser</span>
     <span class="funnel-price"><del>$79</del> $19 Lifetime</span>
     <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" id="bannerStripeBtn">Instant Stripe Checkout</a>
-    <button class="funnel-btn funnel-btn-solana btn-depay-trigger" id="btn-depay-solana" onclick="initiateDePayCheckout()">Web3 Solana Rail ($19)</button>
+    <button class="funnel-btn funnel-btn-solana btn-solana-tip" id="btn-solana-tip" onclick="copySolanaTipAddress()">Web3 Solana Rail ($19)</button>
     <a href="javascript:void(0)" id="btn-open-license-modal" onclick="promptLicenseKey()" class="funnel-link">Have Key?</a>
   </div>
 
@@ -859,7 +859,7 @@
             </p>
             <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
               <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" style="padding:8px 16px;">☕ Buy Us a Coffee</a>
-              <button class="funnel-btn funnel-btn-solana btn-depay-trigger" onclick="initiateDePayCheckout()">Solana Web3 ($19)</button>
+              <button class="funnel-btn funnel-btn-solana btn-solana-tip" onclick="copySolanaTipAddress()">Solana Web3 ($19)</button>
               <button class="btn-outline" onclick="promptLicenseKey()">Activate License</button>
             </div>
           </div>
@@ -900,7 +900,7 @@
       </ul>
       <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
         <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" style="flex:1;text-align:center;justify-content:center;padding:10px;">☕ Buy Us a Coffee (Stripe)</a>
-        <button class="funnel-btn funnel-btn-solana btn-depay-trigger" style="flex:1;justify-content:center;" onclick="initiateDePayCheckout()">Pay with Solana</button>
+        <button class="funnel-btn funnel-btn-solana btn-solana-tip" style="flex:1;justify-content:center;" onclick="copySolanaTipAddress()">Pay with Solana</button>
       </div>
 
       <div style="margin-top:14px;margin-bottom:16px;padding-top:14px;border-top:1px solid var(--border-subtle);">
@@ -1073,10 +1073,10 @@
     };
     window.openLicenseModal = openProModal;
 
-    function initiateDePayCheckout() {
-      if (window.DePayButtons && typeof window.DePayButtons.init === 'function') {
+    function copySolanaTipAddress() {
+      if (window.SolanaTipButtons && typeof window.SolanaTipButtons.init === 'function') {
         try {
-          window.DePayButtons.init({
+          window.SolanaTipButtons.init({
             integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
             receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
             amount: 19,

@@ -441,7 +441,7 @@
     }
   };
 
-  window.triggerDePayCheckout = function () {
+  window.triggerSolana DirectCheckout = function () {
     const solanaAddress = "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK";
     navigator.clipboard.writeText(solanaAddress).then(() => {
       showNotification("Solana Receiver Address Copied: " + solanaAddress);

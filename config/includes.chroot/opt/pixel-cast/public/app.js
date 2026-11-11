@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const solTipAddr = document.getElementById('solTipAddr');
 
-  let currentTargetIp = '100.106.39.46';
+  let currentTargetIp = '100.64.0.20';
   let isStreamActive = false;
   let ws = null;
 

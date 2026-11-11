@@ -1,7 +1,7 @@
 ---
 title: "Zoth OS v3.4 — Sovereign Linux Workstation & Live ISO"
 date: 2026-11-08
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon
@@ -39,7 +39,7 @@ stdp_weight: 0.99
 | **Mirror GitHub Repo** | [https://github.com/1nc0gn30/zoth-os](https://github.com/1nc0gn30/zoth-os) (`main`) |
 | **Official Website** | `~/NullAITech/zoth-os-website` → [https://zothos.nullai.tech](https://zothos.nullai.tech) |
 | **Chroot Skeleton Path** | `~/NullAITech/zoth-os/config/includes.chroot/` (synced with [[Repo vs Live OS]]) |
-| **Architect** | Neal Frazier (`@1nc0gn30`) • [NullAI Platform](https://nullai.tech) • [nealfrazier.tech](https://nealfrazier.tech) |
+| **Architect** | 1nc0gn30 (`@1nc0gn30`) • [NullAI Platform](https://nullai.tech) • [1nc0gn30.si](https://1nc0gn30.si) |
 
 ---
 

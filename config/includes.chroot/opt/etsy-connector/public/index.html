@@ -25,12 +25,12 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
 
-  <!-- DePay Web3 Solana Widget v13 -->
+  <!-- Solana Tip Solana Widget v13 -->
   <script>
     window.addEventListener('load', function() {
-      if (typeof window.DePayButtons !== 'undefined') {
-        window.DePayButtons.init({
-          selector: '.btn-depay-trigger',
+      if (typeof window.SolanaTipButtons !== 'undefined') {
+        window.SolanaTipButtons.init({
+          selector: '.btn-solana-tip',
           integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
           payload: {
             receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
@@ -689,7 +689,7 @@
       </div>
       <div class="banner-actions">
         <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" target="_blank" rel="noopener">Pay with Stripe ($19)</a>
-        <button type="button" id="btn-depay-solana" class="btn btn-solana btn-depay-trigger" onclick="triggerDePayCheckout()">⚡ Pay with Solana ($19)</button>
+        <button type="button" id="btn-solana-tip" class="btn btn-solana btn-solana-tip" onclick="triggerSolana DirectCheckout()">⚡ Pay with Solana ($19)</button>
         <button type="button" class="btn btn-outline" id="btn-open-license-modal" onclick="openPaywallModal('Sales Banner Activation')">Have Key? Activate</button>
       </div>
     </div>
@@ -840,7 +840,7 @@
               <p>Unlock 1-click JSON payloads for direct Printify webhooks, raw CSV matrix exports, and automated Etsy listing creation.</p>
               <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
                 <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" target="_blank" rel="noopener">⚡ Stripe Pay $19</a>
-                <button type="button" id="btn-depay-paywall" class="btn btn-solana btn-depay-trigger" onclick="triggerDePayCheckout()">◎ Solana $19</button>
+                <button type="button" id="btn-solana-tip-paywall" class="btn btn-solana btn-solana-tip" onclick="triggerSolana DirectCheckout()">◎ Solana $19</button>
                 <button type="button" id="btn-unlock-paywall" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openPaywallModal('Paywall Overlay')">✦ Enter Key</button>
               </div>
             </div>
@@ -905,7 +905,7 @@
       </ul>
       <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
         <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" style="flex: 1; min-width: 180px; justify-content: center;" target="_blank" rel="noopener">⚡ Pay with Stripe ($19)</a>
-        <button type="button" id="btn-depay-modal" class="btn btn-solana btn-depay-trigger" style="flex: 1; min-width: 180px; justify-content: center;" onclick="triggerDePayCheckout()">◎ Pay with Solana ($19)</button>
+        <button type="button" id="btn-solana-tip-modal" class="btn btn-solana btn-solana-tip" style="flex: 1; min-width: 180px; justify-content: center;" onclick="triggerSolana DirectCheckout()">◎ Pay with Solana ($19)</button>
       </div>
       <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--card-border);">
         <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">Already purchased? Enter your license key or receipt email:</div>
@@ -1212,7 +1212,7 @@
     }
 
     // Solana Tip Fallback
-    function triggerDePayCheckout() {
+    function triggerSolana DirectCheckout() {
       const solanaAddress = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
       navigator.clipboard.writeText(solanaAddress).then(() => {
         showToast('Solana Receiver Address Copied: ' + solanaAddress);

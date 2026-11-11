@@ -54,7 +54,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
     print("  🎙️ ZOTH AGENT LIVE VOICE CALL STATION • PORT 8114")
     print("=" * 70)
     print(f"  • Web Call Cockpit:   http://{args.host}:{args.port}/call")
-    print(f"  • Tailscale Network:  http://100.106.132.5:{args.port}/call")
+    print(f"  • Tailscale Network:  http://100.64.0.10:{args.port}/call")
     print(f"  • Kokoro Voice Engine: {kokoro_status}")
     print(f"  • Available Voices:   {', '.join(VOICES.keys())}")
     print("=" * 70 + "\n")

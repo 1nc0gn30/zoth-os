@@ -180,7 +180,7 @@ blocked on the missing 0.5.0 source; PWA (D6) is the judge-facing client.
 
 ## 2026-10-26 (Relay LIVE + end-to-end verified)
 
-- FieldKit relay RUNNING from Desktop copy on `100.106.132.5:8770` (+ loopback),
+- FieldKit relay RUNNING from Desktop copy on `100.64.0.10:8770` (+ loopback),
   detached, health OK. Old mobile relay on :8766 untouched. Config/token/audit
   in `relay-runtime/` (0600 token `pixel`, mobile profile).
 - Live Wonder planner VERIFIED (was flagged unverified): 8-step mower plan,
@@ -218,7 +218,7 @@ blocked on the missing 0.5.0 source; PWA (D6) is the judge-facing client.
   Live braille eyes-view (luminance -> Bayer 4x4 ordered dither -> braille
   2x4 cells, animated from phone + glasses frames), real compass heading
   (accel+magnetometer). Rebuilt + reinstalled to Pixel, running.
-- Phone PROVED able to open relay sessions (audit: pixel @100.106.39.46).
+- Phone PROVED able to open relay sessions (audit: pixel @100.64.0.20).
   Glasses still gated on APPLICATION_ID registration (Neal) — "no eligible
   device" is that gate, not a code bug. Spatial audio: compass is real now;
   voice-focus/DoA honestly staged (wearer push-to-talk today; DAT audio
@@ -331,7 +331,7 @@ blocked on the missing 0.5.0 source; PWA (D6) is the judge-facing client.
   never run here: it displays the token). Rebuilt (7.6 MB) + reinstalled to
   Pixel, launches clean. Relay start on :8770 still pending vault unlock.
 
-- 2026-10-26 late (ET): vault unlocked by Neal. Relay :8770 restarted on current FieldKit code (nullai-fieldkit .venv, runtime config/token/audit unchanged). Scratch-port proof first, then swap. Verified: health on 127.0.0.1 + 100.106.132.5, live WS guide session (trio safety-first, real Spark answer), audit session open/closed. MCP tools shipped 513178c; Spotter APK carries DAT APPLICATION_ID=0 (Developer Mode) — awaiting Neal glasses taps.
+- 2026-10-26 late (ET): vault unlocked by operator. Relay :8770 restarted on current FieldKit code (nullai-fieldkit .venv, runtime config/token/audit unchanged). Scratch-port proof first, then swap. Verified: health on 127.0.0.1 + 100.64.0.10, live WS guide session (trio safety-first, real Spark answer), audit session open/closed. MCP tools shipped 513178c; Spotter APK carries DAT APPLICATION_ID=0 (Developer Mode) — awaiting operator glasses taps.
 
 ## 2026-10-27 (D2) — stopping point
 - MCP agent tools live: see_now / say / mission_status / advance_step (nullai-fieldkit 513178c); shared mission store across REST/WS/MCP.

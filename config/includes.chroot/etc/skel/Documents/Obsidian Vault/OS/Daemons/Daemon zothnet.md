@@ -1,7 +1,7 @@
 ---
 title: "zothnet-daemon"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 tags: [os, daemon, zothnet, mesh]
 aliases: ["zothnet_daemon", "zothnet-daemon"]
 port: 9900

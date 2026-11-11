@@ -4,7 +4,7 @@ REM Description: Searches LinkedIn profiles by title/location keyword, inspects 
 REM Tags: networking, b2b, outreach, linkedin
 REM Variables: SEARCH_QUERY, OUTPUT_SCREENSHOT
 
-VAR SEARCH_QUERY=Founder Virginia Beach
+VAR SEARCH_QUERY=Founder Austin
 VAR OUTPUT_SCREENSHOT=linkedin_results.png
 
 LOG Launching LinkedIn Outreach Workflow for '$SEARCH_QUERY'

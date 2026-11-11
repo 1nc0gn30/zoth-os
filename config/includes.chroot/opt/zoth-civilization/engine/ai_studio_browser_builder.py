@@ -36,9 +36,9 @@ DOWNLOADS_DIR = AZOTH_ROOT / "sandbox" / "downloads"
 
 
 def build_app_prompt(business: Dict[str, Any]) -> str:
-    name = business.get("name", "Crown Valet of Virginia Beach")
+    name = business.get("name", "Crown Valet of Austin")
     niche = business.get("niche", "Valet & Luxury Transport")
-    city = business.get("city", "Virginia Beach")
+    city = business.get("city", "Austin")
     state = business.get("state", "VA")
     hook = business.get("hook", "Curbside luxury vehicle dispatch and VIP private event valet management.")
 
@@ -260,11 +260,11 @@ class AiStudioAutomator:
 if __name__ == "__main__":
     automator = AiStudioAutomator()
     sample = {
-        "name": "Crown Valet of Virginia Beach",
+        "name": "Crown Valet of Austin",
         "niche": "Valet & Luxury Transport",
-        "city": "Virginia Beach",
+        "city": "Austin",
         "state": "VA",
-        "hook": "Curbside luxury vehicle dispatch and VIP private event valet management across Virginia Beach."
+        "hook": "Curbside luxury vehicle dispatch and VIP private event valet management across Austin."
     }
 
     # Step 1: Submit prompt

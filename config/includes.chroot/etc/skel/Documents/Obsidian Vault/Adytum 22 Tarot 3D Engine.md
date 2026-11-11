@@ -1,7 +1,7 @@
 ---
 title: "Adytum 22 Major Arcana 3D Tarot Diorama & Trials Engine"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon

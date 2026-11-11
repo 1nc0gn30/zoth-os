@@ -1,7 +1,7 @@
 ---
 title: "Public Surfaces, Domains & Android APK Ecosystem"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon
@@ -21,7 +21,7 @@ stdp_weight: 0.99
 
 # 🌐 Public Surfaces, Production Domains & Android APK Ecosystem
 
-Canonical directory of live production web properties, custom domains, GitHub organizations, and signed Android APK / multi-platform binary releases engineered by **Neal Frazier (`@1nc0gn30`) • Neal Frazier Tech • NullAI Platform**.
+Canonical directory of live production web properties, custom domains, GitHub organizations, and signed Android APK / multi-platform binary releases engineered by **1nc0gn30 (`@1nc0gn30`) • 1nc0gn30 • NullAI Platform**.
 
 ---
 
@@ -31,7 +31,7 @@ Canonical directory of live production web properties, custom domains, GitHub or
 | :--- | :--- | :--- | :--- |
 | **1nc0gn30 Sovereign Hub** | [https://1nc0gn30.si](https://1nc0gn30.si) | `~/NullAITech/sites/1nc0gn30-si` (`1nc0gn30/nealsvision`) | 360° Volumetric Character Shader Stage (Hybrid, Braille, Dither, ASCII, 3D Voxel), [[World of Zoth]] (`game.html` + `world-of-zoth.apk`), FieldKit (`fieldkit.html`), 72-Tool Directory |
 | **GitHub × 1nc0gn30 Collab Portal** | [https://1nc0gn30.github.io](https://1nc0gn30.github.io) | `~/NullAITech/1nc0gn30.github.io` (`1nc0gn30/1nc0gn30.github.io`) | Interactive 3D WebGL + Unicode `U+2800` Braille & Bayer 8×8 Dither Octo-Merkaba Core, 52-week contribution matrix, ecosystem funnel |
-| **Neal Frazier Tech Hub** | [https://nealfrazier.tech](https://nealfrazier.tech) | `~/NullAITech/nealfrazier-tech-build` | Personal & professional AI, full-stack, and security engineering hub |
+| **1nc0gn30 Hub** | [https://1nc0gn30.si](https://1nc0gn30.si) | `~/NullAITech/1nc0gn30-si` | Personal & professional AI, full-stack, and security engineering hub |
 | **757 Tech Pro** | [https://757tech.pro](https://757tech.pro) | `~/NullAITech/sites` | Hampton Roads (`757`) technical engineering & edge AI portal |
 | **NullAI Platform Hub** | [https://nullai.tech](https://nullai.tech) | `~/NullAITech/nullai2026` (`1nc0gn30/nullai2026`) | Ghost Byte 3D Engine, 72 Open-Access Tools, ZothOS v3.4 + Lite v1.1, Pantheon 21, Adytum 22, `/manifest.json`, `/llms.txt` |
 | **Zoth Studio v2** | [https://zoth.nullai.tech](https://zoth.nullai.tech) | `~/NullAITech/zoth-studio-v2` (`NullAITech/zoth-studio-v2`) | 72-Tool God-Mode Workstation, 8-Planet 3D Star System (`/world`), Pantheon 21, Adytum 22 Tarot 3D Engine (`/adytum`), Second Brain (`/memory`) |
@@ -61,7 +61,7 @@ All Android packages are built reproducibly via Android SDK Build-Tools (`aapt2`
 ## 3. 8-Point Pre-Deployment Production Guardrail
 
 Every public surface enforces the **8-Point Sovereign Production Guardrail**:
-1. **AEO & SEO Schema.org `@graph`** (`WebApplication` / `SoftwareApplication` + `FAQPage`, creator `Neal Frazier / 1nc0gn30`).
+1. **AEO & SEO Schema.org `@graph`** (`WebApplication` / `SoftwareApplication` + `FAQPage`, creator `1nc0gn30 / 1nc0gn30`).
 2. **`robots.txt` & `sitemap.xml`** explicitly allowing `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Googlebot`, `Applebot` with `0` crawl delay.
 3. **Netlify Security & SPA Redirects** (`X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `/* /index.html 200`).
 4. **Media Hygiene & Accessibility** (100% descriptive `alt` attributes and labeled interactive controls).

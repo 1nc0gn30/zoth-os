@@ -30,7 +30,7 @@ def get_candidate_hosts() -> list[str]:
     hosts.extend([
         "http://127.0.0.1:8790",
         "http://192.168.122.1:8790",
-        "http://100.125.220.102:8790",
+        "http://100.64.0.10:8790",
         "http://10.88.0.1:8790",
         "http://172.17.0.1:8790",
         "http://host.containers.internal:8790",

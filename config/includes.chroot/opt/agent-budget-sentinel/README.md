@@ -44,8 +44,8 @@ Autonomous AI agents running recursive tool loops, multi-agent debates, and self
    - Interactive Try-Before-You-Buy token cost calculator.
    - Emergency operator kill switch and burst test simulation harness.
 5. **Dual Cash Registers & Monetization Funnel**:
-   - Above-the-fold high-converting sales banner ($19 founding lifetime vs $79 regular).
-   - Stripe & DePay Solana instant activation rails.
+   - Above-the-fold high-converting sales banner (100% free open-access).
+   - Stripe & Solana Tip instant activation rails.
    - Frosted glass output paywall over advanced multi-agent quota hierarchy modes.
 
 ---

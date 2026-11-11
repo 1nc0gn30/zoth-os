@@ -33,7 +33,7 @@ Running `pytest -v` verifies the `PixelDevice` and `StreamOptions` dataclasses, 
 ![Step 02 — Developer Automated Pytest Suite](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_02_dev_pytest_suite.jpg)
 
 ### Step 3: Live FastAPI REST API Contracts (`/health`, `/api/status`, `/api/target`)
-Querying `http://127.0.0.1:8148/health` and `/api/status` confirms `scrcpy`, `adb`, and `tailscale` binary readiness, inspects connected Tailscale mesh nodes (`ghost-a858f830` at `100.106.132.5`), and updates the active Pixel target IP via `POST /api/target`.
+Querying `http://127.0.0.1:8148/health` and `/api/status` confirms `scrcpy`, `adb`, and `tailscale` binary readiness, inspects connected Tailscale mesh nodes (`ghost-a858f830` at `100.64.0.10`), and updates the active Pixel target IP via `POST /api/target`.
 
 ![Step 03 — Developer REST API Contracts](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_03_dev_api_contracts.jpg)
 
@@ -47,7 +47,7 @@ Running `pixel-cast --help` lists all 13 subcommands (`status`, `connect`, `disc
 ![Step 04 — End-User CLI Help](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_04_user_cli_help.jpg)
 
 ### Step 5: Live Tailscale Mesh & Wireless ADB Status (`pixel-cast status`)
-Executing `pixel-cast status` and `pixel-cast --json status` reports the local ZothOS Tailscale node (`100.106.132.5`), target Pixel endpoint (`100.106.39.46:5555`), ADB wireless bridge state, and workstation URLs.
+Executing `pixel-cast status` and `pixel-cast --json status` reports the local ZothOS Tailscale node (`100.64.0.10`), target Pixel endpoint (`100.64.0.20:5555`), ADB wireless bridge state, and workstation URLs.
 
 ![Step 05 — End-User CLI Mesh Status](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_05_user_cli_mesh_status.jpg)
 
@@ -66,7 +66,7 @@ Opening `http://127.0.0.1:8148` presents the 6-card Bento workstation featuring 
 ![Step 07 — Standalone Workstation Initial View](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_07_standalone_gui_initial.jpg)
 
 ### Step 8: Standalone Workstation — 1-Tap QR Connect, Stream Tuners & Wireless ADB Pairing
-Scrolling down reveals the `Pixel 1-Tap QR Connect` matrix (`http://100.106.132.5:8148/mobile`), `Stream Configuration` (`1440p Quad HD`, `16 Mbps Master Quality`, `60 FPS`, Opus Audio Forwarding), and the `Wireless ADB Pairing Helper` for Android 11+ 6-digit pairing codes.
+Scrolling down reveals the `Pixel 1-Tap QR Connect` matrix (`http://100.64.0.10:8148/mobile`), `Stream Configuration` (`1440p Quad HD`, `16 Mbps Master Quality`, `60 FPS`, Opus Audio Forwarding), and the `Wireless ADB Pairing Helper` for Android 11+ 6-digit pairing codes.
 
 ![Step 08 — Standalone QR, Stream Tuners & Pairing](~/Documents/Obsidian%20Vault/Studio/Tools/Artifacts/pixel-cast/pixel-cast_08_standalone_gui_qr_and_prefs.jpg)
 

@@ -229,10 +229,10 @@ Target: http://127.0.0.1:8109
 
 ## 8. Sovereign Monetization & Pro Licensing
 
-- **Sales Funnel Banner**: Urgent lifetime founding pass ($19 vs $79 regular).
+- **Sales Funnel Banner**: Urgent lifetime founding pass (100% Free regular).
 - **Payment Rails**:
   - Stripe Checkout (Credit Card, Apple Pay, Google Pay).
-  - DePay Solana Payment Widget (Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8`, Solana receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
+  - Solana Tip Payment Widget (Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8`, Solana receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
 - **Instant Client-Side Activation**: Supports receipt email/license key activation and automatic URL parameter unlocking (`?licensed=true`), permanently persisting in `localStorage` and removing all paywall blurs.
 
 ---

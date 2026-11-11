@@ -28,7 +28,7 @@ SCENES = [
 CONFIG_YAML = """# ~/.config/zoth-relay/mobile/config.yaml (zothos v0.5.0)
 hosts:
   - 127.0.0.1
-  - 100.106.132.5
+  - 100.64.0.10
 port: 8766
 agents_file: ~/.config/zoth-relay/mobile/agents.yaml
 audit_log: ~/.local/state/zoth-relay-mobile/audit.log
@@ -86,7 +86,7 @@ class ZelaGuideHandler(http.server.SimpleHTTPRequestHandler):
                 "version": "0.5.0",
                 "name": "Zela Glasses Guide",
                 "mode": "Sovereign Wearable AI Mission Coach",
-                "tailscale_ip": "100.106.132.5",
+                "tailscale_ip": "100.64.0.10",
                 "relay_port": 8766,
                 "vision_engine": "moondream (local via Ollama :11434)",
                 "tts_engine": "kokoro v1.0 ONNX (24kHz neural)",

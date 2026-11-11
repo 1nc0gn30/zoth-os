@@ -125,8 +125,8 @@ def cmd_status(mgr: PixelCastManager, as_json: bool = False):
         print(f"  • Stream:          \033[1;30mIDLE\033[0m (Run `pixel-cast stream` to launch)")
 
     print(f"\n\033[1;34m[WEB STATION]\033[0m")
-    print(f"  • Workstation:     http://{self_node.get('ip', '100.106.132.5')}:8148")
-    print(f"  • Mobile Cast:     http://{self_node.get('ip', '100.106.132.5')}:8148/mobile\n")
+    print(f"  • Workstation:     http://{self_node.get('ip', '100.64.0.10')}:8148")
+    print(f"  • Mobile Cast:     http://{self_node.get('ip', '100.64.0.10')}:8148/mobile\n")
 
 
 def main():
@@ -309,7 +309,7 @@ def main():
 
     elif args.command == "qr":
         ts = mgr.get_tailscale_status()
-        self_ip = ts.get("self", {}).get("ip", "100.106.132.5")
+        self_ip = ts.get("self", {}).get("ip", "100.64.0.10")
         mobile_url = f"http://{self_ip}:8148/mobile"
         generate_terminal_qr(mobile_url)
 

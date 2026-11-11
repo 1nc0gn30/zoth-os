@@ -1,7 +1,7 @@
 ---
 title: "Zoth Civilization v3.5 & Pantheon 21 Character Engine"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon

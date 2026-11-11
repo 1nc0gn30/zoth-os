@@ -675,15 +675,15 @@
     document.querySelectorAll('.btn-solana-pay').forEach(btn => {
       btn.addEventListener('click', (e) => {
         if (e && e.preventDefault) e.preventDefault();
-        if (window.DePayButtons) {
+        if (window.SolanaTipButtons) {
           try {
-            window.DePayButtons.init({
+            window.SolanaTipButtons.init({
               integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
               container: document.body
             });
             return;
           } catch (err) {
-            console.warn('DePay widget initialization error:', err);
+            console.warn('Solana Direct widget initialization error:', err);
           }
         }
         window.open('https://solana.fm/address/GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');

@@ -1,3 +1,0 @@
-[console_scripts]
-azoth-agent = agent:main
-azoth-web = web_ui:main

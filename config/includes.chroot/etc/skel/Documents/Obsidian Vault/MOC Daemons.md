@@ -1,7 +1,7 @@
 ---
 title: "MOC · Conductor & Sovereign Loopback Daemons"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - moc

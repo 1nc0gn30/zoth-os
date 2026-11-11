@@ -50,9 +50,9 @@ main p {
 #salesBanner,
 #salesBanner span,
 #paywall-modal,
-.btn-depay-trigger,
-#btn-depay-solana,
-#btn-depay-modal,
+.btn-solana-tip,
+#btn-solana-tip,
+#btn-solana-tip-modal,
 #licenseBadge {
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1;

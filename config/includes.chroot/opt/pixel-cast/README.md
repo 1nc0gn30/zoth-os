@@ -19,11 +19,11 @@ Sharing a mobile device screen to a Linux desktop typically suffers from severe 
 
 **PixelCast eliminates all four pain points:**
 - **Zero Cloud & Zero Telemetry**: Operates 100% locally over private Tailscale WireGuard mesh tunnels.
-- **Auto-Discovery**: Queries local Tailscale status to detect the active Google Pixel (`pixel-10-pro` @ `100.106.39.46`) with live ICMP latency measurement (~40ms).
+- **Auto-Discovery**: Queries local Tailscale status to detect the active Google Pixel (`pixel-10-pro` @ `100.64.0.20`) with live ICMP latency measurement (~40ms).
 - **60fps Native Mirroring**: Orchestrates hardware-accelerated `scrcpy 5.0.1` with Opus audio forwarding, mouse/touch passthrough, screen-off battery preservation, and direct MP4 recording.
 - **Dual Mode**:
   - **Mode A (Desktop Mirror)**: Native high-FPS scrcpy mirror with hardware keyevent HUD (Back, Home, Recents, Power, Volume, Typer).
-  - **Mode B (In-Browser Mobile Companion)**: Instant QR Code scan on the Pixel opens `http://100.106.132.5:8148/mobile` for live camera lens streaming and instant file/photo drop to desktop.
+  - **Mode B (In-Browser Mobile Companion)**: Instant QR Code scan on the Pixel opens `http://100.64.0.10:8148/mobile` for live camera lens streaming and instant file/photo drop to desktop.
 
 ---
 
@@ -32,7 +32,7 @@ Sharing a mobile device screen to a Linux desktop typically suffers from severe 
 ```
 ┌─────────────────────────────────┐                 ┌──────────────────────────────────┐
 │      Google Pixel 10 Pro        │                 │        ZothOS Host Desktop       │
-│       (100.106.39.46)           │                 │         (100.106.132.5)          │
+│       (100.64.0.20)           │                 │         (100.64.0.10)          │
 │                                 │                 │                                  │
 │  • Developer Wireless Debugging │◄── Tailscale ──►│  • Tailscale Mesh Daemon         │
 │  • Port 5555 / Dynamic Pair     │   WireGuard     │  • Scrcpy 5.0.1 Video Engine     │
@@ -50,7 +50,7 @@ Open the PixelCast Workstation on port `8148`:
 ```bash
 pixel-cast serve --host 0.0.0.0 --port 8148
 ```
-Visit `http://127.0.0.1:8148` or `http://100.106.132.5:8148` on desktop.
+Visit `http://127.0.0.1:8148` or `http://100.64.0.10:8148` on desktop.
 
 ### 2. Connect Your Google Pixel
 Ensure both your Google Pixel and ZothOS desktop are connected to the same Tailscale network:
@@ -70,7 +70,7 @@ Open terminal QR code to connect from your Pixel:
 ```bash
 pixel-cast qr
 ```
-Point your Pixel camera at the displayed QR code to open `http://100.106.132.5:8148/mobile`.
+Point your Pixel camera at the displayed QR code to open `http://100.64.0.10:8148/mobile`.
 
 ---
 

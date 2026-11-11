@@ -45,9 +45,9 @@ button,
 #btn-export-cursor,
 #btn-export-all,
 #btn-header-key,
-#btn-depay-solana,
-#btn-depay-modal,
-.btn-depay-trigger {
+#btn-solana-tip,
+#btn-solana-tip-modal,
+.btn-solana-tip {
   transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
               background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
               border-color 140ms cubic-bezier(0.16, 1, 0.3, 1),

@@ -72,7 +72,7 @@
             "name": "What payment options are accepted for the Pro Founding Member license?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "You can purchase the $19 Lifetime Founding License using Stripe (Credit Cards, Apple Pay, Google Pay) or decentralized cryptocurrency via the DePay Solana widget."
+              "text": "You can purchase the $19 Lifetime Founding License using Stripe (Credit Cards, Apple Pay, Google Pay) or decentralized cryptocurrency via the Solana Tip widget."
             }
           }
         ]
@@ -105,7 +105,7 @@
         <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="btn btn-primary" id="btn-stripe-checkout" aria-label="Purchase Pro with Stripe">
           <span>★ ☕ Buy Us a Coffee (Stripe)</span>
         </a>
-        <button type="button" class="btn btn-solana btn-depay-trigger" id="btn-depay-solana" onclick="openDePayCheckout()" aria-label="Purchase Pro with Solana">
+        <button type="button" class="btn btn-solana btn-solana-tip" id="btn-solana-tip" onclick="copySolanaTipAddress()" aria-label="Purchase Pro with Solana">
           <span>◎ Solana Tip</span>
         </button>
         <button type="button" class="btn-link" id="btn-open-license-modal" onclick="openPaywallModal('Enter License Key')" aria-label="Activate License Key">
@@ -424,7 +424,7 @@
             <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="btn btn-primary" id="btn-overlay-stripe">
               <span>★ Unlock Pro via Stripe ($19)</span>
             </a>
-            <button type="button" class="btn btn-solana btn-depay-trigger" id="btn-overlay-solana" onclick="openDePayCheckout()">
+            <button type="button" class="btn btn-solana btn-solana-tip" id="btn-overlay-solana" onclick="copySolanaTipAddress()">
               <span>⚡ Unlock via Solana ($19)</span>
             </button>
             <button type="button" class="btn btn-outline" id="btn-overlay-key" onclick="openPaywallModal('Enter License Key')">
@@ -462,7 +462,7 @@
           <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener" class="btn btn-primary" id="modal-stripe-btn" style="flex: 1; min-width: 180px;">
             <span>★ ☕ Buy Us a Coffee (Stripe)</span>
           </a>
-          <button type="button" class="btn btn-solana btn-depay-trigger" id="modal-solana-btn" onclick="openDePayCheckout()" style="flex: 1; min-width: 180px;" aria-label="Pay with Solana Tip">
+          <button type="button" class="btn btn-solana btn-solana-tip" id="modal-solana-btn" onclick="copySolanaTipAddress()" style="flex: 1; min-width: 180px;" aria-label="Pay with Solana Tip">
             <span>⚡ Solana Pay ($19)</span>
           </button>
         </div>
@@ -489,8 +489,8 @@
           Instant automated Web3 payment or direct sovereign on-chain transfer.
         </p>
 
-        <button type="button" class="btn btn-solana" onclick="openDePayCheckout()" style="width: 100%; margin-bottom: 1rem; min-height: 48px;">
-          <span>⚡ Launch Interactive DePay Widget</span>
+        <button type="button" class="btn btn-solana" onclick="copySolanaTipAddress()" style="width: 100%; margin-bottom: 1rem; min-height: 48px;">
+          <span>⚡ Launch Interactive Solana Direct Widget</span>
         </button>
 
         <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;">

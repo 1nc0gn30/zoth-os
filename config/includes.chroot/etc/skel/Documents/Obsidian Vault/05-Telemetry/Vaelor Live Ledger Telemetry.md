@@ -65,7 +65,7 @@ flowchart TD
 | Handle | Display Name | Balance (◈ VLR) | Height | Guardians | Status |
 |:---|:---|:---:|:---:|:---|:---:|
 | `@treasury` | Vaelor Sovereign Treasury & Reserve | 98680 VLR | 9 | @neal, @zoth, @nullai | 🔒 Secured |
-| `@neal` | Neal Frazier (@1nc0gn30) | 82.095 VLR | 60 | @treasury, @zoth | 🔒 Secured |
+| `@1nc0gn30` | 1nc0gn30 (@1nc0gn30) | 82.095 VLR | 60 | @treasury, @zoth | 🔒 Secured |
 | `@zoth` | Zoth Studio & ZothOS Compute Node | 460366.085 VLR | 26290 | @neal, @treasury | 🔒 Secured |
 | `@sprig` | Sprig Kitchen • 757 Local Merchant | 8461.527 VLR | 199 | @neal, @zoth, @passkey_sprig_vault | 🔒 Secured |
 | `@citizen` | Sovereign Demo Wallet (Passkey Ready) | 7615.964842 VLR | 380 | @neal, @zoth, @passkey_backup_757 | 🔒 Secured |

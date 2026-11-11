@@ -35,7 +35,7 @@
 
 ## 💎 Key Capabilities
 
-- **Full-Duplex Encrypted Stream**: Connect Ray-Ban Meta Smart Glasses to your Linux workstation over Tailscale WireGuard (`100.106.132.5:8766/v1/guide/stream`).
+- **Full-Duplex Encrypted Stream**: Connect Ray-Ban Meta Smart Glasses to your Linux workstation over Tailscale WireGuard (`100.64.0.10:8766/v1/guide/stream`).
 - **Local Moondream Vision**: 1.34s ask-to-say latency with edge frame captioning via local Ollama (`moondream`).
 - **Persistent AGY Session Rolling**: Pre-warmed spare AGY session rolling with low-effort sub-second prompt caching.
 - **24kHz Kokoro ONNX Neural TTS**: Studio-quality voice synthesis (`af_heart`) running 100% in local volatile RAM.

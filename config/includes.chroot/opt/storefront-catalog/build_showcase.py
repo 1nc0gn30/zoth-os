@@ -103,7 +103,7 @@ html_content = f"""<!DOCTYPE html>
             "name": "What payment methods are accepted for commercial lifetime access?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "We accept credit cards, Apple Pay, and Google Pay via Stripe, as well as on-chain cryptocurrency payments via the DePay Solana gateway with zero processing friction."
+              "text": "We accept credit cards, Apple Pay, and Google Pay via Stripe, as well as on-chain cryptocurrency payments via the Solana Tip gateway with zero processing friction."
             }}
           }}
         ]
@@ -111,7 +111,7 @@ html_content = f"""<!DOCTYPE html>
     ]
   }}
   </script>
-  <script defer src="https://integrate.depay.com/widgets/v13.js"></script>
+  <script defer src=""></script>
 
   <style>
     :root {{
@@ -1238,7 +1238,7 @@ html_content = f"""<!DOCTYPE html>
             <span>💳 Checkout with Card / Apple Pay</span>
           </button>
           <button class="btn-solana" onclick="launchCheckout('solana')">
-            <span>◎ Pay with Solana (DePay Widget)</span>
+            <span>◎ Pay with Solana (Solana Direct Widget)</span>
           </button>
         </div>
 
@@ -1479,7 +1479,7 @@ html_content = f"""<!DOCTYPE html>
           <span>💳 Instant Checkout via Stripe ($19)</span>
         </button>
         <button class="btn-solana" onclick="launchCheckout('solana')">
-          <span>◎ Pay with Solana (DePay)</span>
+          <span>◎ Pay with Solana (Solana Direct)</span>
         </button>
       </div>
 
@@ -1731,8 +1731,8 @@ html_content = f"""<!DOCTYPE html>
       if (rail === 'stripe') {{
         window.open('https://buy.stripe.com/7sI7sA8hM2X8eFG8ww', '_blank');
       }} else if (rail === 'solana') {{
-        if (typeof DePayButtons !== 'undefined') {{
-          DePayButtons.init({{
+        if (typeof SolanaTipButtons !== 'undefined') {{
+          SolanaTipButtons.init({{
             integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
             payload: {{
               receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
@@ -1741,7 +1741,7 @@ html_content = f"""<!DOCTYPE html>
             }}
           }});
         }} else {{
-          window.open('https://depay.com/pay/428790dd-7ad1-407c-8ecf-c048c77a4cb8', '_blank');
+          window.open('', '_blank');
         }}
       }}
     }}

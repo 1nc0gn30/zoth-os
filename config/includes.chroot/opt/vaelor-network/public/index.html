@@ -1497,13 +1497,13 @@
         <h2>
           <span>⚡ Vaelor Validator & Merchant POS Pro Pass</span>
           <span class="price-strike">$79 Regular</span>
-          <span class="price-now">$19 Founding Lifetime</span>
+          <span class="price-now">$19 Open-Access</span>
         </h2>
         <p>Unlocks Full Genesis Validator Node Config, Unlimited Drop-In Protected-Pay Checkout SDK Exports, Custom `@domain` Handle Minting & Priority PoUW Multiplier.</p>
       </div>
       <div class="funnel-actions">
         <a class="btn btn-gold" href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer">💳 Unlock via Stripe ($19)</a>
-        <a class="btn btn-emerald" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer">◎ Pay with Solana (DePay)</a>
+        <a class="btn btn-emerald" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer">◎ Pay with Solana (Solana Direct)</a>
         <button class="btn btn-outline" id="bannerActivateBtn" type="button">Activate Key</button>
       </div>
     </section>
@@ -3347,11 +3347,11 @@
 
             <div class="pool-card">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-family:var(--font-mono);font-size:0.7rem;color:#c084fc;font-weight:700;">☀️ SOLANA DePay</span>
+                <span style="font-family:var(--font-mono);font-size:0.7rem;color:#c084fc;font-weight:700;">☀️ SOLANA Solana Direct</span>
                 <span style="font-family:var(--font-mono);font-size:0.68rem;color:#34d399;">Mainnet SPL</span>
               </div>
               <div style="font-family:var(--font-mono);font-size:1.05rem;font-weight:700;margin-top:4px;color:#fff;">25,000.00 SOL</div>
-              <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Peg: $180.00 USD • DePay Integration</div>
+              <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Peg: $180.00 USD • Solana Direct Integration</div>
             </div>
 
             <div class="pool-card">
@@ -3575,7 +3575,7 @@
                 Validator Genesis Config & Merchant POS SDK Locked
               </h4>
               <p style="font-size:0.82rem;color:#cbd5e1;max-width:440px;margin-bottom:14px;">
-                Unlock the complete federated validator configuration, P2P gossip keypair exporter, and white-label 1-line Merchant POS Checkout SDK with the $19 Founding Lifetime Pass.
+                Unlock the complete federated validator configuration, P2P gossip keypair exporter, and white-label 1-line Merchant POS Checkout SDK with the $19 Open-Access Pass.
               </p>
               <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
                 <a class="btn btn-gold" href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer">💳 Unlock via Stripe ($19)</a>
@@ -4068,7 +4068,7 @@
         </div>
         <div class="form-group">
           <label for="newDisplayNameInput">Display Name / Business Title</label>
-          <input class="input" id="newDisplayNameInput" type="text" placeholder="e.g. Virginia Beach Roasters" />
+          <input class="input" id="newDisplayNameInput" type="text" placeholder="e.g. Austin Roasters" />
         </div>
         <div class="form-group">
           <label for="newGuardiansInput">Social Recovery Guardians (2-of-3 Vault Recovery — No Seed Phrase Needed)</label>
@@ -4101,7 +4101,7 @@
       </ul>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
         <a class="btn btn-gold" href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer">💳 Checkout with Stripe ($19)</a>
-        <a class="btn btn-emerald" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer">◎ Pay with Solana (DePay)</a>
+        <a class="btn btn-emerald" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer">◎ Pay with Solana (Solana Direct)</a>
       </div>
       <div class="form-group">
         <label for="licenseKeyInput">Already Purchased? Enter Stripe Receipt Email or Pro License Key:</label>
@@ -7854,7 +7854,7 @@
         const rates = {
           VLR: { symbol: 'VLR', name: 'Vaelor L1 Sovereign Currency', usdRate: 1.00, rail: 'Vaelor Account-Lattice (Feeless L1 DAG)', icon: '◈', minAmount: 1.0, decimals: 2 },
           USD: { symbol: 'USD', name: 'US Dollar (Fiat / Stripe / Card)', usdRate: 1.00, rail: 'Stripe Direct Checkout (Apple Pay / Google Pay / Cards)', icon: '$', minAmount: 1.0, decimals: 2 },
-          SOL: { symbol: 'SOL', name: 'Solana (DePay / Phantom)', usdRate: 180.00, rail: 'Solana Mainnet (DePay Integration)', icon: '◎', minAmount: 0.01, decimals: 4 },
+          SOL: { symbol: 'SOL', name: 'Solana (Solana Direct / Phantom)', usdRate: 180.00, rail: 'Solana Mainnet (Solana Direct Integration)', icon: '◎', minAmount: 0.01, decimals: 4 },
           BTC: { symbol: 'BTC', name: 'Bitcoin (Lightning / Taproot)', usdRate: 95000.00, rail: 'Bitcoin Taproot / Lightning', icon: '₿', minAmount: 0.0001, decimals: 6 }
         };
         return { ok: true, rates };
@@ -7870,7 +7870,7 @@
         const rails = {
           VLR: 'Vaelor Account-Lattice (Feeless L1 DAG)',
           USD: 'Stripe Direct Checkout (Apple Pay / Google Pay / Cards)',
-          SOL: 'Solana Mainnet (DePay Integration)',
+          SOL: 'Solana Mainnet (Solana Direct Integration)',
           BTC: 'Bitcoin Taproot / Lightning'
         };
         const ZOTH_ECOSYSTEM_HANDLES = ['@zoth', '@1nc0gn30', '@treasury', '@sprig', '@citizen'];

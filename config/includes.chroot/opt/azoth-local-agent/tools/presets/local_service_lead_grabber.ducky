@@ -5,7 +5,7 @@ REM Tags: leads, b2b, sales, local-business, cold-outreach
 REM Variables: NICHE, LOCATION, OUTPUT_SCREENSHOT
 
 VAR NICHE=roofing contractors
-VAR LOCATION=Virginia Beach VA
+VAR LOCATION=Austin TX
 VAR OUTPUT_SCREENSHOT=local_leads_results.png
 
 LOG Opening Google Maps for Local Lead Discovery

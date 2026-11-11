@@ -51,7 +51,7 @@ Android Subsystem Commands:
   android install               Deploy APK to connected Android device / emulator via ADB
   android devices               List connected Android devices
 
-Attribution: Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+Attribution: 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """)
     sys.exit(1)
 

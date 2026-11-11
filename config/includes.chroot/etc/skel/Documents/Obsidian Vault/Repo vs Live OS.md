@@ -1,7 +1,7 @@
 ---
 title: "Repo vs Live OS — Bidirectional Chroot Sync Map"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon
@@ -26,7 +26,7 @@ Bidirectional synchronization reference between the **Live ZothOS v3.4 Desktop W
 ## 1. Synchronization Rules & Hardening Invariants
 
 1. **Zero-PII & Portable Paths**:
-   - All CLI launchers in `/usr/local/bin/`, `~/.local/bin/`, and `config/includes.chroot/usr/local/bin/` use `os.path.expanduser('~/NullAITech/...')` instead of hardcoded machine paths and attribute `Neal Frazier Tech (@1nc0gn30) • NullAI Platform`.
+   - All CLI launchers in `/usr/local/bin/`, `~/.local/bin/`, and `config/includes.chroot/usr/local/bin/` use `os.path.expanduser('~/NullAITech/...')` instead of hardcoded machine paths and attribute `1nc0gn30 (@1nc0gn30) • NullAI Platform`.
 2. **Deterministic Desktop Folder Sync (`pack-iso.sh` & `zoth-plasma-setup`)**:
    - `pack-iso.sh` wipes `chroot/etc/skel/Desktop` and `chroot/home/*/Desktop` before copying `config/includes.chroot/etc/skel/Desktop` so zero loose `.desktop` icons ever regress onto the Live ISO desktop.
    - `zoth-plasma-setup` enforces the 4 canonical folders (`01-AI-Agents-and-Dev`, `02-Security-and-Privacy`, `03-ZothOS-Daemons`, `04-Media-and-Utilities`) prior to Plasma/XFCE startup.

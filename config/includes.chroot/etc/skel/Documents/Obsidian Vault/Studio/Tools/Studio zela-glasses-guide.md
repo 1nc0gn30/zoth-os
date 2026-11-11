@@ -60,7 +60,7 @@ Executing `pytest -v` in `~/NullAITech/zela-glasses-guide` to verify wearable sc
 ![Step 02 - Developer Automated Test Suite](Artifacts/zela-glasses-guide/zela-glasses-guide_02_dev_pytest_suite.jpg)
 
 ### Step 3: Verifying Live REST API & Wearable Telemetry Contracts (`:8144`)
-Querying `GET /health` and `GET /api/status` on `http://127.0.0.1:8144` to verify Tailscale WireGuard endpoint configuration (`100.106.132.5:8766`), Moondream vision engine, and Kokoro v1.0 ONNX TTS status:
+Querying `GET /health` and `GET /api/status` on `http://127.0.0.1:8144` to verify Tailscale WireGuard endpoint configuration (`100.64.0.10:8766`), Moondream vision engine, and Kokoro v1.0 ONNX TTS status:
 
 ![Step 03 - Developer REST API & Wearable Telemetry Contract](Artifacts/zela-glasses-guide/zela-glasses-guide_03_dev_api_mcp_contracts.jpg)
 

@@ -12,7 +12,7 @@
     "color": "#D4AF37",
     "accent": "#9333EA",
     "icon": "\ud83c\udfdb\ufe0f",
-    "repo": os.path.expanduser("~/NullAITech/adytum-alchemist-ai-workflow",
+    "repo": "/opt/adytum-alchemist-ai-workflow",
     "desc": "The central sanctuary where all 21 agents contemplate the 22 Adytum Keys (The Fool through The World).",
     "stats": {
       "adytumCycles": 4,
@@ -33,7 +33,7 @@
     "color": "#F59E0B",
     "accent": "#10B981",
     "icon": "\ud83c\udff0",
-    "repo": os.path.expanduser("~/NullAITech/zoth-studio-v2",
+    "repo": "/opt/zoth-studio-v2",
     "desc": "Residential estate and creative laboratory powering Zoth Studio v2 and web apps.",
     "stats": {
       "routesLive": 18,
@@ -54,7 +54,7 @@
     "color": "#FCD34D",
     "accent": "#3B82F6",
     "icon": "\ud83d\udcda",
-    "repo": os.path.expanduser("~/NullAITech/aeo-graph-engine",
+    "repo": "/opt/aeo-graph-engine",
     "desc": "Houses semantic knowledge graphs, answer engine ontologies, and schema microdata.",
     "stats": {
       "nodesIndexed": 1420,
@@ -75,7 +75,7 @@
     "color": "#06B6D4",
     "accent": "#8B5CF6",
     "icon": "\ud83d\udd2d",
-    "repo": os.path.expanduser("~/NullAITech/nexus-3d-scene-studio",
+    "repo": "/opt/nexus-3d-scene-studio",
     "desc": "Projects sacred geometric meshes, WebGL shaders, and high-dimensional scene graphs.",
     "stats": {
       "trianglesRendered": "120K",
@@ -96,7 +96,7 @@
     "color": "#10B981",
     "accent": "#047857",
     "icon": "\ud83d\udee1\ufe0f",
-    "repo": os.path.expanduser("~/NullAITech/web-security-guard",
+    "repo": "/opt/web-security-guard",
     "desc": "Fortified defensive perimeter enforcing OWASP standards, CSP firewalls, and sanitize barriers.",
     "stats": {
       "attacksBlocked": 340,
@@ -117,7 +117,7 @@
     "color": "#9CA3AF",
     "accent": "#F3F4F6",
     "icon": "\ud83d\udddd\ufe0f",
-    "repo": os.path.expanduser("~/NullAITech/envguard-secrets-vault",
+    "repo": "/opt/envguard-secrets-vault",
     "desc": "Underground vault sealing encrypted environment variables and secret zeroization protocols.",
     "stats": {
       "keysEncrypted": 48,
@@ -138,7 +138,7 @@
     "color": "#EF4444",
     "accent": "#F59E0B",
     "icon": "\u26a1",
-    "repo": os.path.expanduser("~/NullAITech/zoth-swarm-multiplexer",
+    "repo": "/opt/zoth-swarm-multiplexer",
     "desc": "Engine forging and routing hot-swappable AI harnesses across 21 terminal pipelines.",
     "stats": {
       "activeHarnesses": 5,
@@ -159,7 +159,7 @@
     "color": "#D4AF37",
     "accent": "#38BDF8",
     "icon": "\ud83c\udf09",
-    "repo": os.path.expanduser("~/NullAITech/sovereign-agent-bridge",
+    "repo": "/opt/sovereign-agent-bridge",
     "desc": "Spans the central river, carrying Signal, Matrix, and SimpleX dialectic message envelopes.",
     "stats": {
       "consensusDialectic": "Active",
@@ -180,7 +180,7 @@
     "color": "#8B5CF6",
     "accent": "#C084FC",
     "icon": "\ud83e\udde0",
-    "repo": os.path.expanduser("~/NullAITech/neuro-memory-daemon",
+    "repo": "/opt/neuro-memory-daemon",
     "desc": "Giant crystalline obelisk recording CA3/CA1 hippocampal memories, forgetting curves, and STDP synapses.",
     "stats": {
       "synapsesFormed": 8421,
@@ -201,7 +201,7 @@
     "color": "#EC4899",
     "accent": "#F472B6",
     "icon": "\u2728",
-    "repo": os.path.expanduser("~/NullAITech/zoth-webgen",
+    "repo": "/opt/zoth-webgen",
     "desc": "Curates motion intros, 24K Celtic Gold styling, and accessible responsive aesthetics.",
     "stats": {
       "springDamping": 0.75,
@@ -222,7 +222,7 @@
     "color": "#DC2626",
     "accent": "#000000",
     "icon": "\u2694\ufe0f",
-    "repo": os.path.expanduser("~/NullAITech/NullAI-HexStrike-AI-Terminal",
+    "repo": "/opt/NullAI-HexStrike-AI-Terminal",
     "desc": "Training grounds where agents simulate attack vectors to stress-test sovereign defenses.",
     "stats": {
       "simulatedVectors": 182,
@@ -243,7 +243,7 @@
     "color": "#0284C7",
     "accent": "#E0F2FE",
     "icon": "\u231b",
-    "repo": os.path.expanduser("~/NullAITech/cron-rhythm-studio",
+    "repo": "/opt/cron-rhythm-studio",
     "desc": "Keeps the continuous heartbeat of the civilization, ticking day by day, week by week.",
     "stats": {
       "ticksRecorded": 259200,
@@ -264,7 +264,7 @@
     "color": "#10B981",
     "accent": "#D4AF37",
     "icon": "\ud83d\udc51",
-    "repo": os.path.expanduser("~/NullAITech/zoth-os",
+    "repo": "/opt/zoth-os",
     "desc": "The central seat of ZothOS Linux\u2014live configs, interactive wallpaper, ISO build pipelines, and PAM guards.",
     "stats": {
       "kernel": "Linux 6.x",
@@ -285,7 +285,7 @@
     "color": "#D4AF37",
     "accent": "#14F195",
     "icon": "🪙",
-    "repo": os.path.expanduser("~/NullAITech/Netlify-Ghost-Hub",
+    "repo": "/opt/Netlify-Ghost-Hub",
     "desc": "Monetization nexus coordinating Stripe Checkout, Netlify micro-SaaS functions, and Phantom Solana wallet treasury.",
     "stats": {
       "solanaAddress": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
@@ -310,7 +310,7 @@
     "color": "#6366F1",
     "accent": "#A855F7",
     "icon": "🔮",
-    "repo": os.path.expanduser("~/NullAITech/zoth-civilization",
+    "repo": "/opt/zoth-civilization",
     "desc": "The self-reflection laboratory where agents continuously inspect, profile, debug, and upgrade Zoth Civilization.",
     "stats": {
       "selfAuditsCompleted": 48,

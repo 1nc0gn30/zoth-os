@@ -9,7 +9,7 @@ Interactive guide to ZothOS:
 - ZothNet P2P Communication & Sovereign Agent Bridge
 - Modular Tool Installation (zoth-pull)
 
-Author: Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+Author: 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """
 
 import os
@@ -193,7 +193,7 @@ def main():
         print(f"  {GRAY}0.{RESET} Exit to Desktop / Shell\n")
 
         print(f"{GOLD}☕ Support Sovereign Development:{RESET} {CYAN}https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X{RESET}")
-        print(f"{GRAY}Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform{RESET}\n")
+        print(f"{GRAY}Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform{RESET}\n")
 
         choice = input(f"{GOLD}Enter choice [0-6]: {RESET}").strip()
         if choice == '1':

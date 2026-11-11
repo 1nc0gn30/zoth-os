@@ -47,7 +47,7 @@ def main():
   ducky_cli.py --preset x_post --var POST_TEXT="Deploying a-bot v2 🦆✨"
 
   # Run from file
-  ducky_cli.py --file tools/presets/linkedin_outreach.ducky -v SEARCH_QUERY="CTO Virginia Beach"
+  ducky_cli.py --file tools/presets/linkedin_outreach.ducky -v SEARCH_QUERY="CTO Austin"
 
   # Validate syntax without execution
   ducky_cli.py --file tools/presets/google_scrape.ducky --validate

@@ -2083,9 +2083,9 @@ class VaelorLatticeNode {
       },
       SOL: {
         symbol: 'SOL',
-        name: 'Solana (DePay / Phantom)',
+        name: 'Solana (Solana Direct / Phantom)',
         usdRate: 180.00,
-        rail: 'Solana Mainnet (DePay Integration ID 428790dd-7ad1-407c-8ecf-c048c77a4cb8)',
+        rail: 'Solana Mainnet (Solana Direct Integration ID 428790dd-7ad1-407c-8ecf-c048c77a4cb8)',
         icon: '◎',
         minAmount: 0.01,
         decimals: 4

@@ -135,7 +135,7 @@ class TestVariables:
     def test_parse_var_declaration(self):
         assert parse_var_declaration("SEARCH=hvac contractors") == ("SEARCH", "hvac contractors")
         assert parse_var_declaration('POST_TEXT="Hello World"') == ("POST_TEXT", "Hello World")
-        assert parse_var_declaration("CITY = 'Virginia Beach'") == ("CITY", "Virginia Beach")
+        assert parse_var_declaration("CITY = 'Austin'") == ("CITY", "Austin")
         assert parse_var_declaration("UNSET_VAR") == ("UNSET_VAR", "")
 
     def test_expand_variables_simple(self):

@@ -4,7 +4,7 @@ REM Description: Navigates to Google, types search keyword with human cadence, e
 REM Tags: search, seo, research, scraping
 REM Variables: SEARCH_TERM, OUTPUT_SCREENSHOT
 
-VAR SEARCH_TERM=HVAC contractors Virginia Beach VA
+VAR SEARCH_TERM=HVAC contractors Austin TX
 VAR OUTPUT_SCREENSHOT=google_serp_results.png
 
 LOG Navigating to Google Search

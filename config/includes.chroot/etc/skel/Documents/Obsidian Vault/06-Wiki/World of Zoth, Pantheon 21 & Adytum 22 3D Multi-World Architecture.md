@@ -1,7 +1,7 @@
 ---
 title: "World of Zoth, Pantheon 21 & Adytum 22 3D Multi-World Architecture"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - wiki

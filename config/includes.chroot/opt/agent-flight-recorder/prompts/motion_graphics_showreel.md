@@ -64,5 +64,5 @@ Sound Effect: Resonant cinematic analog chord and warm sub-bass resolve.
   1. Scrub session timelines 0:00 to N:NN with synchronized terminal output.
   2. Map network egress endpoints and memory engrams at exact milliseconds.
   3. Generate voice incident briefings ready for Kokoro TTS (:9394).
-[00:22 - 00:30] Resolution & 1-Click Bundle Export: Export self-contained HTML incident files to share with your team. Get founding lifetime access for $19 today.
+[00:22 - 00:30] Resolution & 1-Click Bundle Export: Export self-contained HTML incident files to share with your team. 100% free and open-access.
 ```

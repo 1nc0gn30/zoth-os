@@ -1,7 +1,7 @@
 ---
 title: "Zoth Studio v2 — 72-Tool Sovereign AI Workstation & 3D World"
 date: 2026-11-08
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon

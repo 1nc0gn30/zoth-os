@@ -1,7 +1,7 @@
 ---
 title: "ZothOS-Lite v1.1 — A100 3D Web Desktop & Window Manager"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon
@@ -36,7 +36,7 @@ Lightweight (`<800 MB RAM` / `958 MB` container footprint) browser-native and Do
 | **Website Repository** | `~/NullAITech/zoth-os-website` → [https://zothos.nullai.tech](https://zothos.nullai.tech) |
 | **Local Loopback Daemon** | `http://127.0.0.1:8145` (`PORT=8145 node server.js`) |
 | **Public Web Desktop** | [https://zothos.nullai.tech](https://zothos.nullai.tech) (`#lite` interactive preview & standalone mode) |
-| **Architect** | Neal Frazier (`@1nc0gn30`) • [NullAI Platform](https://nullai.tech) |
+| **Architect** | 1nc0gn30 (`@1nc0gn30`) • [NullAI Platform](https://nullai.tech) |
 
 ---
 

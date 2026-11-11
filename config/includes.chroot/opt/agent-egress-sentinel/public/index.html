@@ -25,7 +25,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
   <link rel="apple-touch-icon" href="/assets/icon.png">
 
-  <!-- DePay Solana Payment Widget SDK -->
+  <!-- Solana Tip Payment Widget SDK -->
 
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -869,7 +869,7 @@
               ★ Instant Unlock via Stripe ($19)
             </a>
             <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer" class="btn-purple" style="justify-content: center; padding: 8px; text-decoration: none; display: flex; align-items: center;" onclick="window.payWithSolana(event)">
-              ● Pay with Solana (DePay)
+              ● Pay with Solana (Solana Direct)
             </a>
             <button id="btnKeyOverlay" onclick="window.openProModal()" style="background: none; border: none; color: var(--text-dim); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 4px;">
               Already purchased? Enter License Key or Receipt Email
@@ -907,7 +907,7 @@
       </div>
 
       <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 16px;">
-        <span style="font-size: 11px; color: var(--text-dim);">Founding Lifetime Pricing:</span>
+        <span style="font-size: 11px; color: var(--text-dim);">Open-Access Pricing:</span>
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px;">
           <span style="text-decoration: line-through; color: var(--text-dim); font-size: 14px;">$79</span>
           <span style="font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--gold-primary);">$19 USD</span>
@@ -919,7 +919,7 @@
           ★ Instant Checkout via Stripe ($19)
         </a>
         <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener noreferrer" class="btn-purple" style="padding: 10px; text-decoration: none; text-align: center; display: block;" onclick="window.payWithSolana(event)">
-          ● Pay with Solana (DePay Widget)
+          ● Pay with Solana (Solana Direct Widget)
         </a>
       </div>
 
@@ -965,16 +965,16 @@
   <script>
     function payWithSolana(e) {
       if (e) e.preventDefault();
-      if (window.DePay && window.DePay.Payment) {
+      if (window.SolanaTip && window.SolanaTip.Payment) {
         try {
-          window.DePay.Payment({
+          window.SolanaTip.Payment({
             accept: [
               { blockchain: 'solana', token: '11111111111111111111111111111111', receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', amount: 19 }
             ]
           });
           return;
         } catch (err) {
-          console.warn('DePay widget fallback:', err);
+          console.warn('Solana Direct widget fallback:', err);
         }
       }
       window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');

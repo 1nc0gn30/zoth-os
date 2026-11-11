@@ -21,12 +21,12 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
 
-  <!-- DePay Web3 Solana Widget v13 -->
+  <!-- Solana Tip Solana Widget v13 -->
   <script>
     window.addEventListener('load', function() {
-      if (typeof window.DePayButtons !== 'undefined') {
-        window.DePayButtons.init({
-          selector: '.btn-depay-trigger',
+      if (typeof window.SolanaTipButtons !== 'undefined') {
+        window.SolanaTipButtons.init({
+          selector: '.btn-solana-tip',
           integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
           payload: {
             receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
@@ -232,7 +232,7 @@
           <span>⚡ Stripe Pay $19</span>
         </a>
         <!-- Solana Tip Checkout -->
-        <button type="button" id="btn-depay-solana" onclick="window.triggerDePayCheckout()" class="btn-depay-trigger px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/40 font-medium transition text-xs flex items-center space-x-1" aria-label="Pay with Solana Tip">
+        <button type="button" id="btn-solana-tip" onclick="window.triggerSolana DirectCheckout()" class="btn-solana-tip px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/40 font-medium transition text-xs flex items-center space-x-1" aria-label="Pay with Solana Tip">
           <span>◎ Solana $19</span>
         </button>
         <!-- Instant Key Activation -->
@@ -532,7 +532,7 @@
                     <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs font-mono transition">
                       ⚡ Stripe $19
                     </a>
-                    <button type="button" onclick="window.triggerDePayCheckout()" class="btn-depay-trigger px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/40 text-xs font-mono transition">
+                    <button type="button" onclick="window.triggerSolana DirectCheckout()" class="btn-solana-tip px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/40 text-xs font-mono transition">
                       ◎ Solana $19
                     </button>
                     <button type="button" onclick="window.openPaywallModal('Minified Schema Paywall')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-xs font-mono transition">
@@ -773,7 +773,7 @@
           <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="py-2.5 rounded-lg bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs font-mono text-center transition shadow-lg shadow-gold-500/20" aria-label="Pay with credit card">
             ⚡ Stripe Pay $19
           </a>
-          <button type="button" id="btn-depay-modal" onclick="window.triggerDePayCheckout()" class="btn-depay-trigger py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/50 font-bold text-xs font-mono text-center transition" aria-label="Pay with Solana">
+          <button type="button" id="btn-solana-tip-modal" onclick="window.triggerSolana DirectCheckout()" class="btn-solana-tip py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-cyan-500/50 font-bold text-xs font-mono text-center transition" aria-label="Pay with Solana">
             ◎ Solana $19
           </button>
         </div>

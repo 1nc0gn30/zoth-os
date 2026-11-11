@@ -1,12 +1,12 @@
 ---
 title: "1nc0gn30 Sovereign Hub, FieldKit & Creator Portals"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
   - canon
   - 1nc0gn30
-  - nealfrazier
+  - 1nc0gn30
   - 757tech
   - nullai
   - fieldkit
@@ -16,15 +16,15 @@ aliases:
   - "1nc0gn30.si"
   - "1nc0gn30.github.io"
   - "1nc0gn30"
-  - "nealfrazier.tech"
+  - "1nc0gn30.si"
   - "757tech.pro"
 cluster: Canon
 stdp_weight: 0.99
 ---
 
-# 🕶️ 1nc0gn30 Sovereign Hub (`1nc0gn30.si`, `nealfrazier.tech`, `757tech.pro`, `nullai.tech`)
+# 🕶️ 1nc0gn30 Sovereign Hub (`1nc0gn30.si`, `1nc0gn30.si`, `757tech.pro`, `nullai.tech`)
 
-The flagship personal identity, kinetic 3D WebGL/Braille art showcase, physical AI specification hub (**FieldKit**), **[[World of Zoth]]** 3D RPG portal, and sovereign engineering hubs for **Neal Frazier — Neal Frazier Tech** (`@1nc0gn30`).
+The flagship personal identity, kinetic 3D WebGL/Braille art showcase, physical AI specification hub (**FieldKit**), **[[World of Zoth]]** 3D RPG portal, and sovereign engineering hubs for **1nc0gn30** (`@1nc0gn30`).
 
 ---
 
@@ -34,7 +34,7 @@ The flagship personal identity, kinetic 3D WebGL/Braille art showcase, physical 
 | :--- | :--- | :--- | :--- |
 | **1nc0gn30 Sovereign Hub** | [https://1nc0gn30.si](https://1nc0gn30.si) | `~/NullAITech/sites/1nc0gn30-si` & `~/NullAITech/nealsvision` | **Interactive 360° Volumetric Character Stage** with 5 shader modes (`⣿ hybrid`, `⠿ braille`, `▦ dither`, `# ascii`, `⬡ 3d voxel`), 360° pose controls (`0°`–`315°`, `⌨ type`, `→ walk`, `✦ dissolve`), **[[World of Zoth]]** (`game.html` + `world-of-zoth.apk`), **FieldKit** (`fieldkit.html`), and 72-tool directory |
 | **GitHub × 1nc0gn30 Collab Portal** | [https://1nc0gn30.github.io](https://1nc0gn30.github.io) | `~/NullAITech/1nc0gn30.github.io` | **GitHub Dark (`#0D1117`) × Sovereign Gold (`#D4AF37`) & Emerald (`#39D353`)** aesthetic with 3D WebGL + Unicode `U+2800` Braille & Bayer 8×8 Dither core (`Octo-Merkaba`, `Cyber Torus`, `Braille Sphere`) and live 52-week contribution matrix |
-| **Neal Frazier Tech Hub** | [https://nealfrazier.tech](https://nealfrazier.tech) | `~/NullAITech/nealfrazier-tech-build` | Personal & professional full-stack AI, systems engineering, and sovereign architecture hub |
+| **1nc0gn30 Hub** | [https://1nc0gn30.si](https://1nc0gn30.si) | `~/NullAITech/1nc0gn30-si` | Personal & professional full-stack AI, systems engineering, and sovereign architecture hub |
 | **757 Tech Pro** | [https://757tech.pro](https://757tech.pro) | `~/NullAITech/vb-towncenter-delivery` / `sites` | Regional Hampton Roads (`757`) technical consulting, edge AI hardware, and sovereign deployment portal |
 | **NullAI Platform Hub** | [https://nullai.tech](https://nullai.tech) | `~/NullAITech/nullai2026` | **Ghost Byte 3D Engine**, 4-Pillar Sovereign Architecture command deck, `/manifest.json`, and `/llms.txt` AEO discovery index |
 | **GitHub Profile & Org** | [github.com/1nc0gn30](https://github.com/1nc0gn30) · [github.com/NullAITech](https://github.com/NullAITech) | `~/NullAITech/1nc0gn30` | Sovereign ASCII/Braille architecture banner, 120+ open-source repositories, and CLI release index |

@@ -8,7 +8,7 @@
 
 An **autonomous local AI agent** engineered with **Grok-grade intelligence**: real-time X (Twitter) intelligence, multi-source DeepSearch with verifiable citations, dynamic Grok persona modes, chain-of-thought (`<think>`) reasoning, sandbox Python code interpreter, and persistent **Sandboxed Browser** ("VM-ish vibes" with zero VM overhead).
 
-Built for 1nc0gn30 (1nc0gn30 • NullAI, Virginia Beach) to run locally with **Ollama** (offline, private, free) or cloud models via **xAI Grok**, **Hermes**, **AGY**, **Codex**, **Claude**, or **Gemini**.
+Built for 1nc0gn30 (1nc0gn30 • NullAI, Austin) to run locally with **Ollama** (offline, private, free) or cloud models via **xAI Grok**, **Hermes**, **AGY**, **Codex**, **Claude**, or **Gemini**.
 
 ---
 
@@ -176,7 +176,7 @@ Add to your `claude_desktop_config.json` or Cursor MCP settings:
     "azoth": {
       "command": "python3",
       "args": [
-        "/opt/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/agent.py",
+        "/opt/azoth-local-agent/agent.py",
         "--mcp"
       ]
     }

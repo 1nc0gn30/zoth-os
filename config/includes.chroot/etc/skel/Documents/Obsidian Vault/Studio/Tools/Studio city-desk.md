@@ -68,7 +68,7 @@ cli_shot: "Studio/Tools/Artifacts/city-desk/city-desk_04_tui_build_and_json_tele
 
 ### Step 3/12 — Terminal TUI Execution (Part 1): 20 Supported Trade Services & Target Municipal Cities
 - **20 Trade Services**: `city-desk --trades` (`painters`, `plumbers`, `hvac`, `roofers`, `electricians`, `garage-doors`, `landscapers`, `cleaners`, `mobile-detailers`, `junk-removal`, `pest-control`, `movers`, `pet-groomers`, `dentists`, `med-spas`, `gyms`, `restaurants`, `food-trucks`, `photographers`, `auto-repair`)
-- **50 Target Cities**: `city-desk --cities | head -n 14` (`Boise, ID`, `Spokane, WA`, `Tacoma, WA`, `Eugene, OR`, `Reno, NV`, `Colorado Springs, CO`, `Fort Collins, CO`, `Tucson, AZ`, `Albuquerque, NM`, `Virginia Beach, VA`, etc.)
+- **50 Target Cities**: `city-desk --cities | head -n 14` (`Boise, ID`, `Spokane, WA`, `Tacoma, WA`, `Eugene, OR`, `Reno, NV`, `Colorado Springs, CO`, `Fort Collins, CO`, `Tucson, AZ`, `Albuquerque, NM`, `Austin, TX`, etc.)
 ![[Studio/Tools/Artifacts/city-desk/city-desk_03_tui_trades_and_cities.jpg]]
 
 ### Step 4/12 — Terminal TUI Execution (Part 2): 1,000-Page Static Rebuild & Deterministic JSON Telemetry
@@ -81,9 +81,9 @@ cli_shot: "Studio/Tools/Artifacts/city-desk/city-desk_04_tui_build_and_json_tele
 - **Capabilities**: Displays the Editorial Ivory hero (`1,000 Local Trade Pages — One finished page for one trade in one city`), 20 Trades / 50 Cities / 1,000 Pages metrics, and the **Live Lead Page Synthesizer** with Trade Service, Target City, Owner Company Name, Phone Number, and **Export Standalone HTML Bundle**.
 ![[Studio/Tools/Artifacts/city-desk/city-desk_05_gui_standalone_hero_and_synthesizer.jpg]]
 
-### Step 6/12 — Standalone GUI (`:8087`): Live Assemble Virginia Beach HVAC Page Preview
-- **Action**: Select `HVAC shops ($1,100)`, Target City `Virginia Beach, VA`, Owner Company Name `757 Coastal HVAC & Mechanical`, Phone Number `+E164-DEMO-0194`, and click **Live Assemble Page Preview →**.
-- **Result**: Synthesizes the live `Virginia Beach, VA HVAC shops — Written price before work begins` lead page specification and single-file Schema.org HTML bundle.
+### Step 6/12 — Standalone GUI (`:8087`): Live Assemble Austin HVAC Page Preview
+- **Action**: Select `HVAC shops ($1,100)`, Target City `Austin, TX`, Owner Company Name `757 Coastal HVAC & Mechanical`, Phone Number `+E164-DEMO-0194`, and click **Live Assemble Page Preview →**.
+- **Result**: Synthesizes the live `Austin, TX HVAC shops — Written price before work begins` lead page specification and single-file Schema.org HTML bundle.
 ![[Studio/Tools/Artifacts/city-desk/city-desk_06_gui_live_assemble_virginia_beach_hvac.jpg]]
 
 ### Step 7/12 — Standalone GUI (`:8087`): 20 Trades Catalog Grid & 50 Cities Index
@@ -91,14 +91,14 @@ cli_shot: "Studio/Tools/Artifacts/city-desk/city-desk_04_tui_build_and_json_tele
 - **Result**: Displays all 20 specialized trade blueprints (`Painters`, `Plumbers`, `HVAC shops`, `Roofers`, `Electricians`, `Garage door shops`, `Landscapers`, `House cleaners`, `Mobile detailers`, `Junk removal`, `Pest control`, `Movers`, `Pet groomers`, `Dental offices`, `Med spas`, `Gyms`, `Restaurants`, etc.).
 ![[Studio/Tools/Artifacts/city-desk/city-desk_07_gui_trades_and_50_cities_index.jpg]]
 
-### Step 8/12 — Standalone GUI (`:8087`): Localized Virginia Beach Painters Tape-Layout Page
-- **Route**: `http://127.0.0.1:8087/cities/virginia-beach-va/painters/`
-- **Result**: Renders the dedicated **Painters · Virginia Beach** tape-layout page (`Paint, prep, and a written price in Virginia Beach`) with bespoke photography, written scope rules, and owner-editable contact fields.
+### Step 8/12 — Standalone GUI (`:8087`): Localized Austin Painters Tape-Layout Page
+- **Route**: `http://127.0.0.1:8087/cities/austin-tx/painters/`
+- **Result**: Renders the dedicated **Painters · Austin** tape-layout page (`Paint, prep, and a written price in Austin`) with bespoke photography, written scope rules, and owner-editable contact fields.
 ![[Studio/Tools/Artifacts/city-desk/city-desk_08_gui_virginia_beach_painters_page.jpg]]
 
-### Step 9/12 — Standalone GUI (`:8087`): Localized Virginia Beach HVAC 60-Second Written Estimator
-- **Route**: `http://127.0.0.1:8087/cities/virginia-beach-va/hvac/#estimator`
-- **Action**: Select `Replacement quotes (Virginia Beach)` + `Full System / Multi-Area Scope`, enter `1nc0gn30` and `+E164-DEMO-0142`, and click **Request Written Quote**.
+### Step 9/12 — Standalone GUI (`:8087`): Localized Austin HVAC 60-Second Written Estimator
+- **Route**: `http://127.0.0.1:8087/cities/austin-tx/hvac/#estimator`
+- **Action**: Select `Replacement quotes (Austin)` + `Full System / Multi-Area Scope`, enter `1nc0gn30` and `+E164-DEMO-0142`, and click **Request Written Quote**.
 - **Result**: Computes the live `$595 – $1,365` written ballpark range and logs the callback request (`✓ Request logged! The owner will text/call you with a visit window.`).
 ![[Studio/Tools/Artifacts/city-desk/city-desk_09_gui_virginia_beach_hvac_estimator.jpg]]
 

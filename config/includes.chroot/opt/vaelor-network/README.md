@@ -64,7 +64,7 @@ flowchart LR
 
 Every block appended to any account lattice is submitted to a decentralized **5-Validator BFT Quorum** representing geographically distributed anchor points:
 - **Node A**: Norfolk Node (`node-norfolk-va-01`)
-- **Node B**: Virginia Beach Node (`node-vb-oceanfront-02`)
+- **Node B**: Austin Node (`node-vb-oceanfront-02`)
 - **Node C**: Richmond Node (`node-richmond-cap-03`)
 - **Node D**: Chesapeake Node (`node-chesapeake-04`)
 - **Node E**: Outer Banks Node (`node-obx-coastal-05`)
@@ -77,7 +77,7 @@ flowchart TD
 
     subgraph Ring["5-Validator BFT Consensus Ring (Quorum Threshold: 4 of 5)"]
         V1["Node A: Norfolk<br/>(Ed25519 Attestor)"]
-        V2["Node B: Virginia Beach<br/>(Ed25519 Attestor)"]
+        V2["Node B: Austin<br/>(Ed25519 Attestor)"]
         V3["Node C: Richmond<br/>(Ed25519 Attestor)"]
         V4["Node D: Chesapeake<br/>(Ed25519 Attestor)"]
         V5["Node E: Outer Banks<br/>(Ed25519 Attestor)"]
@@ -721,7 +721,7 @@ Open your browser to **`http://127.0.0.1:8140`** to access the **Vaelor Explorer
 - **Protected-Pay Checkout Simulator**: Test escrow locks, deliveries, and instant chargebacks.
 - **Interactive POS Cash Register**: Generate instant QR codes and 1-line embed codes.
 - **PoUW Compute Bench**: Submit useful computational artifacts to mint verified VLR.
-- **DePay Solana & Stripe Bridge**: Instant testbed for cross-chain atomic swaps.
+- **Solana Tip & Stripe Bridge**: Instant testbed for cross-chain atomic swaps.
 
 ---
 

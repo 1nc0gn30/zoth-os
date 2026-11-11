@@ -1326,7 +1326,7 @@ $$P(t) = C \\cdot V^2 \\cdot f + P_{\\text{static}}, \\quad T_{\\text{core}} < 6
             "**Zoth Studio v2** is the sovereign in-browser developer cockpit and micro-SaaS application suite running on port `:3000`. "
             "Powered by React 18, Vite, and Tailwind CSS, Zoth Studio hosts **71 fully-functional, client-side developer tools** "
             "spanning AST code generation, crypto transactions, SEO audits, and media synthesis. Every tool operates with zero broken "
-            "backend server dependencies, dual Stripe and DePay Solana payment rails, and client-side license unlock state persistence."
+            "backend server dependencies, dual Stripe and Solana Tip payment rails, and client-side license unlock state persistence."
         )
         mermaid_chart = """```mermaid
 flowchart LR
@@ -1338,7 +1338,7 @@ flowchart LR
     subgraph SovereignTools["🛠️ 71 Sovereign Tools Matrix"]
         T1["AST Parsers & Minifiers"]
         T2["AEO Schema & SEO Linters"]
-        T3["DePay & WebAuthn Wallets"]
+        T3["Solana Direct & WebAuthn Wallets"]
         T4["Obsidian Vault Bridge"]
     end
     
@@ -1357,7 +1357,7 @@ The 71-tool Studio catalog runs locally: 54 tools execute 100% client-side in th
 
 ### 2. 100% Free & Open Access
 Every tool is free to use. No license, key, or purchase is required, and no output is blurred or locked.
-- **Optional Tips:** Stripe Payment Links (Credit Cards, Apple Pay) + DePay Solana Widget. Tips are voluntary and unlock nothing extra.
+- **Optional Tips:** Stripe Payment Links (Credit Cards, Apple Pay) + Solana Tip Widget. Tips are voluntary and unlock nothing extra.
 
 ### 3. Avant-Garde Design Commodities
 Styled with custom typography (`Syne`, `Space Grotesk`, `JetBrains Mono`), tactile Bento grids, pure CSS border beams, and kinetic motion graphics inspired by Claude Opus 5.5 motion design."""

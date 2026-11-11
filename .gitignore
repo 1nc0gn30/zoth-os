@@ -333,3 +333,11 @@ config/includes.chroot/usr/share/doc/
 build/release-*/zothos-*.iso.part*
 config/includes.chroot/home/
 **/.gradle/
+
+# Never track Zoth Civilization runtime play history in chroot overlay
+config/includes.chroot/opt/zoth-civilization/data/*
+!config/includes.chroot/opt/zoth-civilization/data/adytum_keys.json
+!config/includes.chroot/opt/zoth-civilization/data/civilization_buildings.json
+!config/includes.chroot/opt/zoth-civilization/data/library_catalog.json
+!config/includes.chroot/opt/zoth-civilization/data/library_roadmap.json
+!config/includes.chroot/opt/zoth-civilization/data/pantheon_agents.json

@@ -1,5 +1,0 @@
-agent
-engines
-mcp_server
-tools
-web_ui

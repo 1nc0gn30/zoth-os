@@ -63,7 +63,7 @@ def main():
                     return
             except Exception:
                 pass
-        print("# ~/.config/zoth-relay/mobile/config.yaml (zothos v0.5.0)\nhosts:\n  - 127.0.0.1\n  - 100.106.132.5\nport: 8766\n...")
+        print("# ~/.config/zoth-relay/mobile/config.yaml (zothos v0.5.0)\nhosts:\n  - 127.0.0.1\n  - 100.64.0.10\nport: 8766\n...")
         return
 
     if args.presets:

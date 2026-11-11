@@ -614,14 +614,14 @@
       btnExportAuditLive.addEventListener('click', triggerExportAudit);
     }
 
-    // DePay Solana Web3 Checkout
-    const depayBtns = document.querySelectorAll('.btn-depay-solana');
-    depayBtns.forEach(btn => {
+    // Solana Tip Web3 Checkout
+    const solana-tipBtns = document.querySelectorAll('.btn-solana-tip');
+    solana-tipBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (window.DePay && window.DePay.Payment) {
+        if (window.SolanaTip && window.SolanaTip.Payment) {
           try {
-            window.DePay.Payment({
+            window.SolanaTip.Payment({
               accept: [
                 {
                   blockchain: 'solana',
@@ -633,7 +633,7 @@
             });
             return;
           } catch (err) {
-            console.warn('DePay widget fallback:', err);
+            console.warn('Solana Direct widget fallback:', err);
           }
         }
         window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');

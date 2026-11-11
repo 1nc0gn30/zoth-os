@@ -698,7 +698,7 @@ async function main() {
         console.log(`\n${C.bold}🏛️ 5-Validator BFT Quorum Consensus:${C.reset}`);
         console.log(`  Quorum Size:    ${cs.quorumSize || 5} nodes (Threshold: ${cs.bftThreshold || 4} of 5 required)`);
         console.log(`  BFT Finality:   ${C.emerald}${C.bold}${cs.status || '100% BFT FINALITY'}${C.reset} (<20ms latency)`);
-        console.log(`  Anchor Nodes:   Norfolk • Virginia Beach • Richmond • Chesapeake • Outer Banks`);
+        console.log(`  Anchor Nodes:   Norfolk • Austin • Richmond • Chesapeake • Outer Banks`);
 
         const sv = data.savingsVaultSummary || {};
         console.log(`\n${C.bold}💰 8.5% APY Zero-Lockup Savings Vault:${C.reset}`);

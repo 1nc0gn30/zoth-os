@@ -45,7 +45,7 @@ function offerNote(row) {
 // 50 High-Converting US Mid-Size Cities with thriving local trade economies
 const TARGET_CITIES = [
   { city: 'Norfolk', state: 'VA', metro: 'Hampton Roads' },
-  { city: 'Virginia Beach', state: 'VA', metro: 'Coastal Virginia' },
+  { city: 'Austin', state: 'VA', metro: 'Coastal Virginia' },
   { city: 'Richmond', state: 'VA', metro: 'Central Virginia' },
   { city: 'Raleigh', state: 'NC', metro: 'Research Triangle' },
   { city: 'Charlotte', state: 'NC', metro: 'Piedmont' },
@@ -367,9 +367,9 @@ class LocalRevampMission {
     if (changed) this.savePipeline();
 
     const priorityTargets = [
-      { city: 'Virginia Beach', niche: 'hvac' },
-      { city: 'Virginia Beach', niche: 'fencing-and-decks' },
-      { city: 'Virginia Beach', niche: 'electricians' },
+      { city: 'Austin', niche: 'hvac' },
+      { city: 'Austin', niche: 'fencing-and-decks' },
+      { city: 'Austin', niche: 'electricians' },
       { city: 'Norfolk', niche: 'plumbers' },
       { city: 'Norfolk', niche: 'roofers' },
       { city: 'Norfolk', niche: 'hvac' },

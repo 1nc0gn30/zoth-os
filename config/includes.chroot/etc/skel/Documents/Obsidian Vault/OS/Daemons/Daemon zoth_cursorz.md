@@ -1,7 +1,7 @@
 ---
 title: "zoth-cursorz-daemon"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 tags: [os, daemon, cursorz]
 aliases: ["zoth_cursorz", "zoth-cursorz-daemon"]
 port: 9990

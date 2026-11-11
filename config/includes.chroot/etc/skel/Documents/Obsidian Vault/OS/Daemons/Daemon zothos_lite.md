@@ -1,7 +1,7 @@
 ---
 title: "zothos-lite-daemon"
 date: 2026-11-06
-author: "Neal Frazier (@1nc0gn30)"
+author: "1nc0gn30 (@1nc0gn30)"
 tags: [os, daemon, zothos-lite]
 aliases: ["zothos_lite", "zothos-lite-daemon"]
 port: 8145

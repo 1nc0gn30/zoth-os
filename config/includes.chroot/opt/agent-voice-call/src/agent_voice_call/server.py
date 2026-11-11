@@ -178,7 +178,7 @@ class VoiceCallHandler(http.server.BaseHTTPRequestHandler):
             # Secure HTTPS URL for mobile browser microphone permissions
             tailscale_domain = "zothos.tailb0828c.ts.net"
             call_url = f"https://{tailscale_domain}/call?token={token}"
-            fallback_url = f"http://100.106.132.5:{self.server.server_port}/call?token={token}"
+            fallback_url = f"http://100.64.0.10:{self.server.server_port}/call?token={token}"
 
             self._send_json({
                 "status": "created",

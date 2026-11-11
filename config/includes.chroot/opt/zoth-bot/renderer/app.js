@@ -388,7 +388,7 @@ function renderPortal(snap) {
   root.classList.toggle('docked-on-phone', Boolean(p.dockedOnPhone));
 
   const peerName = (p.peerName || 'pixel-10-pro').toUpperCase();
-  const peerIp = p.peerIp || '100.106.39.46';
+  const peerIp = p.peerIp || '100.64.0.20';
 
   if (portalStatusBadge) {
     if (p.dockedOnPhone) {

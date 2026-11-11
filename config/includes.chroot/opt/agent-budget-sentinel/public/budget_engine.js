@@ -211,9 +211,9 @@ function closeCryptoModal() {
   if (modal) modal.style.display = "none";
 }
 
-function openDePayCheckout() {
-  if (typeof DePayWidgets !== 'undefined' && DePayWidgets.Payment) {
-    DePayWidgets.Payment({
+function copySolanaTipAddress() {
+  if (typeof SolanaTipHelper !== 'undefined' && SolanaTipHelper.Payment) {
+    SolanaTipHelper.Payment({
       integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8'
     });
   } else {

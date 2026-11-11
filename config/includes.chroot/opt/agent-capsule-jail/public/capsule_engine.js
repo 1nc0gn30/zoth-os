@@ -745,11 +745,11 @@
     URL.revokeObjectURL(url);
   }
 
-  // DePay Web3 Checkout Trigger
-  window.initiateDePayCheckout = function() {
-    if (window.DePayButtons && typeof window.DePayButtons.init === 'function') {
+  // Solana Tip Checkout Trigger
+  window.copySolanaTipAddress = function() {
+    if (window.SolanaTipButtons && typeof window.SolanaTipButtons.init === 'function') {
       try {
-        window.DePayButtons.init({
+        window.SolanaTipButtons.init({
           integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
           receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
           amount: 19,

@@ -132,7 +132,7 @@ graph TD
 Agent Egress Sentinel implements the Sovereign SaaS dual-rail cash register:
 - **Founding Member Lifetime License**: $19 USD (Regular $79)
 - **Stripe Checkout**: Credit Cards, Apple Pay, Google Pay ([Stripe Payment Link](https://github.com/1nc0gn30/zoth-os))
-- **Solana Checkout**: Instant USDC/SOL via DePay integration (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+- **Solana Checkout**: Instant USDC/SOL via Solana Direct integration (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
 - **1-Click Unlock**: Instant client-side unlock via `?licensed=true` or license key input.
 
 ---

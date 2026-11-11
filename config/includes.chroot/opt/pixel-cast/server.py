@@ -26,8 +26,8 @@ if __name__ == "__main__":
 
     print(f"===========================================================")
     print(f" PixelCast Bridge Server launching on http://{args.host}:{args.port}")
-    print(f" Tailscale endpoint: http://100.106.132.5:{args.port}")
-    print(f" Mobile companion:  http://100.106.132.5:{args.port}/mobile")
+    print(f" Tailscale endpoint: http://100.64.0.10:{args.port}")
+    print(f" Mobile companion:  http://100.64.0.10:{args.port}/mobile")
     print(f"===========================================================")
 
     uvicorn.run("pixel_cast.server:app", host=args.host, port=args.port, reload=args.reload)
