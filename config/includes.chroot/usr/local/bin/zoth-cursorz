@@ -10,6 +10,7 @@
 import sys
 import os
 import json
+from pathlib import Path
 import urllib.request
 import urllib.error
 
@@ -185,17 +186,26 @@ def main():
 
     elif cmd == "daemon":
         import subprocess
-        daemon_script = "/home/zoth/NullAITech/zoth-cursorz/daemon/server.py"
+        repo_root = Path(os.environ.get("ZOTH_CURSORZ_DIR", str(Path.home() / "NullAITech" / "zoth-cursorz")))
+        if not repo_root.exists() and Path("/opt/zoth-cursorz").exists():
+            repo_root = Path("/opt/zoth-cursorz")
+        daemon_script = str(repo_root / "daemon" / "server.py")
         subprocess.run([sys.executable, daemon_script])
 
     elif cmd == "overlay":
         import subprocess
-        overlay_main = "/home/zoth/NullAITech/zoth-cursorz/overlay/main.js"
+        repo_root = Path(os.environ.get("ZOTH_CURSORZ_DIR", str(Path.home() / "NullAITech" / "zoth-cursorz")))
+        if not repo_root.exists() and Path("/opt/zoth-cursorz").exists():
+            repo_root = Path("/opt/zoth-cursorz")
+        overlay_main = str(repo_root / "overlay" / "main.js")
         subprocess.run(["electron", "--no-sandbox", "--disable-dev-shm-usage", overlay_main])
 
     elif cmd == "dashboard":
         import subprocess
-        dash_main = "/home/zoth/NullAITech/zoth-cursorz/launch_dashboard.js"
+        repo_root = Path(os.environ.get("ZOTH_CURSORZ_DIR", str(Path.home() / "NullAITech" / "zoth-cursorz")))
+        if not repo_root.exists() and Path("/opt/zoth-cursorz").exists():
+            repo_root = Path("/opt/zoth-cursorz")
+        dash_main = str(repo_root / "launch_dashboard.js")
         subprocess.run(["electron", "--no-sandbox", "--disable-dev-shm-usage", dash_main])
 
     # Android Management Subcommands
@@ -204,12 +214,13 @@ def main():
             print("Usage: zoth-cursorz android [build|install|devices]")
             sys.exit(1)
         sub = sys.argv[2]
+        repo_root = Path(os.environ.get("ZOTH_CURSORZ_DIR", str(Path.home() / "NullAITech" / "zoth-cursorz")))
         if sub == "build":
             import subprocess
-            subprocess.run(["bash", "/home/zoth/NullAITech/zoth-cursorz/android/package_apk.sh"])
+            subprocess.run(["bash", str(repo_root / "android" / "package_apk.sh")])
         elif sub == "install":
             import subprocess
-            apk_path = "/home/zoth/NullAITech/zoth-cursorz/android/dist/zoth-cursorz-arm64.apk"
+            apk_path = str(repo_root / "android" / "dist" / "zoth-cursorz-arm64.apk")
             subprocess.run(["adb", "install", "-r", apk_path])
         elif sub == "devices":
             import subprocess

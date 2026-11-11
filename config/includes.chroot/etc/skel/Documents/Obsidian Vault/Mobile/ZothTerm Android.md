@@ -12,13 +12,13 @@ fdroid_official: "TWEAK"
 fdroid_sovereign: "READY"
 play_store: "BLOCKED"
 github: "https://github.com/1nc0gn30/zoth-os"
-apk_path: "/home/zoth/NullAITech/zoth-termux/dist/zothterm-0.5_arm64-v8a.apk"
+apk_path: "~/NullAITech/zoth-termux/dist/zothterm-0.5_arm64-v8a.apk"
 tags: [android-apk, mobile, zothterm, termux, fdroid]
 ---
 
 # 📱 ZothTerm Sovereign Shell (`com.termux`)
 
-- **Source**: `/home/zoth/NullAITech/zoth-termux`
+- **Source**: `~/NullAITech/zoth-termux`
 - **APK Binaries**: `dist/zothterm-0.5_arm64-v8a.apk` (`32 MB`), `armeabi-v7a.apk`, `x86_64.apk`, `x86.apk`, `universal.apk` (`115 MB`)
 - **Signing Key**: Production RSA-4096 `~/.zothterm-signing/zothterm-release.jks` (`SHA-256: ec7dce2dba5344f3ce8d3e6a5ad8124587708a3e6058cd4ec35af55c8e79b013`)
 - **Release Checklist**:

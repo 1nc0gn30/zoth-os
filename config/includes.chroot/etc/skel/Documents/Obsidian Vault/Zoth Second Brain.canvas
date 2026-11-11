@@ -108,7 +108,7 @@
       "width": 440,
       "height": 220,
       "color": "5",
-      "text": "### ⚡ STDP Synaptic Core (:8094) & Chroot Parity\n$$\\Delta w = A_+ e^{-\\Delta t / \\tau_+}$$\n- **41,690+ STDP Engrams** & **21-Tool MCP Server**\n- Host `/home/zoth/Documents/Obsidian Vault` mirrored 1:1 to `config/includes.chroot/etc/skel/Documents/Obsidian Vault/`"
+      "text": "### ⚡ STDP Synaptic Core (:8094) & Chroot Parity\n$$\\Delta w = A_+ e^{-\\Delta t / \\tau_+}$$\n- **41,690+ STDP Engrams** & **21-Tool MCP Server**\n- Host `~/Documents/Obsidian Vault` mirrored 1:1 to `config/includes.chroot/etc/skel/Documents/Obsidian Vault/`"
     }
   ],
   "edges": [

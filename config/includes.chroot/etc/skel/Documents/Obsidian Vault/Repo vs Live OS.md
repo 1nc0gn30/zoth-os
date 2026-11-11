@@ -33,7 +33,7 @@ Bidirectional synchronization reference between the **Live ZothOS v3.4 Desktop W
 3. **Xcursor Binary Integrity & `SWCursor` Parity**:
    - Multi-size (`16×16` to `48×48`) ARGB Xcursor binaries in `/usr/share/icons/Zoth-Gold-Cursors/cursors/`, `/etc/environment` (`KWIN_FORCE_SW_CURSOR=1`), `/etc/profile.d/zoth-cursor.sh`, and `/etc/X11/xorg.conf.d/20-zoth-cursor.conf` (`Option "SWCursor" "true"`) are mirrored 1:1 in `config/includes.chroot/`.
 4. **Obsidian Second Brain Chroot Skeleton Parity**:
-   - All root canon `.md` notes, `06-Wiki/*.md` deep architecture articles, `.canvas` JSON Canvas 1.0 boards, and `.base` databases in `/home/zoth/Documents/Obsidian Vault/` are synchronized directly into `/home/zoth/NullAITech/zoth-os/config/includes.chroot/etc/skel/Documents/Obsidian Vault/`.
+   - All root canon `.md` notes, `06-Wiki/*.md` deep architecture articles, `.canvas` JSON Canvas 1.0 boards, and `.base` databases in `~/Documents/Obsidian Vault/` are synchronized directly into `~/NullAITech/zoth-os/config/includes.chroot/etc/skel/Documents/Obsidian Vault/`.
 5. **Host-Only Exclusions**:
    - Never commit `build/cosign.key`, `.iso` images, `/opt/zoth-relay/venv`, or `.tar.gz` archives into the git repository.
 
@@ -52,7 +52,7 @@ Bidirectional synchronization reference between the **Live ZothOS v3.4 Desktop W
 | **Desktop Folder Hierarchy** | `~/Desktop/{01..04}-*` & `/usr/share/applications/*.desktop` | `config/includes.chroot/etc/skel/Desktop/` & `.../usr/share/applications/` | **Synced** (Deterministic 4-folder layout + 95+ `.desktop` launchers) |
 | **3D Live Wallpaper** | `/usr/share/zothos/live-wallpaper/index.html` | `config/includes.chroot/usr/share/zothos/live-wallpaper/index.html` | **Synced** (`ZothOS 3D Interactive Reality Wallpaper`) |
 | **Systemd Units** | `/etc/systemd/system/zoth-*.service` | `config/includes.chroot/etc/systemd/system/zoth-*.service` | **Synced** (`zoth-arsenal-daemons`, `zoth-auth-init`, `zoth-bootstrap`, `zoth-ghost`, `zoth-ghost-amnesic`, `zoth-sentinel`, `zoth-thermal-guard`, `zoth-watchdog`) |
-| **Obsidian Second Brain** | `/home/zoth/Documents/Obsidian Vault` | `config/includes.chroot/etc/skel/Documents/Obsidian Vault` | **Synced** (`2026-11-06` Canon notes, `06-Wiki/`, `.canvas` boards, `.base` views) |
+| **Obsidian Second Brain** | `~/Documents/Obsidian Vault` | `config/includes.chroot/etc/skel/Documents/Obsidian Vault` | **Synced** (`2026-11-06` Canon notes, `06-Wiki/`, `.canvas` boards, `.base` views) |
 
 ---
 

@@ -12,14 +12,14 @@ fdroid_official: "READY"
 fdroid_sovereign: "READY"
 play_store: "DECLARATION"
 github: "https://github.com/1nc0gn30/zothnet"
-apk_path: "/home/zoth/NullAITech/zothnet/bin/zothnet-arm64.apk"
+apk_path: "~/NullAITech/zothnet/bin/zothnet-arm64.apk"
 tags: [android-apk, mobile, zothnet, fdroid, play-store]
 ---
 
 # 📱 ZothNet Sovereign Mesh (`tech.nullai.zothnet`)
 
-- **Source**: `/home/zoth/NullAITech/zothnet-android` & `/home/zoth/NullAITech/zothnet`
-- **APK Binary**: `/home/zoth/NullAITech/zothnet/bin/zothnet-arm64.apk` (`9.1 MB`, SHA-256: `8c40ec11d54f096c233313b139362117e4cd1715084d75d6279c3bb1452e5818`)
+- **Source**: `~/NullAITech/zothnet-android` & `~/NullAITech/zothnet`
+- **APK Binary**: `~/NullAITech/zothnet/bin/zothnet-arm64.apk` (`9.1 MB`, SHA-256: `8c40ec11d54f096c233313b139362117e4cd1715084d75d6279c3bb1452e5818`)
 - **Live Download**: `https://zothnet.nullai.tech/downloads/zothnet-arm64.apk`
 - **Release Checklist**:
   1. Add `android:versionCode="12" android:versionName="1.2.0"` to `AndroidManifest.xml`.

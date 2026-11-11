@@ -8,4 +8,8 @@ fi
 TOOL_NAME="$1"
 TARGET_BIN="$2"
 shift 2
-exec /home/zoth/.local/bin/sovereign-agent-bridge gatekeep "$TOOL_NAME" --target "$TARGET_BIN" -- "$@"
+BRIDGE_BIN="$(command -v sovereign-agent-bridge || true)"
+if [[ -z "$BRIDGE_BIN" ]]; then
+  BRIDGE_BIN="${HOME}/.local/bin/sovereign-agent-bridge"
+fi
+exec "$BRIDGE_BIN" gatekeep "$TOOL_NAME" --target "$TARGET_BIN" -- "$@"

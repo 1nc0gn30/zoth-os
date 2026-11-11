@@ -12,13 +12,13 @@ fdroid_official: "TWEAK"
 fdroid_sovereign: "READY"
 play_store: "TWEAK"
 github: "https://github.com/NullAITech/zoth-studio"
-apk_path: "/home/zoth/NullAITech/zoth-studio-og/zoth-signal-bridge-android"
+apk_path: "~/NullAITech/zoth-studio-og/zoth-signal-bridge-android"
 tags: [android-apk, mobile, signal-bridge, compose, fdroid, play-store]
 ---
 
 # 📱 Zoth Signal Bridge v12 (`tech.nullai.signalbridge`)
 
-- **Source**: `/home/zoth/NullAITech/zoth-studio-og/zoth-signal-bridge-android`
+- **Source**: `~/NullAITech/zoth-studio-og/zoth-signal-bridge-android`
 - **Release Checklist**:
   1. Rename `com.example.zothsignalbridge` → `tech.nullai.signalbridge` in `app/build.gradle.kts`, `AndroidManifest.xml`, and `src/main/java/`.
   2. Remove `android.permission.REQUEST_INSTALL_PACKAGES` for the Google Play Store build.

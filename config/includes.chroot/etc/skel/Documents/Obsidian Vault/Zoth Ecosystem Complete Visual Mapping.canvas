@@ -3,7 +3,7 @@
     {
       "id": "grp_next_level",
       "type": "group",
-      "label": "\ud83d\udfe3 NEXT-LEVEL SOVEREIGN BREAKTHROUGH IP",
+      "label": "🟣 NEXT-LEVEL SOVEREIGN BREAKTHROUGH IP",
       "color": "6",
       "x": -1660,
       "y": -960,
@@ -18,7 +18,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \u25c8 AZOTH & Kokoro Neural Voice\n\n**Core IP**: Embodied Braille & ASCII AI Agent + Real-Time Neural Speech\n- **Tech**: 60FPS articulated facial rig in pure Unicode U+2800 Braille + Bayer 8x8 dither\n- **Voice**: 54-voice Kokoro ONNX TTS (:9394) + real-time phoneme viseme lip-sync\n- **Status**: 100% genuine in-browser utility, low-latency duplex audio\n- **Verdict**: **NEXT LEVEL (10/10)** \u2014 Flagship sovereign AI avatar"
+      "text": "### ◈ AZOTH & Kokoro Neural Voice\n\n**Core IP**: Embodied Braille & ASCII AI Agent + Real-Time Neural Speech\n- **Tech**: 60FPS articulated facial rig in pure Unicode U+2800 Braille + Bayer 8x8 dither\n- **Voice**: 54-voice Kokoro ONNX TTS (:9394) + real-time phoneme viseme lip-sync\n- **Status**: 100% genuine in-browser utility, low-latency duplex audio\n- **Verdict**: **NEXT LEVEL (10/10)** — Flagship sovereign AI avatar"
     },
     {
       "id": "7e22614fc9fc4f0f",
@@ -28,7 +28,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83c\udf10 ZothNet Sovereign Mesh (:42069 / :9900)\n\n**Core IP**: Decentralized zero-broker encrypted mesh network\n- **Tech**: Raw UDP datagram mesh (port 42069) + Ed25519 identity + ChaCha20-Poly1305\n- **Surfaces**: Go binary, Android client, Web console on :9900\n- **Status**: Actively running daemon on host (PID 2240014)\n- **Verdict**: **NEXT LEVEL (10/10)** \u2014 Sovereign off-grid communication backbone"
+      "text": "### 🌐 ZothNet Sovereign Mesh (:42069 / :9900)\n\n**Core IP**: Decentralized zero-broker encrypted mesh network\n- **Tech**: Raw UDP datagram mesh (port 42069) + Ed25519 identity + ChaCha20-Poly1305\n- **Surfaces**: Go binary, Android client, Web console on :9900\n- **Status**: Actively running daemon on host (PID 2240014)\n- **Verdict**: **NEXT LEVEL (10/10)** — Sovereign off-grid communication backbone"
     },
     {
       "id": "ad02cef0ebac477e",
@@ -38,7 +38,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83e\udde0 Neuro-Memory Daemon (:8094)\n\n**Core IP**: Bi-directional STDP Synaptic Memory & LLM Wiki Compiler\n- **Tech**: Spike-timing-dependent plasticity (STDP) associative memory graph\n- **Integration**: Karpathy-style Second Brain wiki compiler + Obsidian sync\n- **Tests**: 67+ test suite passing genuinely\n- **Verdict**: **NEXT LEVEL (10/10)** \u2014 True long-term AI memory engine"
+      "text": "### 🧠 Neuro-Memory Daemon (:8094)\n\n**Core IP**: Bi-directional STDP Synaptic Memory & LLM Wiki Compiler\n- **Tech**: Spike-timing-dependent plasticity (STDP) associative memory graph\n- **Integration**: Karpathy-style Second Brain wiki compiler + Obsidian sync\n- **Tests**: 67+ test suite passing genuinely\n- **Verdict**: **NEXT LEVEL (10/10)** — True long-term AI memory engine"
     },
     {
       "id": "db7d733fdefa4c89",
@@ -48,7 +48,7 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \u26a1 Vaelor Layer-1 PoUW Lattice\n\n**Core IP**: Proof-of-Useful-Work AI Execution DAG\n- **Tech**: Account-lattice cryptographic DAG, zero-gas patron micro-transactions\n- **Utility**: Verifiable AI inference validation across sovereign nodes\n- **Status**: Core architecture, canvases, and contracts defined\n- **Verdict**: **NEXT LEVEL (9/10)** \u2014 Groundbreaking sovereign compute economics"
+      "text": "### ⚡ Vaelor Layer-1 PoUW Lattice\n\n**Core IP**: Proof-of-Useful-Work AI Execution DAG\n- **Tech**: Account-lattice cryptographic DAG, zero-gas patron micro-transactions\n- **Utility**: Verifiable AI inference validation across sovereign nodes\n- **Status**: Core architecture, canvases, and contracts defined\n- **Verdict**: **NEXT LEVEL (9/10)** — Groundbreaking sovereign compute economics"
     },
     {
       "id": "d705cd9f9c52493b",
@@ -58,7 +58,7 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \ud83c\udfdb Zoth Civilization & 3D WebGPU (:9393)\n\n**Core IP**: Autonomous 3D Multi-Agent World & City Simulator\n- **Tech**: WebGPU/Three.js spatial engine + persistent agent autonomy + Kokoro speech\n- **Runtime**: Live Node daemon (PID 2944681) on port 9393\n- **Verdict**: **NEXT LEVEL (9/10)** \u2014 Highly visual, viral-ready multi-agent simulation"
+      "text": "### 🏛 Zoth Civilization & 3D WebGPU (:9393)\n\n**Core IP**: Autonomous 3D Multi-Agent World & City Simulator\n- **Tech**: WebGPU/Three.js spatial engine + persistent agent autonomy + Kokoro speech\n- **Runtime**: Live Node daemon (PID 2944681) on port 9393\n- **Verdict**: **NEXT LEVEL (9/10)** — Highly visual, viral-ready multi-agent simulation"
     },
     {
       "id": "cab87c39f1554a71",
@@ -68,12 +68,12 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \u25c8 ZothOS-Lite 1-Bit Amnesic OS (:8145)\n\n**Core IP**: Ultra-lightweight volatile RAM developer workstation\n- **Footprint**: 958 MB RAM (`toram noswap`), 75+ armed security tools\n- **UI**: 1-Bit Black & White Bayer dither + 3D Torus knot Monolith\n- **Boot**: Verified GRUB direct boot + SDDM session router\n- **Verdict**: **NEXT LEVEL (10/10)** \u2014 Radical sovereign UI/UX paradigm"
+      "text": "### ◈ ZothOS-Lite 1-Bit Amnesic OS (:8145)\n\n**Core IP**: Ultra-lightweight volatile RAM developer workstation\n- **Footprint**: 958 MB RAM (`toram noswap`), 75+ armed security tools\n- **UI**: 1-Bit Black & White Bayer dither + 3D Torus knot Monolith\n- **Boot**: Verified GRUB direct boot + SDDM session router\n- **Verdict**: **NEXT LEVEL (10/10)** — Radical sovereign UI/UX paradigm"
     },
     {
       "id": "grp_finished",
       "type": "group",
-      "label": "\ud83d\udfe2 FINISHED & BATTLE-TESTED SYSTEMS",
+      "label": "🟢 FINISHED & BATTLE-TESTED SYSTEMS",
       "color": "4",
       "x": 40,
       "y": -960,
@@ -88,7 +88,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udee0 Zoth Studio v2 God-Mode Deck (:3000)\n\n**Status**: **100% PRODUCTION READY**\n- **Catalog**: 72 God-Mode tools, 145 static prerendered HTML routes\n- **Hygiene**: 100% Open-Access, zero paywalls, sitemaps in sync\n- **Parity**: Commits synchronized across NullAITech & 1nc0gn30\n- **Verdict**: **ESSENTIAL CORE WORKHORSE (10/10)**"
+      "text": "### 🛠 Zoth Studio v2 God-Mode Deck (:3000)\n\n**Status**: **100% PRODUCTION READY**\n- **Catalog**: 72 God-Mode tools, 145 static prerendered HTML routes\n- **Hygiene**: 100% Open-Access, zero paywalls, sitemaps in sync\n- **Parity**: Commits synchronized across NullAITech & 1nc0gn30\n- **Verdict**: **ESSENTIAL CORE WORKHORSE (10/10)**"
     },
     {
       "id": "e4d1d8263fb241ae",
@@ -98,7 +98,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcbb ZothOS GNU/Linux (Trixie Hybrid)\n\n**Status**: **100% PRODUCTION READY**\n- **Base**: Debian 13 (Trixie) + KDE Plasma 6 + XFCE fallback\n- **Multiboot**: Dualboot synchronized with Parrot OS on SATA SSD\n- **ISO**: Production-ready `zothos-3.3-amd64.iso` (8.8 GB)\n- **Verdict**: **ROCK-SOLID OS WORKSTATION (10/10)**"
+      "text": "### 💻 ZothOS GNU/Linux (Trixie Hybrid)\n\n**Status**: **100% PRODUCTION READY**\n- **Base**: Debian 13 (Trixie) + KDE Plasma 6 + XFCE fallback\n- **Multiboot**: Dualboot synchronized with Parrot OS on SATA SSD\n- **ISO**: Production-ready `zothos-3.3-amd64.iso` (8.8 GB)\n- **Verdict**: **ROCK-SOLID OS WORKSTATION (10/10)**"
     },
     {
       "id": "04bfb6b0c9ca4b90",
@@ -108,7 +108,7 @@
       "y": -900,
       "width": 440,
       "height": 340,
-      "text": "### \u2694\ufe0f HexStrike AI Cyber Terminal (:8888)\n\n**Status**: **100% PRODUCTION READY**\n- **Arsenal**: 156+ automated red-team security tools, high-speed socket scanner\n- **Integration**: FastAPI backend + React terminal + MCP JSON-RPC stdio\n- **CLI**: `/usr/local/bin/hexstrike` with subcommands\n- **Verdict**: **HIGH VALUE OFFENSIVE SUITE (9/10)**"
+      "text": "### ⚔️ HexStrike AI Cyber Terminal (:8888)\n\n**Status**: **100% PRODUCTION READY**\n- **Arsenal**: 156+ automated red-team security tools, high-speed socket scanner\n- **Integration**: FastAPI backend + React terminal + MCP JSON-RPC stdio\n- **CLI**: `/usr/local/bin/hexstrike` with subcommands\n- **Verdict**: **HIGH VALUE OFFENSIVE SUITE (9/10)**"
     },
     {
       "id": "7f8efcbc0cab4a0a",
@@ -118,7 +118,7 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udd0d Zoth-OSINT v4.0 Workstation (:8148)\n\n**Status**: **100% PRODUCTION READY**\n- **Features**: 24 reconnaissance subcommands, zero-key Shodan InternetDB\n- **Storage**: SQLite case manager (`~/.zoth-osint/cases.db`), MITRE mapping\n- **CLI / MCP**: Native CLI binary + Model Context Protocol stdio server\n- **Verdict**: **EXCEPTIONAL UTILITY (9/10)**"
+      "text": "### 🔍 Zoth-OSINT v4.0 Workstation (:8148)\n\n**Status**: **100% PRODUCTION READY**\n- **Features**: 24 reconnaissance subcommands, zero-key Shodan InternetDB\n- **Storage**: SQLite case manager (`~/.zoth-osint/cases.db`), MITRE mapping\n- **CLI / MCP**: Native CLI binary + Model Context Protocol stdio server\n- **Verdict**: **EXCEPTIONAL UTILITY (9/10)**"
     },
     {
       "id": "f2a9cb9330bf41ff",
@@ -128,7 +128,7 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udce1 Sovereign Agent Bridge (:8102)\n\n**Status**: **100% PRODUCTION READY**\n- **Dispatcher**: Secure Signal & SimpleX chat bridge for autonomous agents\n- **Daemon**: Active user systemd service with automatic reconnection\n- **CLI**: `sovereign-agent-bridge` v3.3.0 in `/usr/local/bin/`\n- **Verdict**: **CRITICAL COMMUNICATIONS LAYER (9/10)**"
+      "text": "### 📡 Sovereign Agent Bridge (:8102)\n\n**Status**: **100% PRODUCTION READY**\n- **Dispatcher**: Secure Signal & SimpleX chat bridge for autonomous agents\n- **Daemon**: Active user systemd service with automatic reconnection\n- **CLI**: `sovereign-agent-bridge` v3.3.0 in `/usr/local/bin/`\n- **Verdict**: **CRITICAL COMMUNICATIONS LAYER (9/10)**"
     },
     {
       "id": "fddf3baf437b4441",
@@ -138,12 +138,12 @@
       "y": -520,
       "width": 440,
       "height": 340,
-      "text": "### \ud83c\udfaf Zoth Cursorz & Multi-Agent Cursors (:9989)\n\n**Status**: **100% PRODUCTION READY**\n- **Features**: Virtual agent cursors, ADB Android gestures & tap dispatch\n- **UI**: Transparent click-through Electron overlay + training recorder\n- **Daemon**: Active daemon on port 9989 with low latency IPC\n- **Verdict**: **HIGH VALUE COMPUTER-USE ENGINE (8/10)**"
+      "text": "### 🎯 Zoth Cursorz & Multi-Agent Cursors (:9989)\n\n**Status**: **100% PRODUCTION READY**\n- **Features**: Virtual agent cursors, ADB Android gestures & tap dispatch\n- **UI**: Transparent click-through Electron overlay + training recorder\n- **Daemon**: Active daemon on port 9989 with low latency IPC\n- **Verdict**: **HIGH VALUE COMPUTER-USE ENGINE (8/10)**"
     },
     {
       "id": "grp_enhancing",
       "type": "group",
-      "label": "\ud83d\udfe1 HIGH-ROI / WORTH ENHANCING ASSETS",
+      "label": "🟡 HIGH-ROI / WORTH ENHANCING ASSETS",
       "color": "3",
       "x": -1660,
       "y": -60,
@@ -158,7 +158,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\uded2 Etsy Connector & POD Forge\n\n**Commercial Status**: **HIGH REVENUE POTENTIAL**\n- **Features**: Etsy Open API v3, 13 search tags ranking algorithm, Printify/Gelato\n- **Tests**: 47 passed in 2.25s (100% real utility, zero fake work)\n- **Enhancement**: Add automated daily listing sync and batch mockups\n- **Verdict**: **IMMEDIATE COMMERCIAL ROI (9/10)**"
+      "text": "### 🛒 Etsy Connector & POD Forge\n\n**Commercial Status**: **HIGH REVENUE POTENTIAL**\n- **Features**: Etsy Open API v3, 13 search tags ranking algorithm, Printify/Gelato\n- **Tests**: 47 passed in 2.25s (100% real utility, zero fake work)\n- **Enhancement**: Add automated daily listing sync and batch mockups\n- **Verdict**: **IMMEDIATE COMMERCIAL ROI (9/10)**"
     },
     {
       "id": "ef1343b6b3d34d0e",
@@ -168,7 +168,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udce6 Shopify Connector & Margin Sentinel\n\n**Commercial Status**: **HIGH REVENUE POTENTIAL**\n- **Features**: Multi-store product search, fee calculator, Etsy-to-Shopify transpile\n- **Tests**: 33 passed in 0.55s; MCP tools registered\n- **Enhancement**: Integrate live inventory webhooks and Solana Tip tips\n- **Verdict**: **HIGH VALUE COMMERCE SUITE (8.5/10)**"
+      "text": "### 📦 Shopify Connector & Margin Sentinel\n\n**Commercial Status**: **HIGH REVENUE POTENTIAL**\n- **Features**: Multi-store product search, fee calculator, Etsy-to-Shopify transpile\n- **Tests**: 33 passed in 0.55s; MCP tools registered\n- **Enhancement**: Integrate live inventory webhooks and Solana Tip tips\n- **Verdict**: **HIGH VALUE COMMERCE SUITE (8.5/10)**"
     },
     {
       "id": "77719782a0c34180",
@@ -178,7 +178,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udd76 NullAI FieldKit & Glasses Guide (:8770)\n\n**Operational Status**: **HIGH TACTICAL VALUE**\n- **Features**: Ray-Ban Meta & Zela Glasses guide, Tailscale camera relay\n- **Integration**: Live speech missions, audio duplex, offline GPS\n- **Enhancement**: Package into standalone Android APK with offline LLM\n- **Verdict**: **INNOVATIVE WEARABLE PLATFORM (9/10)**"
+      "text": "### 🕶 NullAI FieldKit & Glasses Guide (:8770)\n\n**Operational Status**: **HIGH TACTICAL VALUE**\n- **Features**: Ray-Ban Meta & Zela Glasses guide, Tailscale camera relay\n- **Integration**: Live speech missions, audio duplex, offline GPS\n- **Enhancement**: Package into standalone Android APK with offline LLM\n- **Verdict**: **INNOVATIVE WEARABLE PLATFORM (9/10)**"
     },
     {
       "id": "b6f1d47853024f93",
@@ -188,7 +188,7 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \u2728 Reality Shader Forge & Datamosh\n\n**Creative Status**: **VIRAL MARKETING ENGINE**\n- **Features**: GPU WebGL procedural shaders, CRT phosphors, liquid-metal SDFs\n- **Showreels**: Claude Opus 5.5 / Revid.ai 15-second motion graphics generator\n- **Enhancement**: One-click MP4 export for TikTok / X viral reels\n- **Verdict**: **POWERFUL VISUAL MOAT (8.5/10)**"
+      "text": "### ✨ Reality Shader Forge & Datamosh\n\n**Creative Status**: **VIRAL MARKETING ENGINE**\n- **Features**: GPU WebGL procedural shaders, CRT phosphors, liquid-metal SDFs\n- **Showreels**: Claude Opus 5.5 / Revid.ai 15-second motion graphics generator\n- **Enhancement**: One-click MP4 export for TikTok / X viral reels\n- **Verdict**: **POWERFUL VISUAL MOAT (8.5/10)**"
     },
     {
       "id": "d5bc309e3c6c47f0",
@@ -198,7 +198,7 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udee1 Agent Prompt Firewall & Capsule Jail\n\n**Enterprise Status**: **CRITICAL AI SAFETY PRODUCT**\n- **Features**: Regex + AST semantic prompt injection filter, Docker capsule jail\n- **Utility**: Protects LLM pipelines from untrusted tool outputs & exfiltration\n- **Enhancement**: Package as an enterprise drop-in Python/Node proxy\n- **Verdict**: **COMMERCIAL SAAS POTENTIAL (9/10)**"
+      "text": "### 🛡 Agent Prompt Firewall & Capsule Jail\n\n**Enterprise Status**: **CRITICAL AI SAFETY PRODUCT**\n- **Features**: Regex + AST semantic prompt injection filter, Docker capsule jail\n- **Utility**: Protects LLM pipelines from untrusted tool outputs & exfiltration\n- **Enhancement**: Package as an enterprise drop-in Python/Node proxy\n- **Verdict**: **COMMERCIAL SAAS POTENTIAL (9/10)**"
     },
     {
       "id": "c31f1d106ec3479c",
@@ -208,12 +208,12 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcc8 AEO Graph Engine & PWA Studio\n\n**Growth Status**: **TRAFFIC & DISCOVERY MULTIPLIER**\n- **Features**: Automated Schema.org graph builder for Perplexity, Google SGE, Claude\n- **Tests**: 101 passed tests; full web app manifest generator\n- **Enhancement**: Add instant sitemap validator and rich snippet tester\n- **Verdict**: **HIGH LEVERAGE SEO/AEO TOOL (8/10)**"
+      "text": "### 📈 AEO Graph Engine & PWA Studio\n\n**Growth Status**: **TRAFFIC & DISCOVERY MULTIPLIER**\n- **Features**: Automated Schema.org graph builder for Perplexity, Google SGE, Claude\n- **Tests**: 101 passed tests; full web app manifest generator\n- **Enhancement**: Add instant sitemap validator and rich snippet tester\n- **Verdict**: **HIGH LEVERAGE SEO/AEO TOOL (8/10)**"
     },
     {
       "id": "grp_unfinished",
       "type": "group",
-      "label": "\ud83d\udfe0 UNFINISHED WORK-IN-PROGRESS GAPS",
+      "label": "🟠 UNFINISHED WORK-IN-PROGRESS GAPS",
       "color": "2",
       "x": 40,
       "y": -60,
@@ -228,7 +228,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcf1 ZothNet Android & WearOS APK\n\n**Gap Analysis**: **IN PROGRESS (65% Complete)**\n- **Current**: Android project scaffolded in `zothnet-android/`\n- **Missing**: Signed Gradle release keystore, automated F-Droid build pipeline\n- **Priority**: High \u2014 Completes the mobile off-grid mesh loop\n- **Action**: Build arm64-v8a debug APK and verify over local ADB"
+      "text": "### 📱 ZothNet Android & WearOS APK\n\n**Gap Analysis**: **IN PROGRESS (65% Complete)**\n- **Current**: Android project scaffolded in `zothnet-android/`\n- **Missing**: Signed Gradle release keystore, automated F-Droid build pipeline\n- **Priority**: High — Completes the mobile off-grid mesh loop\n- **Action**: Build arm64-v8a debug APK and verify over local ADB"
     },
     {
       "id": "5dbc57fa5d6b4157",
@@ -238,7 +238,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udc53 Zela Smart Glasses Direct BLE Driver\n\n**Gap Analysis**: **IN PROGRESS (50% Complete)**\n- **Current**: Relay server works over HTTP/Tailscale (:8766)\n- **Missing**: Native BlueZ WebBluetooth direct GATT client for offline pairing\n- **Priority**: Medium \u2014 Enables phone-free direct glasses tether\n- **Action**: Complete GATT UUID table in `zela-glasses-guide/`"
+      "text": "### 👓 Zela Smart Glasses Direct BLE Driver\n\n**Gap Analysis**: **IN PROGRESS (50% Complete)**\n- **Current**: Relay server works over HTTP/Tailscale (:8766)\n- **Missing**: Native BlueZ WebBluetooth direct GATT client for offline pairing\n- **Priority**: Medium — Enables phone-free direct glasses tether\n- **Action**: Complete GATT UUID table in `zela-glasses-guide/`"
     },
     {
       "id": "85a5cc7d12c049e2",
@@ -248,7 +248,7 @@
       "y": 0,
       "width": 440,
       "height": 340,
-      "text": "### \ud83e\uddea Vaelor L1 DAG Test Harness\n\n**Gap Analysis**: **IN PROGRESS (45% Complete)**\n- **Current**: Architectural specifications and canvas data complete\n- **Missing**: Automated multi-node transaction flood test script\n- **Priority**: Medium \u2014 Needed before public testnet announcement\n- **Action**: Write async pytest simulation for 50 validator nodes"
+      "text": "### 🧪 Vaelor L1 DAG Test Harness\n\n**Gap Analysis**: **IN PROGRESS (45% Complete)**\n- **Current**: Architectural specifications and canvas data complete\n- **Missing**: Automated multi-node transaction flood test script\n- **Priority**: Medium — Needed before public testnet announcement\n- **Action**: Write async pytest simulation for 50 validator nodes"
     },
     {
       "id": "789b6e80fa974ad3",
@@ -258,7 +258,7 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\uddfa CertPath Roadmap & Schema Illustrator\n\n**Gap Analysis**: **POLISH NEEDED (75% Complete)**\n- **Current**: Interactive React DAG and ERD designer works in browser\n- **Missing**: Vector SVG export and LaTeX study sheet generator\n- **Priority**: Low-Medium \u2014 Nice to have for student developers\n- **Action**: Add jsPDF / SVG export button to workstation UI"
+      "text": "### 🗺 CertPath Roadmap & Schema Illustrator\n\n**Gap Analysis**: **POLISH NEEDED (75% Complete)**\n- **Current**: Interactive React DAG and ERD designer works in browser\n- **Missing**: Vector SVG export and LaTeX study sheet generator\n- **Priority**: Low-Medium — Nice to have for student developers\n- **Action**: Add jsPDF / SVG export button to workstation UI"
     },
     {
       "id": "bbe5df1abefa4965",
@@ -268,7 +268,7 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udd2c DeepSearch Research Agent & Hermes Lab\n\n**Gap Analysis**: **STALE PROMPTS (60% Complete)**\n- **Current**: Research pipeline scripts in `hermes-laboratory/`\n- **Missing**: Needs migration from older OpenAI endpoint to local Ollama / Gemini 3.8\n- **Priority**: Medium \u2014 Upgrade to local Qwen 2.5 / NousCoder\n- **Action**: Update `hermes-laboratory/server.py` with modern provider bus"
+      "text": "### 🔬 DeepSearch Research Agent & Hermes Lab\n\n**Gap Analysis**: **STALE PROMPTS (60% Complete)**\n- **Current**: Research pipeline scripts in `hermes-laboratory/`\n- **Missing**: Needs migration from older OpenAI endpoint to local Ollama / Gemini 3.8\n- **Priority**: Medium — Upgrade to local Qwen 2.5 / NousCoder\n- **Action**: Update `hermes-laboratory/server.py` with modern provider bus"
     },
     {
       "id": "0f96a5b994ed4b6b",
@@ -278,12 +278,12 @@
       "y": 380,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcb0 Zoth-Bounty Automated Security Triage\n\n**Gap Analysis**: **UNFINISHED INTEGRATION (55% Complete)**\n- **Current**: HackerOne / Bugcrowd report template generator in place\n- **Missing**: Direct hook into Zoth-OSINT scan outputs for 1-click POC generation\n- **Priority**: Medium \u2014 Synergizes with HexStrike and OSINT\n- **Action**: Wire OSINT target findings into `zoth-bounty/` report builder"
+      "text": "### 💰 Zoth-Bounty Automated Security Triage\n\n**Gap Analysis**: **UNFINISHED INTEGRATION (55% Complete)**\n- **Current**: HackerOne / Bugcrowd report template generator in place\n- **Missing**: Direct hook into Zoth-OSINT scan outputs for 1-click POC generation\n- **Priority**: Medium — Synergizes with HexStrike and OSINT\n- **Action**: Wire OSINT target findings into `zoth-bounty/` report builder"
     },
     {
       "id": "grp_risks",
       "type": "group",
-      "label": "\ud83d\udd34 ACTIVE RISKS & HOST SECURITY POSTURE",
+      "label": "🔴 ACTIVE RISKS & HOST SECURITY POSTURE",
       "color": "1",
       "x": -1660,
       "y": 840,
@@ -298,7 +298,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udea8 CRITICAL: Python HTTP Servers on 0.0.0.0\n\n**Risk Level**: **CRITICAL (Remediation Required)**\n- **Vulnerability**: PIDs 107475, 2922927, 3722498 bound to `0.0.0.0`\n- **Exposure**: Exposes `/home/zoth` and `hermes-laboratory` without auth\n- **Mitigation**: UFW blocks external WAN, but Wi-Fi/LAN peers could access\n- **Remediation**: Terminate obsolete HTTP servers; bind strictly to `127.0.0.1`"
+      "text": "### Hardening Rule: Bind Local Servers to Loopback\n\n- **Policy**: Every Zoth daemon and dev server binds to `127.0.0.1` by default.\n- **Why**: A server on `0.0.0.0` exposes its working directory to LAN and Wi-Fi peers.\n- **Check**: `ss -ltnp | grep 0.0.0.0` should return no Zoth services.\n- **Fix**: Restart the service with `--host 127.0.0.1` and keep UFW enabled."
     },
     {
       "id": "92c25e1510624753",
@@ -308,7 +308,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \u26a0\ufe0f HIGH: Tailscale Unauthenticated Endpoints\n\n**Risk Level**: **HIGH (Tailnet Exposure)**\n- **Vulnerability**: Sentry (:8499) and Mobile Relay (:8766) on Tailscale IP\n- **Exposure**: Any node authorized on your Tailscale network can view camera feed\n- **Mitigation**: Tailscale node ACLs provide boundary, but daemon lacks API token\n- **Remediation**: Add pre-shared bearer token (`ZOTH_RELAY_KEY`) to requests"
+      "text": "### ⚠️ HIGH: Tailscale Unauthenticated Endpoints\n\n**Risk Level**: **HIGH (Tailnet Exposure)**\n- **Vulnerability**: Sentry (:8499) and Mobile Relay (:8766) on Tailscale IP\n- **Exposure**: Any node authorized on your Tailscale network can view camera feed\n- **Mitigation**: Tailscale node ACLs provide boundary, but daemon lacks API token\n- **Remediation**: Add pre-shared bearer token (`ZOTH_RELAY_KEY`) to requests"
     },
     {
       "id": "019a70c83c314cc9",
@@ -318,7 +318,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udce6 MEDIUM: 40+ Orphaned Screenshot Folders\n\n**Risk Level**: **MEDIUM (Disk Bloat & Git Clutter)**\n- **Issue**: `~/NullAITech/zoth-civilization/` has 40+ visual audit shot folders\n- **Exposure**: Unnecessary disk consumption and slow git operations\n- **Remediation**: Consolidate into single archive or purge old October runs"
+      "text": "### 📦 MEDIUM: 40+ Orphaned Screenshot Folders\n\n**Risk Level**: **MEDIUM (Disk Bloat & Git Clutter)**\n- **Issue**: `~/NullAITech/zoth-civilization/` has 40+ visual audit shot folders\n- **Exposure**: Unnecessary disk consumption and slow git operations\n- **Remediation**: Consolidate into single archive or purge old October runs"
     },
     {
       "id": "c20a9cedd412495b",
@@ -328,7 +328,7 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udd11 LOW: Sudo NOPASSWD for zoth & azoth\n\n**Risk Level**: **LOW (Developer Convenience Trade-off)**\n- **Status**: Standard for single-user dev workstation and Live ISO\n- **Exposure**: Any shell process running as `zoth` has unrestricted root access\n- **Remediation**: Keep for development; ensure web daemons drop privileges"
+      "text": "### 🔑 LOW: Sudo NOPASSWD for zoth & azoth\n\n**Risk Level**: **LOW (Developer Convenience Trade-off)**\n- **Status**: Standard for single-user dev workstation and Live ISO\n- **Exposure**: Any shell process running as `zoth` has unrestricted root access\n- **Remediation**: Keep for development; ensure web daemons drop privileges"
     },
     {
       "id": "e7c4a20a700246d0",
@@ -338,7 +338,7 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udc33 LOW: Stale Containerd / Docker Sockets\n\n**Risk Level**: **LOW (Resource Footprint)**\n- **Status**: `containerd` is running on `127.0.0.1:45257` with 0 active containers\n- **Exposure**: Minor memory overhead\n- **Remediation**: Keep enabled for testing capsule jails, monitor memory"
+      "text": "### 🐳 LOW: Stale Containerd / Docker Sockets\n\n**Risk Level**: **LOW (Resource Footprint)**\n- **Status**: `containerd` is running on `127.0.0.1:45257` with 0 active containers\n- **Exposure**: Minor memory overhead\n- **Remediation**: Keep enabled for testing capsule jails, monitor memory"
     },
     {
       "id": "744eb82b2870423b",
@@ -348,12 +348,12 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \ud83e\udd16 LOW: Unauthenticated Local Ollama (:11434)\n\n**Risk Level**: **LOW (Safe on Loopback)**\n- **Status**: Bound strictly to `127.0.0.1:11434`\n- **Exposure**: Safe from external LAN, accessible by local web scripts\n- **Remediation**: Maintain loopback binding; never expose to 0.0.0.0"
+      "text": "### 🤖 LOW: Unauthenticated Local Ollama (:11434)\n\n**Risk Level**: **LOW (Safe on Loopback)**\n- **Status**: Bound strictly to `127.0.0.1:11434`\n- **Exposure**: Safe from external LAN, accessible by local web scripts\n- **Remediation**: Maintain loopback binding; never expose to 0.0.0.0"
     },
     {
       "id": "grp_outdated",
       "type": "group",
-      "label": "\u26aa OUTDATED & WORTH SHELVING (TIME SINKS)",
+      "label": "⚪ OUTDATED & WORTH SHELVING (TIME SINKS)",
       "color": "5",
       "x": 40,
       "y": 840,
@@ -368,7 +368,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcdc zoth-studio-og (Legacy React 18 App)\n\n**Evaluation**: **WORTH NOT WORKING ON (ARCHIVE CANDIDATE)**\n- **Reason**: Fully superseded by `zoth-studio-v2` (Vite 5 + React 18 + 72 Tools)\n- **State**: Contains older dependencies and duplicate assets\n- **Verdict**: Freeze and archive. Do not spend engineering hours here."
+      "text": "### 📜 zoth-studio-og (Legacy React 18 App)\n\n**Evaluation**: **WORTH NOT WORKING ON (ARCHIVE CANDIDATE)**\n- **Reason**: Fully superseded by `zoth-studio-v2` (Vite 5 + React 18 + 72 Tools)\n- **State**: Contains older dependencies and duplicate assets\n- **Verdict**: Freeze and archive. Do not spend engineering hours here."
     },
     {
       "id": "1d35081cf8b644e6",
@@ -378,7 +378,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \u23f3 Legacy Hermes Experimental Mocks\n\n**Evaluation**: **WORTH NOT WORKING ON**\n- **Reason**: Older mock prompt files in `hermes-laboratory/` from early 2026\n- **Superseded By**: `chain-of-thoughts` DAG and `azoth-local-agent`\n- **Verdict**: Leave as reference; do not build new features on top."
+      "text": "### ⏳ Legacy Hermes Experimental Mocks\n\n**Evaluation**: **WORTH NOT WORKING ON**\n- **Reason**: Older mock prompt files in `hermes-laboratory/` from early 2026\n- **Superseded By**: `chain-of-thoughts` DAG and `azoth-local-agent`\n- **Verdict**: Leave as reference; do not build new features on top."
     },
     {
       "id": "f528498ad55043bc",
@@ -388,7 +388,7 @@
       "y": 900,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udee1 Static Web Security Guard Scripts\n\n**Evaluation**: **WORTH SHELVING**\n- **Reason**: Basic Python regex header checkers\n- **Superseded By**: Comprehensive `zoth-osint` and `HexStrike` engines\n- **Verdict**: Deprecate in favor of `zoth-osint tech` and `hexstrike scan`."
+      "text": "### 🛡 Static Web Security Guard Scripts\n\n**Evaluation**: **WORTH SHELVING**\n- **Reason**: Basic Python regex header checkers\n- **Superseded By**: Comprehensive `zoth-osint` and `HexStrike` engines\n- **Verdict**: Deprecate in favor of `zoth-osint tech` and `hexstrike scan`."
     },
     {
       "id": "1766dd3233c74830",
@@ -398,7 +398,7 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \ud83d\udcc1 Redundant Scaffolds & Duplicates\n\n**Evaluation**: **WORTH NOT WORKING ON**\n- **Items**: `meta-hackathon-2026`, `LaunchBetter`, `NullAI-HexStrike-AI-Terminal`\n- **Note**: Standalone sub-repos whose features are already merged into core repos\n- **Verdict**: Keep as git remotes if needed, but do not split dev focus."
+      "text": "### 📁 Redundant Scaffolds & Duplicates\n\n**Evaluation**: **WORTH NOT WORKING ON**\n- **Items**: `meta-hackathon-2026`, `LaunchBetter`, `NullAI-HexStrike-AI-Terminal`\n- **Note**: Standalone sub-repos whose features are already merged into core repos\n- **Verdict**: Keep as git remotes if needed, but do not split dev focus."
     },
     {
       "id": "2edc5121023345b8",
@@ -408,7 +408,7 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \u2699\ufe0f Deprecated LocalAI Bridge Configurations\n\n**Evaluation**: **SUPERSEDED**\n- **Reason**: LocalAI ports in config files from pre-Ollama era\n- **Standard**: Host now standardizes on native `ollama` + `llama-server`\n- **Verdict**: Remove stale LocalAI references across config templates."
+      "text": "### ⚙️ Deprecated LocalAI Bridge Configurations\n\n**Evaluation**: **SUPERSEDED**\n- **Reason**: LocalAI ports in config files from pre-Ollama era\n- **Standard**: Host now standardizes on native `ollama` + `llama-server`\n- **Verdict**: Remove stale LocalAI references across config templates."
     },
     {
       "id": "30a65639a4234162",
@@ -418,7 +418,7 @@
       "y": 1280,
       "width": 440,
       "height": 340,
-      "text": "### \ud83c\udfb2 Standalone Proof-of-Concept Scripts\n\n**Evaluation**: **LOW LEVERAGE**\n- **Items**: One-off demo scripts like `cyber-turtle-studio`, `datamosh-glitch-studio`\n- **Context**: Fun visual experiments, but zero commercial leverage\n- **Verdict**: Retain in Studio gallery, but allocate 0 sprint hours."
+      "text": "### 🎲 Standalone Proof-of-Concept Scripts\n\n**Evaluation**: **LOW LEVERAGE**\n- **Items**: One-off demo scripts like `cyber-turtle-studio`, `datamosh-glitch-studio`\n- **Context**: Fun visual experiments, but zero commercial leverage\n- **Verdict**: Retain in Studio gallery, but allocate 0 sprint hours."
     }
   ],
   "edges": [

@@ -12,14 +12,14 @@ fdroid_official: "READY"
 fdroid_sovereign: "READY"
 play_store: "READY"
 github: "https://github.com/1nc0gn30/world-of-zoth"
-apk_path: "/home/zoth/Desktop/world-of-zoth/dist/world-of-zoth.apk"
+apk_path: "~/Desktop/world-of-zoth/dist/world-of-zoth.apk"
 tags: [android-apk, mobile, game, webgl, fdroid, play-store]
 ---
 
 # 📱 World of Zoth RPG (`com.oncogneo.worldofzoth`)
 
-- **Source**: `/home/zoth/Desktop/world-of-zoth/android`
-- **APK Binary**: `/home/zoth/Desktop/world-of-zoth/dist/world-of-zoth.apk` (`1.9 MB`, SHA-256: `19ab66796eababa6d0b25f13acbfbe26ed9b739e452fe25f6c045ded0af533a0`)
+- **Source**: `~/Desktop/world-of-zoth/android`
+- **APK Binary**: `~/Desktop/world-of-zoth/dist/world-of-zoth.apk` (`1.9 MB`, SHA-256: `19ab66796eababa6d0b25f13acbfbe26ed9b739e452fe25f6c045ded0af533a0`)
 - **Permissions**: **0 permissions requested** (100% offline Three.js r187 WebGL RPG).
 - **Release Checklist**:
   1. Fastest approval on both **Official F-Droid (`fdroiddata`)** and **Google Play Store** (zero high-risk permissions, zero network usage).

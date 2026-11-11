@@ -12,14 +12,14 @@ fdroid_official: "CUSTOM"
 fdroid_sovereign: "READY"
 play_store: "DECLARATION"
 github: "https://github.com/NullAITech/nullai-fieldkit"
-apk_path: "/home/zoth/Desktop/Zoth-Meta-Hackathon/apks/spotter-fieldkit-v0.3.3-debug.apk"
+apk_path: "~/Desktop/Zoth-Meta-Hackathon/apks/spotter-fieldkit-v0.3.3-debug.apk"
 tags: [android-apk, mobile, fieldkit, spotter, wearables, fdroid, play-store]
 ---
 
 # 📱 Spotter / NullAI FieldKit (`tech.nullai.fieldkit`)
 
-- **Source**: `/home/zoth/Desktop/Zoth-Meta-Hackathon/nullai-fieldkit/android` & `/home/zoth/Desktop/Zoth-Meta-Hackathon/wt-int/android`
-- **APK Binary**: `/home/zoth/Desktop/Zoth-Meta-Hackathon/apks/spotter-fieldkit-v0.3.3-debug.apk` (`101 MB`, SHA-256: `807c9e5da3fe4a7779777a0322fbfe254bc9f8d7a1ebbe22e1cd2c9a470127aa`)
+- **Source**: `~/Desktop/Zoth-Meta-Hackathon/nullai-fieldkit/android` & `~/Desktop/Zoth-Meta-Hackathon/wt-int/android`
+- **APK Binary**: `~/Desktop/Zoth-Meta-Hackathon/apks/spotter-fieldkit-v0.3.3-debug.apk` (`101 MB`, SHA-256: `807c9e5da3fe4a7779777a0322fbfe254bc9f8d7a1ebbe22e1cd2c9a470127aa`)
 - **Release Checklist**:
   1. Publish full `meta` build immediately on **Sovereign F-Droid (`fdroid.nullai.tech/repo`)**.
   2. Add `foss` (Phone Camera + MediaPipe Vision + Bluetooth Audio) and `meta` (Ray-Ban Meta `com.meta.wearable:mwdat-*`) Gradle product flavors so `foss` qualifies for **Official F-Droid (`fdroiddata`)**.

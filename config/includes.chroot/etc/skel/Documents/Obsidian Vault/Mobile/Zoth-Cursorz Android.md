@@ -12,14 +12,14 @@ fdroid_official: "READY"
 fdroid_sovereign: "READY"
 play_store: "DECLARATION"
 github: "https://github.com/1nc0gn30/zoth-cursorz"
-apk_path: "/home/zoth/NullAITech/zoth-cursorz/android/dist/zoth-cursorz-arm64.apk"
+apk_path: "~/NullAITech/zoth-cursorz/android/dist/zoth-cursorz-arm64.apk"
 tags: [android-apk, mobile, cursorz, accessibility, fdroid, play-store]
 ---
 
 # 📱 Zoth-Cursorz Android (`tech.nullai.zothcursorz`)
 
-- **Source**: `/home/zoth/NullAITech/zoth-cursorz/android`
-- **APK Binary**: `/home/zoth/NullAITech/zoth-cursorz/android/dist/zoth-cursorz-arm64.apk` (`21 KB`, SHA-256: `23cb73f6bb8be94d3fb7df4e5235c41019a0d388c21f454230390605de9923b1`)
+- **Source**: `~/NullAITech/zoth-cursorz/android`
+- **APK Binary**: `~/NullAITech/zoth-cursorz/android/dist/zoth-cursorz-arm64.apk` (`21 KB`, SHA-256: `23cb73f6bb8be94d3fb7df4e5235c41019a0d388c21f454230390605de9923b1`)
 - **Release Checklist**:
   1. 100% FOSS zero-dependency Java build — ready for **Official F-Droid (`fdroiddata`)** and **Sovereign F-Droid**.
   2. For **Google Play Store**, add an in-app Prominent Disclosure dialog before opening Accessibility Settings and submit the AccessibilityService + `FOREGROUND_SERVICE_SPECIAL_USE` walkthrough video.
