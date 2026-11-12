@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=CreatorPlaybooks
+Comment=Reading list & mentor playbook directory for builders across multiple cities
+Exec=/usr/local/bin/creatorplaybooks desktop
+TryExec=/usr/local/bin/creatorplaybooks
+Icon=creatorplaybooks
+Terminal=false
+Categories=Education;Development;Utility;
+StartupNotify=true
+Actions=WebApp;
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:5185)
+Exec=xdg-open http://127.0.0.1:5185

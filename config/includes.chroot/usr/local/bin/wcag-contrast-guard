@@ -8,7 +8,7 @@ TOOL_NAME = 'WCAG & APCA Contrast Guard Studio'
 TOOL_DESC = 'Universal WCAG 2.2 Level AA/AAA & APCA perceptual contrast evaluation, 8-deficiency color vision deficiency simulation, CIEDE2000 Delta-E auto-remediation, harmonic palette generator, and focus appearance auditing.'
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'accessibility'
-TOOL_PORT = 8099
+TOOL_PORT = 8150
 REPO_DIR = os.path.expanduser('~/NullAITech/wcag-contrast-guard')
 PKG_DIR = os.path.expanduser('~/NullAITech/wcag-contrast-guard/src')
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
@@ -95,7 +95,7 @@ def main():
     print("  wcag-contrast-guard target [--width 44 --height 44] WCAG 2.2 SC 2.5.8 Target Size evaluation")
     print("  wcag-contrast-guard scrim <text>                   Solve text-over-image background scrim")
     print("  wcag-contrast-guard scan <file.css> [--json]       Audit CSS stylesheet color pairs")
-    print("  wcag-contrast-guard serve [--port 8099]            Launch Web Studio & REST API server")
+    print("  wcag-contrast-guard serve [--port 8150]            Launch Web Studio & REST API server")
     print("  wcag-contrast-guard mcp                            Run Model Context Protocol stdio server")
 
 if __name__ == '__main__':

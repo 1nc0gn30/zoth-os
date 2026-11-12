@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# ==============================================================================
+#  CreatorPlaybooks - Reading list & mentor playbook directory for builders
+#  Port :5185 | Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+# ==============================================================================
+PORT=5185
+REPO_DIR="/home/zoth/NullAITech/creatorplaybooks"
+
+if [[ "$1" == "--status" ]] || [[ "$1" == "--json" ]]; then
+    python3 -c "
+import json, urllib.request
+online = False
+try:
+    with urllib.request.urlopen('http://127.0.0.1:$PORT', timeout=1) as r:
+        online = r.status < 400
+except: pass
+payload = {
+    'id': 'creatorplaybooks',
+    'name': 'CreatorPlaybooks',
+    'category': 'Education & Growth',
+    'port': $PORT,
+    'local_url': 'http://127.0.0.1:$PORT',
+    'status': 'ONLINE' if online else 'OFFLINE',
+    'repo_path': '$REPO_DIR',
+    'license': '100% Free & Open Access'
+}
+print(json.dumps(payload, indent=2))
+"
+    exit 0
+fi
+
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+    echo "Usage: creatorplaybooks [serve|desktop|--status|--json|--help]"
+    echo "  serve     Start CreatorPlaybooks workstation on port $PORT"
+    echo "  desktop   Launch workstation and open browser"
+    echo "  --status  Check if daemon is listening on port $PORT"
+    echo "  --json    Output service metadata as JSON"
+    exit 0
+fi
+
+if [[ -d "$REPO_DIR" ]]; then
+    cd "$REPO_DIR"
+    if [[ "$1" == "desktop" ]] || [[ "$1" == "web" ]]; then
+        xdg-open "http://127.0.0.1:$PORT" &
+    fi
+    exec npm run dev -- --port "$PORT" --host 127.0.0.1
+else
+    echo "Error: CreatorPlaybooks repository not found at $REPO_DIR"
+    exit 1
+fi

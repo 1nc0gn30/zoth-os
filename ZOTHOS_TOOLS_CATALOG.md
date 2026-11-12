@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 72-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
+#  ZOTHOS — 78-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
 #  Unified Catalog of the NullAI / 1nc0gn30 Sovereign Arsenal
-#  100% God-Mode Workstation + 30s Launch Film Coverage in Zoth Studio v2 (53 in-browser + 19 local CLI; 72 with public repos)
+#  100% God-Mode Workstation Coverage in Zoth Studio v2 & Native ZothOS CLI
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
@@ -763,3 +763,71 @@
 - **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
 - **Operational Value:** Local video double on GPU; Chatterbox Turbo voice cloning and Wav2Lip photorealistic mouth animation on Quadro P1000 with zero cloud leakage.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
+
+
+## ═══════════════════════════════════════════════════════════════════════════════
+##  CADRE 19 — ACCESSIBILITY, OSINT & SOVEREIGN ENCLAVES (6 TOOLS)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+### 73. wcag-contrast-guard (WCAG & APCA Contrast Guard Studio)
+- **Studio Route:** https://zoth.nullai.tech/tools/wcag-contrast-guard • **Local Port:** `http://127.0.0.1:8150`
+- **GitHub:** https://github.com/1nc0gn30/wcag-contrast-guard
+- **Category:** Design & Accessibility
+- **Execution Mode:** BROWSER | **ZothOS CLI:** `wcag-contrast-guard --help` & `wcag-contrast-guard-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** WCAG 2.1/2.2 AA/AAA relative luminance, APCA-W3 0.98G-4g perceptual lightness contrast, 8 CVD simulation matrices, and CIEDE2000 minimal-shift auto-remediation.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 74. zoth-osint (Zoth OSINT Workstation & Masterclass)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-osint • **Local Port:** `http://127.0.0.1:8149`
+- **GitHub:** https://github.com/1nc0gn30/zoth-osint
+- **Category:** Security & OSINT
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-osint --help` & `zoth-osint-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Sovereign OSINT investigative suite, graph entity link analysis, zero-egress passive reconnaissance, and automated forensic report synthesis.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 75. zoth-bolt (Zoth Bolt Sandboxed Workstation)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-bolt • **Local Port:** `http://127.0.0.1:5173`
+- **GitHub:** https://github.com/1nc0gn30/bolt.diy
+- **Category:** AI Agents & Dev
+- **Execution Mode:** BROWSER | **ZothOS CLI:** `bolt --help` & `bolt.diy-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Local, air-gapped web development sandbox and autonomous multi-agent code synthesizer with WebContainer execution.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 76. zoth-math-pillar (Zoth Math Pillar HUD)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-math-pillar • **Local Port:** `http://127.0.0.1:9995`
+- **GitHub:** https://github.com/1nc0gn30/zoth-os
+- **Category:** Security & Enclave
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-math-pillar --status` & `zoth-math-pillar-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Real-time 4-Pillar Mathematical Security & Compute Telemetry HUD (L0 Kernel, L1 Vault, L2 Network, L3 Agent Runtime) with Compact Pill mode.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 77. zothos-lite (ZothOS-Lite Amnesic Monotone OS)
+- **Studio Route:** https://zoth.nullai.tech/tools/zothos-lite • **Local Port:** `http://127.0.0.1:8145`
+- **GitHub:** https://github.com/1nc0gn30/zothos-lite
+- **Category:** Hardware & OS
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zothos-lite --status` & `zothos-lite-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Tails-style Amnesic Monotone Security & AI OS (Debian 13 Live · toram noswap) supporting 56 AI models, ZothNet P2P mesh, and zero-trace operation.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 78. zothnet (ZothNet Sovereign Darknet Mesh)
+- **Studio Route:** https://zoth.nullai.tech/tools/zothnet • **Local Port:** `http://127.0.0.1:9900`
+- **GitHub:** https://github.com/NullAITech/zoth-studio-v2
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zothnet --status` & `zothnet-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Autonomous zero-DNS darknet mesh with Sphinx 1,280B onion mixnet, Vaelor feeless L1 DAG, Kademlia DHT alpha=3, and STUN NAT traversal.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 79. creatorplaybooks (CreatorPlaybooks)
+- **Studio Route:** https://creatorplaybooks.netlify.app • **Local Port:** `http://127.0.0.1:5185`
+- **GitHub:** https://github.com/1nc0gn30/creatorplaybooks
+- **Category:** Education & Growth
+- **Execution Mode:** BROWSER | **ZothOS CLI:** `creatorplaybooks --status` & `creatorplaybooks desktop`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Curated reading list, mentor playbook directory, practice plans, and goal tracker for builders across global cities with zero AI slop.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).

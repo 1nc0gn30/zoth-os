@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=WCAG & APCA Contrast Guard Studio
+Comment=Universal WCAG 2.2 Level AA/AAA, APCA perceptual lightness, 8 CVD simulations, and auto-remediation engine
+Exec=/usr/local/bin/wcag-contrast-guard desktop
+TryExec=/usr/local/bin/wcag-contrast-guard
+Icon=wcag-contrast-guard
+Terminal=false
+Categories=Development;Utility;Accessibility;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch WCAG Contrast Guard Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "WCAG Contrast Guard TUI" -e /usr/local/bin/wcag-contrast-guard-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8150)
+Exec=xdg-open http://127.0.0.1:8150

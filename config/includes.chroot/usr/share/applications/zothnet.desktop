@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ZothNet Sovereign Mesh
+Comment=Autonomous zero-DNS darknet mesh with Sphinx 1,280B onion mixnet, Vaelor L1 DAG, and Kademlia DHT
+Exec=/usr/local/bin/zothnet run --alias "Studio-Node"
+TryExec=/usr/local/bin/zothnet
+Icon=zothnet
+Terminal=false
+Categories=Network;Security;System;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch ZothNet Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "ZothNet TUI" -e /usr/local/bin/zothnet-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:9900)
+Exec=xdg-open http://127.0.0.1:9900

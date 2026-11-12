@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ZothOS-Lite Amnesic OS
+Comment=Tails-style amnesic monotone security & AI OS (#F7F7F4 / #000000 · Debian 13 Live · toram noswap)
+Exec=/usr/local/bin/zothos-lite desktop
+TryExec=/usr/local/bin/zothos-lite
+Icon=zothos-lite
+Terminal=false
+Categories=System;Security;Development;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch ZothOS-Lite Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "ZothOS-Lite TUI" -e /usr/local/bin/zothos-lite-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8145)
+Exec=xdg-open http://127.0.0.1:8145
