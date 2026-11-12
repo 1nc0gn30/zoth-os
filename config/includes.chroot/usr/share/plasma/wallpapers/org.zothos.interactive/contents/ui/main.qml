@@ -595,7 +595,7 @@ WallpaperItem {
                     text: "U+2800 · SOVEREIGN OS · 24K GOLD"
                     color: "#C99920"
                     font.family: "JetBrains Mono"
-                    font.pixelSize: 8.5
+                    font.pixelSize: 9
                     font.letterSpacing: 2.0
                     font.bold: true
                 }
