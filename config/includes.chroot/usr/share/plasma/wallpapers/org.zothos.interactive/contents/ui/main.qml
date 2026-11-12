@@ -66,9 +66,10 @@ WallpaperItem {
     // 1nc0gn30 3D Orbiting Motes
     property var charOrbitMotes: []
 
-    // 1nc0gn30 Hooded Builder Stage active pose state
+    // 1nc0gn30 Character State: strictly Hero & Running Walk from 1nc0gn30.si
     property string activePoseName: "hero"
-    property real poseTransitionAlpha: 1.0
+    property int runningDirection: -1 // -1 = running left, 1 = running right
+    property double lastRunTime: 0
 
     function triggerShockwave(wx, wy, intensityScale) {
         if (root.waveItems.length === 0) {
@@ -154,7 +155,6 @@ WallpaperItem {
     }
 
     // ── 3. Background Ambient Canvas (Stars + Ley-Lines + Moving Blocks) ───
-    // Half-resolution GPU-upscaled canvas for ultra-high FPS at minimal CPU
     Canvas {
         id: bgGraphicCanvas
         width: Math.max(480, Math.floor(parent.width / 2))
@@ -216,7 +216,7 @@ WallpaperItem {
             // C. Constellation Ley-Lines (Pre-filtered distance)
             var nodes = root.constellationNodes;
             if (nodes && nodes.length > 0) {
-                var connectDist = 80.0; // Scaled distance
+                var connectDist = 80.0;
                 ctx.lineWidth = 0.8;
                 ctx.strokeStyle = "rgba(212, 175, 55, 0.18)";
                 ctx.beginPath();
@@ -226,7 +226,6 @@ WallpaperItem {
                     var nax = na.x * scaleFactor;
                     var nay = na.y * scaleFactor;
 
-                    // Line to mouse cursor if near
                     var dmx = Math.abs(mx - nax);
                     var dmy = Math.abs(my - nay);
                     if (dmx < 110.0 && dmy < 110.0) {
@@ -276,7 +275,6 @@ WallpaperItem {
     }
 
     // ── 4. Dedicated 3D Monolith "Z" Viewport (High-Performance GPU-Isolated)
-    // Sized 480x480 centered on screen: 9x fewer pixels to rasterize than full screen!
     Canvas {
         id: zMonolithCanvas
         anchors.centerIn: parent
@@ -353,7 +351,7 @@ WallpaperItem {
                 var p2 = projV[fIdxs[2]];
 
                 var cross2D = (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p1[1] - p0[1]) * (p2[0] - p0[0]);
-                if (cross2D <= 0) continue; // Culled!
+                if (cross2D <= 0) continue;
 
                 var pA = worldV[fIdxs[0]], pB = worldV[fIdxs[1]], pC = worldV[fIdxs[2]];
                 var avgDepth = (worldV[fIdxs[0]][2] + worldV[fIdxs[1]][2] + worldV[fIdxs[2]][2] + worldV[fIdxs[3]][2]) * 0.25;
@@ -525,7 +523,7 @@ WallpaperItem {
         }
     }
 
-    // ── 6. 1nc0gn30 Hooded Builder Stage (Flanked Right, Alive & 3D) ──────
+    // ── 6. 1nc0gn30 Hooded Builder Stage (Hero & Running Walk from 1nc0gn30.si) ──
     Item {
         id: characterFlankStage
 
@@ -538,39 +536,14 @@ WallpaperItem {
         width: Math.min(320, parent.width * 0.22)
         height: Math.min(480, parent.height * 0.55)
 
-        // Levitation float & 3D tilt tracking cursor in real-time
-        transform: [
-            Translate {
-                y: Math.sin(root.breathingPhase * 0.9) * 8.0
-            },
-            Rotation {
-                origin.x: characterFlankStage.width / 2
-                origin.y: characterFlankStage.height / 2
-                axis { x: 0; y: 1; z: 0 }
-                angle: {
-                    var dx = (root.smoothMouseX - (characterFlankStage.x + characterFlankStage.width / 2));
-                    return Math.max(-22, Math.min(22, -dx * 0.024 + Math.sin(root.breathingPhase * 0.7) * 2.5));
-                }
-            },
-            Rotation {
-                origin.x: characterFlankStage.width / 2
-                origin.y: characterFlankStage.height / 2
-                axis { x: 1; y: 0; z: 0 }
-                angle: {
-                    var dy = (root.smoothMouseY - (characterFlankStage.y + characterFlankStage.height / 2));
-                    return Math.max(-15, Math.min(15, dy * 0.020 + Math.cos(root.breathingPhase * 0.6) * 2.0));
-                }
-            }
-        ]
-
-        // Soft Radial Ethereal Aura Bloom behind character (Zero hard rectangle border!)
+        // Soft Radial Ethereal Aura Bloom behind character
         Rectangle {
             anchors.centerIn: parent
             width: parent.width * 0.95
             height: parent.height * 0.95
             radius: width / 2
             color: "#1839d353"
-            opacity: 0.22 + 0.12 * Math.sin(root.breathingPhase * 0.9)
+            opacity: 0.20 + 0.12 * Math.sin(root.breathingPhase * 0.9)
         }
 
         Rectangle {
@@ -579,46 +552,173 @@ WallpaperItem {
             height: parent.height * 0.70
             radius: width / 2
             color: "#15d4af37"
-            opacity: 0.18 + 0.10 * Math.sin(root.breathingPhase * 1.2)
+            opacity: 0.16 + 0.10 * Math.sin(root.breathingPhase * 1.2)
         }
 
-        // 1nc0gn30 Character Alpha-Transparent & Seamless Feathered Cutout
-        Image {
-            id: characterAlphaImg
-            anchors.centerIn: parent
-            source: "character/alpha-" + root.activePoseName + ".png"
-            width: parent.width
-            height: parent.height
-            fillMode: Image.PreserveAspectFit
-            asynchronous: true
-            cache: true
-            smooth: true
-            opacity: 0.96 * root.poseTransitionAlpha
-            scale: 1.0 + 0.015 * Math.sin(root.breathingPhase * 1.1)
-        }
+        // ── POSE 1: HERO (Main Sentinel Pose from 1nc0gn30.si) ───────────────
+        Item {
+            id: heroPoseItem
+            anchors.fill: parent
+            opacity: root.activePoseName === "hero" ? 1.0 : 0.0
+            visible: opacity > 0.01
 
-        // Orbiting 3D Runic Motes circling around 1nc0gn30 in depth
-        Repeater {
-            model: root.charOrbitMotes
+            Behavior on opacity {
+                NumberAnimation { duration: 340; easing.type: Easing.InOutQuad }
+            }
 
-            Item {
-                id: charMoteItem
-                property real mRad: modelData.angle + root.breathingPhase * modelData.speed
-                property real mX: Math.cos(mRad) * modelData.radius
-                property real mZ: Math.sin(mRad) * modelData.radius
-                property real mY: Math.sin(mRad * 2.0 + modelData.phase) * 35.0
-
-                x: characterFlankStage.width / 2 + mX - 3
-                y: characterFlankStage.height * 0.52 + mY - 3
-                z: mZ > 0 ? 10 : -10 // Depths: front vs behind 1nc0gn30
-
-                Rectangle {
-                    width: 3.2 * (mZ > 0 ? 1.3 : 0.8)
-                    height: width
-                    radius: width / 2
-                    color: mZ > 0 ? "#FFDF70" : "#A07818"
-                    opacity: 0.35 + (mZ + 1.0) * 0.30
+            // Levitation float & real-time 3D tilt tracking cursor in 1nc0gn30.si style
+            transform: [
+                Translate {
+                    y: Math.sin(root.breathingPhase * 1.5) * 6.5
+                },
+                Rotation {
+                    origin.x: heroPoseItem.width / 2
+                    origin.y: heroPoseItem.height / 2
+                    axis { x: 0; y: 1; z: 0 }
+                    angle: {
+                        var dx = (root.smoothMouseX - (characterFlankStage.x + heroPoseItem.width / 2));
+                        return Math.max(-22, Math.min(22, -dx * 0.024 + Math.sin(root.breathingPhase * 0.7) * 2.5));
+                    }
+                },
+                Rotation {
+                    origin.x: heroPoseItem.width / 2
+                    origin.y: heroPoseItem.height / 2
+                    axis { x: 1; y: 0; z: 0 }
+                    angle: {
+                        var dy = (root.smoothMouseY - (characterFlankStage.y + heroPoseItem.height / 2));
+                        return Math.max(-15, Math.min(15, dy * 0.020 + Math.cos(root.breathingPhase * 0.6) * 2.0));
+                    }
                 }
+            ]
+
+            Image {
+                id: heroImg
+                anchors.centerIn: parent
+                source: "character/alpha-hero.png"
+                width: parent.width
+                height: parent.height
+                fillMode: Image.PreserveAspectFit
+                asynchronous: true
+                cache: true
+                smooth: true
+                scale: 1.0 + 0.015 * Math.sin(root.breathingPhase * 1.1)
+            }
+
+            // 8 Orbiting 3D Runic Motes circling around hero in depth
+            Repeater {
+                model: root.charOrbitMotes
+
+                Item {
+                    property real mRad: modelData.angle + root.breathingPhase * modelData.speed
+                    property real mX: Math.cos(mRad) * modelData.radius
+                    property real mZ: Math.sin(mRad) * modelData.radius
+                    property real mY: Math.sin(mRad * 2.0 + modelData.phase) * 35.0
+
+                    x: heroPoseItem.width / 2 + mX - 3
+                    y: heroPoseItem.height * 0.52 + mY - 3
+                    z: mZ > 0 ? 10 : -10
+
+                    Rectangle {
+                        width: 3.2 * (mZ > 0 ? 1.3 : 0.8)
+                        height: width
+                        radius: width / 2
+                        color: mZ > 0 ? "#FFDF70" : "#A07818"
+                        opacity: 0.35 + (mZ + 1.0) * 0.30
+                    }
+                }
+            }
+        }
+
+        // ── POSE 2: WALK (Running Vector Stride from 1nc0gn30.si) ─────────────
+        Item {
+            id: walkPoseItem
+            anchors.fill: parent
+            opacity: root.activePoseName === "walk" ? 1.0 : 0.0
+            visible: opacity > 0.01
+
+            Behavior on opacity {
+                NumberAnimation { duration: 340; easing.type: Easing.InOutQuad }
+            }
+
+            // Running athletic stride bounce & forward lean from 1nc0gn30.si
+            transform: [
+                Translate {
+                    // Rhythmic footfall bounce
+                    y: -Math.abs(Math.sin(root.breathingPhase * 7.5)) * 9.5
+                },
+                Translate {
+                    x: (root.runningDirection > 0 ? 12 : -12) * Math.min(1.0, root.cursorSpeed / 20.0)
+                },
+                Rotation {
+                    origin.x: walkPoseItem.width / 2
+                    origin.y: walkPoseItem.height / 2
+                    axis { x: 1; y: 0; z: 0 }
+                    angle: 8.5
+                },
+                Rotation {
+                    origin.x: walkPoseItem.width / 2
+                    origin.y: walkPoseItem.height / 2
+                    axis { x: 0; y: 1; z: 0 }
+                    angle: (root.runningDirection > 0 ? -12.0 : 12.0)
+                }
+            ]
+
+            Image {
+                id: walkImg
+                anchors.centerIn: parent
+                source: "character/alpha-walk.png"
+                width: parent.width * 1.05
+                height: parent.height * 1.05
+                fillMode: Image.PreserveAspectFit
+                asynchronous: true
+                cache: true
+                smooth: true
+
+                // Horizontal flip: alpha-walk naturally faces left; flip horizontally when running right
+                transform: Scale {
+                    origin.x: walkImg.width / 2
+                    origin.y: walkImg.height / 2
+                    xScale: root.runningDirection > 0 ? -1.0 : 1.0
+                }
+            }
+
+            // Trailing running vector wake particles streaming behind runner
+            Repeater {
+                model: 12
+
+                Item {
+                    property real pPhase: (index / 12.0) * 6.28
+                    property real pLife: (root.breathingPhase * 3.5 + index * 0.28) % 1.0
+                    property real streamDir: root.runningDirection > 0 ? -1.0 : 1.0
+
+                    x: walkPoseItem.width / 2 + streamDir * (30.0 + pLife * 80.0) + Math.sin(pPhase + root.breathingPhase * 4.0) * 12.0
+                    y: walkPoseItem.height * 0.45 + (pLife * 45.0) - Math.abs(Math.sin(root.breathingPhase * 7.5)) * 9.5
+                    opacity: (1.0 - pLife) * 0.75
+
+                    Rectangle {
+                        width: (1.0 - parent.pLife) * 4.0 + 1.5
+                        height: width
+                        color: index % 3 === 0 ? "#39D353" : (index % 2 === 0 ? "#F5B82E" : "#FFF5D0")
+                    }
+                }
+            }
+        }
+
+        // Luminous wavefront pulse on morph transition
+        Rectangle {
+            id: morphWavefront
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width * 1.2
+            height: 3
+            color: "#FFE27A"
+            opacity: 0.0
+            y: parent.height * 0.5
+
+            SequentialAnimation on opacity {
+                id: waveAnim
+                running: false
+                NumberAnimation { to: 0.85; duration: 120 }
+                NumberAnimation { to: 0.0; duration: 250 }
             }
         }
     }
@@ -817,24 +917,22 @@ WallpaperItem {
                 if (root.cursorActivity < 0.02) root.cursorActivity = 0.02;
             }
 
-            // Dynamic 1nc0gn30 Character Pose Logic (Living & Reactive)
-            var charCenterX = characterFlankStage.x + characterFlankStage.width / 2;
-            var charCenterY = characterFlankStage.y + characterFlankStage.height / 2;
-            var charDist = Math.hypot(root.smoothMouseX - charCenterX, root.smoothMouseY - charCenterY);
+            // Dynamic 1nc0gn30 Character Pose Logic (STRICTLY HERO & RUNNING WALK from 1nc0gn30.si)
+            var prevPose = root.activePoseName;
+            var isRunningMotion = moveDist > 14.0 || root.cursorActivity > 0.45;
 
-            var nextPose = "hero";
-            if (charDist < 260) {
-                nextPose = root.smoothMouseX < charCenterX ? "three-quarter" : "front";
-            } else if (moveDist > 22.0) {
-                nextPose = "walk";
-            } else if (root.cursorActivity > 0.6) {
-                nextPose = "type";
-            } else {
-                nextPose = "hero";
+            if (isRunningMotion) {
+                root.activePoseName = "walk";
+                root.lastRunTime = now;
+                if (Math.abs(dxMouse) > 1.0) {
+                    root.runningDirection = dxMouse > 0 ? 1 : -1;
+                }
+            } else if (now - root.lastRunTime > 650) {
+                root.activePoseName = "hero";
             }
 
-            if (root.activePoseName !== nextPose) {
-                root.activePoseName = nextPose;
+            if (prevPose !== root.activePoseName) {
+                waveAnim.restart();
             }
 
             // Rapid whip motion shockwave trigger
