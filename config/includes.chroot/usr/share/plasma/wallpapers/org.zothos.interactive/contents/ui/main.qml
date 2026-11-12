@@ -57,8 +57,10 @@ WallpaperItem {
     // Moving Metallic Gold Pixel Blocks
     property var goldPixelBlocks: []
 
-    // Centerpiece: True 3D Volumetric Sculpted Monolith "Z" Mesh
+    // Centerpiece: True 3D Volumetric Sculpted Monolith "Z" Mesh & 3D Lattice Cube from zothos.nullai.tech
     property var zMonolithMesh: null
+    property var latticePoints: []
+    property var latticeEdges: []
 
     // Floating Braille/ASCII sparks pool
     property var brailleSparks: []
@@ -116,7 +118,7 @@ WallpaperItem {
         property real centerDist: Math.hypot(root.smoothMouseX - (parent.width / 2), root.smoothMouseY - (parent.height / 2 - 40))
         property real centerProximity: Math.max(0.0, 1.0 - centerDist / 650.0)
 
-        // Soft, ethereal central golden bloom breathing in deep space
+        // Soft central golden bloom breathing in deep space
         Image {
             id: centerBloom
             source: "images/glow.png"
@@ -274,7 +276,7 @@ WallpaperItem {
         }
     }
 
-    // ── 4. Dedicated 3D Monolith "Z" Viewport (High-Performance GPU-Isolated)
+    // ── 4. Dedicated 3D Monolith "Z" Viewport (with 3D Lattice Cube from zothos.nullai.tech)
     Canvas {
         id: zMonolithCanvas
         anchors.centerIn: parent
@@ -310,7 +312,51 @@ WallpaperItem {
             var cosX = Math.cos(zPitch), sinX = Math.sin(zPitch);
             var cosZ = Math.cos(zRoll), sinZ = Math.sin(zRoll);
 
-            // Transform 3D vertices
+            // ── A. 3D Lattice Cube from zothos.nullai.tech Navbar Logo ────
+            var latPts = root.latticePoints;
+            var latEdges = root.latticeEdges;
+            if (latPts && latPts.length > 0 && latEdges && latEdges.length > 0) {
+                var latScale = zScale * 0.88;
+                var projLat = [];
+                for (var lpi = 0; lpi < latPts.length; lpi++) {
+                    var lp = latPts[lpi];
+                    var lpx = lp[0], lpy = lp[1], lpz = lp[2];
+                    var lx1 = lpx * cosY - lpz * sinY;
+                    var lz1 = lpx * sinY + lpz * cosY;
+                    var ly2 = lpy * cosX - lz1 * sinX;
+                    var lz2 = lpy * sinX + lz1 * cosX;
+                    var lx3 = lx1 * cosZ - ly2 * sinZ;
+                    var ly3 = lx1 * sinZ + ly2 * cosZ;
+                    var lpf = 3.2 / (3.6 + lz2);
+                    projLat.push([zcx + lx3 * latScale * lpf, zcy + ly3 * latScale * lpf, lz2]);
+                }
+
+                // Draw 3D lattice edges with depth fading
+                ctx.lineWidth = 0.85;
+                for (var lei = 0; lei < latEdges.length; lei++) {
+                    var edge = latEdges[lei];
+                    var ptA = projLat[edge[0]];
+                    var ptB = projLat[edge[1]];
+                    var avgZ = (ptA[2] + ptB[2]) * 0.5;
+                    var edgeAlpha = Math.max(0.08, Math.min(0.40, 0.20 - avgZ * 0.15));
+                    ctx.strokeStyle = "rgba(212, 175, 55, " + edgeAlpha.toFixed(2) + ")";
+                    ctx.beginPath();
+                    ctx.moveTo(ptA[0], ptA[1]);
+                    ctx.lineTo(ptB[0], ptB[1]);
+                    ctx.stroke();
+                }
+
+                // Glowing 3D lattice vertices
+                for (var lvi = 0; lvi < projLat.length; lvi++) {
+                    var lvp = projLat[lvi];
+                    if (lvp[2] < 0.2) {
+                        ctx.fillStyle = lvp[2] < -0.3 ? "rgba(255, 245, 190, 0.75)" : "rgba(212, 175, 55, 0.45)";
+                        ctx.fillRect(lvp[0] - 1.2, lvp[1] - 1.2, 2.4, 2.4);
+                    }
+                }
+            }
+
+            // ── B. Transform 3D Z Monolith Vertices ────────────────────────
             var worldV = [];
             var projV = [];
             var verts = zModel.vertices;
@@ -439,85 +485,126 @@ WallpaperItem {
         }
     }
 
-    // ── 5. Interactive 3D "ZOTHOS" Wordmark (Alive Metallic Letters) ───────
+    // ── 5. Interactive 3D "ZOTHOS" Wordmark (Design Parity with zothos.nullai.tech) ──
     Item {
         id: zothosWordmarkBar
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: zMonolithCanvas.bottom
-        anchors.topMargin: Math.max(14, parent.height * 0.02)
-        width: wordmarkRow.width
-        height: Math.min(84, parent.height * 0.09)
+        anchors.topMargin: Math.max(12, parent.height * 0.016)
+        width: wordmarkColumn.width
+        height: wordmarkColumn.height
 
-        Row {
-            id: wordmarkRow
-            spacing: Math.min(18, root.width * 0.012)
+        Column {
+            id: wordmarkColumn
             anchors.centerIn: parent
+            spacing: 6
 
-            Repeater {
-                model: [
-                    { id: "Z",  src: "images/letter_z.png",  alt: "Z", w: 58 },
-                    { id: "O1", src: "images/letter_o1.png", alt: "O", w: 64 },
-                    { id: "T",  src: "images/letter_t.png",  alt: "T", w: 56 },
-                    { id: "H",  src: "images/letter_h.png",  alt: "H", w: 64 },
-                    { id: "O2", src: "images/letter_o2.png", alt: "O", w: 64 },
-                    { id: "S",  src: "images/letter_s.png",  alt: "S", w: 52 }
-                ]
+            Row {
+                id: wordmarkRow
+                spacing: Math.min(18, root.width * 0.012)
+                anchors.horizontalCenter: parent.horizontalCenter
 
-                Item {
-                    id: letterItem
-                    width: modelData.w * (zothosWordmarkBar.height / 76.0)
-                    height: zothosWordmarkBar.height
-
-                    // Individual floating wave undulation per letter
-                    property real letterWave: Math.sin(root.breathingPhase * 2.2 + index * 0.65) * 6.0
-
-                    // Proximity to cursor lifts letter in 3D
-                    property real cursorDist: {
-                        var absX = zothosWordmarkBar.x + wordmarkRow.x + letterItem.x + letterItem.width / 2;
-                        var absY = zothosWordmarkBar.y + wordmarkRow.y + letterItem.y + letterItem.height / 2;
-                        return Math.hypot(root.smoothMouseX - absX, root.smoothMouseY - absY);
-                    }
-                    property real hoverBoost: cursorDist < 180 ? (1.0 - cursorDist / 180.0) : 0.0
-
-                    scale: 1.0 + hoverBoost * 0.18
-
-                    // 3D Parallax Tilt on each individual letter
-                    transform: [
-                        Translate {
-                            y: letterItem.letterWave - letterItem.hoverBoost * 8.0
-                        },
-                        Rotation {
-                            origin.x: letterItem.width / 2
-                            origin.y: letterItem.height / 2
-                            axis { x: 0; y: 1; z: 0 }
-                            angle: -(root.smoothMouseX - root.width / 2) * 0.012
-                        },
-                        Rotation {
-                            origin.x: letterItem.width / 2
-                            origin.y: letterItem.height / 2
-                            axis { x: 1; y: 0; z: 0 }
-                            angle: (root.smoothMouseY - (zothosWordmarkBar.y + zothosWordmarkBar.height / 2)) * 0.015
-                        }
+                Repeater {
+                    model: [
+                        { id: "Z",  src: "images/letter_z.png",  alt: "Z", w: 58 },
+                        { id: "O1", src: "images/letter_o1.png", alt: "O", w: 64 },
+                        { id: "T",  src: "images/letter_t.png",  alt: "T", w: 56 },
+                        { id: "H",  src: "images/letter_h.png",  alt: "H", w: 64 },
+                        { id: "O2", src: "images/letter_o2.png", alt: "O", w: 64 },
+                        { id: "S",  src: "images/letter_s.png",  alt: "S", w: 52 }
                     ]
 
-                    // Soft golden aura bloom under each letter
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width * 1.35
-                        height: parent.height * 1.35
-                        radius: 16
-                        color: "#25d4af37"
-                        opacity: 0.18 + hoverBoost * 0.50
-                    }
+                    Item {
+                        id: letterItem
+                        width: modelData.w * (Math.min(80, root.height * 0.082) / 76.0)
+                        height: Math.min(80, root.height * 0.082)
 
-                    Image {
-                        source: modelData.src
-                        anchors.fill: parent
-                        fillMode: Image.PreserveAspectFit
-                        asynchronous: true
-                        cache: true
-                        opacity: 0.94 + hoverBoost * 0.06
+                        // Individual floating wave undulation per letter
+                        property real letterWave: Math.sin(root.breathingPhase * 2.2 + index * 0.65) * 5.5
+
+                        // Proximity to cursor lifts letter in 3D
+                        property real cursorDist: {
+                            var absX = zothosWordmarkBar.x + wordmarkColumn.x + wordmarkRow.x + letterItem.x + letterItem.width / 2;
+                            var absY = zothosWordmarkBar.y + wordmarkColumn.y + wordmarkRow.y + letterItem.y + letterItem.height / 2;
+                            return Math.hypot(root.smoothMouseX - absX, root.smoothMouseY - absY);
+                        }
+                        property real hoverBoost: cursorDist < 180 ? (1.0 - cursorDist / 180.0) : 0.0
+
+                        // Continuous sweeping specular sheen wave from zothos.nullai.tech
+                        property real letterNormPos: index / 5.0
+                        property real sheenDist: Math.abs(root.sheenProgress - letterNormPos)
+                        property real sheenGlow: Math.max(0.0, 1.0 - sheenDist * 4.5)
+
+                        scale: 1.0 + hoverBoost * 0.16 + sheenGlow * 0.08
+
+                        // 3D Parallax Tilt on each individual letter
+                        transform: [
+                            Translate {
+                                y: letterItem.letterWave - letterItem.hoverBoost * 7.0 - letterItem.sheenGlow * 3.0
+                            },
+                            Rotation {
+                                origin.x: letterItem.width / 2
+                                origin.y: letterItem.height / 2
+                                axis { x: 0; y: 1; z: 0 }
+                                angle: -(root.smoothMouseX - root.width / 2) * 0.012
+                            },
+                            Rotation {
+                                origin.x: letterItem.width / 2
+                                origin.y: letterItem.height / 2
+                                axis { x: 1; y: 0; z: 0 }
+                                angle: (root.smoothMouseY - (zothosWordmarkBar.y + zothosWordmarkBar.height / 2)) * 0.015
+                            }
+                        ]
+
+                        // Golden aura bloom flaring on sheen or cursor proximity
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: parent.width * 1.35
+                            height: parent.height * 1.35
+                            radius: 16
+                            color: letterItem.sheenGlow > 0.3 ? "#45ffe89e" : "#25d4af37"
+                            opacity: 0.18 + letterItem.hoverBoost * 0.50 + letterItem.sheenGlow * 0.40
+                        }
+
+                        Image {
+                            source: modelData.src
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                            cache: true
+                            opacity: 0.94 + letterItem.hoverBoost * 0.06
+                        }
                     }
+                }
+            }
+
+            // Micro-Telemetry Brand Sub-Line from zothos.nullai.tech
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 8
+                opacity: 0.65 + 0.20 * Math.sin(root.breathingPhase * 1.2)
+
+                Text {
+                    text: "⣿"
+                    color: "#39D353"
+                    font.family: "JetBrains Mono"
+                    font.pixelSize: 9
+                    font.bold: true
+                }
+                Text {
+                    text: "U+2800 · SOVEREIGN OS · 24K GOLD"
+                    color: "#C99920"
+                    font.family: "JetBrains Mono"
+                    font.pixelSize: 8.5
+                    font.letterSpacing: 2.0
+                    font.bold: true
+                }
+                Text {
+                    text: "⣿"
+                    color: "#39D353"
+                    font.family: "JetBrains Mono"
+                    font.pixelSize: 9
+                    font.bold: true
                 }
             }
         }
@@ -643,7 +730,6 @@ WallpaperItem {
             // Running athletic stride bounce & forward lean from 1nc0gn30.si
             transform: [
                 Translate {
-                    // Rhythmic footfall bounce
                     y: -Math.abs(Math.sin(root.breathingPhase * 7.5)) * 9.5
                 },
                 Translate {
@@ -674,7 +760,6 @@ WallpaperItem {
                 cache: true
                 smooth: true
 
-                // Horizontal flip: alpha-walk naturally faces left; flip horizontally when running right
                 transform: Scale {
                     origin.x: walkImg.width / 2
                     origin.y: walkImg.height / 2
@@ -884,7 +969,7 @@ WallpaperItem {
             root.breathingPhase += dt * (root.cursorActivity > 0.05 ? 1.3 : 0.80);
             root.sacredRotation = (root.sacredRotation + dt * (14.0 + root.cursorActivity * 30.0)) % 360.0;
 
-            // Sweeping specular sheen on wordmark
+            // Sweeping specular sheen on wordmark (from zothos.nullai.tech navbar)
             root.sheenProgress += dt * (root.cursorActivity > 0.05 ? 0.50 : 0.25);
             if (root.sheenProgress > 1.8) {
                 root.sheenProgress = -0.4;
@@ -1092,7 +1177,31 @@ WallpaperItem {
             orbitParticles: orbitParticles
         };
 
-        // D. Constellation Ley-Line Star Nodes
+        // D. 3D Lattice Cube from zothos.nullai.tech Navbar Logo
+        var latP = [];
+        var LN = 2;
+        for (var li = 0; li <= LN; li++) {
+            for (var lj = 0; lj <= LN; lj++) {
+                for (var lk = 0; lk <= LN; lk++) {
+                    latP.push([(li / LN) * 2 - 1, (lj / LN) * 2 - 1, (lk / LN) * 2 - 1]);
+                }
+            }
+        }
+        function getLid(i, j, k) { return (i * (LN + 1) + j) * (LN + 1) + k; }
+        var latE = [];
+        for (var ei = 0; ei <= LN; ei++) {
+            for (var ej = 0; ej <= LN; ej++) {
+                for (var ek = 0; ek <= LN; ek++) {
+                    if (ei < LN) latE.push([getLid(ei, ej, ek), getLid(ei + 1, ej, ek)]);
+                    if (ej < LN) latE.push([getLid(ei, ej, ek), getLid(ei, ej + 1, ek)]);
+                    if (ek < LN) latE.push([getLid(ei, ej, ek), getLid(ei, ej, ek + 1)]);
+                }
+            }
+        }
+        root.latticePoints = latP;
+        root.latticeEdges = latE;
+
+        // E. Constellation Ley-Line Star Nodes
         var cNodes = [];
         for (var ni = 0; ni < root.nodeCount; ni++) {
             cNodes.push({
@@ -1106,7 +1215,7 @@ WallpaperItem {
         }
         root.constellationNodes = cNodes;
 
-        // E. Floating Sparks
+        // F. Floating Sparks
         var spks = [];
         for (var spi = 0; spi < 20; spi++) {
             spks.push({
@@ -1119,7 +1228,7 @@ WallpaperItem {
         }
         root.brailleSparks = spks;
 
-        // F. 1nc0gn30 3D Orbiting Motes
+        // G. 1nc0gn30 3D Orbiting Motes
         var cMotes = [];
         for (var mi = 0; mi < 8; mi++) {
             cMotes.push({
