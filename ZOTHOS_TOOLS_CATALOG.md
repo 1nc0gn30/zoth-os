@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 78-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
+#  ZOTHOS — 80-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
 #  Unified Catalog of the NullAI / 1nc0gn30 Sovereign Arsenal
 #  100% God-Mode Workstation Coverage in Zoth Studio v2 & Native ZothOS CLI
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -824,10 +824,19 @@
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
 ### 79. creatorplaybooks (CreatorPlaybooks)
-- **Studio Route:** https://creatorplaybooks.netlify.app • **Local Port:** `http://127.0.0.1:5185`
+- **Studio Route:** https://zoth.nullai.tech/tools/creatorplaybooks • **Local Port:** `http://127.0.0.1:5185`
 - **GitHub:** https://github.com/1nc0gn30/creatorplaybooks
 - **Category:** Education & Growth
 - **Execution Mode:** BROWSER | **ZothOS CLI:** `creatorplaybooks --status` & `creatorplaybooks desktop`
 - **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
 - **Operational Value:** Curated reading list, mentor playbook directory, practice plans, and goal tracker for builders across global cities with zero AI slop.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 80. zoth-obsidian-tracker (Zoth Obsidian Tracker)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-obsidian-tracker • **Local Port:** `http://127.0.0.1:8151`
+- **GitHub:** https://github.com/1nc0gn30/zoth-obsidian-tracker
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-obsidian-tracker --status` & `zoth-obsidian-tracker-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Sovereign Second Brain vault explorer, 5 Ecosystem Pillars, 7-APK Master Roadmap, and 78-tool verification matrix with live screenrecordings on :8151.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
