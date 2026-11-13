@@ -1,7 +1,7 @@
 ---
 title: "Zoth Canon — Sovereign Second Brain"
 date: 2026-11-08
-author: "1nc0gn30 (@1nc0gn30)"
+author: "Neal Frazier (@1nc0gn30)"
 status: verified
 tags:
   - canon
@@ -25,15 +25,15 @@ stdp_weight: 1.00
 
 # ◈ Zoth Canon — Sovereign Second Brain (`2026-11-08`)
 
-Operator knowledge graph and master architectural index for **[[Zoth OS|ZothOS v3.4]]**, **[[ZothOS-Lite Web Desktop|ZothOS-Lite v1.1 (A100 Web Desktop)]]**, **[[Zoth Studio|Zoth Studio v2]]**, **[[ZothNet Sovereign Mesh|ZothNet v1.2.2 Sovereign Darknet Mesh]]**, **[[Zoth Civilization & Pantheon 21]]**, **[[World of Zoth|World of Zoth 3D Lattice Cyber-RPG]]**, **[[Adytum 22 Tarot 3D Engine]]**, **[[1nc0gn30 Sovereign Hub|1nc0gn30.si / 1nc0gn30.si / 757tech.pro]]**, and **[[30 Days of Linux Fundamentals|30 Days of Linux Dojo v3.4]]**. Every note maps to a verified binary, loopback daemon, public surface, or cryptographic artifact. Graph, JSON Canvas 1.0, Obsidian Bases, and STDP Neuro-Memory (`:8094`) are synchronized in real time across the host workstation and the ZothOS Live ISO chroot skeleton (`config/includes.chroot/etc/skel/Documents/Obsidian Vault/`).
+Operator knowledge graph and master architectural index for **[[Zoth OS|ZothOS v3.4]]**, **[[ZothOS-Lite Web Desktop|ZothOS-Lite v1.1 (A100 Web Desktop)]]**, **[[Zoth Studio|Zoth Studio v2]]**, **[[ZothNet Sovereign Mesh|ZothNet v1.2.2 Sovereign Darknet Mesh]]**, **[[Zoth Civilization & Pantheon 21]]**, **[[World of Zoth|World of Zoth 3D Lattice Cyber-RPG]]**, **[[Adytum 22 Tarot 3D Engine]]**, **[[1nc0gn30 Sovereign Hub|1nc0gn30.si / nealfrazier.tech / 757tech.pro]]**, and **[[30 Days of Linux Fundamentals|30 Days of Linux Dojo v3.4]]**. Every note maps to a verified binary, loopback daemon, public surface, or cryptographic artifact. Graph, JSON Canvas 1.0, Obsidian Bases, and STDP Neuro-Memory (`:8094`) are synchronized in real time across the host workstation and the ZothOS Live ISO chroot skeleton (`config/includes.chroot/etc/skel/Documents/Obsidian Vault/`).
 
 > [!tip] Sovereign Telemetry & Vault Pulse (Nov 8, 2026)
-> **1,799+ Markdown Notes · 21 JSON Canvases · 24 Obsidian Bases · 72/72 Open-Access Tools Verified (`0` Paywalls) · 113+ GB Reclaimed · Multiboot Synchronized (Parrot 7 + ZothOS Full + Lite + Amnesic RAM) · Multi-Platform Binaries & Android APKs Live.**
-> All 72 tools across Zoth Studio v2, ZothOS v3.4, ZothOS-Lite, and ZothNet v1.2.2 are **100% Free & Open-Access** by default (`$0.00`). Zero PII, zero telemetry leakage, and full Sigstore Cosign + VirusTotal release verification. Optional support via [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) and Solana Tip (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
+> **1,800+ Markdown Notes · 21 JSON Canvases · 24 Obsidian Bases · 80/80 Open-Access Tools Verified (`0` Paywalls) · 113+ GB Reclaimed · Multiboot Synchronized (Parrot 7 + ZothOS Full + Lite + Amnesic RAM) · Multi-Platform Binaries & Android APKs Live.**
+> All 80 tools across Zoth Studio v2, ZothOS v3.4, ZothOS-Lite, and ZothNet v1.2.2 are **100% Free & Open-Access** by default (`$0.00`). Zero PII, zero telemetry leakage, and full Sigstore Cosign + VirusTotal release verification. Optional support via [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) and Solana Tip (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
 
 > [!info] Live Workstation & Public Domain Topology
 > - **Workstation**: Laptop `eDP-1` @ `0,0` · Samsung `LS32D39xG` @ `1920,0` · 8 Named Virtual Desktops (`Forge` → `Sanctum`)
-> - **Primary Domains**: [1nc0gn30.si](https://1nc0gn30.si) · [757tech.pro](https://757tech.pro) · [nullai.tech](https://nullai.tech) · [1nc0gn30.si](https://1nc0gn30.si) · [1nc0gn30.github.io](https://1nc0gn30.github.io)
+> - **Primary Domains**: [nealfrazier.tech](https://nealfrazier.tech) · [757tech.pro](https://757tech.pro) · [nullai.tech](https://nullai.tech) · [1nc0gn30.si](https://1nc0gn30.si) · [1nc0gn30.github.io](https://1nc0gn30.github.io)
 > - **Platform & Product Domains**: [zoth.nullai.tech](https://zoth.nullai.tech) · [zothos.nullai.tech](https://zothos.nullai.tech) · [zothnet.nullai.tech](https://zothnet.nullai.tech) · [zml.nullai.tech](https://zml.nullai.tech) · [30-days-of-linux.netlify.app](https://30-days-of-linux.netlify.app)
 
 Open [[Maps]] for all interactive canvases and relational bases. Live verification dashboard: `http://127.0.0.1:8151` (`zoth-obsidian-tracker`).
@@ -67,7 +67,7 @@ flowchart TD
     subgraph MemoryHub["🧠 Second Brain & Public Portals"]
         NEURO["Neuro-Memory STDP Daemon (:8094)<br/>41,690+ Engrams · 21-Tool MCP Server"]
         VAULT["Obsidian Second Brain Vault<br/>Host + ZothOS Chroot Skeleton Parity"]
-        HUB["1nc0gn30 Sovereign Hub & Public Surfaces<br/>1nc0gn30.si · 1nc0gn30.si · 757tech.pro · nullai.tech"]
+        HUB["1nc0gn30 Sovereign Hub & Public Surfaces<br/>1nc0gn30.si · nealfrazier.tech · 757tech.pro · nullai.tech"]
     end
 
     CoreOS <--> StudioWorld
@@ -98,16 +98,17 @@ flowchart TD
 | :--- | :--- | :--- | :--- |
 | **ZothOS v3.4 (Full Live ISO)** | [[Zoth OS]] | `zoth-cockpit`, `zoth-control-center`, `pack-iso.sh` | [zothos.nullai.tech](https://zothos.nullai.tech) |
 | **ZothOS-Lite v1.1 (A100 Web Desktop)** | [[ZothOS-Lite Web Desktop]] | `:8145` (`zothos-lite`) | [zothos.nullai.tech/#lite](https://zothos.nullai.tech) |
-| **Zoth Studio v2 (72-Tool Cockpit)** | [[Zoth Studio]] | `:3000` (`zoth-studio`) | [zoth.nullai.tech](https://zoth.nullai.tech) |
+| **Zoth Studio v2 (80-Tool Cockpit)** | [[Zoth Studio]] | `:3000` (`zoth-studio`) | [zoth.nullai.tech](https://zoth.nullai.tech) |
 | **ZothNet v1.2.2 Sovereign Mesh** | [[ZothNet Sovereign Mesh]] | `:9900` HTTP / `:42069` UDP (`zothnet`) | [zothnet.nullai.tech](https://zothnet.nullai.tech) · [zml.nullai.tech](https://zml.nullai.tech) |
 | **Zoth Civilization & Pantheon 21** | [[Zoth Civilization & Pantheon 21]] | `:8120` / `:9393` / `:3000/world` (`zoth-civ`) | [zoth.nullai.tech/world](https://zoth.nullai.tech/world) |
 | **World of Zoth (3D Lattice RPG)** | [[World of Zoth]] | `:8120` / `window.WOZ` (`world-of-zoth.apk`) | [1nc0gn30.si/game.html](https://1nc0gn30.si/game.html) · [world-of-zoth.apk](https://1nc0gn30.si/world-of-zoth.apk) |
 | **Adytum 22 Tarot 3D Engine** | [[Adytum 22 Tarot 3D Engine]] | `:3000/adytum` & `:8099` (`adytum`) | [zoth.nullai.tech/adytum](https://zoth.nullai.tech/adytum) |
 | **Vaelor L1 Feeless DAG (`◈ VLR`)** | [[Vaelor Network]] | `:8140` (`vaelor-cli`, `zothnet ledger`) | [zoth.nullai.tech/vaelor](https://zoth.nullai.tech) |
 | **Neuro-Memory STDP Daemon** | [[Zoth Memory]] | `:8094` (`neuro-memory`, `zoth-second-brain`) | [neuro-memory.nullai.tech](https://neuro-memory.nullai.tech) |
-| **1nc0gn30 Sovereign Hub & Portals** | [[1nc0gn30 Sovereign Hub]] | `1nc0gn30`, `fieldkit`, `zoth-cursorz` (`:9990`) | [1nc0gn30.si](https://1nc0gn30.si) · [1nc0gn30.si](https://1nc0gn30.si) · [757tech.pro](https://757tech.pro) |
+| **1nc0gn30 Sovereign Hub & Portals** | [[1nc0gn30 Sovereign Hub]] | `1nc0gn30`, `fieldkit`, `zoth-cursorz` (`:9990`) | [1nc0gn30.si](https://1nc0gn30.si) · [nealfrazier.tech](https://nealfrazier.tech) · [757tech.pro](https://757tech.pro) |
 | **Public Surfaces & APK Ecosystem** | [[Public Surfaces]] | All Netlify, GitHub Pages & APK Artifacts | [nullai.tech](https://nullai.tech) · [1nc0gn30.github.io](https://1nc0gn30.github.io) |
 | **Zoth Obsidian Tracker App** | [[Studio/Verification/Arsenal Verification & Test Tracker]] | `:8151` (`zoth-obsidian-tracker`) | `http://127.0.0.1:8151` |
+| **Zoth X Connector** | [[Studio/Tools/Studio zoth-x-connector\|Zoth X Connector]] | `:8152` (`zoth-x-connector`) | `http://127.0.0.1:8152` |
 | **30 Days of Linux Dojo v3.4** | [[30 Days of Linux Fundamentals]] | `./control-panel` & `:4321` | [30-days-of-linux.netlify.app](https://30-days-of-linux.netlify.app) |
 | **Zoth WebGen Foundry** | [[Zoth WebGen]] | `:5173` (`bolt-diy` / `zoth-webgen`) | `https://github.com/1nc0gn30/zoth-webgen` |
 | **Supply-Chain Trust & Security** | [[Zoth Trust & Supply Chain]] | `cosign`, `syft`, `virustotal` | `NullAITech/zoth-os` & `zoth-studio-v2` |

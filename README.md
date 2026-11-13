@@ -73,7 +73,7 @@
 | **Developer Runtime** | **Full-Stack Toolchain** | Netlify CLI ops suite, Streamlit Studio ML dashboards, Node.js 20 (Debian), Python 3.12/3.13, Rust, Go, Foundry, and Solana CLI. |
 | **Stealth & Privacy** | **NullAI Ghostmode** | One-touch Tor transparent routing, MAC address spoofing, ephemeral hostname generation, and RAM memory scrubbing. |
 | **Security Arsenal** | **75+ curated security tools** | Pre-configured suites for AD enumeration, web auditing, binary reverse engineering, wireless auditing, and credential inspection (from `30-opsec` + `40-security` package lists). |
-| **Zoth Studio Arsenal** | **75 First-Party Tool Repos & 22 Loopback Daemons** | Full CLI and local daemon integration with [Zoth Studio](https://zoth.nullai.tech) (`127.0.0.1:3000`) across loopback ports `:8094`–`:8151`, `:8765`, `:8787`, `:9393`, `:9395`. |
+| **Zoth Studio Arsenal** | **80 First-Party Tool Repos, 23+ Loopback Daemons & 419 Chroot Binaries** | Full CLI and local daemon integration with [Zoth Studio](https://zoth.nullai.tech) (`127.0.0.1:3000`) across loopback ports `:5173`–`:9995` (including `:8094`–`:8152`, `:8765`, `:8787`, `:9393`, `:9395`). |
 | **Live Boot & Install** | **Calamares 24K Installer** | Hybrid UEFI & legacy BIOS bootloader with automatic GPT/Btrfs subvolume layout and optional LUKS disk encryption. |
 
 ---
@@ -338,9 +338,9 @@ To eliminate stateless context loss across local Ollama (`qwen2.5-coder`) and cl
 
 ## Tool Matrix & Resident Loopback Daemons
 
-ZOTHOS Linux v3.4.0 integrates with [Zoth Studio](https://zoth.nullai.tech) across **75 open-source tool repositories and 22 resident loopback daemons**:
+ZOTHOS Linux v3.4.0 integrates with [Zoth Studio](https://zoth.nullai.tech) across **80 open-source tool repositories, 23+ resident loopback daemons, and 419 chroot binaries** in `config/includes.chroot/usr/local/bin/`:
 
-### 1. The 22 Resident Loopback Daemons (bound to 127.0.0.1)
+### 1. Resident Loopback Daemons (bound to 127.0.0.1)
 Every backend capability runs as an isolated daemon on localhost loopback (`127.0.0.1`) with zero telemetry:
 
 | Port | Daemon Service | Technology | Operational Function |
@@ -548,6 +548,7 @@ sha256sum --ignore-missing -c SHA256SUMS
 | **ZothOS v3.4 CLI & TUI** | `zoth-os` / `zoth-os-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
 | **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native window manager & terminal launcher ([zothos-lite.nullai.tech](https://zothos-lite.nullai.tech)) |
 | **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio zoth-os.md`) |
+| **Zoth X Connector** | `http://127.0.0.1:8152` | Sovereign local X multi-account API controller & persistent systemd scheduler (`zoth-x-connector`) |
 | **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
 
 ```bash

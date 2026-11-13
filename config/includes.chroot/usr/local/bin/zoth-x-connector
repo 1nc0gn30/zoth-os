@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+import { spawn, execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const REPO_DIR = '/home/zoth/NullAITech/zoth-x-connector';
+const PORT = 8152;
+const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`zoth-x-connector v1.0.0 — Sovereign X (Twitter) API Controller & Vault Configurator
+
+Usage:
+  zoth-x-connector                Start local workstation server on http://127.0.0.1:${PORT}
+  zoth-x-connector --status       Print live timer, Vault & account connection status
+  zoth-x-connector --json         Output deterministic JSON telemetry
+  zoth-x-connector run            Execute next scheduled X multi-hub slot
+  zoth-x-connector timer start    Enable & start x-multi-hub.timer
+  zoth-x-connector timer stop     Stop x-multi-hub.timer
+`);
+  process.exit(0);
+}
+
+if (args.includes('--json') || args.includes('--status')) {
+  const vaultPath = path.join(process.env.HOME || '', '.config', 'zoth-vault', 'x.env');
+  const statePath = path.join(process.env.HOME || '', '.config', 'zoth-vault', 'x_campaign_state.json');
+  let timerState = 'unknown';
+  try {
+    timerState = execFileSync('systemctl', ['--user', 'is-active', 'x-multi-hub.timer'], { encoding: 'utf8' }).trim();
+  } catch (_) { timerState = 'inactive'; }
+  const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, 'utf8')) : { accounts: {} };
+  const payload = {
+    id: 'zoth-x-connector',
+    version: '1.0.0',
+    endpoint: `http://127.0.0.1:${PORT}`,
+    vaultExists: fs.existsSync(vaultPath),
+    timerState,
+    accountsTracked: Object.keys(state.accounts || {}),
+    license: '100% Free & Open Access',
+    support: {
+      stripe: 'https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X',
+      solana: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK'
+    }
+  };
+  if (args.includes('--json')) {
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log(`✦ Zoth X Connector (v1.0.0)`);
+    console.log(`  Workstation : http://127.0.0.1:${PORT}`);
+    console.log(`  Timer State : ${timerState}`);
+    console.log(`  Vault Ready : ${payload.vaultExists ? 'YES' : 'NO'}`);
+    console.log(`  Tracked     : ${payload.accountsTracked.map(a => '@' + a).join(', ') || 'none'}`);
+  }
+  process.exit(0);
+}
+
+if (args[0] === 'run') {
+  const multiHub = path.join(process.env.HOME || '', 'Desktop', 'world-of-zoth', 'tools', 'x_multi_hub.mjs');
+  const child = spawn(process.execPath, [multiHub, '--run-slot', ...args.slice(1)], { stdio: 'inherit' });
+  child.on('exit', code => process.exit(code ?? 0));
+} else if (args[0] === 'timer' && (args[1] === 'start' || args[1] === 'stop')) {
+  execFileSync('systemctl', ['--user', args[1], 'x-multi-hub.timer'], { stdio: 'inherit' });
+} else {
+  const child = spawn(process.execPath, [path.join(REPO_DIR, 'server.mjs')], { stdio: 'inherit' });
+  child.on('exit', code => process.exit(code ?? 0));
+}

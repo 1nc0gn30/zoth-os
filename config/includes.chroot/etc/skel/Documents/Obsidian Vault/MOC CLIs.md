@@ -1,7 +1,7 @@
 ---
 title: "MOC · Image CLIs & Braille TUIs"
 date: 2026-11-06
-author: "1nc0gn30 (@1nc0gn30)"
+author: "Neal Frazier (@1nc0gn30)"
 status: verified
 tags:
   - moc
@@ -14,12 +14,13 @@ stdp_weight: 0.98
 
 # 💻 MOC · Image CLIs & Braille TUIs (`/usr/local/bin`)
 
-Every binary and portable launcher in `/usr/local/bin`, `~/.local/bin`, and the ZothOS v3.4 Live ISO chroot `config/includes.chroot/usr/local/bin`. All 72 Sovereign Studio tools also provide a paired `<tool>-tui` Unicode `U+2800` 2×4 Sub-Pixel Braille TUI (`--status`, `--json`).
+Every binary and portable launcher in `/usr/local/bin`, `~/.local/bin`, and the ZothOS v3.4 Live ISO chroot `config/includes.chroot/usr/local/bin` (419 binaries). All 80 Sovereign Studio tools also provide CLI/TUI entrypoints (`--status`, `--json`).
 
 > [!tip] Flagship Nov 2026 CLI Additions
 > - **`zothnet`**: [[ZothNet Sovereign Mesh]] (`zothnet run`, `zothnet monitor` 60fps Braille radar TUI, `zothnet status`, `zothnet id --json`, `zothnet apps compile`, `zothnet ledger`, `zothnet zns`, `zothnet cas`)
 > - **`zoth-cursorz`**: Multi-agent virtual cursor engine (`zoth-cursorz list`, `spawn`, `move`, `click`, `overlay`, `dashboard`, `train`, `android build/install`)
-> - **`zoth-obsidian-tracker`**: Second Brain & 72-Tool Verification Server (`:8151`)
+> - **`zoth-obsidian-tracker`**: Second Brain & 80-Tool Verification Server (`:8151`)
+> - **`zoth-x-connector`**: Sovereign X Multi-Account API Controller & Systemd Scheduler (`:8152`)
 > - **`zoth-second-brain`**: Bidirectional Obsidian Vault & STDP Neuro-Memory (`:8094`) synchronizer
 > - **`zoth-comm`** & **`zoth-node`**: Vaelor L1 encrypted messaging & enterprise BFT cluster controller
 
