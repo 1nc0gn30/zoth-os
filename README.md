@@ -400,7 +400,7 @@ ZOTHOS Linux v3.4.0 implements the native **Model Context Protocol (MCP)** maste
 - **Turbo Boost Lock**: `no_turbo = 1` enforced to prevent thermal throttling and acoustic disruption.
 - **Kokoro Voice Standby**: Kokoro TTS (`:9394`) kept strictly **OFFLINE in Thermal Guard Standby** when not actively generating speech.
 
-See the complete 72-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_TOOLS_CATALOG.md).
+See the complete 80-tool operational guide in [ZOTHOS_TOOLS_CATALOG.md](ZOTHOS_TOOLS_CATALOG.md).
 
 ---
 

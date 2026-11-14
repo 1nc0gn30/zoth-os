@@ -2,7 +2,7 @@
 
 > *"As above, so below; as code, so mind."*
 
-This guide provides operational workflows, CLI syntax, key bindings, and system integrations for the **72 Sovereign Tools** organized across the **5 Strategic Cadres** of ZOTHOS Linux, alongside the master CLI command hierarchy.
+This guide provides operational workflows, CLI syntax, key bindings, and system integrations for the **80 Sovereign Tools** organized across the **5 Strategic Cadres** of ZOTHOS Linux, alongside the master CLI command hierarchy.
 
 ---
 

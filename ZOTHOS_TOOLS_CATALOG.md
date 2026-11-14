@@ -5,7 +5,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 72 Studio tools.
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 80 Studio tools.
 #   Every tool features a dedicated interactive God-Mode Workstation (/tools/<id>), a unique
 #   loopback port (127.0.0.1:<port>), a native ZothOS CLI binary (/usr/local/bin/<id>),
 #   a 60fps Unicode U+2800 Braille TUI (<id>-tui), a 30s 60fps product launch film,
@@ -24,7 +24,7 @@
 #   zoth-studio                        # Launch full Zoth Studio v2 Cockpit (:3000)
 #   zoth-cockpit                       # Full-screen curses terminal operations center
 #   zoth-tool-nexus                    # Interactive TUI tool dispatcher
-#   zoth-pkg list                      # Inspect installed system & 72 arsenal tools
+#   zoth-pkg list                      # Inspect installed system & 80 arsenal tools
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
