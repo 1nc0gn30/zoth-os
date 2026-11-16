@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+if [[ ! -f "$REPO_DIR/server.mjs" ]]; then
+  if [[ -f "/opt/zoth-usb-bridge/server.mjs" ]]; then
+    REPO_DIR="/opt/zoth-usb-bridge"
+  elif [[ -f "$HOME/NullAITech/zoth-usb-bridge/server.mjs" ]]; then
+    REPO_DIR="$HOME/NullAITech/zoth-usb-bridge"
+  fi
+fi
+PORT="${PORT:-8153}"
+BASE_URL="http://127.0.0.1:${PORT}"
+
+usage() {
+  cat <<'EOF'
+zoth-usb-bridge — Sovereign USB, ADB & Developer-Mode Device Bridge
+
+Usage:
+  zoth-usb-bridge serve                 Start the bridge workstation on 127.0.0.1:8153
+  zoth-usb-bridge devices [--json]      List attached ADB & USB bus devices
+  zoth-usb-bridge pair <host:port> <code>   Pair Wireless Debugging device
+  zoth-usb-bridge connect <host:port>       Connect to wireless ADB device
+  zoth-usb-bridge tcpip <serial> [port]     Switch USB device to ADB over Wi-Fi (5555)
+  zoth-usb-bridge reverse <serial> <r> <l>  Reverse port (default tcp:3000 -> tcp:3000)
+  zoth-usb-bridge shell <serial> <cmd...>   Run adb shell command on target device
+  zoth-usb-bridge --status [--json]         Check daemon health & host USB/ADB tools
+  zoth-usb-bridge --help                    Show this help message
+EOF
+}
+
+cmd="${1:-serve}"
+shift || true
+
+case "$cmd" in
+  -h|--help|help)
+    usage
+    ;;
+  serve|start)
+    exec node "$REPO_DIR/server.mjs"
+    ;;
+  --status|status)
+    if [[ "${1:-}" == "--json" ]]; then
+      curl -fsS "${BASE_URL}/health" 2>/dev/null || echo '{"ok":false,"service":"zoth-usb-bridge","port":'"$PORT"',"running":false}'
+    else
+      curl -fsS "${BASE_URL}/health" || { echo "zoth-usb-bridge daemon offline on :${PORT}"; exit 1; }
+    fi
+    ;;
+  devices|list)
+    if [[ "${1:-}" == "--json" ]]; then
+      if curl -fsS "${BASE_URL}/api/devices" 2>/dev/null; then
+        exit 0
+      fi
+      python3 -c '
+import json, subprocess
+adb = subprocess.run(["adb", "devices", "-l"], capture_output=True, text=True)
+usb = subprocess.run(["lsusb"], capture_output=True, text=True)
+print(json.dumps({"ok": True, "adb_raw": adb.stdout.splitlines(), "usb_raw": usb.stdout.splitlines()}, indent=2))
+'
+    else
+      echo "=== ADB Devices ==="
+      adb devices -l || true
+      echo "=== USB Bus (lsusb) ==="
+      lsusb || true
+    fi
+    ;;
+  pair)
+    exec adb pair "${1:?host:port required}" "${2:?pairing code required}"
+    ;;
+  connect)
+    exec adb connect "${1:?host:port required}"
+    ;;
+  tcpip)
+    serial="${1:?device serial required}"
+    tport="${2:-5555}"
+    exec adb -s "$serial" tcpip "$tport"
+    ;;
+  reverse)
+    serial="${1:?device serial required}"
+    rport="${2:-3000}"
+    lport="${3:-3000}"
+    exec adb -s "$serial" reverse "tcp:${rport}" "tcp:${lport}"
+    ;;
+  shell)
+    serial="${1:?device serial required}"
+    shift
+    exec adb -s "$serial" shell "$*"
+    ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    usage
+    exit 1
+    ;;
+esac

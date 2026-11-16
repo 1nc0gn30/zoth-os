@@ -4,7 +4,7 @@ tags: [os, workspace]
 ---
 # WebGen
 
-Foundry on :5173 (bolt.diy). Ctrl+F3. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; Samsung LS32D39xG at 1920,0.
+Foundry on :5173 (bolt.diy). Ctrl+F3. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; External Monitor at 1920,0.
 
 Virtual desktop **3** on this machine and in the ISO skel.
 

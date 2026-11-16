@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# aether-observatory CLI + daemon entry — works from any install location.
+# Resolves the project root from the script's location (with symlink support).
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+BIN_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+
+# serve needs the server module; everything else runs through the node CLI
+if [ "$1" = "serve" ]; then
+  shift
+  exec node "$BIN_DIR/../src/server.js" "$@"
+else
+  exec node "$BIN_DIR/aether-observatory.js" "$@"
+fi

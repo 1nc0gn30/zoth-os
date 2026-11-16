@@ -33,7 +33,8 @@ import {
 import { drawTransitionEffect } from '../../services/transitionsService';
 import { drawVHSTapeGlitch, drawVintage8mmFilm, drawPrismRefraction } from '../../services/vintageVFXService';
 import { drawTypewriterOverlays, drawImageOverlays } from '../../services/typewriterOverlayService';
-import { Upload } from 'lucide-react';
+import { SYNTH_PRESETS, MotionSynthPreset } from '../../services/proceduralMotionSynth';
+import { Upload, Zap } from 'lucide-react';
 
 interface CanvasPreviewProps {
   project: ProjectState;
@@ -43,6 +44,9 @@ interface CanvasPreviewProps {
   onOpenFile: () => void;
   onFileSelect?: (file: File) => void;
   onChange?: (updater: Partial<ProjectState>) => void;
+  onSynthesizeMotion?: (presetId: MotionSynthPreset['id']) => void;
+  isSynthesizing?: boolean;
+  synthProgress?: number;
 }
 
 export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
@@ -51,6 +55,9 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
   onOpenFile,
   onFileSelect,
   onChange,
+  onSynthesizeMotion,
+  isSynthesizing,
+  synthProgress = 0,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -643,32 +650,87 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
       ) : (
         <div 
           onClick={onOpenFile}
-          className="max-w-md w-full flex flex-col items-center justify-center space-y-5 p-10 rounded-3xl border-2 border-dashed border-slate-800 hover:border-brand-500/60 bg-dark-900/50 hover:bg-dark-900/80 transition-all cursor-pointer group shadow-2xl text-center"
+          className="max-w-xl w-full flex flex-col items-center justify-center space-y-5 p-8 rounded-3xl border-2 border-dashed border-slate-800 hover:border-brand-500/60 bg-dark-900/50 hover:bg-dark-900/80 transition-all cursor-pointer group shadow-2xl text-center"
         >
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-600/30 via-indigo-500/20 to-cyan-500/20 border border-brand-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-brand-500/20">
-            <Upload className="w-10 h-10 text-brand-400" />
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-brand-600/30 via-indigo-500/20 to-cyan-500/20 border border-brand-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-brand-500/20">
+            <Upload className="w-8 h-8 text-brand-400" />
           </div>
           <div className="space-y-1.5">
             <h3 className="font-bold text-slate-100 text-base">Drag & Drop Screen Recording</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Supports MP4, MOV, and WebM video recordings.<br />Or click anywhere to select a file from disk.
+              Supports MP4, MOV, and WebM video recordings. Click to select from disk, or synthesize a 60fps procedural edit below.
             </p>
           </div>
 
+          {onSynthesizeMotion && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="w-full space-y-2 pt-2 border-t border-slate-800/80 text-left"
+            >
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-amber-400">
+                <span className="flex items-center space-x-1.5">
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>1-Click Zoth &amp; 1nc0gn30 Motion Synth (Zero Still Images)</span>
+                </span>
+                <span className="text-slate-400">60 FPS + WAV</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {SYNTH_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    disabled={isSynthesizing}
+                    onClick={() => onSynthesizeMotion(preset.id)}
+                    className="p-2.5 rounded-xl bg-dark-950/90 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 flex items-center justify-between transition text-left disabled:opacity-50"
+                  >
+                    <div className="min-w-0 pr-2">
+                      <div className="text-[11px] font-bold text-slate-100 truncate">{preset.title}</div>
+                      <div className="text-[9px] text-slate-400 truncate">{preset.subtitle}</div>
+                    </div>
+                    <span
+                      className="shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded border"
+                      style={{
+                        color: preset.accentHex,
+                        borderColor: `${preset.accentHex}55`,
+                        backgroundColor: `${preset.accentHex}15`,
+                      }}
+                    >
+                      {preset.badge}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {isSynthesizing && (
+                <div className="w-full pt-1 space-y-1">
+                  <div className="flex justify-between text-[10px] font-mono text-amber-300">
+                    <span>Synthesizing 60fps procedural frames &amp; audio...</span>
+                    <span>{Math.round(synthProgress * 100)}%</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-dark-950 overflow-hidden border border-slate-800">
+                    <div
+                      className="h-full bg-amber-400 transition-all duration-100"
+                      style={{ width: `${Math.round(synthProgress * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Studio Feature Chips */}
-          <div className="grid grid-cols-2 gap-2 pt-2 w-full text-left">
+          <div className="grid grid-cols-2 gap-2 pt-1 w-full text-left">
             <div className="p-2.5 rounded-xl bg-dark-950/80 border border-slate-800/80 flex items-center space-x-2">
-              <span className="text-base">📱</span>
+              <span className="text-base">⚡</span>
               <div>
                 <div className="text-[11px] font-semibold text-slate-200">3D Device Frames</div>
                 <div className="text-[9px] text-slate-400">iPhone 17 Pro, Mac, Pixel 9</div>
               </div>
             </div>
             <div className="p-2.5 rounded-xl bg-dark-950/80 border border-slate-800/80 flex items-center space-x-2">
-              <span className="text-base">✨</span>
+              <span className="text-base">🎬</span>
               <div>
-                <div className="text-[11px] font-semibold text-slate-200">CapCut / JianYing</div>
-                <div className="text-[9px] text-slate-400">1-Click Draft Export</div>
+                <div className="text-[11px] font-semibold text-slate-200">CapCut / 60fps MP4</div>
+                <div className="text-[9px] text-slate-400">Native FFmpeg Pipeline</div>
               </div>
             </div>
           </div>

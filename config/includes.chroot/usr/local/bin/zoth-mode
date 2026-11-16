@@ -95,6 +95,7 @@ GEOF2
 
 apply_wallpaper() {
     local wp="$1"
+    local mode="${2:-$(get_current_mode)}"
     # Always preserve & activate the native KDE Plasma 6 3D Interactive Wallpaper (org.zothos.interactive)
     # Never overwrite the OS desktop with a flat static org.kde.image wallpaper or browser window.
     systemctl --user start zoth-cursor-daemon.service 2>/dev/null || true
@@ -104,8 +105,15 @@ apply_wallpaper() {
         var allDesktops = desktops();
         for (var i = 0; i < allDesktops.length; i++) {
             var d = allDesktops[i];
-            d.wallpaperPlugin = 'org.zothos.interactive';
-            if (typeof d.reloadConfig === 'function') d.reloadConfig();
+            var wasInteractive = (d.wallpaperPlugin === 'org.zothos.interactive');
+            if (!wasInteractive) {
+                d.wallpaperPlugin = 'org.zothos.interactive';
+            }
+            d.currentConfigGroup = ['Wallpaper', 'org.zothos.interactive', 'General'];
+            d.writeConfig('realityMode', '$mode');
+            if (!wasInteractive && typeof d.reloadConfig === 'function') {
+                d.reloadConfig();
+            }
         }
         " >/dev/null 2>&1 || true
     fi
@@ -115,6 +123,9 @@ apply_wallpaper() {
             kwriteconfig6 --file "$USER_HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" \
                 --group Containments --group "$cid" \
                 --key wallpaperplugin "org.zothos.interactive" 2>/dev/null || true
+            kwriteconfig6 --file "$USER_HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" \
+                --group Containments --group "$cid" --group Wallpaper --group "org.zothos.interactive" --group General \
+                --key realityMode "$mode" 2>/dev/null || true
         done
     fi
 }
@@ -230,10 +241,10 @@ if [[ -z "$MODE" ]]; then
     echo -e "  ${CYAN}[t] toggle    - Instant Toggle (Default Gold <-> Ghostmode Stealth)${RESET}\n"
     read -rp "Select Reality Mode [1-4, t]: " choice
     case "$choice" in
-        1|gold|default|sanctum) MODE="gold" ;;
-        2|ghost|stealth|amnesic) MODE="ghost" ;;
+        1|gold|24k|24k-gold|default|sanctum) MODE="gold" ;;
+        2|ghost|ghostmode|stealth|amnesic) MODE="ghost" ;;
         3|matrix|hacker|green) MODE="matrix" ;;
-        4|incognito|win11|windows|undercover) MODE="incognito" ;;
+        4|incognito|win11|windows|fluent|undercover) MODE="incognito" ;;
         t|toggle|"")
             if [[ "$CUR" == "ghost" ]]; then MODE="gold"; else MODE="ghost"; fi
             ;;
@@ -247,13 +258,13 @@ if [[ "$MODE" == "toggle" ]]; then
 fi
 
 case "$MODE" in
-    gold|default|sanctum)
+    gold|24k|24k-gold|default|sanctum)
         echo -e "${GOLD}${BOLD}[+] ENGAGING REALITY: SOVEREIGN GOLD MASTER (24K SANCTUM)...${RESET}"
+        save_mode_and_character "gold"
         apply_plasma_colorscheme "ZothHermeticGold"
         apply_icons_and_cursors "Zoth-Azoth-Gold" "Zoth-Azoth-Gold"
-        apply_wallpaper "$WP_DIR/zoth-gold-master.jpg"
+        apply_wallpaper "$WP_DIR/zoth-gold-master.jpg" "gold"
         apply_konsole_profile "Zoth-Gold" "#0A0804" "#FFD700"
-        save_mode_and_character "gold"
         play_cue "$SOUND_DIR/gold-sanctum.wav"
 
         echo -e "  ${AMBER}◈ Theme:${RESET}      ZothHermeticGold (24K Gold & Obsidian Glass)"
@@ -265,13 +276,13 @@ case "$MODE" in
         echo -e "${GOLD}${BOLD}[✓] REALITY TRANSFORM COMPLETE: Sovereign Gold Master Active.${RESET}\n"
         ;;
 
-    ghost|stealth|amnesic)
+    ghost|ghostmode|stealth|amnesic)
         echo -e "${RED}${BOLD}[+] ENGAGING REALITY: NULLAI GHOSTMODE STEALTH (CRIMSON VOID)...${RESET}"
+        save_mode_and_character "ghost"
         apply_plasma_colorscheme "ZothGhostNullAI"
         apply_icons_and_cursors "Zoth-Ghost-NullAI" "Zoth-Ghost-NullAI"
-        apply_wallpaper "$WP_DIR/ghostmode-nullai.png"
+        apply_wallpaper "$WP_DIR/ghostmode-nullai.png" "ghost"
         apply_konsole_profile "Zoth-Ghost" "#080B10" "#FF3355"
-        save_mode_and_character "ghost"
         play_cue "$SOUND_DIR/ghost-vapor.wav"
 
         echo -e "  ${RED}◈ Theme:${RESET}      ZothGhostNullAI (Amnesic Crimson & Dark Charcoal)"
@@ -285,11 +296,11 @@ case "$MODE" in
 
     matrix|hacker|green)
         echo -e "${GREEN}${BOLD}[+] ENGAGING REALITY: HERMETIC MATRIX EMERALD (PHOSPHOR CRT)...${RESET}"
+        save_mode_and_character "matrix"
         apply_plasma_colorscheme "ZothHermeticMatrix"
         apply_icons_and_cursors "Zoth-Hermetic-Matrix" "Zoth-Hermetic-Matrix"
-        apply_wallpaper "$WP_DIR/hermetic-matrix.png"
+        apply_wallpaper "$WP_DIR/hermetic-matrix.png" "matrix"
         apply_konsole_profile "Zoth-Matrix" "#040806" "#00FF9D"
-        save_mode_and_character "matrix"
         play_cue "$SOUND_DIR/matrix-chirp.wav"
 
         echo -e "  ${GREEN}◈ Theme:${RESET}      ZothHermeticMatrix (P39 Phosphor CRT & Deep Obsidian)"
@@ -301,13 +312,13 @@ case "$MODE" in
         echo -e "${GREEN}${BOLD}[✓] REALITY TRANSFORM COMPLETE: Hermetic Matrix Engaged.${RESET}\n"
         ;;
 
-    incognito|win11|windows|undercover)
+    incognito|win11|windows|fluent|undercover)
         echo -e "${BLUE}${BOLD}[+] ENGAGING REALITY: COVERT CHAMELEON (WINDOWS 11 FLUENT)...${RESET}"
+        save_mode_and_character "incognito"
         apply_plasma_colorscheme "ZothIncognitoWin11"
         apply_icons_and_cursors "breeze_cursors" "Zoth-Incognito-Win11"
-        apply_wallpaper "$WP_DIR/win11-bloom.jpg"
+        apply_wallpaper "$WP_DIR/win11-bloom.jpg" "incognito"
         apply_konsole_profile "Zoth-Win11" "#0B1329" "#F3F4F6"
-        save_mode_and_character "incognito"
         play_cue "$SOUND_DIR/win11-fluent.wav"
 
         echo -e "  ${BLUE}◈ Theme:${RESET}      ZothIncognitoWin11 (Windows 11 Fluent Azure & Neutral Chrome)"

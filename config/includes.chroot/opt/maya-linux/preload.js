@@ -15,6 +15,8 @@ const api = {
   exportCapCutDraft: (data) => ipcRenderer.invoke('export-capcut-draft', data),
   generateNeuralTTS: (params) => ipcRenderer.invoke('generate-neural-tts', params),
   listNeuralVoices: () => ipcRenderer.invoke('list-neural-voices'),
+  getCliVideoPath: () => ipcRenderer.invoke('get-cli-video-path'),
+  renderMayaMotionPreset: (params) => ipcRenderer.invoke('render-maya-motion-preset', params),
 };
 
 if (process.contextIsolated) {

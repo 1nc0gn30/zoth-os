@@ -1,84 +1,113 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse, urllib.request, urllib.error, socket, time
+"""Domain Intel OSINT Scout CLI.
 
-TOOL_ID = 'osint-scout-skill'
-TOOL_REPO = 'osint-scout-skill'
-TOOL_NAME = 'Domain Intel OSINT Scout'
-TOOL_DESC = '100% in-browser passive domain intelligence & attack surface reconnaissance engine auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture — free to use; optional tips welcome.'
-TOOL_VERSION = '2.5.0'
-TOOL_CATEGORY = 'Security & Recon'
-TOOL_PORT = 8085
-REPO_DIR = os.path.expanduser('~/NullAITech/osint-scout-skill')
-SERVER_PY = os.path.expanduser('~/NullAITech/osint-scout-skill/server.py')
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform (https://nullai.tech)
+"""
+
+import argparse
+import json
+import os
+import socket
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+TOOL_ID = "osint-scout-skill"
+TOOL_REPO = "osint-scout-skill"
+TOOL_NAME = "Domain Intel OSINT Scout"
+TOOL_DESC = (
+    "Passive domain intelligence and attack surface reconnaissance engine "
+    "auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture."
+)
+TOOL_VERSION = "2.5.0"
+TOOL_CATEGORY = "Security & Recon"
+TOOL_PORT = int(os.environ.get("PORT", "8085"))
+REPO_DIR = Path(__file__).resolve().parent.parent
+SERVER_PY = REPO_DIR / "server.py"
+TUI_BIN = REPO_DIR / "bin" / "osint-scout-skill-tui"
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
+
 def query_health():
     try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={'User-Agent': 'ZothOS-CLI'})
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={"User-Agent": "ZothOS-CLI"})
         with urllib.request.urlopen(req, timeout=2.0) as r:
-            return json.loads(r.read().decode('utf-8'))
+            return json.loads(r.read().decode("utf-8"))
     except Exception as e:
         return {"status": "offline", "error": str(e)}
 
-def scan_domain(domain):
-    domain = domain.strip().lower().replace('https://', '').replace('http://', '').split('/')[0]
-    # Check if local server endpoint is active
+
+def scan_domain(domain: str):
+    cleaned = domain.strip().lower().replace("https://", "").replace("http://", "").split("/")[0]
     try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/recon?domain={domain}", headers={'User-Agent': 'ZothOS-CLI'})
+        url = f"{LOCAL_PORT_URL}/api/recon?domain={urllib.parse.quote(cleaned)}"
+        req = urllib.request.Request(url, headers={"User-Agent": "ZothOS-CLI"})
         with urllib.request.urlopen(req, timeout=3.5) as r:
-            return json.loads(r.read().decode('utf-8'))
+            return json.loads(r.read().decode("utf-8"))
     except Exception:
-        # Direct fallback socket resolution
         results = {
-            "target": domain,
+            "target": cleaned,
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "records": {},
-            "status": "success (direct passive socket)"
+            "status": "success (direct passive socket)",
         }
         try:
-            addr = socket.getaddrinfo(domain, 80, socket.AF_INET, socket.SOCK_STREAM)
+            addr = socket.getaddrinfo(cleaned, 80, socket.AF_INET, socket.SOCK_STREAM)
             results["records"]["A"] = sorted(list(set(item[4][0] for item in addr)))
-        except Exception as e:
+        except Exception:
             results["records"]["A"] = []
+        try:
+            addr6 = socket.getaddrinfo(cleaned, 80, socket.AF_INET6, socket.SOCK_STREAM)
+            results["records"]["AAAA"] = sorted(list(set(item[4][0] for item in addr6)))
+        except Exception:
+            results["records"]["AAAA"] = []
         return results
+
 
 def main():
     args = sys.argv[1:]
-    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
         import shutil as _sh
-        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
-        elec = _sh.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
-    if '--tui' in args or (args and args[0] == 'tui'):
-        rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
+
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = _sh.which("electron") or "/usr/local/bin/electron"
+        sys.exit(subprocess.run([elec, str(REPO_DIR / "electron" / "main.cjs")] + rem, cwd=str(REPO_DIR)).returncode)
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        tui_cmd = str(TUI_BIN) if TUI_BIN.exists() else f"/usr/local/bin/{TOOL_ID}-tui"
+        sys.exit(subprocess.run([sys.executable, tui_cmd] + rem).returncode)
 
     parser = argparse.ArgumentParser(
         prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
     )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local installation and daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local workbench URL")
 
-    subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands')
-    
-    scan_p = subparsers.add_parser('scan', help='Passive DNS and attack surface reconnaissance on domain')
-    scan_p.add_argument('domain', type=str, help='Target domain to audit (e.g. nullai.tech)')
+    subparsers = parser.add_subparsers(dest="subcommand", help="Subcommands")
 
-    serve_p = subparsers.add_parser('serve', help='Run OSINT Scout server')
-    serve_p.add_argument('--port', type=int, default=TOOL_PORT, help='Port to bind')
+    scan_p = subparsers.add_parser("scan", help="Passive DNS and attack surface reconnaissance on domain")
+    scan_p.add_argument("domain", type=str, help="Target domain to audit (e.g. nullai.tech)")
 
-    parsed, unknown = parser.parse_known_args(args)
+    serve_p = subparsers.add_parser("serve", help="Run OSINT Scout HTTP server")
+    serve_p.add_argument("--host", default="127.0.0.1", help="Host to bind (default: 127.0.0.1)")
+    serve_p.add_argument("--port", type=int, default=TOOL_PORT, help="Port to bind (default: 8085)")
 
-    if parsed.subcommand == 'serve':
-        cmd = [sys.executable, SERVER_PY, '--port', str(parsed.port or TOOL_PORT)]
-        proc = subprocess.run(cmd, cwd=REPO_DIR)
+    parsed, _ = parser.parse_known_args(args)
+
+    if parsed.subcommand == "serve":
+        cmd = [sys.executable, str(SERVER_PY), "--host", parsed.host, "--port", str(parsed.port or TOOL_PORT)]
+        proc = subprocess.run(cmd, cwd=str(REPO_DIR))
         sys.exit(proc.returncode)
 
-    if parsed.subcommand == 'scan':
+    if parsed.subcommand == "scan":
         res = scan_domain(parsed.domain)
         print(json.dumps(res, indent=2))
         sys.exit(0)
@@ -91,29 +120,27 @@ def main():
         "name": TOOL_NAME,
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
+        "installed": REPO_DIR.exists(),
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
         "daemon_active": health.get("status") == "healthy",
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
         },
-        "status": "READY"
+        "status": "READY",
     }
 
     if parsed.json:
         print(json.dumps(info, indent=2))
         return
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
+    print(f"{TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL}")
     print(f"  Daemon     : {'ONLINE (Healthy)' if health.get('status') == 'healthy' else 'OFFLINE'}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print("  Access     : 100% Free & Open Access (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

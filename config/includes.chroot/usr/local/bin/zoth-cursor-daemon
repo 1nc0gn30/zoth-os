@@ -21,18 +21,50 @@ SHARED_MEM_PATH = "/dev/shm/zoth_cursor.json"
 TMP_PATH = "/tmp/zoth_cursor.json"
 KWIN_SCRIPT_NAME = "zoth_cursor_tracker"
 
-latest_payload = '{"x":960,"y":540,"timestamp":0}'
+USER_HOME = os.environ.get("HOME") or "/home/zoth"
+MODE_FILE = os.path.join(USER_HOME, ".config", "zothos", "current_mode")
+STATE_FILE = os.path.join(USER_HOME, ".config", "zothos", "profile.state")
+
+cur_x = 960
+cur_y = 540
+cur_ts = 0.0
+_cached_mode = "gold"
+_cached_mtime = -1.0
+
+def normalize_mode(raw):
+    m = (raw or "").strip().lower()
+    if m in ("ghost", "stealth", "amnesic"):
+        return "ghost"
+    if m in ("matrix", "hacker", "green"):
+        return "matrix"
+    if m in ("incognito", "win11", "windows", "fluent", "undercover"):
+        return "incognito"
+    return "gold"
+
+def get_active_mode():
+    global _cached_mode, _cached_mtime
+    target = MODE_FILE if os.path.exists(MODE_FILE) else STATE_FILE
+    try:
+        st = os.stat(target)
+        if st.st_mtime != _cached_mtime:
+            with open(target, "r") as f:
+                _cached_mode = normalize_mode(f.read())
+            _cached_mtime = st.st_mtime
+    except Exception:
+        pass
+    return _cached_mode
 
 class CursorHTTPHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        global latest_payload
         try:
+            mode = get_active_mode()
+            body = f'{{"x":{cur_x},"y":{cur_y},"mode":"{mode}","timestamp":{cur_ts}}}'
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
             self.end_headers()
-            self.wfile.write(latest_payload.encode())
+            self.wfile.write(body.encode())
         except (BrokenPipeError, ConnectionResetError):
             pass
         except Exception:
@@ -59,9 +91,12 @@ except Exception:
     pass
 
 def write_cursor(x, y):
-    global latest_payload
-    payload = f'{{"x":{x},"y":{y},"timestamp":{time.time()}}}'
-    latest_payload = payload
+    global cur_x, cur_y, cur_ts
+    cur_x = int(x)
+    cur_y = int(y)
+    cur_ts = time.time()
+    mode = get_active_mode()
+    payload = f'{{"x":{cur_x},"y":{cur_y},"mode":"{mode}","timestamp":{cur_ts}}}'
     # Write to /dev/shm (RAM)
     try:
         tmp_shm = f"{SHARED_MEM_PATH}.tmp"

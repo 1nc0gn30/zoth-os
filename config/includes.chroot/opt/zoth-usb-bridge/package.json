@@ -1,0 +1,16 @@
+{
+  "name": "zoth-usb-bridge",
+  "version": "1.0.0",
+  "description": "Sovereign USB, ADB & Developer-Mode Device Bridge Workstation and CLI for ZothOS & Zoth Studio",
+  "type": "module",
+  "main": "server.mjs",
+  "bin": {
+    "zoth-usb-bridge": "./bin/zoth-usb-bridge"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --check server.mjs && node --check bin/zoth-usb-bridge"
+  },
+  "author": "Neal Frazier (@1nc0gn30)",
+  "license": "MIT"
+}

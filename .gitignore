@@ -341,3 +341,6 @@ config/includes.chroot/opt/zoth-civilization/data/*
 !config/includes.chroot/opt/zoth-civilization/data/library_catalog.json
 !config/includes.chroot/opt/zoth-civilization/data/library_roadmap.json
 !config/includes.chroot/opt/zoth-civilization/data/pantheon_agents.json
+
+# Ignore local Netlify CLI state directories in chroot apps
+.netlify/

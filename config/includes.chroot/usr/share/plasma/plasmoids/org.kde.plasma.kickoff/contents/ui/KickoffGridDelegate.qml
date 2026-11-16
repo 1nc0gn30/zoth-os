@@ -39,12 +39,12 @@ AbstractKickoffItemDelegate {
         anchors.fill: parent
         anchors.margins: 2
         radius: 8
-        color: root.down ? Qt.rgba(1, 0.84, 0, 0.32) : 
-               (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.12) : 
-               (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.16) : "transparent"))
-        border.color: root.down ? "#ffd700" : 
-                     (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.65) : 
-                     (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.45) : "transparent"))
+        color: root.down ? KickoffSingleton.rgbaAccent(0.32) :
+               (root.mouseArea.containsMouse ? KickoffSingleton.rgbaAccent(0.12) :
+               (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.rgbaAccent(0.16) : "transparent"))
+        border.color: root.down ? KickoffSingleton.accentColor :
+                     (root.mouseArea.containsMouse ? KickoffSingleton.rgbaAccent(0.65) :
+                     (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.rgbaAccent(0.45) : "transparent"))
         border.width: root.down ? 2 : 1
         scale: root.down ? 0.95 : (root.mouseArea.containsMouse ? 1.04 : 1.0)
 
@@ -86,7 +86,7 @@ AbstractKickoffItemDelegate {
             verticalAlignment: Text.AlignTop
             maximumLineCount: 2
             wrapMode: Text.Wrap
-            color: root.mouseArea.containsMouse ? "#fff48f" : (root.iconAndLabelsShouldlookSelected ? "#ffd700" : Kirigami.Theme.textColor)
+            color: root.mouseArea.containsMouse ? KickoffSingleton.accentBright : (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.accentColor : Kirigami.Theme.textColor)
         }
     }
 }

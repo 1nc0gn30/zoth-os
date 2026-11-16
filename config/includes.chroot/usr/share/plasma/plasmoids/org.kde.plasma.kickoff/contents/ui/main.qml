@@ -313,7 +313,7 @@ PlasmoidItem {
                 readonly property bool nonSquareImage: sourceSize.width != sourceSize.height
 
                 visible: nonSquareImage && status == Image.Ready
-                source: Plasmoid.icon
+                source: (Plasmoid.icon && (String(Plasmoid.icon).indexOf("/") === 0 || String(Plasmoid.icon).indexOf("file:") === 0)) ? Plasmoid.icon : ""
 
                 Layout.fillWidth: kickoff.vertical
                 Layout.fillHeight: !kickoff.vertical

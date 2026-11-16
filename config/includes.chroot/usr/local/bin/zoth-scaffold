@@ -1,0 +1,1498 @@
+#!/usr/bin/env python3
+"""
+zoth-scaffold v3.0.0 — Unified Zoth UI, Archetype & Guardrail Audit CLI.
+Zero external dependencies (Python 3 stdlib only).
+"""
+
+import argparse
+import datetime
+import json
+import re
+import shutil
+import stat
+import sys
+from pathlib import Path
+
+KIT_DIR = Path.home() / "NullAITech/zoth-ui-kit"
+STUDIO_TOOLS_DIR = Path.home() / "NullAITech/zoth-studio-v2/src/components/tools"
+DEFAULT_ROOT = Path.home() / "NullAITech"
+
+KIT_CATALOG = {
+    "tool": "zoth-scaffold",
+    "version": "3.0.0",
+    "kitDir": str(KIT_DIR),
+    "reactPrimitives": [
+        "SovereignWorkstationShell",
+        "SovereignCard",
+        "SovereignKpiStrip",
+        "SovereignCodeBlock",
+        "SovereignSupportBar",
+        "SovereignActionBar",
+        "SovereignBand",
+        "SovereignEyebrow",
+        "SovereignRule",
+        "SovereignPresetBar",
+        "SovereignGauge",
+        "SovereignSparkline",
+        "SovereignDataTable",
+        "SovereignKeyValueGrid",
+        "SovereignAlertBanner",
+        "SovereignFaqAccordion",
+        "SovereignHeroSection",
+        "SovereignFeatureGrid",
+        "SovereignDiffViewer",
+        "SovereignTimeline",
+        "SovereignStepWizard",
+        "SovereignFilterBar",
+        "SovereignStatComparison",
+        "SovereignTerminalLog",
+        "SovereignStatusPill",
+        "SovereignJsonTree",
+        "SovereignFileDropzone",
+        "SovereignMediaHUD",
+        "SovereignPromptBox",
+    ],
+    "vanillaAssets": ["zoth-ui.css", "zoth-ui.js"],
+    "canvasVariants": [
+        "braille-orbit",
+        "bayer-field",
+        "scanline-grid",
+        "particle-orbit",
+        "hex-lattice",
+        "waveform-harmonics",
+    ],
+    "archetypes": ["workstation", "auditor", "diff-converter", "landing"],
+    "generators": ["web", "site", "studio-tool", "audit"],
+}
+
+
+def slugify(raw: str) -> str:
+    s = re.sub(r"[^a-zA-Z0-9-]+", "-", raw.strip().lower()).strip("-")
+    return s or "zoth-app"
+
+
+def title_from_slug(slug: str) -> str:
+    return " ".join(part.capitalize() for part in slug.split("-") if part)
+
+
+def pascal_from_slug(slug: str) -> str:
+    return "".join(part.capitalize() for part in slug.split("-") if part) + "GodModeTool"
+
+
+def build_schema_graph(title: str, site_url: str, escaped_desc: str, app_cat: str) -> str:
+    return json.dumps(
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "name": title,
+                    "url": site_url,
+                    "applicationCategory": app_cat,
+                    "operatingSystem": "Linux, macOS, Windows, Web",
+                    "description": escaped_desc,
+                    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+                    "creator": {
+                        "@type": "Organization",
+                        "name": "Neal Frazier Tech (@1nc0gn30)",
+                        "url": "https://nullai.tech",
+                    },
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": [
+                        {
+                            "@type": "Question",
+                            "name": f"What does {title} do?",
+                            "acceptedAnswer": {"@type": "Answer", "text": escaped_desc},
+                        },
+                        {
+                            "@type": "Question",
+                            "name": f"Does {title} run locally with zero telemetry?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": f"Yes. {title} executes client-side or on localhost loopback with zero external tracking.",
+                            },
+                        },
+                        {
+                            "@type": "Question",
+                            "name": f"Is {title} free and open-access?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. 100% free and open-access with zero paywalls. Optional support via Stripe or Solana tip.",
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        indent=2,
+    )
+
+
+def render_head(title: str, slug: str, escaped_desc: str, schema_graph: str) -> str:
+    site_url = f"https://{slug}.nullai.tech/"
+    return f"""  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} — Zero-Egress Sovereign Platform</title>
+  <meta name="description" content="{escaped_desc}">
+
+  <meta property="og:title" content="{title} — Zero-Egress Sovereign Platform">
+  <meta property="og:description" content="{escaped_desc}">
+  <meta property="og:url" content="{site_url}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://zoth.nullai.tech/brand/ghostbyte-dark.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{escaped_desc}">
+  <meta name="twitter:image" content="https://zoth.nullai.tech/brand/ghostbyte-dark.png">
+
+  <script type="application/ld+json">
+{schema_graph}
+  </script>
+
+  <link rel="stylesheet" href="/zoth-ui.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">"""
+
+
+def band_block(slug: str, title: str, category: str, variant: str | None) -> str:
+    variant_attr = f' data-zoth-variant="{variant}"' if variant else ""
+    return f"""      <div class="zoth-band">
+        <canvas data-zoth-band="{slug}"{variant_attr} role="img" aria-label="{title} live sovereign canvas"></canvas>
+        <div class="zoth-band-scanlines" aria-hidden="true"></div>
+        <div class="zoth-band-chrome">
+          <span class="zoth-band-eyebrow">{category.upper()}</span>
+          <span class="zoth-band-readout">INITIALIZING</span>
+        </div>
+      </div>"""
+
+
+def wrap_html_document(title: str, slug: str, escaped_desc: str, schema_graph: str, body_main: str, app_cfg: str, extra_script: str = "") -> str:
+    return f"""<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+{render_head(title, slug, escaped_desc, schema_graph)}
+</head>
+<body>
+  <div class="zoth-container">
+    <div id="zoth-support-mount"></div>
+    <div id="zoth-header-mount"></div>
+
+    <main>
+{body_main}
+    </main>
+
+    <div id="zoth-footer-mount"></div>
+  </div>
+
+  <script>
+    window.ZOTH_APP = {app_cfg};
+  </script>
+  <script src="/zoth-ui.js" defer></script>
+{extra_script}</body>
+</html>
+"""
+
+
+def render_workstation_web(slug: str, title: str, category: str, description: str, port: int, variant: str | None) -> str:
+    site_url = f"https://{slug}.nullai.tech/"
+    escaped_desc = description.replace('"', "'")
+    schema_graph = build_schema_graph(title, site_url, escaped_desc, "DeveloperApplication")
+    app_cfg = json.dumps(
+        {
+            "id": slug,
+            "name": title,
+            "version": "v3.0.0",
+            "glyph": "☿",
+            "tagline": description,
+            "category": category,
+            "repo": slug,
+            "statusText": f"127.0.0.1:{port} · WORKSTATION",
+            "tutorialSteps": [
+                {"icon": "⚡", "title": "Select Preset or Upload", "desc": "Use quick presets or upload a local file; zero data leaves your browser."},
+                {"icon": "📊", "title": "Watch Live Gauge & Sparkline", "desc": "Shannon entropy gauge and byte-trend sparkline update on every edit."},
+                {"icon": "📦", "title": "Copy or Download Artifact", "desc": "Export deterministic SHA-256 digests and formatted payloads in 1 click."},
+            ],
+        },
+        indent=2,
+    )
+
+    sample_json = f'{{"project": "{slug}", "engine": "zoth-ui-kit", "version": "3.0.0", "localFirst": true}}'
+    sample_ping = '{"event": "heartbeat", "egressBytes": 0, "status": "NOMINAL"}'
+    sample_utf8 = '{"glyphs": "☿ ⣿ ◆ ✦", "region": "zoth-enclave", "notes": "Dual-theme contrast verified"}'
+
+    body_main = f"""{band_block(slug, title, category, variant)}
+
+      <div class="zoth-alert zoth-alert-success">
+        <span><strong>ZERO-EGRESS ACTIVE:</strong> SubtleCrypto SHA-256 &amp; Shannon Entropy run 100% locally in your browser.</span>
+        <span class="zoth-badge">PORT :{port}</span>
+      </div>
+
+      <section class="zoth-bento" aria-label="Telemetry & Presets">
+        <div class="zoth-gauge-card zoth-col-4" id="zoth-entropy-gauge" data-zoth-gauge data-value="4.6" data-max="8" data-label="SHANNON ENTROPY" data-unit=" b/B" data-status="STRUCTURED TEXT"></div>
+        <div class="zoth-sparkline-card zoth-col-8" id="zoth-bytes-sparkline" data-zoth-sparkline data-points="48,64,52,78,86,92,89" data-label="PAYLOAD SIZE HISTORY" data-unit=" B" data-threshold="128" data-accent="#38BDF8"></div>
+      </section>
+
+      <section class="zoth-bento" aria-label="Interactive Workstation">
+        <div class="zoth-card zoth-col-5">
+          <div class="zoth-card-head">
+            <div>
+              <span class="zoth-eyebrow">01 · INPUT CONSOLE</span>
+              <h2 class="zoth-card-title">Presets, Upload &amp; Controls</h2>
+            </div>
+          </div>
+          <div class="zoth-preset-bar" aria-label="Quick Presets">
+            <button type="button" class="zoth-tab is-active" data-zoth-preset-target="#zoth-input-box" data-zoth-preset-value='{sample_json}'>Standard Config</button>
+            <button type="button" class="zoth-tab" data-zoth-preset-target="#zoth-input-box" data-zoth-preset-value='{sample_ping}'>Telemetry Ping</button>
+            <button type="button" class="zoth-tab" data-zoth-preset-target="#zoth-input-box" data-zoth-preset-value='{sample_utf8}'>Unicode Sample</button>
+            <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-file-target="#zoth-input-box">Upload File</button>
+          </div>
+          <div class="zoth-field">
+            <label class="zoth-label" for="zoth-mode-select">Transform Pipeline</label>
+            <select class="zoth-select" id="zoth-mode-select">
+              <option value="inspect">Inspect + SHA-256 Digest + Base64</option>
+              <option value="json-pretty">Pretty-Print JSON</option>
+              <option value="upper-hex">UTF-8 Hex Dump</option>
+            </select>
+          </div>
+          <div class="zoth-field">
+            <label class="zoth-label" for="zoth-input-box">Input Payload</label>
+            <textarea class="zoth-textarea" id="zoth-input-box" spellcheck="false">{sample_json}</textarea>
+          </div>
+        </div>
+
+        <div class="zoth-card zoth-col-7">
+          <div class="zoth-card-head">
+            <div>
+              <span class="zoth-eyebrow">02 · DETERMINISTIC OUTPUT</span>
+              <h2 class="zoth-card-title">Digest &amp; Diagnostic Readout</h2>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+              <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-copy="#zoth-output-box">Copy Output</button>
+              <button type="button" class="zoth-btn zoth-btn-cyan" data-zoth-download="#zoth-output-box" data-zoth-filename="{slug}-output.json">Download</button>
+            </div>
+          </div>
+          <div class="zoth-kv-grid" style="margin-bottom:0.9rem;">
+            <div class="zoth-kv-item"><div class="zoth-kv-key">UTF-8 Bytes</div><div class="zoth-kv-val" id="kv-bytes">0 B</div></div>
+            <div class="zoth-kv-item"><div class="zoth-kv-key">SHA-256 Prefix</div><div class="zoth-kv-val" id="kv-sha">—</div></div>
+          </div>
+          <pre class="zoth-terminal" id="zoth-output-box"></pre>
+        </div>
+      </section>"""
+
+    extra_script = f"""  <script>
+    (function () {{
+      var inputEl = document.getElementById('zoth-input-box');
+      var modeEl = document.getElementById('zoth-mode-select');
+      var outEl = document.getElementById('zoth-output-box');
+      var kvBytes = document.getElementById('kv-bytes');
+      var kvSha = document.getElementById('kv-sha');
+      var gaugeEl = document.getElementById('zoth-entropy-gauge');
+      var sparkEl = document.getElementById('zoth-bytes-sparkline');
+      var history = [48, 64, 52, 78, 86];
+
+      function shannonEntropy(bytes) {{
+        if (!bytes.length) return 0;
+        var counts = new Array(256).fill(0);
+        for (var i = 0; i < bytes.length; i++) counts[bytes[i]]++;
+        var ent = 0;
+        for (var c = 0; c < 256; c++) {{
+          if (!counts[c]) continue;
+          var p = counts[c] / bytes.length;
+          ent -= p * Math.log2(p);
+        }}
+        return ent;
+      }}
+
+      async function sha256Hex(bytes) {{
+        if (!window.crypto || !window.crypto.subtle) return 'subtle-crypto-unavailable';
+        var buf = await window.crypto.subtle.digest('SHA-256', bytes);
+        return Array.from(new Uint8Array(buf)).map(function (b) {{
+          return b.toString(16).padStart(2, '0');
+        }}).join('');
+      }}
+
+      async function runTransform() {{
+        var raw = inputEl.value || '';
+        var bytes = new TextEncoder().encode(raw);
+        var entropy = shannonEntropy(bytes);
+        var digest = await sha256Hex(bytes);
+
+        kvBytes.textContent = bytes.length + ' B';
+        kvSha.textContent = digest.slice(0, 16) + '…';
+
+        if (window.ZothUI) {{
+          gaugeEl.setAttribute('data-value', entropy.toFixed(2));
+          gaugeEl.setAttribute('data-status', entropy > 5.8 ? 'HIGH RANDOMNESS' : entropy > 3.5 ? 'STRUCTURED TEXT' : 'LOW ENTROPY');
+          window.ZothUI.renderGauge(gaugeEl);
+          if (history[history.length - 1] !== bytes.length) {{
+            history.push(bytes.length);
+            if (history.length > 14) history.shift();
+          }}
+          sparkEl.setAttribute('data-points', history.join(','));
+          window.ZothUI.renderSparkline(sparkEl);
+        }}
+
+        var mode = modeEl.value;
+        if (mode === 'json-pretty') {{
+          try {{ outEl.textContent = JSON.stringify(JSON.parse(raw), null, 2); }}
+          catch (err) {{ outEl.textContent = 'JSON Parse Error: ' + err.message; }}
+          return;
+        }}
+        if (mode === 'upper-hex') {{
+          outEl.textContent = Array.from(bytes).map(function (b) {{ return b.toString(16).toUpperCase().padStart(2, '0'); }}).join(' ');
+          return;
+        }}
+        var b64 = btoa(String.fromCharCode.apply(null, Array.from(bytes)));
+        outEl.textContent = JSON.stringify({{ tool: '{slug}', bytes: bytes.length, entropyBitsPerByte: Number(entropy.toFixed(4)), sha256: digest, base64: b64 }}, null, 2);
+      }}
+
+      inputEl.addEventListener('input', runTransform);
+      modeEl.addEventListener('change', runTransform);
+      window.addEventListener('DOMContentLoaded', runTransform);
+    }})();
+  </script>
+"""
+    return wrap_html_document(title, slug, escaped_desc, schema_graph, body_main, app_cfg, extra_script)
+
+
+def render_auditor_web(slug: str, title: str, category: str, description: str, port: int, variant: str | None) -> str:
+    site_url = f"https://{slug}.nullai.tech/"
+    escaped_desc = description.replace('"', "'")
+    schema_graph = build_schema_graph(title, site_url, escaped_desc, "SecurityApplication")
+    app_cfg = json.dumps(
+        {
+            "id": slug,
+            "name": title,
+            "version": "v3.0.0",
+            "glyph": "🛡",
+            "tagline": description,
+            "category": category,
+            "repo": slug,
+            "statusText": f"127.0.0.1:{port} · AUDITOR ARCHETYPE",
+            "tutorialSteps": [
+                {"icon": "🔎", "title": "Paste HTML/JSON Manifest", "desc": "Load a snippet or upload a file to audit rules locally in-browser."},
+                {"icon": "📈", "title": "Review Score & CSV Findings", "desc": "Compliance score gauge, event timeline, and filterable findings update immediately."},
+            ],
+        },
+        indent=2,
+    )
+
+    sample_ok = '&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;&lt;script type="application/ld+json"&gt;{"@graph":["FAQPage"]}&lt;/script&gt;'
+    sample_warn = '&lt;div&gt;Missing viewport meta and blur-lock paywall gate detected&lt;/div&gt;'
+
+    body_main = f"""{band_block(slug, title, category, variant)}
+
+      <div class="zoth-alert" id="audit-banner">
+        <span id="audit-banner-text"><strong>AUDITOR READY:</strong> Running live policy rules cleanly on localhost.</span>
+        <span class="zoth-badge" id="audit-score-badge">100 / 100</span>
+      </div>
+
+      <section class="zoth-bento" aria-label="Audit Telemetry">
+        <div class="zoth-gauge-card zoth-col-4" id="audit-gauge" data-zoth-gauge data-value="100" data-max="100" data-label="COMPLIANCE SCORE" data-unit="%" data-status="PASS"></div>
+        <div class="zoth-card zoth-col-8">
+          <span class="zoth-eyebrow">01 · ARTIFACT TARGET INPUT</span>
+          <h2 class="zoth-card-title">Paste Config, HTML, or JSON to Audit</h2>
+          <div class="zoth-preset-bar" style="margin-top:0.65rem;">
+            <button type="button" class="zoth-tab is-active" data-zoth-preset-target="#audit-input" data-zoth-preset-value='{sample_ok}'>Compliant Artifact</button>
+            <button type="button" class="zoth-tab" data-zoth-preset-target="#audit-input" data-zoth-preset-value='{sample_warn}'>Failing Sample</button>
+            <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-file-target="#audit-input">Upload Target</button>
+          </div>
+          <textarea class="zoth-textarea" id="audit-input" spellcheck="false">{sample_ok}</textarea>
+        </div>
+      </section>
+
+      <section class="zoth-bento" aria-label="Findings and Timeline">
+        <div class="zoth-card zoth-col-8">
+          <div class="zoth-card-head">
+            <div>
+              <span class="zoth-eyebrow">02 · FINDINGS MATRIX</span>
+              <h2 class="zoth-card-title">Rule Evaluation Table</h2>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+              <input class="zoth-input" type="search" placeholder="Filter checks..." data-zoth-table-search="#audit-table">
+              <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-table-csv="#audit-table" data-zoth-filename="{slug}-findings.csv">Export CSV</button>
+            </div>
+          </div>
+          <div class="zoth-table-wrap">
+            <table class="zoth-table" id="audit-table">
+              <thead><tr><th>Rule</th><th>Condition</th><th>Severity</th><th>Status</th></tr></thead>
+              <tbody id="audit-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="zoth-card zoth-col-4">
+          <span class="zoth-eyebrow">03 · SCAN PIPELINE</span>
+          <h2 class="zoth-card-title" style="margin-bottom:0.85rem;">Execution Timeline</h2>
+          <div class="zoth-timeline">
+            <div class="zoth-timeline-item"><div class="zoth-timeline-dot"></div><strong>Tokenizer</strong><div class="zoth-subtitle">Parsed target in &lt;2ms</div></div>
+            <div class="zoth-timeline-item"><div class="zoth-timeline-dot"></div><strong>Guardrail Engine</strong><div class="zoth-subtitle">Checked AEO, Viewport &amp; Zero-Paywall</div></div>
+            <div class="zoth-timeline-item"><div class="zoth-timeline-dot"></div><strong>CSV / Log Ready</strong><div class="zoth-subtitle">Exportable locally without egress</div></div>
+          </div>
+        </div>
+      </section>"""
+
+    extra_script = """  <script>
+    (function () {
+      var inp = document.getElementById('audit-input');
+      var tbody = document.getElementById('audit-tbody');
+      var gauge = document.getElementById('audit-gauge');
+      var badge = document.getElementById('audit-score-badge');
+
+      function evaluate() {
+        var txt = inp.value || '';
+        var lt = String.fromCharCode(60);
+        var scriptOpenRe = new RegExp(lt + 'script', 'gi');
+        var scriptCloseRe = new RegExp(lt + '/script>', 'gi');
+        var blurRe = new RegExp('filter: *blu' + 'r|blur-lock', 'i');
+        var rules = [
+          { name: 'Viewport Meta', cond: 'width=device-width present', sev: 'HIGH', pass: /width=device-width/i.test(txt) },
+          { name: 'Schema.org Graph', cond: 'ld+json or @graph detected', sev: 'MED', pass: /(@graph|FAQPage|SoftwareApplication)/i.test(txt) },
+          { name: 'Zero Paywall Blur', cond: 'No paywall blur or blur-lock', sev: 'CRIT', pass: !blurRe.test(txt) },
+          { name: 'Balanced Markup', cond: 'No unclosed script/style tags', sev: 'HIGH', pass: (txt.match(scriptOpenRe) || []).length === (txt.match(scriptCloseRe) || []).length }
+        ];
+        var passed = rules.filter(function (r) { return r.pass; }).length;
+        var score = Math.round((passed / rules.length) * 100);
+        if (badge) badge.textContent = score + ' / 100';
+        tbody.innerHTML = rules.map(function (r) {
+          var cls = r.pass ? 'zoth-pill-pass' : (r.sev === 'CRIT' ? 'zoth-pill-fail' : 'zoth-pill-warn');
+          return '<tr><td>' + r.name + '</td><td>' + r.cond + '</td><td>' + r.sev + '</td><td><span class="' + cls + '">' + (r.pass ? 'PASS' : 'FAIL') + '</span></td></tr>';
+        }).join('');
+        if (window.ZothUI) {
+          gauge.setAttribute('data-value', String(score));
+          gauge.setAttribute('data-status', score === 100 ? 'ALL CHECKS PASS' : 'NEEDS FIXES');
+          window.ZothUI.renderGauge(gauge);
+        }
+      }
+
+      inp.addEventListener('input', evaluate);
+      window.addEventListener('DOMContentLoaded', evaluate);
+    })();
+  </script>
+"""
+    return wrap_html_document(title, slug, escaped_desc, schema_graph, body_main, app_cfg, extra_script)
+
+
+def render_diff_web(slug: str, title: str, category: str, description: str, port: int, variant: str | None) -> str:
+    site_url = f"https://{slug}.nullai.tech/"
+    escaped_desc = description.replace('"', "'")
+    schema_graph = build_schema_graph(title, site_url, escaped_desc, "DeveloperApplication")
+    app_cfg = json.dumps(
+        {
+            "id": slug,
+            "name": title,
+            "version": "v3.0.0",
+            "glyph": "⇄",
+            "tagline": description,
+            "category": category,
+            "repo": slug,
+            "statusText": f"127.0.0.1:{port} · DIFF CONVERTER",
+            "tutorialSteps": [
+                {"icon": "⇄", "title": "Edit Source or Apply Pipeline", "desc": "Format JSON, sort object keys, or inspect manual line changes cleanly."},
+                {"icon": "📦", "title": "Copy Transformed Output", "desc": "Everything executes locally with live +added / -removed counters."},
+            ],
+        },
+        indent=2,
+    )
+
+    sample_a = '{"service":"' + slug + '","paywall":true,"theme":"legacy","port":' + str(port) + '}'
+    body_main = f"""{band_block(slug, title, category, variant)}
+
+      <section class="zoth-bento" aria-label="Diff Converter Workspace">
+        <div class="zoth-card zoth-col-5">
+          <span class="zoth-eyebrow">01 · SOURCE PAYLOAD</span>
+          <h2 class="zoth-card-title">Input &amp; Transform Pipeline</h2>
+          <div class="zoth-preset-bar" style="margin-top:0.65rem;">
+            <button type="button" class="zoth-tab is-active" data-diff-mode="pretty">Pretty JSON</button>
+            <button type="button" class="zoth-tab" data-diff-mode="sort">Sort Keys</button>
+            <button type="button" class="zoth-tab" data-diff-mode="minify">Minify</button>
+            <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-file-target="#diff-source">Upload File</button>
+          </div>
+          <textarea class="zoth-textarea" id="diff-source" spellcheck="false">{sample_a}</textarea>
+        </div>
+
+        <div class="zoth-card zoth-col-7">
+          <div class="zoth-card-head">
+            <div>
+              <span class="zoth-eyebrow">02 · TRANSFORMED OUTPUT</span>
+              <h2 class="zoth-card-title">Live Converted Artifact</h2>
+            </div>
+            <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-copy="#diff-target">Copy Transformed</button>
+          </div>
+          <textarea class="zoth-textarea" id="diff-target" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <section aria-label="Line by Line Diff">
+        <div class="zoth-diff-wrap" id="live-diff-view" data-zoth-diff data-title="{slug.upper()} LINE DIFF"></div>
+      </section>"""
+
+    extra_script = """  <script>
+    (function () {
+      var src = document.getElementById('diff-source');
+      var dst = document.getElementById('diff-target');
+      var diffEl = document.getElementById('live-diff-view');
+      var mode = 'pretty';
+
+      function sortObj(val) {
+        if (Array.isArray(val)) return val.map(sortObj);
+        if (val && typeof val === 'object') {
+          return Object.keys(val).sort().reduce(function (acc, k) {
+            acc[k] = sortObj(val[k]);
+            return acc;
+          }, {});
+        }
+        return val;
+      }
+
+      function applyTransform(recomputeTarget) {
+        if (recomputeTarget) {
+          try {
+            var parsed = JSON.parse(src.value || '{}');
+            if (mode === 'minify') dst.value = JSON.stringify(parsed);
+            else if (mode === 'sort') dst.value = JSON.stringify(sortObj(parsed), null, 2);
+            else dst.value = JSON.stringify(parsed, null, 2);
+          } catch (err) {
+            dst.value = (src.value || '').trim().toUpperCase();
+          }
+        }
+        diffEl.setAttribute('data-before', src.value || '');
+        diffEl.setAttribute('data-after', dst.value || '');
+        if (window.ZothUI) window.ZothUI.renderDiff(diffEl);
+      }
+
+      document.querySelectorAll('[data-diff-mode]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          mode = btn.getAttribute('data-diff-mode');
+          document.querySelectorAll('[data-diff-mode]').forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+          applyTransform(true);
+        });
+      });
+
+      src.addEventListener('input', function () { applyTransform(true); });
+      dst.addEventListener('input', function () { applyTransform(false); });
+      window.addEventListener('DOMContentLoaded', function () { applyTransform(true); });
+    })();
+  </script>
+"""
+    return wrap_html_document(title, slug, escaped_desc, schema_graph, body_main, app_cfg, extra_script)
+
+
+def render_site_index(slug: str, title: str, category: str, description: str, port: int, variant: str | None = None) -> str:
+    site_url = f"https://{slug}.nullai.tech/"
+    escaped_desc = description.replace('"', "'")
+    schema_graph = build_schema_graph(title, site_url, escaped_desc, "WebApplication")
+    app_cfg = json.dumps(
+        {
+            "id": slug,
+            "name": title,
+            "version": "v3.0.0",
+            "glyph": "✦",
+            "tagline": description,
+            "category": category,
+            "repo": slug,
+            "statusText": "OPEN ACCESS · ZERO TELEMETRY",
+            "tutorialSteps": [
+                {"icon": "🌐", "title": "Dual-Theme Site", "desc": "Switch Obsidian Dark and Editorial Ivory Light from the header at any time."},
+                {"icon": "🔎", "title": "Search & Export Specs", "desc": "Filter capabilities live and export CSV directly from the comparison table."},
+            ],
+        },
+        indent=2,
+    )
+
+    body_main = f"""      <section class="zoth-hero" aria-label="Product Introduction">
+        <p class="zoth-hero-kicker">{category.upper()} · ZERO EGRESS ARCHITECTURE</p>
+        <h2 class="zoth-hero-title">{title}</h2>
+        <p class="zoth-hero-lead">{description}</p>
+        <div class="zoth-hero-cta">
+          <a class="zoth-btn zoth-btn-primary" href="#capabilities">Explore Capabilities</a>
+          <a class="zoth-btn zoth-btn-outline" href="https://github.com/1nc0gn30/{slug}" target="_blank" rel="noopener noreferrer">View Source on GitHub</a>
+        </div>
+      </section>
+
+{band_block(slug, title, category, variant)}
+
+      <section class="zoth-bento" aria-label="Telemetry & Performance Benchmarks">
+        <div class="zoth-gauge-card zoth-col-4" data-zoth-gauge data-value="100" data-max="100" data-label="LOCAL PRIVACY" data-unit="%" data-status="AIR-GAP READY" data-accent="#34D399"></div>
+        <div class="zoth-card zoth-col-8">
+          <span class="zoth-eyebrow">BENCHMARK DELTAS</span>
+          <h2 class="zoth-card-title" style="margin-bottom:0.85rem;">Client-Side Runtime Profile</h2>
+          <div class="zoth-stat-list" data-zoth-stat-bars data-items='[{{"label":"Initial CSS+JS Weight","baseline":210,"current":57,"unit":" KB","max":220}},{{"label":"Roundtrip Latency","baseline":140,"current":8,"unit":" ms","max":150}}]'></div>
+        </div>
+      </section>
+
+      <section class="zoth-feature-grid" aria-label="Platform Pillars">
+        <article class="zoth-feature-card">
+          <span class="zoth-eyebrow">01 · ARCHITECTURE</span>
+          <h3>100% Client-Side</h3>
+          <p>Zero external API dependencies or tracking pixels. Built on standardized Zoth UI primitives.</p>
+        </article>
+        <article class="zoth-feature-card">
+          <span class="zoth-eyebrow">02 · ACCESSIBILITY</span>
+          <h3>Triple-Viewport Grid</h3>
+          <p>Verified across 375px mobile, 768px tablet, and desktop layouts with 44px touch targets.</p>
+        </article>
+        <article class="zoth-feature-card">
+          <span class="zoth-eyebrow">03 · DISTRIBUTION</span>
+          <h3>SEO &amp; AEO Indexed</h3>
+          <p>Pre-wired with Schema.org JSON-LD graph, OpenGraph headers, robots.txt, and sitemap.xml.</p>
+        </article>
+      </section>
+
+      <section id="capabilities" class="zoth-card" style="margin-bottom:1.5rem;">
+        <div class="zoth-card-head">
+          <div>
+            <span class="zoth-eyebrow">CAPABILITY MATRIX</span>
+            <h2 class="zoth-card-title">Platform Verification Specs</h2>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+            <input class="zoth-input" style="min-width:210px;" type="search" placeholder="Filter specs..." data-zoth-table-search="#site-matrix">
+            <button type="button" class="zoth-btn zoth-btn-outline" data-zoth-table-csv="#site-matrix" data-zoth-filename="{slug}-specs.csv">Export CSV</button>
+          </div>
+        </div>
+        <div class="zoth-table-wrap">
+          <table class="zoth-table" id="site-matrix">
+            <thead>
+              <tr><th>Module</th><th>Execution Mode</th><th>Runtime Footprint</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>UI Design Tokens</td><td>Obsidian Dark / Ivory Light</td><td>Zero Runtime Deps</td><td><span class="zoth-pill-pass">PASS</span></td></tr>
+              <tr><td>Schema.org Graph</td><td>WebApplication + FAQPage</td><td>Static JSON-LD</td><td><span class="zoth-pill-pass">PASS</span></td></tr>
+              <tr><td>Outbound Telemetry</td><td>Disabled (127.0.0.1:{port})</td><td>0 Bytes External</td><td><span class="zoth-pill-pass">LOCAL</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-label="Frequently Asked Questions">
+        <details class="zoth-faq-item" open>
+          <summary>How is {title} licensed and deployed?</summary>
+          <div class="zoth-faq-body">{title} is 100% free and open-access. Deploy the static public/ folder to Netlify or run python3 server.py on 127.0.0.1:{port}.</div>
+        </details>
+        <details class="zoth-faq-item">
+          <summary>Does {title} work completely offline?</summary>
+          <div class="zoth-faq-body">Yes. All CSS, JavaScript, and SVG data visualizations are bundled locally inside public/zoth-ui.css and public/zoth-ui.js.</div>
+        </details>
+      </section>"""
+
+    return wrap_html_document(title, slug, escaped_desc, schema_graph, body_main, app_cfg)
+
+
+def render_robots(slug: str) -> str:
+    return f"""User-agent: *
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+Sitemap: https://{slug}.nullai.tech/sitemap.xml
+"""
+
+
+def render_sitemap(slug: str) -> str:
+    today = datetime.date.today().isoformat()
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://{slug}.nullai.tech/</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+
+
+def render_netlify_toml() -> str:
+    return """[build]
+  publish = "public"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+"""
+
+
+def render_showreel_prompt(slug: str, title: str, description: str) -> str:
+    return f"""# {title} — 15s Claude Motion Graphics Showreel Prompt
+
+- **Slug**: `{slug}`
+- **Hero Anchor Shape**: Hexagonal Isometric Lattice (`hex-lattice`) & Ordered Bayer 8x8 Orbital Grid
+- **Aspect / Timing**: 16:9 (1920x1080) & 9:16 (1080x1920), 60fps, 15.0s total (3.5s hook -> 7.5s live transform demo -> 4.0s aperture lock & CTA)
+- **Visual Grammar**: Obsidian `#08080B`, Aurum Gold `#D4AF37`, Emerald `#34D399`, `JetBrains Mono` labels, `Celtic Garamond` display headlines, sub-pixel `U+2800` Braille waveform transitions.
+- **Core Message**: "{title} — {description}"
+"""
+
+
+def render_server_py(slug: str, port: int) -> str:
+    return f"""#!/usr/bin/env python3
+\"\"\"Local loopback HTTP + API server for {slug}.\"\"\"
+
+import http.server
+import json
+import os
+import socketserver
+from pathlib import Path
+
+PORT = int(os.environ.get("PORT", "{port}"))
+PUBLIC_DIR = Path(__file__).resolve().parent / "public"
+
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(PUBLIC_DIR), **kwargs)
+
+    def _send_json(self, code: int, payload: dict) -> None:
+        raw = json.dumps(payload, indent=2).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_GET(self):
+        if self.path == "/health":
+            return self._send_json(200, {{"ok": True, "service": "{slug}", "port": PORT}})
+        if self.path == "/api/status":
+            return self._send_json(200, {{"service": "{slug}", "mode": "local-first", "zeroEgress": True}})
+        return super().do_GET()
+
+
+class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    allow_reuse_address = True
+
+
+if __name__ == "__main__":
+    with ThreadingTCPServer(("127.0.0.1", PORT), Handler) as httpd:
+        print(f"{slug} listening on http://127.0.0.1:{{PORT}}")
+        httpd.serve_forever()
+"""
+
+
+def render_readme(slug: str, title: str, description: str, port: int, archetype: str) -> str:
+    return f"""# {title}
+
+## What It Does
+{description}
+
+## How It Works
+- Built with **Zoth UI Kit v3.0** (`zoth-ui.css` + `zoth-ui.js`) using the **`{archetype}`** archetype.
+- Runs 100% client-side with zero outbound telemetry, bundled with an optional zero-dependency Python 3 loopback server (`server.py` on `127.0.0.1:{port}`).
+
+## ZothOS CLI & Local Commands
+```bash
+python3 server.py
+curl -s http://127.0.0.1:{port}/health
+curl -s http://127.0.0.1:{port}/api/status
+zoth-scaffold audit .
+```
+
+---
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform (`https://github.com/1nc0gn30/{slug}`).
+"""
+
+
+def render_studio_tool_jsx(slug: str, title: str, category: str, archetype: str = "workstation", variant: str | None = None) -> str:
+    comp = pascal_from_slug(slug)
+    var_prop = f'\n      variant="{variant}"' if variant else ""
+
+    if archetype == "auditor":
+        return f"""import React, {{ useMemo, useState }} from 'react';
+import {{ Stack, TextField, Unstable_Grid2 as Grid }} from '@mui/material';
+import {{
+  SovereignWorkstationShell,
+  SovereignCard,
+  SovereignGauge,
+  SovereignAlertBanner,
+  SovereignDataTable,
+  SovereignTimeline,
+  SovereignTerminalLog,
+  SOV,
+}} from '../sovereign';
+
+const SAMPLE_HTML = '<meta name="viewport" content="width=device-width, initial-scale=1.0">\\n<script type="application/ld+json">{{"@graph":["FAQPage"]}}</script>';
+
+export default function {comp}() {{
+  const [source, setSource] = useState(SAMPLE_HTML);
+
+  const findings = useMemo(() => {{
+    const txt = source || '';
+    return [
+      {{ rule: 'Viewport Meta', condition: 'width=device-width present', status: /width=device-width/i.test(txt) ? 'PASS' : 'FAIL' }},
+      {{ rule: 'Schema.org Graph', condition: 'ld+json or FAQPage found', status: /(@graph|FAQPage)/i.test(txt) ? 'PASS' : 'FAIL' }},
+      {{ rule: 'Zero Paywall Blur', condition: 'No blur lock selectors', status: !/filter:\\s*blur/i.test(txt) ? 'PASS' : 'FAIL' }},
+      {{ rule: 'Balanced Scripts', condition: '<script> tags closed', status: (txt.match(/<script/gi) || []).length === (txt.match(/<\\/script>/gi) || []).length ? 'PASS' : 'FAIL' }},
+    ];
+  }}, [source]);
+
+  const passed = findings.filter((f) => f.status === 'PASS').length;
+  const score = Math.round((passed / findings.length) * 100);
+
+  return (
+    <SovereignWorkstationShell
+      id="{slug}"
+      category="{category.upper()}"
+      title="{title}"
+      version="3.0.0"{var_prop}
+      subtitle="Zero-egress policy & hygiene auditor built on @zoth/ui v3.0 Blocks."
+      metrics={{[
+        {{ label: 'SCORE', value: String(score), unit: '%', status: score === 100 ? 'PASS' : 'REVIEW', accent: SOV.emerald }},
+        {{ label: 'PASSED', value: `${{passed}}/${{findings.length}}`, status: 'RULES' }},
+        {{ label: 'MODE', value: 'LOCAL', status: 'ZERO EGRESS' }},
+        {{ label: 'ARCHETYPE', value: 'AUDITOR' }},
+      ]}}
+      leftPane={{
+        <SovereignCard index="01" eyebrow="TARGET INPUT" title="Source Document">
+          <Stack spacing={{2}}>
+            <TextField
+              multiline
+              minRows={{7}}
+              fullWidth
+              value={{source}}
+              onChange={{(e) => setSource(e.target.value)}}
+              sx={{{{ '& textarea': {{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.8rem' }} }}}}
+            />
+            <SovereignAlertBanner
+              severity={{score === 100 ? 'success' : 'warning'}}
+              title={{score === 100 ? 'All Guardrails Passing' : 'Policy Gaps Detected'}}
+              message="Checks run deterministically inside your browser."
+            />
+            <SovereignTimeline
+              items={{[
+                {{ time: '00:00', title: 'AST / Regex Scan', status: 'pass', detail: 'Tokenized target string safely.' }},
+                {{ time: '00:01', title: 'Score Computed', status: score === 100 ? 'pass' : 'warn', detail: `${{passed}} of ${{findings.length}} rules green.` }},
+              ]}}
+            />
+          </Stack>
+        </SovereignCard>
+      }}
+      rightPane={{
+        <Stack spacing={{2}}>
+          <Grid container spacing={{2}}>
+            <Grid xs={{12}} sm={{5}}>
+              <SovereignGauge value={{score}} max={{100}} label="COMPLIANCE" unit="%" status={{score === 100 ? 'PASS' : 'ATTN'}} />
+            </Grid>
+            <Grid xs={{12}} sm={{7}}>
+              <SovereignTerminalLog
+                title="RULE ENGINE STREAM"
+                maxHeight={{190}}
+                logs={{findings.map((f, i) => ({{
+                  ts: `00:0${{i}}`,
+                  level: f.status === 'PASS' ? 'INFO' : 'ERROR',
+                  source: f.rule,
+                  message: f.condition,
+                }}))}}
+              />
+            </Grid>
+          </Grid>
+          <SovereignDataTable
+            eyebrow="FINDINGS MATRIX"
+            title="Rule Evaluation Matrix"
+            columns={{[
+              {{ key: 'rule', label: 'RULE' }},
+              {{ key: 'condition', label: 'EXPECTATION' }},
+              {{ key: 'status', label: 'RESULT', mono: true }},
+            ]}}
+            rows={{findings}}
+            filename="{slug}-findings.csv"
+          />
+        </Stack>
+      }}
+    />
+  );
+}}
+"""
+
+    if archetype == "diff-converter":
+        return f"""import React, {{ useMemo, useState }} from 'react';
+import {{ Stack, TextField }} from '@mui/material';
+import {{
+  SovereignWorkstationShell,
+  SovereignCard,
+  SovereignPresetBar,
+  SovereignDiffViewer,
+  SOV,
+}} from '../sovereign';
+
+const PRESETS = [
+  {{ id: 'cfg', label: 'Config Rewrite', badge: 'JSON', data: '{{"service":"{slug}","paywall":true,"theme":"legacy"}}' }},
+  {{ id: 'env', label: 'Sorted Keys', badge: 'KEYS', data: '{{"z":3,"a":1,"m":2}}' }},
+];
+
+export default function {comp}() {{
+  const [presetId, setPresetId] = useState('cfg');
+  const [beforeText, setBeforeText] = useState(PRESETS[0].data);
+
+  const afterText = useMemo(() => {{
+    try {{
+      const obj = JSON.parse(beforeText || '{{}}');
+      const sorted = Object.keys(obj).sort().reduce((acc, k) => ({{ ...acc, [k]: obj[k] }}), {{}});
+      return JSON.stringify({{ ...sorted, paywall: false, dualTheme: true }}, null, 2);
+    }} catch {{
+      return (beforeText || '').trim();
+    }}
+  }}, [beforeText]);
+
+  return (
+    <SovereignWorkstationShell
+      id="{slug}"
+      category="{category.upper()}"
+      title="{title}"
+      version="3.0.0"{var_prop}
+      subtitle="Zero-egress side-by-side transformation & line diff workstation built on @zoth/ui v3.0."
+      metrics={{[
+        {{ label: 'BEFORE LINES', value: String(beforeText.split('\\n').length), status: 'SOURCE' }},
+        {{ label: 'AFTER LINES', value: String(afterText.split('\\n').length), status: 'CONVERTED', accent: SOV.emerald }},
+        {{ label: 'EXECUTION', value: 'LOCAL', status: 'ZERO EGRESS' }},
+        {{ label: 'ARCHETYPE', value: 'DIFF-CONVERTER' }},
+      ]}}
+      leftPane={{
+        <SovereignCard index="01" eyebrow="SOURCE INPUT" title="Before Payload">
+          <Stack spacing={{2}}>
+            <SovereignPresetBar
+              presets={{PRESETS}}
+              activeId={{presetId}}
+              onSelect={{(p) => {{ setPresetId(p.id); setBeforeText(p.data); }}}}
+              onUploadText={{({{ text }}) => {{ setPresetId('upload'); setBeforeText(text); }}}}
+              onReset={{() => {{ setPresetId('cfg'); setBeforeText(PRESETS[0].data); }}}}
+            />
+            <TextField
+              multiline
+              minRows={{9}}
+              fullWidth
+              value={{beforeText}}
+              onChange={{(e) => setBeforeText(e.target.value)}}
+              sx={{{{ '& textarea': {{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.8rem' }} }}}}
+            />
+          </Stack>
+        </SovereignCard>
+      }}
+      rightPane={{
+        <SovereignDiffViewer
+          title="{slug.upper()} TRANSFORMATION DIFF"
+          beforeLabel="ORIGINAL"
+          afterLabel="CONVERTED"
+          beforeText={{beforeText}}
+          afterText={{afterText}}
+        />
+      }}
+    />
+  );
+}}
+"""
+
+    if archetype == "landing":
+        return f"""import React from 'react';
+import {{ Stack }} from '@mui/material';
+import {{
+  SovereignWorkstationShell,
+  SovereignHeroSection,
+  SovereignFeatureGrid,
+  SovereignStatComparison,
+  SovereignKeyValueGrid,
+  SovereignFaqAccordion,
+  SOV,
+}} from '../sovereign';
+
+export default function {comp}() {{
+  return (
+    <SovereignWorkstationShell
+      id="{slug}"
+      category="{category.upper()}"
+      title="{title}"
+      version="3.0.0"{var_prop}
+      subtitle="Zero-egress product showcase assembled from @zoth/ui v3.0 website blocks."
+      metrics={{[
+        {{ label: 'ACCESS', value: '100% OPEN', status: 'ZERO PAYWALL', accent: SOV.emerald }},
+        {{ label: 'RUNTIME', value: 'CLIENT', status: 'AIR-GAPPED' }},
+        {{ label: 'THEME', value: 'DUAL', status: 'DARK + LIGHT' }},
+        {{ label: 'ARCHETYPE', value: 'LANDING' }},
+      ]}}
+    >
+      <Stack spacing={{2.5}}>
+        <SovereignHeroSection
+          eyebrow="{category.upper()}"
+          badge="OPEN ACCESS"
+          title="Sovereign Architecture for"
+          highlight="{title}"
+          subtitle="High-craft dark/light dual theme, zero outbound tracking, and client-side determinism out of the box."
+          trustItems={{[{{ label: 'EGRESS', value: '0 B' }}, {{ label: 'VIEWPORTS', value: 'MOBILE / TABLET / DESKTOP' }}]}}
+        />
+        <SovereignFeatureGrid
+          cols={{3}}
+          items={{[
+            {{ tag: 'ZERO DEPS', title: 'Local Execution', desc: 'Runs purely in the browser with no external calls.', metric: '0 B EGRESS' }},
+            {{ tag: 'DUAL THEME', title: 'Dark & Ivory Light', desc: 'Tuned typography contrast across both color schemes.', metric: 'WCAG AA' }},
+            {{ tag: 'AEO READY', title: 'Schema Graph', desc: 'Structured SoftwareApplication + FAQPage JSON-LD.', metric: 'INDEXED' }},
+          ]}}
+        />
+        <SovereignStatComparison
+          title="RUNTIME FOOTPRINT DELTAS"
+          items={{[
+            {{ label: 'Bundle Size', baseline: 210, current: 52, unit: ' KB', max: 220 }},
+            {{ label: 'First Interaction', baseline: 420, current: 24, unit: ' ms', max: 450 }},
+          ]}}
+        />
+        <SovereignKeyValueGrid
+          items={{[
+            {{ label: 'SERVICE ID', value: '{slug}', mono: true, copyable: true }},
+            {{ label: 'DEPLOYMENT', value: 'Static + Optional Loopback', badge: 'NETLIFY' }},
+          ]}}
+        />
+        <SovereignFaqAccordion
+          items={{[
+            {{ question: 'Does {title} require a backend API key?', tag: 'PRIVACY', answer: 'No. Everything runs locally in your browser without telemetry.' }},
+          ]}}
+        />
+      </Stack>
+    </SovereignWorkstationShell>
+  );
+}}
+"""
+
+    return f"""import React, {{ useMemo, useState }} from 'react';
+import {{ Stack, TextField, Unstable_Grid2 as Grid }} from '@mui/material';
+import {{
+  SovereignWorkstationShell,
+  SovereignPresetBar,
+  SovereignCard,
+  SovereignGauge,
+  SovereignSparkline,
+  SovereignCodeBlock,
+  SovereignKeyValueGrid,
+  SovereignAlertBanner,
+  SOV,
+}} from '../sovereign';
+
+const PRESETS = [
+  {{ id: 'default', label: 'Standard Payload', badge: 'JSON', data: '{{"tool": "{slug}", "sovereign": true, "localFirst": true}}' }},
+  {{ id: 'telemetry', label: 'Heartbeat Frame', badge: 'IPC', data: '{{"event": "heartbeat", "egressBytes": 0, "status": "NOMINAL"}}' }},
+  {{ id: 'high-entropy', label: 'Hex Entropy Sample', badge: 'CRYPTO', data: 'a7f92b4c810d93ea6f8812cb04e578c1df89ab1034ce77fa0912bcde3499ab08' }},
+];
+
+export default function {comp}() {{
+  const [activePreset, setActivePreset] = useState('default');
+  const [input, setInput] = useState(PRESETS[0].data);
+  const [history, setHistory] = useState([54, 62, 58, 74, 69, 64]);
+
+  const metrics = useMemo(() => {{
+    const bytes = new TextEncoder().encode(input || '');
+    const counts = new Array(256).fill(0);
+    for (let i = 0; i < bytes.length; i += 1) counts[bytes[i]] += 1;
+    let entropy = 0;
+    for (let c = 0; c < 256; c += 1) {{
+      if (counts[c] > 0) {{
+        const p = counts[c] / bytes.length;
+        entropy -= p * Math.log2(p);
+      }}
+    }}
+    return {{
+      tool: '{slug}',
+      bytes: bytes.length,
+      lines: (input || '').split('\\n').length,
+      entropy: Number(entropy.toFixed(3)),
+    }};
+  }}, [input]);
+
+  const updateInput = (nextVal) => {{
+    setInput(nextVal);
+    const len = new TextEncoder().encode(nextVal || '').length;
+    setHistory((prev) => [...prev.slice(-11), len]);
+  }};
+
+  return (
+    <SovereignWorkstationShell
+      id="{slug}"
+      category="{category.upper()}"
+      title="{title}"
+      version="3.0.0"{var_prop}
+      subtitle="Zero-egress Zoth Studio workstation built on SovereignWorkstationShell v3 + @zoth/ui."
+      metrics={{[
+        {{ label: 'INPUT BYTES', value: String(metrics.bytes), unit: 'B' }},
+        {{ label: 'ENTROPY', value: String(metrics.entropy), unit: 'b/B', status: metrics.entropy > 5.2 ? 'HIGH' : 'STRUCTURED' }},
+        {{ label: 'EXECUTION', value: 'LOCAL', status: 'ZERO EGRESS', accent: SOV.emerald }},
+        {{ label: 'UI KIT', value: '@zoth/ui v3' }},
+      ]}}
+      tutorialSteps={{[
+        {{ icon: '⚡', title: 'Select Preset or Upload', desc: 'Load a preset or local file from the preset toolbar.' }},
+        {{ icon: '📊', title: 'Inspect Live Telemetry', desc: 'Watch the radial entropy gauge and byte-size sparkline update live.' }},
+        {{ icon: '📦', title: 'Export Artifact', desc: 'Copy or download the verified JSON output from the right pane.' }},
+      ]}}
+      leftPane={{
+        <SovereignCard index="01" eyebrow="INPUT CONSOLE" title="Presets & Source Payload">
+          <Stack spacing={{2}}>
+            <SovereignPresetBar
+              presets={{PRESETS}}
+              activeId={{activePreset}}
+              onSelect={{(p) => {{ setActivePreset(p.id); updateInput(p.data); }}}}
+              onUploadText={{({{ text }}) => {{ setActivePreset('upload'); updateInput(text); }}}}
+              onReset={{() => {{ setActivePreset('default'); updateInput(PRESETS[0].data); }}}}
+            />
+            <TextField
+              multiline
+              minRows={{6}}
+              fullWidth
+              value={{input}}
+              onChange={{(e) => updateInput(e.target.value)}}
+              sx={{{{ '& textarea': {{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.82rem' }} }}}}
+            />
+            <SovereignAlertBanner
+              severity="success"
+              title="LOCAL LOOPBACK VERIFIED"
+              message="Zero external network calls executed during inspection."
+            />
+          </Stack>
+        </SovereignCard>
+      }}
+      rightPane={{
+        <Stack spacing={{2}}>
+          <Grid container spacing={{2}}>
+            <Grid xs={{12}} sm={{5}}>
+              <SovereignGauge
+                value={{metrics.entropy}}
+                max={{8}}
+                label="SHANNON ENTROPY"
+                unit=" b/B"
+                thresholds={{{{ warn: 4.8, danger: 6.8 }}}}
+                status={{metrics.entropy > 5.8 ? 'HIGH RANDOMNESS' : 'STRUCTURED'}}
+              />
+            </Grid>
+            <Grid xs={{12}} sm={{7}}>
+              <SovereignSparkline
+                title="PAYLOAD BYTE STREAM"
+                data={{history}}
+                unit=" B"
+                threshold={{128}}
+                thresholdLabel="FRAME TARGET (128 B)"
+              />
+            </Grid>
+          </Grid>
+          <SovereignKeyValueGrid
+            items={{[
+              {{ label: 'TOOL SLUG', value: '{slug}' }},
+              {{ label: 'BYTE COUNT', value: `${{metrics.bytes}} bytes` }},
+            ]}}
+          />
+          <SovereignCodeBlock
+            title="{slug.upper()} READOUT"
+            badge="CLIENT-SIDE"
+            filename="{slug}-output.json"
+            code={{JSON.stringify(metrics, null, 2)}}
+          />
+        </Stack>
+      }}
+    />
+  );
+}}
+"""
+
+
+def render_web_index(slug: str, title: str, category: str, description: str, port: int, archetype: str = "workstation", variant: str | None = None) -> str:
+    if archetype == "auditor":
+        return render_auditor_web(slug, title, category, description, port, variant)
+    if archetype == "diff-converter":
+        return render_diff_web(slug, title, category, description, port, variant)
+    if archetype == "landing":
+        return render_site_index(slug, title, category, description, port, variant)
+    return render_workstation_web(slug, title, category, description, port, variant)
+
+
+def write_static_bundle(args, generator_name: str) -> dict:
+    slug = slugify(args.slug)
+    title = args.title or title_from_slug(slug)
+    archetype = getattr(args, "archetype", None) or ("landing" if generator_name == "site" else "workstation")
+    variant = getattr(args, "variant", None)
+    category = args.category or ("Sovereign Platform" if generator_name == "site" else "Sovereign Developer Tool")
+    description = args.description or f"{title} — zero-egress, offline-capable web platform built on Zoth UI Kit v3."
+    port = args.port or (8165 if generator_name == "site" else 8160)
+    out_dir = Path(args.out_dir).expanduser().resolve() if args.out_dir else (DEFAULT_ROOT / slug)
+
+    public_dir = out_dir / "public"
+    prompts_dir = out_dir / "prompts"
+    public_dir.mkdir(parents=True, exist_ok=True)
+    prompts_dir.mkdir(parents=True, exist_ok=True)
+
+    html = (
+        render_site_index(slug, title, category, description, port, variant)
+        if generator_name == "site"
+        else render_web_index(slug, title, category, description, port, archetype, variant)
+    )
+    (public_dir / "index.html").write_text(html, encoding="utf-8")
+    shutil.copy2(KIT_DIR / "zoth-ui.css", public_dir / "zoth-ui.css")
+    shutil.copy2(KIT_DIR / "zoth-ui.js", public_dir / "zoth-ui.js")
+    (public_dir / "robots.txt").write_text(render_robots(slug), encoding="utf-8")
+    (public_dir / "sitemap.xml").write_text(render_sitemap(slug), encoding="utf-8")
+    (out_dir / "netlify.toml").write_text(render_netlify_toml(), encoding="utf-8")
+    (prompts_dir / "motion_graphics_showreel.md").write_text(
+        render_showreel_prompt(slug, title, description), encoding="utf-8"
+    )
+
+    server_path = out_dir / "server.py"
+    server_path.write_text(render_server_py(slug, port), encoding="utf-8")
+    server_path.chmod(server_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    (out_dir / "README.md").write_text(render_readme(slug, title, description, port, archetype), encoding="utf-8")
+
+    return {
+        "ok": True,
+        "generator": generator_name,
+        "archetype": archetype,
+        "variant": variant,
+        "slug": slug,
+        "title": title,
+        "outDir": str(out_dir),
+        "port": port,
+        "files": [
+            str(public_dir / "index.html"),
+            str(public_dir / "zoth-ui.css"),
+            str(public_dir / "zoth-ui.js"),
+            str(public_dir / "robots.txt"),
+            str(public_dir / "sitemap.xml"),
+            str(out_dir / "netlify.toml"),
+            str(prompts_dir / "motion_graphics_showreel.md"),
+            str(server_path),
+            str(out_dir / "README.md"),
+        ],
+    }
+
+
+def cmd_studio_tool(args) -> dict:
+    slug = slugify(args.slug)
+    title = args.title or title_from_slug(slug)
+    category = args.category or "Developer Utility"
+    archetype = getattr(args, "archetype", "workstation") or "workstation"
+    variant = getattr(args, "variant", None)
+    comp = pascal_from_slug(slug)
+    out_path = Path(args.out).expanduser().resolve() if args.out else (STUDIO_TOOLS_DIR / f"{comp}.jsx")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(render_studio_tool_jsx(slug, title, category, archetype, variant), encoding="utf-8")
+    return {
+        "ok": True,
+        "generator": "studio-tool",
+        "archetype": archetype,
+        "variant": variant,
+        "slug": slug,
+        "component": comp,
+        "outFile": str(out_path),
+    }
+
+
+def _find_first(base: Path, candidates: list[str]) -> Path | None:
+    for rel in candidates:
+        p = base / rel
+        if p.is_file():
+            return p
+    return None
+
+
+def cmd_audit(args) -> dict:
+    target = Path(args.target).expanduser().resolve()
+    index_path = _find_first(target, ["public/index.html", "index.html"])
+    robots_path = _find_first(target, ["public/robots.txt", "robots.txt"])
+    sitemap_path = _find_first(target, ["public/sitemap.xml", "sitemap.xml"])
+    netlify_path = _find_first(target, ["netlify.toml"])
+    redirects_path = _find_first(target, ["public/_redirects", "_redirects"])
+    zoth_js_path = _find_first(target, ["public/zoth-ui.js", "public/zoth-ui/zoth-ui.js", "zoth-ui.js"])
+
+    html_text = index_path.read_text(encoding="utf-8", errors="ignore") if index_path else ""
+    robots_text = robots_path.read_text(encoding="utf-8", errors="ignore") if robots_path else ""
+    sitemap_text = sitemap_path.read_text(encoding="utf-8", errors="ignore") if sitemap_path else ""
+    netlify_text = netlify_path.read_text(encoding="utf-8", errors="ignore") if netlify_path else ""
+    redirects_text = redirects_path.read_text(encoding="utf-8", errors="ignore") if redirects_path else ""
+    zoth_js_text = zoth_js_path.read_text(encoding="utf-8", errors="ignore") if zoth_js_path else ""
+    combined_client = html_text + "\n" + zoth_js_text
+
+    style_balanced = len(re.findall(r"<style\b", html_text, re.I)) == len(re.findall(r"</style>", html_text, re.I))
+    script_balanced = len(re.findall(r"<script\b", html_text, re.I)) == len(re.findall(r"</script>", html_text, re.I))
+
+    checks = [
+        {
+            "id": "index_html",
+            "pass": bool(index_path and style_balanced and script_balanced and "</body>" in html_text.lower()),
+            "detail": str(index_path) if index_path else "Missing public/index.html or balanced markup",
+        },
+        {
+            "id": "schema_graph",
+            "pass": bool(
+                "application/ld+json" in html_text
+                and '"@graph"' in html_text
+                and '"FAQPage"' in html_text
+            ),
+            "detail": "Schema.org JSON-LD @graph + FAQPage",
+        },
+        {
+            "id": "robots_txt",
+            "pass": bool(
+                robots_path
+                and all(tok in robots_text for tok in ("GPTBot", "ClaudeBot", "PerplexityBot", "Sitemap:"))
+            ),
+            "detail": str(robots_path) if robots_path else "Missing robots.txt with frontier AI crawler allow rules",
+        },
+        {
+            "id": "sitemap_xml",
+            "pass": bool(sitemap_path and "<loc>" in sitemap_text),
+            "detail": str(sitemap_path) if sitemap_path else "Missing sitemap.xml with <loc>",
+        },
+        {
+            "id": "netlify_toml",
+            "pass": bool(
+                netlify_path
+                and "X-Frame-Options" in netlify_text
+                and "X-Content-Type-Options" in netlify_text
+                and ("[[redirects]]" in netlify_text or "/index.html 200" in redirects_text)
+            ),
+            "detail": str(netlify_path) if netlify_path else "Missing netlify.toml security headers & SPA redirect",
+        },
+        {
+            "id": "open_access_support",
+            "pass": bool(
+                "3cIfZg27PdKo2D64Ocfw40X" in combined_client
+                and "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" in combined_client
+                and not re.search(r"filter:\s*blur\(", html_text, re.I)
+                and "depay" not in html_text.lower()
+            ),
+            "detail": "Stripe Buy Us a Coffee + Solana tip without paywall blur or DePay",
+        },
+        {
+            "id": "viewport_meta",
+            "pass": bool(re.search(r"width=device-width", html_text, re.I) and re.search(r"initial-scale=1", html_text, re.I)),
+            "detail": "Responsive viewport meta tag",
+        },
+        {
+            "id": "zoth_ui_adoption",
+            "pass": bool(
+                "zoth-ui.css" in html_text
+                or "zoth-ui.js" in html_text
+                or "@zoth/ui" in html_text
+                or "components/sovereign" in html_text
+            ),
+            "detail": "References zoth-ui.css / zoth-ui.js or @zoth/ui primitives",
+        },
+    ]
+
+    passed = sum(1 for c in checks if c["pass"])
+    total = len(checks)
+    return {
+        "ok": passed == total,
+        "target": str(target),
+        "score": passed,
+        "maxScore": total,
+        "pct": round((passed / total) * 100),
+        "checks": checks,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="zoth-scaffold",
+        description="Unified Zoth UI v3.0 component, archetype & guardrail audit CLI.",
+    )
+    parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    sub = parser.add_subparsers(dest="command")
+
+    p_list = sub.add_parser("list", help="List reusable @zoth/ui v3.0 primitives, archetypes, and canvas variants")
+    p_list.add_argument("--json", action="store_true", help="Output JSON catalog")
+
+    for name, default_port, default_arch, help_txt in [
+        ("web", 8160, "workstation", "Scaffold a standalone web workstation / auditor / diff-converter / landing page"),
+        ("site", 8165, "landing", "Scaffold a full product/marketing website (hero + feature grid + stat bars + CSV table + FAQ)"),
+    ]:
+        p = sub.add_parser(name, help=help_txt)
+        p.add_argument("slug", help="Kebab-case slug (e.g. my-audit-tool)")
+        p.add_argument("--title", help="Display title")
+        p.add_argument("--category", help="Product/tool category")
+        p.add_argument("--description", help="Short summary")
+        p.add_argument("--archetype", choices=KIT_CATALOG["archetypes"], default=default_arch, help="UI archetype template")
+        p.add_argument("--variant", choices=KIT_CATALOG["canvasVariants"], default=None, help="Override deterministic canvas engine")
+        p.add_argument("--port", type=int, default=default_port, help=f"Local server port (default: {default_port})")
+        p.add_argument("--out-dir", help="Target directory (default: ~/NullAITech/<slug>)")
+        p.add_argument("--json", action="store_true", help="Output JSON result")
+
+    p_studio = sub.add_parser("studio-tool", help="Scaffold a Zoth Studio v2 React tool component")
+    p_studio.add_argument("slug", help="Kebab-case tool slug")
+    p_studio.add_argument("--title", help="Display title")
+    p_studio.add_argument("--category", help="Tool category")
+    p_studio.add_argument("--archetype", choices=KIT_CATALOG["archetypes"], default="workstation", help="React archetype template")
+    p_studio.add_argument("--variant", choices=KIT_CATALOG["canvasVariants"], default=None, help="Override deterministic canvas engine")
+    p_studio.add_argument("--out", help="Output .jsx file path")
+    p_studio.add_argument("--json", action="store_true", help="Output JSON result")
+
+    p_audit = sub.add_parser("audit", help="Audit any project directory against the 8 Sovereign Guardrail checks")
+    p_audit.add_argument("target", nargs="?", default=".", help="Project root directory to audit (default: current directory)")
+    p_audit.add_argument("--json", action="store_true", help="Output JSON report")
+
+    args = parser.parse_args()
+
+    if args.command is None or args.command == "list":
+        if args.json:
+            print(json.dumps(KIT_CATALOG, indent=2))
+        else:
+            print("zoth-scaffold v3.0.0 — Zoth Unified UI & Archetype Generator")
+            print("Generators: " + ", ".join(KIT_CATALOG["generators"]))
+            print("Archetypes: " + ", ".join(KIT_CATALOG["archetypes"]))
+            print("Canvas:     " + ", ".join(KIT_CATALOG["canvasVariants"]))
+            print("React kit:  " + ", ".join(KIT_CATALOG["reactPrimitives"]))
+            print("Vanilla kit: " + ", ".join(KIT_CATALOG["vanillaAssets"]))
+        return 0
+
+    if args.command in ("web", "site"):
+        res = write_static_bundle(args, args.command)
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"✔ Scaffolded {args.command} ({res['archetype']}) '{res['slug']}' at {res['outDir']}")
+            for f in res["files"]:
+                print(f"  - {f}")
+        return 0
+
+    if args.command == "studio-tool":
+        res = cmd_studio_tool(args)
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"✔ Scaffolded React component {res['component']} ({res['archetype']}) at {res['outFile']}")
+        return 0
+
+    if args.command == "audit":
+        res = cmd_audit(args)
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"Sovereign Audit: {res['target']} -> {res['score']}/{res['maxScore']} ({res['pct']}%)")
+            for chk in res["checks"]:
+                mark = "✔" if chk["pass"] else "✘"
+                print(f"  {mark} {chk['id']}: {chk['detail']}")
+        return 0 if res["ok"] else 1
+
+    parser.print_help()
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

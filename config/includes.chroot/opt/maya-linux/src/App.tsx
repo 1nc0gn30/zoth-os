@@ -20,6 +20,7 @@ import { GRADIENT_PRESETS } from './models/devices';
 import { SpeedTimeline } from './models/speedTimeline';
 import { exportVideo } from './services/exportService';
 import { computeAudioDucking, computeAudioFade } from './services/audioService';
+import { generateProceduralMotionProject, MotionSynthPreset } from './services/proceduralMotionSynth';
 import { AudioTrack, StickerItem, SubtitleItem, TextOverlay, MetaEditsConfig, TransitionItem, TypewriterOverlayItem, ImageOverlayItem } from './types/models';
 
 const initialProject: ProjectState = {
@@ -368,6 +369,41 @@ export const App: React.FC = () => {
   };
 
   const [exportedFilePath, setExportedFilePath] = useState<string | null>(null);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [synthProgress, setSynthProgress] = useState(0);
+
+  const handleSynthesizeMotion = async (presetId: MotionSynthPreset['id']) => {
+    if (isSynthesizing || project.isExporting) return;
+    setIsSynthesizing(true);
+    setSynthProgress(0);
+    try {
+      const synthUpdate = await generateProceduralMotionProject(presetId, (p) => setSynthProgress(p));
+      updateProject(synthUpdate, true);
+    } catch (err: any) {
+      console.error('Procedural motion synth failed:', err);
+      alert(`Motion Synth error: ${err.message || err}`);
+    } finally {
+      setIsSynthesizing(false);
+      setSynthProgress(0);
+    }
+  };
+
+  useEffect(() => {
+    const api = (window as any).electronAPI;
+    if (!api?.getCliVideoPath) return;
+    api.getCliVideoPath().then((cliPath: string | null) => {
+      if (cliPath && typeof cliPath === 'string') {
+        const fileName = cliPath.split('/').pop() || 'cli-video.mp4';
+        const fileUrl = cliPath.startsWith('file://') ? cliPath : `file://${encodeURI(cliPath)}`;
+        updateProject({
+          videoURL: fileUrl,
+          displayName: fileName,
+          isPlaying: false,
+          currentSeconds: 0,
+        });
+      }
+    }).catch(() => {});
+  }, []);
 
   const handleExport = async (transparent: boolean, quality: '1080p' | '1440p' | '4k' = '1080p', fps: number = 60) => {
     const video = videoRef.current;
@@ -481,6 +517,26 @@ export const App: React.FC = () => {
           } else if (project.selectedEvent.type === 'sticker') {
             updateProject({
               stickers: (project.stickers || []).filter(s => s.id !== project.selectedEvent?.id),
+              selectedEvent: null,
+            }, true);
+          } else if (project.selectedEvent.type === 'transition') {
+            updateProject({
+              transitions: (project.transitions || []).filter(t => t.id !== project.selectedEvent?.id),
+              selectedEvent: null,
+            }, true);
+          } else if (project.selectedEvent.type === 'typewriter') {
+            updateProject({
+              typewriters: (project.typewriters || []).filter(tw => tw.id !== project.selectedEvent?.id),
+              selectedEvent: null,
+            }, true);
+          } else if (project.selectedEvent.type === 'imageOverlay') {
+            updateProject({
+              imageOverlays: (project.imageOverlays || []).filter(im => im.id !== project.selectedEvent?.id),
+              selectedEvent: null,
+            }, true);
+          } else if (project.selectedEvent.type === 'subtitle') {
+            updateProject({
+              subtitles: (project.subtitles || []).filter(sb => sb.id !== project.selectedEvent?.id),
               selectedEvent: null,
             }, true);
           }
@@ -679,7 +735,7 @@ export const App: React.FC = () => {
       <TypewriterModal
         isOpen={isTypewriterModalOpen}
         onClose={() => setIsTypewriterModalOpen(false)}
-        project={project}
+        currentTime={project.currentSeconds || 0}
         onAddTypewriter={(typewriter: TypewriterOverlayItem) => {
           updateProject({
             typewriters: [...(project.typewriters || []), typewriter],
@@ -691,8 +747,8 @@ export const App: React.FC = () => {
       <BrandAssetsModal
         isOpen={isBrandAssetsModalOpen}
         onClose={() => setIsBrandAssetsModalOpen(false)}
-        project={project}
-        onAddBrandAsset={(asset: ImageOverlayItem) => {
+        currentTime={project.currentSeconds || 0}
+        onAddImageOverlay={(asset: ImageOverlayItem) => {
           updateProject({
             imageOverlays: [...(project.imageOverlays || []), asset],
             selectedEvent: { type: 'imageOverlay', id: asset.id },
@@ -707,6 +763,8 @@ export const App: React.FC = () => {
         onSaveProject={handleSaveProject}
         onLoadProject={handleLoadProject}
         onExport={handleExport}
+        onSynthesizeMotion={handleSynthesizeMotion}
+        isSynthesizing={isSynthesizing}
         onOpenTemplates={() => setIsTemplatesModalOpen(true)}
         onOpenTTS={() => setIsTTSModalOpen(true)}
         onOpenLowerThirds={() => setIsLowerThirdsModalOpen(true)}
@@ -736,6 +794,9 @@ export const App: React.FC = () => {
           onOpenFile={handleOpenFile}
           onFileSelect={loadVideoFile}
           onChange={updateProject}
+          onSynthesizeMotion={handleSynthesizeMotion}
+          isSynthesizing={isSynthesizing}
+          synthProgress={synthProgress}
         />
 
         <InspectorPanel

@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
-# ZothOS Desktop (Electron) & Braille TUI Interceptor
-import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
-if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/yara-sigma-forge')
-    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
-    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
-if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
-    _z_sys.exit(_z_sp.run(['/usr/local/bin/yara-sigma-forge-tui'] + _z_rem).returncode)
 """
-YARA-X & Sigma Threat Rule Forge CLI (v3.4.0)
-Engineered by 1nc0gn30 • NullAI Platform
+YARA-X & Sigma Threat Rule Forge CLI (v3.3.0)
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """
 
 import argparse
@@ -27,10 +17,11 @@ TOOL_ID = "yara-sigma-forge"
 TOOL_REPO = "yara-sigma-forge"
 TOOL_NAME = "YARA-X & Sigma Threat Rule Forge"
 TOOL_DESC = "100% client-side YARA-X & Sigma threat detection compiler with 60fps byte-offset entropy radar, CVE-2024-4577 PHP-CGI / ELF64 memfd / AI Agent exfil signatures, and MITRE ATT&CK mapping."
-TOOL_VERSION = "3.4.0"
+TOOL_VERSION = "3.3.0"
 TOOL_CATEGORY = "Security & Recon"
 TOOL_PORT = 8133
-REPO_DIR = os.path.expanduser("~/NullAITech/yara-sigma-forge")
+_CANDIDATE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_DIR = _CANDIDATE_ROOT if os.path.isfile(os.path.join(_CANDIDATE_ROOT, "server.py")) else "/opt/yara-sigma-forge"
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
@@ -118,7 +109,7 @@ def emit_yara(preset_key: str) -> str:
 {{
   meta:
     description = "{preset["label"]}"
-    author = "1nc0gn30 • NullAI Platform"
+    author = "1nc0gn30 (@1nc0gn30) • NullAI Platform"
     severity = "{preset["severity"]}"
     mitre_attack = "{', '.join(preset["mitre"])}"
 
@@ -136,7 +127,7 @@ def emit_sigma(preset_key: str) -> str:
     return f"""title: {preset["label"]}
 status: production
 description: Sovereign Sigma detection rule
-author: 1nc0gn30 • NullAI Platform
+author: 1nc0gn30 (@1nc0gn30) • NullAI Platform
 logsource:
   category: process_creation / webserver
   product: linux / windows
@@ -245,7 +236,6 @@ def main():
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
         "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
         "daemon_running": daemon_running,
@@ -253,7 +243,6 @@ def main():
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
         },
         "status": "ONLINE" if daemon_running else "READY",
     }
@@ -262,11 +251,10 @@ def main():
         print(json.dumps(info, indent=2))
         return
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
+    print(f"{TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL} (Daemon: {'ONLINE' if daemon_running else 'STANDBY'})")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print("  Access     : 100% Free & Open Access (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)")
 
 
 if __name__ == "__main__":

@@ -96,7 +96,7 @@ PlasmaExtras.PlasmoidHeading {
                         anchors.fill: parent
                         radius: width / 2
                         color: "transparent"
-                        border.color: Qt.rgba(1, 0.84, 0, 0.75)
+                        border.color: KickoffSingleton.rgbaAccent(0.75)
                         border.width: 1.5
                     }
 
@@ -138,7 +138,7 @@ PlasmaExtras.PlasmoidHeading {
                         id: nameLabel
                         anchors.fill: parent
                         opacity: parent.containsMouse ? 0 : 1
-                        color: "#ffd700"
+                        color: KickoffSingleton.accentColor
                         font.bold: true
                         level: 4
                         text: kuser.fullName
@@ -205,7 +205,7 @@ PlasmaExtras.PlasmoidHeading {
                     background: Rectangle {
                         radius: 8
                         color: searchField.activeFocus ? Qt.rgba(0.08, 0.10, 0.14, 0.95) : Qt.rgba(0.05, 0.07, 0.10, 0.90)
-                        border.color: searchField.activeFocus ? "#ffd700" : Qt.rgba(1, 0.84, 0, 0.32)
+                        border.color: searchField.activeFocus ? KickoffSingleton.accentColor : KickoffSingleton.rgbaAccent(0.32)
                         border.width: searchField.activeFocus ? 2 : 1
 
                         Behavior on border.color {

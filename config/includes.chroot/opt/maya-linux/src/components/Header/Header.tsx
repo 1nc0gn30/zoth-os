@@ -18,10 +18,12 @@ import {
   Type,
   Crown,
   Menu,
-  X
+  X,
+  Zap
 } from 'lucide-react';
 import { ProjectState } from '../../types/project';
 import { generateCapCutDraft } from '../../services/capcutExportService';
+import { SYNTH_PRESETS, MotionSynthPreset } from '../../services/proceduralMotionSynth';
 
 interface HeaderProps {
   project: ProjectState;
@@ -29,6 +31,8 @@ interface HeaderProps {
   onSaveProject: () => void;
   onLoadProject: (projectData: any) => void;
   onExport: (transparent: boolean, quality?: '1080p' | '1440p' | '4k', fps?: number) => void;
+  onSynthesizeMotion?: (presetId: MotionSynthPreset['id']) => void;
+  isSynthesizing?: boolean;
   onOpenTemplates?: () => void;
   onOpenTTS?: () => void;
   onOpenLowerThirds?: () => void;
@@ -51,6 +55,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSaveProject,
   onLoadProject,
   onExport,
+  onSynthesizeMotion,
+  isSynthesizing,
   onOpenTemplates,
   onOpenTTS,
   onOpenLowerThirds,
@@ -68,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const projectInputRef = useRef<HTMLInputElement>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<'vfx' | 'audio' | null>(null);
+  const [activeMenu, setActiveMenu] = useState<'vfx' | 'audio' | 'synth' | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -337,6 +343,52 @@ export const Header: React.FC<HeaderProps> = ({
             <MousePointer className="w-3.5 h-3.5 text-cyan-400" />
             <span>Cursor</span>
           </button>
+
+          {/* Procedural Zoth & 1nc0gn30 Motion Synth Menu */}
+          {onSynthesizeMotion && (
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                disabled={isSynthesizing || project.isExporting}
+                onClick={() => setActiveMenu(activeMenu === 'synth' ? null : 'synth')}
+                title="Synthesize 60fps Zoth & 1nc0gn30 Procedural Motion Video (Zero Still Images)"
+                className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition shadow-sm active:scale-95 disabled:opacity-40 ${
+                  activeMenu === 'synth'
+                    ? 'bg-amber-600 text-white border-amber-400'
+                    : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/40'
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>Motion Synth</span>
+                <ChevronDown className="w-3 h-3 text-amber-400 ml-0.5" />
+              </button>
+
+              {activeMenu === 'synth' && (
+                <div className="absolute top-full left-0 mt-1.5 w-72 rounded-xl bg-dark-900 border border-amber-500/30 shadow-2xl p-1.5 space-y-1 z-50 animate-in fade-in">
+                  <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-amber-400/90 border-b border-slate-800/80">
+                    60 FPS Procedural Synth (Zero Still Images)
+                  </div>
+                  {SYNTH_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => {
+                        setActiveMenu(null);
+                        onSynthesizeMotion(preset.id);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 text-xs text-slate-200 hover:text-white flex items-center justify-between transition"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="font-semibold truncate">{preset.title}</div>
+                        <div className="text-[10px] text-slate-400 truncate">{preset.subtitle}</div>
+                      </div>
+                      <span className="shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/20">
+                        {preset.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Help Shortcuts */}
           <button
@@ -635,6 +687,28 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="text-[10px] text-slate-400">Screen mouse tracking & smooth pathing</div>
                   </div>
                 </button>
+
+                {onSynthesizeMotion && (
+                  <div className="pt-1 space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400 px-1">
+                      Zoth & 1nc0gn30 60fps Motion Synth
+                    </div>
+                    {SYNTH_PRESETS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        disabled={isSynthesizing || project.isExporting}
+                        onClick={() => runAndClose(() => onSynthesizeMotion(preset.id))}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-left transition disabled:opacity-40"
+                      >
+                        <div className="min-w-0 pr-2">
+                          <div className="font-semibold text-amber-200 truncate">{preset.title}</div>
+                          <div className="text-[10px] text-slate-400 truncate">{preset.badge}</div>
+                        </div>
+                        <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Overlays & VFX */}
@@ -769,7 +843,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Keyboard Shortcuts (?)</span>
               </button>
 
-              <span className="text-[10px] text-slate-400 font-mono">v1.1.0</span>
+              <span className="text-[10px] text-slate-400 font-mono">v1.2.0</span>
             </div>
           </div>
         </div>

@@ -249,7 +249,6 @@ def get_status():
         "engineered_by": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
         "support": {
             "buy_us_a_coffee_stripe": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_tip_address": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
         },
         "license": "100% Free & Open Access (Zero Paywalls)",
     }

@@ -35,6 +35,73 @@ Rectangle {
         readonly property real wordW: Math.min(parent.width * 0.58, 1060)
         readonly property real wordH: wordW / 4.3838
 
+        // One-shot Hermetic Sanctum Degree Ring Canvas (0 continuous CPU cost)
+        Canvas {
+            id: sanctumRingCanvas
+            width: Math.min(masterContainer.width * 0.86, 860)
+            height: Math.min(masterContainer.height * 0.68, 420)
+            anchors.centerIn: wordContainer
+            opacity: 0.72
+            Component.onCompleted: requestPaint()
+            onPaint: {
+                var ctx = getContext("2d");
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                var cx = width * 0.5;
+                var cy = height * 0.5;
+                var rxOuter = width * 0.44;
+                var ryOuter = height * 0.42;
+                var rxInner = rxOuter * 0.84;
+                var ryInner = ryOuter * 0.84;
+
+                // Outer & inner elliptical sanctum rings
+                ctx.strokeStyle = "rgba(245, 197, 66, 0.28)";
+                ctx.lineWidth = 1.4;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(1.0, ryOuter / rxOuter);
+                ctx.beginPath();
+                ctx.arc(0, 0, rxOuter, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.strokeStyle = "rgba(44, 182, 125, 0.24)";
+                ctx.lineWidth = 1.0;
+                ctx.beginPath();
+                ctx.arc(0, 0, rxInner, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+
+                // 36 Hermetic degree ticks + 4 cardinal sigil diamonds
+                ctx.strokeStyle = "rgba(255, 215, 0, 0.55)";
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                for (var t = 0; t < 36; t++) {
+                    var ang = (t / 36.0) * Math.PI * 2.0;
+                    var isMaj = (t % 3 === 0);
+                    var rA = isMaj ? 0.94 : 0.975;
+                    var rB = isMaj ? 1.045 : 1.015;
+                    ctx.moveTo(cx + Math.cos(ang) * rxOuter * rA, cy + Math.sin(ang) * ryOuter * rA);
+                    ctx.lineTo(cx + Math.cos(ang) * rxOuter * rB, cy + Math.sin(ang) * ryOuter * rB);
+                }
+                ctx.stroke();
+
+                ctx.strokeStyle = "rgba(255, 240, 178, 0.85)";
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                for (var c = 0; c < 4; c++) {
+                    var ca = c * Math.PI * 0.5;
+                    var dx = cx + Math.cos(ca) * rxOuter * 1.08;
+                    var dy = cy + Math.sin(ca) * ryOuter * 1.08;
+                    var ds = 5.0;
+                    ctx.moveTo(dx, dy - ds);
+                    ctx.lineTo(dx + ds, dy);
+                    ctx.lineTo(dx, dy + ds);
+                    ctx.lineTo(dx - ds, dy);
+                    ctx.closePath();
+                }
+                ctx.stroke();
+            }
+        }
+
         // Ambient Center Bloom
         Image {
             id: glow
@@ -192,12 +259,24 @@ Rectangle {
             anchors.top: progressBarTrough.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "✦ SOVEREIGN INTELLIGENCE OS ✦"
+            text: "⣿ U+2800 HERMETIC KERNEL · AZOTH PRIME [☿] · NULLAI SANCTUM ⣿"
             color: "#FFD700"
             font.family: "DejaVu Sans Mono"
             font.pixelSize: 11
             font.bold: true
-            opacity: 0.85
+            opacity: 0.88
+        }
+
+        Text {
+            id: brailleSubText
+            anchors.top: statusText.bottom
+            anchors.topMargin: 6
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "⣷⣯⣿  INITIALIZING SOVEREIGN WORKSPACE & DAEMON MESH  ⣿⣽⣾"
+            color: "#2cb67d"
+            font.family: "DejaVu Sans Mono"
+            font.pixelSize: 10
+            opacity: 0.72
         }
     }
 

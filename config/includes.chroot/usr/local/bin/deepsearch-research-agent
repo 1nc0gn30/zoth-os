@@ -7,11 +7,11 @@ TOOL_NAME = 'DeepSearch Research Agent & Studio'
 TOOL_DESC = '100% in-browser multi-source deep research agent with grounded inline citations, quantitative benchmark verification, research DAG brand media, and consensus matrices.'
 TOOL_VERSION = '2.5.0'
 TOOL_CATEGORY = 'AI & Knowledge'
-TOOL_PORT = 8085
+TOOL_PORT = 8122
 REPO_DIR = os.path.expanduser('~/NullAITech/deepsearch-research-agent')
 PY_CLI = os.path.expanduser('~/NullAITech/deepsearch-research-agent/src/deepsearch_research_agent/cli.py')
 PKG_DIR = os.path.expanduser('~/NullAITech/deepsearch-research-agent/src')
-STUDIO_URL = f"http://127.0.0.1:8085/tools/{TOOL_ID}"
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
 def main():

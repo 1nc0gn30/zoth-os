@@ -6,6 +6,9 @@
 
 set -e
 
+MAYA_CALLER_PWD="$(pwd)"
+export MAYA_CALLER_PWD
+
 MAYA_DIR="/opt/maya-linux"
 if [[ ! -d "$MAYA_DIR" ]] && [[ -d "/usr/share/maya-linux" ]]; then
     MAYA_DIR="/usr/share/maya-linux"
@@ -13,6 +16,25 @@ fi
 if [[ ! -d "$MAYA_DIR" ]] && [[ -d "$HOME/maya-linux" ]]; then
     MAYA_DIR="$HOME/maya-linux"
 fi
+
+case "${1:-}" in
+  --help|-h)
+    cat <<EOF
+Maya for Linux (Studio Pro v1.2.0)
+
+Usage:
+  maya                               Launch Maya Studio Pro desktop GUI
+  maya <video.mp4|mov|webm>          Open a video directly inside Maya Studio Pro
+  maya --list-presets                List headless 60fps procedural motion presets
+  maya --render <preset|all> [--out DIR]
+                                     Render 60fps procedural motion edits (zero still images)
+EOF
+    exit 0
+    ;;
+  --list-presets|--render)
+    exec python3 "$MAYA_DIR/maya_motion_engine.py" "$@"
+    ;;
+esac
 
 cd "$MAYA_DIR"
 

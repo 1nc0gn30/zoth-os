@@ -148,14 +148,14 @@ RowLayout {
                     PC3.Label {
                         text: model.display
                         visible: Plasmoid.configuration.showActionButtonCaptions
-                        color: actionButton.hovered ? "#ffd700" : Kirigami.Theme.textColor
+                        color: actionButton.hovered ? KickoffSingleton.accentColor : Kirigami.Theme.textColor
                     }
                 }
 
                 background: Rectangle {
                     radius: 8
-                    color: actionButton.down ? Qt.rgba(1, 0.84, 0, 0.28) : (actionButton.hovered ? Qt.rgba(1, 0.84, 0, 0.14) : "transparent")
-                    border.color: actionButton.down ? "#ffd700" : (actionButton.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : Qt.rgba(1, 1, 1, 0.08))
+                    color: actionButton.down ? KickoffSingleton.rgbaAccent(0.28) : (actionButton.hovered ? KickoffSingleton.rgbaAccent(0.14) : "transparent")
+                    border.color: actionButton.down ? KickoffSingleton.accentColor : (actionButton.hovered ? KickoffSingleton.rgbaAccent(0.5) : Qt.rgba(1, 1, 1, 0.08))
                     border.width: actionButton.down ? 1.5 : 1
                     scale: actionButton.down ? 0.95 : (actionButton.hovered ? 1.02 : 1.0)
                     Behavior on scale { NumberAnimation { duration: 120 } }
@@ -239,14 +239,14 @@ RowLayout {
             }
             PC3.Label {
                 text: [i18n("Leave"), i18n("Power"), i18n("More"), i18n("More")][Plasmoid.configuration.primaryActions]
-                color: overflowBtn.hovered ? "#ffd700" : Kirigami.Theme.textColor
+                color: overflowBtn.hovered ? KickoffSingleton.accentColor : Kirigami.Theme.textColor
             }
         }
 
         background: Rectangle {
             radius: 8
-            color: overflowBtn.down ? Qt.rgba(1, 0.84, 0, 0.28) : (overflowBtn.hovered ? Qt.rgba(1, 0.84, 0, 0.14) : "transparent")
-            border.color: overflowBtn.down ? "#ffd700" : (overflowBtn.hovered ? Qt.rgba(1, 0.84, 0, 0.5) : Qt.rgba(1, 1, 1, 0.08))
+            color: overflowBtn.down ? KickoffSingleton.rgbaAccent(0.28) : (overflowBtn.hovered ? KickoffSingleton.rgbaAccent(0.14) : "transparent")
+            border.color: overflowBtn.down ? KickoffSingleton.accentColor : (overflowBtn.hovered ? KickoffSingleton.rgbaAccent(0.5) : Qt.rgba(1, 1, 1, 0.08))
             border.width: overflowBtn.down ? 1.5 : 1
             scale: overflowBtn.down ? 0.95 : (overflowBtn.hovered ? 1.02 : 1.0)
             Behavior on scale { NumberAnimation { duration: 120 } }

@@ -4,7 +4,7 @@ tags: [os, workspace]
 ---
 # Sanctum
 
-Focus and this vault. Ctrl+F8. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; Samsung LS32D39xG at 1920,0.
+Focus and this vault. Ctrl+F8. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; External Monitor at 1920,0.
 
 Virtual desktop **8** on this machine and in the ISO skel.
 

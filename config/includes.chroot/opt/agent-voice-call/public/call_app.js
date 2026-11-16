@@ -15,7 +15,7 @@
 
   // HTTPS Auto-Upgrade for Tailscale on mobile devices (Guarantees Web Speech API permissions)
   if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    const targetHttps = `https://zothos.tailb0828c.ts.net/call?token=${encodeURIComponent(token)}&channel=${encodeURIComponent(channel)}`;
+    const targetHttps = `https://zothos.local/call?token=${encodeURIComponent(token)}&channel=${encodeURIComponent(channel)}`;
     window.location.replace(targetHttps);
     return;
   }
@@ -793,7 +793,7 @@
           }
         }
       } catch (err) {}
-      fallbackBrowserTTS("I am on the line, Neal. Tap the mic or speak naturally—I am listening.");
+      fallbackBrowserTTS("I am on the line. Tap the mic or speak naturally—I am listening.");
     });
   }
 
@@ -820,7 +820,7 @@
       elModalDuration.textContent = `Session: ${s.session_id || 'active'} • Duration: ${durationStr} • Turns: ${s.total_turns || 2} • Voice: ${(s.voice || currentVoice).toUpperCase()}`;
       elModalDebrief.textContent = s.dialogue
         ? `${s.dialogue}\n\n✓ Synced to Neuro-Memory (:8094), Flight Recorder (:8104) & Signal/SimpleX.`
-        : `Transcript and key decisions have been delivered to your Signal (+E164_PLACEHOLDER) and SimpleX (@1nc0gn30) channels.`;
+        : `Transcript and key decisions have been delivered to your configured Signal and SimpleX (@1nc0gn30) channels.`;
       elModalDebrief.style.whiteSpace = 'pre-wrap';
       elModalDebrief.style.textAlign = 'left';
       elModal.style.display = 'flex';
@@ -853,7 +853,7 @@
       }
     } catch (e) {
       console.warn('Welcome voice fetch error:', e);
-      fallbackBrowserTTS(`Live on the line, Neal. Azoth is listening.`);
+      fallbackBrowserTTS(`Live on the line. Azoth is listening.`);
     }
   });
 

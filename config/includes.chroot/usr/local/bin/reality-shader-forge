@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
-# ZothOS Desktop (Electron) & Braille TUI Interceptor
-import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
-if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/reality-shader-forge')
-    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
-    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
-if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
-    _z_sys.exit(_z_sp.run(['/usr/local/bin/reality-shader-forge-tui'] + _z_rem).returncode)
 """
 Zoth Reality Shader & Theme Forge CLI (v3.4.0)
-Engineered by 1nc0gn30 • NullAI Platform
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
 """
 
 import argparse
@@ -28,8 +18,9 @@ TOOL_DESC = "Interactive 60fps Reality Switch shader synthesizer and ZothOS desk
 TOOL_VERSION = "3.4.0"
 TOOL_CATEGORY = "Media & 3D"
 TOOL_PORT = 8134
-REPO_DIR = os.path.expanduser("~/NullAITech/reality-shader-forge")
-STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+_LOCAL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_DIR = _LOCAL_ROOT if os.path.isfile(os.path.join(_LOCAL_ROOT, "server.py")) else "/opt/reality-shader-forge"
+STUDIO_URL = f"https://zoth.nullai.tech/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
 REALITIES = {
@@ -126,19 +117,19 @@ yellow  = "{r['primary']}"
 blue    = "#38BDF8"
 magenta = "#8B5CF6"
 cyan    = "#06B6D4"
-white   = "{r['text']}"""
+white   = "{r['text']}" """.strip()
 
     if format_type == "css":
         return f""":root {{
   --zoth-reality-name: "{r['name']}";
   --zoth-reality-primary: {r['primary']};
-  --zoth-reality-secondary: {r['secondary']};
+  --zoth-reality-secondary: {r['secondary']}
   --zoth-reality-void: {r['bgVoid']};
   --zoth-reality-surface: {r['surface']};
   --zoth-reality-text: {r['text']};
   --zoth-border-accent: {r['primary']}3D;
   --zoth-shadow-glow: 0 0 24px {r['primary']}33;
-}}"""
+}}""".replace(f"--zoth-reality-secondary: {r['secondary']}\n", f"--zoth-reality-secondary: {r['secondary']};\n")
 
     return json.dumps(
         {
@@ -177,7 +168,7 @@ def main():
         else:
             print("Zoth Realities Matrix:")
             for k, v in REALITIES.items():
-                print(f"  ✦ [{k}] {v['name']} — Primary: {v['primary']}, Void: {v['bgVoid']}")
+                print(f"  - [{k}] {v['name']} — Primary: {v['primary']}, Void: {v['bgVoid']}")
         return
 
     if args.format:
@@ -199,16 +190,14 @@ def main():
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
         "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
         "daemon_running": daemon_running,
         "realities": list(REALITIES.keys()),
         "formats": ["kde", "alacritty", "css", "json"],
-        "license": "100% Free & Open Access (Zero Paywalls)",
+        "license": "MIT",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
         },
         "status": "ONLINE" if daemon_running else "READY",
     }
@@ -217,11 +206,10 @@ def main():
         print(json.dumps(info, indent=2))
         return
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
+    print(f"{TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL} (Daemon: {'ONLINE' if daemon_running else 'STANDBY'})")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print("  License    : MIT (Open-Source)")
 
 
 if __name__ == "__main__":

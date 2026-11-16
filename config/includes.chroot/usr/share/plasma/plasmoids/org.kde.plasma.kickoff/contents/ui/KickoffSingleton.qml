@@ -19,6 +19,72 @@ Item {
 
     visible: false
 
+    //BEGIN Sovereign Reality Mode State & Command Runner
+    property string currentMode: "gold"
+
+    function normalizeMode(raw) {
+        var m = String(raw || "gold").toLowerCase().trim();
+        if (m === "win11" || m === "windows" || m === "incognito") return "incognito";
+        if (m === "ghost" || m === "ghostmode") return "ghost";
+        if (m === "matrix" || m === "lucy" || m === "p39") return "matrix";
+        return "gold";
+    }
+
+    readonly property color accentColor: currentMode === "ghost" ? "#ff3058" :
+                                         (currentMode === "matrix" ? "#00ff9d" :
+                                         (currentMode === "incognito" ? "#48a8ff" : "#ffd700"))
+
+    readonly property color accentBright: currentMode === "ghost" ? "#ff8da3" :
+                                          (currentMode === "matrix" ? "#9effd6" :
+                                          (currentMode === "incognito" ? "#a8d8ff" : "#fff48f"))
+
+    readonly property string modeBadge: currentMode === "ghost" ? "◈ GHOSTMODE" :
+                                        (currentMode === "matrix" ? "λ MATRIX P39" :
+                                        (currentMode === "incognito" ? "❖ EXEC FLUENT" : "☿ 24K SANCTUM"))
+
+    function rgbaAccent(alpha) {
+        if (currentMode === "ghost") return Qt.rgba(1.0, 0.188, 0.345, alpha);
+        if (currentMode === "matrix") return Qt.rgba(0.0, 1.0, 0.616, alpha);
+        if (currentMode === "incognito") return Qt.rgba(0.282, 0.659, 1.0, alpha);
+        return Qt.rgba(1.0, 0.84, 0.0, alpha);
+    }
+
+    readonly property P5Support.DataSource cmdRunner: P5Support.DataSource {
+        engine: "executable"
+        connectedSources: []
+        onNewData: (source, data) => disconnectSource(source)
+    }
+
+    function switchRealityMode(modeId) {
+        var norm = normalizeMode(modeId);
+        root.currentMode = norm;
+        cmdRunner.connectSource("/usr/local/bin/zoth-mode " + norm);
+    }
+
+    function openUrl(url) {
+        cmdRunner.connectSource("xdg-open " + url);
+    }
+
+    function syncModeFromDaemon() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://127.0.0.1:9989/");
+        xhr.timeout = 250;
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 && xhr.responseText) {
+                try {
+                    var parsed = JSON.parse(xhr.responseText);
+                    if (parsed && parsed.mode) {
+                        root.currentMode = root.normalizeMode(parsed.mode);
+                    }
+                } catch (e) {}
+            }
+        };
+        xhr.send();
+    }
+
+    Component.onCompleted: syncModeFromDaemon()
+    //END
+
     //BEGIN Models and Data Sources
     readonly property P5Support.DataSource powerManagement: P5Support.DataSource {
         engine: "powermanagement"

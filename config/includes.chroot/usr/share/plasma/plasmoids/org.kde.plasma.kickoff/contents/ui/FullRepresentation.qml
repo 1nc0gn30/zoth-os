@@ -41,10 +41,23 @@ EmptyPage {
         id: alchemicalGoldBorder
         anchors.fill: parent
         color: "transparent"
-        border.color: Qt.rgba(1, 0.84, 0, 0.45)
+        border.color: KickoffSingleton.rgbaAccent(0.50)
         border.width: 1
         radius: 10
         z: 100
+
+        Behavior on border.color {
+            ColorAnimation { duration: 180 }
+        }
+    }
+
+    Connections {
+        target: kickoff
+        function onExpandedChanged() {
+            if (kickoff.expanded) {
+                KickoffSingleton.syncModeFromDaemon();
+            }
+        }
     }
 
     /* NOTE: Important things to know about keyboard input handling:

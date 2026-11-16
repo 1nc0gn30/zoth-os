@@ -17,9 +17,11 @@ TOOL_VERSION = "1.0.0"
 TOOL_CATEGORY = "Media & 3D"
 TOOL_PORT = 8823
 STUDIO_PORT = 3000
-REPO_DIR = os.path.expanduser("~/NullAITech/zoth-scene-foundry")
+_LOCAL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_DIR = _LOCAL_ROOT if os.path.exists(os.path.join(_LOCAL_ROOT, "server.py")) else "/opt/zoth-scene-foundry"
 STUDIO_URL = f"http://127.0.0.1:{STUDIO_PORT}/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
 
 def check_daemon(url=f"{LOCAL_PORT_URL}/health", timeout=1.5):
     try:
@@ -31,10 +33,11 @@ def check_daemon(url=f"{LOCAL_PORT_URL}/health", timeout=1.5):
         pass
     return None
 
+
 def main():
     parser = argparse.ArgumentParser(
         prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — Procedural ASCII + pixel-art scene engine"
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — Procedural ASCII + pixel-art scene engine",
     )
     parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
     parser.add_argument("--status", action="store_true", help="Check local ZothOS installation & daemon status")
@@ -55,12 +58,12 @@ def main():
     daemon_health = check_daemon()
 
     if args.tubes:
-        print("✦ Cathode Tube Palettes:")
-        print("  • aurum_gold  : #070602 background, #D4AF37 foreground (24K Master)")
-        print("  • retro_amber : #080501 background, #F59E0B foreground (CRT Amber)")
-        print("  • cyber_cyan  : #010609 background, #38BDF8 foreground (Phosphor Cyan)")
+        print("Cathode Tube Palettes:")
+        print("  • aurum_gold       : #070602 background, #D4AF37 foreground (24K Master)")
+        print("  • retro_amber      : #080501 background, #F59E0B foreground (CRT Amber)")
+        print("  • cyber_cyan       : #010609 background, #38BDF8 foreground (Phosphor Cyan)")
         print("  • sovereign_emerald: #010804 background, #10B981 foreground (Matrix Emerald)")
-        print("  • ghost_crimson: #090203 background, #EF4444 foreground (Alert Crimson)")
+        print("  • ghost_crimson    : #090203 background, #EF4444 foreground (Alert Crimson)")
         return
 
     if args.scenes:
@@ -68,7 +71,7 @@ def main():
             try:
                 with urllib.request.urlopen(f"{LOCAL_PORT_URL}/api/status", timeout=2) as r:
                     data = json.loads(r.read().decode())
-                    print(f"✦ Zoth Scene Foundry: {data.get('total_scenes', 1000)} cataloged scenes on {LOCAL_PORT_URL}/gallery.html")
+                    print(f"Zoth Scene Foundry: {data.get('total_scenes', 1000)} cataloged scenes on {LOCAL_PORT_URL}/gallery.html")
                     return
             except Exception:
                 pass
@@ -94,18 +97,16 @@ def main():
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
         "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
-        "studio_url": STUDIO_URL,
+        "studio_url": "https://zoth.nullai.tech/tools/zoth-scene-foundry",
         "local_url": LOCAL_PORT_URL,
         "local_port": TOOL_PORT,
         "daemon_active": daemon_health is not None,
         "daemon_status": daemon_health or {"status": "inactive"},
         "gallery_url": f"{LOCAL_PORT_URL}/gallery.html",
-        "license": "100% Free & Open Access (Zero Paywalls)",
+        "license": "MIT",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-        }
+        },
     }
 
     if args.json:
@@ -119,12 +120,12 @@ def main():
         return
 
     daemon_tag = "ACTIVE (running)" if daemon_health else "INACTIVE"
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
+    print(f"{TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
     print(f"  Daemon     : {daemon_tag} at {LOCAL_PORT_URL}")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Gallery    : {LOCAL_PORT_URL}/gallery.html")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print("  Access     : 100% Free & Open Source (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)")
+
 
 if __name__ == "__main__":
     main()

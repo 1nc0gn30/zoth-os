@@ -1,6 +1,6 @@
 # Workspaces
 
-Eight named Plasma desktops. Samsung is its own screen.
+Eight named Plasma desktops. External monitor is its own screen.
 
 `zoth-workspaces apply` restores this if a clone comes back.
 
@@ -9,9 +9,9 @@ Eight named Plasma desktops. Samsung is its own screen.
 | Screen | Connector | Position |
 |---|---|---|
 | Laptop | `eDP-1` | `0,0` 1920×1080 |
-| Samsung LS32D39xG | `DP-3` | `1920,0` 1920×1080 |
+| External Monitor | `DP-3` | `1920,0` 1920×1080 |
 
-If the Samsung sits to the **left** of the laptop, drag it in System Settings → Display.
+If the External monitor sits to the **left** of the laptop, drag it in System Settings → Display.
 
 ## Desktops
 
@@ -26,7 +26,7 @@ If the Samsung sits to the **left** of the laptop, drag it in System Settings �
 | Ctrl+F7 | [[Room Ops]] | Terminals, monitors |
 | Ctrl+F8 | [[Room Sanctum]] | This vault, focus |
 
-Meta+Ctrl+Arrows walk the 2×4 grid. Meta+Alt+1 laptop. Meta+Alt+2 Samsung. Meta+Shift+F1…F8 send the active window.
+Meta+Ctrl+Arrows walk the 2×4 grid. Meta+Alt+1 laptop. Meta+Alt+2 external monitor. Meta+Shift+F1…F8 send the active window.
 
 ## Related
 

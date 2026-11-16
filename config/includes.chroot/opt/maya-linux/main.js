@@ -792,6 +792,47 @@ ipcMain.handle('generate-neural-tts', async (event, { text, voice, rate, pitch, 
   }
 });
 
+// IPC Handler: CLI Video Path Resolution
+ipcMain.handle('get-cli-video-path', async () => {
+  const args = process.argv.slice(1);
+  const callerCwd = process.env.MAYA_CALLER_PWD || process.cwd();
+  for (const raw of args) {
+    if (!raw || raw.startsWith('-') || raw === '.') continue;
+    const candidate = path.isAbsolute(raw) ? path.resolve(raw) : path.resolve(callerCwd, raw);
+    if (fs.existsSync(candidate) && /\.(mp4|mov|webm|mkv)$/i.test(candidate)) {
+      return candidate;
+    }
+  }
+  return null;
+});
+
+// IPC Handler: Headless 60fps Procedural Motion Engine Invocation
+ipcMain.handle('render-maya-motion-preset', async (event, { preset = 'zoth-core', outDir } = {}) => {
+  return new Promise((resolve, reject) => {
+    const engineScript = path.join(__dirname, 'maya_motion_engine.py');
+    if (!fs.existsSync(engineScript)) {
+      return reject(new Error('maya_motion_engine.py not found in Maya installation directory.'));
+    }
+    const targetOut = outDir || path.join(app.getPath('videos') || app.getPath('home'), 'maya-zoth-edits');
+    const pythonBin = findExecutable('python3');
+    const proc = spawn(pythonBin, [engineScript, '--render', preset, '--out', targetOut], {
+      env: { ...process.env, PATH: getEnrichedPath() },
+    });
+    let stdout = '';
+    let stderr = '';
+    proc.stdout.on('data', (d) => { stdout += d.toString(); });
+    proc.stderr.on('data', (d) => { stderr += d.toString(); });
+    proc.on('close', (code) => {
+      if (code === 0) {
+        resolve({ success: true, outDir: targetOut, stdout });
+      } else {
+        reject(new Error(stderr || stdout || `Motion engine exited with code ${code}`));
+      }
+    });
+    proc.on('error', (err) => reject(err));
+  });
+});
+
 app.whenReady().then(() => {
   createWindow();
 

@@ -113,14 +113,14 @@ PlasmaExtras.PlasmoidHeading {
                 }
                 PC3.Label {
                     text: applicationsTab.text
-                    color: applicationsTab.checked ? "#ffd700" : (applicationsTab.hovered ? "#fff48f" : Kirigami.Theme.textColor)
+                    color: applicationsTab.checked ? KickoffSingleton.accentColor : (applicationsTab.hovered ? KickoffSingleton.accentBright : Kirigami.Theme.textColor)
                     font.bold: applicationsTab.checked
                 }
             }
 
             background: Rectangle {
-                color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.16) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
-                border.color: applicationsTab.checked ? Qt.rgba(1, 0.84, 0, 0.45) : (applicationsTab.hovered ? Qt.rgba(1, 0.84, 0, 0.25) : "transparent")
+                color: applicationsTab.checked ? KickoffSingleton.rgbaAccent(0.16) : (applicationsTab.hovered ? KickoffSingleton.rgbaAccent(0.08) : "transparent")
+                border.color: applicationsTab.checked ? KickoffSingleton.rgbaAccent(0.45) : (applicationsTab.hovered ? KickoffSingleton.rgbaAccent(0.25) : "transparent")
                 border.width: 1
                 radius: 8
                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -132,7 +132,7 @@ PlasmaExtras.PlasmoidHeading {
                     width: Math.max(parent.width - 24, 20)
                     height: applicationsTab.checked ? 2.5 : (applicationsTab.hovered ? 1.5 : 0)
                     radius: 2
-                    color: "#ffd700"
+                    color: KickoffSingleton.accentColor
                     visible: height > 0
                     Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                 }
@@ -170,14 +170,14 @@ PlasmaExtras.PlasmoidHeading {
                 }
                 PC3.Label {
                     text: placesTab.text
-                    color: placesTab.checked ? "#ffd700" : (placesTab.hovered ? "#fff48f" : Kirigami.Theme.textColor)
+                    color: placesTab.checked ? KickoffSingleton.accentColor : (placesTab.hovered ? KickoffSingleton.accentBright : Kirigami.Theme.textColor)
                     font.bold: placesTab.checked
                 }
             }
 
             background: Rectangle {
-                color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.16) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.08) : "transparent")
-                border.color: placesTab.checked ? Qt.rgba(1, 0.84, 0, 0.45) : (placesTab.hovered ? Qt.rgba(1, 0.84, 0, 0.25) : "transparent")
+                color: placesTab.checked ? KickoffSingleton.rgbaAccent(0.16) : (placesTab.hovered ? KickoffSingleton.rgbaAccent(0.08) : "transparent")
+                border.color: placesTab.checked ? KickoffSingleton.rgbaAccent(0.45) : (placesTab.hovered ? KickoffSingleton.rgbaAccent(0.25) : "transparent")
                 border.width: 1
                 radius: 8
                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -189,7 +189,7 @@ PlasmaExtras.PlasmoidHeading {
                     width: Math.max(parent.width - 24, 20)
                     height: placesTab.checked ? 2.5 : (placesTab.hovered ? 1.5 : 0)
                     radius: 2
-                    color: "#ffd700"
+                    color: KickoffSingleton.accentColor
                     visible: height > 0
                     Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                 }

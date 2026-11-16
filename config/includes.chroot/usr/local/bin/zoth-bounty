@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-# ZothOS Desktop (Electron) & Braille TUI Interceptor
-import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
-if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/zoth-bounty')
-    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
-    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
-if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
-    _z_sys.exit(_z_sp.run(['/usr/local/bin/zoth-bounty-tui'] + _z_rem).returncode)
 """
 Zoth Bounty CLI Binary
 Zero-false-positive security research, disclosure & communications workspace.
@@ -27,7 +17,8 @@ TOOL_VERSION = "1.0.0"
 TOOL_CATEGORY = "Security & Enclave"
 TOOL_PORT = 9494
 STUDIO_PORT = 3000
-REPO_DIR = os.path.expanduser("~/NullAITech/zoth-bounty")
+_SCRIPT_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_DIR = _SCRIPT_REPO if os.path.exists(os.path.join(_SCRIPT_REPO, "server.js")) else "/opt/zoth-bounty"
 STUDIO_URL = f"http://127.0.0.1:{STUDIO_PORT}/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
@@ -117,8 +108,7 @@ def main():
         "daemon_status": daemon_health or {"status": "inactive"},
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
-            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         }
     }
 
@@ -136,7 +126,7 @@ def main():
     print(f"  Repository : {REPO_DIR}")
     print(f"  Daemon     : {daemon_tag} at {LOCAL_PORT_URL}")
     print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"  Access     : 100% Free & Open Access (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)")
 
 if __name__ == "__main__":
     main()

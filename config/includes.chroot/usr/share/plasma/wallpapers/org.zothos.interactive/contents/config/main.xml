@@ -3,6 +3,10 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <kcfgfile name=""/>
   <group name="General">
+    <entry name="realityMode" type="String">
+      <label>Active ZothOS Reality Mode (gold, ghost, matrix, incognito)</label>
+      <default>gold</default>
+    </entry>
     <entry name="MaxTilt" type="double">
       <label>Maximum 3D Tilt Angle (degrees)</label>
       <default>24.0</default>

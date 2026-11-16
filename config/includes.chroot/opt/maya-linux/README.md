@@ -68,10 +68,20 @@ chmod +x Maya-1.1.0.AppImage
 - **Audio Controls**: Individual timeline volume slider and synchronized playback.
 
 ### 🎨 Backgrounds & Branding
-- **8 Curated Gradients**: Brand-aligned Maya presets (`#6466FA`).
-- **Solid Colors**: Brand palette + custom hex picker.
-- **Video Blur Backdrop**: Blurred Keynote-style dynamic poster of your screen recording.
+- **8 Curated Gradients & Animated Mesh Shaders**: Brand-aligned Maya presets (`#6466FA`), Aurora, Cyberpunk, Sunset, Deep Ocean, and dynamic PCB/Blueprint/Radial patterns.
+- **Zoth & `1nc0gn30` 1-Click Pro Templates**: *Zoth Sovereign Core*, *`1nc0gn30` Cyber Matrix*, and *NullAI Pantheon Swarm*.
+- **Solid Colors & Video Blur**: Brand palette + custom hex picker + blurred Keynote-style poster backdrop.
 - **Transparent (Alpha)**: Exports transparent video for overlaying onto other video tracks in OBS, DaVinci Resolve, or Kdenlive.
+
+### ⚡ In-App & Headless 60 FPS Procedural Motion Synth (Zero Still Images)
+- **Built-in 60 FPS Synth Presets**: Generate full-motion 3D orbital wireframes, Unicode Braille cipher streams, animated cursor paths, typewriter headers, and procedural WAV audio directly inside Maya with 1 click (`zoth-core`, `1nc0gn30-ops`, `arsenal-80`, `vaelor-l1`).
+- **CLI Headless Motion Renderer (`maya`)**:
+  ```bash
+  maya --list-presets
+  maya --render zoth-sovereign-core --out ~/Videos/maya-zoth-edits
+  maya --render all --out ~/Videos/maya-zoth-edits
+  maya /path/to/video.mp4   # Open directly in Maya Studio Pro
+  ```
 
 ### 💾 Saved Projects (`.mayaproj`)
 - Save complete layouts, animation keyframes, callouts, and audio timelines to `.mayaproj` JSON files to easily reopen and edit past projects.

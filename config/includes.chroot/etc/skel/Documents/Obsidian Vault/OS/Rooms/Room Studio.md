@@ -4,7 +4,7 @@ tags: [os, workspace]
 ---
 # Studio
 
-Zoth Studio on :3000. Ctrl+F2. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; Samsung LS32D39xG at 1920,0.
+Zoth Studio on :3000. Ctrl+F2. Pager is 2×4. Walk with `Meta+Ctrl+Arrows`. Restore with `zoth-workspaces apply`. Laptop eDP-1 at 0,0; External Monitor at 1920,0.
 
 Virtual desktop **2** on this machine and in the ISO skel.
 

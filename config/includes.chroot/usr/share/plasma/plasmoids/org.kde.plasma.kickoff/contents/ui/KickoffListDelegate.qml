@@ -39,7 +39,7 @@ AbstractKickoffItemDelegate {
     descriptionTruncated: descriptionLabel.truncated
     descriptionVisible: descriptionLabel.visible
 
-    dragIconItem: icon
+    dragIconItem: iconWrapper
 
     background: Item {
         anchors.fill: parent
@@ -49,12 +49,12 @@ AbstractKickoffItemDelegate {
             anchors.fill: parent
             anchors.margins: 2
             radius: 8
-            color: root.down ? Qt.rgba(1, 0.84, 0, 0.28) : 
-                   (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.14) : 
-                   (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.18) : "transparent"))
-            border.color: root.down ? "#ffd700" : 
-                         (root.mouseArea.containsMouse ? Qt.rgba(1, 0.84, 0, 0.50) : 
-                         (root.iconAndLabelsShouldlookSelected ? Qt.rgba(1, 0.84, 0, 0.35) : "transparent"))
+            color: root.down ? KickoffSingleton.rgbaAccent(0.28) :
+                   (root.mouseArea.containsMouse ? KickoffSingleton.rgbaAccent(0.14) :
+                   (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.rgbaAccent(0.18) : "transparent"))
+            border.color: root.down ? KickoffSingleton.accentColor :
+                         (root.mouseArea.containsMouse ? KickoffSingleton.rgbaAccent(0.50) :
+                         (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.rgbaAccent(0.35) : "transparent"))
             border.width: 1
             scale: root.down ? 0.98 : (root.mouseArea.containsMouse ? 1.015 : 1.0)
 
@@ -69,7 +69,7 @@ AbstractKickoffItemDelegate {
             }
         }
 
-        // Gold indicator bar for category navigation & item selection
+        // Mode-synced indicator bar for category navigation & item selection
         Rectangle {
             id: goldActiveBar
             width: (root.iconAndLabelsShouldlookSelected || root.down) ? 4 : (root.mouseArea.containsMouse ? 2.5 : 0)
@@ -79,7 +79,7 @@ AbstractKickoffItemDelegate {
             anchors.topMargin: 4
             anchors.bottomMargin: 4
             radius: 2
-            color: root.down ? "#ffffff" : "#ffd700"
+            color: root.down ? "#ffffff" : KickoffSingleton.accentColor
             visible: width > 0
 
             Behavior on width {
@@ -147,7 +147,7 @@ AbstractKickoffItemDelegate {
         GridLayout {
             id: gridLayout
 
-            readonly property color textColor: root.down ? "#ffffff" : (root.mouseArea.containsMouse ? "#fff48f" : (root.iconAndLabelsShouldlookSelected ? "#ffd700" : Kirigami.Theme.textColor))
+            readonly property color textColor: root.down ? "#ffffff" : (root.mouseArea.containsMouse ? KickoffSingleton.accentBright : (root.iconAndLabelsShouldlookSelected ? KickoffSingleton.accentColor : Kirigami.Theme.textColor))
 
             Layout.fillWidth: true
 
@@ -166,7 +166,7 @@ AbstractKickoffItemDelegate {
             PC3.Label {
                 id: label
                 Layout.fillWidth: !descriptionLabel.visible
-                Layout.maximumWidth: root.width - root.leftPadding - root.rightPadding - icon.width - row.spacing
+                Layout.maximumWidth: root.width - root.leftPadding - root.rightPadding - root.icon.width - row.spacing
                 Layout.preferredHeight: {
                     if (root.isCategoryListItem) {
                         return root.compact ? implicitHeight : Math.round(implicitHeight * 1.6);

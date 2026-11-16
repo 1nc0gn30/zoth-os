@@ -1854,7 +1854,7 @@ const server = http.createServer(async (req, res) => {
     const sinks = [
       { id: 'ALL', name: 'All Connected Speakers (Analog ALC3266 + HDMI Monitor)', type: 'multi', active: audioState.selectedSink === 'ALL' },
       { id: '55', name: 'Built-in Audio Analog Stereo (ALC3266 Speakers / Headphones)', type: 'analog', active: audioState.selectedSink === '55' },
-      { id: '56', name: 'HDMI 0 DisplayPort Audio (Samsung LS32D39xG Monitor)', type: 'hdmi', active: audioState.selectedSink === '56' },
+      { id: '56', name: 'HDMI 0 DisplayPort Audio (External Monitor)', type: 'hdmi', active: audioState.selectedSink === '56' },
       { id: 'plughw:0,0', name: 'ALSA Direct Hardware (HDA Intel PCH ALC3266)', type: 'alsa', active: audioState.selectedSink === 'plughw:0,0' }
     ];
 

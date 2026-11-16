@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoth USB Bridge — Sovereign USB, ADB &amp; Developer-Mode Device Workstation</title>
+  <meta name="description" content="Local-first USB, ADB, Wireless Debugging, scrcpy mirroring, and Developer-Mode device bridge for ZothOS &amp; Zoth Studio on 127.0.0.1:8153." />
+  <meta property="og:title" content="Zoth USB Bridge — Sovereign USB &amp; Developer-Mode Bridge" />
+  <meta property="og:description" content="Inspect USB &amp; ADB devices, pair Wireless Debugging, run adb shell, capture device screens, reverse localhost ports, and launch scrcpy locally." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/zoth-usb-bridge" />
+  <meta property="og:image" content="https://zoth.nullai.tech/brand/ghostbyte-dark.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:image" content="https://zoth.nullai.tech/brand/ghostbyte-dark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Zoth USB Bridge",
+        "url": "https://zoth.nullai.tech/tools/zoth-usb-bridge",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, Android (ADB), WebUSB",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "url": "https://github.com/1nc0gn30"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Zoth USB Bridge connect to USB and Developer Mode devices?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth USB Bridge binds strictly to 127.0.0.1:8153 and orchestrates host adb, lsusb, scrcpy, and WebUSB APIs with zero cloud egress."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Zoth USB Bridge free and open access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Zoth USB Bridge is 100% free and unlocked with zero paywalls, supported by optional Stripe Buy Us a Coffee and Solana tips."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand-mark" aria-hidden="true">⚡</span>
+      <div>
+        <div class="brand-title">ZOTH USB BRIDGE <span class="badge">v1.0.0 · 127.0.0.1:8153</span></div>
+        <div class="brand-sub">USB, ADB, Wireless Debugging &amp; Developer-Mode Workstation</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span id="hostToolsPill" class="pill pill-neutral">Probing host tools...</span>
+      <button id="refreshBtn" class="btn btn-secondary" type="button">↻ Refresh Devices</button>
+      <button id="webUsbBtn" class="btn btn-secondary" type="button">🔌 WebUSB Probe</button>
+      <button id="themeToggle" class="btn btn-secondary" type="button" aria-label="Toggle dark mode">◐ Theme</button>
+      <a class="btn btn-coffee" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+    </div>
+  </header>
+
+  <main class="workspace-grid">
+    <!-- Left Pane: Connected Devices, Wireless Debugging & USB Bus -->
+    <section class="pane pane-left">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="kicker">ADB &amp; DEVELOPER MODE</div>
+            <h2>Connected Devices</h2>
+          </div>
+          <span id="adbCountBadge" class="pill">0 online</span>
+        </div>
+        <div id="adbDevicesList" class="device-list">
+          <div class="empty-state">Scanning ADB &amp; USB bus...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="kicker">ANDROID 11+ WIRELESS DEBUGGING</div>
+            <h2>Pair &amp; Connect Over Wi-Fi</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="pairEndpoint">Pairing IP:Port</label>
+            <input id="pairEndpoint" type="text" placeholder="192.168.1.42:37123" />
+          </div>
+          <div class="field">
+            <label for="pairCode">6-Digit Code</label>
+            <input id="pairCode" type="text" placeholder="123456" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="pairBtn" class="btn btn-primary" type="button">Pair Device</button>
+        </div>
+        <hr class="sep" />
+        <div class="form-grid single">
+          <div class="field">
+            <label for="connectEndpoint">Connect IP:Port (or tcpip 5555)</label>
+            <input id="connectEndpoint" type="text" placeholder="192.168.1.42:5555" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="connectBtn" class="btn btn-primary" type="button">Connect Wireless ADB</button>
+          <button id="disconnectBtn" class="btn btn-secondary" type="button">Disconnect All</button>
+        </div>
+        <div id="wirelessStatus" class="status-line" aria-live="polite">Ready for USB or Wireless Debugging.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="kicker">LINUX USB HARDWARE BUS (LSUSB &amp; WEBUSB)</div>
+            <h2>Attached USB Peripherals</h2>
+          </div>
+          <span id="usbCountBadge" class="pill">0 USB</span>
+        </div>
+        <div id="usbDevicesList" class="usb-list"></div>
+      </div>
+    </section>
+
+    <!-- Right Pane: Active Developer Console (Shell / Logcat / Packages / Screen) -->
+    <section class="pane pane-right">
+      <div class="card console-card">
+        <div class="card-head">
+          <div>
+            <div class="kicker">ACTIVE TARGET CONSOLE</div>
+            <h2 id="activeTargetHeading">No device selected</h2>
+          </div>
+          <div class="target-actions">
+            <button id="tcpipBtn" class="btn btn-secondary" type="button" disabled>📡 USB → Wi-Fi :5555</button>
+            <button id="reverseBtn" class="btn btn-secondary" type="button" disabled>⇄ Reverse :3000</button>
+            <button id="scrcpyBtn" class="btn btn-secondary" type="button" disabled>📱 Launch scrcpy</button>
+            <button id="screenshotBtn" class="btn btn-primary" type="button" disabled>📸 Capture Screen</button>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="shell" type="button">ADB Shell</button>
+          <button class="tab" data-tab="logcat" type="button">Live Logcat</button>
+          <button class="tab" data-tab="packages" type="button">3rd-Party Packages</button>
+          <button class="tab" data-tab="screen" type="button">Device Screen</button>
+        </div>
+
+        <div id="tab-shell" class="tab-panel active">
+          <div class="quick-chips">
+            <button class="chip-btn" data-cmd="getprop ro.product.model && getprop ro.build.version.release" type="button">Device Info</button>
+            <button class="chip-btn" data-cmd="dumpsys battery" type="button">Battery</button>
+            <button class="chip-btn" data-cmd="ip -f inet addr show wlan0" type="button">Wi-Fi IP</button>
+            <button class="chip-btn" data-cmd="wm size && wm density" type="button">Display</button>
+            <button class="chip-btn" data-cmd="df -h /data" type="button">Storage</button>
+          </div>
+          <div class="shell-input-row">
+            <input id="shellCmdInput" type="text" placeholder="Enter adb shell command (e.g. uname -a, ps -A | head)..." />
+            <button id="runShellBtn" class="btn btn-primary" type="button">Run Shell</button>
+          </div>
+          <pre id="shellOutput" class="terminal-out">Select an authorized USB or Wireless ADB device on the left to execute commands.</pre>
+        </div>
+
+        <div id="tab-logcat" class="tab-panel">
+          <div class="btn-row" style="margin-bottom: 10px;">
+            <button id="fetchLogcatBtn" class="btn btn-primary" type="button">Fetch Last 80 Logcat Lines</button>
+          </div>
+          <pre id="logcatOutput" class="terminal-out">Click "Fetch Last 80 Logcat Lines" to pull live device logs.</pre>
+        </div>
+
+        <div id="tab-packages" class="tab-panel">
+          <div class="btn-row" style="margin-bottom: 10px;">
+            <button id="fetchPackagesBtn" class="btn btn-primary" type="button">List Installed User Packages (-3)</button>
+          </div>
+          <div id="packagesOutput" class="packages-grid">No packages loaded yet.</div>
+        </div>
+
+        <div id="tab-screen" class="tab-panel">
+          <div id="screenPreviewWrap" class="screen-wrap">
+            <div class="empty-state">Click "📸 Capture Screen" above to stream a live PNG frame via <code>adb exec-out screencap -p</code>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>Engineered by <strong>Neal Frazier Tech (@1nc0gn30)</strong> • NullAI Platform • Zero-Egress Local Loopback</div>
+    <div class="footer-links">
+      <a href="https://github.com/1nc0gn30/zoth-usb-bridge" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI</a>
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <span class="mono" title="Solana Tip Address">SOL: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</span>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

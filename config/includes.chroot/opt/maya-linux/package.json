@@ -1,7 +1,7 @@
 {
   "name": "maya-video-editor",
-  "version": "1.1.0",
-  "description": "Wrap screen recordings in beautiful device frames and export ready-to-share videos on Linux",
+  "version": "1.2.0",
+  "description": "Wrap screen recordings in beautiful device frames, synthesize 60fps procedural motion edits, and export ready-to-share videos on Linux",
   "main": "main.js",
   "homepage": "./",
   "scripts": {
@@ -22,6 +22,7 @@
       "main.js",
       "electron-main.js",
       "preload.js",
+      "maya_motion_engine.py",
       "public/**/*"
     ],
     "linux": {
@@ -38,20 +39,20 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.7",
     "howler": "^2.2.4",
-    "lucide-react": "^1.65.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "lucide-react": "^1.34.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.20.5",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.6.1",
     "electron": "^34.2.0",
     "electron-builder": "^25.1.8",
-    "postcss": "^8.5.32",
-    "tailwindcss": "^3.4.19",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vite": "^6.1.0"
   }

@@ -1,97 +1,72 @@
 #!/usr/bin/env python3
-"""Unified Command Line Interface for etsy-connector.
-Engineered by 1nc0gn30 • NullAI Platform.
-100% Python Standard Library — Zero External Dependencies.
+"""Executable launcher for etsy-connector.
+
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
+100% Python Standard Library.
 """
-import sys, os, json, subprocess, argparse
 
-TOOL_ID = 'etsy-connector'
-TOOL_REPO = 'etsy-connector'
-TOOL_NAME = 'Etsy Connector'
-TOOL_DESC = 'Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.'
-TOOL_VERSION = '2.5.0'
-TOOL_CATEGORY = 'Commerce & MCP'
-TOOL_PORT = 8108
-REPO_DIR = os.path.expanduser('~/NullAITech/etsy-connector')
-PY_CLI = os.path.expanduser('~/NullAITech/etsy-connector/src/etsy_connector/cli.py')
-PKG_DIR = os.path.expanduser('~/NullAITech/etsy-connector/src')
-STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
-LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+from __future__ import annotations
 
-def main():
-    args = sys.argv[1:]
-    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
-        import shutil as _sh
-        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
-        elec = _sh.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
-    if '--tui' in args or (args and args[0] == 'tui'):
-        rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
-    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version', '--help', '-h'):
-        env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = 'etsy_connector.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-        else:
-            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
-        sys.exit(res.returncode)
+# zothos-json-manifest: deterministic machine-readable manifest for `etsy-connector --json`
+import sys as _zsys
 
-    parser = argparse.ArgumentParser(
-        prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
-    )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('subcommand', nargs='*', help='Subcommand (mcp, serve, audit, profit, search, config, auth)')
-    parsed, unknown = parser.parse_known_args(args)
 
-    if parsed.subcommand and parsed.subcommand[0] in ('mcp', 'serve', 'audit', 'profit', 'search', 'config', 'auth'):
-        env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = 'etsy_connector.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-            sys.exit(res.returncode)
+def _zoth_manifest_subs(_help):
+    for _line in (_help or "").splitlines():
+        if "{" not in _line or "}" not in _line:
+            continue
+        _inner = _line.split("{", 1)[1].split("}", 1)[0]
+        if "," not in _inner:
+            continue
+        _s = [x.strip() for x in _inner.split(",") if x.strip()]
+        if _s and all(x.replace("-", "").replace("_", "").isalnum() for x in _s):
+            return [x for x in _s if x != "help"]
+    return []
 
-    info = {
-        "id": TOOL_ID,
-        "repo": TOOL_REPO,
-        "name": TOOL_NAME,
-        "version": TOOL_VERSION,
-        "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
-        "native_cli": PY_CLI,
-        "studio_workbench_url": STUDIO_URL,
-        "local_endpoint": LOCAL_PORT_URL,
-        "license": "100% Free & Open Access (Zero Paywalls)",
-        "support": {
-            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-        },
-        "status": "READY"
-    }
 
-    if parsed.json:
-        print(json.dumps(info, indent=2))
-        return
+def _zoth_manifest():
+    import json as _zj, subprocess as _zsp
+    _r = _zsp.run([_zsys.executable, _zsys.argv[0], "--help"],
+                  capture_output=True, text=True, timeout=60)
+    _subs = _zoth_manifest_subs((_r.stdout or "") + (_r.stderr or ""))
+    print(_zj.dumps({"tool": 'etsy-connector', "ok": True, "kind": "json-manifest",
+                     "version": '0.1.0', "local_port": 8108, "execution_type": 'browser',
+                     "studio_route": "/tools/" + 'etsy-connector', "entry": __file__,
+                     "commands": _subs,
+                     "usage": "run `etsy-connector --help`" + ("; subcommands: " + ", ".join(_subs) if _subs else "")},
+                    indent=2, sort_keys=True))
+    raise SystemExit(0)
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
-    print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
-    print()
-    print("Commands:")
-    print("  etsy-connector audit           Audit listing title and 13 tags for SEO rank")
-    print("  etsy-connector profit          Calculate Etsy fees, POD costs, and net margins")
-    print("  etsy-connector search          Search active competitor listings")
-    print("  etsy-connector mcp             Run JSON-RPC 2.0 stdio MCP server")
-    print("  etsy-connector serve           Launch REST API and web cockpit")
 
-if __name__ == '__main__':
-    main()
+if _zsys.argv[1:] == ["--json"]:
+    _zoth_manifest()
+# zothos-json-manifest-end
+
+
+
+
+
+
+# zothos-repo-shim: run the canonical repo copy so repo-relative paths resolve
+import os as _os, sys as _sys
+_here = _os.path.realpath(__file__)
+_repo = _os.environ.get("ZOTH_REPO_DIR") or '/home/zoth/NullAITech' + "/" + 'etsy-connector'
+_real = _os.path.join(_repo, "bin", 'etsy-connector')
+if _os.path.exists(_real) and _os.path.realpath(_real) != _here:
+    _os.execv(_sys.executable, [_sys.executable, _real] + _sys.argv[1:])
+del _os, _sys, _here, _repo, _real
+
+
+import os
+import sys
+from pathlib import Path
+
+# Add src to sys.path
+SRC_DIR = Path(__file__).resolve().parent.parent / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from etsy_connector.cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())
