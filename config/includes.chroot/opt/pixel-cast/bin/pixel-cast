@@ -22,6 +22,12 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 SRC_DIR = PROJECT_DIR / "src"
+if not (SRC_DIR / "pixel_cast").exists():
+    for _cand in (Path.home() / "NullAITech" / "pixel-cast", Path("/opt/pixel-cast")):
+        if (_cand / "src" / "pixel_cast").exists():
+            PROJECT_DIR = _cand
+            SRC_DIR = PROJECT_DIR / "src"
+            break
 
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -125,8 +131,8 @@ def cmd_status(mgr: PixelCastManager, as_json: bool = False):
         print(f"  • Stream:          \033[1;30mIDLE\033[0m (Run `pixel-cast stream` to launch)")
 
     print(f"\n\033[1;34m[WEB STATION]\033[0m")
-    print(f"  • Workstation:     http://{self_node.get('ip', '100.64.0.10')}:8148")
-    print(f"  • Mobile Cast:     http://{self_node.get('ip', '100.64.0.10')}:8148/mobile\n")
+    print(f"  • Workstation:     http://{self_node.get('ip', '127.0.0.1')}:8148")
+    print(f"  • Mobile Cast:     http://{self_node.get('ip', '127.0.0.1')}:8148/mobile\n")
 
 
 def main():
@@ -135,11 +141,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    parser.add_argument("--status", action="store_true", help="Show live Tailscale, ADB, and Scrcpy stream status")
 
     subparsers = parser.add_subparsers(dest="command", help="Subcommand to execute")
 
     # status
-    subparsers.add_parser("status", help="Show live Tailscale, ADB, and Scrcpy stream status")
+    p_status = subparsers.add_parser("status", help="Show live Tailscale, ADB, and Scrcpy stream status")
+    p_status.add_argument("--json", action="store_true", help="Output machine-readable JSON")
 
     # connect
     p_conn = subparsers.add_parser("connect", help="Connect to Pixel over Tailscale ADB")
@@ -189,7 +197,7 @@ def main():
 
     # serve
     p_srv = subparsers.add_parser("serve", help="Run PixelCast Standalone Web Workstation Server")
-    p_srv.add_argument("--host", default="0.0.0.0", help="Host interface (default 0.0.0.0)")
+    p_srv.add_argument("--host", default="127.0.0.1", help="Host interface (default 127.0.0.1; pass <tailscale-ip> for mesh)")
     p_srv.add_argument("--port", type=int, default=8148, help="Port (default 8148)")
 
     # qr
@@ -201,7 +209,7 @@ def main():
     args = parser.parse_args()
     mgr = PixelCastManager()
 
-    if not args.command or args.command == "status":
+    if args.status or not args.command or args.command == "status":
         cmd_status(mgr, as_json=args.json)
         return
 
@@ -309,7 +317,7 @@ def main():
 
     elif args.command == "qr":
         ts = mgr.get_tailscale_status()
-        self_ip = ts.get("self", {}).get("ip", "100.64.0.10")
+        self_ip = ts.get("self", {}).get("ip", "127.0.0.1")
         mobile_url = f"http://{self_ip}:8148/mobile"
         generate_terminal_qr(mobile_url)
 

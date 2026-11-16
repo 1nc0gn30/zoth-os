@@ -141,11 +141,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    parser.add_argument("--status", action="store_true", help="Show live Tailscale, ADB, and Scrcpy stream status")
 
     subparsers = parser.add_subparsers(dest="command", help="Subcommand to execute")
 
     # status
-    subparsers.add_parser("status", help="Show live Tailscale, ADB, and Scrcpy stream status")
+    p_status = subparsers.add_parser("status", help="Show live Tailscale, ADB, and Scrcpy stream status")
+    p_status.add_argument("--json", action="store_true", help="Output machine-readable JSON")
 
     # connect
     p_conn = subparsers.add_parser("connect", help="Connect to Pixel over Tailscale ADB")
@@ -207,7 +209,7 @@ def main():
     args = parser.parse_args()
     mgr = PixelCastManager()
 
-    if not args.command or args.command == "status":
+    if args.status or not args.command or args.command == "status":
         cmd_status(mgr, as_json=args.json)
         return
 

@@ -9,6 +9,15 @@ while [ -h "$SOURCE" ]; do
 done
 BIN_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 
+if [ ! -f "$BIN_DIR/aether-observatory.js" ]; then
+  for cand in "${HOME}/NullAITech/aether-observatory/bin" "/opt/aether-observatory/bin" "/usr/local/share/aether-observatory/bin"; do
+    if [ -f "$cand/aether-observatory.js" ]; then
+      BIN_DIR="$cand"
+      break
+    fi
+  done
+fi
+
 # serve needs the server module; everything else runs through the node CLI
 if [ "$1" = "serve" ]; then
   shift

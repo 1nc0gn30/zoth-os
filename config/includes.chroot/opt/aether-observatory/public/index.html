@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER-OBSERVATORY — Cyber-Physical Telemetry &amp; Sonification Workstation</title>
+  <meta name="description" content="Sovereign cyber-physical telemetry, live 3D daemon/port constellation, flight-recorder time machine and WebAudio acoustic sonification workstation — Neal Frazier Tech / NullAI Platform.">
+  <meta name="theme-color" content="#07090E">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AETHER-OBSERVATORY">
+  <meta property="og:description" content="Telemetry of the machine, rendered as starfield and sung as drone. Live process/port constellation, SQLite flight recorder, WebAudio sonification.">
+  <meta property="og:url" content="http://127.0.0.1:8160/">
+  <meta property="og:image" content="http://127.0.0.1:8160/favicon.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@1nc0gn30">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="http://127.0.0.1:8160/">
+  <link rel="license" href="/RAILWAY-ATTRIBUTION.md">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "AETHER-OBSERVATORY",
+        "url": "http://127.0.0.1:8160/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux",
+        "author": { "@type": "Person", "name": "Neal Frazier", "sameAs": "https://x.com/1nc0gn30" },
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Sovereign cyber-physical telemetry, 3D process/port constellation, flight-recorder time machine and WebAudio acoustic sonification workstation.",
+        "featureList": "Live CPU/thermal/RAM telemetry; 3D daemon & port constellation with vector/braille/Bayer render modes; SQLite snapshot time machine with T1/T2 diff; WebAudio harmonic sonification with FFT waterfall"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is the telemetry data real or simulated?",
+            "acceptedAnswer": { "@type": "Answer", "text": "100% real. Every number is sampled live from /proc, /sys/class/thermal, the sensors(1) binary and ss -tlnp on the host machine. There are no mocks, no setTimeout fabrications, no placeholder figures anywhere in the application." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the time machine?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A persistent SQLite ring-buffer records a compact telemetry frame every 10 seconds (24h retention). The scrubber lets you replay history and diff any two timestamps to surface spawned/terminated daemons, thermal spikes and load swings, exportable as Markdown or JSON." }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the sonification work?",
+            "acceptedAnswer": { "@type": "Answer", "text": "An opt-in WebAudio engine maps CPU load to pitch, memory pressure to filter opening, thermal rise to brightness and active socket count to harmonic density, rendered as a phased saw/sine drone with a live 60fps FFT waterfall. Audio only starts after you press PLAY DRONE and stops with one click." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is this tool free or paywalled?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Completely free — no paywalls, no accounts, no tracking cookies, no external analytics. If it is useful there is a voluntary Buy Me a Coffee link in the documentation drawer." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to workstation</a>
+
+  <!-- Braille aperture intro -->
+  <div id="intro-gate" role="dialog" aria-label="Intro — press Escape to skip">
+    <canvas id="intro-canvas" width="660" height="220" aria-hidden="true"></canvas>
+    <button class="skip" id="intro-skip">[ ESC TO SKIP ]</button>
+  </div>
+
+  <!-- Node inspector drawer -->
+  <aside class="drawer" id="node-drawer" role="complementary" aria-label="Process inspector" aria-hidden="true">
+    <button class="close-btn" id="drawer-close" aria-label="Close inspector">✕</button>
+    <span class="kicker">DEEP SOCKET INSPECTOR</span>
+    <h3 id="d-node-name">—</h3>
+    <dl id="d-node-facts"></dl>
+    <span class="kicker">PROC COMMAND</span>
+    <p id="d-node-cmd" class="num" style="word-break:break-all;font-size:11px;color:var(--ink-dim);margin-top:var(--sp-2)">—</p>
+  </aside>
+
+  <!-- Documentation drawer -->
+  <aside class="drawer docs-drawer" id="docs-drawer" role="complementary" aria-label="Documentation" aria-hidden="true">
+    <button class="close-btn" id="docs-close" aria-label="Close documentation">✕</button>
+    <span class="kicker">FIELD MANUAL — every panel does real work</span>
+    <h3 style="margin-top:var(--sp-1)">operating instructions</h3>
+    <ol class="story">
+      <li>
+        <h4>Sky Map — the constellation viewport</h4>
+        <p>The centerpiece renders every TCP daemon currently listening on this host as a 3D orbital star. Drag to orbit the camera (yaw/pitch), scroll to zoom (FOV), click any star to lock focus and open the deep socket inspector — real PID, real uptime from <span class="num">/proc/&lt;pid&gt;/stat</span>, real measured latency. Try the three render pipelines from the mode rack: <b>01 VECTOR</b> (perspective starfield + depth-sorted edges), <b>02 BRAILLE</b> (Unicode U+2800 2×4 sub-pixel matrix — silent, generative monochrome), <b>03 DITHER</b> (Bayer 8×8 one-bit halftone with phosphor scanlines).</p>
+      </li>
+      <li>
+        <h4>Meters — split-flap flight odometers</h4>
+        <p>Mechanical flap drums read the machine aloud: uptime since boot, live listening socket count, and CPU package temperature from <span class="num">sensors(1)</span> / <span class="num">/sys/class/thermal/*</span>. Every value flips only when the real reading changes.</p>
+      </li>
+      <li>
+        <h4>Sonorium — the acoustic telemetry deck</h4>
+        <p>Press <b>PLAY DRONE</b> (opt-in; browsers require a user gesture for audio). Four rotary knobs conduct real system physics into synthesis: <b>CPU LOAD → PITCH</b>, <b>MEM PRESSURE → HARMONICS</b>, <b>THERMAL → BRIGHTNESS (filter cutoff)</b>, <b>SOCKETS → DRIFT (LFO)</b>. Drag a knob vertically; watch the 60fps FFT waterfall paint what the drone hears. Drag=relative, wheel=fine, keys ↑↓←→ are accessible.</p>
+      </li>
+      <li>
+        <h4>Timeline — the flight recorder</h4>
+        <p>A SQLite ring-buffer snaps a telemetry frame every ten seconds (24 h rolling). Scrub the strip to scrub memory; press <b>DIFF</b> and tap two epochs to compare them — terminated ports, spawned daemons, thermal spikes and load swings surface as chips. EXPORT emits a clean Markdown or JSON incident report of exactly that window.</p>
+      </li>
+    </ol>
+    <div class="dirty-note">
+      LIVE FEED — nothing on this page is mocked. CPU reads /proc/stat deltas, thermals read
+      /sys/class/thermal + sensors(1), sockets read ss -tlnp matched against the Zoth Studio registry
+      (zoth-studio-v2/toolsData.js), and the git pulse walks ~/NullAITech repos for 14-day commit activity.
+    </div>
+    <p style="font-size:12px;color:var(--ink-faint)">
+      Telemetry cadence: 10s persists to <span class="num">data/aether-flight.db</span> · stream over SSE · CLI:
+      <span class="num">aether-observatory status|constellation|snapshot|serve</span>.
+    </p>
+    <a class="coffee-link" href="https://buymeacoffee.com/1nc0gn30" target="_blank" rel="noopener">
+      ☕ Buy Me a Coffee — optional, never guarded
+    </a>
+  </aside>
+
+  <!-- ==================== SHELL ==================== -->
+  <div class="shell">
+    <header class="top-rail">
+      <div class="brand">
+        <h1><span class="aether">AETHER</span> OBSERVATORY</h1>
+        <span class="sub">cyber-physical telemetry &amp; sonar</span>
+      </div>
+      <div class="top-actions">
+        <span class="live-pill" id="live-pill" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="live-pill-text">+0%</span><span aria-hidden="true">&nbsp;·&nbsp;</span><span id="live-clock" class="num">--:--:--</span></span>
+        <button class="btn" id="docs-open" style="min-height:44px">FIELD MANUAL</button>
+        <div class="theme-rack" role="group" aria-label="Theme switcher">
+          <div class="jaw" aria-hidden="true"></div>
+          <button id="theme-dark" aria-pressed="true">DARK</button>
+          <button id="theme-light" aria-pressed="false">LIGHT</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="deck">
+      <!-- ROW 1: Observatory + meters -->
+      <section class="card beam c-span-8 viewport-card" aria-label="Observatory constellation viewport">
+        <div class="viewport-toolbar">
+          <div class="mode-rack" role="group" aria-label="Render pipeline">
+            <button data-mode="vector" aria-pressed="true">01 VECTOR</button>
+            <button data-mode="braille" aria-pressed="false">02 BRAILLE</button>
+            <button data-mode="dither" aria-pressed="false">03 DITHER</button>
+          </div>
+          <button class="btn" id="reset-camera">RESET CAM</button>
+          <span class="viewport-hint" id="viewport-hint"></span>
+        </div>
+        <div class="viewport-wrap">
+          <canvas id="constellation-canvas"></canvas>
+          <pre id="constellation-braille" aria-hidden="true"></pre>
+        </div>
+      </section>
+
+      <section class="card c-span-4" style="animation-delay:60ms" aria-label="Flight odometer meters">
+        <div class="card-head"><h2>Flight Odometers</h2><span class="tag">SPLIT-FLAP</span></div>
+        <div class="odo-row" style="flex-direction:column;gap:var(--sp-5)">
+          <div class="odo">
+            <div class="label">Uptime · since boot</div>
+            <div class="digits" id="odo-uptime" data-odo aria-label="System uptime"></div>
+          </div>
+          <div class="odo">
+            <div class="label">Open sockets · ss -tlnp</div>
+            <div class="digits" id="odo-sockets" data-odo aria-label="Listening sockets"></div>
+          </div>
+          <div class="odo">
+            <div class="label">Package thermal</div>
+            <div class="digits" id="odo-thermal" data-odo aria-label="CPU temperature"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROW 2: telemetry charts -->
+      <section class="card c-span-6" style="animation-delay:120ms" aria-label="CPU load telemetry">
+        <div class="card-head"><h2>Load Telemetry</h2><span class="tag">/proc/stat · 250ms sample</span></div>
+        <canvas id="chart-cpu" height="120" aria-label="CPU load chart"></canvas>
+        <div class="reading-strip">
+          <span class="reading">load1<b id="r-load1">—</b></span>
+          <span class="reading">load5<b id="r-load5">—</b></span>
+          <span class="reading">load15<b id="r-load15">—</b></span>
+          <span class="reading">busy<b id="r-busy">—</b></span>
+          <span class="reading">procs<b id="r-procs" class="num">—</b></span>
+        </div>
+      </section>
+
+      <section class="card c-span-6" style="animation-delay:180ms" aria-label="Memory and thermal telemetry">
+        <div class="card-head"><h2>Thermal &amp; Memory</h2><span class="tag">sensors · /proc/meminfo</span></div>
+        <div class="chart-grid">
+          <div class="chart-panel">
+            <h3>Package °C</h3>
+            <canvas id="chart-thermal" height="120" aria-label="Thermal history chart"></canvas>
+          </div>
+          <div class="chart-panel">
+            <h3>Memory pressure</h3>
+            <canvas id="chart-mem" height="120" aria-label="Memory history chart"></canvas>
+          </div>
+        </div>
+        <div class="reading-strip">
+          <span class="reading">pkg<b id="r-pkg" class="heat">—</b></span>
+          <span class="reading">max zone<b id="r-zone" class="heat">—</b></span>
+          <span class="reading">fan<b id="r-fan" class="num">—</b></span>
+          <span class="reading">ram<b id="r-ram" class="num">—</b></span>
+          <span class="reading">swap<b id="r-swap" class="num">—</b></span>
+        </div>
+      </section>
+
+      <!-- ROW 3: Sonorium -->
+      <section class="card c-span-12" style="animation-delay:240ms" aria-label="Sonification deck">
+        <div class="card-head"><h2>Sonorium</h2><span class="tag">WEBAUDIO · FFT WATERFALL</span></div>
+        <div class="sono-controls">
+          <button class="sono-toggle" id="sono-toggle" aria-pressed="false">▶ PLAY DRONE (optional)</button>
+          <span class="sono-note" id="sono-note">maps live CPU/Pkg°C/MEM/socket physics → pitched saw/sine drone · drag knobs vertically · wheel for fine · ↑↓ keys</span>
+        </div>
+        <div class="knob-rack">
+          <div class="knob"><div class="dial" data-knob="pitch" tabindex="0" role="slider" aria-label="Pitch — follows CPU load" aria-valuemin="0" aria-valuemax="100" aria-valuenow="38"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Pitch ↥ CPU</div><div class="k-value num" id="kv-pitch">38</div></div>
+          <div class="knob"><div class="dial" data-knob="harm" tabindex="0" role="slider" aria-label="Harmonic entry — follows memory pressure" aria-valuemin="0" aria-valuemax="100" aria-valuenow="26"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Harms ↥ MEM</div><div class="k-value num" id="kv-harm">26</div></div>
+          <div class="knob"><div class="dial" data-knob="bright" tabindex="0" role="slider" aria-label="Filter brightness — follows peak core temp"aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Bright ↥ TEMP</div><div class="k-value num" id="kv-bright">50</div></div>
+          <div class="knob"><div class="dial" data-knob="drift" tabindex="0" role="slider" aria-label="LFO drift rate — follows active sockets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Drift ↥ SOCK</div><div class="k-value num" id="kv-drift">30</div></div>
+        </div>
+        <canvas id="fft-waterfall" aria-label="FFT waterfall spectrogram" style="margin-top:var(--sp-4)"></canvas>
+      </section>
+
+      <!-- ROW 4: git pulse -->
+      <section class="card c-span-5" style="animation-delay:300ms" aria-label="Git pulse">
+        <div class="card-head"><h2>Git Pulse</h2><span class="tag">~/NullAITech · 14d</span></div>
+        <div id="git-list" style="display:grid;gap:var(--sp-2)"></div>
+      </section>
+
+      <!-- ROW 4b: timeline -->
+      <section class="card beam c-span-7" style="animation-delay:360ms" aria-label="Time machine">
+        <div class="card-head">
+          <h2>Time Machine</h2><span class="tag">SQLite ring · 10s frame</span>
+          <span class="grow"></span>
+          <span class="tm-readout" id="tm-count">0 frames</span>
+        </div>
+        <canvas id="timeline-canvas" aria-label="Telemetry snapshot timeline scrubber"></canvas>
+        <div class="tm-toolbar">
+          <div class="tm-mode" role="group" aria-label="Scrub mode">
+            <button id="tm-scrub" aria-pressed="true">SCRUB</button>
+            <button id="tm-diff" aria-pressed="false">DIFF T1/T2</button>
+          </div>
+          <span class="tm-readout" id="tm-readout">—</span>
+          <span style="flex:1"></span>
+          <button class="btn" id="tm-export-md" disabled>EXPORT MD</button>
+          <button class="btn" id="tm-export-json" disabled>EXPORT JSON</button>
+        </div>
+        <div class="tm-diff" id="tm-diff-out">
+          <div class="card-head" style="margin-top:var(--sp-3)"><h2>Diff</h2><span class="tag" id="tm-diff-range">T1 → T2</span></div>
+          <div class="diff-chips" id="tm-diff-chips"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>AETHER-OBSERVATORY v1.0.0 · Neal Frazier Tech · <a href="https://x.com/1nc0gn30" rel="noopener">@1nc0gn30</a> · NullAI Platform</span>
+      <span style="flex:1"></span>
+      <span id="foot-port" class="num">http://127.0.0.1:8160</span>
+      <a href="https://buymeacoffee.com/1nc0gn30" target="_blank" rel="noopener">☕ buy me a coffee</a>
+      <span id="git-dirty-note" class="dirty-note" style="display:none;margin:0"></span>
+    </footer>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

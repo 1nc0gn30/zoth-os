@@ -1,0 +1,183 @@
+/* ==========================================================================
+   AETHER-OBSERVATORY — dual-theme design system
+   Obsidian Sovereign Dark (default) · Editorial Ivory Light
+   Latent design logic: Teenage Engineering tactility × astrophysical observatory
+   ========================================================================== */
+
+/* ---------- Typography (Google Fonts, preconnected in index.html) ---------- */
+/* Syne · Plus Jakarta Sans · JetBrains Mono */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* core surfaces — obsidian void */
+  --bg0: #07090E;
+  --bg1: #0B0F16;
+  --bg2: #101623;
+  --bg3: #151D2E;
+  --panel: rgba(255, 255, 255, 0.035);
+  --panel-solid: #0D1220;
+  --surface-glass: rgba(13, 18, 32, 0.72);
+
+  /* tactile hairlines & beams */
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --beam: conic-gradient(from var(--beam-a, 0deg), transparent 0 70%, rgba(212, 175, 55, 0.9) 82%, rgba(56, 189, 248, 0.9) 90%, transparent 100%);
+
+  /* ink — paper talc, never pure white */
+  --ink: #E7E2D4;
+  --ink-dim: #9BA3B4;
+  --ink-faint: #5C6478;
+
+  /* accents — burnished gold + star cyan */
+  --gold: #D4AF37;
+  --gold-soft: #E5C76B;
+  --cyan: #38BDF8;
+  --cyan-deep: #0B7498;
+  --ember: #FF7A45;
+  --danger: #F4504D;
+  --ok: #3ECF8E;
+
+  /* thermal ramp */
+  --heat0: #1E3A5F;
+  --heat1: #2E6F9E;
+  --heat2: #D4AF37;
+  --heat3: #FF7A45;
+  --heat4: #F4504D;
+
+  /* hand grain (8px paper-cell, low alpha) */
+  --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h1v1H0zM4 4h1v1H4zM2 6h1v1H2zM6 2h1v1H6z' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+  --grain-alpha: 1;
+
+  /* fonts */
+  --font-display: 'Syne', 'Clash Display', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* spacing scale — faithful ratios */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-8: 48px;
+
+  /* radius — mostly square, engineered */
+  --r-sm: 3px; --r-md: 6px; --r-lg: 10px;
+
+  /* motion tokens */
+  --dur-1: 120ms; --dur-2: 240ms; --dur-3: 420ms; --dur-4: 720ms;
+  --ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* node palette — stable by category, JVM-warm against void */
+  --cat-dev: #38BDF8;      /* developer tooling — star cyan   */
+  --cat-noc: #D4AF37;      /* network ops — burnished gold    */
+  --cat-data: #3ECF8E;     /* data ops — mint phosphor         */
+  --cat-gen: #FF7A45;      /* generation — ember               */
+  --cat-sec: #B48CF2;      /* security ops — nebula violet     */
+  --cat-unknown: #5C6478;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Editorial Ivory paper — alabaster, never #fff */
+  --bg0: #F2EEE1;
+  --bg1: #F7F4EB;
+  --bg2: #FCFAF4;
+  --bg3: #FFFFFF;
+  --panel: rgba(17, 19, 24, 0.028);
+  --panel-solid: #FCFAF4;
+  --surface-glass: rgba(252, 250, 244, 0.78);
+
+  /* paper discipline */
+  --line: rgba(17, 19, 24, 0.14);
+  --line-strong: rgba(17, 19, 24, 0.28);
+  --beam: conic-gradient(from var(--beam-a, 0deg), transparent 0 70%, rgba(140, 98, 57, 0.75) 82%, rgba(11, 116, 152, 0.75) 90%, transparent 100%);
+
+  /* ink — sepia-flecked */
+  --ink: #111318;
+  --ink-dim: #55504A;
+  --ink-faint: #8B857A;
+
+  /* accents durably dark enough for 4.5:1+ on paper */
+  --gold: #8C6239;
+  --gold-soft: #A87C4F;
+  --cyan: #0B7498;
+  --cyan-deep: #084C66;
+  --ember: #B04A17;
+  --danger: #AA2E24;
+  --ok: #1A7A4E;
+
+  --heat0: #A8C6DF;
+  --heat1: #4E8FB8;
+  --heat2: #B9862F;
+  --heat3: #C65E24;
+  --heat4: #AA2E24;
+
+  /* subtler grain on paper */
+  --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h1v1H0zM4 4h1v1H4zM2 6h1v1H2zM6 2h1v1H6z' fill='%23111318' fill-opacity='0.035'/%3E%3C/svg%3E");
+
+  --cat-dev: #0B7498;
+  --cat-noc: #8C6239;
+  --cat-data: #1A7A4E;
+  --cat-gen: #B04A17;
+  --cat-sec: #6B4FA8;
+  --cat-unknown: #8B857A;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg0);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+/* hand grain overlay — real pixel texture, low alpha, never blocks */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: var(--grain-url);
+  pointer-events: none;
+  z-index: 2147483000;
+  opacity: var(--grain-alpha);
+}
+
+::selection { background: var(--gold); color: var(--bg0); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 5px; border: 2px solid var(--bg0); }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+button { font-family: inherit; cursor: pointer; }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; letter-spacing: -0.02em; }
+code, .mono, .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+};
+
+/* skip link */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--gold); color: var(--bg0);
+  padding: var(--sp-2) var(--sp-4); z-index: 2147483100; font-weight: 700;
+}
+.skip-link:focus { left: var(--sp-3); top: var(--sp-3); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+}

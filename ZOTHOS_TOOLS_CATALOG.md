@@ -851,12 +851,12 @@ markers: edit `toolsData.js`, then re-run the generator.
 
 | | |
 |---|---|
-| generated | 2026-11-15 12:38 |
+| generated | 2026-11-16 09:53 |
 | catalog entries | 81 |
 | distinct ports | 81 (0 collisions) |
 | Layer C — catalog entries byte-identical on all 3 surfaces | 81/81 |
-| Layer C — canonical wrapper filenames byte-identical | 54/54 |
-| Layer C — short-name aliases byte-identical | 39/55 |
+| Layer C — canonical wrapper filenames byte-identical | 51/51 |
+| Layer C — short-name aliases byte-identical | 54/54 |
 | Layer B components | 81/81 |
 | Layer D READMEs | 81/81 |
 

@@ -1,0 +1,20 @@
+{
+  "name": "aether-observatory",
+  "version": "1.0.0",
+  "description": "Sovereign cyber-physical telemetry, 3D process/port constellation, time-machine flight recorder & WebAudio sonification workstation — Neal Frazier Tech / NullAI Platform",
+  "type": "module",
+  "main": "src/server.js",
+  "bin": {
+    "aether-observatory": "bin/aether-observatory"
+  },
+  "scripts": {
+    "start": "node src/server.js --port 8160",
+    "serve": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "license": "MIT",
+  "author": "Neal Frazier (@1nc0gn30) / NullAI Platform",
+  "private": true
+}
