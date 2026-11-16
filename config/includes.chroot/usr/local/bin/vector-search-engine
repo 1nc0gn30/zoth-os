@@ -7,12 +7,24 @@ elif [ "$1" = "tui" ] || [ "$1" = "--tui" ]; then
   shift
   exec /usr/local/bin/vector-search-engine-tui "$@"
 fi
+
+if [ "$1" = "--json" ] || [ "$1" = "--status" ] || [ "$1" = "status" ]; then
+  if curl -sf http://127.0.0.1:8121/health >/dev/null 2>&1; then
+    curl -sf http://127.0.0.1:8121/health && echo "" && exit 0
+  fi
+fi
+
 REPO_DIR="$HOME/NullAITech/vector-search-engine"
-PYTHON_BIN="python3"
+PYTHON_BIN="/opt/zothos-ai-env/bin/python3"
+if [ ! -f "$PYTHON_BIN" ]; then
+  PYTHON_BIN="python3"
+fi
 export PYTHONPATH="$REPO_DIR/src${PYTHONPATH:+:$PYTHONPATH}"
 
 if [ "$1" = "--status" ] || [ "$1" = "status" ]; then
-  exec "$PYTHON_BIN" -m vector_search_engine.cli list
+  exec "$PYTHON_BIN" -m vector_search_engine.cli list "${@:2}"
+elif [ "$1" = "--json" ]; then
+  exec "$PYTHON_BIN" -m vector_search_engine.cli list --json
 elif [ "$1" = "--version" ] || [ "$1" = "-v" ]; then
   echo "vector-search-engine v2.5.0 (HNSW Vector Database & Okapi BM25 Hybrid Studio)"
   exit 0
