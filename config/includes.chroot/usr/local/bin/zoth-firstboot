@@ -16,9 +16,12 @@ fi
 : "${ZOTH_SRC_ROOT:=${ZOTH_ACTIVE_HOME}/NullAITech}"
 
 FLAG="${ZOTH_HOME}/.config/zothos/firstboot.done"
-LOG="/var/log/zoth-nexus-firstboot.log"
-mkdir -p "${ZOTH_HOME}/.config/zothos"
-mkdir -p /var/log
+if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+    LOG="${HOME}/.local/state/zoth-nexus-firstboot.log"
+else
+    LOG="/var/log/zoth-nexus-firstboot.log"
+fi
+mkdir -p "${ZOTH_HOME}/.config/zothos" "$(dirname "$LOG")"
 
 if [[ -f "$FLAG" ]]; then
     exit 0
