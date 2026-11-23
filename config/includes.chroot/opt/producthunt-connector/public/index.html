@@ -2,8 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zoth PH · Product Hunt connector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoth PH · Product Hunt Connector — Sovereign URL Drift &amp; Launch Telemetry</title>
+  <meta name="description" content="Zero-dependency Product Hunt GraphQL v2 connector &amp; localhost cockpit (:8139) that diffs live listing URLs, tracks votes/ranks/comments, and generates official badges. 100% free &amp; open-access." />
+  <meta property="og:title" content="Zoth PH · Product Hunt Connector — Sovereign Launch Telemetry" />
+  <meta property="og:description" content="Zero-dependency Product Hunt GraphQL v2 connector &amp; localhost cockpit (:8139) for URL drift detection, vote/comment tracking, and badge generation." />
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/producthunt-connector" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://zoth.nullai.tech/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:title" content="Zoth PH · Product Hunt Connector" />
+  <meta name="twitter:description" content="Zero-dependency Product Hunt GraphQL v2 connector &amp; localhost cockpit (:8139)." />
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Product Hunt Connector (zoth-ph)",
+        "url": "https://zoth.nullai.tech/tools/producthunt-connector",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows, Web",
+        "description": "Local ZothOS cockpit and GraphQL v2 client that diffs Product Hunt listings against canonical website and GitHub release URLs, tracks votes and comments, and renders official badges.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "1nc0gn30",
+          "url": "https://nealfrazier.tech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does Product Hunt Connector (zoth-ph) do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It connects to the Product Hunt GraphQL v2 API using a local mode-0600 token to read live votes, comments, weekly rank, and product links, and detects drift against your canonical website and GitHub release URLs."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Product Hunt Connector require external Python packages or cloud relays?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. It is built 100% on the Python 3 standard library and binds to 127.0.0.1:8139 with zero third-party telemetry."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Product Hunt Connector free and how can I support development?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, it is 100% free and open-access under the MIT License with zero paywalls. Optional support is welcomed via Buy Us a Coffee on Stripe (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or Solana tips to GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       --bg: #08080B;
@@ -31,8 +109,12 @@
     }
     .row { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); }
     .row:first-child { border-top: 0; padding-top: 0; }
-    .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); }
-    .v { font-family: var(--mono); font-size: 13px; text-align: right; word-break: break-all; }
+    .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); flex-shrink: 0; }
+    .v { font-family: var(--mono); font-size: 13px; text-align: right; overflow-wrap: anywhere; word-break: normal; }
+    @media (max-width: 640px) {
+      .row { flex-direction: column; gap: 4px; align-items: flex-start; }
+      .v { text-align: left; }
+    }
     .ok { color: var(--ok); }
     .bad { color: var(--bad); }
     label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 8px; }
@@ -53,45 +135,13 @@
     a { color: var(--gold); }
     .hidden { display: none; }
   </style>
-
-  <!-- Zoth 100% Open-Access & Buy Us a Coffee Invariant -->
-  <script id="zoth-open-access-init">
-    (function() {
-      try {
-        var keys = ['agent_audiocipher_pro', 'agent_cyber_turtle_pro', 'agent_datamosh_pro', 'agent_nexus3d_pro', 'agent_policy_pro', 'audiocipher_license', 'audiocipher_pro_licensed', 'badge3d_pro_licensed', 'certpath_pro_key', 'certpath_pro_licensed', 'cron_rhythm_pro_key', 'cron_rhythm_pro_licensed', 'cwv-speed-engine_pro_licensed', 'cwv_pro_licensed', 'cyber_turtle_pro_licensed', 'datamosh_pro_licensed', 'deepsearch-research-agent_pro_licensed', 'deepsearch_pro_licensed', 'entropy_studio_licensed', 'envguard-secrets-vault_pro_licensed', 'envguard_pro_license', 'etsy_connector_pro', 'jwt_guard_licensed', 'mdg_pro_licensed', 'neuro_pro_licensed', 'nexus3d_pro_licensed', 'omnipost_pro_key', 'omnipost_pro_licensed', 'osint_pro_licensed', 'payload-entropy-studio_pro_licensed', 'polyglot_pro_licensed', 'pro_licensed', 'promptmaster_pro_licensed', 'promptmaster_pro_active', 'robots-txt-auditor_pro_licensed', 'robots_pro_licensed', 'schema_illustrator_pro_licensed', 'sovereign_pro_licensed', 'subsweep-lead-scanner_pro_licensed', 'subsweep_licensed', 'turtle_pro_licensed', 'ufo_sacred_licensed', 'vector-search-engine_pro_licensed', 'vector_studio_pro_licensed', 'web-security-guard_pro_licensed', 'web_security_guard_licensed', 'yourdigitalspace_pro', 'zela_guide_pro_licensed', 'zoth_ascii_magic_pro', 'zoth_audiocipher_licensed', 'zoth_badge3d_licensed', 'zoth_cyber_turtle_licensed', 'zoth_datamosh_licensed', 'zoth_etsy_licensed', 'zoth_nexus3d_licensed', 'zoth_osint_licensed', 'zoth_policy_licensed', 'zoth_sacred_licensed', 'zoth_ufo_licensed'];
-        for (var i = 0; i < keys.length; i++) {
-          localStorage.setItem(keys[i], 'true');
-        }
-        localStorage.setItem('pm_license_v2', JSON.stringify({ method: 'open_access', ref: 'free_forever', at: '2026-01-01T00:00:00Z' }));
-        window.isPro = true;
-        window.isProLicensed = true;
-      } catch (e) {}
-    })();
-  </script>
-  <style id="zoth-open-access-override">
-    .paywall-overlay, .output-paywall-overlay, #outputPaywallOverlay, #schemaPaywallOverlay,
-    #transformerPaywallOverlay, #proPaywallModal, #licenseModal, #salesBanner, #founding-offer-banner,
-    #funnelHeroBanner, [data-alias="paywallOverlay"], [data-alias="founding-offer-banner"] {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-    .paywall-wrap #outputPreview, .paywall-wrap #reportContentArea, .paywall-content,
-    .paywall-content.locked, .paywall-wrap.is-locked #outputPreview, .paywall-wrap.locked #outputPreview {
-      filter: none !important;
-      -webkit-filter: none !important;
-      user-select: auto !important;
-      pointer-events: auto !important;
-    }
-  </style>
-
 </head>
 <body>
 
-<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
-  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999; margin-bottom: 20px; border-radius: 10px;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN-SOURCE WORKSTATION</span>
   <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
-  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" title="Solana Tip Address: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="background: #047857; color: #FFFFFF; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip: GG2e…dXoK</a>
 </div>
 
   <div class="eyebrow">Zoth OS · Product Hunt</div>
@@ -125,6 +175,11 @@
     <div class="eyebrow">Official badges</div>
     <p class="note" id="badges"></p>
   </div>
+
+  <footer style="margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--mute); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;">
+    <div>Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a></div>
+    <div><a href="https://github.com/1nc0gn30/producthunt-connector" target="_blank" rel="noopener">GitHub Repository</a> • Port 8139</div>
+  </footer>
 
   <script>
     const rows = document.getElementById("rows");
@@ -219,6 +274,22 @@
     };
     loadStatus().catch(err => { rows.innerHTML = row("error", String(err), "bad"); });
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "producthunt-connector",
+          toolName: "Product Hunt Connector (zoth-ph)",
+          tagline: "Autonomous launch intelligence and upvote velocity tracker for Product Hunt!",
+          accentColor: "#F97316",
+          steps: [{"icon": "\ud83d\ude80", "title": "Plan Your Launch Day", "desc": "Track top-ranking products, maker comments, and upvote velocity throughout your launch window."}, {"icon": "\ud83d\udcca", "title": "Hourly Momentum Radar", "desc": "See how fast your project is gaining upvotes compared to competitors on the daily leaderboard."}, {"icon": "\ud83d\udcdd", "title": "Maker Bio & Checklist", "desc": "Gives you a ready-to-use launch checklist so you don't miss first-comment rules or gallery media guidelines."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etsy Connector for Antigravity • Autonomous API & Print-on-Demand Suite</title>
   <meta name="description" content="Sovereign Etsy Open API v3 and Print-on-Demand connector for Google Antigravity AI agents. Real-time SEO auditing for 13 tags, fee & margin calculator, and Printify integration.">
-  <meta name="author" content="1nc0gn30">
+  <meta name="author" content="1nc0gn30 (@1nc0gn30)">
   
   <!-- OpenGraph Meta Tags -->
   <meta property="og:title" content="Etsy Connector for Antigravity • Autonomous POD & SEO Suite">
@@ -25,23 +25,6 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
 
-  <!-- Solana Tip Solana Widget v13 -->
-  <script>
-    window.addEventListener('load', function() {
-      if (typeof window.SolanaTipButtons !== 'undefined') {
-        window.SolanaTipButtons.init({
-          selector: '.btn-solana-tip',
-          integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
-          payload: {
-            receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-            amount: 19.00,
-            currency: 'USD'
-          }
-        });
-      }
-    });
-  </script>
-
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +36,7 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "name": "Etsy Connector for Antigravity",
         "url": "https://etsy.nullai.tech/",
         "applicationCategory": "BusinessApplication",
@@ -61,14 +44,19 @@
         "description": "Autonomous Etsy Open API v3 and Print-on-Demand MCP connector for Google Antigravity agents, featuring 13-tag SEO auditing and Printify fulfillment automation.",
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": "https://github.com/1nc0gn30/zoth-os"
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "creator": {
           "@type": "Person",
-          "name": "1nc0gn30",
+          "name": "Neal Frazier (@1nc0gn30)",
+          "url": "https://nullai.tech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
           "url": "https://nullai.tech"
         }
       },
@@ -93,10 +81,10 @@
           },
           {
             "@type": "Question",
-            "name": "What payment methods are accepted for Pro Lifetime Access?",
+            "name": "Is Etsy Connector free and open access, and how can I support it?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "You can pay via Stripe (Credit Cards, Apple Pay, Google Pay) or decentralized crypto via Solana Tip."
+              "text": "Yes. Etsy Connector is 100% free and open access with zero paywalls or login gates. Optional support is available via Buy Us a Coffee on Stripe (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or Solana Tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -215,7 +203,7 @@
       align-items: center;
     }
 
-    .badge-pro {
+    .badge-open {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(16, 185, 129, 0.2));
       color: #FBBF24;
       border: 1px solid #F59E0B;
@@ -443,63 +431,6 @@
     .stat-row:last-child { border-bottom: none; }
     .stat-val { font-family: var(--mono); font-weight: 600; color: #FFF; }
 
-    /* Output Paywall Blur */
-    .paywall-wrapper {
-      position: relative;
-      margin-top: 20px;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .blurred-content {
-      filter: blur(6px);
-      user-select: none;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .paywall-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(9, 9, 13, 0.75);
-      padding: 24px;
-      text-align: center;
-      z-index: 10;
-    }
-
-    .paywall-overlay h4 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #FFF;
-      margin-bottom: 6px;
-    }
-
-    .paywall-overlay p {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      margin-bottom: 16px;
-      max-width: 380px;
-    }
-
-    body.pro-licensed .paywall-overlay,
-    body.pro-unlocked .paywall-overlay,
-    .paywall-wrapper.pro-unlocked .paywall-overlay {
-      display: none !important;
-    }
-
-    body.pro-licensed .blurred-content,
-    body.pro-unlocked .blurred-content,
-    .paywall-wrapper.pro-unlocked .blurred-content {
-      filter: none !important;
-      user-select: auto !important;
-      pointer-events: auto !important;
-      opacity: 1 !important;
-    }
-
     pre {
       white-space: pre-wrap;
       word-break: break-all;
@@ -511,7 +442,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       display: none;
       align-items: center;
       justify-content: center;
@@ -662,6 +593,13 @@
 </head>
 <body>
 
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN-SOURCE WORKSTATION</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="background: #047857; color: #FFFFFF; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip</a>
+</div>
+
+
   <header>
     <div class="container header-inner">
       <a href="/" class="brand">
@@ -672,27 +610,13 @@
         </div>
       </a>
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <span class="badge-free" id="licenseBadge" data-alias="proStatusBadge" data-alt-id="pro-badge">⚡ FREE TIER</span>
-        <span class="badge-pro" id="statusBadge" style="display:none;">⚡ MCP ACTIVE</span>
-        <button class="btn btn-outline" id="btn-header-key" data-alias="btnActivateKey" style="min-height: 34px; padding: 4px 12px; font-size: 0.75rem;" onclick="openPaywallModal('Header Key Activation')">✦ Enter Key</button>
+        <span class="badge-open" id="openAccessBadge">✦ 100% FREE &amp; OPEN ACCESS</span>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="min-height: 34px; padding: 4px 12px; font-size: 0.75rem; text-decoration: none;">☕ Buy Us a Coffee</a>
       </div>
     </div>
   </header>
 
   <main class="container">
-
-    <!-- Founding Member Sales Funnel Banner -->
-    <div class="sales-banner" id="salesBanner">
-      <div class="banner-text">
-        <h3>⭐ Founding Member Lifetime License — $19 <span style="text-decoration: line-through; opacity: 0.5; font-size: 0.85rem; margin-left: 6px;">$79</span></h3>
-        <p>Unlimited Etsy SEO Audits, 1-Click Printify POD Sync, and Instant Antigravity MCP Access.</p>
-      </div>
-      <div class="banner-actions">
-        <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" target="_blank" rel="noopener">Pay with Stripe ($19)</a>
-        <button type="button" id="btn-solana-tip" class="btn btn-solana btn-solana-tip" onclick="triggerSolana DirectCheckout()">⚡ Pay with Solana ($19)</button>
-        <button type="button" class="btn btn-outline" id="btn-open-license-modal" onclick="openPaywallModal('Sales Banner Activation')">Have Key? Activate</button>
-      </div>
-    </div>
 
     <!-- Navigation Tabs -->
     <div class="tabs-bar">
@@ -771,10 +695,10 @@
         <div class="card">
           <div class="card-title">◈ Net Margin & Payout Breakdown</div>
           <div class="score-circle">
-            <div class="score-val" id="netProfitVal" style="color: #34D399;">$19.46</div>
+            <div class="score-val" id="netProfitVal" style="color: #34D399;">$0.34</div>
             <div>
-              <div style="font-weight: 700; font-size: 1.1rem; color: #FFF;" id="marginVal">49.9% Net Margin</div>
-              <div style="font-size: 0.8rem; color: var(--text-dim);" id="roiVal">125.5% ROI on POD spend</div>
+              <div style="font-weight: 700; font-size: 1.1rem; color: #FFF;" id="marginVal">49.6% Net Margin</div>
+              <div style="font-size: 0.8rem; color: var(--text-dim);" id="roiVal">124.8% ROI on POD spend</div>
             </div>
           </div>
           <div class="stat-row">
@@ -830,21 +754,12 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div class="card-title" style="margin: 0;">★ Printify API Payload</div>
             <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn btn-outline" id="btn-copy-payload" style="padding: 4px 10px; font-size: 0.75rem;" onclick="triggerProAction('copy_payload')">✦ Copy Payload (Pro)</button>
-              <button type="button" class="btn btn-gold" id="btn-export-matrix" style="padding: 4px 10px; font-size: 0.75rem;" onclick="triggerProAction('export_matrix')">↓ Export CSV (Pro)</button>
+              <button type="button" class="btn btn-outline" id="btn-copy-payload" style="padding: 4px 10px; font-size: 0.75rem;" onclick="copyPrintifyPayload()">✦ Copy Payload</button>
+              <button type="button" class="btn btn-gold" id="btn-export-matrix" style="padding: 4px 10px; font-size: 0.75rem;" onclick="exportBlueprintCsv()">↓ Export CSV</button>
             </div>
           </div>
-          <div class="paywall-wrapper" id="podPaywall">
-            <div class="paywall-overlay" id="podOverlay">
-              <h4>★ Pro Production Payload & Automation</h4>
-              <p>Unlock 1-click JSON payloads for direct Printify webhooks, raw CSV matrix exports, and automated Etsy listing creation.</p>
-              <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
-                <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" target="_blank" rel="noopener">⚡ Stripe Pay $19</a>
-                <button type="button" id="btn-solana-tip-paywall" class="btn btn-solana btn-solana-tip" onclick="triggerSolana DirectCheckout()">◎ Solana $19</button>
-                <button type="button" id="btn-unlock-paywall" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openPaywallModal('Paywall Overlay')">✦ Enter Key</button>
-              </div>
-            </div>
-            <pre class="blurred-content" id="podJsonCode" style="font-family: var(--mono); font-size: 0.75rem; color: #38BDF8; background: #000; padding: 16px; border-radius: 8px;">
+          <div id="podPayloadWrap">
+            <pre id="podJsonCode" style="font-family: var(--mono); font-size: 0.75rem; color: #38BDF8; background: #000; padding: 16px; border-radius: 8px;">
 {
   "blueprint_id": 49,
   "print_provider_id": 29,
@@ -883,44 +798,9 @@
 
   </main>
 
-  <!-- Pro Paywall Modal -->
-  <div id="paywall-modal" class="modal-backdrop" data-alias="licenseModal" data-alt-id="proModal" onclick="if(event.target === this) closePaywallModal()">
-    <div class="modal-card">
-      <button type="button" id="modal-close-btn" class="modal-close" onclick="closePaywallModal()">&times;</button>
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-        <span class="badge-pro">⭐ PRO UNLOCK</span>
-        <span style="font-size: 0.8rem; color: var(--text-dim);" id="modalFeatureName">Instant Pro Activation</span>
-      </div>
-      <h3 style="font-size: 1.4rem; color: #FFF; margin-bottom: 8px;">Etsy Connector Pro Lifetime Access</h3>
-      <p style="font-size: 0.88rem; color: var(--text-dim); margin-bottom: 16px;">
-        Supercharge your Etsy shop with automated SEO algorithms, Printify POD payload generation, and seamless Antigravity MCP integration.
-      </p>
-      <ul class="matrix-list">
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>Unlimited Etsy SEO Audits</strong>: Real-time 140-char title & 13-tag ranking algorithm scoring</span></li>
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>POD Margin & Fee Precision</strong>: Exact transaction, processing, and offsite ad calculations</span></li>
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>1-Click Printify Blueprints</strong>: Instant production JSON payloads for webhook sync</span></li>
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>Catalog CSV Matrix Export</strong>: Full tabular export of specs, costs, and retail tiers</span></li>
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>Full Antigravity MCP Access</strong>: 8 autonomous agent tools for listings, tags, and shop stats</span></li>
-        <li class="matrix-item"><span class="matrix-check">✓</span> <span><strong>Lifetime Sovereign License</strong>: Zero recurring subscriptions, instant client-side unlock</span></li>
-      </ul>
-      <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-        <a href="https://github.com/1nc0gn30/zoth-os" class="btn btn-gold" style="flex: 1; min-width: 180px; justify-content: center;" target="_blank" rel="noopener">⚡ Pay with Stripe ($19)</a>
-        <button type="button" id="btn-solana-tip-modal" class="btn btn-solana btn-solana-tip" style="flex: 1; min-width: 180px; justify-content: center;" onclick="triggerSolana DirectCheckout()">◎ Pay with Solana ($19)</button>
-      </div>
-      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--card-border);">
-        <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">Already purchased? Enter your license key or receipt email:</div>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="licenseKeyInput" data-alias="licenseKeyInput" data-alt-id="license-key-input" placeholder="e.g. ETSY-PRO-2026 or receipt email" style="flex: 1; padding: 8px 12px; font-size: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 8px; color: #FFF;">
-          <button type="button" id="btnActivateKey" data-alias="btnActivateKey" data-alt-id="btn-activate-key" class="btn btn-outline" style="white-space: nowrap; padding: 8px 16px;" onclick="verifyLicenseKey()">Activate</button>
-        </div>
-        <div id="license-status" style="font-size: 0.75rem; margin-top: 6px; min-height: 18px;"></div>
-      </div>
-    </div>
-  </div>
-
   <footer>
     <div class="container">
-      Engineered by NullAI (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a>
+      Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/etsy-connector" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a> • <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a> • Solana: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
     </div>
   </footer>
 
@@ -928,12 +808,14 @@
     // Tab switching
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active');
+        if (el.getAttribute('onclick') && el.getAttribute('onclick').includes("'" + tabId + "'")) {
+          el.classList.add('active');
+        }
+      });
       const target = document.getElementById('tab-' + tabId);
       if (target) target.style.display = 'block';
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-      }
     }
 
     // SEO Audit in Browser
@@ -1037,20 +919,6 @@
       document.getElementById('podJsonCode').textContent = JSON.stringify(payload, null, 2);
     }
 
-    // Modal controls
-    function openPaywallModal(feature) {
-      if (feature) {
-        document.getElementById('modalFeatureName').textContent = feature;
-      }
-      const modal = document.getElementById('paywall-modal');
-      modal.classList.add('open');
-      document.getElementById('license-status').textContent = '';
-      setTimeout(() => {
-        const inp = document.getElementById('license-key-input');
-        if (inp) inp.focus();
-      }, 50);
-    }
-
     // Toast notification helper
     function showToast(msg) {
       console.log('[ETSY]', msg);
@@ -1071,175 +939,70 @@
       }, 3500);
     }
 
-    function closePaywallModal() {
-      const modal = document.getElementById('paywall-modal');
-      modal.classList.remove('open');
-    }
-
-    // Action Interceptor
-    function triggerProAction(actionType) {
-      const isPro = localStorage.getItem('etsy_connector_pro') === 'true' ||
-                    localStorage.getItem('zoth_etsy_licensed') === 'true' ||
-                    localStorage.getItem('pro_licensed') === 'true';
-      if (!isPro) {
-        const labels = {
-          'copy_payload': 'Copy Production Payload',
-          'export_matrix': 'Export Blueprint CSV Matrix'
-        };
-        openPaywallModal(labels[actionType] || 'Pro Automation Feature');
-        return;
-      }
-
-      if (actionType === 'copy_payload') {
-        const text = document.getElementById('podJsonCode').textContent.trim();
-        navigator.clipboard.writeText(text).then(() => {
-          const btn = document.getElementById('btn-copy-payload');
-          const original = btn.textContent;
-          btn.textContent = '✓ Payload Copied!';
-          showToast('✓ Printify Production Payload copied to clipboard!');
-          setTimeout(() => { btn.textContent = original; }, 2000);
-        }).catch(err => {
-          showToast('Printify JSON ready for export.');
-        });
-      } else if (actionType === 'export_matrix') {
-        const csvContent = "data:text/csv;charset=utf-8," + 
-          "Product,Blueprint ID,Print Provider ID,Retail Price,Base Cost,Resolution,Status\n" +
-          "Comfort Colors 1717 Garment-Dyed Tee,638,29,$32.99,$12.80,4500x5400 px,Ready\n" +
-          "Gildan 18000 Heavy Blend Crewneck Sweatshirt,49,29,$38.99,$15.50,4500x5400 px,Ready\n" +
-          "Ceramic Accent Mug 15oz,68,29,$21.99,$6.80,2400x1100 px,Ready\n" +
-          "Liberty Bags Heavy Canvas Tote,611,29,$24.99,$7.20,3600x3600 px,Ready\n" +
-          "Instant Digital Download 300 DPI Wall Art,0,0,$9.99,$0.00,7200x10800 px,Ready\n";
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "etsy_printify_blueprints.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('✓ Blueprint CSV Matrix downloaded!');
-      }
-    }
-
-    // Key Verification
-    function verifyLicenseKey() {
-      const inp = document.getElementById('licenseKeyInput') || document.getElementById('license-key-input');
-      const status = document.getElementById('license-status');
-      const val = (inp ? inp.value : '').trim();
-
-      if (val.length >= 4 || val.includes('@') || val.toUpperCase() === 'ETSY-PRO-2026' || val.toUpperCase() === 'SOVEREIGN-PRO-2026') {
-        localStorage.setItem('etsy_connector_pro', 'true');
-        localStorage.setItem('zoth_etsy_licensed', 'true');
-        localStorage.setItem('pro_licensed', 'true');
-        if (status) {
-          status.style.color = '#34D399';
-          status.textContent = '★ License key verified! Unlocking Pro privileges...';
-        }
-        showToast('⭐ Sovereign Pro License Activated Permanently!');
-        checkLicense();
-        setTimeout(() => {
-          closePaywallModal();
-        }, 500);
-      } else {
-        if (status) {
-          status.style.color = '#F87171';
-          status.textContent = '⚠️ Invalid key or email format. Please check receipt.';
-        }
-        showToast('Invalid key or email format.');
-      }
-    }
-
-    window.activateLicenseKey = function(key) {
-      const inp = document.getElementById('licenseKeyInput') || document.getElementById('license-key-input');
-      if (inp) inp.value = key;
-      verifyLicenseKey();
-    };
-    window.openLicenseModal = openPaywallModal;
-
-    // License Check
-    function checkLicense() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isLicensed = urlParams.get('licensed') === 'true' ||
-                         window.location.search.includes('session_id=') ||
-                         localStorage.getItem('etsy_connector_pro') === 'true' ||
-                         localStorage.getItem('zoth_etsy_licensed') === 'true' ||
-                         localStorage.getItem('pro_licensed') === 'true';
-
-      if (isLicensed) {
-        localStorage.setItem('etsy_connector_pro', 'true');
-        localStorage.setItem('zoth_etsy_licensed', 'true');
-        localStorage.setItem('pro_licensed', 'true');
-        document.body.classList.add('pro-licensed', 'pro-unlocked');
-        
-        const badge = document.getElementById('licenseBadge') || document.getElementById('pro-badge');
-        if (badge) {
-          badge.textContent = '⭐ PRO ACTIVE';
-          badge.className = 'badge-pro';
-        }
-
-        const banner = document.getElementById('salesBanner');
-        if (banner) banner.style.display = 'none';
-
-        const overlay = document.getElementById('podOverlay');
-        if (overlay) overlay.style.display = 'none';
-
-        const jsonCode = document.getElementById('podJsonCode');
-        if (jsonCode) jsonCode.classList.remove('blurred-content');
-
-        const headerKeyBtn = document.getElementById('btn-header-key');
-        if (headerKeyBtn) {
-          headerKeyBtn.textContent = '⭐ Pro Unlocked';
-          headerKeyBtn.disabled = true;
-          headerKeyBtn.style.opacity = '0.7';
-          headerKeyBtn.style.cursor = 'default';
-        }
-
-        if (window.location.search.includes('licensed=true') || window.location.search.includes('session_id=')) {
-          try {
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({ path: cleanUrl }, document.title, cleanUrl);
-          } catch (e) {}
-        }
-      } else {
-        const badge = document.getElementById('licenseBadge') || document.getElementById('pro-badge');
-        if (badge) {
-          badge.textContent = '⚡ FREE TIER';
-          badge.className = 'badge-free';
-        }
-        const banner = document.getElementById('salesBanner');
-        if (banner) banner.style.display = 'flex';
-      }
-    }
-
-    // Solana Tip Fallback
-    function triggerSolana DirectCheckout() {
-      const solanaAddress = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
-      navigator.clipboard.writeText(solanaAddress).then(() => {
-        showToast('Solana Receiver Address Copied: ' + solanaAddress);
-      }).catch(() => {
-        showToast('Solana Receiver: ' + solanaAddress);
+    // Open-Source Payload & CSV Export Actions
+    function copyPrintifyPayload() {
+      const text = document.getElementById('podJsonCode').textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btn-copy-payload');
+        const original = btn.textContent;
+        btn.textContent = '✓ Payload Copied!';
+        showToast('✓ Printify Production Payload copied to clipboard!');
+        setTimeout(() => { btn.textContent = original; }, 2000);
+      }).catch(err => {
+        showToast('Printify JSON ready for export.');
       });
     }
 
-    // Keyboard bindings
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closePaywallModal();
-      }
-    });
+    function exportBlueprintCsv() {
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "Product,Blueprint ID,Print Provider ID,Retail Price,Base Cost,Resolution,Status\n" +
+        "Comfort Colors 1717 Garment-Dyed Tee,638,29,$32.99,$12.80,4500x5400 px,Ready\n" +
+        "Gildan 18000 Heavy Blend Crewneck Sweatshirt,49,29,$38.99,$15.50,4500x5400 px,Ready\n" +
+        "Ceramic Accent Mug 15oz,68,29,$21.99,$6.80,2400x1100 px,Ready\n" +
+        "Liberty Bags Heavy Canvas Tote,611,29,$24.99,$7.20,3600x3600 px,Ready\n" +
+        "Instant Digital Download 300 DPI Wall Art,0,0,$9.99,$0.00,7200x10800 px,Ready\n";
 
-    const keyInp = document.getElementById('licenseKeyInput') || document.getElementById('license-key-input');
-    keyInp?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        verifyLicenseKey();
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "etsy_printify_blueprints.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('✓ Blueprint CSV Matrix downloaded!');
+    }
+
+    function initOpenAccessState() {
+      const badge = document.getElementById('openAccessBadge');
+      if (badge) {
+        badge.textContent = '✦ OPEN SOURCE';
+        badge.className = 'badge-open';
       }
-    });
+    }
 
     // Init
     runAudit();
     runProfit();
     updateBlueprint();
-    checkLicense();
+    initOpenAccessState();
   </script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "etsy-connector",
+          toolName: "Etsy Connector",
+          tagline: "Optimize your Etsy storefront with 13-tag SEO and fee margin audits.",
+          accentColor: "#F97316",
+          steps: [{"icon": "\ud83d\udecd\ufe0f", "title": "Rank Higher on Etsy", "desc": "Helps shoppers find your items by testing your titles and search tags against Etsy's ranking algorithm."}, {"icon": "\ud83c\udff7\ufe0f", "title": "The 13-Tag Inspector", "desc": "Make sure you use all 13 tags without wasting space on repeats or banned words."}, {"icon": "\ud83d\udcb0", "title": "Instant Profit Margins", "desc": "Calculates Etsy seller fees and shipping costs so you know exactly how much money you take home."}]
+        });
+      }
+    });
+  </script>
+  <script src="/assets/sovereign-upgrade.js"></script>
+
 </body>
 </html>

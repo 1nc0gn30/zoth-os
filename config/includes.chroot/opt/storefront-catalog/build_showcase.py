@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Build Avant-Garde Web Showcase for YourDigitalSpace Master Catalog.
+"""Build 100% Open-Access Web Showcase for YourDigitalSpace Master Catalog.
 
-Demographic: 55+ Women (Grandmothers, Gardeners, Cottagecore, Crafters)
-Sovereign SaaS Standard: Glassmorphic UI, Interactive Profit Engine, Action Interceptors,
-Dual Stripe/Solana Checkout, Schema.org Graph, Triple-Viewport Responsive.
+Reads catalog_manifest.json and writes public/index.html with zero paywalls,
+zero third-party payment popups, interactive run-rate calculator, and Printify payload export.
 Zero external dependencies.
 """
 
@@ -15,19 +14,13 @@ MANIFEST_PATH = ROOT / "catalog_manifest.json"
 PUBLIC_DIR = ROOT / "public"
 OUTPUT_HTML = PUBLIC_DIR / "index.html"
 
-with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
-    manifest = json.load(f)
-
-products_json = json.dumps(manifest["listings"])
-financials = manifest["portfolio_financials"]
-
-html_content = f"""<!DOCTYPE html>
+TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YourDigitalSpace — Day 7 Master Print-on-Demand Catalog</title>
-  <meta name="description" content="10 high-converting Etsy Print-on-Demand products optimized for 55+ women, grandmothers, gardeners, and crafters. 62.6% blended profit margin with full Printify payloads.">
+  <meta name="description" content="10 high-converting Etsy Print-on-Demand products optimized for 55+ women, grandmothers, gardeners, and crafters. __BLENDED_MARGIN__% blended profit margin with full Printify payloads.">
   <meta name="keywords" content="etsy, print on demand, printify, cottagecore, grandma gifts, wildflower, botanical, margins, seo tags">
   <meta name="author" content="1nc0gn30 (@1nc0gn30) • NullAI Platform">
   <link rel="canonical" href="https://yourdigitalspace.nullai.tech/">
@@ -36,7 +29,7 @@ html_content = f"""<!DOCTYPE html>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yourdigitalspace.nullai.tech/">
   <meta property="og:title" content="YourDigitalSpace — Day 7 Master Print-on-Demand Catalog">
-  <meta property="og:description" content="10 Production-Ready Etsy POD Products. 100/100 SEO Score, 62.6% Blended Margin, 300 DPI Canvases & Printify API Payloads.">
+  <meta property="og:description" content="10 Production-Ready Etsy POD Products. 100/100 SEO Score, __BLENDED_MARGIN__% Blended Margin, 300 DPI Canvases & Printify API Payloads.">
   <meta property="og:image" content="https://yourdigitalspace.nullai.tech/assets/mockups/prod-01-grandma-garden-sweatshirt_mockup.jpg">
 
   <!-- Twitter Meta -->
@@ -44,7 +37,7 @@ html_content = f"""<!DOCTYPE html>
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
   <meta name="twitter:title" content="YourDigitalSpace — Day 7 Master Etsy POD Catalog">
-  <meta name="twitter:description" content="10 Production-Ready Etsy POD Products. 100/100 SEO Score, 62.6% Blended Margin.">
+  <meta name="twitter:description" content="10 Production-Ready Etsy POD Products. 100/100 SEO Score, __BLENDED_MARGIN__% Blended Margin.">
   <meta name="twitter:image" content="https://yourdigitalspace.nullai.tech/assets/mockups/prod-01-grandma-garden-sweatshirt_mockup.jpg">
 
   <!-- Typography -->
@@ -54,67 +47,65 @@ html_content = f"""<!DOCTYPE html>
 
   <!-- Schema.org JSON-LD Graph -->
   <script type="application/ld+json">
-  {{
+  {
     "@context": "https://schema.org",
     "@graph": [
-      {{
+      {
         "@type": "WebApplication",
         "name": "YourDigitalSpace Etsy POD Catalog Showcase",
         "url": "https://yourdigitalspace.nullai.tech/",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "All modern web browsers",
-        "creator": {{
+        "creator": {
           "@type": "Person",
           "name": "1nc0gn30",
           "alternateName": "1nc0gn30 • NullAI",
           "sameAs": "https://github.com/1nc0gn30"
-        }},
-        "offers": {{
+        },
+        "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "priceValidUntil": "2027-12-31",
           "availability": "https://schema.org/InStock",
-          "url": "https://buy.stripe.com/7sI7sA8hM2X8eFG8ww"
-        }},
-        "description": "Comprehensive 10-product Etsy Print-on-Demand catalog optimized for 55+ women demographic with 62.6% blended profit margin, 13/13 tag sets, and Printify payloads."
-      }},
-      {{
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+        },
+        "description": "Comprehensive 10-product Etsy Print-on-Demand catalog optimized for 55+ women demographic with __BLENDED_MARGIN__% blended profit margin, 13/13 tag sets, and Printify payloads."
+      },
+      {
         "@type": "FAQPage",
         "mainEntity": [
-          {{
+          {
             "@type": "Question",
             "name": "What is included with each product in the YourDigitalSpace catalog?",
-            "acceptedAnswer": {{
+            "acceptedAnswer": {
               "@type": "Answer",
               "text": "Every product includes full 13/13 high-converting Etsy SEO tags (100/100 score), verified print canvas master artwork at 300 DPI, photorealistic mockups, optimized product description with sizing charts, and 1-click Printify API JSON fulfillment payloads."
-            }}
-          }},
-          {{
+            }
+          },
+          {
             "@type": "Question",
             "name": "Can I publish these directly to my Etsy shop or Printify store?",
-            "acceptedAnswer": {{
+            "acceptedAnswer": {
               "@type": "Answer",
               "text": "Yes! The JSON payloads match the Printify v1 catalog schema and can be submitted directly via API or imported into the Etsy Connector MCP bridge for instant publishing."
-            }}
-          }},
-          {{
+            }
+          },
+          {
             "@type": "Question",
-            "name": "What payment methods are accepted for commercial lifetime access?",
-            "acceptedAnswer": {{
+            "name": "How can I support YourDigitalSpace and ZothOS?",
+            "acceptedAnswer": {
               "@type": "Answer",
-              "text": "We accept credit cards, Apple Pay, and Google Pay via Stripe, as well as on-chain cryptocurrency payments via the Solana Tip gateway with zero processing friction."
-            }}
-          }}
+              "text": "YourDigitalSpace is 100% free and open access for everyone with zero paywalls. If our tools and print-on-demand assets help your business thrive, you can support us via Buy Us a Coffee (Stripe) or on-chain Solana tip."
+            }
+          }
         ]
-      }}
+      }
     ]
-  }}
+  }
   </script>
-  <script defer src=""></script>
-
   <style>
-    :root {{
+    :root {
       --bg: #09090b;
       --bg-card: rgba(24, 24, 27, 0.7);
       --bg-card-hover: rgba(39, 39, 42, 0.85);
@@ -132,25 +123,25 @@ html_content = f"""<!DOCTYPE html>
       --text-dim: #71717a;
       --font-display: 'Syne', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
-    }}
+    }
 
-    * {{
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }}
+    }
 
-    body {{
+    body {
       background-color: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
       min-height: 100vh;
       overflow-x: hidden;
       line-height: 1.5;
-    }}
+    }
 
     /* Conic mesh background glow */
-    .bg-glow {{
+    .bg-glow {
       position: fixed;
       top: 0;
       left: 0;
@@ -162,9 +153,9 @@ html_content = f"""<!DOCTYPE html>
         radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 85% 20%, rgba(244, 63, 94, 0.06) 0%, transparent 45%),
         radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
-    }}
+    }
 
-    .container {{
+    .container {
       width: 100%;
       max-width: 1380px;
       margin: 0 auto;
@@ -172,10 +163,10 @@ html_content = f"""<!DOCTYPE html>
       position: relative;
       z-index: 1;
       overflow-x: hidden;
-    }}
+    }
 
     /* Header */
-    header {{
+    header {
       padding: 2.5rem 0 1.5rem 0;
       display: flex;
       flex-wrap: wrap;
@@ -185,22 +176,22 @@ html_content = f"""<!DOCTYPE html>
       border-bottom: 1px solid var(--border);
       margin-bottom: 2rem;
       width: 100%;
-    }}
+    }
 
-    .brand-title {{
+    .brand-title {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
-    }}
+    }
 
-    .brand-logo-row {{
+    .brand-logo-row {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       flex-wrap: wrap;
-    }}
+    }
 
-    .brand-logo-icon {{
+    .brand-logo-icon {
       width: 36px;
       height: 36px;
       border-radius: 10px;
@@ -211,9 +202,9 @@ html_content = f"""<!DOCTYPE html>
       justify-content: center;
       color: var(--gold-bright);
       font-size: 1.2rem;
-    }}
+    }
 
-    h1 {{
+    h1 {
       font-family: var(--font-display);
       font-size: 1.85rem;
       font-weight: 800;
@@ -223,9 +214,9 @@ html_content = f"""<!DOCTYPE html>
       -webkit-text-fill-color: transparent;
       word-break: break-word;
       overflow-wrap: break-word;
-    }}
+    }
 
-    .badge-tag {{
+    .badge-tag {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
@@ -238,21 +229,21 @@ html_content = f"""<!DOCTYPE html>
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-    }}
+    }
 
-    .sub-tagline {{
+    .sub-tagline {
       font-size: 0.9rem;
       color: var(--text-muted);
-    }}
+    }
 
-    .header-actions {{
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       flex-wrap: wrap;
-    }}
+    }
 
-    .pro-badge {{
+    .pro-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -264,17 +255,17 @@ html_content = f"""<!DOCTYPE html>
       border: 1px solid var(--border);
       color: var(--text-muted);
       transition: all 0.2s ease;
-    }}
+    }
 
-    .pro-badge.active {{
+    .pro-badge.active {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 215, 0, 0.1));
       border: 1px solid var(--gold);
       color: var(--gold-bright);
       box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-    }}
+    }
 
     /* Sales Funnel Banner Above The Fold */
-    .sales-funnel-banner {{
+    .sales-funnel-banner {
       background: linear-gradient(135deg, rgba(28, 25, 23, 0.95), rgba(24, 24, 27, 0.95));
       border: 1px solid var(--border-gold);
       border-radius: 18px;
@@ -287,9 +278,9 @@ html_content = f"""<!DOCTYPE html>
       box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.15);
       position: relative;
       overflow: hidden;
-    }}
+    }
 
-    .banner-beam {{
+    .banner-beam {
       position: absolute;
       top: -50%;
       left: -50%;
@@ -298,19 +289,19 @@ html_content = f"""<!DOCTYPE html>
       background: conic-gradient(from 0deg, transparent 0deg, rgba(212, 175, 55, 0.1) 60deg, transparent 120deg);
       animation: rotateBeam 12s linear infinite;
       pointer-events: none;
-    }}
+    }
 
-    @keyframes rotateBeam {{
-      from {{ transform: rotate(0deg); }}
-      to {{ transform: rotate(360deg); }}
-    }}
+    @keyframes rotateBeam {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
-    .banner-content {{
+    .banner-content {
       position: relative;
       z-index: 1;
-    }}
+    }
 
-    .banner-urgent-pill {{
+    .banner-urgent-pill {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -323,39 +314,39 @@ html_content = f"""<!DOCTYPE html>
       font-weight: 700;
       text-transform: uppercase;
       margin-bottom: 0.75rem;
-    }}
+    }
 
-    .banner-title {{
+    .banner-title {
       font-family: var(--font-display);
       font-size: 1.45rem;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 0.5rem;
       line-height: 1.25;
-    }}
+    }
 
-    .banner-desc {{
+    .banner-desc {
       font-size: 0.88rem;
       color: var(--text-muted);
       margin-bottom: 0.75rem;
       line-height: 1.45;
-    }}
+    }
 
-    .banner-perks {{
+    .banner-perks {
       display: flex;
       flex-wrap: wrap;
       gap: 0.85rem;
       font-size: 0.8rem;
       color: #e4e4e7;
-    }}
+    }
 
-    .banner-perks span {{
+    .banner-perks span {
       display: flex;
       align-items: center;
       gap: 0.35rem;
-    }}
+    }
 
-    .banner-cta-card {{
+    .banner-cta-card {
       position: relative;
       z-index: 1;
       background: rgba(9, 9, 11, 0.75);
@@ -367,29 +358,29 @@ html_content = f"""<!DOCTYPE html>
       align-items: center;
       text-align: center;
       backdrop-filter: blur(12px);
-    }}
+    }
 
-    .pricing-row {{
+    .pricing-row {
       display: flex;
       align-items: baseline;
       gap: 0.6rem;
       margin-bottom: 0.5rem;
-    }}
+    }
 
-    .price-regular {{
+    .price-regular {
       font-size: 1.15rem;
       color: var(--text-dim);
       text-decoration: line-through;
-    }}
+    }
 
-    .price-discounted {{
+    .price-discounted {
       font-family: var(--font-display);
       font-size: 2.2rem;
       font-weight: 800;
       color: var(--gold-bright);
-    }}
+    }
 
-    .price-badge {{
+    .price-badge {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.4);
       color: var(--emerald);
@@ -397,17 +388,17 @@ html_content = f"""<!DOCTYPE html>
       border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 700;
-    }}
+    }
 
-    .checkout-rail-buttons {{
+    .checkout-rail-buttons {
       display: flex;
       flex-direction: column;
       gap: 0.6rem;
       width: 100%;
       margin: 0.85rem 0;
-    }}
+    }
 
-    .btn-stripe {{
+    .btn-stripe {
       width: 100%;
       padding: 0.75rem 1rem;
       border-radius: 10px;
@@ -423,14 +414,14 @@ html_content = f"""<!DOCTYPE html>
       gap: 0.5rem;
       transition: all 0.2s ease;
       box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
-    }}
+    }
 
-    .btn-stripe:hover {{
+    .btn-stripe:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
-    }}
+    }
 
-    .btn-solana {{
+    .btn-solana {
       width: 100%;
       padding: 0.7rem 1rem;
       border-radius: 10px;
@@ -445,35 +436,35 @@ html_content = f"""<!DOCTYPE html>
       justify-content: center;
       gap: 0.5rem;
       transition: all 0.2s ease;
-    }}
+    }
 
-    .btn-solana:hover {{
+    .btn-solana:hover {
       background: rgba(39, 39, 42, 0.95);
       border-color: var(--purple);
       color: #ffffff;
-    }}
+    }
 
-    .activate-key-link {{
+    .activate-key-link {
       font-size: 0.78rem;
       color: var(--text-muted);
       text-decoration: underline;
       cursor: pointer;
       transition: color 0.2s ease;
-    }}
+    }
 
-    .activate-key-link:hover {{
+    .activate-key-link:hover {
       color: var(--gold-bright);
-    }}
+    }
 
     /* Bento Financial Grid */
-    .bento-grid {{
+    .bento-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 1rem;
       margin-bottom: 2.5rem;
-    }}
+    }
 
-    .bento-card {{
+    .bento-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -483,44 +474,44 @@ html_content = f"""<!DOCTYPE html>
       gap: 0.35rem;
       transition: all 0.2s ease;
       backdrop-filter: blur(10px);
-    }}
+    }
 
-    .bento-card:hover {{
+    .bento-card:hover {
       border-color: rgba(255, 255, 255, 0.15);
       background: var(--bg-card-hover);
-    }}
+    }
 
-    .bento-label {{
+    .bento-label {
       font-size: 0.75rem;
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-    }}
+    }
 
-    .bento-value {{
+    .bento-value {
       font-family: var(--font-display);
       font-size: 1.6rem;
       font-weight: 800;
       color: #ffffff;
-    }}
+    }
 
-    .bento-sub {{
+    .bento-sub {
       font-size: 0.75rem;
       color: var(--text-dim);
-    }}
+    }
 
-    .bento-card.highlight {{
+    .bento-card.highlight {
       border-color: var(--border-gold);
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(24, 24, 27, 0.7));
-    }}
+    }
 
-    .bento-card.highlight .bento-value {{
+    .bento-card.highlight .bento-value {
       color: var(--gold-bright);
-    }}
+    }
 
     /* Interactive Profit Calculator Section */
-    .calculator-section {{
+    .calculator-section {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -531,50 +522,50 @@ html_content = f"""<!DOCTYPE html>
       gap: 2rem;
       align-items: center;
       backdrop-filter: blur(12px);
-    }}
+    }
 
-    .calc-controls {{
+    .calc-controls {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-    }}
+    }
 
-    .calc-title {{
+    .calc-title {
       font-family: var(--font-display);
       font-size: 1.25rem;
       font-weight: 700;
       color: #ffffff;
-    }}
+    }
 
-    .calc-slider-wrapper {{
+    .calc-slider-wrapper {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-    }}
+    }
 
-    .calc-slider-header {{
+    .calc-slider-header {
       display: flex;
       justify-content: space-between;
       font-size: 0.88rem;
       color: var(--text-muted);
-    }}
+    }
 
-    .calc-slider-val {{
+    .calc-slider-val {
       font-weight: 800;
       color: var(--gold-bright);
       font-family: var(--font-display);
-    }}
+    }
 
-    input[type=range] {{
+    input[type=range] {
       -webkit-appearance: none;
       width: 100%;
       height: 8px;
       border-radius: 4px;
       background: #27272a;
       outline: none;
-    }}
+    }
 
-    input[type=range]::-webkit-slider-thumb {{
+    input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 20px;
       height: 20px;
@@ -582,15 +573,15 @@ html_content = f"""<!DOCTYPE html>
       background: var(--gold-bright);
       cursor: pointer;
       box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-    }}
+    }
 
-    .calc-results {{
+    .calc-results {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
-    }}
+    }
 
-    .calc-result-box {{
+    .calc-result-box {
       background: rgba(9, 9, 11, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -598,42 +589,42 @@ html_content = f"""<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-    }}
+    }
 
-    .calc-result-label {{
+    .calc-result-label {
       font-size: 0.72rem;
       color: var(--text-muted);
       text-transform: uppercase;
-    }}
+    }
 
-    .calc-result-num {{
+    .calc-result-num {
       font-family: var(--font-display);
       font-size: 1.4rem;
       font-weight: 800;
       color: var(--emerald);
-    }}
+    }
 
-    .calc-result-num.treasury {{
+    .calc-result-num.treasury {
       color: var(--gold-bright);
-    }}
+    }
 
     /* Filter Tabs & Search Row */
-    .controls-row {{
+    .controls-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
       margin-bottom: 1.75rem;
-    }}
+    }
 
-    .filter-tabs {{
+    .filter-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-    }}
+    }
 
-    .filter-tab {{
+    .filter-tab {
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 0.82rem;
@@ -643,20 +634,20 @@ html_content = f"""<!DOCTYPE html>
       color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
-    }}
+    }
 
-    .filter-tab:hover {{
+    .filter-tab:hover {
       color: #ffffff;
       border-color: rgba(255, 255, 255, 0.2);
-    }}
+    }
 
-    .filter-tab.active {{
+    .filter-tab.active {
       background: rgba(212, 175, 55, 0.15);
       border-color: var(--gold);
       color: var(--gold-bright);
-    }}
+    }
 
-    .search-input {{
+    .search-input {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -668,21 +659,21 @@ html_content = f"""<!DOCTYPE html>
       max-width: 320px;
       min-width: 0;
       transition: border-color 0.2s ease;
-    }}
+    }
 
-    .search-input:focus {{
+    .search-input:focus {
       border-color: var(--gold);
-    }}
+    }
 
     /* Products Grid */
-    .products-grid {{
+    .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1.5rem;
       margin-bottom: 3.5rem;
-    }}
+    }
 
-    .product-card {{
+    .product-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -691,40 +682,40 @@ html_content = f"""<!DOCTYPE html>
       flex-direction: column;
       transition: all 0.25s ease;
       backdrop-filter: blur(10px);
-    }}
+    }
 
-    .product-card:hover {{
+    .product-card:hover {
       transform: translateY(-3px);
       border-color: rgba(212, 175, 55, 0.3);
       box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
-    }}
+    }
 
-    .card-media {{
+    .card-media {
       position: relative;
       width: 100%;
       height: 280px;
       background: #141418;
       overflow: hidden;
       cursor: pointer;
-    }}
+    }
 
-    .card-media img {{
+    .card-media img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
-    }}
+    }
 
-    .product-card:hover .card-media img {{
+    .product-card:hover .card-media img {
       transform: scale(1.04);
-    }}
+    }
 
-    .card-cadre-tag {{
+    .card-cadre-tag {
       position: absolute;
       top: 12px;
       left: 12px;
       background: rgba(9, 9, 11, 0.8);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       border: 1px solid var(--border);
       color: #ffffff;
       padding: 0.25rem 0.65rem;
@@ -732,9 +723,9 @@ html_content = f"""<!DOCTYPE html>
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-    }}
+    }
 
-    .card-seo-tag {{
+    .card-seo-tag {
       position: absolute;
       top: 12px;
       right: 12px;
@@ -745,17 +736,17 @@ html_content = f"""<!DOCTYPE html>
       font-size: 0.72rem;
       font-weight: 800;
       text-transform: uppercase;
-    }}
+    }
 
-    .card-body {{
+    .card-body {
       padding: 1.4rem;
       display: flex;
       flex-direction: column;
       flex: 1;
       gap: 0.9rem;
-    }}
+    }
 
-    .card-title {{
+    .card-title {
       font-family: var(--font-display);
       font-size: 1.05rem;
       font-weight: 700;
@@ -766,9 +757,9 @@ html_content = f"""<!DOCTYPE html>
       -webkit-box-orient: vertical;
       overflow: hidden;
       min-height: 2.7rem;
-    }}
+    }
 
-    .card-financials {{
+    .card-financials {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.5rem;
@@ -776,60 +767,60 @@ html_content = f"""<!DOCTYPE html>
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 0.65rem 0.8rem;
-    }}
+    }
 
-    .fin-item {{
+    .fin-item {
       display: flex;
       flex-direction: column;
       gap: 0.15rem;
-    }}
+    }
 
-    .fin-label {{
+    .fin-label {
       font-size: 0.68rem;
       color: var(--text-dim);
       text-transform: uppercase;
-    }}
+    }
 
-    .fin-val {{
+    .fin-val {
       font-size: 0.95rem;
       font-weight: 800;
       color: #ffffff;
-    }}
+    }
 
-    .fin-val.profit {{
+    .fin-val.profit {
       color: var(--emerald);
-    }}
+    }
 
-    .fin-val.margin {{
+    .fin-val.margin {
       color: var(--gold-bright);
-    }}
+    }
 
-    .card-tags-cloud {{
+    .card-tags-cloud {
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
       max-height: 62px;
       overflow: hidden;
       position: relative;
-    }}
+    }
 
-    .tag-pill {{
+    .tag-pill {
       background: rgba(39, 39, 42, 0.6);
       border: 1px solid var(--border);
       color: var(--text-muted);
       padding: 0.15rem 0.45rem;
       border-radius: 4px;
       font-size: 0.7rem;
-    }}
+    }
 
-    .card-actions {{
+    .card-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
       margin-top: auto;
-    }}
+    }
 
-    .btn-action {{
+    .btn-action {
       padding: 0.6rem 0.75rem;
       border-radius: 8px;
       font-size: 0.78rem;
@@ -843,27 +834,27 @@ html_content = f"""<!DOCTYPE html>
       align-items: center;
       justify-content: center;
       gap: 0.35rem;
-    }}
+    }
 
-    .btn-action:hover {{
+    .btn-action:hover {
       background: rgba(39, 39, 42, 1);
       border-color: rgba(255, 255, 255, 0.25);
-    }}
+    }
 
-    .btn-export-payload {{
+    .btn-export-payload {
       grid-column: span 2;
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(24, 24, 27, 0.8));
       border-color: var(--border-gold);
       color: var(--gold-bright);
-    }}
+    }
 
-    .btn-export-payload:hover {{
+    .btn-export-payload:hover {
       background: rgba(212, 175, 55, 0.25);
       border-color: var(--gold);
-    }}
+    }
 
-    /* Output Paywall Frosted Glass Section */
-    .paywall-section {{
+    /* Master Production & Fulfillment Vault */
+    .vault-section {
       background: var(--bg-card);
       border: 1px solid var(--border-gold);
       border-radius: 18px;
@@ -871,98 +862,93 @@ html_content = f"""<!DOCTYPE html>
       margin-bottom: 4rem;
       position: relative;
       overflow: hidden;
-    }}
+    }
 
-    .paywall-header {{
+    .vault-header {
       text-align: center;
       margin-bottom: 2rem;
-    }}
+    }
 
-    .paywall-header h2 {{
+    .vault-header h2 {
       font-family: var(--font-display);
       font-size: 1.7rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text);
       margin-bottom: 0.5rem;
-    }}
+    }
 
-    .paywall-header p {{
+    .vault-header p {
       color: var(--text-muted);
       font-size: 0.95rem;
-    }}
+    }
 
-    .paywall-blur-container {{
+    .vault-code-container {
       position: relative;
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
-    }}
+    }
 
-    .blurred-content {{
-      filter: blur(6px);
-      user-select: none;
-      pointer-events: none;
+    .vault-code-pre {
       background: #09090b;
       padding: 2rem;
       font-family: monospace;
       font-size: 0.85rem;
       color: #a1a1aa;
       line-height: 1.6;
-    }}
+    }
 
-    .blurred-content.unlocked {{
-      filter: none;
-      user-select: text;
-      pointer-events: auto;
-    }}
+    html[data-theme="light"] {
+      --bg: #FBF9F5;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F3EFE6;
+      --border: rgba(17, 24, 39, 0.12);
+      --border-gold: rgba(154, 107, 22, 0.45);
+      --gold: #9A6B16;
+      --gold-bright: #854D0E;
+      --gold-dim: #713F12;
+      --emerald: #047857;
+      --rose: #E11D48;
+      --cyan: #0369A1;
+      --purple: #7E22CE;
+      --text: #111827;
+      --text-muted: #4B5563;
+      --text-dim: #6B7280;
+    }
 
-    .paywall-lock-overlay {{
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(9, 9, 11, 0.65);
-      backdrop-filter: blur(4px);
-      padding: 2rem;
-      text-align: center;
-      z-index: 5;
-    }}
+    html[data-theme="light"] .sales-funnel-banner,
+    html[data-theme="light"] .bento-card,
+    html[data-theme="light"] .calculator-section,
+    html[data-theme="light"] .product-card,
+    html[data-theme="light"] .vault-section,
+    html[data-theme="light"] .banner-cta-card,
+    html[data-theme="light"] .calc-result-box {
+      background: #FFFFFF !important;
+      color: #111827 !important;
+      border-color: rgba(17, 24, 39, 0.14) !important;
+    }
 
-    .lock-icon-circle {{
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid var(--border-gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }}
+    html[data-theme="light"] .banner-title,
+    html[data-theme="light"] .brand-logo-row h1,
+    html[data-theme="light"] .bento-value,
+    html[data-theme="light"] .calc-title,
+    html[data-theme="light"] .card-title,
+    html[data-theme="light"] .fin-val,
+    html[data-theme="light"] .banner-perks,
+    html[data-theme="light"] .banner-perks span,
+    html[data-theme="light"] .banner-cta-card div {
+      color: #111827 !important;
+      background: none !important;
+      -webkit-text-fill-color: #111827 !important;
+    }
 
-    .lock-title {{
-      font-family: var(--font-display);
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-    }}
-
-    .lock-desc {{
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      max-width: 480px;
-      margin-bottom: 1.25rem;
-    }}
+    html[data-theme="light"] .vault-code-pre {
+      background: #F3EFE6 !important;
+      color: #1F2937 !important;
+    }
 
     /* Modals */
-    .modal-overlay {{
+    .modal-overlay {
       display: none;
       position: fixed;
       top: 0;
@@ -975,13 +961,13 @@ html_content = f"""<!DOCTYPE html>
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-    }}
+    }
 
-    .modal-overlay.active {{
+    .modal-overlay.active {
       display: flex;
-    }}
+    }
 
-    .modal-card {{
+    .modal-card {
       background: #121216;
       border: 1px solid var(--border-gold);
       border-radius: 18px;
@@ -992,9 +978,9 @@ html_content = f"""<!DOCTYPE html>
       padding: 2rem;
       position: relative;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    }}
+    }
 
-    .modal-close-btn {{
+    .modal-close-btn {
       position: absolute;
       top: 1.25rem;
       right: 1.25rem;
@@ -1009,44 +995,44 @@ html_content = f"""<!DOCTYPE html>
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
-    }}
+    }
 
-    .modal-close-btn:hover {{
+    .modal-close-btn:hover {
       color: #ffffff;
       background: #27272a;
-    }}
+    }
 
-    .modal-title {{
+    .modal-title {
       font-family: var(--font-display);
       font-size: 1.45rem;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 1rem;
       padding-right: 2rem;
-    }}
+    }
 
-    .modal-media-grid {{
+    .modal-media-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 1.5rem;
-    }}
+    }
 
-    .modal-media-box {{
+    .modal-media-box {
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
       background: #09090b;
-    }}
+    }
 
-    .modal-media-box img {{
+    .modal-media-box img {
       width: 100%;
       height: 240px;
       object-fit: cover;
       display: block;
-    }}
+    }
 
-    .modal-media-label {{
+    .modal-media-label {
       padding: 0.5rem;
       text-align: center;
       font-size: 0.75rem;
@@ -1054,9 +1040,9 @@ html_content = f"""<!DOCTYPE html>
       background: rgba(24, 24, 27, 0.9);
       color: var(--text-muted);
       text-transform: uppercase;
-    }}
+    }
 
-    .modal-copy-block {{
+    .modal-copy-block {
       background: #09090b;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -1068,9 +1054,9 @@ html_content = f"""<!DOCTYPE html>
       max-height: 240px;
       overflow-y: auto;
       margin-bottom: 1.25rem;
-    }}
+    }
 
-    .modal-key-input {{
+    .modal-key-input {
       width: 100%;
       padding: 0.75rem 1rem;
       border-radius: 8px;
@@ -1080,14 +1066,14 @@ html_content = f"""<!DOCTYPE html>
       font-size: 0.9rem;
       margin-bottom: 0.75rem;
       outline: none;
-    }}
+    }
 
-    .modal-key-input:focus {{
+    .modal-key-input:focus {
       border-color: var(--gold);
-    }}
+    }
 
     /* Footer */
-    footer {{
+    footer {
       border-top: 1px solid var(--border);
       padding: 2.5rem 0 1rem 0;
       display: flex;
@@ -1097,84 +1083,92 @@ html_content = f"""<!DOCTYPE html>
       gap: 1rem;
       font-size: 0.85rem;
       color: var(--text-muted);
-    }}
+    }
 
-    footer a {{
+    footer a {
       color: var(--gold);
       text-decoration: none;
-    }}
+    }
 
-    footer a:hover {{
+    footer a:hover {
       text-decoration: underline;
-    }}
+    }
 
     /* Responsiveness */
-    @media (max-width: 1024px) {{
-      .sales-funnel-banner {{
+    @media (max-width: 1024px) {
+      .sales-funnel-banner {
         grid-template-columns: 1fr;
-      }}
-      .bento-grid {{
+      }
+      .bento-grid {
         grid-template-columns: repeat(3, 1fr);
-      }}
-      .calculator-section {{
+      }
+      .calculator-section {
         grid-template-columns: 1fr;
-      }}
-    }}
+      }
+    }
 
-    @media (max-width: 768px) {{
-      .bento-grid {{
+    @media (max-width: 768px) {
+      .bento-grid {
         grid-template-columns: repeat(2, 1fr);
-      }}
-      .products-grid {{
+      }
+      .products-grid {
         grid-template-columns: 1fr;
-      }}
-      .modal-media-grid {{
+      }
+      .modal-media-grid {
         grid-template-columns: 1fr;
-      }}
-      .calc-results {{
+      }
+      .calc-results {
         grid-template-columns: 1fr;
-      }}
-    }}
+      }
+    }
 
-    @media (max-width: 480px) {{
-      .container {{
+    @media (max-width: 480px) {
+      .container {
         padding: 0 0.75rem 3.5rem 0.75rem;
-      }}
-      .brand-title {{
+      }
+      .brand-title {
         width: 100%;
-      }}
-      .brand-logo-row {{
+      }
+      .brand-logo-row {
         width: 100%;
-      }}
-      h1 {{
+      }
+      h1 {
         font-size: 1.35rem;
-      }}
-      .sales-funnel-banner {{
+      }
+      .sales-funnel-banner {
         padding: 1.25rem 1rem;
-      }}
-      .banner-title {{
+      }
+      .banner-title {
         font-size: 1.2rem;
-      }}
-      .banner-perks {{
+      }
+      .banner-perks {
         flex-direction: column;
         gap: 0.4rem;
-      }}
-      .bento-grid {{
+      }
+      .bento-grid {
         grid-template-columns: 1fr;
-      }}
-      .calculator-section {{
+      }
+      .calculator-section {
         padding: 1.25rem 1rem;
-      }}
-      .search-input {{
+      }
+      .search-input {
         max-width: 100%;
-      }}
-      .products-grid {{
+      }
+      .products-grid {
         grid-template-columns: 1fr;
-      }}
-    }}
+      }
+    }
   </style>
+  <link rel="stylesheet" href="wave.css">
+  <link rel="stylesheet" href="wave-states.css">
 </head>
 <body>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+</div>
+
   <div class="bg-glow"></div>
 
   <div class="container">
@@ -1182,9 +1176,9 @@ html_content = f"""<!DOCTYPE html>
     <header>
       <div class="brand-title">
         <div class="brand-logo-row">
-          <div class="brand-logo-icon">🌸</div>
+          <div class="brand-logo-icon">✦</div>
           <h1>YourDigitalSpace</h1>
-          <span class="badge-tag">v1.0.0 • Day 7 Master</span>
+          <span class="badge-tag">v2.5.0 • Day 7 Master</span>
         </div>
         <div class="sub-tagline">
           NullAI Commerce Suite • Demographic Focus: 55+ Women, Grandmothers, Cottagecore, Crafters
@@ -1192,59 +1186,53 @@ html_content = f"""<!DOCTYPE html>
       </div>
 
       <div class="header-actions">
-        <div id="proBadge" class="pro-badge">
-          <span>🔒 PREVIEW MODE</span>
+        <div id="proBadge" class="pro-badge active">
+          <span>✦ 100% FREE & OPEN ACCESS</span>
         </div>
-        <button id="headerUnlockBtn" class="btn-action" style="background: rgba(212,175,55,0.15); border-color: var(--border-gold); color: var(--gold-bright);">
-          ⭐ Unlock Pro License ($19)
+        <button id="themeToggleBtn" type="button" class="btn-action" onclick="toggleTheme()" style="width: auto; padding: 0.45rem 0.9rem; cursor: pointer;">
+          ☀️ Light Mode
         </button>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" class="btn-action" style="background: rgba(212,175,55,0.15); border-color: var(--border-gold); color: var(--gold-bright); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+          ☕ Buy Us a Coffee
+        </a>
       </div>
     </header>
 
-    <!-- Above-The-Fold Sales Funnel Banner -->
+    <!-- Above-The-Fold Sovereign Showcase Banner -->
     <section class="sales-funnel-banner">
       <div class="banner-beam"></div>
       <div class="banner-content">
-        <div class="banner-urgent-pill">
-          🔥 Founding Storefront Bundle • 76% Off Lifetime
+        <div class="banner-urgent-pill" style="border-color: rgba(52,211,153,0.4); color: #34d399; background: rgba(52,211,153,0.1);">
+          ✦ 100% Free & Open-Access Sovereign Catalog
         </div>
         <h2 class="banner-title">
-          10 Master Print-on-Demand Listings Built for 62.6% Net Margins
+          10 Master Print-on-Demand Listings Built for __BLENDED_MARGIN__% Net Margins
         </h2>
         <p class="banner-desc">
-          Engineered for Etsy's highest-converting demographic (55+ women, grandmothers, garden enthusiasts). Every product is paired with 300 DPI master canvases, lifestyle mockups, 13/13 long-tail SEO tag sets, and 1-click Printify API fulfillment payloads.
+          Engineered for Etsy's highest-converting demographic (55+ women, grandmothers, garden enthusiasts). Every product is paired with 300 DPI master canvases, lifestyle mockups, 13/13 long-tail SEO tag sets, and 1-click Printify API fulfillment payloads. Unlocked completely by default with zero paywalls.
         </p>
         <div class="banner-perks">
           <span>✓ 10 Master Etsy Listings</span>
           <span>✓ 100/100 A+ SEO Tag Sets</span>
           <span>✓ 10 Printify API JSONs</span>
-          <span>✓ $127.41 Net Profit / Basket</span>
+          <span>✓ $__TOTAL_PROFIT__ Net Profit / Basket</span>
           <span>✓ Commercial Rights Included</span>
         </div>
       </div>
 
       <div class="banner-cta-card">
-        <div class="pricing-row">
-          <span class="price-regular">$79</span>
-          <span class="price-discounted">$19</span>
-          <span class="price-badge">SAVE 76%</span>
+        <div style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 0.35rem;">
+          ☕ Support Autonomous Development
         </div>
-        <div style="font-size: 0.78rem; color: var(--text-dim); margin-bottom: 0.4rem;">
-          One-time payment • Lifetime commercial access
+        <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.8rem;">
+          Free and open tools forever. If these listings help you build, consider buying us a coffee via Stripe.
         </div>
 
         <div class="checkout-rail-buttons">
-          <button class="btn-stripe" onclick="launchCheckout('stripe')">
-            <span>💳 Checkout with Card / Apple Pay</span>
-          </button>
-          <button class="btn-solana" onclick="launchCheckout('solana')">
-            <span>◎ Pay with Solana (Solana Direct Widget)</span>
-          </button>
+          <a class="btn-stripe" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" style="text-decoration: none; text-align: center;">
+            <span>☕ Buy Us a Coffee (Stripe)</span>
+          </a>
         </div>
-
-        <a class="activate-key-link" onclick="openKeyModal()">
-          Already purchased? Activate license key
-        </a>
       </div>
     </section>
 
@@ -1258,25 +1246,25 @@ html_content = f"""<!DOCTYPE html>
 
       <div class="bento-card">
         <div class="bento-label">Combined Basket Retail</div>
-        <div class="bento-value">${financials['total_retail_value']}</div>
+        <div class="bento-value">$__TOTAL_RETAIL__</div>
         <div class="bento-sub">Average Order Value: $20.34</div>
       </div>
 
       <div class="bento-card">
         <div class="bento-label">Production COGS</div>
-        <div class="bento-value">${financials['total_production_cost']}</div>
+        <div class="bento-value">$__TOTAL_COST__</div>
         <div class="bento-sub">Printify tier 1 DTG fulfillment</div>
       </div>
 
       <div class="bento-card highlight">
         <div class="bento-label">Net Profit / Basket</div>
-        <div class="bento-value">${financials['total_net_profit']}</div>
+        <div class="bento-value">$__TOTAL_PROFIT__</div>
         <div class="bento-sub">After all Etsy & processing fees</div>
       </div>
 
       <div class="bento-card highlight">
         <div class="bento-label">Blended Net Margin</div>
-        <div class="bento-value">{financials['blended_net_margin']}%</div>
+        <div class="bento-value">__BLENDED_MARGIN__%</div>
         <div class="bento-sub">Etsy Top 1% Margin Tier</div>
       </div>
     </section>
@@ -1284,7 +1272,7 @@ html_content = f"""<!DOCTYPE html>
     <!-- Interactive Profit & Treasury Engine -->
     <section class="calculator-section">
       <div class="calc-controls">
-        <h3 class="calc-title">📈 Treasury Projection & Run-Rate Engine</h3>
+        <h3 class="calc-title">✦ Treasury Projection & Run-Rate Engine</h3>
         <p style="font-size: 0.85rem; color: var(--text-muted);">
           Simulate store velocity to model monthly cash flow and progress toward the <strong>$100,000 Sovereign Treasury</strong> milestone.
         </p>
@@ -1306,7 +1294,7 @@ html_content = f"""<!DOCTYPE html>
 
         <div class="calc-result-box">
           <div class="calc-result-label">Monthly Net Profit</div>
-          <div id="resMonthlyNet" class="calc-result-num">$19,111.50</div>
+          <div id="resMonthlyNet" class="calc-result-num">$19,112</div>
         </div>
 
         <div class="calc-result-box">
@@ -1340,46 +1328,41 @@ html_content = f"""<!DOCTYPE html>
       <!-- Injected via JavaScript -->
     </div>
 
-    <!-- Frosted Glass Output Paywall Section -->
-    <section class="paywall-section">
-      <div class="paywall-header">
-        <h2>📦 Master Production & Fulfillment Vault</h2>
-        <p>Direct download access to the complete 10-product Printify API payloads, raw vector print canvases, and automated Etsy listing CSVs.</p>
+    <!-- Master Production & Fulfillment Vault (100% Unlocked) -->
+    <section class="vault-section">
+      <div class="vault-header">
+        <h2>▣ Master Production & Fulfillment Vault</h2>
+        <p>Complete 10-product Printify API payloads, raw vector print canvases, and automated Etsy listing CSVs — 100% free and unlocked.</p>
       </div>
 
-      <div class="paywall-blur-container">
-        <div id="blurredPayload" class="blurred-content">
-          // SAMPLE PRINTIFY PRODUCTION PAYLOAD (PREVIEW)
-          {{
-            "store": "YourDigitalSpace",
-            "production_blueprint_id": 12,
-            "print_provider_id": 99,
-            "variants": [
-              {{"id": 41235, "price": 3499, "cost": 1250, "margin": "64.2%"}},
-              {{"id": 41236, "price": 3499, "cost": 1250, "margin": "64.2%"}}
-            ],
-            "print_areas": {{
-              "front": "https://storage.nullai.tech/canvases/prod-01-grandma-garden-sweatshirt.png",
-              "dpi": 300,
-              "color_profile": "sRGB IEC61966-2.1"
-            }},
-            "tags_13_set": [
-              "grandma sweatshirt", "gardener gift", "wildflower sweater",
-              "grandmas garden", "grandma crewneck", "mom birthday gift"
-            ]
-          }}
-        </div>
-
-        <div id="lockOverlay" class="paywall-lock-overlay">
-          <div class="lock-icon-circle">🔒</div>
-          <div class="lock-title">Unlock Full Production Vault</div>
-          <div class="lock-desc">
-            Instantly download all 10 verified Printify JSON payloads, 300 DPI high-res print master canvases, and 13-tag Etsy ranking suites for just $19 lifetime.
-          </div>
-          <button class="btn-stripe" style="max-width: 320px;" onclick="launchCheckout('stripe')">
-            ⭐ Unlock All 10 Payloads ($19 Lifetime)
-          </button>
-        </div>
+      <div class="vault-code-container">
+        <pre id="masterPayloadPreview" class="vault-code-pre" style="margin: 0; max-height: 400px; overflow-y: auto;">// MASTER PRINTIFY PRODUCTION PAYLOAD SCHEMA (100% UNLOCKED)
+{
+  "store": "YourDigitalSpace",
+  "production_blueprint_id": 12,
+  "print_provider_id": 99,
+  "variants": [
+    {"id": 41235, "price": 3499, "cost": 1250, "margin": "64.2%"},
+    {"id": 41236, "price": 3499, "cost": 1250, "margin": "64.2%"}
+  ],
+  "print_areas": {
+    "front": "https://storage.nullai.tech/canvases/prod-01-grandma-garden-sweatshirt.png",
+    "dpi": 300,
+    "color_profile": "sRGB IEC61966-2.1"
+  },
+  "tags_13_set": [
+    "grandma sweatshirt", "gardener gift", "wildflower sweater",
+    "grandmas garden", "grandma crewneck", "mom birthday gift"
+  ]
+}</pre>
+      </div>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button class="btn-action" style="max-width: 280px; padding: 0.65rem 1.25rem; font-weight: 600;" onclick="copyMasterPayload()">
+          <span>📋 Copy Master Payload Schema</span>
+        </button>
+        <a class="btn-action" style="max-width: 280px; padding: 0.65rem 1.25rem; font-weight: 600; text-decoration: none; text-align: center;" href="/api/catalog" target="_blank">
+          <span>▣ View Full Catalog JSON API</span>
+        </a>
       </div>
     </section>
 
@@ -1413,10 +1396,10 @@ html_content = f"""<!DOCTYPE html>
 
       <div class="card-actions">
         <button class="btn-action" onclick="downloadCanvasFromModal()">
-          <span>🎨 Download 300 DPI Canvas Art</span>
+          <span>✦ Download 300 DPI Canvas Art</span>
         </button>
         <button class="btn-action" onclick="downloadPayloadFromModal()">
-          <span>📦 Download Printify JSON</span>
+          <span>▣ Download Printify JSON</span>
         </button>
       </div>
     </div>
@@ -1434,7 +1417,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <div id="modalTagsContainer" class="card-tags-cloud" style="max-height: none; margin-bottom: 0.75rem;"></div>
         <button class="btn-action" style="width: auto; padding: 0.35rem 0.75rem;" onclick="copyTagsToClipboard()">
-          📋 Copy All 13 Tags
+          ✦ Copy All 13 Tags
         </button>
       </div>
 
@@ -1444,161 +1427,109 @@ html_content = f"""<!DOCTYPE html>
       <div id="modalDescriptionText" class="modal-copy-block"></div>
 
       <button class="btn-action" style="width: 100%;" onclick="copyDescriptionToClipboard()">
-        📄 Copy Full Description to Clipboard
+        ◆ Copy Full Description to Clipboard
       </button>
     </div>
   </div>
 
-  <!-- Pro Paywall Modal -->
-  <div id="proPaywallModal" class="modal-overlay" onclick="closeProModal(event)">
-    <div class="modal-card" style="max-width: 520px; text-align: center;">
-      <button class="modal-close-btn" onclick="closeProModal(null)">✕</button>
-      <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">👑</div>
-      <h3 class="modal-title" style="padding-right: 0;">Unlock Pro Commercial License</h3>
-      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Get instant access to all 10 production-ready Printify API JSONs, raw 300 DPI canvases, and automated Etsy CSV upload templates.
-      </p>
-
-      <div style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left; background: rgba(9,9,11,0.6); padding: 1rem; border-radius: 10px; margin-bottom: 1.25rem; font-size: 0.82rem; color: #e4e4e7;">
-        <div>✓ Instant JSON download for all 10 products</div>
-        <div>✓ 300 DPI master print art with transparent PNGs</div>
-        <div>✓ 100/100 A+ verified Etsy SEO tag sets</div>
-        <div>✓ Commercial license for unlimited Etsy & Shopify sales</div>
-        <div>✓ Direct integration with Zoth Etsy Connector & MCP Bridge</div>
-        <div>✓ Lifetime updates & future niche releases</div>
-      </div>
-
-      <div class="pricing-row" style="justify-content: center; margin-bottom: 1rem;">
-        <span class="price-regular">$79</span>
-        <span class="price-discounted">$19</span>
-        <span class="price-badge">SAVE 76%</span>
-      </div>
-
-      <div class="checkout-rail-buttons">
-        <button class="btn-stripe" onclick="launchCheckout('stripe')">
-          <span>💳 Instant Checkout via Stripe ($19)</span>
-        </button>
-        <button class="btn-solana" onclick="launchCheckout('solana')">
-          <span>◎ Pay with Solana (Solana Direct)</span>
-        </button>
-      </div>
-
-      <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-        <input type="text" id="licenseKeyInput" class="modal-key-input" placeholder="Enter receipt email or license key...">
-        <button class="btn-action" style="width: 100%; border-color: var(--border-gold); color: var(--gold-bright);" onclick="activateLicenseKey()">
-          ⭐ Activate License
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const PRODUCTS = {products_json};
+    const PRODUCTS = __PRODUCTS_JSON__;
     let currentFilter = 'all';
     let currentSearch = '';
     let selectedProduct = null;
-    let isProActive = false;
+    let isProActive = true;
 
-    // Check license in localStorage or URL
-    function initLicense() {{
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('licensed') === 'true' || params.get('pro') === 'true') {{
-        localStorage.setItem('yourdigitalspace_pro', 'true');
-      }}
+    // 100% Free & Open Access Initialization
+    function initLicense() {
+      isProActive = true;
+      const proBadge = document.getElementById('proBadge');
+      if (proBadge) {
+        proBadge.classList.add('active');
+        proBadge.innerHTML = '<span>✦ 100% FREE & OPEN ACCESS</span>';
+      }
+    }
 
-      if (localStorage.getItem('yourdigitalspace_pro') === 'true') {{
-        isProActive = true;
-        document.getElementById('proBadge').classList.add('active');
-        document.getElementById('proBadge').innerHTML = '<span>⭐ PRO ACTIVE</span>';
-        document.getElementById('headerUnlockBtn').style.display = 'none';
-        const lockOverlay = document.getElementById('lockOverlay');
-        if (lockOverlay) lockOverlay.style.display = 'none';
-        const blurredPayload = document.getElementById('blurredPayload');
-        if (blurredPayload) blurredPayload.classList.add('unlocked');
-      }}
-    }}
-
-    function renderProducts() {{
+    function renderProducts() {
       const grid = document.getElementById('productsGrid');
       grid.innerHTML = '';
 
-      const filtered = PRODUCTS.filter(p => {{
+      const filtered = PRODUCTS.filter(p => {
         const matchCadre = currentFilter === 'all' || p.cadre === currentFilter;
         const matchSearch = currentSearch === '' ||
           p.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
           p.tags.some(t => t.toLowerCase().includes(currentSearch.toLowerCase()));
         return matchCadre && matchSearch;
-      }});
+      });
 
-      if (filtered.length === 0) {{
+      if (filtered.length === 0) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim);">No matching products found. Try adjusting your search or category filter.</div>';
         return;
-      }}
+      }
 
-      filtered.forEach(p => {{
+      filtered.forEach(p => {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
-          <div class="card-media" onclick="openMediaModal('${{p.id}}')">
-            <img src="${{p.mockup_file}}" alt="${{p.title}} photorealistic mockup" loading="lazy">
-            <span class="card-cadre-tag">${{p.cadre.replace('_', ' ')}}</span>
-            <span class="card-seo-tag">SEO ${{p.seo_score}}/100 ${{p.seo_grade}}</span>
+          <div class="card-media" onclick="openMediaModal('${p.id}')">
+            <img src="${p.mockup_file}" alt="${p.title} photorealistic mockup" loading="lazy">
+            <span class="card-cadre-tag">${p.cadre.replace('_', ' ')}</span>
+            <span class="card-seo-tag">SEO ${p.seo_score}/100 ${p.seo_grade}</span>
           </div>
 
           <div class="card-body">
-            <div class="card-title" title="${{p.title}}">${{p.title}}</div>
+            <div class="card-title" title="${p.title}">${p.title}</div>
 
             <div class="card-financials">
               <div class="fin-item">
                 <span class="fin-label">Retail</span>
-                <span class="fin-val">$${{p.financials.retail_price.toFixed(2)}}</span>
+                <span class="fin-val">$${p.financials.retail_price.toFixed(2)}</span>
               </div>
               <div class="fin-item">
                 <span class="fin-label">Net Profit</span>
-                <span class="fin-val profit">+$${{p.financials.net_profit.toFixed(2)}}</span>
+                <span class="fin-val profit">+$${p.financials.net_profit.toFixed(2)}</span>
               </div>
               <div class="fin-item">
                 <span class="fin-label">Margin</span>
-                <span class="fin-val margin">${{p.financials.margin_percent}}%</span>
+                <span class="fin-val margin">${p.financials.margin_percent}%</span>
               </div>
             </div>
 
             <div class="card-tags-cloud">
-              ${{p.tags.map(t => `<span class="tag-pill">${{t}}</span>`).join('')}}
+              ${p.tags.map(t => `<span class="tag-pill">${t}</span>`).join('')}
             </div>
 
             <div class="card-actions">
-              <button class="btn-action" onclick="openMediaModal('${{p.id}}')">
-                <span>🎨 Canvas & Art</span>
+              <button class="btn-action" onclick="openMediaModal('${p.id}')">
+                <span>✦ Canvas & Art</span>
               </button>
-              <button class="btn-action" onclick="openCopyModal('${{p.id}}')">
-                <span>📝 Copy & SEO</span>
+              <button class="btn-action" onclick="openCopyModal('${p.id}')">
+                <span>✎ Copy & SEO</span>
               </button>
-              <button class="btn-action btn-export-payload" onclick="handleExportPayload('${{p.id}}')">
-                <span>${{isProActive ? '📦 Download Printify Payload' : '🔒 Export Printify JSON'}}</span>
+              <button class="btn-action btn-export-payload" onclick="handleExportPayload('${p.id}')">
+                <span>▣ Download Printify Payload</span>
               </button>
             </div>
           </div>
         `;
         grid.appendChild(card);
-      }});
-    }}
+      });
+    }
 
-    function filterCadre(cadre) {{
+    function filterCadre(cadre) {
       currentFilter = cadre;
       document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
       event.target.classList.add('active');
       renderProducts();
-    }}
+    }
 
-    function handleSearch() {{
+    function handleSearch() {
       currentSearch = document.getElementById('searchInput').value;
       renderProducts();
-    }}
+    }
 
-    function updateCalculator() {{
+    function updateCalculator() {
       const orders = parseInt(document.getElementById('orderSlider').value);
-      document.getElementById('sliderDisplay').textContent = `${{orders}} Orders / Day`;
+      document.getElementById('sliderDisplay').textContent = `${orders} Orders / Day`;
 
       const basketRetail = 203.41;
       const basketNetProfit = 127.41;
@@ -1609,13 +1540,13 @@ html_content = f"""<!DOCTYPE html>
       const annualNet = monthlyNet * 12;
       const daysTo100k = Math.max(1, Math.round(100000 / (orders * basketNetProfit)));
 
-      document.getElementById('resMonthlyGross').textContent = `$${{monthlyGross.toLocaleString(undefined, {{maximumFractionDigits: 0}})}}`;
-      document.getElementById('resMonthlyNet').textContent = `$${{monthlyNet.toLocaleString(undefined, {{maximumFractionDigits: 0}})}}`;
-      document.getElementById('resAnnualRate').textContent = `$${{annualNet.toLocaleString(undefined, {{maximumFractionDigits: 0}})}}`;
-      document.getElementById('resDaysTo100k').textContent = `${{daysTo100k}} Days`;
-    }}
+      document.getElementById('resMonthlyGross').textContent = `$${monthlyGross.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      document.getElementById('resMonthlyNet').textContent = `$${monthlyNet.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      document.getElementById('resAnnualRate').textContent = `$${annualNet.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      document.getElementById('resDaysTo100k').textContent = `${daysTo100k} Days`;
+    }
 
-    function openMediaModal(productId) {{
+    function openMediaModal(productId) {
       selectedProduct = PRODUCTS.find(p => p.id === productId);
       if (!selectedProduct) return;
 
@@ -1623,15 +1554,15 @@ html_content = f"""<!DOCTYPE html>
       document.getElementById('modalMockupImg').src = selectedProduct.mockup_file;
       document.getElementById('modalCanvasImg').src = selectedProduct.canvas_file;
       document.getElementById('mediaModal').classList.add('active');
-    }}
+    }
 
-    function closeMediaModal(e) {{
-      if (!e || e.target.id === 'mediaModal' || e.target.classList.contains('modal-close-btn')) {{
+    function closeMediaModal(e) {
+      if (!e || e.target.id === 'mediaModal' || e.target.classList.contains('modal-close-btn')) {
         document.getElementById('mediaModal').classList.remove('active');
-      }}
-    }}
+      }
+    }
 
-    function openCopyModal(productId) {{
+    function openCopyModal(productId) {
       selectedProduct = PRODUCTS.find(p => p.id === productId);
       if (!selectedProduct) return;
 
@@ -1639,123 +1570,137 @@ html_content = f"""<!DOCTYPE html>
       document.getElementById('modalDescriptionText').textContent = selectedProduct.description;
 
       const tagContainer = document.getElementById('modalTagsContainer');
-      tagContainer.innerHTML = selectedProduct.tags.map(t => `<span class="tag-pill" style="color: #ffffff; background: #27272a;">${{t}}</span>`).join('');
+      tagContainer.innerHTML = selectedProduct.tags.map(t => `<span class="tag-pill" style="color: #ffffff; background: #27272a;">${t}</span>`).join('');
 
       document.getElementById('copyModal').classList.add('active');
-    }}
+    }
 
-    function closeCopyModal(e) {{
-      if (!e || e.target.id === 'copyModal' || e.target.classList.contains('modal-close-btn')) {{
+    function closeCopyModal(e) {
+      if (!e || e.target.id === 'copyModal' || e.target.classList.contains('modal-close-btn')) {
         document.getElementById('copyModal').classList.remove('active');
-      }}
-    }}
+      }
+    }
 
-    function copyTagsToClipboard() {{
+    function copyTagsToClipboard() {
       if (!selectedProduct) return;
       navigator.clipboard.writeText(selectedProduct.tags.join(', '));
       alert('13/13 SEO Tags copied to clipboard!');
-    }}
+    }
 
-    function copyDescriptionToClipboard() {{
+    function copyDescriptionToClipboard() {
       if (!selectedProduct) return;
       navigator.clipboard.writeText(selectedProduct.description);
       alert('Full listing description copied to clipboard!');
-    }}
+    }
 
-    function handleExportPayload(productId) {{
+    function handleExportPayload(productId) {
       selectedProduct = PRODUCTS.find(p => p.id === productId);
-      if (isProActive) {{
+      if (selectedProduct) {
         downloadPayloadFile(selectedProduct);
-      }} else {{
-        openProModal();
-      }}
-    }}
+      }
+    }
 
-    function downloadCanvasFromModal() {{
+    function downloadCanvasFromModal() {
       if (!selectedProduct) return;
-      if (isProActive) {{
-        const a = document.createElement('a');
-        a.href = selectedProduct.canvas_file;
-        a.download = selectedProduct.canvas_file.split('/').pop();
-        a.click();
-      }} else {{
-        openProModal();
-      }}
-    }}
+      const a = document.createElement('a');
+      a.href = selectedProduct.canvas_file;
+      a.download = selectedProduct.canvas_file.split('/').pop();
+      a.click();
+    }
 
-    function downloadPayloadFromModal() {{
+    function downloadPayloadFromModal() {
       if (!selectedProduct) return;
-      if (isProActive) {{
-        downloadPayloadFile(selectedProduct);
-      }} else {{
-        openProModal();
-      }}
-    }}
+      downloadPayloadFile(selectedProduct);
+    }
 
-    function downloadPayloadFile(prod) {{
+    function downloadPayloadFile(prod) {
       const a = document.createElement('a');
       a.href = prod.pod_payload_file;
       a.download = prod.pod_payload_file.split('/').pop();
       a.click();
-    }}
+    }
 
-    function openProModal() {{
-      document.getElementById('proPaywallModal').classList.add('active');
-    }}
+    function copyMasterPayload() {
+      const payloadSample = {
+        "store": "YourDigitalSpace",
+        "production_blueprint_id": 12,
+        "print_provider_id": 99,
+        "variants": [
+          {"id": 41235, "price": 3499, "cost": 1250, "margin": "64.2%"},
+          {"id": 41236, "price": 3499, "cost": 1250, "margin": "64.2%"}
+        ],
+        "print_areas": {
+          "front": "https://storage.nullai.tech/canvases/prod-01-grandma-garden-sweatshirt.png",
+          "dpi": 300,
+          "color_profile": "sRGB IEC61966-2.1"
+        },
+        "tags_13_set": [
+          "grandma sweatshirt", "gardener gift", "wildflower sweater",
+          "grandmas garden", "grandma crewneck", "mom birthday gift"
+        ]
+      };
+      navigator.clipboard.writeText(JSON.stringify(payloadSample, null, 2));
+      alert('Master Printify Payload Schema copied to clipboard!');
+    }
 
-    function closeProModal(e) {{
-      if (!e || e.target.id === 'proPaywallModal' || e.target.classList.contains('modal-close-btn')) {{
-        document.getElementById('proPaywallModal').classList.remove('active');
-      }}
-    }}
+    function launchCheckout(rail) {
+      if (rail === 'stripe') {
+        window.open('https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X', '_blank');
+      } 
+    }
 
-    function openKeyModal() {{
-      openProModal();
-    }}
-
-    function activateLicenseKey() {{
-      const key = document.getElementById('licenseKeyInput').value.trim();
-      if (key.length > 3) {{
-        localStorage.setItem('yourdigitalspace_pro', 'true');
-        isProActive = true;
-        closeProModal(null);
-        initLicense();
-        renderProducts();
-        alert('⭐ License Successfully Activated! All 10 Printify Payloads and 300 DPI master canvases unlocked.');
-      }} else {{
-        alert('Please enter a valid license key or receipt email.');
-      }}
-    }}
-
-    function launchCheckout(rail) {{
-      if (rail === 'stripe') {{
-        window.open('https://buy.stripe.com/7sI7sA8hM2X8eFG8ww', '_blank');
-      }} else if (rail === 'solana') {{
-        if (typeof SolanaTipButtons !== 'undefined') {{
-          SolanaTipButtons.init({{
-            integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
-            payload: {{
-              receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-              amount: 19.00,
-              currency: 'USD'
-            }}
-          }});
-        }} else {{
-          window.open('', '_blank');
-        }}
-      }}
-    }}
-
-    document.getElementById('headerUnlockBtn').addEventListener('click', openProModal);
+    function toggleTheme() {
+      const root = document.documentElement;
+      const btn = document.getElementById('themeToggleBtn');
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      if (btn) btn.textContent = next === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
 
     // Initial setup
-    initLicense();
     renderProducts();
     updateCalculator();
   </script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "storefront-catalog",
+          toolName: "YourDigitalSpace POD Showcase",
+          tagline: "Interactive live 3D showcase and catalog viewer for Print-on-Demand products!",
+          accentColor: "#EC4899",
+          steps: [{"icon": "\ud83c\udfea", "title": "Virtual Storefront Gallery", "desc": "Browse and interact with an avant-garde catalog of custom hoodies, posters, and accessories."}, {"icon": "\ud83e\uddca", "title": "Interactive 3D Product Views", "desc": "Spin and inspect products in full 3D to see how designs look from every angle."}, {"icon": "\ud83d\udcb3", "title": "Zero-Friction Checkout", "desc": "Connects directly to Stripe with 100% unlocked open access."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
 """
 
-OUTPUT_HTML.write_text(html_content, encoding="utf-8")
-print(f"Showcase successfully built at {OUTPUT_HTML} ({len(html_content):,} bytes)")
+
+def build():
+    with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    products_json = json.dumps(manifest["listings"])
+    fin = manifest["portfolio_financials"]
+
+    rendered = (
+        TEMPLATE
+        .replace("__PRODUCTS_JSON__", products_json)
+        .replace("__TOTAL_RETAIL__", str(fin["total_retail_value"]))
+        .replace("__TOTAL_COST__", str(fin["total_production_cost"]))
+        .replace("__TOTAL_PROFIT__", str(fin["total_net_profit"]))
+        .replace("__BLENDED_MARGIN__", str(fin["blended_net_margin"]))
+    )
+    OUTPUT_HTML.write_text(rendered, encoding="utf-8")
+    print(f"Showcase built at {OUTPUT_HTML} ({len(rendered):,} bytes)")
+
+
+if __name__ == "__main__":
+    build()

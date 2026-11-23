@@ -1,6 +1,6 @@
 /**
  * Etsy POD Forge — Client-Side Core Engine & Interactive Studio
- * Engineered by 1nc0gn30 • NullAI Platform
+ * Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
  * 100% Functional In-Browser Utility — Zero Fake Work
  */
 
@@ -16,7 +16,6 @@
     color: 'sand',
     retail: 34.99,
     activeTab: 'canvas',
-    isLicensed: false,
     prompts: [],
     stats: {
       canvases: 1,
@@ -107,74 +106,6 @@
       dim: "3600 x 3600 px @ 300 DPI"
     }
   };
-
-  // Pro License Storage Keys
-  const STORAGE_KEY = 'etsy_pod_licensed';
-  const STORAGE_KEY_ALT = 'zoth_etsy_pod_licensed';
-  const STORAGE_KEY_PRO = 'pro_licensed';
-
-  // Check Pro License Status
-  function checkLicense() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === 'true' || urlParams.get('pro') === '1' || urlParams.get('key') === 'ETSY-PRO-2026') {
-      localStorage.setItem(STORAGE_KEY, 'true');
-      localStorage.setItem(STORAGE_KEY_ALT, 'true');
-      localStorage.setItem(STORAGE_KEY_PRO, 'true');
-      try {
-        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-      } catch (e) {}
-    }
-    state.isLicensed = localStorage.getItem(STORAGE_KEY) === 'true' ||
-                       localStorage.getItem(STORAGE_KEY_ALT) === 'true' ||
-                       localStorage.getItem(STORAGE_KEY_PRO) === 'true';
-    updateLicenseUI();
-  }
-
-  function updateLicenseUI() {
-    const badge = document.getElementById('licenseBadge');
-    const paywallOverlay = document.getElementById('paywallOverlay');
-    const exportLocked = document.getElementById('exportLockedNotice');
-    const salesBanner = document.getElementById('salesBanner') || document.querySelector('.sales-funnel-banner');
-    const btnActivate = document.getElementById('btnOpenProModal') || document.getElementById('btnActivateKey');
-
-    if (state.isLicensed) {
-      if (badge) {
-        badge.innerHTML = '⭐ PRO ACTIVE';
-        badge.classList.remove('badge-guest');
-        badge.classList.add('badge-pro');
-      }
-      if (paywallOverlay) {
-        paywallOverlay.style.display = 'none';
-      }
-      const blurs = document.querySelectorAll('.paywall-blur');
-      blurs.forEach(el => el.classList.remove('paywall-blur'));
-      if (exportLocked) {
-        exportLocked.style.display = 'none';
-      }
-      if (salesBanner) {
-        salesBanner.style.display = 'none';
-      }
-      if (btnActivate) {
-        btnActivate.style.display = 'none';
-      }
-    } else {
-      if (badge) {
-        badge.innerHTML = '⚡ FREE TIER';
-        badge.classList.add('badge-guest');
-        badge.classList.remove('badge-pro');
-      }
-      if (paywallOverlay) {
-        paywallOverlay.style.display = 'flex';
-      }
-      if (salesBanner) {
-        salesBanner.style.display = 'block';
-      }
-      if (btnActivate) {
-        btnActivate.style.display = 'inline-block';
-      }
-    }
-  }
 
   // Profit Calculator
   function calculateProfit(retail, prod) {
@@ -579,7 +510,6 @@
 
   // Initialize UI Bindings
   function init() {
-    checkLicense();
     updateProfitMeters();
     updateListingView();
     renderLocalCanvas();
@@ -649,87 +579,13 @@
       showToast('Copied all 13 Etsy Tags to clipboard!');
     });
 
-    // Export Action Interceptors
+    // Export Actions
     document.querySelectorAll('.btn-export-trigger').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (!state.isLicensed) {
-          openProModal();
-        } else {
-          downloadKit();
-        }
-      });
-    });
-
-    // Modal Triggers
-    document.getElementById('btnOpenProModal')?.addEventListener('click', openProModal);
-    document.getElementById('btn-paywall-key')?.addEventListener('click', openProModal);
-    document.getElementById('btnActivateKey')?.addEventListener('click', () => {
-      activateLicense();
-    });
-    document.getElementById('btnSubmitKey')?.addEventListener('click', () => {
-      activateLicense();
-    });
-    document.getElementById('closeModalBtn')?.addEventListener('click', closeProModal);
-
-    // Solana Tip Button Trigger
-    document.querySelectorAll('.btn-solana-pay').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        if (e && e.preventDefault) e.preventDefault();
-        if (window.SolanaTipButtons) {
-          try {
-            window.SolanaTipButtons.init({
-              integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
-              container: document.body
-            });
-            return;
-          } catch (err) {
-            console.warn('Solana Direct widget initialization error:', err);
-          }
-        }
-        window.open('https://solana.fm/address/GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
-        openProModal();
+        downloadKit();
       });
     });
   }
-
-  function activateLicense(key) {
-    const input = document.getElementById('license-input') || document.getElementById('inputLicenseKey') || document.getElementById('licenseKeyInput');
-    const val = (key || (input ? input.value : '')).trim();
-    const upper = val.toUpperCase();
-    if (upper === 'ETSY-PRO-2026' || val.includes('@') || val.length >= 8 || upper === 'SOVEREIGN-PRO-2026' || upper.startsWith('ETSY-')) {
-      localStorage.setItem(STORAGE_KEY, 'true');
-      localStorage.setItem(STORAGE_KEY_ALT, 'true');
-      localStorage.setItem(STORAGE_KEY_PRO, 'true');
-      state.isLicensed = true;
-      updateLicenseUI();
-      closeProModal();
-      showToast('⭐ PRO LICENSE ACTIVATED PERMANENTLY!');
-      return true;
-    } else {
-      showToast('Please enter a valid order receipt email or license key.');
-      console.warn('Invalid key provided.');
-      return false;
-    }
-  }
-
-  function openProModal() {
-    const m = document.getElementById('licenseModal') || document.getElementById('proModal') || document.querySelector('[data-alias="paywall-modal"]') || document.querySelector('[data-alias="licenseModal"]');
-    if (m) m.style.display = 'flex';
-  }
-
-  function closeProModal() {
-    const m = document.getElementById('licenseModal') || document.getElementById('proModal') || document.querySelector('[data-alias="paywall-modal"]') || document.querySelector('[data-alias="licenseModal"]');
-    if (m) m.style.display = 'none';
-  }
-
-  window.checkLicense = checkLicense;
-  window.updateLicenseUI = updateLicenseUI;
-  window.openProModal = openProModal;
-  window.closeProModal = closeProModal;
-  window.openLicenseModal = openProModal;
-  window.closeLicenseModal = closeProModal;
-  window.activateLicenseKey = activateLicense;
-  window.activateLicense = activateLicense;
 
   function downloadKit() {
     const cadre = state.cadre;

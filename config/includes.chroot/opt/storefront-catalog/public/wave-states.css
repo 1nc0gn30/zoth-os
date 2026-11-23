@@ -12,8 +12,7 @@
   box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.35);
 }
 
-.search-input:focus-visible,
-.modal-key-input:focus-visible {
+.search-input:focus-visible {
   outline: 2px solid var(--gold-bright);
   outline-offset: 1px;
   border-color: var(--gold-bright);
@@ -93,8 +92,7 @@ input[type=range]:focus-visible {
   box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);
 }
 
-.search-input:hover,
-.modal-key-input:hover {
+.search-input:hover {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
@@ -152,16 +150,6 @@ input[type=range]:focus-visible {
 }
 
 /* 4. Error Presentation */
-.modal-key-input:invalid,
-.modal-key-input.error,
-.modal-key-input[aria-invalid="true"],
-.modal-key-input:user-invalid {
-  border-color: var(--rose) !important;
-  background-color: rgba(244, 63, 94, 0.08) !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
-}
-
 .search-input:invalid,
 .search-input.error,
 .search-input[aria-invalid="true"],
@@ -189,7 +177,7 @@ input[type=range]:focus-visible {
   .tag-pill,
   .bento-card,
   .calculator-section,
-  .paywall-section,
+  .vault-section,
   .banner-cta-card,
   .modal-media-box,
   .modal-copy-block,
@@ -199,7 +187,6 @@ input[type=range]:focus-visible {
   .activate-key-link,
   footer a,
   .search-input,
-  .modal-key-input,
   .btn-action,
   .btn-stripe,
   .btn-solana,

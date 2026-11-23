@@ -908,15 +908,15 @@
       border: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    /* Frosted Glass Output Paywall */
-    .paywall-wrapper {
+    /* Open-Access Output Panel */
+    .open-output-wrapper {
       position: relative;
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid var(--border);
       background: rgba(5, 6, 11, 0.95);
     }
-    .paywall-code {
+    .open-output-code {
       padding: 16px;
       font-family: var(--font-mono);
       font-size: 0.76rem;
@@ -925,27 +925,6 @@
       word-break: break-all;
       max-height: 290px;
       overflow-y: auto;
-      transition: filter 0.25s ease;
-    }
-    .paywall-code.blurred {
-      filter: blur(6px);
-      user-select: none;
-      pointer-events: none;
-    }
-    .paywall-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-      background: rgba(5, 6, 11, 0.62);
-      backdrop-filter: blur(3px);
-    }
-    .paywall-overlay.hidden {
-      display: none;
     }
 
     /* Modals */
@@ -4342,20 +4321,19 @@
     let activeHandle = '@citizen';
     let animatedArcs = [];
 
-    function isProLicensed() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('licensed') === 'true') {
-        localStorage.setItem(STORAGE_KEY_LICENSE, 'true');
-        return true;
-      }
-      return localStorage.getItem(STORAGE_KEY_LICENSE) === 'true';
-    }
-
     function updateLicenseUI() {
-      const pro = isProLicensed();
       const badge = document.getElementById('licenseStatusBadge');
       const codeEl = document.getElementById('sdkCodeOutput');
       const overlay = document.getElementById('paywallOverlayCard');
+      if (badge) {
+        badge.textContent = '✦ OPEN ACCESS';
+        badge.style.background = 'rgba(16, 185, 129, 0.2)';
+        badge.style.color = '#34d399';
+      }
+      if (codeEl) codeEl.classList.remove('blurred');
+      if (overlay) overlay.style.display = 'none';
+      return;
+      const pro = true;
       if (pro) {
         badge.textContent = '⭐ PRO ACTIVE';
         badge.style.background = 'rgba(16, 185, 129, 0.2)';
@@ -11750,13 +11728,11 @@
       document.getElementById('closeLicenseModalBtn').addEventListener('click', () => licenseModal.classList.remove('open'));
 
       document.getElementById('copySdkBtn').addEventListener('click', () => {
-        if (!isProLicensed()) return openLicense();
         navigator.clipboard.writeText(document.getElementById('sdkCodeOutput').textContent);
         document.getElementById('copySdkBtn').textContent = '✅ Copied!';
       });
 
       document.getElementById('exportSdkBtn').addEventListener('click', () => {
-        if (!isProLicensed()) return openLicense();
         const blob = new Blob([document.getElementById('sdkCodeOutput').textContent], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);

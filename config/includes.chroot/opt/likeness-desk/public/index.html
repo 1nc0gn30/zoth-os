@@ -2,41 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Likeness desk</title>
-  <link rel="stylesheet" href="/style.css">
-
-  <!-- Zoth 100% Open-Access & Buy Us a Coffee Invariant -->
-  <script id="zoth-open-access-init">
-    (function() {
-      try {
-        var keys = ['agent_audiocipher_pro', 'agent_cyber_turtle_pro', 'agent_datamosh_pro', 'agent_nexus3d_pro', 'agent_policy_pro', 'audiocipher_license', 'audiocipher_pro_licensed', 'badge3d_pro_licensed', 'certpath_pro_key', 'certpath_pro_licensed', 'cron_rhythm_pro_key', 'cron_rhythm_pro_licensed', 'cwv-speed-engine_pro_licensed', 'cwv_pro_licensed', 'cyber_turtle_pro_licensed', 'datamosh_pro_licensed', 'deepsearch-research-agent_pro_licensed', 'deepsearch_pro_licensed', 'entropy_studio_licensed', 'envguard-secrets-vault_pro_licensed', 'envguard_pro_license', 'etsy_connector_pro', 'jwt_guard_licensed', 'mdg_pro_licensed', 'neuro_pro_licensed', 'nexus3d_pro_licensed', 'omnipost_pro_key', 'omnipost_pro_licensed', 'osint_pro_licensed', 'payload-entropy-studio_pro_licensed', 'polyglot_pro_licensed', 'pro_licensed', 'promptmaster_pro_licensed', 'promptmaster_pro_active', 'robots-txt-auditor_pro_licensed', 'robots_pro_licensed', 'schema_illustrator_pro_licensed', 'sovereign_pro_licensed', 'subsweep-lead-scanner_pro_licensed', 'subsweep_licensed', 'turtle_pro_licensed', 'ufo_sacred_licensed', 'vector-search-engine_pro_licensed', 'vector_studio_pro_licensed', 'web-security-guard_pro_licensed', 'web_security_guard_licensed', 'yourdigitalspace_pro', 'zela_guide_pro_licensed', 'zoth_ascii_magic_pro', 'zoth_audiocipher_licensed', 'zoth_badge3d_licensed', 'zoth_cyber_turtle_licensed', 'zoth_datamosh_licensed', 'zoth_etsy_licensed', 'zoth_nexus3d_licensed', 'zoth_osint_licensed', 'zoth_policy_licensed', 'zoth_sacred_licensed', 'zoth_ufo_licensed'];
-        for (var i = 0; i < keys.length; i++) {
-          localStorage.setItem(keys[i], 'true');
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Likeness Desk — Local AI Video &amp; Voice Double Studio</title>
+  <meta name="description" content="Local-first AI video double and real-time voice/lip-sync workstation. Animate portraits, clone voice profiles locally, and render neural talking-head streams with zero cloud lock-in.">
+  <meta property="og:title" content="Likeness Desk — Local AI Video &amp; Voice Double Studio">
+  <meta property="og:description" content="100% open-access local AI video double, mouth-box neural lip-sync, and real-time speech cloning desk by Neal Frazier Tech.">
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/likeness-desk">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://nullai.tech/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Likeness Desk — Local AI Video &amp; Voice Double Studio">
+  <meta name="twitter:description" content="Local-first AI video double and real-time voice/lip-sync studio. Zero cloud egress, 100% unlocked.">
+  <meta name="twitter:image" content="https://nullai.tech/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://zoth.nullai.tech/tools/likeness-desk#app",
+        "name": "Likeness Desk",
+        "url": "https://zoth.nullai.tech/tools/likeness-desk",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Linux, macOS, Windows, Web Browser",
+        "description": "Local-first AI video double and voice lip-sync workstation supporting portrait alignment, mouth-region mapping, and local neural face rendering.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "@1nc0gn30",
+          "url": "https://github.com/1nc0gn30"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
         }
-        localStorage.setItem('pm_license_v2', JSON.stringify({ method: 'open_access', ref: 'free_forever', at: '2026-01-01T00:00:00Z' }));
-        window.isPro = true;
-        window.isProLicensed = true;
-      } catch (e) {}
-    })();
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://zoth.nullai.tech/tools/likeness-desk#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does Likeness Desk do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Likeness Desk transforms a still portrait, mouth-region box, and voice sample into a synchronized local AI video double via its Node server, CLI, and web desk."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Likeness Desk send portraits or audio to third-party clouds?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Likeness Desk runs locally on 127.0.0.1:9395 and keeps portrait crops, audio takes, and neural synthesis strictly on your own hardware."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Likeness Desk free to use and how can I support development?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Likeness Desk is 100% free and open access with zero paywalls. Optional voluntary tips are accepted via Buy Us a Coffee (Stripe) or Solana wallet GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK."
+            }
+          }
+        ]
+      }
+    ]
+  }
   </script>
-  <style id="zoth-open-access-override">
-    .paywall-overlay, .output-paywall-overlay, #outputPaywallOverlay, #schemaPaywallOverlay,
-    #transformerPaywallOverlay, #proPaywallModal, #licenseModal, #salesBanner, #founding-offer-banner,
-    #funnelHeroBanner, [data-alias="paywallOverlay"], [data-alias="founding-offer-banner"] {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-    .paywall-wrap #outputPreview, .paywall-wrap #reportContentArea, .paywall-content,
-    .paywall-content.locked, .paywall-wrap.is-locked #outputPreview, .paywall-wrap.locked #outputPreview {
-      filter: none !important;
-      -webkit-filter: none !important;
-      user-select: auto !important;
-      pointer-events: auto !important;
-    }
-  </style>
-
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -102,7 +144,32 @@
       </article>
     </section>
   </main>
+  <footer style="margin: 20px auto 28px; max-width: 1180px; padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 12px; color: #a8a29e; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; line-height: 1.7;">
+    <div><strong style="color: #f5f5f4;">Likeness Desk</strong> — 100% Free &amp; Open-Access Local AI Video &amp; Voice Double Workstation.</div>
+    <div>
+      Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/likeness-desk" target="_blank" rel="noopener noreferrer" style="color: #D4AF37;">@1nc0gn30</a>) &bull;
+      <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color: #D4AF37;">NullAI Platform</a> &bull;
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="color: #D4AF37;">☕ Buy Us a Coffee</a> &bull;
+      Solana: <code style="color: #14F195; background: rgba(20,241,149,0.08); padding: 2px 6px; border-radius: 4px; word-break: break-all;">GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
+    </div>
+  </footer>
   <script src="/app.js"></script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "likeness-desk",
+          toolName: "Likeness Desk (AI Video Double)",
+          tagline: "Create photorealistic AI video avatars with expressive facial motion!",
+          accentColor: "#F43F5E",
+          steps: [{"icon": "\ud83d\udc64", "title": "What is a Digital Double?", "desc": "A realistic digital clone of your face that can talk, blink, and present videos for your brand."}, {"icon": "\ud83d\udde3\ufe0f", "title": "Viseme Lip-Sync", "desc": "Syncs mouth movements precisely to your recorded voice or synthesized speech."}, {"icon": "\ud83c\udfac", "title": "Zero-Effort Video Creation", "desc": "Generate professional marketing and tutorial videos simply by typing text."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

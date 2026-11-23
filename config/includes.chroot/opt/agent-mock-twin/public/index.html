@@ -37,7 +37,7 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "@id": "https://agent-mock-twin.nullai.tech/#app",
         "name": "Agent Mock Twin",
         "url": "https://agent-mock-twin.nullai.tech/",
@@ -52,10 +52,10 @@
         },
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": "https://github.com/1nc0gn30/zoth-os"
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "featureList": [
           "Zero External Pip Dependencies",
@@ -467,32 +467,6 @@
       background: rgba(212, 175, 55, 0.08);
     }
 
-    /* Paywall Blur Target & Lock Overlay */
-    .paywall-wrapper {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .pro-blur-target {
-      filter: blur(6px);
-      pointer-events: none;
-      user-select: none;
-      opacity: 0.6;
-    }
-    .paywall-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(8, 8, 11, 0.82);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      z-index: 10;
-      backdrop-filter: blur(3px);
-    }
-
     /* Toast Notification */
     .glass-toast {
       position: fixed;
@@ -528,7 +502,7 @@
       justify-content: center;
       z-index: 200;
       padding: 16px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
     }
     .modal-backdrop.active {
       display: flex;
@@ -574,10 +548,15 @@
   <!-- Wave Enhancement Stylesheet -->
   <link rel="stylesheet" href="/wave.css">
   <link rel="stylesheet" href="/wave-states.css">
-
-  <!-- Solana Tip Payment Widget SDK -->
 </head>
 <body>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
+
 
   <!-- Top Global Navigation Bar -->
   <header>
@@ -585,44 +564,36 @@
       <img src="assets/icon.png" alt="Agent Mock Twin Brand Icon" style="width: 28px; height: 28px; border-radius: 6px;">
       <span>AGENT MOCK TWIN</span>
       <span class="badge" style="background: rgba(212,175,55,0.15); color: var(--gold-glow); border: 1px solid rgba(212,175,55,0.3); font-size: 11px;">v2.5 SOVEREIGN</span>
-      <span class="badge badge-free" id="licenseBadge">⚡ FREE TIER</span>
+      <span class="badge" id="licenseBadge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS</span>
     </div>
     
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-      <button type="button" class="btn btn-outline" style="min-height: 38px; padding: 6px 14px; font-size: 12px;" onclick="openProModal()">
-        <span>✦</span> Activate License
-      </button>
       <a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="min-height: 38px; padding: 6px 14px; font-size: 12px;">
         <span>★</span> GitHub
       </a>
-      <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="min-height: 38px; padding: 6px 14px; font-size: 12px;">
-        <span>⚡</span> Get Pro ($19)
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="min-height: 38px; padding: 6px 14px; font-size: 12px; background: #D4AF37; color: #08080B; font-weight: 800;">
+        ☕ Buy Us a Coffee (Stripe)
       </a>
+      <button type="button" class="btn btn-solana" onclick="startSolanaTipSolanaPayment()" style="min-height: 38px; padding: 6px 14px; font-size: 12px; background: #10B981; color: #FFF; font-weight: 700; border: none; cursor: pointer;">
+        Solana Tip ⚡
+      </button>
     </div>
   </header>
 
   <div class="container">
 
-    <!-- High-Converting Sales Funnel Banner -->
-    <section class="sales-banner" id="salesBanner" aria-label="Founding Member Pricing">
+    <!-- Sovereign Open Access Support Bar -->
+    <section class="sales-banner" id="salesBanner" aria-label="Sovereign Open Access Bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border: 1px solid rgba(212,175,55,0.35);">
       <div class="sales-banner-text">
-        <h2><span>◉</span> Autonomous Network Twin — Open-Access Access</h2>
-        <p>Run agent test suites in CI/CD without burning API credits. Zero external dependencies.</p>
-        <div class="pricing-pill">
-          <span class="price-strike">$79 Regular</span>
-          <span>→</span>
-          <span class="price-urgent">$19 Lifetime Access (Founding Member)</span>
-        </div>
+        <h2 style="color: #10B981;"><span>◉</span> Autonomous Network Twin — 100% Free &amp; Open Access</h2>
+        <p>Run agent test suites in CI/CD without burning API credits. Zero external dependencies. Voluntary tips support development.</p>
       </div>
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-stripe">
-          <span>★</span> Credit Card / Apple Pay ($19)
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-stripe" style="background: #D4AF37; color: #08080B; font-weight: 800;">
+          ☕ Buy Us a Coffee (Stripe)
         </a>
-        <button type="button" class="btn btn-solana" onclick="copySolanaTipAddress()">
-          <span>◎</span> Pay with Solana ($19)
-        </button>
-        <button type="button" class="btn btn-outline" id="btnActivateBanner" onclick="openProModal()" style="min-height: 44px;">
-          <span>✦</span> Activate Key
+        <button type="button" class="btn btn-solana" onclick="startSolanaTipSolanaPayment()" style="background: #10B981; color: #FFF; font-weight: 700;">
+          Solana Tip ⚡
         </button>
       </div>
     </section>
@@ -819,68 +790,41 @@
         <span>⚡</span> Enterprise CI/CD & Chaos Suite
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button type="button" class="btn btn-outline" id="btnExportDockerLive" onclick="openProModal()" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
+        <button type="button" class="btn btn-outline" id="btnExportDockerLive" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
           <span>▣</span> Export CI Docker Container
         </button>
-        <button type="button" class="btn btn-outline" id="btnChaosTriggerLive" onclick="openProModal()" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
+        <button type="button" class="btn btn-outline" id="btnChaosTriggerLive" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
           <span>⚡</span> Simulate 503 Outage
         </button>
       </div>
     </div>
 
-    <!-- Frosted Glass Output Paywall: Advanced Chaos & Jitter Engine -->
-    <section class="paywall-wrapper glass-card" style="margin-bottom: 40px; padding: 0;">
-      
-      <!-- Locked Pro Workspace (Blurred) -->
-      <div class="pro-blur-target" style="padding: 24px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-          <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--gold-glow);">
-            ⚡ Pro Engine: Dynamic Chaos Fault Injection & Jitter Topology
-          </h3>
-          <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid #F59E0B;">PRO REQUIRED</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px;">
-          <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">CHAOS FAULT RATE</div>
-            <div style="font-size: 20px; font-weight: 800; color: #EF4444; margin-top: 4px;">5.0% Rate Limits</div>
-            <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Simulates upstream HTTP 429 & 503 backpressure</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">FUZZY PAYLOAD TOLERANCE</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--cyan-glow); margin-top: 4px;">Jaccard 0.85</div>
-            <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Semantic JSON key & prompt drift reconciliation</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">HEADLESS CI DOCKER EXPORT</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--emerald-glow); margin-top: 4px;">Ready</div>
-            <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Zero-dependency Alpine container for GitHub Actions</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Glowing Centered Lock Overlay -->
-      <div class="paywall-overlay" id="paywallOverlay">
-        <div style="font-size: 36px; margin-bottom: 10px;">★</div>
-        <h3 style="font-family: var(--font-display); font-size: 22px; color: #FFF; font-weight: 800; margin-bottom: 6px;">
-          Unlock Advanced Chaos Engine & Fuzzy Replay
+    <!-- Sovereign Engine: Dynamic Chaos & Jitter Engine -->
+    <section class="glass-card" style="margin-bottom: 40px; padding: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--gold-glow);">
+          ⚡ Sovereign Engine: Dynamic Chaos Fault Injection & Jitter Topology
         </h3>
-        <p style="font-size: 13px; color: #D1D5DB; max-width: 480px; margin-bottom: 18px;">
-          Stress-test autonomous agent resilience against simulated upstream outages, rate limit retries, and prompt drift with zero external dependencies.
-        </p>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-          <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-stripe">
-            <span>★</span> Unlock via Stripe ($19 Lifetime)
-          </a>
-          <button type="button" class="btn btn-solana" onclick="copySolanaTipAddress()">
-            <span>◎</span> Unlock via Solana ($19)
-          </button>
-          <button type="button" class="btn btn-outline" id="btnKeyOverlay" onclick="openProModal()">
-            <span>✦</span> Enter Key / Email
-          </button>
-        </div>
+        <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald-glow); border: 1px solid rgba(16, 185, 129, 0.4);">✦ UNLOCKED & ACTIVE</span>
       </div>
 
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">CHAOS FAULT RATE</div>
+          <div style="font-size: 20px; font-weight: 800; color: #EF4444; margin-top: 4px;">5.0% Rate Limits</div>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Simulates upstream HTTP 429 & 503 backpressure</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">FUZZY PAYLOAD TOLERANCE</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--cyan-glow); margin-top: 4px;">Jaccard 0.85</div>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Semantic JSON key & prompt drift reconciliation</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">HEADLESS CI DOCKER EXPORT</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--emerald-glow); margin-top: 4px;">Ready</div>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Zero-dependency Alpine container for GitHub Actions</div>
+        </div>
+      </div>
     </section>
 
     <!-- FAQ Section for AEO & Google SGE Discovery -->
@@ -915,101 +859,55 @@
   <!-- Professional Sovereign Attribution Footer -->
   <footer style="text-align: center; padding: 24px 20px; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 12px; background: rgba(8, 8, 11, 0.95);">
     <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-      <span>Engineered by <strong>NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold-glow); text-decoration: none;">@1nc0gn30</a>)</span>
+      <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold-glow); text-decoration: none;">@1nc0gn30</a>)</span>
       <span>•</span>
       <span><a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color: var(--cyan-glow); text-decoration: none;">NullAI Platform</a></span>
       <span>•</span>
-      <span><a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" style="color: #9CA3AF; text-decoration: none;">Open Source Repository</a></span>
+      <span><a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" style="color: #9CA3AF; text-decoration: none;">GitHub Repo</a></span>
+      <span>•</span>
+      <span><a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="color: #FACC15; text-decoration: none; font-weight: 700;">☕ Buy Us a Coffee</a></span>
+      <span>•</span>
+      <span><a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="color: #14F195; text-decoration: none; font-weight: 700;">◎ Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</a></span>
     </div>
   </footer>
 
-  <!-- Pro Paywall Modal -->
-  <div class="modal-backdrop" id="proModal" data-alias="licenseModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-box">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-        <h3 id="modalTitle" style="font-family: var(--font-display); font-size: 20px; color: var(--gold-glow);">
-          ⭐ Unlock Agent Mock Twin Pro
-        </h3>
-        <button type="button" id="closeProModal" onclick="closeProModal()" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">✕</button>
-      </div>
-
-      <p style="font-size: 13px; color: #D1D5DB; margin-bottom: 16px;">
-        One-time investment of $19 for permanent lifetime access. Deploy autonomous agent testing without monthly subscriptions.
-      </p>
-
-      <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; font-size: 12px;">
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Fuzzy Semantic Payload Matching & Prompt Drift Tolerance
-        </li>
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Dynamic Chaos Fault Injection (HTTP 429 Rate Limits, 500/503 Errors)
-        </li>
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Configurable Latency Simulation & Microsecond Jitter Control
-        </li>
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Unlimited HAR 1.2 Archive & OpenAPI 3.0 Blueprint Storage
-        </li>
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Headless CI/CD Docker Container & GitHub Actions Workflow
-        </li>
-        <li style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #10B981;">✓</span> Lifetime Updates with Zero External Pip Dependencies
-        </li>
-      </ul>
-
-      <!-- Dual Payment Rails -->
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-stripe" style="flex: 1;">
-          <span>★</span> ☕ Buy Us a Coffee (Stripe)
-        </a>
-        <button type="button" class="btn btn-solana" onclick="copySolanaTipAddress()" style="flex: 1;">
-          <span>◎</span> Solana Tip ($19)
-        </button>
-      </div>
-
-      <!-- Instant Key Input -->
-      <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-        <label for="licenseKeyInput" style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">Already purchased? Enter receipt email or license key:</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="licenseKeyInput" placeholder="name@domain.com or AMT-PRO-XXXX" style="flex: 1; background: #050608; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px 12px; color: #FFF; font-family: var(--font-mono); font-size: 12px;">
-          <button type="button" id="btnActivateKey" data-alias="btnActivateKey" class="btn btn-gold" onclick="activateWithKey()" style="min-height: 38px; padding: 6px 16px;">Activate</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Solana Tip Payment Handler -->
+  <!-- Solana Tip Handler -->
   <script>
-    function copySolanaTipAddress() {
-      if (window.SolanaTip && window.SolanaTip.Payment) {
-        try {
-          window.SolanaTip.Payment({
-            accept: [
-              {
-                blockchain: 'solana',
-                token: '11111111111111111111111111111111',
-                receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-                amount: 19
-              },
-              {
-                blockchain: 'solana',
-                token: 'USDC_SPL_MINT',
-                receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-                amount: 19
-              }
-            ]
-          });
-          return;
-        } catch (err) {
-          console.warn('Solana Direct widget fallback:', err);
-        }
+    function copySolanaTip() {
+      const address = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(address).then(() => {
+          showNotification('✓ Solana address copied: ' + address.slice(0, 6) + '...' + address.slice(-4));
+        }).catch(() => {
+          prompt('Copy Solana Tip Address:', address);
+        });
+      } else {
+        prompt('Copy Solana Tip Address:', address);
       }
-      window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
+    }
+    function startSolanaTipSolanaPayment() {
+      copySolanaTip();
     }
   </script>
 
   <!-- Client-side Logic Script -->
   <script src="/mock_engine.js"></script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-mock-twin",
+          toolName: "Agent Mock Twin",
+          tagline: "Clone external APIs into lightning-fast, zero-cost simulated twins!",
+          accentColor: "#10B981",
+          steps: [{"icon": "\ud83d\udc6f", "title": "What is a Mock Twin?", "desc": "Instead of paying for expensive cloud APIs every time you test your agents, Mock Twin creates a free simulator that behaves identically."}, {"icon": "\u26a1", "title": "Zero Latency Offline Testing", "desc": "Develop and debug your agent tools completely offline on airplanes, trains, or without internet."}, {"icon": "\ud83d\udcb0", "title": "Save 100% on API Bills", "desc": "Run thousands of automated unit tests without spending a single penny on token fees."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

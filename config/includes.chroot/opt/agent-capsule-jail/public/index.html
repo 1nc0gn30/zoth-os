@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Capsule Jail — Ephemeral Sandboxed Execution Engine & Kernel Enclave</title>
   <meta name="description" content="Autonomous zero-dependency kernel enclave, quota manager, and ephemeral sandboxed execution engine for sovereign AI agents. Strip host secrets, enforce CPU/RAM limits, and audit filesystem diffs.">
-  <meta name="keywords" content="AI agent sandbox, process jail, kernel enclave, python sandbox, RLIMIT_CPU, RLIMIT_AS, ephemeral execution, security guardrail, NullAI, 1nc0gn30">
-  <meta name="author" content="1nc0gn30">
+  <meta name="keywords" content="AI agent sandbox, process jail, kernel enclave, python sandbox, RLIMIT_CPU, RLIMIT_AS, ephemeral execution, security guardrail, 1nc0gn30 • NullAI, NullAI">
+  <meta name="author" content="1nc0gn30 (@1nc0gn30)">
   <link rel="canonical" href="https://capsule.nullai.tech/">
 
   <!-- OpenGraph Metadata -->
@@ -35,15 +35,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Solana Tip Payments Widget v13 -->
-
+  <!-- Solana Tip Web3 Payments Widget v13 -->
   <!-- Schema.org JSON-LD Graph for Frontier Crawlers & SGE -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "SoftwareApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "name": "Agent Capsule Jail",
         "url": "https://capsule.nullai.tech/",
         "applicationCategory": "SecurityApplication",
@@ -51,10 +50,10 @@
         "description": "Autonomous zero-dependency kernel enclave and ephemeral execution sandbox for AI agent subprocesses with strict resource quotas, secret stripping, and filesystem delta diffing.",
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": "https://github.com/1nc0gn30/zoth-os"
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "author": {
           "@type": "Person",
@@ -62,7 +61,7 @@
           "url": "https://github.com/1nc0gn30",
           "affiliation": {
             "@type": "Organization",
-            "name": "NullAI",
+            "name": "1nc0gn30 • NullAI",
             "url": "https://nullai.tech"
           }
         }
@@ -88,10 +87,10 @@
           },
           {
             "@type": "Question",
-            "name": "What payment rails are supported for founding licenses?",
+            "name": "Is Agent Capsule Jail free and open-access?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Founding member lifetime licenses (100% Free regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the Solana Tip Web3 payment widget."
+              "text": "Yes. Agent Capsule Jail is 100% free and open-access with zero paywalls or feature gates. Optional community support is welcomed via Buy Us a Coffee (Stripe) or Solana tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -126,6 +125,11 @@
       margin: 0;
       padding: 0;
       -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
     }
 
     body {
@@ -712,7 +716,7 @@
     .badge-mod { background: rgba(212, 175, 55, 0.2); color: var(--gold-bright); }
     .badge-del { background: rgba(239, 68, 68, 0.2); color: var(--red-alert); }
 
-    /* Advanced Forensic Output with Frosted Glass Paywall Blur */
+    /* Advanced Forensic Output */
     .forensic-section {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -741,52 +745,6 @@
       white-space: pre;
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      transition: filter 0.3s ease;
-    }
-
-    .forensic-payload.is-blurred {
-      filter: blur(6px);
-      user-select: none;
-      pointer-events: none;
-    }
-
-    .paywall-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(8, 8, 11, 0.72);
-      backdrop-filter: blur(8px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-      z-index: 10;
-    }
-
-    .paywall-box {
-      max-width: 440px;
-      background: rgba(18, 18, 26, 0.95);
-      border: 1px solid var(--gold-primary);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    }
-
-    .paywall-box h3 {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      color: #FFFFFF;
-      margin-bottom: 8px;
-    }
-
-    .paywall-box p {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 16px;
     }
 
     /* Telemetry Bento Row */
@@ -972,6 +930,13 @@
   <link rel="stylesheet" href="/wave-states.css">
 </head>
 <body>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
+
   <div class="ambient-glow" aria-hidden="true"></div>
 
   <div class="container">
@@ -986,34 +951,14 @@
       </div>
       <div class="header-actions">
         <span class="badge" style="background: rgba(212,175,55,0.15); color: #F59E0B; border: 1px solid rgba(212,175,55,0.3); font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 700;">v2.5 SOVEREIGN</span>
-        <div id="licenseBadge" data-alias="badgePro" data-alt-id="pro-badge" class="badge-pro" title="Open-Access Member Status">
-          ⚡ FREE TIER
+        <div id="licenseBadge" data-alias="badgePro" data-alt-id="pro-badge" class="badge-pro is-active" title="100% Free & Open Access">
+          ✦ 100% FREE &amp; OPEN ACCESS
         </div>
-        <button id="btnActivateKey" class="btn-key-toggle" aria-label="100% Open Access Key">
-          ✦ Activate License
-        </button>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn-key-toggle" style="text-decoration: none;" aria-label="Support via Stripe">
+          ☕ Buy Us a Coffee
+        </a>
       </div>
     </header>
-
-    <!-- High-Converting Sales Funnel Banner Above Main Section -->
-    <section id="salesBanner" class="sales-banner" aria-label="Founding Member Lifetime Access">
-      <div class="sales-info">
-        <h2>
-          <span>⚡ Founding Member Lifetime Access</span>
-          <span class="price-tag">$19</span>
-          <span class="price-strike">$79</span>
-        </h2>
-        <p>Unlock unrestricted forensic kernel traces, automated delta commits, and multi-tenant quota escalation.</p>
-      </div>
-      <div class="sales-ctas">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-cta-stripe" id="btn-stripe-funnel" aria-label="Purchase lifetime license via Stripe">
-          <span>★ Lifetime Stripe License ($19)</span>
-        </a>
-        <button type="button" id="btn-solana-tip" class="btn-cta-solana btn-solana-tip" onclick="copySolanaTipAddress()" aria-label="Purchase lifetime license via Solana Web3">
-          <span>⚡ Solana Tip (SOL / USDC)</span>
-        </button>
-      </div>
-    </section>
 
     <!-- Telemetry Bento Counters -->
     <section class="telemetry-row" aria-label="Live System Telemetry">
@@ -1166,7 +1111,7 @@
       </section>
     </main>
 
-    <!-- Advanced Forensic Output with Frosted Glass Paywall Blur -->
+    <!-- Advanced Forensic Output & Audit Seal -->
     <section class="forensic-section" aria-labelledby="forensicsTitle">
       <div class="card-title">
         <span id="forensicsTitle">✦ Deep Kernel Forensics & Audit Seal</span>
@@ -1177,7 +1122,7 @@
       </div>
 
       <div class="forensic-wrapper">
-        <pre id="forensicPayload" class="forensic-payload is-blurred">{
+        <pre id="forensicPayload" class="forensic-payload">{
   "capsule_id": "cap_sample_enclave_audit",
   "isolation_grade": "SOVEREIGN_L3_EPHEMERAL",
   "audit_integrity": {
@@ -1192,81 +1137,57 @@
   },
   "flight_recorder_dispatched": true
 }</pre>
-
-        <!-- Centered Paywall Lock Card -->
-        <div id="forensicBlurOverlay" class="paywall-overlay" role="dialog" aria-label="Forensics Locked">
-          <div class="paywall-box">
-            <h3>★ Deep Forensic Logs Locked</h3>
-            <p>Raw kernel syscall traces, SHA256 cryptographic audit seals, and delta export bundles require Founding Pro Access.</p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-cta-stripe" aria-label="Unlock Pro via Stripe">
-                <span>Unlock for $19</span>
-              </a>
-              <button type="button" id="btnUnlockForensic" class="preset-pill" aria-label="Enter License Key">
-                <span>Enter Key</span>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="app-footer">
       <div>
-        Engineered by <strong>NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">@1nc0gn30</a>) • <strong>NullAI Platform</strong>
+        Engineered by <strong>1nc0gn30 • NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">@1nc0gn30</a>) • <strong>NullAI Platform</strong>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <a href="https://github.com/1nc0gn30/agent-capsule-jail" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
+        <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip (GG2e...dXoK)</a>
         <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Hub</a>
         <a href="/sitemap.xml" target="_blank">Sitemap</a>
       </div>
     </footer>
   </div>
 
-  <!-- Paywall Modal -->
-  <div id="modalPaywall" data-alias="licenseModal" data-alt-id="paywallModal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="paywallModalTitle">
-    <div class="modal-card">
-      <button type="button" id="btnClosePaywall" class="modal-close" aria-label="Close Paywall Modal">✕</button>
-      <h3 id="paywallModalTitle" class="modal-title">Upgrade to Founding Pro</h3>
-      <p class="modal-desc">Secure lifetime sovereign sandbox execution capabilities across your infrastructure.</p>
-
-      <ul class="feature-checklist">
-        <li><span>✓</span> Unrestricted Deep Kernel Syscall Forensics</li>
-        <li><span>✓</span> Automated Delta Commit & Synchronizer Engine</li>
-        <li><span>✓</span> Multi-Tenant High-Density Quota Escalation</li>
-        <li><span>✓</span> Zero-Leak API Credential Strip Guardrail</li>
-        <li><span>✓</span> Flight Recorder Telemetry Ingestion Support</li>
-        <li><span>✓</span> Lifetime Updates — Zero Subscription Recurring Fees</li>
-      </ul>
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-cta-stripe" style="justify-content: center;" aria-label="Stripe Lifetime Checkout">
-          ★ Unlock Lifetime Access with Stripe ($19)
-        </a>
-        <button type="button" class="btn-cta-solana btn-solana-tip" onclick="copySolanaTipAddress()" style="justify-content: center; width: 100%;" aria-label="Solana Web3 Checkout">
-          ⚡ Solana Tip Instant Checkout (SOL / USDC)
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Key Activation Modal -->
-  <div id="modalActivation" data-alias="activationModal" data-alt-id="activationModal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="actModalTitle">
-    <div class="modal-card">
-      <button type="button" id="btnCloseActivation" class="modal-close" aria-label="Close Activation Modal">✕</button>
-      <h3 id="actModalTitle" class="modal-title">100% Open Access</h3>
-      <p class="modal-desc">Enter your 16-character license key or Stripe receipt email to permanently unlock all features on this browser.</p>
-
-      <input type="text" id="licenseKeyInput" data-alias="inputLicenseKey" data-alt-id="licenseKeyInput" class="input-license" placeholder="CAPSULE-PRO-2026 or user@domain.com" aria-label="License Key or Email Input">
-      <div id="keyError" style="color: var(--red-alert); font-size: 0.8rem; margin-bottom: 12px; display: none;"></div>
-
-      <button type="button" id="btnSubmitKey" data-alias="btnActivateKey" data-alt-id="btn-modal-activate" class="btn-run" style="width: 100%;" aria-label="Submit License Key">
-        Verify & Unlock
-      </button>
-    </div>
-  </div>
-
   <script src="/capsule_engine.js"></script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-capsule-jail",
+          toolName: "Agent Capsule Jail",
+          tagline: "Lock rogue AI agents inside a virtual sandbox before they break your system!",
+          accentColor: "#EF4444",
+          steps: [
+            {
+              icon: "🛡️",
+              title: "What is an Agent Jail?",
+              desc: "Autonomous coding agents can run bash commands, delete files, or send data. A Capsule Jail puts them in a bulletproof box where they can only touch safe folders."
+            },
+            {
+              icon: "🔒",
+              title: "Select Quarantine Rules",
+              desc: "Choose between Read-Only filesystem, Network Isolation, or Memory Capping with single-click toggle chips."
+            },
+            {
+              icon: "⚡",
+              title: "Live Container Telemetry",
+              desc: "Watch real-time syscalls, network ingress/egress drops, and audit logs with zero-egress enforcement."
+            }
+          ]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

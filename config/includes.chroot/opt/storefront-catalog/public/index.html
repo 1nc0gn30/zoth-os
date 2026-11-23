@@ -35,16 +35,28 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "name": "YourDigitalSpace Etsy POD Catalog Showcase",
         "url": "https://yourdigitalspace.nullai.tech/",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "All modern web browsers",
-        "creator": {
+        "author": {
           "@type": "Person",
-          "name": "1nc0gn30",
-          "alternateName": "1nc0gn30 • NullAI",
+          "name": "Neal Frazier",
+          "alternateName": "1nc0gn30",
+          "url": "https://nealfrazier.tech",
           "sameAs": "https://github.com/1nc0gn30"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech",
+          "sameAs": "https://github.com/1nc0gn30"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+          "url": "https://nullai.tech"
         },
         "offers": {
           "@type": "Offer",
@@ -77,10 +89,10 @@
           },
           {
             "@type": "Question",
-            "name": "How can I support YourDigitalSpace and ZothOS?",
+            "name": "How can I support YourDigitalSpace and Neal Frazier Tech?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "YourDigitalSpace is 100% free and open access for everyone with zero paywalls. If our tools and print-on-demand assets help your business thrive, you can support us via Buy Us a Coffee (Stripe) or on-chain Solana tip."
+              "text": "YourDigitalSpace is 100% free and open access for everyone with zero paywalls. If our tools and print-on-demand assets help your business thrive, you can support Neal Frazier Tech via Buy Us a Coffee (Stripe: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or on-chain Solana tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -227,7 +239,7 @@
       flex-wrap: wrap;
     }
 
-    .pro-badge {
+    .open-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -241,7 +253,7 @@
       transition: all 0.2s ease;
     }
 
-    .pro-badge.active {
+    .open-badge.active {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 215, 0, 0.1));
       border: 1px solid var(--gold);
       color: var(--gold-bright);
@@ -1040,22 +1052,6 @@
       margin-bottom: 1.25rem;
     }
 
-    .modal-key-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #09090b;
-      color: #ffffff;
-      font-size: 0.9rem;
-      margin-bottom: 0.75rem;
-      outline: none;
-    }
-
-    .modal-key-input:focus {
-      border-color: var(--gold);
-    }
-
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -1148,10 +1144,10 @@
 </head>
 <body>
 
-<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, #091310, #12100B); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999; max-width: 100%; box-sizing: border-box;">
   <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
   <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
-  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" title="Solana Tip Address: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: #047857; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.28); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
 </div>
 
   <div class="bg-glow"></div>
@@ -1171,7 +1167,7 @@
       </div>
 
       <div class="header-actions">
-        <div id="proBadge" class="pro-badge active">
+        <div id="openAccessBadge" class="open-badge active">
           <span>✦ 100% FREE & OPEN ACCESS</span>
         </div>
         <button id="themeToggleBtn" type="button" class="btn-action" onclick="toggleTheme()" style="width: auto; padding: 0.45rem 0.9rem; cursor: pointer;">
@@ -1210,15 +1206,12 @@
           ☕ Support Autonomous Development
         </div>
         <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.8rem;">
-          Free and open tools forever. If these listings help you build, consider buying us a coffee or sending a Solana tip.
+          Free and open tools forever. If these listings help you build, consider buying us a coffee via Stripe.
         </div>
 
         <div class="checkout-rail-buttons">
           <a class="btn-stripe" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" style="text-decoration: none; text-align: center;">
             <span>☕ Buy Us a Coffee (Stripe)</span>
-          </a>
-          <a class="btn-solana" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" style="text-decoration: none; text-align: center;">
-            <span>◎ Solana Tip (GG2eQb…dXoK)</span>
           </a>
         </div>
       </div>
@@ -1282,7 +1275,7 @@
 
         <div class="calc-result-box">
           <div class="calc-result-label">Monthly Net Profit</div>
-          <div id="resMonthlyNet" class="calc-result-num">$0,112</div>
+          <div id="resMonthlyNet" class="calc-result-num">$19,112</div>
         </div>
 
         <div class="calc-result-box">
@@ -1324,7 +1317,7 @@
       </div>
 
       <div class="vault-code-container">
-        <pre id="blurredPayload" class="vault-code-pre" style="margin: 0; max-height: 400px; overflow-y: auto;">// MASTER PRINTIFY PRODUCTION PAYLOAD SCHEMA (100% UNLOCKED)
+        <pre id="masterPayloadPreview" class="vault-code-pre" style="margin: 0; max-height: 400px; overflow-y: auto;">// MASTER PRINTIFY PRODUCTION PAYLOAD SCHEMA (100% UNLOCKED)
 {
   "store": "YourDigitalSpace",
   "production_blueprint_id": 12,
@@ -1357,7 +1350,7 @@
     <!-- Footer -->
     <footer>
       <div>
-        Engineered by 1nc0gn30 • NullAI (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a>
+        Engineered by <a href="https://github.com/1nc0gn30/storefront-catalog" target="_blank" rel="noopener noreferrer">Neal Frazier Tech (@1nc0gn30)</a> • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
       </div>
       <div>
         Repository: <a href="https://github.com/1nc0gn30/storefront-catalog" target="_blank" rel="noopener">storefront-catalog</a> • Demographic: 55+ Women
@@ -1425,17 +1418,6 @@
     let currentFilter = 'all';
     let currentSearch = '';
     let selectedProduct = null;
-    let isProActive = true;
-
-    // 100% Free & Open Access Initialization
-    function initLicense() {
-      isProActive = true;
-      const proBadge = document.getElementById('proBadge');
-      if (proBadge) {
-        proBadge.classList.add('active');
-        proBadge.innerHTML = '<span>✦ 100% FREE & OPEN ACCESS</span>';
-      }
-    }
 
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
@@ -1634,9 +1616,7 @@
     function launchCheckout(rail) {
       if (rail === 'stripe') {
         window.open('https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X', '_blank');
-      } else if (rail === 'solana') {
-        window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
-      }
+      } 
     }
 
     function toggleTheme() {
@@ -1651,6 +1631,22 @@
     renderProducts();
     updateCalculator();
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "storefront-catalog",
+          toolName: "YourDigitalSpace POD Showcase",
+          tagline: "Interactive live 3D showcase and catalog viewer for Print-on-Demand products!",
+          accentColor: "#EC4899",
+          steps: [{"icon": "\ud83c\udfea", "title": "Virtual Storefront Gallery", "desc": "Browse and interact with an avant-garde catalog of custom hoodies, posters, and accessories."}, {"icon": "\ud83e\uddca", "title": "Interactive 3D Product Views", "desc": "Spin and inspect products in full 3D to see how designs look from every angle."}, {"icon": "\ud83d\udcb3", "title": "Zero-Friction Checkout", "desc": "Connects directly to Stripe with 100% unlocked open access."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

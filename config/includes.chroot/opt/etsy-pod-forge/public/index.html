@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etsy POD Forge — Autonomous Print-on-Demand Studio & Listing Synthesizer</title>
   <meta name="description" content="Autonomous 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer targeting the high-LTV 50–75+ women demographic. 45%–98% net profit margins.">
-  <meta name="author" content="1nc0gn30">
+  <meta name="author" content="1nc0gn30 (@1nc0gn30)">
   <link rel="canonical" href="https://etsy-pod.nullai.tech/">
 
   <!-- OpenGraph Metadata -->
@@ -25,7 +25,6 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" href="/assets/icon.png">
   <link rel="apple-touch-icon" href="/assets/icon.png">
-
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +36,7 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "@id": "https://etsy-pod.nullai.tech/#app",
         "name": "Etsy POD Forge",
         "url": "https://etsy-pod.nullai.tech/",
@@ -46,17 +45,18 @@
         "description": "Autonomous Print-on-Demand studio engine generating 300 DPI print-ready transparent PNG canvases, lifestyle mockups, and 13-tag Etsy SEO listing kits targeting the 50-75+ women demographic.",
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
           "seller": {
             "@type": "Organization",
-            "name": "NullAI"
+            "name": "Neal Frazier Tech"
           }
         },
         "creator": {
           "@type": "Person",
-          "name": "1nc0gn30",
+          "name": "Neal Frazier (@1nc0gn30)",
           "url": "https://github.com/1nc0gn30"
         }
       },
@@ -82,10 +82,10 @@
           },
           {
             "@type": "Question",
-            "name": "Are the generated canvases ready for commercial printing?",
+            "name": "Is Etsy POD Forge free and open access, and how are master canvases exported?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Master canvases are exported at 300 DPI transparent PNG in standard production dimensions (4500x5400 px for direct-to-garment apparel, 2000x2000 px for mugs, and 3600x3600 px for heavy canvas totes)."
+              "text": "Yes. Etsy POD Forge is 100% free and open access with zero paywalls, exporting 300 DPI transparent PNG canvases (4500x5400 px DTG, 2000x2000 px mugs, 3600x3600 px totes). Optional support is available via Stripe (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or Solana Tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -118,6 +118,11 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
     }
 
     body {
@@ -190,12 +195,7 @@
       letter-spacing: 0.08em;
       font-weight: 700;
     }
-    .badge-guest {
-      background: rgba(212, 175, 55, 0.12);
-      border: 1px solid var(--gold);
-      color: var(--gold-light);
-    }
-    .badge-pro {
+    .badge-open {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid var(--emerald);
       color: var(--emerald);
@@ -205,7 +205,7 @@
       align-items: center;
       gap: 12px;
     }
-    .btn-key-activate {
+    .btn-coffee-cta {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-muted);
@@ -216,101 +216,9 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .btn-key-activate:hover {
+    .btn-coffee-cta:hover {
       border-color: var(--gold);
       color: var(--gold);
-    }
-
-    /* Sales Funnel Banner Above The Fold */
-    .sales-funnel-banner {
-      margin: 20px 0;
-      background: linear-gradient(135deg, rgba(32, 28, 40, 0.95), rgba(18, 16, 24, 0.95));
-      border: 1px solid var(--gold);
-      border-radius: 14px;
-      padding: 16px 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-      position: relative;
-      overflow: hidden;
-    }
-    .sales-banner-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .sales-banner-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .sales-urgency-badge {
-      background: var(--terracotta);
-      color: #fff;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-    }
-    .sales-headline {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .price-strike {
-      text-decoration: line-through;
-      color: var(--text-muted);
-      margin: 0 6px;
-    }
-    .price-highlight {
-      color: var(--gold);
-      font-weight: 800;
-      font-size: 1.25rem;
-    }
-    .sales-banner-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .btn-checkout-stripe {
-      background: linear-gradient(135deg, #635BFF, #7A73FF);
-      color: #fff;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.15s ease;
-    }
-    .btn-checkout-stripe:hover {
-      transform: translateY(-1px);
-    }
-    .btn-checkout-solana {
-      background: linear-gradient(135deg, #14F195, #9945FF);
-      color: #000;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.15s ease;
-    }
-    .btn-checkout-solana:hover {
-      transform: translateY(-1px);
     }
 
     /* Cadre Selector */
@@ -419,50 +327,6 @@
       max-height: 480px;
       display: block;
       border-radius: 8px;
-    }
-
-    /* Frosted Glass Paywall Overlay */
-    .paywall-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(8, 8, 11, 0.72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      text-align: center;
-      z-index: 10;
-    }
-    .paywall-lock-card {
-      background: rgba(24, 20, 32, 0.95);
-      border: 1px solid var(--gold);
-      border-radius: 14px;
-      padding: 24px;
-      max-width: 380px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    }
-    .paywall-lock-icon {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
-    }
-    .paywall-title {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-    .paywall-desc {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-    }
-    .paywall-btns {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
     /* Controls Strip */
@@ -776,24 +640,19 @@
         grid-template-columns: repeat(2, 1fr);
       }
     }
-    @media (max-width: 480px) {
-      .sales-banner-content {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .sales-banner-right {
-        width: 100%;
-      }
-      .btn-checkout-stripe, .btn-checkout-solana {
-        flex: 1;
-        justify-content: center;
-      }
-    }
   </style>
   <link rel="stylesheet" href="/wave.css">
   <link rel="stylesheet" href="/wave-states.css">
+
 </head>
 <body>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN-SOURCE WORKSTATION</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="background: #047857; color: #FFFFFF; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip</a>
+</div>
+
   <div class="aurora-bar"></div>
 
   <header>
@@ -805,41 +664,13 @@
         <span class="version-pill" style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:9999px;background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);margin-left:8px;">v2.5 SOVEREIGN</span>
       </a>
       <div class="header-actions">
-        <div id="licenseBadge" class="brand-badge badge-guest" onclick="window.openProModal()" style="cursor: pointer;">⚡ FREE TIER</div>
-        <button id="btnOpenProModal" data-alias="btnHeaderPro" class="btn-key-activate" type="button" onclick="window.openProModal()">Enter Key / Pro</button>
+        <div id="openAccessBadge" class="brand-badge badge-open" style="cursor: default;">✦ 100% FREE &amp; OPEN ACCESS</div>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn-coffee-cta" style="text-decoration: none;" id="btnHeaderCoffee">☕ Buy Us a Coffee</a>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- Above-The-Fold Urgent Sales Funnel Banner -->
-    <section id="salesBanner" class="sales-funnel-banner" aria-label="Founding Member Offer" data-alias="founding-offer-banner">
-      <div class="sales-banner-content">
-        <div class="sales-banner-left">
-          <span class="sales-urgency-badge">⚡ LIMITED FOUNDING COHORT</span>
-          <div>
-            <div class="sales-headline">
-              Unlock Unlimited Master 300 DPI Exports & Full 13-Tag Engine
-            </div>
-            <div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px;">
-              Regular <span class="price-strike">$79</span> ➔ Lifetime Founding Member: 
-              <span class="price-highlight">$19</span> (One-time payment)
-            </div>
-          </div>
-        </div>
-        <div class="sales-banner-right">
-          <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" title="Checkout securely via Stripe">
-            <span>★ Pay $19 via Card / Apple Pay</span>
-          </a>
-          <button type="button" class="btn-checkout-solana btn-solana-pay" title="Pay with Solana or USDC">
-            <span>◎ Pay with Solana / USDC</span>
-          </button>
-          <button id="btn-paywall-key" data-alias="btnActivateBanner" type="button" onclick="window.openProModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 11px; margin-left: 8px;">
-            Activate Key
-          </button>
-        </div>
-      </div>
-    </section>
 
     <!-- Cadre Selector Strip -->
     <nav class="cadre-selector-strip" aria-label="Product Cadres">
@@ -876,25 +707,6 @@
 
         <div class="canvas-stage-wrapper">
           <canvas id="studioCanvas" width="900" height="1080"></canvas>
-
-          <!-- Paywall Lock Overlay (Unlocked via ?licensed=true or key) -->
-          <div id="paywallOverlay" class="paywall-overlay" style="display: none;">
-            <div class="paywall-lock-card">
-              <div class="paywall-lock-icon">★</div>
-              <h3 class="paywall-title">High-Res Master File Locked</h3>
-              <p class="paywall-desc">
-                The full 4500x5400 px (300 DPI) print-ready transparent PNG and lifestyle mockup zip bundle are reserved for Pro Founding Members.
-              </p>
-              <div class="paywall-btns">
-                <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" style="justify-content: center;">
-                  <span>Unlock Lifetime Access for $19</span>
-                </a>
-                <button type="button" class="btn-checkout-solana btn-solana-pay" style="justify-content: center;">
-                  <span>Pay $19 with Solana / USDC</span>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="controls-strip">
@@ -986,43 +798,13 @@
     </section>
   </main>
 
-  <!-- Pro Activation Modal -->
-  <div id="licenseModal" data-alias="paywall-modal proModal" class="modal-overlay">
-    <div class="modal-card">
-      <button id="closeModalBtn" type="button" class="modal-close-btn" aria-label="Close modal">&times;</button>
-      <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 8px; color: var(--text-main);">
-        ⭐ Unlock Pro Lifetime Access
-      </h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
-        Instant commercial rights, 4500x5400 px master direct-to-garment print files, and automated ZIP export kits.
-      </p>
-
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn-checkout-stripe" style="justify-content: center; padding: 12px;">
-          <span>★ Instant ☕ Buy Us a Coffee (Stripe)</span>
-        </a>
-        <button type="button" class="btn-checkout-solana btn-solana-pay" style="justify-content: center; padding: 12px;">
-          <span>◎ Pay with Solana / USDC ($19)</span>
-        </button>
-      </div>
-
-      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-        <label for="license-input" style="display: block; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">
-          Already purchased? Enter receipt email or license key:
-        </label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="license-input" data-alias="inputLicenseKey licenseKeyInput" placeholder="e.g. contact@nullai.tech or ETSY-PRO-2026" style="flex: 1; padding: 8px 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;">
-          <button id="btnActivateKey" data-alias="btnSubmitKey" type="button" style="background: var(--gold); border: none; color: #000; padding: 8px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: var(--font-mono);">Activate</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <footer>
     <div class="container">
       <p>
-        Engineered by <strong>NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • 
-        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+        Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/etsy-pod-forge" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • 
+        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a> • 
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a> • 
+        Solana: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
       </p>
       <p style="margin-top: 6px; color: rgba(255,255,255,0.3); font-size: 0.75rem;">
         Autonomous Sovereign Print-on-Demand Studio • Day 7 Revenue Engine • Port 8107
@@ -1031,5 +813,22 @@
   </footer>
 
   <script src="/forge_engine.js"></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "etsy-pod-forge",
+          toolName: "Etsy POD Forge",
+          tagline: "Automate Print-on-Demand products from art to live store listings!",
+          accentColor: "#EC4899",
+          steps: [{"icon": "\ud83d\udc55", "title": "What is Print-on-Demand?", "desc": "Sell custom t-shirts, mugs, and posters without buying inventory! When a customer orders, a printer makes and ships it for you."}, {"icon": "\ud83c\udfa8", "title": "Instant Product Mockups", "desc": "Upload an image and see it placed realistically onto shirts, hoodies, and wall art in seconds."}, {"icon": "\ud83d\ude80", "title": "One-Click Store Export", "desc": "Generates complete listings with high-converting titles, descriptions, and tag payloads."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

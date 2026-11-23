@@ -1,7 +1,7 @@
 /**
  * AGENT BUDGET SENTINEL — In-Browser Telemetry & Value Realization Engine
  * Zero Fake Work — 100% Real Working Utility.
- * Engineered by 1nc0gn30 • NullAI Platform.
+ * Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
  */
 
 // Model Pricing Database (Per 1 Million Tokens in USD)
@@ -97,7 +97,7 @@ const DEFAULT_TRANSACTIONS = [
   }
 ];
 
-let isPro = false;
+let isPro = true;
 let eventSource = null;
 let currentStats = { ...DEFAULT_STATS };
 let currentTransactions = [ ...DEFAULT_TRANSACTIONS ];
@@ -114,23 +114,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// --- Licensing & Monetization ---
+// --- Licensing & Monetization — 100% Free & Open Access Invariant ---
 function initLicenseState() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("licensed") === "true" || urlParams.get("session_id") || urlParams.get("pro") === "true") {
-    localStorage.setItem("budget_sentinel_pro_license", "BUDGET-PRO-2026");
-    localStorage.setItem("agent_budget_pro", "BUDGET-PRO-2026");
-    localStorage.setItem("zoth_budget_licensed", "true");
-    localStorage.setItem("pro_licensed", "true");
-    if (window.history && window.history.replaceState) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }
-
-  const savedLicense = localStorage.getItem("budget_sentinel_pro_license") || localStorage.getItem("agent_budget_pro") || localStorage.getItem("zoth_budget_licensed") || localStorage.getItem("pro_licensed");
-  if (savedLicense) {
-    activateProState();
-  }
+  activateProState();
 }
 
 function activateProState() {
@@ -142,63 +128,29 @@ function activateProState() {
   
   const badge1 = document.getElementById("licenseBadge") || document.getElementById("pro-badge");
   if (badge1) {
-    badge1.textContent = "⭐ PRO ACTIVE";
-    badge1.className = "badge badge-pro";
+    badge1.textContent = "✦ 100% OPEN ACCESS";
+    badge1.style.background = "rgba(16,185,129,0.2)";
+    badge1.style.color = "#10B981";
+    badge1.style.borderColor = "rgba(16,185,129,0.5)";
   }
   const badge2 = document.getElementById("proStatusBadge");
   if (badge2) {
-    badge2.textContent = "⭐ PRO ACTIVE";
-    badge2.className = "badge badge-pro";
+    badge2.textContent = "✦ 100% OPEN ACCESS";
+    badge2.style.background = "rgba(16,185,129,0.2)";
+    badge2.style.color = "#10B981";
+    badge2.style.borderColor = "rgba(16,185,129,0.5)";
   }
 
-  // Hide sales banner
-  const salesBanner = document.getElementById("salesBanner");
-  if (salesBanner) {
-    salesBanner.style.display = "none";
+  const btnKey = document.getElementById("btn-header-key");
+  if (btnKey) {
+    btnKey.textContent = "☕ Buy Us a Coffee";
+    btnKey.onclick = function() {
+      window.open("https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X", "_blank");
+    };
   }
 
-  // Remove paywall blurs
-  const blurredPanels = document.querySelectorAll(".paywall-blurred");
-  blurredPanels.forEach(el => {
-    el.classList.remove("paywall-blurred");
-    el.style.filter = "none";
-    el.style.pointerEvents = "auto";
-    el.style.opacity = "1";
-  });
-
-  // Hide paywall overlay
-  const overlays = document.querySelectorAll(".paywall-overlay");
-  overlays.forEach(el => {
-    el.style.display = "none";
-  });
-
-  // Close modal if open
-  closePaywallModal();
+  // Close support modal if open
   closeCryptoModal();
-  showToast("⭐ Sovereign Pro License Active — All Features Unlocked!");
-}
-
-window.activateLicenseKey = function(key) {
-  if (!key) key = "BUDGET-PRO-2026";
-  localStorage.setItem("budget_sentinel_pro_license", key);
-  localStorage.setItem("agent_budget_pro", key);
-  localStorage.setItem("zoth_budget_licensed", "true");
-  localStorage.setItem("pro_licensed", "true");
-  activateProState();
-  return true;
-};
-
-function openPaywallModal(featureName = "Advanced FinOps Mode") {
-  if (isPro) return;
-  const modal = document.getElementById("paywallModal");
-  const featEl = document.getElementById("modalFeatureName");
-  if (featEl) featEl.textContent = featureName;
-  if (modal) modal.style.display = "flex";
-}
-
-function closePaywallModal() {
-  const modal = document.getElementById("paywallModal");
-  if (modal) modal.style.display = "none";
 }
 
 function openCryptoModal() {
@@ -211,11 +163,9 @@ function closeCryptoModal() {
   if (modal) modal.style.display = "none";
 }
 
-function copySolanaTipAddress() {
-  if (typeof SolanaTipHelper !== 'undefined' && SolanaTipHelper.Payment) {
-    SolanaTipHelper.Payment({
-      integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8'
-    });
+function openSolanaTipCheckout() {
+  if (typeof SolanaTipWidgets !== 'undefined' && SolanaTipWidgets.Payment) {
+    (navigator.clipboard && navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK'));
   } else {
     openCryptoModal();
   }
@@ -249,21 +199,6 @@ function copyConfigCommand() {
   }
 }
 
-function verifyLicenseKey() {
-  const input = document.getElementById("licenseKeyInput");
-  const key = input ? input.value.trim() : "";
-  if (key.length >= 6) {
-    localStorage.setItem("budget_sentinel_pro_license", key);
-    localStorage.setItem("agent_budget_pro", key);
-    localStorage.setItem("zoth_budget_licensed", "true");
-    localStorage.setItem("pro_licensed", "true");
-    activateProState();
-    showToast("✓ Sovereign Pro License Verified! All Advanced Guardrails & Export Modes Unlocked.");
-  } else {
-    showToast("Please enter a valid license key or receipt email (min 6 characters).");
-  }
-}
-
 // --- Live Telemetry & Stats ---
 async function fetchStats() {
   if (!isLiveBackend) {
@@ -286,6 +221,8 @@ async function fetchStats() {
 }
 
 function renderStats(data) {
+  if (!data) return;
+  currentStats = { ...currentStats, ...data };
   const stateEl = document.getElementById("breakerStateBadge");
   const headerPill = document.getElementById("headerBreakerPill");
   const spendEl = document.getElementById("currentSpendVal");
@@ -734,11 +671,6 @@ function triggerAuditExport() {
 }
 
 async function exportAuditLedger(format = 'json') {
-  if (!isPro) {
-    openPaywallModal(`FinOps Compliance Exporter (${format.toUpperCase()})`);
-    return;
-  }
-
   let txs = currentTransactions;
 
   if (isLiveBackend) {
