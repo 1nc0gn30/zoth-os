@@ -851,7 +851,7 @@ markers: edit `toolsData.js`, then re-run the generator.
 
 | | |
 |---|---|
-| generated | 2026-11-16 09:53 |
+| generated | 2026-11-19 10:23 |
 | catalog entries | 81 |
 | distinct ports | 81 (0 collisions) |
 | Layer C — catalog entries byte-identical on all 3 surfaces | 81/81 |

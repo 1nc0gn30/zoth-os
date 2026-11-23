@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Zoth Memory Vault (Chronicle Vault) — Chroot CLI Wrapper
+CLI_PATH=""
+for candidate in \
+  "/opt/zoth-memory-vault/cli.py" \
+  "$HOME/NullAITech/zoth-memory-vault/cli.py"
+do
+  if [[ -f "$candidate" ]]; then
+    CLI_PATH="$candidate"
+    break
+  fi
+done
+
+if [[ -z "$CLI_PATH" ]]; then
+  echo "zoth-memory-vault: cli.py not found in /opt/zoth-memory-vault or \$HOME/NullAITech/zoth-memory-vault" >&2
+  exit 1
+fi
+
+PYTHON_BIN="python3"
+if [[ -x "/opt/zothos-ai-env/bin/python3" ]]; then
+  PYTHON_BIN="/opt/zothos-ai-env/bin/python3"
+fi
+
+exec "$PYTHON_BIN" "$CLI_PATH" "$@"

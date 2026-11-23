@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-Zoth WebGen — Sovereign Full-Stack AI Web Architect CLI
-Wrapper around Zoth Bolt (bolt.diy) on :5173 / :8092.
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
-100% Free & Open Access
+Zoth WebGen — alias launcher for Zoth Bolt (the real bolt.diy fork) on :5173.
+Never starts the legacy braille server.py stand-in.
 """
 import sys, os, subprocess, shutil
 
@@ -11,12 +9,8 @@ def main():
     bolt_bin = shutil.which('zoth-bolt') or '/usr/local/bin/zoth-bolt'
     if os.path.exists(bolt_bin) and os.path.realpath(bolt_bin) != os.path.realpath(__file__):
         sys.exit(subprocess.run([bolt_bin] + sys.argv[1:]).returncode)
-    # Fallback to direct python script in bolt.diy or zoth-webgen
-    repo = os.path.expanduser('~/NullAITech/bolt.diy')
-    if not os.path.exists(repo):
-        repo = os.path.expanduser('~/NullAITech/zoth-webgen')
-    server_py = os.path.join(repo, 'server.py')
-    sys.exit(subprocess.run([sys.executable, server_py] + sys.argv[1:], cwd=repo).returncode)
+    print('zoth-bolt launcher not found — install the real bolt.diy fork launcher first.', file=sys.stderr)
+    sys.exit(1)
 
 if __name__ == '__main__':
     main()

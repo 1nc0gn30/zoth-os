@@ -37,27 +37,16 @@ function isBackendRunning() {
 
 function startBackend() {
   const rootDir = path.resolve(__dirname, '..');
-  const env = { ...process.env, PORT: String(BACKEND_PORT), PYTHONUNBUFFERED: '1' };
-  let cmd = 'python3';
-  let args = ['server.py', '--port', String(BACKEND_PORT)];
-
-  if (fs.existsSync(path.join(rootDir, 'server.js'))) {
-    cmd = 'node';
-    args = ['server.js', '--port', String(BACKEND_PORT)];
-  } else if (fs.existsSync(path.join(rootDir, 'server.py'))) {
-    cmd = 'python3';
-    args = ['server.py', '--port', String(BACKEND_PORT)];
-  } else if (fs.existsSync(path.join(rootDir, 'zoth_relay', 'server.py'))) {
-    cmd = 'python3';
-    args = ['-m', 'zoth_relay.server', '--port', String(BACKEND_PORT)];
-  } else if (fs.existsSync(path.join(rootDir, 'src'))) {
-    const srcDir = path.join(rootDir, 'src');
-    const pkgs = fs.readdirSync(srcDir).filter((d) => fs.existsSync(path.join(srcDir, d, 'cli.py')));
-    if (pkgs.length > 0) {
-      env.PYTHONPATH = env.PYTHONPATH ? `${srcDir}:${env.PYTHONPATH}` : srcDir;
-      args = ['-m', `${pkgs[0]}.cli`, 'serve', '--port', String(BACKEND_PORT)];
-    }
+  const env = { ...process.env, PORT: String(BACKEND_PORT) };
+  // ONLY the real bolt.diy fork (Remix/Vite). Never the legacy server.py braille stand-in.
+  if (!fs.existsSync(path.join(rootDir, 'package.json'))) {
+    console.error('[zoth-bolt] package.json missing — refusing to start any stand-in backend.');
+    app.quit();
+    return;
   }
+  const runner = fs.existsSync('/usr/bin/pnpm') ? 'pnpm' : 'npm';
+  const cmd = runner;
+  const args = ['run', 'dev', '--', '--port', String(BACKEND_PORT), '--host', '127.0.0.1'];
 
   backendProcess = spawn(cmd, args, {
     cwd: rootDir,

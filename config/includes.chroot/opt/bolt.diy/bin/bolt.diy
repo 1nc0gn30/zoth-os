@@ -3,6 +3,9 @@
 Zoth Bolt (zoth-bolt / bolt.diy) — Sovereign Full-Stack AI Web & Motion Architect CLI
 Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
 100% Free & Open Access
+
+This launcher ONLY ever starts the real bolt.diy fork (Remix/Vite workbench).
+The legacy server.py braille stand-in is never spawned.
 """
 import sys, os, json, subprocess, argparse, urllib.request, urllib.error, time, shutil
 
@@ -11,70 +14,80 @@ TOOL_ALIAS = 'bolt.diy'
 TOOL_REPO = 'bolt.diy'
 TOOL_NAME = 'Zoth Bolt'
 TOOL_DESC = 'Flagship sovereign full-stack AI web, 3D shader, and motion architect on :5173 with local Ollama, 19+ LLM providers, and WebContainer live synthesis.'
-TOOL_VERSION = '2.5.0'
+TOOL_VERSION = '3.5.0'
 TOOL_CATEGORY = 'AI Agents & Dev'
 TOOL_PORT = 5173
-REPO_DIR = os.path.expanduser('~/NullAITech/bolt.diy')
-SERVER_PY = os.path.expanduser('~/NullAITech/bolt.diy/server.py')
-ELECTRON_MAIN = os.path.expanduser('~/NullAITech/bolt.diy/electron/main.cjs')
+
+
+def _repo_candidates():
+    return [
+        os.path.expanduser('~/NullAITech/bolt.diy'),
+        '/opt/bolt.diy',
+        '/opt/zoth-bolt',
+        os.path.expanduser('~/bolt.diy'),
+    ]
+
+
+def find_repo():
+    for c in _repo_candidates():
+        if os.path.isfile(os.path.join(c, 'package.json')):
+            return c
+    return _repo_candidates()[0]
+
+
+REPO_DIR = find_repo()
+ELECTRON_MAIN = os.path.join(REPO_DIR, 'electron', 'main.cjs')
 STUDIO_URL = "http://127.0.0.1:3000/tools/zoth-bolt"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
 
 def check_daemon():
-    for path in ("/api/health", "/health", "/"):
-        try:
-            req = urllib.request.Request(f"{LOCAL_PORT_URL}{path}")
-            with urllib.request.urlopen(req, timeout=1.5) as resp:
-                if 200 <= resp.status < 400:
-                    body = resp.read().decode("utf-8", errors="ignore")
-                    try:
-                        return json.loads(body)
-                    except Exception:
-                        return {"status": "online", "port": TOOL_PORT}
-        except Exception:
-            pass
+    """Online means the REAL bolt.diy engine answered — not any HTTP 200."""
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/api/health")
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            body = json.loads(resp.read().decode("utf-8", errors="ignore"))
+            if body.get("engine") == "bolt.diy":
+                return body
+    except Exception:
+        pass
     return None
+
+
+def _runner():
+    return shutil.which('pnpm') or shutil.which('npm')
 
 
 def ensure_daemon(port=TOOL_PORT):
     status = check_daemon()
     if status is not None:
         return status
-    if os.path.exists(SERVER_PY):
-        subprocess.Popen(
-            [sys.executable, SERVER_PY, "--port", str(port)],
-            cwd=REPO_DIR,
-            stdout=open("/tmp/zoth-bolt.log", "a"),
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
-        for _ in range(25):
-            time.sleep(0.2)
-            status = check_daemon()
-            if status is not None:
-                return status
-    return check_daemon()
+    if not os.path.isfile(os.path.join(REPO_DIR, 'package.json')):
+        return None
+    runner = _runner()
+    if not runner:
+        return None
+    env = dict(os.environ, PORT=str(port))
+    subprocess.Popen(
+        [runner, 'run', 'dev', '--', '--port', str(port), '--host', '127.0.0.1'],
+        cwd=REPO_DIR,
+        stdout=open("/tmp/zoth-bolt.log", "a"),
+        stderr=subprocess.STDOUT,
+        start_new_session=True,
+        env=env,
+    )
+    for _ in range(150):
+        time.sleep(0.4)
+        status = check_daemon()
+        if status is not None:
+            return status
+    return None
 
 
 def api_get(endpoint):
     try:
         req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}")
         with urllib.request.urlopen(req, timeout=3.0) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except Exception as e:
-        return {"error": str(e)}
-
-
-def api_post(endpoint, data=None):
-    try:
-        req_data = json.dumps(data or {}).encode("utf-8")
-        req = urllib.request.Request(
-            f"{LOCAL_PORT_URL}{endpoint}",
-            data=req_data,
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req, timeout=5.0) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except Exception as e:
         return {"error": str(e)}
@@ -112,18 +125,18 @@ def main():
     parser.add_argument("--status", action="store_true", help="Check local Zoth Bolt daemon status")
     parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
     parser.add_argument("--ui", action="store_true", help="Print local Zoth Bolt workbench URL")
-    parser.add_argument("--port", type=int, default=TOOL_PORT, help="Port for serve subcommand")
-    parser.add_argument("--prompt", type=str, default="", help="Prompt for AI full-stack synthesis")
-    parser.add_argument("--provider", type=str, default="Ollama (Local Sovereign)", help="LLM Provider")
+    parser.add_argument("--port", type=int, default=TOOL_PORT, help="Port for serve/dev subcommands")
+    parser.add_argument("--prompt", type=str, default="", help="Prompt forwarded into the live Zoth Bolt workbench")
+    parser.add_argument("--provider", type=str, default="Ollama", help="LLM Provider")
     parser.add_argument("--model", type=str, default="qwen2.5-coder:32b", help="Model ID")
     parser.add_argument(
         "subcommand",
         nargs="?",
         choices=[
-            "status", "providers", "templates", "assets", "synthesize",
+            "status", "providers", "models", "bridge", "synthesize",
             "serve", "dev", "ollama", "desktop", "electron", "tui"
         ],
-        help="Subcommand (status, serve, dev, ollama, desktop, electron, tui, providers, templates, assets, synthesize)",
+        help="Subcommand (status, serve, dev, ollama, desktop, electron, tui, providers, models, bridge, synthesize)",
     )
     parsed, unknown = parser.parse_known_args(args)
 
@@ -134,7 +147,13 @@ def main():
         launch_tui(unknown + (["--json"] if parsed.json else []))
 
     if parsed.subcommand == "serve":
-        os.execv(sys.executable, [sys.executable, SERVER_PY, "--port", str(parsed.port)])
+        runner = _runner()
+        if not runner or not os.path.isfile(os.path.join(REPO_DIR, 'package.json')):
+            print("✗ Real bolt.diy fork not found (package.json missing) — refusing to start any stand-in.", file=sys.stderr)
+            sys.exit(1)
+        os.chdir(REPO_DIR)
+        os.environ['PORT'] = str(parsed.port)
+        os.execv(runner, [runner, 'run', 'dev', '--', '--port', str(parsed.port), '--host', '127.0.0.1'])
 
     if parsed.subcommand in ("dev", "ollama"):
         daemon_status = ensure_daemon(parsed.port)
@@ -147,7 +166,7 @@ def main():
                 "url": LOCAL_PORT_URL,
                 "studio_url": STUDIO_URL,
                 "daemon_online": daemon_status is not None,
-                "status": "READY"
+                "status": "READY" if daemon_status else "STARTING"
             }, indent=2))
             return
         print(f"✦ {TOOL_NAME} [{mode_label}] is LIVE at {LOCAL_PORT_URL}")
@@ -159,24 +178,35 @@ def main():
     daemon_status = ensure_daemon(TOOL_PORT)
 
     if parsed.subcommand == "providers":
-        print(json.dumps(api_get("/api/providers"), indent=2))
+        print(json.dumps(api_get("/api/configured-providers"), indent=2))
         return
 
-    if parsed.subcommand == "templates":
-        print(json.dumps(api_get("/api/templates"), indent=2))
+    if parsed.subcommand == "models":
+        print(json.dumps(api_get("/api/local-models"), indent=2))
         return
 
-    if parsed.subcommand == "assets":
-        print(json.dumps(api_get("/api/assets"), indent=2))
+    if parsed.subcommand == "bridge":
+        print(json.dumps(api_get("/api/zoth/bridge"), indent=2))
         return
 
     if parsed.subcommand == "synthesize" or parsed.prompt:
         prompt_text = parsed.prompt or "Build a dark glassmorphic AI telemetry dashboard with real-time charts"
-        res = api_post("/api/synthesize", {
-            "prompt": prompt_text,
-            "provider": parsed.provider,
-            "model": parsed.model,
-        })
+        try:
+            req_data = json.dumps({
+                "action": "prompt_and_build",
+                "prompt": prompt_text,
+                "provider": parsed.provider,
+                "model": parsed.model,
+            }).encode("utf-8")
+            req = urllib.request.Request(
+                f"{LOCAL_PORT_URL}/api/webgen/control",
+                data=req_data,
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=5.0) as resp:
+                res = json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            res = {"error": str(e)}
         print(json.dumps(res, indent=2))
         return
 
@@ -187,9 +217,9 @@ def main():
         "name": TOOL_NAME,
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
+        "installed": os.path.isfile(os.path.join(REPO_DIR, 'package.json')),
         "repo_path": REPO_DIR,
-        "native_cli": SERVER_PY,
+        "engine": "bolt.diy (real Remix/Vite fork)",
         "electron_main": ELECTRON_MAIN,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
@@ -215,10 +245,7 @@ def main():
         state = "ONLINE" if daemon_status else "OFFLINE"
         print(f"✦ {TOOL_NAME} Daemon Status: {state} (:{TOOL_PORT}) | Workbench: {LOCAL_PORT_URL}")
         if isinstance(daemon_status, dict):
-            print(f"  Engine        : {daemon_status.get('service', 'zoth-bolt-sovereign')}")
-            print(f"  Providers     : {daemon_status.get('providers_count', 19)} AI Providers")
-            print(f"  Templates     : {daemon_status.get('templates_count', 8)} Stacks")
-            print(f"  GPU Assets    : {daemon_status.get('gpu_assets_count', 3)} Verified Assets")
+            print(f"  Engine        : {daemon_status.get('engine', 'bolt.diy')}")
         return
 
     print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
@@ -226,7 +253,7 @@ def main():
     print(f"  Studio Route  : {STUDIO_URL}")
     print(f"  Local Port    : {LOCAL_PORT_URL}")
     print(f"  Daemon        : {'ONLINE' if daemon_status else 'OFFLINE'}")
-    print(f"  Commands      : zoth-bolt [status|dev|ollama|desktop|tui|providers|templates|synthesize]")
+    print(f"  Commands      : zoth-bolt [status|dev|ollama|desktop|tui|providers|models|bridge|synthesize]")
     print(f"  Access        : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
 
