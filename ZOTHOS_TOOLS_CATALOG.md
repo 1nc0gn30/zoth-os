@@ -1,11 +1,11 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 80-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
+#  ZOTHOS — 83-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
 #  Unified Catalog of the NullAI / 1nc0gn30 Sovereign Arsenal
 #  100% God-Mode Workstation Coverage in Zoth Studio v2 & Native ZothOS CLI
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 80 Studio tools.
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 83 Studio tools.
 #   Every tool features a dedicated interactive God-Mode Workstation (/tools/<id>), a unique
 #   loopback port (127.0.0.1:<port>), a native ZothOS CLI binary (/usr/local/bin/<id>),
 #   a 60fps Unicode U+2800 Braille TUI (<id>-tui), a 30s 60fps product launch film,
@@ -24,11 +24,11 @@
 #   zoth-studio                        # Launch full Zoth Studio v2 Cockpit (:3000)
 #   zoth-cockpit                       # Full-screen curses terminal operations center
 #   zoth-tool-nexus                    # Interactive TUI tool dispatcher
-#   zoth-pkg list                      # Inspect installed system & 80 arsenal tools
+#   zoth-pkg list                      # Inspect installed system & 83 arsenal tools
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 1 — HARDWARE & OS (1 TOOLS)
+##  CADRE 1 — HARDWARE & OS (1 TOOL)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 1. pixel-cast (PixelCast)
@@ -42,7 +42,7 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 2 — PLANNING (1 TOOLS)
+##  CADRE 2 — PLANNING (1 TOOL)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 2. adytum-alchemist-ai-workflow (Adytum Planner)
@@ -56,7 +56,7 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 3 — SWARM & CORE (9 TOOLS)
+##  CADRE 3 — SWARM & CORE (11 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
 ### 3. azoth-local-agent (AZOTH Local Archon Agent)
@@ -140,12 +140,30 @@
 - **Operational Value:** Local-first always-on 3D WebGL desk companion for Zoth OS — multi-harness neural engine (Grok/Hermes/Ollama), Security Ring authority, MCP hub, summoned with Ctrl+Shift+Space.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
+### 12. zoth-x-connector (Zoth X Connector)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-x-connector • **Local Port:** `http://127.0.0.1:8152`
+- **GitHub:** https://github.com/1nc0gn30/zoth-x-connector
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-x-connector --help` & `zoth-x-connector-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Sovereign local X (Twitter) multi-account API controller, persistent systemd timer scheduler, Zoth Vault OAuth configurator, and live campaign workstation on :8152.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
+
+### 13. zoth-egregore (Zoth Egregore)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-egregore • **Local Port:** `http://127.0.0.1:8147`
+- **GitHub:** https://github.com/1nc0gn30/zoth-egregore
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-egregore --help` & `zoth-egregore-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Zero-dependency OpenAI-compatible collective-intelligence inference proxy (:8147) orchestrating 3,456 co-prime cognitive lenses over DeepSeek-Flash & Nous Research Hermes Agent with Beta-posterior Adaptive-Consistency stopping.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
+
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 4 — MEMORY & BRAIN (1 TOOLS)
+##  CADRE 4 — MEMORY & BRAIN (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 12. neuro-memory-daemon (Neuro-Memory Daemon)
+### 14. neuro-memory-daemon (Neuro-Memory Daemon)
 - **Studio Route:** https://zoth.nullai.tech/tools/neuro-memory-daemon • **Local Port:** `http://127.0.0.1:8094`
 - **GitHub:** https://github.com/NullAITech/neuro-memory-daemon
 - **Category:** Memory & Brain
@@ -154,12 +172,21 @@
 - **Operational Value:** Biological-fidelity memory substrate with 3D Cosmic Nebula and federated Zoth Memory viewer. CLI zoth-memory / zoth-neuro-memory.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
+### 15. zoth-memory-vault (Chronicle Vault)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-memory-vault • **Local Port:** `http://127.0.0.1:8161`
+- **GitHub:** https://github.com/1nc0gn30/zoth-memory-vault
+- **Category:** Memory & Brain
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-memory-vault --help` & `zoth-memory-vault-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Contained Hermes + AGY conversation consolidation, friction/pattern intelligence, live continuity recall, and personal prompt playbook workstation on :8161.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
+
 
 ## ═══════════════════════════════════════════════════════════════════════════════
 ##  CADRE 5 — AI & KNOWLEDGE (3 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 13. deepsearch-research-agent (DeepSearch Research Agent & Studio)
+### 16. deepsearch-research-agent (DeepSearch Research Agent & Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/deepsearch-research-agent • **Local Port:** `http://127.0.0.1:8122`
 - **GitHub:** https://github.com/1nc0gn30/deepsearch-research-agent
 - **Category:** AI & Knowledge
@@ -168,7 +195,7 @@
 - **Operational Value:** 100% in-browser multi-source deep research agent with grounded inline citations, quantitative benchmark verification, research DAG brand media, and consensus matrices.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 14. promptmaster-studio (PromptMaster Studio)
+### 17. promptmaster-studio (PromptMaster Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/promptmaster-studio • **Local Port:** `http://127.0.0.1:8123`
 - **GitHub:** https://github.com/1nc0gn30/promptmaster-studio
 - **Category:** AI & Knowledge
@@ -177,7 +204,7 @@
 - **Operational Value:** 100% in-browser prompt engineering and meta-optimization studio with real-time AST linting, multi-model rewrites (Claude, ChatGPT, Gemini), tri-model constellation brand media, and dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 15. webmcp-protocol-inspector (WebMCP Protocol Suite)
+### 18. webmcp-protocol-inspector (WebMCP Protocol Suite)
 - **Studio Route:** https://zoth.nullai.tech/tools/webmcp-protocol-inspector • **Local Port:** `http://127.0.0.1:8142`
 - **GitHub:** https://github.com/NullAITech/zoth-studio-v2
 - **Category:** AI & Knowledge
@@ -191,7 +218,7 @@
 ##  CADRE 6 — SECURITY & RECON (9 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 16. hexstrike-arsenal (HexStrike Security Arsenal)
+### 19. hexstrike-arsenal (HexStrike Security Arsenal)
 - **Studio Route:** https://zoth.nullai.tech/tools/hexstrike-arsenal • **Local Port:** `http://127.0.0.1:8138`
 - **GitHub:** https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal
 - **Category:** Security & Recon
@@ -200,7 +227,7 @@
 - **Operational Value:** Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 17. envguard-secrets-vault (EnvGuard Secrets Vault)
+### 20. envguard-secrets-vault (EnvGuard Secrets Vault)
 - **Studio Route:** https://zoth.nullai.tech/tools/envguard-secrets-vault • **Local Port:** `http://127.0.0.1:8088`
 - **GitHub:** https://github.com/1nc0gn30/envguard-secrets-vault
 - **Category:** Security & Recon
@@ -209,7 +236,7 @@
 - **Operational Value:** Argon2id + AES-256-GCM hardware vault for zero-cloud secret storage, Shamir quorum splitting, and leak scanning.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 18. jwt-inspector-guard (JWT Inspector Guard)
+### 21. jwt-inspector-guard (JWT Inspector Guard)
 - **Studio Route:** https://zoth.nullai.tech/tools/jwt-inspector-guard • **Local Port:** `http://127.0.0.1:8124`
 - **GitHub:** https://github.com/1nc0gn30/jwt-inspector-guard
 - **Category:** Security & Recon
@@ -218,7 +245,7 @@
 - **Operational Value:** Zero-cloud in-browser JWT token decoder, cryptographic signature validator, HS256 dictionary cracker, DPoP proofer, and auth claim auditor.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 19. payload-entropy-studio (Payload Entropy Studio)
+### 22. payload-entropy-studio (Payload Entropy Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/payload-entropy-studio • **Local Port:** `http://127.0.0.1:8080`
 - **GitHub:** https://github.com/1nc0gn30/payload-entropy-studio
 - **Category:** Security & Recon
@@ -227,7 +254,7 @@
 - **Operational Value:** 100% in-browser Shannon entropy waveform visualizer, 32-byte sliding window, recursive payload deobfuscator, automated multi-engine WAF rule generator, Shannon waveform brand media, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 20. web-security-guard (Web Security Guard)
+### 23. web-security-guard (Web Security Guard)
 - **Studio Route:** https://zoth.nullai.tech/tools/web-security-guard • **Local Port:** `http://127.0.0.1:8125`
 - **GitHub:** https://github.com/1nc0gn30/web-security-guard
 - **Category:** Security & Recon
@@ -236,7 +263,7 @@
 - **Operational Value:** 100% in-browser security headers auditor, TLS cert inspector, CSP Level 3 generator, native Web Crypto SHA-384 SRI hasher, security defense shield brand media, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 21. subsweep-lead-scanner (SubSweep Lead Scanner)
+### 24. subsweep-lead-scanner (SubSweep Lead Scanner)
 - **Studio Route:** https://zoth.nullai.tech/tools/subsweep-lead-scanner • **Local Port:** `http://127.0.0.1:8090`
 - **GitHub:** https://github.com/1nc0gn30/subsweep-lead-scanner
 - **Category:** Security & Recon
@@ -245,7 +272,7 @@
 - **Operational Value:** 100% in-browser OSINT reconnaissance, passive DNS discovery, tech stack fingerprinting, OSINT radar brand media, and executive lead intelligence with zero cloud egress.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 22. agent-gods-eye (Agent God's Eye)
+### 25. agent-gods-eye (Agent God's Eye)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-gods-eye • **Local Port:** `http://127.0.0.1:8112`
 - **GitHub:** https://github.com/1nc0gn30/agent-gods-eye
 - **Category:** Security & Recon
@@ -254,7 +281,7 @@
 - **Operational Value:** Autonomous zero-dependency Shodan OSINT tactical radar, 3D kinetic planetary attack surface reconnaissance, and threat scoring.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 23. osint-scout-skill (Domain Intel OSINT Scout)
+### 26. osint-scout-skill (Domain Intel OSINT Scout)
 - **Studio Route:** https://zoth.nullai.tech/tools/osint-scout-skill • **Local Port:** `http://127.0.0.1:8085`
 - **GitHub:** https://github.com/NullAITech/osint-scout-skill
 - **Category:** Security & Recon
@@ -263,7 +290,7 @@
 - **Operational Value:** 100% in-browser passive domain intelligence & attack surface reconnaissance engine auditing Certificate Transparency logs, DoH DNS records, and SPF/DMARC posture — free to use; optional tips welcome.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 24. yara-sigma-forge (YARA-X & Sigma Threat Rule Forge)
+### 27. yara-sigma-forge (YARA-X & Sigma Threat Rule Forge)
 - **Studio Route:** https://zoth.nullai.tech/tools/yara-sigma-forge • **Local Port:** `http://127.0.0.1:8133`
 - **GitHub:** https://github.com/1nc0gn30/yara-sigma-forge
 - **Category:** Security & Recon
@@ -277,7 +304,7 @@
 ##  CADRE 7 — AUTONOMOUS WEB (7 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 25. polyglot-framework-exporter (Polyglot Framework Exporter)
+### 28. polyglot-framework-exporter (Polyglot Framework Exporter)
 - **Studio Route:** https://zoth.nullai.tech/tools/polyglot-framework-exporter • **Local Port:** `http://127.0.0.1:8126`
 - **GitHub:** https://github.com/1nc0gn30/polyglot-framework-exporter
 - **Category:** Autonomous Web
@@ -286,7 +313,7 @@
 - **Operational Value:** 100% in-browser multi-framework project scaffolder (13 frameworks), AST component transpiler, and client-side PKZIP compressor.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 26. aeo-graph-engine (AEO Graph Engine & Studio)
+### 29. aeo-graph-engine (AEO Graph Engine & Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/aeo-graph-engine • **Local Port:** `http://127.0.0.1:8127`
 - **GitHub:** https://github.com/1nc0gn30/aeo-graph-engine
 - **Category:** Autonomous Web
@@ -295,7 +322,7 @@
 - **Operational Value:** 100% in-browser Answer Engine Optimization (AEO/GEO) workbench, Schema.org JSON-LD @graph generator, live semantic crawler, and MCP export with dual checkout rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 27. cwv-speed-engine (CWV Speed Engine)
+### 30. cwv-speed-engine (CWV Speed Engine)
 - **Studio Route:** https://zoth.nullai.tech/tools/cwv-speed-engine • **Local Port:** `http://127.0.0.1:8128`
 - **GitHub:** https://github.com/1nc0gn30/cwv-speed-engine
 - **Category:** Autonomous Web
@@ -304,7 +331,7 @@
 - **Operational Value:** 100% in-browser Core Web Vitals diagnostic engine, client DOM AST speed transformer, PWA manifest builder, tachometer gauge brand media, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 28. pwa-manifest-builder (PWA Manifest Studio)
+### 31. pwa-manifest-builder (PWA Manifest Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/pwa-manifest-builder • **Local Port:** `http://127.0.0.1:8100`
 - **GitHub:** https://github.com/1nc0gn30/pwa-manifest-builder
 - **Category:** Autonomous Web
@@ -313,7 +340,7 @@
 - **Operational Value:** 100% in-browser Progressive Web App manifest generator, ServiceWorker compiler, offline cache architect, and production PWA ZIP bundle exporter. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 29. schema-illustrator-studio (Schema Illustrator Studio)
+### 32. schema-illustrator-studio (Schema Illustrator Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/schema-illustrator-studio • **Local Port:** `http://127.0.0.1:8099`
 - **GitHub:** https://github.com/1nc0gn30/schema-illustrator-studio
 - **Category:** Autonomous Web
@@ -322,7 +349,7 @@
 - **Operational Value:** 100% in-browser visual database ERD studio and schema transpiler (TypeScript, Pydantic, Prisma, SQL DDL, GraphQL). Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 30. zoth-webgen (Zoth QuickSite Starter)
+### 33. zoth-webgen (Zoth QuickSite Starter)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-webgen • **Local Port:** `http://127.0.0.1:8092`
 - **GitHub:** https://github.com/NullAITech/zoth-webgen
 - **Category:** Autonomous Web
@@ -331,13 +358,13 @@
 - **Operational Value:** Simple 3-step static template & 1-click Netlify launcher on 127.0.0.1:8092. Pick a ready-made template, preview live, and export HTML/ZIP or deploy to Netlify.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 31. bolt.diy (Zoth Bolt)
-- **Studio Route:** https://zoth.nullai.tech/tools/bolt.diy • **Local Port:** `http://127.0.0.1:5173`
-- **GitHub:** https://github.com/stackblitz-labs/bolt.diy
+### 34. zoth-bolt (Zoth Bolt)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-bolt • **Local Port:** `http://127.0.0.1:5173`
+- **GitHub:** https://github.com/1nc0gn30/bolt.diy
 - **Category:** Autonomous Web
-- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `bolt.diy --help` & `bolt.diy-tui`
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-bolt --help` & `zoth-bolt-tui`
 - **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
-- **Operational Value:** Flagship Full-Stack AI Web & Motion Architect on 127.0.0.1:5173. Supports 23+ AI providers, local CLI agents (AGY, Hermes, Grok, Claude, OpenCode, Cline, Aider), 6 Motion Edit templates, 200k+ free SVG & 16-bit Pixel Art icons, MCP asset bridge, and live WebContainers.
+- **Operational Value:** Flagship Sovereign Full-Stack AI Web & Motion Architect (Zoth Bolt / bolt.diy) on 127.0.0.1:5173. Supports 19+ AI providers, local Ollama & CLI agents (AGY, Hermes, Grok, Claude, OpenCode, Cline, Aider), 6 Motion Edit templates, 200k+ SVG & Pixel Art icons, TUI (`zoth-bolt-tui`), and Electron Desktop app (`zoth-bolt desktop`).
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 
@@ -345,7 +372,7 @@
 ##  CADRE 8 — MEDIA & 3D (9 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 32. vision-gesture-control (Vision Gesture Control)
+### 35. vision-gesture-control (Vision Gesture Control)
 - **Studio Route:** https://zoth.nullai.tech/tools/vision-gesture-control • **Local Port:** `http://127.0.0.1:8089`
 - **GitHub:** https://github.com/1nc0gn30/vision-gesture-control
 - **Category:** Media & 3D
@@ -354,7 +381,7 @@
 - **Operational Value:** 100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivity. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 33. badge3d-coin-generator (Badge3D Coin Generator)
+### 36. badge3d-coin-generator (Badge3D Coin Generator)
 - **Studio Route:** https://zoth.nullai.tech/tools/badge3d-coin-generator • **Local Port:** `http://127.0.0.1:8084`
 - **GitHub:** https://github.com/1nc0gn30/badge3d-coin-generator
 - **Category:** Media & 3D
@@ -363,7 +390,7 @@
 - **Operational Value:** 100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders, watertight STL/OBJ export, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 34. cyber-turtle-studio (Cyber Turtle Studio)
+### 37. cyber-turtle-studio (Cyber Turtle Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/cyber-turtle-studio • **Local Port:** `http://127.0.0.1:8129`
 - **GitHub:** https://github.com/1nc0gn30/cyber-turtle-studio
 - **Category:** Media & 3D
@@ -372,7 +399,7 @@
 - **Operational Value:** 100% in-browser L-System fractal synthesizer, turtle geometry studio, and physical CNC pen-plotter G-Code and SVG vector exporter. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 35. datamosh-glitch-studio (Datamosh Glitch Studio)
+### 38. datamosh-glitch-studio (Datamosh Glitch Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/datamosh-glitch-studio • **Local Port:** `http://127.0.0.1:8081`
 - **GitHub:** https://github.com/1nc0gn30/datamosh-glitch-studio
 - **Category:** Media & 3D
@@ -381,7 +408,7 @@
 - **Operational Value:** 100% in-browser parametric video datamosh synthesizer, H.264 I-frame drop corruption, CRT scanlines, procedural cassette brand media, and live camera mosh buffer with zero paywalls.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 36. nexus-3d-scene-studio (Nexus 3D Scene Studio)
+### 39. nexus-3d-scene-studio (Nexus 3D Scene Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/nexus-3d-scene-studio • **Local Port:** `http://127.0.0.1:8082`
 - **GitHub:** https://github.com/1nc0gn30/nexus-3d-scene-studio
 - **Category:** Media & 3D
@@ -390,7 +417,7 @@
 - **Operational Value:** 100% in-browser WebGL mathematical 3D geometry engine, 4D Tesseract, parametric surfaces, FastMCP server, procedural tesseract brand media, and precision OBJ/STL mesh exporters with zero paywalls.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 37. ufo-sacred-geometry (UFO Sacred Geometry Studio)
+### 40. ufo-sacred-geometry (UFO Sacred Geometry Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/ufo-sacred-geometry • **Local Port:** `http://127.0.0.1:8083`
 - **GitHub:** https://github.com/1nc0gn30/ufo-sacred-geometry
 - **Category:** Media & 3D
@@ -399,7 +426,7 @@
 - **Operational Value:** 100% in-browser sacred geometry synthesizer, crop circle agro-glyph CAD generator, procedural Metatron brand media, and AutoCAD DXF, Wavefront OBJ, and vector SVG exporter with dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 38. zoth-ascii-magic (Zoth ASCII Magic Studio)
+### 41. zoth-ascii-magic (Zoth ASCII Magic Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-ascii-magic • **Local Port:** `http://127.0.0.1:8132`
 - **GitHub:** https://github.com/1nc0gn30/zoth-ascii-magic
 - **Category:** Media & 3D
@@ -408,7 +435,7 @@
 - **Operational Value:** 100% client-side Image/Video/3D-to-ASCII & Sub-Pixel Unicode Braille studio with Sobel directional edge detection (/\\|-), interactive 2D point relighting, CRT phosphor bloom, and 24-bit TrueColor ANSI/HTML/SVG exports.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 39. reality-shader-forge (Zoth Reality Shader & Theme Forge)
+### 42. reality-shader-forge (Zoth Reality Shader & Theme Forge)
 - **Studio Route:** https://zoth.nullai.tech/tools/reality-shader-forge • **Local Port:** `http://127.0.0.1:8134`
 - **GitHub:** https://github.com/1nc0gn30/reality-shader-forge
 - **Category:** Media & 3D
@@ -417,7 +444,7 @@
 - **Operational Value:** Interactive 60fps Reality Switch shader synthesizer and ZothOS desktop theme compiler. Customize the 5 Zoth Realities, preview Zoth Bot companions, and export KDE Plasma .colors, Alacritty .toml, and CSS tokens.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 40. zoth-scene-foundry (Zoth Scene Foundry)
+### 43. zoth-scene-foundry (Zoth Scene Foundry)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-scene-foundry • **Local Port:** `http://127.0.0.1:8823`
 - **GitHub:** https://github.com/1nc0gn30/zoth-scene-foundry
 - **Category:** Media & 3D
@@ -431,7 +458,7 @@
 ##  CADRE 9 — AUTOMATION (4 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 41. omnipost-social-engine (OmniPost Social Engine)
+### 44. omnipost-social-engine (OmniPost Social Engine)
 - **Studio Route:** https://zoth.nullai.tech/tools/omnipost-social-engine • **Local Port:** `http://127.0.0.1:8091`
 - **GitHub:** https://github.com/1nc0gn30/omnipost-social-engine
 - **Category:** Automation
@@ -440,7 +467,7 @@
 - **Operational Value:** 100% in-browser social content formatting, viral thread splitter, virality scoring, MCP AI agent client hub, and procedural omni-beacon brand media with dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 42. cron-rhythm-studio (CronRhythm Studio)
+### 45. cron-rhythm-studio (CronRhythm Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/cron-rhythm-studio • **Local Port:** `http://127.0.0.1:5174`
 - **GitHub:** https://github.com/1nc0gn30/cron-rhythm-studio
 - **Category:** Automation
@@ -449,7 +476,7 @@
 - **Operational Value:** High-precision cron AST parser, 24x7 rhythm heatmap, countdown timeline, multi-dialect transpiler across K8s, GitHub Actions, AWS EventBridge, and Systemd with procedural chronometer brand media and dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 43. certpath-roadmap-studio (CertPath Roadmap Studio)
+### 46. certpath-roadmap-studio (CertPath Roadmap Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/certpath-roadmap-studio • **Local Port:** `http://127.0.0.1:8093`
 - **GitHub:** https://github.com/1nc0gn30/certpath-roadmap-studio
 - **Category:** Automation
@@ -458,7 +485,7 @@
 - **Operational Value:** 100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, procedural DAG brand media, and dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 44. regex-droid-builder (Regex Droid Studio)
+### 47. regex-droid-builder (Regex Droid Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/regex-droid-builder • **Local Port:** `http://127.0.0.1:8101`
 - **GitHub:** https://github.com/1nc0gn30/regex-droid-builder
 - **Category:** Automation
@@ -472,7 +499,7 @@
 ##  CADRE 10 — SECURITY & OPSEC (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 45. anderson-security-sentinel (Anderson Security Sentinel)
+### 48. anderson-security-sentinel (Anderson Security Sentinel)
 - **Studio Route:** https://zoth.nullai.tech/tools/anderson-security-sentinel • **Local Port:** `http://127.0.0.1:8103`
 - **GitHub:** https://github.com/1nc0gn30/anderson-security-sentinel
 - **Category:** Security & OpSec
@@ -481,7 +508,7 @@
 - **Operational Value:** Autonomous biometric laptop perimeter defense, WiFi X-Ray RF tomography, USB tripwire guard, and thermal FLIR optics. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 46. audiocipher-stego-engine (AudioCipher Stego Studio)
+### 49. audiocipher-stego-engine (AudioCipher Stego Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/audiocipher-stego-engine • **Local Port:** `http://127.0.0.1:8096`
 - **GitHub:** https://github.com/1nc0gn30/audiocipher-stego-engine
 - **Category:** Security & OpSec
@@ -495,7 +522,7 @@
 ##  CADRE 11 — GROWTH & SEO (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 47. robots-txt-auditor (Robots.txt & AEO Auditor)
+### 50. robots-txt-auditor (Robots.txt & AEO Auditor)
 - **Studio Route:** https://zoth.nullai.tech/tools/robots-txt-auditor • **Local Port:** `http://127.0.0.1:8086`
 - **GitHub:** https://github.com/1nc0gn30/robots-txt-auditor
 - **Category:** Growth & SEO
@@ -504,7 +531,7 @@
 - **Operational Value:** 100% in-browser RFC 9309 robots.txt parser, AI crawler simulator (Googlebot, GPTBot, ClaudeBot, PerplexityBot, Applebot), Pro Drift Shield, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 48. city-desk (City Desk)
+### 51. city-desk (City Desk)
 - **Studio Route:** https://zoth.nullai.tech/tools/city-desk • **Local Port:** `http://127.0.0.1:8087`
 - **GitHub:** https://github.com/1nc0gn30/city-desk
 - **Category:** Growth & SEO
@@ -518,7 +545,7 @@
 ##  CADRE 12 — SECURITY & NETWORK (3 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 49. agent-egress-sentinel (Agent Egress Sentinel)
+### 52. agent-egress-sentinel (Agent Egress Sentinel)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-egress-sentinel • **Local Port:** `http://127.0.0.1:8095`
 - **GitHub:** https://github.com/1nc0gn30/agent-egress-sentinel
 - **Category:** Security & Network
@@ -527,7 +554,7 @@
 - **Operational Value:** Autonomous zero-dependency network interceptor, TLS SNI sniffer, kinetic egress radar, and kernel quarantine. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 50. agent-prompt-firewall (Agent Prompt Firewall)
+### 53. agent-prompt-firewall (Agent Prompt Firewall)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-prompt-firewall • **Local Port:** `http://127.0.0.1:8098`
 - **GitHub:** https://github.com/1nc0gn30/agent-prompt-firewall
 - **Category:** Security & Network
@@ -536,7 +563,7 @@
 - **Operational Value:** Autonomous inline prompt injection defense, PII redactor, and threat radar for AI agents ($0 token leak) with real-time SSE stream, AST de-obfuscation, and 100% free open access.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 51. agent-budget-sentinel (Agent Budget Sentinel)
+### 54. agent-budget-sentinel (Agent Budget Sentinel)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-budget-sentinel • **Local Port:** `http://127.0.0.1:8110`
 - **GitHub:** https://github.com/1nc0gn30/agent-budget-sentinel
 - **Category:** Security & Network
@@ -550,7 +577,7 @@
 ##  CADRE 13 — SIMULATION & TESTING (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 52. agent-mock-twin (Agent Mock Twin)
+### 55. agent-mock-twin (Agent Mock Twin)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-mock-twin • **Local Port:** `http://127.0.0.1:8097`
 - **GitHub:** https://github.com/1nc0gn30/agent-mock-twin
 - **Category:** Simulation & Testing
@@ -559,7 +586,7 @@
 - **Operational Value:** Autonomous offline API mock server & deterministic replay twin for AI agents ($0 token spend in CI/CD) with OpenAPI/HAR ingestion, Python standard library backend, and 100% free open access.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 53. mcp-lens (MCP Lens)
+### 56. mcp-lens (MCP Lens)
 - **Studio Route:** https://zoth.nullai.tech/tools/mcp-lens • **Local Port:** `http://127.0.0.1:8109`
 - **GitHub:** https://github.com/1nc0gn30/mcp-lens
 - **Category:** Simulation & Testing
@@ -570,10 +597,10 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 14 — FORENSICS & TELEMETRY (1 TOOLS)
+##  CADRE 14 — FORENSICS & TELEMETRY (1 TOOL)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 54. agent-flight-recorder (Agent Flight Recorder)
+### 57. agent-flight-recorder (Agent Flight Recorder)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-flight-recorder • **Local Port:** `http://127.0.0.1:8104`
 - **GitHub:** https://github.com/1nc0gn30/agent-flight-recorder
 - **Category:** Forensics & Telemetry
@@ -587,7 +614,7 @@
 ##  CADRE 15 — SECURITY & ENCLAVE (5 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 55. agent-capsule-jail (Agent Capsule Jail)
+### 58. agent-capsule-jail (Agent Capsule Jail)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-capsule-jail • **Local Port:** `http://127.0.0.1:8105`
 - **GitHub:** https://github.com/1nc0gn30/agent-capsule-jail
 - **Category:** Security & Enclave
@@ -596,7 +623,7 @@
 - **Operational Value:** Autonomous kernel enclave sandbox, resource quota manager, and secret stripping engine with dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 56. agent-policy-auditor (Agent Policy Auditor)
+### 59. agent-policy-auditor (Agent Policy Auditor)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-policy-auditor • **Local Port:** `http://127.0.0.1:8106`
 - **GitHub:** https://github.com/1nc0gn30/agent-policy-auditor
 - **Category:** Security & Enclave
@@ -605,7 +632,7 @@
 - **Operational Value:** Autonomous capability leaser, permission broker, and OWASP LLM manifest security auditor with dual Stripe + Solana rails.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 57. shodan-surface-sentinel (Shodan Attack Surface Sentinel)
+### 60. shodan-surface-sentinel (Shodan Attack Surface Sentinel)
 - **Studio Route:** https://zoth.nullai.tech/tools/shodan-surface-sentinel • **Local Port:** `http://127.0.0.1:8130`
 - **GitHub:** https://github.com/1nc0gn30/shodan-surface-sentinel
 - **Category:** Security & Enclave
@@ -614,7 +641,7 @@
 - **Operational Value:** Zero-egress defensive asset auditor and InternetDB engine. Inspects open ports, CPE software stacks, and confirmed CVE exposures for your infrastructure.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 58. ghidra-mcp-bridge (GhidraMCP Binary Reverse Engineering Bridge)
+### 61. ghidra-mcp-bridge (GhidraMCP Binary Reverse Engineering Bridge)
 - **Studio Route:** https://zoth.nullai.tech/tools/ghidra-mcp-bridge • **Local Port:** `http://127.0.0.1:8131`
 - **GitHub:** https://github.com/LaurieWired/GhidraMCP
 - **Category:** Security & Enclave
@@ -623,7 +650,7 @@
 - **Operational Value:** LaurieWired Ghidra Model Context Protocol bridge for autonomous binary decompilation, AST method analysis, and project variable annotation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 59. zoth-bounty (Zoth Bounty Research Hub)
+### 62. zoth-bounty (Zoth Bounty Research Hub)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-bounty • **Local Port:** `http://127.0.0.1:9494`
 - **GitHub:** https://github.com/1nc0gn30/zoth-bounty
 - **Category:** Security & Enclave
@@ -637,7 +664,7 @@
 ##  CADRE 16 — COMMERCE & POD (3 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 60. etsy-pod-forge (Etsy POD Forge)
+### 63. etsy-pod-forge (Etsy POD Forge)
 - **Studio Route:** https://zoth.nullai.tech/tools/etsy-pod-forge • **Local Port:** `http://127.0.0.1:8107`
 - **GitHub:** https://github.com/1nc0gn30/etsy-pod-forge
 - **Category:** Commerce & POD
@@ -646,7 +673,7 @@
 - **Operational Value:** Autonomous 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer. Free to use; tips optional.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 61. storefront-catalog (YourDigitalSpace POD Showcase)
+### 64. storefront-catalog (YourDigitalSpace POD Showcase)
 - **Studio Route:** https://zoth.nullai.tech/tools/storefront-catalog • **Local Port:** `http://127.0.0.1:8143`
 - **GitHub:** https://github.com/1nc0gn30/storefront-catalog
 - **Category:** Commerce & POD
@@ -655,7 +682,7 @@
 - **Operational Value:** 10 master Etsy Print-on-Demand products optimized for 55+ demographic with 62.6% blended profit margin, 13/13 tag sets, and 100% free & open-access with optional Buy Us a Coffee & Solana tip support.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 62. producthunt-connector (Product Hunt Connector (zoth-ph))
+### 65. producthunt-connector (Product Hunt Connector (zoth-ph))
 - **Studio Route:** https://zoth.nullai.tech/tools/producthunt-connector • **Local Port:** `http://127.0.0.1:8139`
 - **GitHub:** https://github.com/1nc0gn30/producthunt-connector
 - **Category:** Commerce & POD
@@ -669,7 +696,7 @@
 ##  CADRE 17 — COMMERCE & MCP (8 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 63. etsy-connector (Etsy Connector)
+### 66. etsy-connector (Etsy Connector)
 - **Studio Route:** https://zoth.nullai.tech/tools/etsy-connector • **Local Port:** `http://127.0.0.1:8108`
 - **GitHub:** https://github.com/1nc0gn30/etsy-connector
 - **Category:** Commerce & MCP
@@ -678,7 +705,7 @@
 - **Operational Value:** Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 64. shopify-connector (Shopify Connector)
+### 67. shopify-connector (Shopify Connector)
 - **Studio Route:** https://zoth.nullai.tech/tools/shopify-connector • **Local Port:** `http://127.0.0.1:8113`
 - **GitHub:** https://github.com/1nc0gn30/shopify-connector
 - **Category:** Commerce & MCP
@@ -687,7 +714,7 @@
 - **Operational Value:** Shopify GraphQL Admin API & POD sync engine with 1-click Etsy listing transpiler, net profit simulator, and Antigravity MCP suite.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 65. printify-connector (Printify Connector)
+### 68. printify-connector (Printify Connector)
 - **Studio Route:** https://zoth.nullai.tech/tools/printify-connector • **Local Port:** `http://127.0.0.1:8115`
 - **GitHub:** https://github.com/1nc0gn30/printify-connector
 - **Category:** Commerce & MCP
@@ -696,7 +723,7 @@
 - **Operational Value:** Autonomous zero-dependency Printify Open API v1 connector, 20% Premium margin calculator, artwork DPI auditor, and Antigravity MCP suite.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 66. gelato-connector (Gelato Connector)
+### 69. gelato-connector (Gelato Connector)
 - **Studio Route:** https://zoth.nullai.tech/tools/gelato-connector • **Local Port:** `http://127.0.0.1:8116`
 - **GitHub:** https://github.com/1nc0gn30/gelato-connector
 - **Category:** Commerce & MCP
@@ -705,7 +732,7 @@
 - **Operational Value:** Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Antigravity MCP suite.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 67. pod-smart-router (POD Smart Router)
+### 70. pod-smart-router (POD Smart Router)
 - **Studio Route:** https://zoth.nullai.tech/tools/pod-smart-router • **Local Port:** `http://127.0.0.1:8117`
 - **GitHub:** https://github.com/1nc0gn30/pod-smart-router
 - **Category:** Commerce & MCP
@@ -714,7 +741,7 @@
 - **Operational Value:** Multi-channel POD order router dynamically comparing Printify (:8115) and Gelato (:8116) on landed cost, domestic proximity, delivery speed, and tariff avoidance.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 68. digital-asset-forge (Digital Asset Forge)
+### 71. digital-asset-forge (Digital Asset Forge)
 - **Studio Route:** https://zoth.nullai.tech/tools/digital-asset-forge • **Local Port:** `http://127.0.0.1:8118`
 - **GitHub:** https://github.com/1nc0gn30/digital-asset-forge
 - **Category:** Commerce & MCP
@@ -723,7 +750,7 @@
 - **Operational Value:** High-Res 300 DPI multi-ratio wall art pack generator (2:3, 3:4, 4:5, 11:14, ISO) for Etsy & Shopify digital downloads (98% margin) with 20MB multi-zip splitting.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 69. pod-mockup-forge (POD Mockup Forge)
+### 72. pod-mockup-forge (POD Mockup Forge)
 - **Studio Route:** https://zoth.nullai.tech/tools/pod-mockup-forge • **Local Port:** `http://127.0.0.1:8119`
 - **GitHub:** https://github.com/1nc0gn30/pod-mockup-forge
 - **Category:** Commerce & MCP
@@ -732,7 +759,7 @@
 - **Operational Value:** Autonomous photorealistic mockup studio with 60fps Lumen Matrix, fabric ink blending, and Etsy 2026 photo standards compliance auditor.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 70. pod-margin-sentinel (POD Margin Sentinel)
+### 73. pod-margin-sentinel (POD Margin Sentinel)
 - **Studio Route:** https://zoth.nullai.tech/tools/pod-margin-sentinel • **Local Port:** `http://127.0.0.1:8120`
 - **GitHub:** https://github.com/1nc0gn30/pod-margin-sentinel
 - **Category:** Commerce & MCP
@@ -746,7 +773,7 @@
 ##  CADRE 18 — VOICE & REAL-TIME (2 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 71. agent-voice-call (Agent Voice Call)
+### 74. agent-voice-call (Agent Voice Call)
 - **Studio Route:** https://zoth.nullai.tech/tools/agent-voice-call • **Local Port:** `http://127.0.0.1:8114`
 - **GitHub:** https://github.com/1nc0gn30/agent-voice-call
 - **Category:** Voice & Real-Time
@@ -755,7 +782,7 @@
 - **Operational Value:** Autonomous sovereign real-time voice cockpit, live audio WebSocket streaming, multi-persona voice synthesizer, and zero-telemetry call protocol.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
-### 72. likeness-desk (Likeness Desk (AI Video Double))
+### 75. likeness-desk (Likeness Desk (AI Video Double))
 - **Studio Route:** https://zoth.nullai.tech/tools/likeness-desk • **Local Port:** `http://127.0.0.1:9395`
 - **GitHub:** https://github.com/1nc0gn30/likeness-desk
 - **Category:** Voice & Real-Time
@@ -766,10 +793,10 @@
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
-##  CADRE 19 — ACCESSIBILITY, OSINT & SOVEREIGN ENCLAVES (6 TOOLS)
+##  CADRE 19 — ACCESSIBILITY, OSINT & SOVEREIGN ENCLAVES (8 TOOLS)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-### 73. wcag-contrast-guard (WCAG & APCA Contrast Guard Studio)
+### 76. wcag-contrast-guard (WCAG & APCA Contrast Guard Studio)
 - **Studio Route:** https://zoth.nullai.tech/tools/wcag-contrast-guard • **Local Port:** `http://127.0.0.1:8150`
 - **GitHub:** https://github.com/1nc0gn30/wcag-contrast-guard
 - **Category:** Design & Accessibility
@@ -778,7 +805,7 @@
 - **Operational Value:** WCAG 2.1/2.2 AA/AAA relative luminance, APCA-W3 0.98G-4g perceptual lightness contrast, 8 CVD simulation matrices, and CIEDE2000 minimal-shift auto-remediation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 74. zoth-osint (Zoth OSINT Workstation & Masterclass)
+### 77. zoth-osint (Zoth OSINT Workstation & Masterclass)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-osint • **Local Port:** `http://127.0.0.1:8149`
 - **GitHub:** https://github.com/1nc0gn30/zoth-osint
 - **Category:** Security & OSINT
@@ -787,16 +814,8 @@
 - **Operational Value:** Sovereign OSINT investigative suite, graph entity link analysis, zero-egress passive reconnaissance, and automated forensic report synthesis.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 75. zoth-bolt (Zoth Bolt Sandboxed Workstation)
-- **Studio Route:** https://zoth.nullai.tech/tools/zoth-bolt • **Local Port:** `http://127.0.0.1:5173`
-- **GitHub:** https://github.com/1nc0gn30/bolt.diy
-- **Category:** AI Agents & Dev
-- **Execution Mode:** BROWSER | **ZothOS CLI:** `bolt --help` & `bolt.diy-tui`
-- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
-- **Operational Value:** Local, air-gapped web development sandbox and autonomous multi-agent code synthesizer with WebContainer execution.
-- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 76. zoth-math-pillar (Zoth Math Pillar HUD)
+### 78. zoth-math-pillar (Zoth Math Pillar HUD)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-math-pillar • **Local Port:** `http://127.0.0.1:9995`
 - **GitHub:** https://github.com/1nc0gn30/zoth-os
 - **Category:** Security & Enclave
@@ -805,7 +824,7 @@
 - **Operational Value:** Real-time 4-Pillar Mathematical Security & Compute Telemetry HUD (L0 Kernel, L1 Vault, L2 Network, L3 Agent Runtime) with Compact Pill mode.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 77. zothos-lite (ZothOS-Lite Amnesic Monotone OS)
+### 79. zothos-lite (ZothOS-Lite Amnesic Monotone OS)
 - **Studio Route:** https://zoth.nullai.tech/tools/zothos-lite • **Local Port:** `http://127.0.0.1:8145`
 - **GitHub:** https://github.com/1nc0gn30/zothos-lite
 - **Category:** Hardware & OS
@@ -814,7 +833,7 @@
 - **Operational Value:** Tails-style Amnesic Monotone Security & AI OS (Debian 13 Live · toram noswap) supporting 56 AI models, ZothNet P2P mesh, and zero-trace operation.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 78. zothnet (ZothNet Sovereign Darknet Mesh)
+### 80. zothnet (ZothNet Sovereign Darknet Mesh)
 - **Studio Route:** https://zoth.nullai.tech/tools/zothnet • **Local Port:** `http://127.0.0.1:9900`
 - **GitHub:** https://github.com/NullAITech/zoth-studio-v2
 - **Category:** Swarm & Core
@@ -823,7 +842,7 @@
 - **Operational Value:** Autonomous zero-DNS darknet mesh with Sphinx 1,280B onion mixnet, Vaelor feeless L1 DAG, Kademlia DHT alpha=3, and STUN NAT traversal.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 79. creatorplaybooks (CreatorPlaybooks)
+### 81. creatorplaybooks (CreatorPlaybooks)
 - **Studio Route:** https://zoth.nullai.tech/tools/creatorplaybooks • **Local Port:** `http://127.0.0.1:5185`
 - **GitHub:** https://github.com/1nc0gn30/creatorplaybooks
 - **Category:** Education & Growth
@@ -832,7 +851,7 @@
 - **Operational Value:** Curated reading list, mentor playbook directory, practice plans, and goal tracker for builders across global cities with zero AI slop.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
 
-### 80. zoth-obsidian-tracker (Zoth Obsidian Tracker)
+### 82. zoth-obsidian-tracker (Zoth Obsidian Tracker)
 - **Studio Route:** https://zoth.nullai.tech/tools/zoth-obsidian-tracker • **Local Port:** `http://127.0.0.1:8151`
 - **GitHub:** https://github.com/1nc0gn30/zoth-obsidian-tracker
 - **Category:** Swarm & Core
@@ -840,6 +859,15 @@
 - **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
 - **Operational Value:** Sovereign Second Brain vault explorer, 5 Ecosystem Pillars, 7-APK Master Roadmap, and 78-tool verification matrix with live screenrecordings on :8151.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 83. aether-observatory (Aether Observatory)
+- **Studio Route:** https://zoth.nullai.tech/tools/aether-observatory • **Local Port:** `http://127.0.0.1:8160`
+- **GitHub:** https://github.com/1nc0gn30/aether-observatory
+- **Category:** System & Telemetry
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `aether-observatory --help` & `aether-observatory-tui`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Sovereign cyber-physical telemetry command deck: 60fps 3D orbital constellation of every live port, daemon, thermal zone and repo, Braille/Bayer-8x8 dither HUD, procedural WebAudio sonification, and SQLite flight recorder with diff scrubber on :8160.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
 ---
 
@@ -851,98 +879,100 @@ markers: edit `toolsData.js`, then re-run the generator.
 
 | | |
 |---|---|
-| generated | 2026-11-19 10:23 |
-| catalog entries | 81 |
-| distinct ports | 81 (0 collisions) |
-| Layer C — catalog entries byte-identical on all 3 surfaces | 81/81 |
+| generated | 2026-11-23 14:41 |
+| catalog entries | 83 |
+| distinct ports | 82 (0 collisions) |
+| Layer C — catalog entries byte-identical on all 3 surfaces | 82/83 |
 | Layer C — canonical wrapper filenames byte-identical | 51/51 |
-| Layer C — short-name aliases byte-identical | 54/54 |
-| Layer B components | 81/81 |
-| Layer D READMEs | 81/81 |
+| Layer C — short-name aliases byte-identical | 51/54 |
+| Layer B components | 83/83 |
+| Layer D READMEs | 83/83 |
 
 | # | tool id | category | port | A | B | C | D |
 |---|---------|----------|------|---|---|---|---|
-| 1 | `pixel-cast` | Hardware & OS | `:8148` | A | B | 3/3 | D |
-| 2 | `aether-observatory` | System & Telemetry | `:8160` | A | B | 3/3 | D |
-| 3 | `adytum-alchemist-ai-workflow` | Planning | `:8135` | A | B | 3/3 | D |
-| 4 | `azoth-local-agent` | Swarm & Core | `:8136` | A | B | 3/3 | D |
-| 5 | `sovereign-agent-bridge` | Swarm & Core | `:8102` | A | B | 3/3 | D |
-| 6 | `neuro-memory-daemon` | Memory & Brain | `:8094` | A | B | 3/3 | D |
-| 7 | `zoth-os` | Swarm & Core | `:8137` | A | B | 3/3 | D |
-| 8 | `vector-search-engine` | Swarm & Core | `:8121` | A | B | 3/3 | D |
-| 9 | `deepsearch-research-agent` | AI & Knowledge | `:8122` | A | B | 3/3 | D |
-| 10 | `promptmaster-studio` | AI & Knowledge | `:8123` | A | B | 3/3 | D |
-| 11 | `hexstrike-arsenal` | Security & Recon | `:8138` | A | B | 3/3 | D |
-| 12 | `envguard-secrets-vault` | Security & Recon | `:8088` | A | B | 3/3 | D |
-| 13 | `jwt-inspector-guard` | Security & Recon | `:8124` | A | B | 3/3 | D |
-| 14 | `payload-entropy-studio` | Security & Recon | `:8080` | A | B | 3/3 | D |
-| 15 | `web-security-guard` | Security & Recon | `:8125` | A | B | 3/3 | D |
-| 16 | `polyglot-framework-exporter` | Autonomous Web | `:8126` | A | B | 3/3 | D |
-| 17 | `aeo-graph-engine` | Autonomous Web | `:8127` | A | B | 3/3 | D |
-| 18 | `cwv-speed-engine` | Autonomous Web | `:8128` | A | B | 3/3 | D |
-| 19 | `vision-gesture-control` | Media & 3D | `:8089` | A | B | 3/3 | D |
-| 20 | `subsweep-lead-scanner` | Security & Recon | `:8090` | A | B | 3/3 | D |
-| 21 | `omnipost-social-engine` | Automation | `:8091` | A | B | 3/3 | D |
-| 22 | `cron-rhythm-studio` | Automation | `:5174` | A | B | 3/3 | D |
-| 23 | `certpath-roadmap-studio` | Automation | `:8093` | A | B | 3/3 | D |
-| 24 | `pwa-manifest-builder` | Autonomous Web | `:8100` | A | B | 3/3 | D |
-| 25 | `regex-droid-builder` | Automation | `:8101` | A | B | 3/3 | D |
-| 26 | `schema-illustrator-studio` | Autonomous Web | `:8099` | A | B | 3/3 | D |
-| 27 | `zoth-webgen` | Autonomous Web | `:8092` | A | B | 3/3 | D |
-| 28 | `zoth-swarm-multiplexer` | Swarm & Core | `:8141` | A | B | 3/3 | D |
-| 29 | `webmcp-protocol-inspector` | AI & Knowledge | `:8142` | A | B | 3/3 | D |
-| 30 | `anderson-security-sentinel` | Security & OpSec | `:8103` | A | B | 3/3 | D |
-| 31 | `badge3d-coin-generator` | Media & 3D | `:8084` | A | B | 3/3 | D |
-| 32 | `robots-txt-auditor` | Growth & SEO | `:8086` | A | B | 3/3 | D |
-| 33 | `city-desk` | Growth & SEO | `:8087` | A | B | 3/3 | D |
-| 34 | `agent-egress-sentinel` | Security & Network | `:8095` | A | B | 3/3 | D |
-| 35 | `agent-mock-twin` | Simulation & Testing | `:8097` | A | B | 3/3 | D |
-| 36 | `agent-prompt-firewall` | Security & Network | `:8098` | A | B | 3/3 | D |
-| 37 | `wcag-contrast-guard` | Accessibility & UI | `:8150` | A | B | 3/3 | D |
-| 38 | `agent-flight-recorder` | Forensics & Telemetry | `:8104` | A | B | 3/3 | D |
-| 39 | `agent-capsule-jail` | Security & Enclave | `:8105` | A | B | 3/3 | D |
-| 40 | `agent-policy-auditor` | Security & Enclave | `:8106` | A | B | 3/3 | D |
-| 41 | `etsy-pod-forge` | Commerce & POD | `:8107` | A | B | 3/3 | D |
-| 42 | `etsy-connector` | Commerce & MCP | `:8108` | A | B | 3/3 | D |
-| 43 | `mcp-lens` | Simulation & Testing | `:8109` | A | B | 3/3 | D |
-| 44 | `agent-budget-sentinel` | Security & Network | `:8110` | A | B | 3/3 | D |
-| 45 | `agent-gods-eye` | Security & Recon | `:8112` | A | B | 3/3 | D |
-| 46 | `shopify-connector` | Commerce & MCP | `:8113` | A | B | 3/3 | D |
-| 47 | `printify-connector` | Commerce & MCP | `:8115` | A | B | 3/3 | D |
-| 48 | `gelato-connector` | Commerce & MCP | `:8116` | A | B | 3/3 | D |
-| 49 | `agent-voice-call` | Voice & Real-Time | `:8114` | A | B | 3/3 | D |
-| 50 | `pod-smart-router` | Commerce & MCP | `:8117` | A | B | 3/3 | D |
-| 51 | `digital-asset-forge` | Commerce & MCP | `:8118` | A | B | 3/3 | D |
-| 52 | `pod-mockup-forge` | Commerce & MCP | `:8119` | A | B | 3/3 | D |
-| 53 | `pod-margin-sentinel` | Commerce & MCP | `:8120` | A | B | 3/3 | D |
-| 54 | `audiocipher-stego-engine` | Security & OpSec | `:8096` | A | B | 3/3 | D |
-| 55 | `cyber-turtle-studio` | Media & 3D | `:8129` | A | B | 3/3 | D |
-| 56 | `datamosh-glitch-studio` | Media & 3D | `:8081` | A | B | 3/3 | D |
-| 57 | `nexus-3d-scene-studio` | Media & 3D | `:8082` | A | B | 3/3 | D |
-| 58 | `ufo-sacred-geometry` | Media & 3D | `:8083` | A | B | 3/3 | D |
-| 59 | `likeness-desk` | Voice & Real-Time | `:9395` | A | B | 3/3 | D |
-| 60 | `osint-scout-skill` | Security & Recon | `:8085` | A | B | 3/3 | D |
-| 61 | `zoth-osint` | Security & Recon | `:8149` | A | B | 3/3 | D |
-| 62 | `zoth-bolt` | Autonomous Web | `:5173` | A | B | 3/3 | D |
-| 63 | `zoth-civilization` | Swarm & Core | `:9393` | A | B | 3/3 | D |
-| 64 | `storefront-catalog` | Commerce & POD | `:8143` | A | B | 3/3 | D |
-| 65 | `shodan-surface-sentinel` | Security & Enclave | `:8130` | A | B | 3/3 | D |
-| 66 | `ghidra-mcp-bridge` | Security & Enclave | `:8131` | A | B | 3/3 | D |
-| 67 | `zoth-ascii-magic` | Media & 3D | `:8132` | A | B | 3/3 | D |
-| 68 | `yara-sigma-forge` | Security & Recon | `:8133` | A | B | 3/3 | D |
-| 69 | `reality-shader-forge` | Media & 3D | `:8134` | A | B | 3/3 | D |
-| 70 | `producthunt-connector` | Commerce & POD | `:8139` | A | B | 3/3 | D |
-| 71 | `zoth-relay` | Swarm & Core | `:8765` | A | B | 3/3 | D |
-| 72 | `zela-glasses-guide` | Swarm & Core | `:8144` | A | B | 3/3 | D |
-| 73 | `zoth-bot` | Swarm & Core | `:8146` | A | B | 3/3 | D |
-| 74 | `zoth-bounty` | Security & Enclave | `:9494` | A | B | 3/3 | D |
-| 75 | `zoth-scene-foundry` | Media & 3D | `:8823` | A | B | 3/3 | D |
-| 76 | `zoth-math-pillar` | Security & Enclave | `:9995` | A | B | 3/3 | D |
-| 77 | `zothos-lite` | Hardware & OS | `:8145` | A | B | 3/3 | D |
-| 78 | `zothnet` | Swarm & Core | `:9900` | A | B | 3/3 | D |
-| 79 | `creatorplaybooks` | Education & Growth | `:5185` | A | B | 3/3 | D |
-| 80 | `zoth-obsidian-tracker` | Swarm & Core | `:8151` | A | B | 3/3 | D |
-| 81 | `zoth-x-connector` | Swarm & Core | `:8152` | A | B | 3/3 | D |
+| 1 | `zoth-memory-vault` | Memory & Brain | `:8161` | A | B | 3 | D |
+| 2 | `pixel-cast` | Hardware & OS | `:8148` | A | B | 3/3 | D |
+| 3 | `aether-observatory` | System & Telemetry | `:8160` | A | B | 3/3 | D |
+| 4 | `adytum-alchemist-ai-workflow` | Planning | `:8135` | A | B | 3/3 | D |
+| 5 | `azoth-local-agent` | Swarm & Core | `:8136` | A | B | 3/3 | D |
+| 6 | `sovereign-agent-bridge` | Swarm & Core | `:8102` | A | B | 3/3 | D |
+| 7 | `neuro-memory-daemon` | Memory & Brain | `:8094` | A | B | 3/3 | D |
+| 8 | `zoth-os` | Swarm & Core | `:8137` | A | B | 3/3 | D |
+| 9 | `vector-search-engine` | Swarm & Core | `:8121` | A | B | 3/3 | D |
+| 10 | `deepsearch-research-agent` | AI & Knowledge | `:8122` | A | B | 3/3 | D |
+| 11 | `promptmaster-studio` | AI & Knowledge | `:8123` | A | B | 3/3 | D |
+| 12 | `hexstrike-arsenal` | Security & Recon | `:8138` | A | B | 3/3 | D |
+| 13 | `envguard-secrets-vault` | Security & Recon | `:8088` | A | B | 3/3 | D |
+| 14 | `jwt-inspector-guard` | Security & Recon | `:8124` | A | B | 3/3 | D |
+| 15 | `payload-entropy-studio` | Security & Recon | `:8080` | A | B | 3/3 | D |
+| 16 | `web-security-guard` | Security & Recon | `:8125` | A | B | 3/3 | D |
+| 17 | `polyglot-framework-exporter` | Autonomous Web | `:8126` | A | B | 3/3 | D |
+| 18 | `aeo-graph-engine` | Autonomous Web | `:8127` | A | B | 3/3 | D |
+| 19 | `cwv-speed-engine` | Autonomous Web | `:8128` | A | B | 3/3 | D |
+| 20 | `vision-gesture-control` | Media & 3D | `:8089` | A | B | 3/3 | D |
+| 21 | `subsweep-lead-scanner` | Security & Recon | `:8090` | A | B | 3/3 | D |
+| 22 | `omnipost-social-engine` | Automation | `:8091` | A | B | 3/3 | D |
+| 23 | `cron-rhythm-studio` | Automation | `:5174` | A | B | 3/3 | D |
+| 24 | `certpath-roadmap-studio` | Automation | `:8093` | A | B | 3/3 | D |
+| 25 | `pwa-manifest-builder` | Autonomous Web | `:8100` | A | B | 3/3 | D |
+| 26 | `regex-droid-builder` | Automation | `:8101` | A | B | 3/3 | D |
+| 27 | `schema-illustrator-studio` | Autonomous Web | `:8099` | A | B | 3/3 | D |
+| 28 | `zoth-webgen` | Autonomous Web | `:5173` | A | B | 3/3 | D |
+| 29 | `zoth-swarm-multiplexer` | Swarm & Core | `:8141` | A | B | 3/3 | D |
+| 30 | `webmcp-protocol-inspector` | AI & Knowledge | `:8142` | A | B | 3/3 | D |
+| 31 | `anderson-security-sentinel` | Security & OpSec | `:8103` | A | B | 3/3 | D |
+| 32 | `badge3d-coin-generator` | Media & 3D | `:8084` | A | B | 3/3 | D |
+| 33 | `robots-txt-auditor` | Growth & SEO | `:8086` | A | B | 3/3 | D |
+| 34 | `city-desk` | Growth & SEO | `:8087` | A | B | 3/3 | D |
+| 35 | `agent-egress-sentinel` | Security & Network | `:8095` | A | B | 3/3 | D |
+| 36 | `agent-mock-twin` | Simulation & Testing | `:8097` | A | B | 3/3 | D |
+| 37 | `agent-prompt-firewall` | Security & Network | `:8098` | A | B | 3/3 | D |
+| 38 | `wcag-contrast-guard` | Accessibility & UI | `:8150` | A | B | 3/3 | D |
+| 39 | `agent-flight-recorder` | Forensics & Telemetry | `:8104` | A | B | 3/3 | D |
+| 40 | `agent-capsule-jail` | Security & Enclave | `:8105` | A | B | 3/3 | D |
+| 41 | `agent-policy-auditor` | Security & Enclave | `:8106` | A | B | 3/3 | D |
+| 42 | `etsy-pod-forge` | Commerce & POD | `:8107` | A | B | 3/3 | D |
+| 43 | `etsy-connector` | Commerce & MCP | `:8108` | A | B | 3/3 | D |
+| 44 | `mcp-lens` | Simulation & Testing | `:8109` | A | B | 3/3 | D |
+| 45 | `agent-budget-sentinel` | Security & Network | `:8110` | A | B | 3/3 | D |
+| 46 | `agent-gods-eye` | Security & Recon | `:8112` | A | B | 3/3 | D |
+| 47 | `shopify-connector` | Commerce & MCP | `:8113` | A | B | 3/3 | D |
+| 48 | `printify-connector` | Commerce & MCP | `:8115` | A | B | 3/3 | D |
+| 49 | `gelato-connector` | Commerce & MCP | `:8116` | A | B | 3/3 | D |
+| 50 | `agent-voice-call` | Voice & Real-Time | `:8114` | A | B | 3/3 | D |
+| 51 | `pod-smart-router` | Commerce & MCP | `:8117` | A | B | 3/3 | D |
+| 52 | `digital-asset-forge` | Commerce & MCP | `:8118` | A | B | 3/3 | D |
+| 53 | `pod-mockup-forge` | Commerce & MCP | `:8119` | A | B | 3/3 | D |
+| 54 | `pod-margin-sentinel` | Commerce & MCP | `:8120` | A | B | 3/3 | D |
+| 55 | `audiocipher-stego-engine` | Security & OpSec | `:8096` | A | B | 3/3 | D |
+| 56 | `cyber-turtle-studio` | Media & 3D | `:8129` | A | B | 3/3 | D |
+| 57 | `datamosh-glitch-studio` | Media & 3D | `:8081` | A | B | 3/3 | D |
+| 58 | `nexus-3d-scene-studio` | Media & 3D | `:8082` | A | B | 3/3 | D |
+| 59 | `ufo-sacred-geometry` | Media & 3D | `:8083` | A | B | 3/3 | D |
+| 60 | `likeness-desk` | Voice & Real-Time | `:9395` | A | B | 3/3 | D |
+| 61 | `osint-scout-skill` | Security & Recon | `:8085` | A | B | 3/3 | D |
+| 62 | `zoth-osint` | Security & Recon | `:8149` | A | B | 3/3 | D |
+| 63 | `zoth-bolt` | Autonomous Web | `:5173` | A | B | 3/3 | D |
+| 64 | `zoth-civilization` | Swarm & Core | `:9393` | A | B | 3/3 | D |
+| 65 | `storefront-catalog` | Commerce & POD | `:8143` | A | B | 3/3 | D |
+| 66 | `shodan-surface-sentinel` | Security & Enclave | `:8130` | A | B | 3/3 | D |
+| 67 | `ghidra-mcp-bridge` | Security & Enclave | `:8131` | A | B | 3/3 | D |
+| 68 | `zoth-ascii-magic` | Media & 3D | `:8132` | A | B | 3/3 | D |
+| 69 | `yara-sigma-forge` | Security & Recon | `:8133` | A | B | 3/3 | D |
+| 70 | `reality-shader-forge` | Media & 3D | `:8134` | A | B | 3/3 | D |
+| 71 | `producthunt-connector` | Commerce & POD | `:8139` | A | B | 3/3 | D |
+| 72 | `zoth-relay` | Swarm & Core | `:8765` | A | B | 3/3 | D |
+| 73 | `zela-glasses-guide` | Swarm & Core | `:8144` | A | B | 3/3 | D |
+| 74 | `zoth-bot` | Swarm & Core | `:8146` | A | B | 3/3 | D |
+| 75 | `zoth-bounty` | Security & Enclave | `:9494` | A | B | 3/3 | D |
+| 76 | `zoth-scene-foundry` | Media & 3D | `:8823` | A | B | 3/3 | D |
+| 77 | `zoth-math-pillar` | Security & Enclave | `:9995` | A | B | 3/3 | D |
+| 78 | `zothos-lite` | Hardware & OS | `:8145` | A | B | 3/3 | D |
+| 79 | `zothnet` | Swarm & Core | `:9900` | A | B | 3/3 | D |
+| 80 | `creatorplaybooks` | Education & Growth | `:5185` | A | B | 3/3 | D |
+| 81 | `zoth-obsidian-tracker` | Swarm & Core | `:8151` | A | B | 3/3 | D |
+| 82 | `zoth-x-connector` | Swarm & Core | `:8152` | A | B | 3/3 | D |
+| 83 | `zoth-egregore` | Swarm & Core | `:8147` | A | B | 3/3 | D |
 
 Full ledger: `zoth-studio-v2/docs/SOVEREIGN_ECOSYSTEM_ATLAS.md`.
 <!-- SOVEREIGN-ATLAS-SYNC:END -->
