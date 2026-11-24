@@ -80,6 +80,15 @@ description = "Intentional public Solana receive address on the DePay payment li
 regexTarget = "secret"
 regexes = ['''GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK''']
 
+# Fictional 555-01xx demo placeholder in vendored zoth-civilization UI input.
+[[allowlists]]
+description = "Fictional NANP 555-0194 placeholder in zoth-civilization demo generator input."
+targetRules = ["zoth-phone-separated"]
+condition = "AND"
+paths = ['''(?:^|/)config/includes\.chroot/opt/zoth-civilization/public/index\.html$''']
+regexTarget = "secret"
+regexes = ['''^\(512\) 555-0194$''']
+
 # Published archive signing fingerprints. These are public pins in build/build-iso.sh.
 [[allowlists]]
 description = "Published Kali and Parrot archive signing fingerprints pinned in the ISO build."
