@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# balenaEtcher launcher wrapper (AppImage or system install)
+for candidate in \
+  "/opt/balenaEtcher/balena-etcher" \
+  "/opt/balenaEtcher/balena-etcher-electron" \
+  "/usr/bin/balena-etcher" \
+  "$HOME/Applications/balenaEtcher.AppImage"
+do
+  if [[ -x "$candidate" ]]; then
+    exec "$candidate" "$@"
+  fi
+done
+
+exec /usr/local/bin/zoth-konsole --pause --title "balenaEtcher" -- bash -c 'echo "balenaEtcher AppImage not installed in /opt/balenaEtcher yet. Install via Zoth AppImages or https://etcher.balena.io"'

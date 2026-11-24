@@ -7,4 +7,4 @@ Icon=signal-desktop
 StartupWMClass=signal
 Comment=Sovereign Encrypted Voice, Video & Text Messenger
 MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
-Categories=Network;Chat;InstantMessaging;
+Categories=X-Zoth-Security;Network;Chat;InstantMessaging;

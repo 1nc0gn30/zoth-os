@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Hub
+GenericName=Categorized Tool & App Launcher
+Comment=All 85 Zoth Tools & Core Apps — Categorized with Live Status Detection
+Exec=/usr/local/bin/zoth-hub
+TryExec=/usr/local/bin/zoth-hub
+Icon=zoth-studio
+Terminal=false
+Categories=X-Zoth-AI;System;Utility;
+Keywords=zoth;hub;launcher;tools;apps;catalog;ai;
+StartupNotify=true

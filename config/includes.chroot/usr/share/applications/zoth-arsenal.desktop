@@ -6,5 +6,5 @@ Comment=Kali, Parrot, AI & Web3 Sovereign Tool Registry
 Exec=/usr/local/bin/zoth-konsole --shell --title "ZOTH ARSENAL" -- zoth
 Icon=security-high
 Terminal=false
-Categories=Security;Development;System;
+Categories=X-Zoth-System;Security;Development;System;
 StartupNotify=true

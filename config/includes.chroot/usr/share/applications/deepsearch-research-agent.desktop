@@ -7,13 +7,13 @@ Exec=/usr/local/bin/deepsearch-research-agent desktop
 TryExec=/usr/local/bin/deepsearch-research-agent
 Icon=deepsearch-research-agent
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch DeepSearch Research Agent & Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "DeepSearch Research Agent & Studio TUI" -e /usr/local/bin/deepsearch-research-agent-tui
+Exec=/usr/local/bin/zoth-konsole --title "DeepSearch Research Agent & Studio TUI" -- /usr/local/bin/deepsearch-research-agent-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8122)

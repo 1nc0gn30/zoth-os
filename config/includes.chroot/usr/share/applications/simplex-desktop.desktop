@@ -6,6 +6,6 @@ Comment=Zero-Identifier 100% Metadata-Free Private Messenger
 Exec=/usr/local/bin/simplex-desktop
 Icon=simplex-desktop
 Terminal=false
-Categories=Network;Chat;InstantMessaging;
+Categories=X-Zoth-Security;Network;Chat;InstantMessaging;
 Keywords=chat;messaging;im;private;simplex;
 StartupNotify=true

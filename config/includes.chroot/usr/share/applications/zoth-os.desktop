@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zoth-os desktop
 TryExec=/usr/local/bin/zoth-os
 Icon=zoth-os
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-System;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Zoth OS v3.4.0 Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Zoth OS v3.4.0 TUI" -e /usr/local/bin/zoth-os-tui
+Exec=/usr/local/bin/zoth-konsole --title "Zoth OS v3.4.0 TUI" -- /usr/local/bin/zoth-os-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8137)

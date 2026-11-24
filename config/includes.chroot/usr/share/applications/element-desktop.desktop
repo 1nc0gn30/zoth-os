@@ -7,4 +7,4 @@ Icon=element-desktop
 StartupWMClass=Element
 Comment=Decentralized End-to-End Encrypted Matrix Chat
 MimeType=x-scheme-handler/io.element.desktop;x-scheme-handler/element;
-Categories=Network;Chat;InstantMessaging;
+Categories=X-Zoth-Security;Network;Chat;InstantMessaging;

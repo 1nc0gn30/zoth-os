@@ -8,6 +8,6 @@ TryExec=onionshare
 Exec=onionshare
 Icon=onionshare
 Terminal=false
-Categories=Network;Security;ZothPentesting;ZothOpsec;
+Categories=X-Zoth-Security;Network;Security;ZothPentesting;ZothOpsec;
 Keywords=tor;onion;anonymous;share;privacy;chat;
 StartupNotify=true

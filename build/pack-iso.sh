@@ -108,7 +108,7 @@ sudo mkdir -p "chroot/home/${ZOTH_USER}" "chroot/home/${AZOTH_USER}"
 sudo rm -rf "chroot/home/${ZOTH_USER}/Desktop" "chroot/home/${AZOTH_USER}/Desktop" 2>/dev/null || true
 sudo cp -a chroot/etc/skel/. "chroot/home/${ZOTH_USER}/" 2>/dev/null || true
 sudo cp -a chroot/etc/skel/. "chroot/home/${AZOTH_USER}/" 2>/dev/null || true
-sudo chmod +x chroot/home/*/Desktop/*.desktop chroot/home/*/Desktop/*/*.desktop chroot/etc/skel/Desktop/*.desktop chroot/etc/skel/Desktop/*/*.desktop 2>/dev/null || true
+sudo chmod +x chroot/home/*/Desktop/*.desktop chroot/etc/skel/Desktop/*.desktop 2>/dev/null || true
 sudo chroot chroot chown -R "${ZOTH_USER}:${ZOTH_USER}" "/home/${ZOTH_USER}" 2>/dev/null || sudo chown -R 1000:1000 "chroot/home/${ZOTH_USER}"
 sudo chroot chroot chown -R "${AZOTH_USER}:${AZOTH_USER}" "/home/${AZOTH_USER}" 2>/dev/null || sudo chown -R 1001:1005 "chroot/home/${AZOTH_USER}"
 sudo chmod 750 "chroot/home/${ZOTH_USER}" "chroot/home/${AZOTH_USER}"

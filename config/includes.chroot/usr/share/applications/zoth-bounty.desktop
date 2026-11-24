@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zoth-bounty desktop
 TryExec=/usr/local/bin/zoth-bounty
 Icon=zoth-bounty
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Zoth Bounty Research Hub Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Zoth Bounty Research Hub TUI" -e /usr/local/bin/zoth-bounty-tui
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Bounty Research Hub TUI" -- /usr/local/bin/zoth-bounty-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:9494)

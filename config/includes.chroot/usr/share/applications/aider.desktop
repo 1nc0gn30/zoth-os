@@ -6,6 +6,6 @@ Comment=Aider AI Pair Programming in the Terminal
 Exec=/usr/local/bin/zoth-konsole --title "Aider AI" -- /usr/local/bin/aider
 Icon=zoth-agent
 Terminal=false
-Categories=Development;AI;
+Categories=X-Zoth-Dev;Development;AI;
 StartupNotify=true
 Keywords=aider;chat;ai;pair;programming;cli;

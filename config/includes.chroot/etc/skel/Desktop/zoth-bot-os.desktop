@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Bot OS
+GenericName=AI Command Deck
+Comment=Hermes · AGY · Social · Cove Command Deck (:8190)
+Exec=/usr/local/bin/zoth-bot-os open
+TryExec=/usr/local/bin/zoth-bot-os
+Icon=zoth-bot
+Terminal=false
+Categories=X-Zoth-AI;Development;Network;
+Keywords=zoth;bot;hermes;agy;social;cove;agent;command;
+StartupNotify=true

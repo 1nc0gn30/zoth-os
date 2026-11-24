@@ -7,13 +7,13 @@ Exec=/usr/local/bin/vision-gesture-control desktop
 TryExec=/usr/local/bin/vision-gesture-control
 Icon=vision-gesture-control
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Vision Gesture Control Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Vision Gesture Control TUI" -e /usr/local/bin/vision-gesture-control-tui
+Exec=/usr/local/bin/zoth-konsole --title "Vision Gesture Control TUI" -- /usr/local/bin/vision-gesture-control-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8089)

@@ -6,6 +6,6 @@ Comment=Interactive Sovereign Architecture & Operations Manual
 Exec=/usr/local/bin/zoth-docs
 Icon=/usr/share/pixmaps/zoth-docs.png
 Terminal=false
-Categories=Documentation;Help;
+Categories=X-Zoth-System;Documentation;Help;
 Keywords=docs;documentation;guide;manual;codex;zothos;
 StartupNotify=true

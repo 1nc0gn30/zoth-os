@@ -7,13 +7,13 @@ Exec=/usr/local/bin/storefront-catalog desktop
 TryExec=/usr/local/bin/storefront-catalog
 Icon=storefront-catalog
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch YourDigitalSpace POD Showcase Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "YourDigitalSpace POD Showcase TUI" -e /usr/local/bin/storefront-catalog-tui
+Exec=/usr/local/bin/zoth-konsole --title "YourDigitalSpace POD Showcase TUI" -- /usr/local/bin/storefront-catalog-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8143)

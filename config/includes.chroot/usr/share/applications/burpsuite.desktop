@@ -7,5 +7,5 @@ Comment=Interactive HTTP/HTTPS penetration testing proxy and scanner
 Exec=/usr/bin/burpsuite
 Icon=burpsuite
 Terminal=false
-Categories=Network;Security;
+Categories=X-Zoth-Security;Network;Security;
 StartupNotify=true

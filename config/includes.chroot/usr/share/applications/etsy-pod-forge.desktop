@@ -7,13 +7,13 @@ Exec=/usr/local/bin/etsy-pod-forge desktop
 TryExec=/usr/local/bin/etsy-pod-forge
 Icon=etsy-pod-forge
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Etsy POD Forge Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Etsy POD Forge TUI" -e /usr/local/bin/etsy-pod-forge-tui
+Exec=/usr/local/bin/zoth-konsole --title "Etsy POD Forge TUI" -- /usr/local/bin/etsy-pod-forge-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8107)

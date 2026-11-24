@@ -7,13 +7,13 @@ Exec=/usr/local/bin/digital-asset-forge desktop
 TryExec=/usr/local/bin/digital-asset-forge
 Icon=digital-asset-forge
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Digital Asset Forge Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Digital Asset Forge TUI" -e /usr/local/bin/digital-asset-forge-tui
+Exec=/usr/local/bin/zoth-konsole --title "Digital Asset Forge TUI" -- /usr/local/bin/digital-asset-forge-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8118)

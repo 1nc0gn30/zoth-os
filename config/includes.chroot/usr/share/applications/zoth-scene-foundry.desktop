@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zoth-scene-foundry desktop
 TryExec=/usr/local/bin/zoth-scene-foundry
 Icon=zoth-scene-foundry
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Zoth Scene Foundry Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Zoth Scene Foundry TUI" -e /usr/local/bin/zoth-scene-foundry-tui
+Exec=/usr/local/bin/zoth-konsole --title "Zoth Scene Foundry TUI" -- /usr/local/bin/zoth-scene-foundry-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8823)

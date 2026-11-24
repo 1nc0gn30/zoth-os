@@ -7,13 +7,13 @@ Exec=/usr/local/bin/audiocipher-stego-engine desktop
 TryExec=/usr/local/bin/audiocipher-stego-engine
 Icon=audiocipher-stego-engine
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch AudioCipher Stego Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "AudioCipher Stego Studio TUI" -e /usr/local/bin/audiocipher-stego-engine-tui
+Exec=/usr/local/bin/zoth-konsole --title "AudioCipher Stego Studio TUI" -- /usr/local/bin/audiocipher-stego-engine-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8096)

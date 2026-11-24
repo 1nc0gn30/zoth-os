@@ -7,13 +7,13 @@ Exec=/usr/local/bin/regex-droid-builder desktop
 TryExec=/usr/local/bin/regex-droid-builder
 Icon=regex-droid-builder
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Regex Droid Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Regex Droid Studio TUI" -e /usr/local/bin/regex-droid-builder-tui
+Exec=/usr/local/bin/zoth-konsole --title "Regex Droid Studio TUI" -- /usr/local/bin/regex-droid-builder-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8101)

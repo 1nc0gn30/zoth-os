@@ -6,6 +6,6 @@ Comment=Satie, Chopin, Debussy & Bach Hermetic Focus Studio
 Exec=zoth-music
 Icon=zoth-soundtrack
 Terminal=false
-Categories=AudioVideo;Audio;Player;
+Categories=X-Zoth-Media;AudioVideo;Audio;Player;
 Keywords=audio;music;classical;piano;satie;chopin;bach;focus;
 StartupNotify=false

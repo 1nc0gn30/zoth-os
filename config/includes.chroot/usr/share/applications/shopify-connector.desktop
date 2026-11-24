@@ -7,13 +7,13 @@ Exec=/usr/local/bin/shopify-connector desktop
 TryExec=/usr/local/bin/shopify-connector
 Icon=shopify-connector
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Shopify Connector Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Shopify Connector TUI" -e /usr/local/bin/shopify-connector-tui
+Exec=/usr/local/bin/zoth-konsole --title "Shopify Connector TUI" -- /usr/local/bin/shopify-connector-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8113)

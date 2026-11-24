@@ -24,52 +24,38 @@ if [ -f "$HOME/.Xresources" ] && command -v xrdb >/dev/null 2>&1; then
     xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
 fi
 
-# 1. Deterministic Desktop Folder Organization (Zero Loose AI/Security/Utility Clutter)
+# 1. Deterministic 5-Icon Root Desktop (Zero Folder / Loose Icon Clutter — All 85 Tools Live in Zoth Hub)
 if [ -d "$HOME/Desktop" ]; then
-    mkdir -p "$HOME/Desktop/01-AI-Agents-and-Dev" \
-             "$HOME/Desktop/02-Security-and-Privacy" \
-             "$HOME/Desktop/03-ZothOS-Daemons" \
-             "$HOME/Desktop/04-Media-and-Utilities"
+    # Remove legacy cluttered Desktop folders, stray images, and legacy Debian installers
+    rm -rf "$HOME/Desktop/01-AI-Agents-and-Dev" \
+           "$HOME/Desktop/02-Security-and-Privacy" \
+           "$HOME/Desktop/03-ZothOS-Daemons" \
+           "$HOME/Desktop/04-Media-and-Utilities" \
+           "$HOME/Desktop/Zoth-Meta-Hackathon" 2>/dev/null || true
+    rm -f "$HOME/Desktop/"*.png "$HOME/Desktop/"*.jpg \
+          "$HOME/Desktop/calamares-install-debian.desktop" \
+          "$HOME/Desktop/calamares.desktop" \
+          "$HOME/Desktop/thunderbird"* \
+          "$HOME/Desktop/zoth-os.desktop" \
+          "$HOME/Desktop/zoth-studio.desktop" \
+          "$HOME/Desktop/zoth-civilization.desktop" \
+          "$HOME/Desktop/zoth-tool-nexus.desktop" \
+          "$HOME/Desktop/zoth-control-center.desktop" \
+          "$HOME/Desktop/zoth-welcome.desktop" 2>/dev/null || true
 
-    # Remove any stray promotional images or legacy Debian installers
-    rm -f "$HOME/Desktop/"*.png "$HOME/Desktop/"*.jpg "$HOME/Desktop/calamares-install-debian.desktop" "$HOME/Desktop/thunderbird"* 2>/dev/null || true
-    rm -rf "$HOME/Desktop/Zoth-Meta-Hackathon" 2>/dev/null || true
-
-    for f in "$HOME/Desktop/"*.desktop; do
-        [ -f "$f" ] || continue
-        base=$(basename "$f")
-        case "$base" in
-            # Only the 7 core flagship launchers stay on the root Desktop alongside the 4 folders:
-            zoth-os.desktop|zoth-studio.desktop|zoth-civilization.desktop|zoth-tool-nexus.desktop|zoth-control-center.desktop|google-chrome.desktop|install-zothos.desktop)
-                chmod +x "$f" 2>/dev/null || true
-                ;;
-            # All AI Agents & Dev IDEs belong strictly inside 01-AI-Agents-and-Dev:
-            claude-code.desktop|grok-ai.desktop|zoth-grok-bot.desktop|hermes-agent.desktop|zoth-cursor.desktop|aider.desktop|bolt-diy.desktop|cline.desktop|google-antigravity.desktop|netlify.desktop|openai-codex.desktop|opencode.desktop|streamlit.desktop|zoth-agent.desktop|zoth-ai.desktop|zoth-ai-stack.desktop|zoth-bot.desktop|zoth-lazydocker.desktop|zoth-update-studio.desktop|zoth-webgen.desktop|zoth-workspaces.desktop)
-                mv -f "$f" "$HOME/Desktop/01-AI-Agents-and-Dev/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
-                chmod +x "$HOME/Desktop/01-AI-Agents-and-Dev/$base" 2>/dev/null || true
-                ;;
-            # Security & Privacy tools belong inside 02-Security-and-Privacy:
-            bitwarden.desktop|burpsuite.desktop|element-desktop.desktop|hexstrike-ai.desktop|signal-desktop.desktop|simplex-desktop.desktop|tor-browser.desktop|zoth-ghost-amnesic.desktop|zoth-ghost.desktop|zoth-keepassxc.desktop|zoth-lock.desktop|zoth-netkill.desktop|zoth-onionshare.desktop|zoth-quicklock.desktop|zoth-sec.desktop|zoth-tools-installer.desktop|zoth-arsenal-provisioner.desktop|zoth-undercover.desktop|zoth-vault.desktop|zoth-veracrypt.desktop)
-                mv -f "$f" "$HOME/Desktop/02-Security-and-Privacy/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
-                chmod +x "$HOME/Desktop/02-Security-and-Privacy/$base" 2>/dev/null || true
-                ;;
-            # ZothOS Daemons belong inside 03-ZothOS-Daemons:
-            zoth-agent-conductor.desktop|zoth-agent-hud.desktop|zoth-budget-sentinel.desktop|zoth-capsule-jail.desktop|zoth-cockpit.desktop|zoth-egress-sentinel.desktop|zoth-etsy-connector.desktop|zoth-etsy-pod-forge.desktop|zoth-flight-recorder.desktop|zoth-mcp-lens.desktop|zoth-memory.desktop|zoth-mock-twin.desktop|zoth-neuro-memory.desktop|zoth-policy-auditor.desktop|zoth-producthunt.desktop|zoth-prompt-firewall.desktop|zoth-relay-pair.desktop|zoth-sentinel.desktop)
-                mv -f "$f" "$HOME/Desktop/03-ZothOS-Daemons/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
-                chmod +x "$HOME/Desktop/03-ZothOS-Daemons/$base" 2>/dev/null || true
-                ;;
-            # Everything else goes cleanly into 04-Media-and-Utilities:
-            *)
-                mv -f "$f" "$HOME/Desktop/04-Media-and-Utilities/$base" 2>/dev/null || rm -f "$f" 2>/dev/null || true
-                chmod +x "$HOME/Desktop/04-Media-and-Utilities/$base" 2>/dev/null || true
-                ;;
-        esac
+    # Ensure the 5 curated core launchers are present and executable
+    for core_launcher in zoth-hub.desktop zoth-bot-os.desktop zoth-terminal.desktop google-chrome.desktop install-zothos.desktop; do
+        if [ ! -f "$HOME/Desktop/$core_launcher" ]; then
+            if [ -f "/etc/skel/Desktop/$core_launcher" ]; then
+                cp -f "/etc/skel/Desktop/$core_launcher" "$HOME/Desktop/$core_launcher" 2>/dev/null || true
+            elif [ -f "/usr/share/applications/$core_launcher" ]; then
+                cp -f "/usr/share/applications/$core_launcher" "$HOME/Desktop/$core_launcher" 2>/dev/null || true
+            fi
+        fi
+        chmod +x "$HOME/Desktop/$core_launcher" 2>/dev/null || true
     done
 
-    # Ensure all .desktop launchers inside the 4 folders are executable
-    chmod +x "$HOME/Desktop/"*/*.desktop 2>/dev/null || true
-
-    # On Live USB environment, ensure Install ZothOS 3.4.0 is prominently on the Desktop
+    # On Live USB environment, ensure Install ZothOS is prominently on the Desktop
     if [ -d /run/live/medium ] && [ -f /usr/share/applications/install-zothos.desktop ]; then
         cp -f /usr/share/applications/install-zothos.desktop "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true
         chmod +x "$HOME/Desktop/install-zothos.desktop" 2>/dev/null || true

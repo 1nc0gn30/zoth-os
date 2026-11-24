@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Chronicle Vault (Memory Vault)
+GenericName=Conversation & Pattern Intelligence
+Comment=Hermes + AGY Conversation Consolidation, Recall & Prompt Playbook Workstation
+Exec=/usr/local/bin/zoth-konsole --pause --title "Chronicle Vault" -- /usr/local/bin/zoth-memory-vault --help
+TryExec=/usr/local/bin/zoth-memory-vault
+Icon=zoth-neuro-memory
+Terminal=false
+Categories=X-Zoth-AI;Utility;Development;
+Keywords=memory;vault;chronicle;hermes;agy;recall;
+StartupNotify=true

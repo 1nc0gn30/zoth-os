@@ -54,6 +54,54 @@
 	</Menu>
 	
 	<Menu>
+		<Name>Zoth Hub &amp; AI</Name>
+		<Directory>zoth-hub-ai.directory</Directory>
+		<Include>
+			<Category>X-Zoth-AI</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
+		<Name>Zoth Security</Name>
+		<Directory>zoth-security.directory</Directory>
+		<Include>
+			<Category>X-Zoth-Security</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
+		<Name>Zoth Dev &amp; Web</Name>
+		<Directory>zoth-dev-web.directory</Directory>
+		<Include>
+			<Category>X-Zoth-Dev</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
+		<Name>Zoth Media &amp; 3D</Name>
+		<Directory>zoth-media-3d.directory</Directory>
+		<Include>
+			<Category>X-Zoth-Media</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
+		<Name>Zoth Commerce</Name>
+		<Directory>zoth-commerce.directory</Directory>
+		<Include>
+			<Category>X-Zoth-Commerce</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
+		<Name>Zoth System</Name>
+		<Directory>zoth-system.directory</Directory>
+		<Include>
+			<Category>X-Zoth-System</Category>
+		</Include>
+	</Menu>
+
+	<Menu>
 		<Name>Pentesting</Name>
 		<Directory>zoth-pentesting.directory</Directory>
 		<Menu>

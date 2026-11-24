@@ -6,5 +6,5 @@ Comment=Interactive Model Context Protocol Management & Testing Station
 Exec=/usr/local/bin/zoth-mcp-gui
 Icon=/usr/share/pixmaps/zoth-mcp.png
 Terminal=false
-Categories=Development;AI;BetaExperimental;
+Categories=X-Zoth-AI;Development;AI;BetaExperimental;
 StartupNotify=true

@@ -7,13 +7,13 @@ Exec=/usr/local/bin/cyber-turtle-studio desktop
 TryExec=/usr/local/bin/cyber-turtle-studio
 Icon=cyber-turtle-studio
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Cyber Turtle Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Cyber Turtle Studio TUI" -e /usr/local/bin/cyber-turtle-studio-tui
+Exec=/usr/local/bin/zoth-konsole --title "Cyber Turtle Studio TUI" -- /usr/local/bin/cyber-turtle-studio-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8129)

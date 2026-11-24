@@ -7,13 +7,13 @@ Exec=/usr/local/bin/webmcp-protocol-inspector desktop
 TryExec=/usr/local/bin/webmcp-protocol-inspector
 Icon=webmcp-protocol-inspector
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch WebMCP Protocol Suite Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "WebMCP Protocol Suite TUI" -e /usr/local/bin/webmcp-protocol-inspector-tui
+Exec=/usr/local/bin/zoth-konsole --title "WebMCP Protocol Suite TUI" -- /usr/local/bin/webmcp-protocol-inspector-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8142)

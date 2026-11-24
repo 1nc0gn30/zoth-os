@@ -8,5 +8,5 @@ Exec=/usr/local/bin/zoth-tools-installer
 Icon=/usr/share/icons/Zoth-Hermetic/256x256/apps/zoth-tool-nexus.png
 Terminal=false
 StartupNotify=true
-Categories=System;Security;Development;Utility;Settings;
+Categories=X-Zoth-Media;System;Security;Development;Utility;Settings;
 Keywords=zoth;kali;parrot;tools;install;installer;bundle;arsenal;provisioner;extras;

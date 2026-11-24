@@ -7,13 +7,13 @@ Exec=/usr/local/bin/agent-gods-eye desktop
 TryExec=/usr/local/bin/agent-gods-eye
 Icon=agent-gods-eye
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Agent God's Eye Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent God's Eye TUI" -e /usr/local/bin/agent-gods-eye-tui
+Exec=/usr/local/bin/zoth-konsole --title "Agent God's Eye TUI" -- /usr/local/bin/agent-gods-eye-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8112)

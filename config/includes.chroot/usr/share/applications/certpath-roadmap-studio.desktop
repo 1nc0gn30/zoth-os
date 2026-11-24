@@ -7,13 +7,13 @@ Exec=/usr/local/bin/certpath-roadmap-studio desktop
 TryExec=/usr/local/bin/certpath-roadmap-studio
 Icon=certpath-roadmap-studio
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch CertPath Roadmap Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "CertPath Roadmap Studio TUI" -e /usr/local/bin/certpath-roadmap-studio-tui
+Exec=/usr/local/bin/zoth-konsole --title "CertPath Roadmap Studio TUI" -- /usr/local/bin/certpath-roadmap-studio-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8093)

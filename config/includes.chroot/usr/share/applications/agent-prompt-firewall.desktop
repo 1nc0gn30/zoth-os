@@ -7,13 +7,13 @@ Exec=/usr/local/bin/agent-prompt-firewall desktop
 TryExec=/usr/local/bin/agent-prompt-firewall
 Icon=agent-prompt-firewall
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Agent Prompt Firewall Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent Prompt Firewall TUI" -e /usr/local/bin/agent-prompt-firewall-tui
+Exec=/usr/local/bin/zoth-konsole --title "Agent Prompt Firewall TUI" -- /usr/local/bin/agent-prompt-firewall-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8098)

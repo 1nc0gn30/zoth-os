@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zothos-lite desktop
 TryExec=/usr/local/bin/zothos-lite
 Icon=zothos-lite
 Terminal=false
-Categories=System;Security;Development;
+Categories=X-Zoth-System;System;Security;Development;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch ZothOS-Lite Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "ZothOS-Lite TUI" -e /usr/local/bin/zothos-lite-tui
+Exec=/usr/local/bin/zoth-konsole --title "ZothOS-Lite TUI" -- /usr/local/bin/zothos-lite-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8145)

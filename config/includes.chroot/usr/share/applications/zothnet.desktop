@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zothnet run --alias "Studio-Node"
 TryExec=/usr/local/bin/zothnet
 Icon=zothnet
 Terminal=false
-Categories=Network;Security;System;
+Categories=X-Zoth-Security;Network;Security;System;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch ZothNet Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "ZothNet TUI" -e /usr/local/bin/zothnet-tui
+Exec=/usr/local/bin/zoth-konsole --title "ZothNet TUI" -- /usr/local/bin/zothnet-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:9900)

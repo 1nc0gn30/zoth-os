@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Zoth Hub — Categorized ZothOS App & 85-Tool Launcher
+HUB_DIR=""
+for candidate in \
+  "${ZOTH_HUB_DIR:-}" \
+  "/opt/zoth-hub" \
+  "$HOME/.local/share/zoth-hub" \
+  "$HOME/NullAITech/zoth-os/config/includes.chroot/opt/zoth-hub"
+do
+  if [[ -n "$candidate" && -f "$candidate/hub_server.py" ]]; then
+    HUB_DIR="$candidate"
+    break
+  fi
+done
+
+if [[ -z "$HUB_DIR" ]]; then
+  echo "zoth-hub: hub_server.py not found in /opt/zoth-hub or ~/.local/share/zoth-hub" >&2
+  exit 1
+fi
+
+PYTHON_BIN="python3"
+if [[ -x "/opt/zothos-ai-env/bin/python3" ]]; then
+  PYTHON_BIN="/opt/zothos-ai-env/bin/python3"
+fi
+
+exec "$PYTHON_BIN" "$HUB_DIR/hub_server.py" "$@"

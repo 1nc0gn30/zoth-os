@@ -8,6 +8,6 @@ TryExec=veracrypt
 Exec=veracrypt
 Icon=veracrypt
 Terminal=false
-Categories=Security;ZothPentesting;ZothOpsec;Utility;
+Categories=X-Zoth-Security;Security;ZothPentesting;ZothOpsec;Utility;
 Keywords=encryption;crypto;vault;disk;volume;
 StartupNotify=true

@@ -8,6 +8,6 @@ Terminal=false
 Type=Application
 StartupNotify=true
 StartupWMClass=grok-bot
-Categories=Development;System;ArtificialIntelligence;Utility;
+Categories=X-Zoth-AI;Development;System;ArtificialIntelligence;Utility;
 MimeType=x-scheme-handler/grokbot;x-scheme-handler/sand;
 Keywords=grok;bot;ai;agent;research;neural;spacex;x;

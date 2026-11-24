@@ -6,6 +6,6 @@ Comment=Access and manage your Bitwarden vault CLI
 Exec=/usr/local/bin/zoth-konsole --title "Bitwarden Vault" -- /usr/local/bin/zoth-vault bw
 Icon=/usr/share/pixmaps/bitwarden.png
 Terminal=false
-Categories=Utility;Security;
+Categories=X-Zoth-Security;Utility;Security;
 StartupNotify=true
 GenericName=Password & Secrets Manager

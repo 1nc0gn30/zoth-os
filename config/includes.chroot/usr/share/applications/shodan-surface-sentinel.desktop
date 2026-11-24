@@ -7,13 +7,13 @@ Exec=/usr/local/bin/shodan-surface-sentinel desktop
 TryExec=/usr/local/bin/shodan-surface-sentinel
 Icon=shodan-surface-sentinel
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Shodan Attack Surface Sentinel Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Shodan Attack Surface Sentinel TUI" -e /usr/local/bin/shodan-surface-sentinel-tui
+Exec=/usr/local/bin/zoth-konsole --title "Shodan Attack Surface Sentinel TUI" -- /usr/local/bin/shodan-surface-sentinel-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8130)

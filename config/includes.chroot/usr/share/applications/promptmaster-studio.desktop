@@ -7,13 +7,13 @@ Exec=/usr/local/bin/promptmaster-studio desktop
 TryExec=/usr/local/bin/promptmaster-studio
 Icon=promptmaster-studio
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch PromptMaster Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "PromptMaster Studio TUI" -e /usr/local/bin/promptmaster-studio-tui
+Exec=/usr/local/bin/zoth-konsole --title "PromptMaster Studio TUI" -- /usr/local/bin/promptmaster-studio-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8123)

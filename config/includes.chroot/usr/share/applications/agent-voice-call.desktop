@@ -7,13 +7,13 @@ Exec=/usr/local/bin/agent-voice-call desktop
 TryExec=/usr/local/bin/agent-voice-call
 Icon=agent-voice-call
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Agent Voice Call Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent Voice Call TUI" -e /usr/local/bin/agent-voice-call-tui
+Exec=/usr/local/bin/zoth-konsole --title "Agent Voice Call TUI" -- /usr/local/bin/agent-voice-call-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8114)

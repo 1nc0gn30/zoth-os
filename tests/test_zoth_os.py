@@ -1,5 +1,6 @@
 import json
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -10,40 +11,56 @@ ZOTH_OS_BIN = os.path.expanduser("~/.local/bin/zoth-os")
 if not os.path.exists(ZOTH_OS_BIN):
     ZOTH_OS_BIN = os.path.join(REPO_ROOT, "config/includes.chroot/usr/local/bin/zoth-os")
 
-def _is_daemon_up():
+def _is_daemon_up(port=8137):
     try:
-        with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=1) as r:
-            return r.status == 200
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health", timeout=1) as r:
+            if r.status != 200:
+                return False
+            data = json.loads(r.read().decode())
+            return data.get("service") == "zoth-os"
     except Exception:
         return False
 
+def _port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.2)
+        return s.connect_ex(("127.0.0.1", port)) == 0
+
+def _free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
 def test_zoth_os_daemon_health_and_status():
     proc = None
-    if not _is_daemon_up():
+    port = 8137
+    if not _is_daemon_up(port):
+        if _port_in_use(port):
+            port = _free_port()
         proc = subprocess.Popen(
-            [sys.executable, os.path.join(REPO_ROOT, "server.py"), "--port", "8137"],
+            [sys.executable, os.path.join(REPO_ROOT, "server.py"), "--port", str(port)],
             cwd=REPO_ROOT,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         for _ in range(30):
-            if _is_daemon_up():
+            if _is_daemon_up(port):
                 break
             time.sleep(0.1)
 
     try:
-        with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=5) as r:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health", timeout=5) as r:
             assert r.status == 200
             health = json.loads(r.read().decode())
             assert health.get("status") == "healthy"
             assert health.get("service") == "zoth-os"
             assert health.get("virtual_desktops") == 8
 
-        with urllib.request.urlopen("http://127.0.0.1:8137/api/status", timeout=5) as r:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/status", timeout=5) as r:
             assert r.status == 200
             status = json.loads(r.read().decode())
             assert status.get("version") == "3.4.0"
-            assert status.get("port") == 8137
+            assert status.get("port") in (port, 8137)
     finally:
         if proc is not None:
             proc.terminate()

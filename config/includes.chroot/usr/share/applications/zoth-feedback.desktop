@@ -6,6 +6,6 @@ Comment=Anonymous Encrypted Feedback & Feature Dispatcher
 Exec=/usr/local/bin/zoth-feedback
 Icon=/usr/share/pixmaps/zoth-feedback.png
 Terminal=false
-Categories=Utility;System;
+Categories=X-Zoth-System;Utility;System;
 Keywords=feedback;anonymous;report;suggest;zothos;
 StartupNotify=true

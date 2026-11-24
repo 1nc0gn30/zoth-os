@@ -7,7 +7,7 @@ Exec=/usr/local/bin/zoth-obsidian-tracker --open
 TryExec=/usr/local/bin/zoth-obsidian-tracker
 Icon=obsidian
 Terminal=false
-Categories=Development;Documentation;System;
+Categories=X-Zoth-AI;Development;Documentation;System;
 StartupNotify=true
 Actions=WebApp;TUI;
 

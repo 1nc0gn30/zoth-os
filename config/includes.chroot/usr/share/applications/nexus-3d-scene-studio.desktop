@@ -7,13 +7,13 @@ Exec=/usr/local/bin/nexus-3d-scene-studio desktop
 TryExec=/usr/local/bin/nexus-3d-scene-studio
 Icon=nexus-3d-scene-studio
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Nexus 3D Scene Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Nexus 3D Scene Studio TUI" -e /usr/local/bin/nexus-3d-scene-studio-tui
+Exec=/usr/local/bin/zoth-konsole --title "Nexus 3D Scene Studio TUI" -- /usr/local/bin/nexus-3d-scene-studio-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8082)

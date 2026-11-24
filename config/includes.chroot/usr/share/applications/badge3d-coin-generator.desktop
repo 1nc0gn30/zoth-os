@@ -7,13 +7,13 @@ Exec=/usr/local/bin/badge3d-coin-generator desktop
 TryExec=/usr/local/bin/badge3d-coin-generator
 Icon=badge3d-coin-generator
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Badge3D Coin Generator Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Badge3D Coin Generator TUI" -e /usr/local/bin/badge3d-coin-generator-tui
+Exec=/usr/local/bin/zoth-konsole --title "Badge3D Coin Generator TUI" -- /usr/local/bin/badge3d-coin-generator-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8084)

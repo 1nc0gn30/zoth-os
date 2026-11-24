@@ -7,13 +7,13 @@ Exec=/usr/local/bin/anderson-security-sentinel desktop
 TryExec=/usr/local/bin/anderson-security-sentinel
 Icon=anderson-security-sentinel
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Anderson Security Sentinel Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Anderson Security Sentinel TUI" -e /usr/local/bin/anderson-security-sentinel-tui
+Exec=/usr/local/bin/zoth-konsole --title "Anderson Security Sentinel TUI" -- /usr/local/bin/anderson-security-sentinel-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8103)

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoth Hub — Categorized ZothOS App &amp; Tool Launcher</title>
+  <meta name="description" content="Unified, categorized ZothOS desktop launcher covering all 85 Zoth Studio tools and core OS applications with live local port and CLI binary detection." />
+  <meta property="og:title" content="Zoth Hub — Categorized ZothOS App &amp; Tool Launcher" />
+  <meta property="og:description" content="Live status detection and categorized launch control for all 85 Zoth Studio tools and ZothOS core apps across 6 categories." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zothos.nullai.tech/hub" />
+  <meta property="og:image" content="https://zoth.nullai.tech/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Zoth Hub",
+        "url": "https://zothos.nullai.tech/hub",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux (ZothOS / Debian 13 KDE Plasma 6)",
+        "softwareVersion": "1.0.0",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech"
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Zoth Hub detect tool status?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth Hub runs live 60ms TCP probes against loopback 127.0.0.1 ports and checks system PATH binaries via shutil.which so every Running, Installed, Browser-Ready, or Not Installed badge reflects real machine state."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Zoth Hub free and offline-capable?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Zoth Hub is 100% free and open-access with zero paywalls, runs locally on 127.0.0.1:8195 with zero cloud telemetry, and ships with an embedded catalog.json for offline ZothOS sessions."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" role="img" aria-label="Zoth Hub Emblem">
+            <rect x="2" y="2" width="24" height="24" rx="7" stroke="currentColor" stroke-width="1.8" />
+            <path d="M8.5 9.5H19.5L8.5 18.5H19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-row">
+            <h1>Zoth Hub</h1>
+            <span class="version-pill">v1.0.0</span>
+          </div>
+          <p class="brand-sub">Categorized ZothOS Application &amp; 85-Tool Control Center</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="refreshBtn" class="btn btn-ghost" type="button" title="Re-probe local ports and CLI binaries">
+          <span class="btn-icon" aria-hidden="true">↻</span>
+          <span>Re-Probe</span>
+        </button>
+        <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Toggle Obsidian Dark and Editorial Ivory Light theme">
+          <span id="themeIcon" class="btn-icon" aria-hidden="true">☀</span>
+          <span id="themeLabel">Ivory</span>
+        </button>
+        <a
+          class="btn btn-coffee"
+          href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span aria-hidden="true">☕</span>
+          <span>Buy Us a Coffee</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="telemetry-strip" aria-label="Live Machine Detection Summary">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Catalog Total</span>
+          <strong id="statTotal" class="stat-value">—</strong>
+          <span class="stat-meta" id="statProbeMeta">Probing host…</span>
+        </div>
+        <div class="stat-card stat-running">
+          <span class="stat-label"><span class="dot dot-running"></span>Running Locally</span>
+          <strong id="statRunning" class="stat-value">—</strong>
+          <span class="stat-meta">127.0.0.1 TCP live</span>
+        </div>
+        <div class="stat-card stat-installed">
+          <span class="stat-label"><span class="dot dot-installed"></span>Installed CLI</span>
+          <strong id="statInstalled" class="stat-value">—</strong>
+          <span class="stat-meta">Found on PATH</span>
+        </div>
+        <div class="stat-card stat-browser">
+          <span class="stat-label"><span class="dot dot-browser"></span>Browser-Ready</span>
+          <strong id="statBrowser" class="stat-value">—</strong>
+          <span class="stat-meta">Client-side web apps</span>
+        </div>
+      </div>
+
+      <div class="honesty-bar" role="note">
+        <span class="honesty-tag">100% Live Detection</span>
+        <p>
+          Every badge is verified on this machine via 60ms loopback port checks and <code>PATH</code> binary inspection.
+          Nothing is faked: daemons show <strong>Running</strong> only when listening, CLI tools show <strong>Installed</strong> only when present, and web utilities launch directly in browser.
+        </p>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Search and Filter Tools">
+      <div class="search-row">
+        <label class="search-box" for="searchInput">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search 85+ tools, ports, binaries, or categories (press /)…"
+            autocomplete="off"
+          />
+          <button id="clearSearch" class="clear-btn" type="button" hidden aria-label="Clear search">✕</button>
+        </label>
+
+        <div class="status-pills" role="group" aria-label="Filter by runtime status">
+          <button class="pill active" data-status="all" type="button">All</button>
+          <button class="pill" data-status="running" type="button"><span class="dot dot-running"></span>Running</button>
+          <button class="pill" data-status="installed_cli" type="button"><span class="dot dot-installed"></span>Installed</button>
+          <button class="pill" data-status="browser_ready" type="button"><span class="dot dot-browser"></span>Browser-Ready</button>
+          <button class="pill" data-status="not_installed" type="button"><span class="dot dot-missing"></span>Not Installed</button>
+        </div>
+      </div>
+
+      <nav id="categoryTabs" class="category-tabs" aria-label="Tool Categories">
+        <!-- Populated dynamically from /api/catalog -->
+      </nav>
+    </section>
+
+    <section class="results-header">
+      <h2 id="activeHeading">All Tools &amp; Core Apps</h2>
+      <p id="resultsCount" class="results-meta">Loading catalog…</p>
+    </section>
+
+    <section id="toolGrid" class="tool-grid" aria-live="polite">
+      <!-- Populated dynamically -->
+    </section>
+
+    <section id="emptyState" class="empty-state" hidden>
+      <h3>No matching tools in this filter</h3>
+      <p>Try clearing your search query or switching back to <strong>All</strong> categories and statuses.</p>
+      <button id="resetFiltersBtn" class="btn btn-primary" type="button">Reset Filters</button>
+    </section>
+  </main>
+
+  <div id="detailModal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span id="modalCategory" class="modal-eyebrow"></span>
+          <h3 id="modalTitle"></h3>
+        </div>
+        <button id="modalClose" class="btn btn-ghost modal-close" type="button" aria-label="Close details">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalStatusRow" class="modal-status-row"></div>
+        <p id="modalDesc" class="modal-desc"></p>
+        <dl id="modalSpecs" class="spec-grid"></dl>
+        <div class="cmd-block">
+          <div class="cmd-head">
+            <span>CLI / Start Command</span>
+            <button id="copyCmdBtn" class="btn btn-ghost btn-sm" type="button">Copy</button>
+          </div>
+          <pre><code id="modalPull"></code></pre>
+        </div>
+      </div>
+      <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p class="footer-credit">Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a></p>
+        <p class="footer-note">100% Free &amp; Open-Access · Zero Paywalls · Zero Cloud Telemetry</p>
+      </div>
+      <div class="footer-right">
+        <a
+          class="footer-coffee"
+          href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+          target="_blank"
+          rel="noopener noreferrer"
+        >☕ Buy Us a Coffee</a>
+        <button
+          id="copySolanaBtn"
+          class="solana-chip"
+          type="button"
+          data-address="GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+          title="Click to copy Solana tip address"
+        >
+          SOL Tip: <code>GG2e…dXoK</code>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

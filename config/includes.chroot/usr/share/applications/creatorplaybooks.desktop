@@ -7,7 +7,7 @@ Exec=/usr/local/bin/creatorplaybooks desktop
 TryExec=/usr/local/bin/creatorplaybooks
 Icon=creatorplaybooks
 Terminal=false
-Categories=Education;Development;Utility;
+Categories=X-Zoth-Commerce;Education;Development;Utility;
 StartupNotify=true
 Actions=WebApp;
 

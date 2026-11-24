@@ -7,13 +7,13 @@ Exec=/usr/local/bin/azoth-local-agent desktop
 TryExec=/usr/local/bin/azoth-local-agent
 Icon=azoth-local-agent
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch AZOTH Local Archon Agent Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "AZOTH Local Archon Agent TUI" -e /usr/local/bin/azoth-local-agent-tui
+Exec=/usr/local/bin/zoth-konsole --title "AZOTH Local Archon Agent TUI" -- /usr/local/bin/azoth-local-agent-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8136)

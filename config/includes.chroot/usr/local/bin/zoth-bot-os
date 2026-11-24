@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Zoth Bot OS — Chroot CLI & Desktop Wrapper
+REPO_DIR=""
+for candidate in \
+  "/opt/zoth-bot-os" \
+  "$HOME/NullAITech/zoth-bot-os"
+do
+  if [[ -f "$candidate/server.py" ]]; then
+    REPO_DIR="$candidate"
+    break
+  fi
+done
+
+PY_BIN="python3"
+if [[ -x "/opt/zothos-ai-env/bin/python3" ]]; then
+  PY_BIN="/opt/zothos-ai-env/bin/python3"
+fi
+
+PORT="${ZOTH_BOT_PORT:-8190}"
+HOST="${ZOTH_BOT_HOST:-127.0.0.1}"
+URL="http://${HOST}:${PORT}"
+
+open_browser() {
+  if command -v zoth-chrome >/dev/null 2>&1; then
+    nohup zoth-chrome "$URL" >/dev/null 2>&1 &
+  elif command -v xdg-open >/dev/null 2>&1; then
+    nohup xdg-open "$URL" >/dev/null 2>&1 &
+  else
+    echo "Open $URL in your browser"
+  fi
+}
+
+cmd="${1:-open}"
+case "$cmd" in
+  open)
+    if ! curl -fsS --max-time 1 "${URL}/health" >/dev/null 2>&1; then
+      if [[ -n "$REPO_DIR" ]]; then
+        nohup "$PY_BIN" "$REPO_DIR/server.py" --host "$HOST" --port "$PORT" >/dev/null 2>&1 &
+        for _ in $(seq 1 25); do
+          if curl -fsS --max-time 1 "${URL}/health" >/dev/null 2>&1; then
+            break
+          fi
+          sleep 0.2
+        done
+      fi
+    fi
+    open_browser
+    ;;
+  serve|start)
+    shift || true
+    if [[ -z "$REPO_DIR" ]]; then
+      echo "zoth-bot-os: server.py not found in /opt/zoth-bot-os or \$HOME/NullAITech/zoth-bot-os" >&2
+      exit 1
+    fi
+    exec "$PY_BIN" "$REPO_DIR/server.py" --host "$HOST" --port "$PORT" "$@"
+    ;;
+  status)
+    curl -fsS "${URL}/health" && echo
+    ;;
+  models)
+    curl -fsS "${URL}/api/models" && echo
+    ;;
+  system)
+    curl -fsS "${URL}/api/system/status" && echo
+    ;;
+  url)
+    echo "Local: $URL"
+    ;;
+  --help|-h|help)
+    cat <<EOF
+zoth-bot-os — Zoth Bot OS Command Deck (:8190)
+
+Usage:
+  zoth-bot-os open                          Start daemon if needed and open Command Deck
+  zoth-bot-os serve [--host H] [--port P]   Run server in foreground
+  zoth-bot-os status                        Query /health JSON
+  zoth-bot-os models                        Query /api/models JSON
+  zoth-bot-os system                        Query /api/system/status JSON
+  zoth-bot-os url                           Print local URL
+EOF
+    ;;
+  *)
+    if [[ -z "$REPO_DIR" ]]; then
+      echo "zoth-bot-os: server.py not found" >&2
+      exit 1
+    fi
+    exec "$PY_BIN" "$REPO_DIR/server.py" "$@"
+    ;;
+esac

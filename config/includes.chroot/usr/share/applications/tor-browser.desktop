@@ -6,5 +6,5 @@ Comment=Tor Onion Routing Anonymous Web Explorer
 Exec=/usr/local/bin/tor-browser %u
 Icon=torbrowser
 Terminal=false
-Categories=Network;WebBrowser;Security;Pentesting;
+Categories=X-Zoth-Security;Network;WebBrowser;Security;Pentesting;
 StartupNotify=true

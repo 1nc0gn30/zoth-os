@@ -7,13 +7,13 @@ Exec=/usr/local/bin/agent-mock-twin desktop
 TryExec=/usr/local/bin/agent-mock-twin
 Icon=agent-mock-twin
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Dev;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Agent Mock Twin Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent Mock Twin TUI" -e /usr/local/bin/agent-mock-twin-tui
+Exec=/usr/local/bin/zoth-konsole --title "Agent Mock Twin TUI" -- /usr/local/bin/agent-mock-twin-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8097)

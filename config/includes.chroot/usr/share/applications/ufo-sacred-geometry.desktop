@@ -7,13 +7,13 @@ Exec=/usr/local/bin/ufo-sacred-geometry desktop
 TryExec=/usr/local/bin/ufo-sacred-geometry
 Icon=ufo-sacred-geometry
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch UFO Sacred Geometry Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "UFO Sacred Geometry Studio TUI" -e /usr/local/bin/ufo-sacred-geometry-tui
+Exec=/usr/local/bin/zoth-konsole --title "UFO Sacred Geometry Studio TUI" -- /usr/local/bin/ufo-sacred-geometry-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8083)

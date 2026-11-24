@@ -7,13 +7,13 @@ Exec=/usr/local/bin/likeness-desk desktop
 TryExec=/usr/local/bin/likeness-desk
 Icon=likeness-desk
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Likeness Desk (AI Video Double) Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Likeness Desk (AI Video Double) TUI" -e /usr/local/bin/likeness-desk-tui
+Exec=/usr/local/bin/zoth-konsole --title "Likeness Desk (AI Video Double) TUI" -- /usr/local/bin/likeness-desk-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:9395)

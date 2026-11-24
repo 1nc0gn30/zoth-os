@@ -7,13 +7,13 @@ Exec=/usr/local/bin/zoth-osint desktop
 TryExec=/usr/local/bin/zoth-osint
 Icon=zoth-osint
 Terminal=false
-Categories=Security;Network;Development;
+Categories=X-Zoth-Security;Security;Network;Development;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Zoth OSINT Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Zoth OSINT TUI" -e /usr/local/bin/zoth-osint-tui
+Exec=/usr/local/bin/zoth-konsole --title "Zoth OSINT TUI" -- /usr/local/bin/zoth-osint-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8149)

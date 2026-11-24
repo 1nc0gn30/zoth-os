@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zoth Comfy Cloud Foundry
+GenericName=Comfy Cloud Asset Foundry
+Comment=Zero-VRAM Comfy Cloud CLI & FLUX.2 Pro / Video Loop Workflow Foundry
+Exec=/usr/local/bin/zoth-konsole --pause --title "Zoth Comfy Foundry" -- /usr/local/bin/zoth-comfy-foundry --help
+TryExec=/usr/local/bin/zoth-comfy-foundry
+Icon=applications-graphics
+Terminal=false
+Categories=X-Zoth-Media;Graphics;Development;
+Keywords=comfy;flux;render;media;foundry;ai;images;
+StartupNotify=true

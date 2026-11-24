@@ -7,13 +7,13 @@ Exec=/usr/local/bin/web-security-guard desktop
 TryExec=/usr/local/bin/web-security-guard
 Icon=web-security-guard
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Web Security Guard Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Web Security Guard TUI" -e /usr/local/bin/web-security-guard-tui
+Exec=/usr/local/bin/zoth-konsole --title "Web Security Guard TUI" -- /usr/local/bin/web-security-guard-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8125)

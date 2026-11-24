@@ -8,7 +8,7 @@ Exec=/usr/local/bin/zoth-memory
 TryExec=/usr/local/bin/zoth-memory
 Icon=/usr/share/pixmaps/zoth-memory.png
 Terminal=false
-Categories=System;ArtificialIntelligence;Utility;
+Categories=X-Zoth-AI;System;ArtificialIntelligence;Utility;
 StartupNotify=true
 Actions=Stream;Graph;Consolidate;
 

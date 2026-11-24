@@ -6,7 +6,7 @@ Comment=Kali and Parrot security tools, AI & sovereign runtimes orchestrator
 Exec=/usr/local/bin/zoth-tool-nexus --gui
 Icon=/usr/share/pixmaps/zoth-tool-nexus.png
 Terminal=false
-Categories=System;Development;Security;Pentesting;
+Categories=X-Zoth-System;System;Development;Security;Pentesting;
 StartupNotify=true
 Actions=Terminal;Doctor;InstallAll;
 

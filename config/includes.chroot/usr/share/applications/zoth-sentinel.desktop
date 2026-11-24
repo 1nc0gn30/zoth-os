@@ -7,6 +7,6 @@ Comment=Lightweight autonomous AI daemon monitoring and executing OS tasks
 Exec=/usr/local/bin/zoth-sentinel-hud
 Icon=zoth-sentinel
 Terminal=false
-Categories=System;Security;Utility;Development;
+Categories=X-Zoth-Security;System;Security;Utility;Development;
 Keywords=AI;Sentinel;Assistant;Supervisor;Automation;Execution;
 StartupNotify=true

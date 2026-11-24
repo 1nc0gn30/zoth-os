@@ -5,4 +5,4 @@ Comment=Show the QR code that pairs Zoth Live / Zoth Guide on the Pixel with thi
 Exec=xdg-open /root/.config/zoth-relay/pixel-pair.png
 Icon=zoth-relay
 Terminal=false
-Categories=Utility;
+Categories=X-Zoth-AI;Utility;

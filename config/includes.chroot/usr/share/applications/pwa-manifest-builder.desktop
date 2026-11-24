@@ -7,13 +7,13 @@ Exec=/usr/local/bin/pwa-manifest-builder desktop
 TryExec=/usr/local/bin/pwa-manifest-builder
 Icon=pwa-manifest-builder
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Dev;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch PWA Manifest Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "PWA Manifest Studio TUI" -e /usr/local/bin/pwa-manifest-builder-tui
+Exec=/usr/local/bin/zoth-konsole --title "PWA Manifest Studio TUI" -- /usr/local/bin/pwa-manifest-builder-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8100)

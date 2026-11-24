@@ -7,13 +7,13 @@ Exec=/usr/local/bin/agent-flight-recorder desktop
 TryExec=/usr/local/bin/agent-flight-recorder
 Icon=agent-flight-recorder
 Terminal=false
-Categories=Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Agent Flight Recorder Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent Flight Recorder TUI" -e /usr/local/bin/agent-flight-recorder-tui
+Exec=/usr/local/bin/zoth-konsole --title "Agent Flight Recorder TUI" -- /usr/local/bin/agent-flight-recorder-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8104)
