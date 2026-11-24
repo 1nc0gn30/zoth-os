@@ -1,25 +1,56 @@
 import json
 import os
 import subprocess
+import sys
+import time
 import urllib.request
 
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 ZOTH_OS_BIN = os.path.expanduser("~/.local/bin/zoth-os")
 if not os.path.exists(ZOTH_OS_BIN):
-    ZOTH_OS_BIN = os.path.join(os.path.dirname(__file__), "../config/includes.chroot/usr/local/bin/zoth-os")
+    ZOTH_OS_BIN = os.path.join(REPO_ROOT, "config/includes.chroot/usr/local/bin/zoth-os")
+
+def _is_daemon_up():
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=1) as r:
+            return r.status == 200
+    except Exception:
+        return False
 
 def test_zoth_os_daemon_health_and_status():
-    with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=5) as r:
-        assert r.status == 200
-        health = json.loads(r.read().decode())
-        assert health.get("status") == "healthy"
-        assert health.get("service") == "zoth-os"
-        assert health.get("virtual_desktops") == 8
+    proc = None
+    if not _is_daemon_up():
+        proc = subprocess.Popen(
+            [sys.executable, os.path.join(REPO_ROOT, "server.py"), "--port", "8137"],
+            cwd=REPO_ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        for _ in range(30):
+            if _is_daemon_up():
+                break
+            time.sleep(0.1)
 
-    with urllib.request.urlopen("http://127.0.0.1:8137/api/status", timeout=5) as r:
-        assert r.status == 200
-        status = json.loads(r.read().decode())
-        assert status.get("version") == "3.4.0"
-        assert status.get("port") == 8137
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8137/api/health", timeout=5) as r:
+            assert r.status == 200
+            health = json.loads(r.read().decode())
+            assert health.get("status") == "healthy"
+            assert health.get("service") == "zoth-os"
+            assert health.get("virtual_desktops") == 8
+
+        with urllib.request.urlopen("http://127.0.0.1:8137/api/status", timeout=5) as r:
+            assert r.status == 200
+            status = json.loads(r.read().decode())
+            assert status.get("version") == "3.4.0"
+            assert status.get("port") == 8137
+    finally:
+        if proc is not None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                proc.kill()
 
 def test_zoth_os_cli_desktops_and_iso_audit():
     res1 = subprocess.run(
