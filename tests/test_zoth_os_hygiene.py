@@ -43,12 +43,22 @@ def test_zoth_firstboot_has_non_root_log_fallback():
     assert re.search(r"EUID.*-ne\s+0", firstboot), "Missing non-root EUID guard for LOG path"
 
 
-def test_tools_catalog_lists_83_tools_and_key_entries():
+def test_tools_catalog_lists_85_tools_and_key_entries():
     assert CATALOG_PATH.is_file(), f"Missing catalog: {CATALOG_PATH}"
     text = CATALOG_PATH.read_text(encoding="utf-8")
-    assert "83-Tool" in text or "83 Studio tools" in text
+    assert "85-Tool" in text or "85 Studio tools" in text
     assert "zoth-memory-vault" in text, "ZOTHOS_TOOLS_CATALOG.md missing zoth-memory-vault"
     assert "zoth-egregore" in text, "ZOTHOS_TOOLS_CATALOG.md missing zoth-egregore"
+    assert "zoth-bot-os" in text, "ZOTHOS_TOOLS_CATALOG.md missing zoth-bot-os"
+    assert "zoth-comfy-foundry" in text, "ZOTHOS_TOOLS_CATALOG.md missing zoth-comfy-foundry"
+
+
+def test_zoth_studio_systemd_unit_points_to_serve_mjs():
+    unit = ROOT / "config" / "includes.chroot" / "etc" / "systemd" / "system" / "zoth-studio.service"
+    assert unit.is_file(), f"Missing unit: {unit}"
+    text = unit.read_text(encoding="utf-8")
+    assert "/opt/zoth-studio/server/serve.mjs --port 3000" in text
+    assert "/opt/zoth-studio/server.js" not in text
 
 
 def test_zero_paywall_or_depay_regressions_in_chroot_opt():

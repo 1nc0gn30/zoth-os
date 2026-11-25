@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-11-24T11:54:00.123646+00:00",
+  "generated_at": "2026-11-25T17:54:36.623434+00:00",
   "studio_tools_count": 85,
   "core_apps_count": 12,
   "total_count": 97,
@@ -894,7 +894,7 @@
       "live_url": "",
       "studio_url": "https://zoth.nullai.tech/tools/hexstrike-arsenal",
       "github": "https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal",
-      "pull": "hexstrike-arsenal --help  # or: git clone https://github.com/NullAITech/hexstrike-arsenal.git",
+      "pull": "hexstrike-arsenal --help  # or: git clone https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git",
       "published": true,
       "core_app": false,
       "desktop_exec": null

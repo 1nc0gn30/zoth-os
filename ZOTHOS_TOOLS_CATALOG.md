@@ -1,22 +1,22 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  ZOTHOS — 83-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
+#  ZOTHOS — 85-Tool Sovereign Master Arsenal & Workstation Ecosystem v3.4.0
 #  Unified Catalog of the NullAI / 1nc0gn30 Sovereign Arsenal
 #  100% God-Mode Workstation Coverage in Zoth Studio v2 & Native ZothOS CLI
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Operational Overview:
-#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 83 Studio tools.
+#   Zoth Studio v2 serves as the unified cockpit and orchestrator for all 85 Studio tools.
 #   Every tool features a dedicated interactive God-Mode Workstation (/tools/<id>), a unique
 #   loopback port (127.0.0.1:<port>), a native ZothOS CLI binary (/usr/local/bin/<id>),
 #   a 60fps Unicode U+2800 Braille TUI (<id>-tui), a 30s 60fps product launch film,
 #   validated JSON-Schema contracts, and 100% Free & Open-Access support rails (Stripe Buy Us a Coffee + Solana Tip).
 #
-# Desktop Consolidation Architecture (7 Root Flagships + 4 Folders = 83 .desktop Launchers):
-#   ~/Desktop/ (7 Root Flagship Launchers)
-#   ├── 01-AI-Agents-and-Dev/      (20 Autonomous AI Harnesses & IDEs)
-#   ├── 02-Security-and-Privacy/   (19 Offensive Recon, OSINT & Crypto Enclaves)
-#   ├── 03-ZothOS-Daemons/         (18 Loopback System Sentinels & HUDs)
-#   └── 04-Media-and-Utilities/    (19 Creative Engines, POD & Bare-Metal Utils)
+# Desktop Consolidation Architecture (5 Root Flagships + Zoth Hub = 85 Studio Tools):
+#   ~/Desktop/ (5 Root Flagship Launchers + Zoth Hub)
+#   ├── 01-AI-Agents-and-Dev/      (Autonomous AI Harnesses & IDEs)
+#   ├── 02-Security-and-Privacy/   (Offensive Recon, OSINT & Crypto Enclaves)
+#   ├── 03-ZothOS-Daemons/         (Loopback System Sentinels & HUDs)
+#   └── 04-Media-and-Utilities/    (Creative Engines, POD & Bare-Metal Utils)
 #
 # Launching via CLI & Dispatchers:
 #   zoth-control-center --status       # Audit 4 Desktop Pillars & 23 Loopback Daemons
@@ -24,7 +24,7 @@
 #   zoth-studio                        # Launch full Zoth Studio v2 Cockpit (:3000)
 #   zoth-cockpit                       # Full-screen curses terminal operations center
 #   zoth-tool-nexus                    # Interactive TUI tool dispatcher
-#   zoth-pkg list                      # Inspect installed system & 83 arsenal tools
+#   zoth-pkg list                      # Inspect installed system & 85 arsenal tools
 
 
 ## ═══════════════════════════════════════════════════════════════════════════════
@@ -869,6 +869,24 @@
 - **Operational Value:** Sovereign cyber-physical telemetry command deck: 60fps 3D orbital constellation of every live port, daemon, thermal zone and repo, Braille/Bayer-8x8 dither HUD, procedural WebAudio sonification, and SQLite flight recorder with diff scrubber on :8160.
 - **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow across Mobile 390px, Tablet 820px, Desktop 1425px).
 
+### 84. zoth-bot-os (Zoth Bot OS)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-bot-os • **Local Port:** `http://127.0.0.1:8190`
+- **GitHub:** https://github.com/1nc0gn30/zoth-bot-os
+- **Category:** Swarm & Core
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-bot-os --help`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Mobile-first PWA and desktop Command Deck (:8190) unifying Hermes, Antigravity (AGY), Chronicle Vault, Social Teach-by-Recording Playbooks, and Netlify Cove over local loopback and Tailscale HTTPS.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
+### 85. zoth-comfy-foundry (Zoth Comfy Cloud Foundry)
+- **Studio Route:** https://zoth.nullai.tech/tools/zoth-comfy-foundry • **Local Port:** `CLI`
+- **GitHub:** https://github.com/1nc0gn30/zoth-comfy-foundry
+- **Category:** Media & 3D
+- **Execution Mode:** LOCAL_CLI | **ZothOS CLI:** `zoth-comfy --help`
+- **Open Access:** 100% Free & Unlocked | ☕ Buy Us a Coffee (Stripe + Solana Tip)
+- **Operational Value:** Zero-dependency Python CLI & 8-preset workflow library connecting Zoth web projects to Comfy Cloud and Partner Nodes (FLUX.2 Pro, FLUX.1 Kontext, Partner Video Loops) for hero specimens, packshots, and batch SKU renders with zero local GPU VRAM required.
+- **Headless Verification:** 100% PASS (0 console errors, 0px horizontal overflow).
+
 ---
 
 <!-- SOVEREIGN-ATLAS-SYNC:START -->
@@ -879,14 +897,14 @@ markers: edit `toolsData.js`, then re-run the generator.
 
 | | |
 |---|---|
-| generated | 2026-11-23 14:41 |
-| catalog entries | 83 |
-| distinct ports | 82 (0 collisions) |
-| Layer C — catalog entries byte-identical on all 3 surfaces | 82/83 |
+| generated | 2026-11-25 12:55 |
+| catalog entries | 85 |
+| distinct ports | 83 (0 collisions) |
+| Layer C — catalog entries byte-identical on all 3 surfaces | 84/85 |
 | Layer C — canonical wrapper filenames byte-identical | 51/51 |
 | Layer C — short-name aliases byte-identical | 51/54 |
-| Layer B components | 83/83 |
-| Layer D READMEs | 83/83 |
+| Layer B components | 85/85 |
+| Layer D READMEs | 85/85 |
 
 | # | tool id | category | port | A | B | C | D |
 |---|---------|----------|------|---|---|---|---|
@@ -973,6 +991,8 @@ markers: edit `toolsData.js`, then re-run the generator.
 | 81 | `zoth-obsidian-tracker` | Swarm & Core | `:8151` | A | B | 3/3 | D |
 | 82 | `zoth-x-connector` | Swarm & Core | `:8152` | A | B | 3/3 | D |
 | 83 | `zoth-egregore` | Swarm & Core | `:8147` | A | B | 3/3 | D |
+| 84 | `zoth-bot-os` | Swarm & Core | `:8190` | A | B | 3/3 | D |
+| 85 | `zoth-comfy-foundry` | Media & 3D | `CLI` | A | B | 3/3 | D |
 
 Full ledger: `zoth-studio-v2/docs/SOVEREIGN_ECOSYSTEM_ATLAS.md`.
 <!-- SOVEREIGN-ATLAS-SYNC:END -->

@@ -1,6 +1,6 @@
 ---
-title: "Zoth Studio v2 — 72-Tool Sovereign AI Workstation & 3D World"
-date: 2026-11-08
+title: "Zoth Studio v2 — 85-Tool Sovereign AI Workstation & 3D World"
+date: 2026-11-25
 author: "1nc0gn30 (@1nc0gn30)"
 status: verified
 tags:
@@ -24,7 +24,7 @@ stdp_weight: 0.99
 **Vite + React 19 + MUI 5 + Three.js / WebGL** sovereign AI engineering platform running locally on `http://127.0.0.1:3000` and publicly at [https://zoth.nullai.tech](https://zoth.nullai.tech).
 
 > [!important] 100% Free & Open-Access Architecture (Zero Paywalls)
-> All **72 Sovereign Tools** in `src/data/toolsData.js` are **100% free, unlocked, and open-access ($0.00)** with zero blur locks, zero license modals, and zero paywalls. Optional patronage is supported via a clean **"☕ Buy Us a Coffee"** link (`https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X`) and Solana tip address (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
+> All **85 Sovereign Tools** in `src/data/toolsData.js` are **100% free, unlocked, and open-access ($0.00)** with zero blur locks, zero license modals, and zero paywalls. Optional patronage is supported via a clean **"☕ Buy Us a Coffee"** link (`https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X`) and Solana tip address (`GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`).
 
 ---
 
@@ -37,7 +37,7 @@ stdp_weight: 0.99
 | **Local Workstation URL** | `http://127.0.0.1:3000` (bypass route intros anytime with `?intro=0`) |
 | **System Bundle Mirror** | `/opt/zoth-studio/dist/` (synced into [[Zoth OS]] chroot) |
 | **CLI Launcher** | `zoth-studio` / `npx @nullaitech/zoth` |
-| **Catalog Source of Truth** | `src/data/toolsData.js` + `public/api/tools.json` (72 verified tools: 53 in-browser + 19 CLI/daemon workstations) |
+| **Catalog Source of Truth** | `src/data/toolsData.js` + `public/api/tools.json` (85 verified tools: 56 in-browser + 29 CLI/daemon workstations) |
 
 ---
 
@@ -47,7 +47,7 @@ stdp_weight: 0.99
 flowchart LR
     subgraph StudioCore["⚡ Zoth Studio v2 (:3000 / zoth.nullai.tech)"]
         HOME["/ — HomePage.jsx<br/>Sovereign Command Deck & 6 Math Pillars"]
-        ARSENAL["/arsenal & /tools/:id<br/>72 Open-Access God-Mode Workstations"]
+        ARSENAL["/arsenal & /tools/:id<br/>85 Open-Access God-Mode Workstations"]
         WORLD["/world — ZothWorldPage.jsx<br/>A100 8-Planet 3D Star System & Pantheon 21 Studio"]
         ADYTUM["/adytum — AdytumPage.jsx<br/>Adytum 22 BOTA Tarot 3D Diorama & Trials"]
         MEMORY["/memory — MemoryPage.jsx<br/>Obsidian Second Brain & STDP Cortex (:8094)"]
@@ -57,13 +57,13 @@ flowchart LR
 
 | Route | Component / Engine | What It Delivers |
 | :--- | :--- | :--- |
-| `/` | `HomePage.jsx` | Sovereign command deck, 72-tool telemetry, 6 mathematical pillars & live daemon fleet |
+| `/` | `HomePage.jsx` | Sovereign command deck, 85-tool telemetry, 6 mathematical pillars & live daemon fleet |
 | `/world` | `ZothWorldPage.jsx` (`ZothWorldCanvas3D.jsx`, `PantheonCharacterStudio.jsx`) | **A100 Multi-World 8-Planet 3D Star System & Dyson Core** (`SOLARIS-PRIME`, `AETHER-IX`, `KRONOS-FORGE`, `VAELOR-PRIME`, `NYX-SHADOW`, `SYNAPSE-VII`, `TERRA-NEXUS`, `SANCTUM-OMEGA`) + **[[Zoth Civilization & Pantheon 21|Pantheon 21 Character Studio]]** (5-tab RPG inspector, 84 `Q/W/E/R` abilities, 21×21 synergy matrix) |
 | `/adytum` | `AdytumPage.jsx` (`AdytumTarotEngine3D.jsx`) | **[[Adytum 22 Tarot 3D Engine]]** (Key `0` The Fool → Key `XXI` The World, procedural WebGL shrines, interactive 3-Card Tarot Spread Oracle, and playable Trials of Wisdom) |
 | `/memory` | `MemoryPage.jsx` (`obsidianWikiData.js`) | **Obsidian Second Brain & Biomorphic 3D Netrunner Cortex** (`:8094` STDP engrams, Karpathy LLM Wiki reader, JSON Canvas 1.0 & Bases auditor) |
 | `/zoth-os` | `ZothOsPage.jsx` | **[[Zoth OS|ZothOS v3.4]] & [[ZothOS-Lite Web Desktop|ZothOS-Lite v1.1]] Showcase** with interactive Unicode `U+2800` Braille & Bayer 8×8 Dither 3D Pyramid/Merkaba logo |
-| `/arsenal` | `ArsenalPage.jsx` | Filterable catalog of all 72 sovereign developer, security, AI, and creative tools |
-| `/tools/:id` | `src/components/tools/*` | Dedicated multi-pane **God-Mode** interactive workstation for each of the 72 tools |
+| `/arsenal` | `ArsenalPage.jsx` | Filterable catalog of all 85 sovereign developer, security, AI, and creative tools |
+| `/tools/:id` | `src/components/tools/*` | Dedicated multi-pane **God-Mode** interactive workstation for each of the 85 tools |
 | `/webgen` | `WebGenPage.jsx` | [[Zoth WebGen]] full-stack AI app foundry showcase (`:5173`) |
 
 ---
