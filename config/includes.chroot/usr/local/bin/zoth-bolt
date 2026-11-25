@@ -14,7 +14,7 @@ TOOL_ALIAS = 'bolt.diy'
 TOOL_REPO = 'bolt.diy'
 TOOL_NAME = 'Zoth Bolt'
 TOOL_DESC = 'Flagship sovereign full-stack AI web, 3D shader, and motion architect on :5173 with local Ollama, 19+ LLM providers, and WebContainer live synthesis.'
-TOOL_VERSION = '3.5.0'
+TOOL_VERSION = '3.6.0'
 TOOL_CATEGORY = 'AI Agents & Dev'
 TOOL_PORT = 5173
 
@@ -129,14 +129,26 @@ def main():
     parser.add_argument("--prompt", type=str, default="", help="Prompt forwarded into the live Zoth Bolt workbench")
     parser.add_argument("--provider", type=str, default="Ollama", help="LLM Provider")
     parser.add_argument("--model", type=str, default="qwen2.5-coder:32b", help="Model ID")
+    parser.add_argument("--name", type=str, default="", help="Company name for oneshot local business site")
+    parser.add_argument("--tagline", type=str, default="", help="Tagline for oneshot local business site")
+    parser.add_argument("--primary", type=str, default="#0E4B39", help="Primary brand hex color for oneshot")
+    parser.add_argument("--accent", type=str, default="#D6A24A", help="Accent brand hex color for oneshot")
+    parser.add_argument("--category", type=str, default="home-services", help="Industry category for oneshot")
+    parser.add_argument("--style", type=str, default="editorial-light", help="Theme archetype (editorial-light|coastal-sand|obsidian-noir)")
+    parser.add_argument("--city", type=str, default="Virginia Beach, VA", help="City/State for oneshot")
+    parser.add_argument("--zip", dest="zip_code", type=str, default="23451", help="ZIP code for oneshot")
+    parser.add_argument("--phone", type=str, default="", help="Business phone for oneshot NAP/SMS")
+    parser.add_argument("--email", type=str, default="", help="Business email for oneshot")
+    parser.add_argument("--out-dir", type=str, default="", help="Output directory for oneshot bundle")
+    parser.add_argument("--deploy", action="store_true", help="Deploy generated oneshot site to Netlify production")
     parser.add_argument(
         "subcommand",
         nargs="?",
         choices=[
-            "status", "providers", "models", "bridge", "synthesize",
+            "status", "providers", "models", "bridge", "synthesize", "oneshot",
             "serve", "dev", "ollama", "desktop", "electron", "tui"
         ],
-        help="Subcommand (status, serve, dev, ollama, desktop, electron, tui, providers, models, bridge, synthesize)",
+        help="Subcommand (status, oneshot, serve, dev, ollama, desktop, electron, tui, providers, models, bridge, synthesize)",
     )
     parsed, unknown = parser.parse_known_args(args)
 
@@ -187,6 +199,83 @@ def main():
 
     if parsed.subcommand == "bridge":
         print(json.dumps(api_get("/api/zoth/bridge"), indent=2))
+        return
+
+    if parsed.subcommand == "oneshot":
+        if not parsed.name.strip():
+            print("✗ --name \"Company Name\" is required for `zoth-bolt oneshot`.", file=sys.stderr)
+            sys.exit(2)
+        payload = {
+            "companyName": parsed.name.strip(),
+            "tagline": parsed.tagline.strip(),
+            "primaryColor": parsed.primary,
+            "accentColor": parsed.accent,
+            "category": parsed.category,
+            "heroStyle": parsed.style,
+            "city": parsed.city,
+            "zip": parsed.zip_code,
+            "phone": parsed.phone,
+            "email": parsed.email,
+        }
+        try:
+            req = urllib.request.Request(
+                f"{LOCAL_PORT_URL}/api/zoth/local-business",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=15.0) as resp:
+                res = json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            print(json.dumps({"ok": False, "error": str(e)}, indent=2))
+            sys.exit(1)
+
+        slug = res.get("slug") or "local-business"
+        out_dir = parsed.out_dir.strip() or os.path.expanduser(f"~/NullAITech/bolt-sites/{slug}")
+        os.makedirs(out_dir, exist_ok=True)
+        for rel_path, content in (res.get("files") or {}).items():
+            dest = os.path.join(out_dir, rel_path.lstrip("/"))
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            with open(dest, "w", encoding="utf-8") as fh:
+                fh.write(content)
+
+        deploy_info = None
+        if parsed.deploy:
+            netlify_bin = shutil.which("netlify")
+            if not netlify_bin:
+                deploy_info = {"ok": False, "error": "netlify CLI not found in PATH"}
+            else:
+                site_flag = os.path.join(out_dir, ".netlify", "state.json")
+                if not os.path.isfile(site_flag):
+                    subprocess.run(
+                        [netlify_bin, "sites:create", "--name", f"{slug}-{int(time.time()) % 10000}"],
+                        cwd=out_dir, capture_output=True, text=True, check=False,
+                    )
+                proc = subprocess.run(
+                    [netlify_bin, "deploy", "--prod", "--dir", out_dir, "--json"],
+                    cwd=out_dir, capture_output=True, text=True, check=False,
+                )
+                try:
+                    deploy_info = json.loads(proc.stdout)
+                except Exception:
+                    deploy_info = {"returncode": proc.returncode, "stdout": proc.stdout[-400:], "stderr": proc.stderr[-400:]}
+
+        summary = {
+            "ok": True,
+            "engine": "bolt.diy",
+            "slug": slug,
+            "out_dir": out_dir,
+            "files": res.get("fileNames", []),
+            "deploy": deploy_info,
+        }
+        if parsed.json:
+            print(json.dumps(summary, indent=2))
+        else:
+            print(f"✦ Zoth Bolt One-Shot Site Ready: {parsed.name} ({slug})")
+            print(f"  Output Dir : {out_dir}")
+            print(f"  Files      : {', '.join(summary['files'])}")
+            if isinstance(deploy_info, dict) and (deploy_info.get('url') or deploy_info.get('deploy_url')):
+                print(f"  Live URL   : {deploy_info.get('url') or deploy_info.get('deploy_url')}")
         return
 
     if parsed.subcommand == "synthesize" or parsed.prompt:
@@ -253,7 +342,7 @@ def main():
     print(f"  Studio Route  : {STUDIO_URL}")
     print(f"  Local Port    : {LOCAL_PORT_URL}")
     print(f"  Daemon        : {'ONLINE' if daemon_status else 'OFFLINE'}")
-    print(f"  Commands      : zoth-bolt [status|dev|ollama|desktop|tui|providers|models|bridge|synthesize]")
+    print(f"  Commands      : zoth-bolt [status|oneshot|dev|ollama|desktop|tui|providers|models|bridge|synthesize]")
     print(f"  Access        : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
 
 
