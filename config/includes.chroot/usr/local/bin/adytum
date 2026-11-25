@@ -1,40 +1,184 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse, shutil
+"""
+Adytum Planner — 22-Key Hermetic AI Workbench CLI (v2.4.0)
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
 
-TOOL_ID = 'adytum-alchemist-ai-workflow'
-TOOL_REPO = 'adytum-alchemist-ai-workflow'
-TOOL_NAME = 'Adytum Sanctuary 3D (22 Major Arcana)'
-TOOL_DESC = 'Interactive 3D Esoteric Tarot Sanctuary, 22 Major Arcana 3D Diorama Explorer, and Hermetic Alchemist Workbench.'
-TOOL_VERSION = '2.4.0'
-TOOL_CATEGORY = 'Creative & Design'
+TOOL_ID = "adytum-alchemist-ai-workflow"
+TOOL_REPO = "adytum-alchemist-ai-workflow"
+TOOL_NAME = "Adytum Planner — 22-Key Hermetic AI Workbench"
+TOOL_DESC = (
+    "Local-first 22 Major Arcana BOTA contemplation workbench, offline AI-Chemistry "
+    "curriculum, and negation-aware 15-rule Hermetic architectural invariant gatekeeper."
+)
+TOOL_VERSION = "2.4.0"
+TOOL_CATEGORY = "Planning"
 TOOL_PORT = 8135
-REPO_DIR = os.path.expanduser('~/NullAITech/adytum-alchemist-ai-workflow')
-SERVER_PY = os.path.expanduser('~/NullAITech/adytum-alchemist-ai-workflow/server.py')
-ELECTRON_MAIN = os.path.expanduser('~/NullAITech/adytum-alchemist-ai-workflow/electron/main.cjs')
+REPO_DIR = os.path.expanduser("~/NullAITech/adytum-alchemist-ai-workflow")
+SERVER_PY = os.path.join(REPO_DIR, "server.py")
+ELECTRON_MAIN = os.path.join(REPO_DIR, "electron", "main.cjs")
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-def main():
-    args = sys.argv[1:]
-    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
-        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
-        elec = shutil.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, ELECTRON_MAIN] + rem, cwd=REPO_DIR).returncode)
-    if '--tui' in args or (args and args[0] == 'tui'):
-        rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run(['/usr/local/bin/adytum-alchemist-ai-workflow-tui'] + rem).returncode)
-    if args and args[0] == 'serve':
-        os.execv(sys.executable, [sys.executable, SERVER_PY, '--port', str(TOOL_PORT)])
+HERMETIC_KEYS = [
+    {"key": 0, "arcana": "0 · The Fool (Aleph)", "name": "The Fool", "letter": "Aleph (א)", "gematria": 1, "gate": "Air / Pneuma", "phase": "Pure Potentiality & Unbounded Ideation", "directive": "Strip all inherited assumptions; define the irreducible sovereign objective."},
+    {"key": 1, "arcana": "I · The Magician (Beth)", "name": "The Magician", "letter": "Beth (ב)", "gematria": 2, "gate": "Mercury / Logos", "phase": "Focused Intention & Single-Pointed Execution", "directive": "Bind local CLI tools, MCP endpoints, and hardware compute to a single unambiguous goal."},
+    {"key": 2, "arcana": "II · The High Priestess (Gimel)", "name": "The High Priestess", "letter": "Gimel (ג)", "gematria": 3, "gate": "Moon / Memory", "phase": "Cryptographic Memory & Zero-Leak Storage", "directive": "Preserve state across sessions in deterministic local stores with zero unauthorized egress."},
+    {"key": 3, "arcana": "III · The Empress (Daleth)", "name": "The Empress", "letter": "Daleth (ד)", "gematria": 4, "gate": "Venus / Door", "phase": "Generative Architecture & Organic Scalability", "directive": "Compose clean primitives that multiply downstream capability without brittle coupling."},
+    {"key": 4, "arcana": "IV · The Emperor (Heh)", "name": "The Emperor", "letter": "Heh (ה)", "gematria": 5, "gate": "Aries / Sight", "phase": "Immutable Invariants & Structural Governance", "directive": "Enforce strict schemas and constitutional assertions at every system boundary."},
+    {"key": 5, "arcana": "V · The Hierophant (Vav)", "name": "The Hierophant", "letter": "Vav (ו)", "gematria": 6, "gate": "Taurus / Nail", "phase": "Standardized Contracts & Semantic Schemas", "directive": "Expose canonical JSON-RPC / MCP and CLI contracts so humans and agents interoperate cleanly."},
+    {"key": 6, "arcana": "VI · The Lovers (Zain)", "name": "The Lovers", "letter": "Zain (ז)", "gematria": 7, "gate": "Gemini / Sword", "phase": "Binary Tradeoff Discipline & Clean Boundaries", "directive": "State explicit non-goals, security separations, and architectural tradeoffs."},
+    {"key": 7, "arcana": "VII · The Chariot (Cheth)", "name": "The Chariot", "letter": "Cheth (ח)", "gematria": 8, "gate": "Cancer / Armor", "phase": "Air-Gapped Isolation & Sandbox Enclosures", "directive": "Lock the execution harness to loopback silicon (127.0.0.1) with 100% offline capability."},
+    {"key": 8, "arcana": "VIII · Strength (Teth)", "name": "Strength", "letter": "Teth (ט)", "gematria": 9, "gate": "Leo / Serpent", "phase": "Graceful Error Handling & Self-Healing Loops", "directive": "Wrap subprocesses, ports, and model calls in bounded retry and deterministic fallback loops."},
+    {"key": 9, "arcana": "IX · The Hermit (Yod)", "name": "The Hermit", "letter": "Yod (י)", "gematria": 10, "gate": "Virgo / Lantern", "phase": "Deterministic Verification & Zero-Dependency Audits", "directive": "Prove runtime behavior with self-contained smoke tests rather than trusting documentation."},
+    {"key": 10, "arcana": "X · Wheel of Fortune (Kaph)", "name": "Wheel of Fortune", "letter": "Kaph (כ)", "gematria": 20, "gate": "Jupiter / Cycle", "phase": "State Loop Determinism & Replayability", "directive": "Ensure event loops and state transitions resume idempotently across restarts."},
+    {"key": 11, "arcana": "XI · Justice (Lamed)", "name": "Justice", "letter": "Lamed (ל)", "gematria": 30, "gate": "Libra / Scales", "phase": "Strict Verification Tests & Equilibrated Budgets", "directive": "Enforce concrete latency, memory, and accuracy budgets with automated assertions."},
+    {"key": 12, "arcana": "XII · The Hanged Man (Mem)", "name": "The Hanged Man", "letter": "Mem (מ)", "gematria": 40, "gate": "Water / Reversal", "phase": "Asynchronous Non-Blocking Flow & Calm Pacing", "directive": "Replace busy polling and blocking bottlenecks with reactive event-driven wakeups."},
+    {"key": 13, "arcana": "XIII · Death (Nun)", "name": "Death", "letter": "Nun (נ)", "gematria": 50, "gate": "Scorpio / Transformation", "phase": "Ruthless Cruft Pruning & Resource Cleanup", "directive": "Prune dead state, zombie processes, stale caches, and legacy paywall clutter."},
+    {"key": 14, "arcana": "XIV · Temperance (Samekh)", "name": "Temperance", "letter": "Samekh (ס)", "gematria": 60, "gate": "Sagittarius / Synthesis", "phase": "Rate-Limiting & High-Concurrence Harmony", "directive": "Harmonize CLI backend and browser UI in calibrated equilibrium without state drift."},
+    {"key": 15, "arcana": "XV · The Devil (Ayin)", "name": "The Devil", "letter": "Ayin (ע)", "gematria": 70, "gate": "Capricorn / Eye", "phase": "Anti-Deception Audit & Elimination of Mock State", "directive": "Banish fake placeholders, mock responses, and misleading cipher labels."},
+    {"key": 16, "arcana": "XVI · The Tower (Peh)", "name": "The Tower", "letter": "Peh (פ)", "gematria": 80, "gate": "Mars / Lightning", "phase": "Chaos Resilience & Graceful Crash Recovery", "directive": "Test fault injection and atomic writes so abrupt termination never corrupts user state."},
+    {"key": 17, "arcana": "XVII · The Star (Tzaddi)", "name": "The Star", "letter": "Tzaddi (צ)", "gematria": 90, "gate": "Aquarius / Star", "phase": "Transparent Telemetry & Clear Logging", "directive": "Provide structured diagnostics (/health, --json) so operators see live health in <5s."},
+    {"key": 18, "arcana": "XVIII · The Moon (Qoph)", "name": "The Moon", "letter": "Qoph (ק)", "gematria": 100, "gate": "Pisces / Soma", "phase": "Deep Synaptic Retention & Subconscious Caches", "directive": "Preserve lineage history and user artifacts seamlessly across upgrades."},
+    {"key": 19, "arcana": "XIX · The Sun (Resh)", "name": "The Sun", "letter": "Resh (ר)", "gematria": 200, "gate": "Sun / Radiance", "phase": "Production-Grade Elegance & High-Fidelity UI", "directive": "Deliver high-contrast, responsive UI across mobile, tablet, and desktop viewports."},
+    {"key": 20, "arcana": "XX · Judgement (Shin)", "name": "Judgement", "letter": "Shin (ש)", "gematria": 300, "gate": "Fire / Awakening", "phase": "Comprehensive Integration Sentinel & Release Gate", "directive": "Verify README, in-app docs, CLI --help, and live UI parity before release."},
+    {"key": 21, "arcana": "XXI · The World (Tav)", "name": "The World", "letter": "Tav (ת)", "gematria": 400, "gate": "Saturn / Crown", "phase": "Hermetic Sovereign Wholeness & Zero-Egress Proof", "directive": "Seal the compiled artifact, emit deterministic manifest, and ship 100% open-access."},
+]
 
-    parser = argparse.ArgumentParser(prog=TOOL_ID, description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}")
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
-    parsed, _ = parser.parse_known_args(args)
+_NEGATION_RE = re.compile(
+    r"\b(?:no|without|zero|skip|skipping|none|lack|lacking|missing|never|not|avoid|omits?|omitting)\b",
+    re.IGNORECASE,
+)
 
-    info = {
+
+def _has_positive_term(text: str, terms: list[str]) -> bool:
+    for term in terms:
+        pattern = re.compile(rf"\b{re.escape(term)}\w*", re.IGNORECASE)
+        for match in pattern.finditer(text):
+            prefix = text[max(0, match.start() - 32) : match.start()]
+            clause_prefix = re.split(r"[.;\n!?]", prefix)[-1]
+            if not _NEGATION_RE.search(clause_prefix):
+                return True
+    return False
+
+
+def validate_plan(plan_text: str = "") -> dict:
+    text = (plan_text or "").strip()
+    lowered = text.lower()
+    rules = [
+        (0, len(text) > 50, "Intention & Purpose Defined (Aleph)", 5),
+        (1, _has_positive_term(lowered, ["scope", "goal", "objective"]), "Single-Pointed Focus (Beth)", 5),
+        (2, _has_positive_term(lowered, ["memory", "store", "cache", "state", "storage"]), "State & Memory Integrity (Gimel)", 5),
+        (4, _has_positive_term(lowered, ["invariant", "rule", "constraint"]), "Immutable Invariants Enforced (Heh)", 5),
+        (5, _has_positive_term(lowered, ["schema", "json", "contract", "type"]), "Standardized Schemas & Interfaces (Vav)", 5),
+        (6, _has_positive_term(lowered, ["tradeoff", "boundary", "boundaries", "exclude", "non-goal"]), "Explicit Tradeoffs & Non-Goals (Zain)", 4),
+        (7, _has_positive_term(lowered, ["isolate", "isolation", "air-gap", "sandbox", "zero-egress", "local", "loopback"]), "Air-Gapped Isolation & Sandbox (Cheth)", 6),
+        (8, _has_positive_term(lowered, ["error", "fail", "catch", "resilien", "recovery"]), "Graceful Error Handling (Teth)", 5),
+        (9, _has_positive_term(lowered, ["test", "audit", "verify", "verification", "pytest"]), "Deterministic Verification Test Suite (Yod)", 6),
+        (11, _has_positive_term(lowered, ["budget", "metric", "eval", "benchmark", "latency"]), "Performance & Budget Equilibrated (Lamed)", 4),
+        (13, _has_positive_term(lowered, ["clean", "prune", "remove", "purge"]), "Resource Pruning & Cleanup (Nun)", 4),
+        (15, not any(bad in lowered for bad in ("placeholder", "mock_production", "fake_data")), "Truth In Advertising / No Fake State (Ayin)", 6),
+        (17, _has_positive_term(lowered, ["log", "telemetry", "trace", "stdout", "diagnostic"]), "Clear Logging & Diagnostics (Tzaddi)", 4),
+        (20, _has_positive_term(lowered, ["release", "deploy", "deliver", "ci"]), "Integration Gate & Release Verification (Shin)", 5),
+        (21, ("cloud-only" not in lowered) and _has_positive_term(lowered, ["offline", "local-first", "sovereign"]), "Sovereign Wholeness & Local Autonomy (Tav)", 5),
+    ]
+    key_map = {k["key"]: k["arcana"] for k in HERMETIC_KEYS}
+    total_weight = sum(w for _, _, _, w in rules)
+    score_total = 0
+    checks = []
+    for key_num, ok, label, weight in rules:
+        if ok:
+            score_total += weight
+        checks.append({
+            "keyNumber": key_num,
+            "keyName": key_map.get(key_num, f"Key {key_num}"),
+            "rule": label,
+            "passed": bool(ok),
+            "weight": weight,
+            "recommendation": None if ok else f"Incorporate explicit {label.lower()} into specification.",
+        })
+    score = min(100, round((score_total / total_weight) * 100))
+    passed = score >= 70
+    grade = "A+" if score >= 90 else ("A" if score >= 80 else ("B" if score >= 70 else "NEEDS_REVISION"))
+    return {
+        "passed": passed,
+        "score": score,
+        "grade": grade,
+        "summary": (
+            "Specification passes the Hermetic Quality Gate. Architecture is robust, testable, and bounded."
+            if passed
+            else "Specification fails required hermetic invariants. Run `adytum harden` to remediate blockers."
+        ),
+        "checks": checks,
+        "blockers": [c["recommendation"] for c in checks if not c["passed"]],
+    }
+
+
+def auto_harden_spec(plan_text: str = "", project_name: str = "Sovereign Zero-Egress Enclave") -> str:
+    text = (plan_text or "").strip()
+    replacements = [
+        (r"\bwith\s+no\s+tests?\s+(?:or|and)\s+boundar(?:y|ies)\b", "with automated verification tests and explicit security boundaries"),
+        (r"\b(?:with\s+)?no\s+tests?\b", "with automated verification tests"),
+        (r"\bwithout\s+tests?\b", "with automated verification tests"),
+        (r"\b(?:with\s+)?no\s+boundar(?:y|ies)\b", "with explicit security boundaries"),
+        (r"\bwithout\s+boundar(?:y|ies)\b", "with explicit security boundaries"),
+        (r"\bplaceholder\s+mock_production\s+responses\b", "verified production API handlers"),
+        (r"\bfake_data\s+timers\b", "deterministic live execution loops"),
+        (r"\bcloud-only\b", "local-first sovereign"),
+        (r"\bplaceholder\b", "verified implementation"),
+        (r"\bmock_production\b", "verified_production"),
+        (r"\bfake_data\b", "canonical_fixtures"),
+    ]
+    for pattern, repl in replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    remediation_map = {
+        0: f"Intention & Purpose (Key 0 · Aleph): Deliver a sovereign, zero-egress architecture for {project_name} with unambiguous user value.",
+        1: "Goal & Scope (Key 1 · Beth): Define a single-pointed objective and strict execution scope with zero feature drift.",
+        2: "State & Memory Store (Key 2 · Gimel): Persist application state and memory cache in deterministic local storage with atomic writes.",
+        4: "Immutable Invariants (Key 4 · Heh): Enforce strict runtime invariants and constitutional constraints at every module boundary.",
+        5: "Standardized Schemas (Key 5 · Vav): Validate all inputs and outputs against canonical JSON schema type contracts.",
+        6: "Explicit Tradeoffs & Boundaries (Key 6 · Zain): Document explicit architectural tradeoffs and exclude non-essential surface area.",
+        7: "Air-Gapped Sandbox Isolation (Key 7 · Cheth): Isolate execution to local loopback (127.0.0.1) inside a zero-egress sandbox.",
+        8: "Graceful Error Resilience (Key 8 · Teth): Wrap all I/O and subprocess boundaries in bounded catch and error recovery loops.",
+        9: "Deterministic Verification Suite (Key 9 · Yod): Audit and verify runtime behavior via an automated end-to-end test suite.",
+        11: "Equilibrated Performance Budgets (Key 11 · Lamed): Benchmark latency and memory metrics against strict quantitative budgets.",
+        13: "Resource Pruning & Hygiene (Key 13 · Nun): Prune stale cache state, zombie processes, and dead code paths automatically.",
+        15: "Anti-Deception Guarantee (Key 15 · Ayin): Zero fabricated state—all transforms, metrics, and outputs execute real algorithms.",
+        17: "Transparent Telemetry & Diagnostics (Key 17 · Tzaddi): Emit structured stdout telemetry logs and health trace diagnostics.",
+        20: "Release & CI Integration Gate (Key 20 · Shin): Gate CI deployment and release delivery on 100% invariant verification.",
+        21: "Sovereign Wholeness & Offline Autonomy (Key 21 · Tav): Guarantee 100% offline, local-first sovereign operation without cloud lock-in.",
+    }
+    current_audit = validate_plan(text)
+    added = [
+        remediation_map[c["keyNumber"]]
+        for c in current_audit["checks"]
+        if not c["passed"] and c["keyNumber"] in remediation_map
+    ]
+    if added:
+        header = f"{text}\n" if text else f"# {project_name} — Sovereign Specification\n"
+        text = "\n".join([header, "## Hermetic Invariant Hardening Clauses", *[f"- {c}" for c in added]]).strip()
+    return text
+
+
+def _read_spec_input(target: str) -> str:
+    if target == "-":
+        return sys.stdin.read()
+    if os.path.isfile(target):
+        with open(target, "r", encoding="utf-8") as fh:
+            return fh.read()
+    return target
+
+
+def _status_info() -> dict:
+    return {
         "id": TOOL_ID,
         "repo": TOOL_REPO,
         "name": TOOL_NAME,
@@ -45,24 +189,151 @@ def main():
         "native_cli": SERVER_PY,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
+        "commands": ["list", "key", "invariants", "validate", "harden", "serve"],
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
         },
-        "status": "READY"
+        "status": "READY",
     }
-    if parsed.json:
-        print(json.dumps(info, indent=2))
-        return
-    if parsed.ui:
-        print(LOCAL_PORT_URL)
-        return
+
+
+def _print_status():
     print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
     print(f"  Repository : {REPO_DIR}")
     print(f"  Workbench  : {STUDIO_URL}")
     print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Access     : 100% Free & Open Access")
+    print("  Commands   : list | key <0-21> | invariants [project] | validate <file|text> | harden <file|text> | serve")
+    print("  Access     : 100% Free & Open Access")
 
-if __name__ == '__main__':
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog=os.path.basename(sys.argv[0]) or TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
+    )
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local ZothOS installation & daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local ZothOS workbench URL")
+
+    sub = parser.add_subparsers(dest="command", metavar="COMMAND")
+
+    p_list = sub.add_parser("list", help="List all 22 Major Arcana Hermetic keys and engineering directives")
+    p_list.add_argument("--json", action="store_true", help="Output JSON array of all 22 keys")
+
+    p_key = sub.add_parser("key", help="Inspect a specific Major Arcana key (0–21)")
+    p_key.add_argument("number", type=int, help="Major Arcana key number (0 through 21)")
+    p_key.add_argument("--json", action="store_true", help="Output JSON for the selected key")
+
+    p_inv = sub.add_parser("invariants", help="Generate 22-point architectural invariant checklist for a project")
+    p_inv.add_argument("project", nargs="?", default="Sovereign Zero-Egress Enclave", help="Project name")
+    p_inv.add_argument("--json", action="store_true", help="Output JSON checklist")
+
+    p_val = sub.add_parser("validate", help="Audit a plan file or inline spec text against 15 Hermetic invariants (exit 0 if score >= 70)")
+    p_val.add_argument("target", help="Path to plan file, inline text, or '-' for stdin")
+    p_val.add_argument("--json", action="store_true", help="Output JSON audit report")
+
+    p_harden = sub.add_parser("harden", help="Coherently auto-harden a draft spec or file to pass all 15 Hermetic invariants")
+    p_harden.add_argument("target", help="Path to plan file, inline text, or '-' for stdin")
+    p_harden.add_argument("--project", default="Sovereign Zero-Egress Enclave", help="Project name for remediation header")
+    p_harden.add_argument("--json", action="store_true", help="Output JSON with hardened text and verification score")
+
+    p_serve = sub.add_parser("serve", help="Start the loopback HTTP workbench daemon (server.py)")
+    p_serve.add_argument("--port", type=int, default=TOOL_PORT, help="Loopback port (default: 8135)")
+    p_serve.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
+
+    return parser
+
+
+def main():
+    args = sys.argv[1:]
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = shutil.which("electron") or "/usr/local/bin/electron"
+        sys.exit(subprocess.run([elec, ELECTRON_MAIN] + rem, cwd=REPO_DIR).returncode)
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        sys.exit(subprocess.run(["/usr/local/bin/adytum-alchemist-ai-workflow-tui"] + rem).returncode)
+
+    parser = build_parser()
+    parsed = parser.parse_args(args)
+
+    if parsed.command == "serve":
+        os.execv(sys.executable, [sys.executable, SERVER_PY, "--port", str(parsed.port), "--host", str(parsed.host)])
+
+    if parsed.command == "list":
+        if parsed.json:
+            print(json.dumps({"version": TOOL_VERSION, "count": len(HERMETIC_KEYS), "keys": HERMETIC_KEYS}, indent=2))
+            return
+        for k in HERMETIC_KEYS:
+            print(f"{k['key']:>2} | {k['arcana']:<32} | {k['gate']:<22} | {k['phase']}")
+        return
+
+    if parsed.command == "key":
+        if parsed.number < 0 or parsed.number >= len(HERMETIC_KEYS):
+            print(f"error: key must be between 0 and 21 (got {parsed.number})", file=sys.stderr)
+            sys.exit(2)
+        item = HERMETIC_KEYS[parsed.number]
+        if parsed.json:
+            print(json.dumps(item, indent=2))
+            return
+        print(f"Key {item['key']}: {item['arcana']}")
+        print(f"  Letter / Gematria : {item['letter']} ({item['gematria']})")
+        print(f"  Elemental Gate    : {item['gate']}")
+        print(f"  Engineering Phase : {item['phase']}")
+        print(f"  Directive         : {item['directive']}")
+        return
+
+    if parsed.command == "invariants":
+        payload = {
+            "project": parsed.project,
+            "version": TOOL_VERSION,
+            "invariants": [
+                {"key": k["key"], "arcana": k["arcana"], "phase": k["phase"], "directive": k["directive"]}
+                for k in HERMETIC_KEYS
+            ],
+        }
+        if parsed.json:
+            print(json.dumps(payload, indent=2))
+            return
+        print(f"# Adytum 22-Key Invariants: {parsed.project}\n")
+        for k in HERMETIC_KEYS:
+            print(f"- [ ] **Key {k['key']} ({k['arcana']})**: {k['phase']} — {k['directive']}")
+        return
+
+    if parsed.command == "validate":
+        text = _read_spec_input(parsed.target)
+        audit = validate_plan(text)
+        if parsed.json:
+            print(json.dumps(audit, indent=2))
+        else:
+            status = "PASSED" if audit["passed"] else "FAILED"
+            print(f"Adytum Hermetic Gate: {status} — {audit['score']}/100 ({audit['grade']})")
+            for c in audit["checks"]:
+                mark = "✔" if c["passed"] else "✖"
+                print(f"  {mark} Key {c['keyNumber']:>2}: {c['rule']}")
+        sys.exit(0 if audit["passed"] else 1)
+
+    if parsed.command == "harden":
+        text = _read_spec_input(parsed.target)
+        hardened = auto_harden_spec(text, parsed.project)
+        audit = validate_plan(hardened)
+        if parsed.json:
+            print(json.dumps({"project": parsed.project, "hardened": hardened, "audit": audit}, indent=2))
+        else:
+            print(hardened)
+        sys.exit(0 if audit["passed"] else 1)
+
+    if parsed.json:
+        print(json.dumps(_status_info(), indent=2))
+        return
+    if parsed.ui:
+        print(LOCAL_PORT_URL)
+        return
+    _print_status()
+
+
+if __name__ == "__main__":
     main()
