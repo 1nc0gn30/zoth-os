@@ -1,12 +1,24 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  Zoth Pet HUD & Desktop Pet Companion Launcher
+# ZothOS Desktop Pet & HUD Launcher
 # ==============================================================================
 set -euo pipefail
 
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
-    echo "Usage: zoth-pet-hud [--pet lycan|kitsune|draco|workbot|azoth] [--hud]"
+    echo "Usage: zoth-pet-hud [--pet eye|aquila|draco|ignis|kitsune|lycan|workbot|azoth] [--hud]"
     exit 0
+fi
+
+# Optional: --pet NAME selects the companion before launch (used by the menu actions).
+if [[ "${1:-}" == "--pet" ]]; then
+    PET_ID="${2:-}"
+    if [[ ! "$PET_ID" =~ ^[a-z0-9_-]{1,32}$ ]]; then
+        echo "[!] Invalid pet name: '$PET_ID'" >&2
+        exit 2
+    fi
+    mkdir -p "$HOME/.config/zothos"
+    printf '{"petId":"%s"}\n' "$PET_ID" > "$HOME/.config/zothos/pet_config.json"
+    shift 2
 fi
 
 if [[ "${1:-}" == "--hud" ]]; then
