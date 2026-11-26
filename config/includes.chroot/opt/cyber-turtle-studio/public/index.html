@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Turtle Studio v2.6.0 | L-System, Logo DSL &amp; CNC Plotter Workstation</title>
+  <meta name="description" content="Zero-egress L-System fractal synthesizer, bounded Logo DSL compiler, Truchet tiles, BFS mazes, 2-Opt TSP plotter optimizer, sanitized SVG, CNC G-Code, and 2x4 Unicode Braille workstation.">
+  <link rel="canonical" href="https://cyber-turtle-studio.netlify.app/">
+
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:title" content="Cyber Turtle Studio v2.6.0 | L-System, Logo DSL &amp; CNC Plotter Workstation">
+  <meta property="og:description" content="Synthesize 28 L-System fractals, run bounded Logo DSL scripts, optimize CNC air-travel with 2-Opt TSP, and export sanitized SVG, auto-fit G-Code, and 2x4 Braille.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cyber-turtle-studio.netlify.app/">
+  <meta property="og:image" content="https://cyber-turtle-studio.netlify.app/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Cyber Turtle Studio v2.6.0 | L-System &amp; CNC Plotter Engine">
+  <meta name="twitter:description" content="Deterministic L-System fractals, Logo DSL, Truchet tiles, BFS mazes, 2-Opt TSP air-travel optimization, and CNC G-Code with zero cloud egress.">
+  <meta name="twitter:image" content="https://cyber-turtle-studio.netlify.app/assets/banner.png">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+  <link rel="stylesheet" href="/zoth-theme.css">
+
+  <!-- AEO & SEO Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Cyber Turtle Studio",
+        "softwareVersion": "2.6.0",
+        "url": "https://cyber-turtle-studio.netlify.app/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Linux, macOS, Windows, Termux, Web Browser",
+        "description": "Zero-egress L-System fractal synthesizer, bounded Logo DSL interpreter, Truchet/Maze generator, 2-Opt TSP air-travel optimizer, and CNC pen-plotter G-Code / SVG / Braille exporter.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "priceValidUntil": "2027-12-31",
+          "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+          "seller": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech",
+            "url": "https://nullai.tech"
+          }
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Neal Frazier (@1nc0gn30)",
+          "alternateName": "1nc0gn30",
+          "url": "https://github.com/1nc0gn30"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Cyber Turtle Studio optimize CNC pen-plotter G-Code?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Cyber Turtle Studio chains contiguous vector strokes into polylines, solves the Traveling Salesperson Problem with Nearest-Neighbor + 2-Opt local search to minimize rapid air-travel distance, and exports auto-fitted 200mm-bed G-Code with strict G0 pen-up rapid moves and G1 pen-down draw moves."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Cyber Turtle Studio send geometry or scripts to external servers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All rendering, 2-Opt TSP optimization, and exports execute either locally against the loopback 127.0.0.1:8129 Python stdlib server or 100% client-side in your browser with zero external network egress."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Cyber Turtle Studio free and open access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All 28 presets, Logo DSL execution, Truchet tiles, BFS mazes, Spirographs, 2-Opt TSP, G-Code, SVG, Braille export, and 9 MCP stdio tools are 100% free with zero paywalls. Optional support is available via Buy Us a Coffee or Solana."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    (function initThemeImmediate() {
+      const params = new URLSearchParams(window.location.search);
+      const qTheme = params.get('theme');
+      const isEmbed = params.get('embed') === '1';
+      if (isEmbed) document.documentElement.classList.add('ct-embed');
+      let theme = 'dark';
+      if (qTheme === 'light' || qTheme === 'dark') {
+        theme = qTheme;
+      } else {
+        try {
+          const saved = localStorage.getItem('ct_theme');
+          if (saved === 'light' || saved === 'dark') theme = saved;
+          else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) theme = 'light';
+        } catch (_) {}
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+  <header class="ct-header">
+    <div class="ct-brand">
+      <img src="/assets/icon.png" alt="Cyber Turtle Studio geometric hexagonal turtle icon" class="ct-brand-icon" width="36" height="36">
+      <div>
+        <h1 class="ct-brand-title">
+          Cyber Turtle Studio
+          <span class="ct-version-pill">v2.6.0 • 100% OPEN ACCESS</span>
+        </h1>
+        <p class="ct-brand-sub">L-Systems (28 Presets) • Bounded Logo DSL • Truchet • BFS Maze • Spirograph • 2-Opt TSP • CNC G-Code</p>
+      </div>
+    </div>
+
+    <div class="ct-header-actions">
+      <span id="runtime-badge" class="ct-status-pill" aria-live="polite">
+        <span class="ct-dot" aria-hidden="true"></span>
+        <span id="runtime-label">Checking :8129 API…</span>
+      </span>
+      <button type="button" id="btn-theme-toggle" class="ct-btn" aria-label="Toggle Light and Dark Theme">
+        Switch Theme
+      </button>
+      <button type="button" id="btn-quickstart" class="ct-btn ct-btn-gold" aria-label="Open Quickstart Guide">
+        Quickstart
+      </button>
+    </div>
+  </header>
+
+  <main class="ct-workspace">
+    <!-- Left Rail: Generator Controls -->
+    <section class="ct-panel" aria-label="Geometry Synthesizer Controls">
+      <h2 class="ct-panel-title">
+        <span>Synthesizer Mode</span>
+        <span id="preset-count-badge">28 Presets</span>
+      </h2>
+
+      <div class="ct-tabs" role="tablist" aria-label="Geometry Engines">
+        <button type="button" role="tab" class="ct-tab active" id="tab-lsystem" data-mode="lsystem" aria-selected="true">L-System</button>
+        <button type="button" role="tab" class="ct-tab" id="tab-logo" data-mode="logo" aria-selected="false">Logo DSL</button>
+        <button type="button" role="tab" class="ct-tab" id="tab-truchet" data-mode="truchet" aria-selected="false">Truchet</button>
+        <button type="button" role="tab" class="ct-tab" id="tab-maze" data-mode="maze" aria-selected="false">Maze</button>
+        <button type="button" role="tab" class="ct-tab" id="tab-spiro" data-mode="spirograph" aria-selected="false">Spiro</button>
+      </div>
+
+      <!-- Mode 1: L-System -->
+      <div id="pane-lsystem" class="ct-mode-pane">
+        <div class="ct-field">
+          <label class="ct-label" for="preset-select">Catalog Preset (28 Fractals &amp; Trees)</label>
+          <select id="preset-select" class="ct-select"></select>
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="lsystem-axiom">Axiom String</label>
+          <input id="lsystem-axiom" class="ct-input" type="text" value="F--F--F">
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="lsystem-rules">Production Rules (Symbol=Expansion, comma/newline separated)</label>
+          <textarea id="lsystem-rules" class="ct-textarea" rows="3">F=F+F--F+F</textarea>
+        </div>
+
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="lsystem-angle">
+              <span>Turn Angle θ (°)</span>
+              <span class="ct-label-val" id="val-angle">60°</span>
+            </label>
+            <input id="lsystem-angle" class="ct-range" type="range" min="5" max="180" step="0.5" value="60">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="lsystem-iter">
+              <span>Iterations (0–12)</span>
+              <span class="ct-label-val" id="val-iter">4</span>
+            </label>
+            <input id="lsystem-iter" class="ct-range" type="range" min="0" max="12" step="1" value="4">
+          </div>
+        </div>
+
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="lsystem-step">Step Length (px)</label>
+            <input id="lsystem-step" class="ct-input" type="number" min="1" max="100" step="1" value="10">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="lsystem-heading">Initial Heading (°)</label>
+            <input id="lsystem-heading" class="ct-input" type="number" min="-360" max="360" step="5" value="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 2: Logo DSL -->
+      <div id="pane-logo" class="ct-mode-pane" hidden>
+        <div class="ct-field">
+          <label class="ct-label" for="logo-sample-select">Logo Sample Script</label>
+          <select id="logo-sample-select" class="ct-select">
+            <option value="flower">Flower of Life (circle + repeat)</option>
+            <option value="koch">Koch Logo (recursive to/if/stop)</option>
+            <option value="spiral">Spiral Vortex (make + :var arithmetic)</option>
+            <option value="mandala">Hex Mandala (nested repeat)</option>
+            <option value="pen_test">Pen-Up Grid (2-Opt TSP + G0 travel test)</option>
+          </select>
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="logo-script">Bounded Logo DSL Script (fd, bk, lt, rt, pu, pd, circle, make, to..end, if)</label>
+          <textarea id="logo-script" class="ct-textarea" rows="8"></textarea>
+        </div>
+      </div>
+
+      <!-- Mode 3: Truchet -->
+      <div id="pane-truchet" class="ct-mode-pane" hidden>
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="truchet-rows">Rows (1–60)</label>
+            <input id="truchet-rows" class="ct-input" type="number" min="1" max="60" value="8">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="truchet-cols">Cols (1–60)</label>
+            <input id="truchet-cols" class="ct-input" type="number" min="1" max="60" value="8">
+          </div>
+        </div>
+        <div class="ct-field">
+          <label class="ct-label" for="truchet-style">Tile Geometry Style</label>
+          <select id="truchet-style" class="ct-select">
+            <option value="arcs">Smith Quarter-Circle Arcs</option>
+            <option value="concentric_arcs">Concentric Dual Arcs</option>
+            <option value="diagonal">Diagonal Circuit Slashes</option>
+            <option value="cross_line">Cross-Line Mesh</option>
+          </select>
+        </div>
+        <div class="ct-field">
+          <label class="ct-label" for="truchet-seed">PRNG Seed</label>
+          <input id="truchet-seed" class="ct-input" type="number" min="0" max="999999" value="42">
+        </div>
+      </div>
+
+      <!-- Mode 4: Maze -->
+      <div id="pane-maze" class="ct-mode-pane" hidden>
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="maze-rows">Maze Rows (2–50)</label>
+            <input id="maze-rows" class="ct-input" type="number" min="2" max="50" value="12">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="maze-cols">Maze Cols (2–50)</label>
+            <input id="maze-cols" class="ct-input" type="number" min="2" max="50" value="12">
+          </div>
+        </div>
+        <div class="ct-field">
+          <label class="ct-label" for="maze-algo">Labyrinth Algorithm</label>
+          <select id="maze-algo" class="ct-select">
+            <option value="recursive_backtracker">Recursive Backtracker</option>
+            <option value="braided">Braided Loops</option>
+            <option value="wilson">Wilson Uniform Spanning Tree</option>
+          </select>
+        </div>
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="maze-seed">Maze Seed</label>
+            <input id="maze-seed" class="ct-input" type="number" min="0" max="999999" value="42">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="maze-solve">BFS Shortest Path</label>
+            <select id="maze-solve" class="ct-select">
+              <option value="true" selected>Overlay BFS Solution</option>
+              <option value="false">Walls Only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 5: Spirograph -->
+      <div id="pane-spirograph" class="ct-mode-pane" hidden>
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="spiro-outer">Outer Ring R</label>
+            <input id="spiro-outer" class="ct-input" type="number" min="10" max="300" value="120">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="spiro-inner">Inner Gear r</label>
+            <input id="spiro-inner" class="ct-input" type="number" min="2" max="200" value="45">
+          </div>
+        </div>
+        <div class="ct-field-row">
+          <div class="ct-field">
+            <label class="ct-label" for="spiro-pen">Pen Offset d</label>
+            <input id="spiro-pen" class="ct-input" type="number" min="1" max="200" value="65">
+          </div>
+          <div class="ct-field">
+            <label class="ct-label" for="spiro-steps">Curve Steps</label>
+            <input id="spiro-steps" class="ct-input" type="number" min="60" max="6000" value="1200">
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-btn-row" style="margin-top: 12px;">
+        <button type="button" id="btn-synthesize" class="ct-btn ct-btn-primary" style="flex: 1 1 100%;">
+          Synthesize Vector Geometry
+        </button>
+      </div>
+    </section>
+
+    <!-- Center Stage: Vector SVG Canvas & 2-Opt TSP Controls -->
+    <section class="ct-panel ct-stage-panel" aria-label="Interactive Vector Stage">
+      <div class="ct-toolbar">
+        <div class="ct-btn-row">
+          <button type="button" id="btn-tsp-optimize" class="ct-btn ct-btn-gold">
+            Run 2-Opt TSP
+          </button>
+          <button type="button" id="btn-toggle-air" class="ct-btn" aria-pressed="false">
+            Air Overlay: OFF
+          </button>
+          <button type="button" id="btn-animate" class="ct-btn" aria-pressed="false">
+            Animate: OFF
+          </button>
+        </div>
+        <div class="ct-btn-row">
+          <button type="button" id="btn-dl-svg" class="ct-btn ct-btn-primary">SVG</button>
+          <button type="button" id="btn-dl-png" class="ct-btn ct-btn-sky">PNG</button>
+          <button type="button" id="btn-dl-gcode" class="ct-btn ct-btn-gold">G-Code</button>
+        </div>
+      </div>
+
+      <div id="error-banner" class="ct-error-banner" role="alert"></div>
+
+      <div id="svg-stage" class="ct-canvas-wrap" role="img" aria-label="Live procedural turtle vector canvas"></div>
+
+      <div class="ct-stage-caption">
+        <span id="stage-pattern-label">Pattern: Koch Snowflake</span>
+        <span id="stage-source-label">Engine: Ready</span>
+      </div>
+    </section>
+
+    <!-- Right Rail: Telemetry, 2-Opt TSP Savings, CNC G-Code & 2x4 Braille -->
+    <aside class="ct-panel" aria-label="Toolpath Telemetry and Exporters">
+      <h2 class="ct-panel-title">
+        <span>Toolpath &amp; 2-Opt TSP</span>
+        <span id="tsp-badge">Baseline</span>
+      </h2>
+
+      <div class="ct-metrics-grid">
+        <div class="ct-metric-card">
+          <div class="ct-metric-label">Draw Segments</div>
+          <div class="ct-metric-value emerald" id="stat-segments">0</div>
+        </div>
+        <div class="ct-metric-card">
+          <div class="ct-metric-label">Draw Length</div>
+          <div class="ct-metric-value sky" id="stat-draw">0 mm</div>
+        </div>
+        <div class="ct-metric-card">
+          <div class="ct-metric-label">Air Travel (Rapid)</div>
+          <div class="ct-metric-value gold" id="stat-air">0 mm</div>
+        </div>
+        <div class="ct-metric-card">
+          <div class="ct-metric-label">2-Opt TSP Savings</div>
+          <div class="ct-metric-value emerald" id="stat-saved">0.0%</div>
+        </div>
+      </div>
+
+      <div class="ct-field-row">
+        <div class="ct-field">
+          <label class="ct-label" for="gcode-bed">Bed Size (mm)</label>
+          <input id="gcode-bed" class="ct-input" type="number" min="50" max="600" value="200">
+        </div>
+        <div class="ct-field">
+          <label class="ct-label" for="gcode-mode">Toolhead Mode</label>
+          <select id="gcode-mode" class="ct-select">
+            <option value="pen">Pen Plotter (Z-Axis)</option>
+            <option value="laser">Laser (M3/M5)</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="ct-panel-title" style="margin-top: 8px;">
+        <span>CNC G-Code Preview (Pen-Up G0 Gated)</span>
+        <button type="button" id="btn-copy-gcode" class="ct-btn" style="padding: 6px 10px;">Copy</button>
+      </h3>
+      <pre id="gcode-preview" class="ct-code-box" aria-label="Generated CNC G-Code preview"></pre>
+
+      <h3 class="ct-panel-title" style="margin-top: 12px;">
+        <span>2×4 Unicode Braille Raster (U+2800)</span>
+        <button type="button" id="btn-copy-braille" class="ct-btn" style="padding: 6px 10px;">Copy</button>
+      </h3>
+      <pre id="braille-preview" class="ct-braille-box" aria-label="2x4 Unicode Braille raster preview"></pre>
+    </aside>
+  </main>
+
+  <footer class="ct-footer">
+    <div class="ct-footer-attr">
+      <span>Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform</span>
+      <a href="https://github.com/1nc0gn30/cyber-turtle-studio" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">nullai.tech</a>
+    </div>
+    <div class="ct-support-bar">
+      <a class="ct-btn ct-btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">
+        ☕ Buy Us a Coffee
+      </a>
+      <a class="ct-btn ct-btn-primary" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" rel="noopener noreferrer">
+        ◎ Solana Tip
+      </a>
+    </div>
+  </footer>
+
+  <div id="ct-toast" class="ct-toast" role="status" aria-live="polite"></div>
+
+  <script src="/cyber-turtle-engine.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      const Engine = window.CyberTurtleEngine;
+
+      const state = {
+        mode: 'lsystem',
+        apiOnline: false,
+        presets: Engine.PRESETS.slice(),
+        activeResult: null,
+        activeTitle: 'Koch Snowflake',
+        tspReport: null,
+        airMoves: [],
+        showAirOverlay: false,
+        animateSvg: false,
+        gcodeText: '',
+        brailleText: '',
+        svgMarkup: '',
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function isLightTheme() {
+        return document.documentElement.getAttribute('data-theme') === 'light';
+      }
+
+      function applyTheme(nextTheme, persist = true) {
+        const clean = nextTheme === 'light' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', clean);
+        if (persist) {
+          try { localStorage.setItem('ct_theme', clean); } catch (_) {}
+        }
+        $('btn-theme-toggle').textContent = clean === 'light' ? 'Dark Mode' : 'Light Mode';
+        if (state.activeResult) renderSvgStage();
+      }
+
+      function showToast(msg) {
+        const el = $('ct-toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => el.classList.remove('show'), 2200);
+      }
+
+      function showError(msg) {
+        const banner = $('error-banner');
+        if (!msg) {
+          banner.textContent = '';
+          banner.classList.remove('visible');
+        } else {
+          banner.textContent = msg;
+          banner.classList.add('visible');
+        }
+      }
+
+      // Safe SVG DOM mount using DOMParser (zero raw innerHTML sink)
+      function mountSvgSafe(svgStr) {
+        const container = $('svg-stage');
+        while (container.firstChild) container.removeChild(container.firstChild);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgStr, 'image/svg+xml');
+        const svgEl = doc.documentElement;
+        if (!svgEl || svgEl.nodeName.toLowerCase() !== 'svg' || doc.querySelector('parsererror')) {
+          const fallback = document.createElement('p');
+          fallback.textContent = 'Vector canvas unavailable.';
+          container.appendChild(fallback);
+          return;
+        }
+        // Strip any unexpected script elements defensively
+        svgEl.querySelectorAll('script').forEach((node) => node.remove());
+        container.appendChild(document.importNode(svgEl, true));
+      }
+
+      function populatePresets(selectedId) {
+        const sel = $('preset-select');
+        const keepVal = selectedId || sel.value || 'koch_snowflake';
+        while (sel.firstChild) sel.removeChild(sel.firstChild);
+        state.presets.forEach((p) => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `[${p.category}] ${p.name}`;
+          sel.appendChild(opt);
+        });
+        if (state.presets.some((p) => p.id === keepVal)) {
+          sel.value = keepVal;
+        }
+        $('preset-count-badge').textContent = `${state.presets.length} Presets`;
+      }
+
+      function loadPresetIntoForm(presetId) {
+        const p = state.presets.find((x) => x.id === presetId) || state.presets[0];
+        if (!p) return;
+        $('lsystem-axiom').value = p.axiom || 'F--F--F';
+        const rulesObj = p.rules || {};
+        const ruleLines = Object.entries(rulesObj).map(([k, v]) => {
+          if (Array.isArray(v) && v.length > 0) {
+            return `${k}=${typeof v[0] === 'string' ? v[0] : (v[0].successor || '')}`;
+          }
+          return `${k}=${v}`;
+        });
+        $('lsystem-rules').value = ruleLines.join('\n');
+        $('lsystem-angle').value = String(p.angle ?? 60);
+        $('val-angle').textContent = `${p.angle ?? 60}°`;
+        $('lsystem-iter').value = String(Math.min(12, p.iterations ?? 4));
+        $('val-iter').textContent = String(Math.min(12, p.iterations ?? 4));
+        $('lsystem-step').value = String(p.step ?? p.step_size ?? 10);
+        $('lsystem-heading').value = String(p.heading ?? p.start_heading ?? 0);
+        state.activeTitle = p.name || p.title || p.id;
+      }
+
+      function parseRulesField(rawText) {
+        const out = {};
+        String(rawText || '').split(/[\n,;]+/).forEach((line) => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+          const sep = trimmed.includes('->') ? '->' : (trimmed.includes('=') ? '=' : (trimmed.includes(':') ? ':' : null));
+          if (!sep) return;
+          const idx = trimmed.indexOf(sep);
+          const k = trimmed.slice(0, idx).trim();
+          const v = trimmed.slice(idx + sep.length).trim();
+          if (k) out[k] = v;
+        });
+        return out;
+      }
+
+      function astDictToResult(astDict) {
+        const segs = (astDict && Array.isArray(astDict.segments) ? astDict.segments : []).map((s) => ({
+          x1: Number(s.start?.x ?? 0),
+          y1: Number(s.start?.y ?? 0),
+          x2: Number(s.end?.x ?? 0),
+          y2: Number(s.end?.y ?? 0),
+          is_draw: s.segment_type !== 'move' && s.is_draw !== false,
+          color: s.color || undefined,
+          width: Number(s.stroke_width || 1.5),
+        }));
+        return Engine.computeMetrics(segs);
+      }
+
+      function renderSvgStage() {
+        if (!state.activeResult) return;
+        const light = isLightTheme();
+        const svgStr = Engine.exportSvgString(state.activeResult, {
+          title: state.activeTitle,
+          lightMode: light,
+          background: light ? '#FFFFFF' : '#05070B',
+          overrideColor: light ? '#047857' : '#34D399',
+          animated: state.animateSvg,
+          airMoves: state.showAirOverlay ? state.airMoves : [],
+          airColor: light ? '#B45309' : '#F59E0B',
+        });
+        state.svgMarkup = svgStr;
+        mountSvgSafe(svgStr);
+      }
+
+      function refreshOutputs(result, sourceLabel) {
+        state.activeResult = result;
+        const optPreview = Engine.optimizeToolpath2Opt(result.segments);
+        state.airMoves = state.tspReport ? optPreview.airMovesAfter : optPreview.airMovesBefore;
+
+        const bed = Math.max(50, Math.min(600, Number($('gcode-bed').value) || 200));
+        const laser = $('gcode-mode').value === 'laser';
+        state.gcodeText = Engine.exportGCode(result.segments, {
+          bedWidth: bed,
+          bedHeight: bed,
+          laserMode: laser,
+          title: state.activeTitle,
+        });
+        state.brailleText = Engine.rasterizeBraille(result.segments, 44, 16);
+
+        $('stat-segments').textContent = result.stats.drawSegments.toLocaleString();
+        $('stat-draw').textContent = `${Math.round(result.stats.drawDistance)} mm`;
+        const airVal = state.tspReport ? state.tspReport.optimizedAirTravel : optPreview.report.initialAirTravel;
+        $('stat-air').textContent = `${Math.round(airVal)} mm`;
+        $('stat-saved').textContent = state.tspReport ? `${state.tspReport.reductionPercent}%` : '0.0%';
+        $('tsp-badge').textContent = state.tspReport ? `Optimized (-${state.tspReport.savedMm}mm)` : 'Baseline';
+        $('gcode-preview').textContent = state.gcodeText.split('\n').slice(0, 60).join('\n');
+        $('braille-preview').textContent = state.brailleText;
+        $('stage-pattern-label').textContent = `Pattern: ${state.activeTitle}`;
+        $('stage-source-label').textContent = `Engine: ${sourceLabel}`;
+
+        renderSvgStage();
+      }
+
+      async function callLocalApi(endpoint, payload) {
+        if (!state.apiOnline) return null;
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (!res.ok || data.success === false) {
+            throw new Error(data.error || `API HTTP ${res.status}`);
+          }
+          return data;
+        } catch (err) {
+          if (err && err.name === 'TypeError') {
+            state.apiOnline = false;
+            $('runtime-label').textContent = 'Client JS Engine (Static)';
+            return null;
+          }
+          throw err;
+        }
+      }
+
+      async function synthesize() {
+        showError('');
+        state.tspReport = null;
+        try {
+          if (state.mode === 'lsystem') {
+            const axiom = $('lsystem-axiom').value.trim() || 'F';
+            const rules = parseRulesField($('lsystem-rules').value);
+            const angle = Number($('lsystem-angle').value) || 60;
+            const iterations = Math.floor(Number($('lsystem-iter').value) || 0);
+            const step = Number($('lsystem-step').value) || 10;
+            const heading = Number($('lsystem-heading').value) || 0;
+
+            const apiData = await callLocalApi('/api/generate-lsystem', {
+              axiom, rules, iterations, angle_deg: angle, step_size: step, initial_heading: heading,
+            });
+            if (apiData && apiData.ast) {
+              refreshOutputs(astDictToResult(apiData.ast), 'Loopback :8129 Python API');
+              return;
+            }
+            const expanded = Engine.expandLSystem(axiom, rules, iterations);
+            const localRes = Engine.interpretLSystem(expanded, { angle, step, heading });
+            refreshOutputs(localRes, 'Client JS Engine');
+          } else if (state.mode === 'logo') {
+            const script = $('logo-script').value;
+            state.activeTitle = `Logo DSL (${$('logo-sample-select').selectedOptions[0]?.textContent || 'Custom'})`;
+            const apiData = await callLocalApi('/api/execute-logo', { script });
+            if (apiData && apiData.ast) {
+              refreshOutputs(astDictToResult(apiData.ast), 'Loopback :8129 Python API');
+              return;
+            }
+            const localRes = Engine.executeLogo(script);
+            refreshOutputs(localRes, 'Client JS Engine');
+          } else if (state.mode === 'truchet') {
+            const rows = Number($('truchet-rows').value) || 8;
+            const cols = Number($('truchet-cols').value) || 8;
+            const style = $('truchet-style').value;
+            const seed = Number($('truchet-seed').value) || 42;
+            state.activeTitle = `Truchet ${style} (${rows}x${cols})`;
+            const apiData = await callLocalApi('/api/truchet', { rows, cols, style, seed, tile_size: 40 });
+            if (apiData && apiData.ast) {
+              refreshOutputs(astDictToResult(apiData.ast), 'Loopback :8129 Python API');
+              return;
+            }
+            refreshOutputs(Engine.generateTruchet({ rows, cols, style, seed }), 'Client JS Engine');
+          } else if (state.mode === 'maze') {
+            const rows = Number($('maze-rows').value) || 12;
+            const cols = Number($('maze-cols').value) || 12;
+            const algo = $('maze-algo').value;
+            const seed = Number($('maze-seed').value) || 42;
+            const solve = $('maze-solve').value === 'true';
+            state.activeTitle = `Maze ${algo} (${rows}x${cols})`;
+            const apiData = await callLocalApi('/api/maze', { rows, cols, algorithm: algo, seed, solve, cell_size: 26 });
+            if (apiData && apiData.ast) {
+              refreshOutputs(astDictToResult(apiData.ast), 'Loopback :8129 Python API');
+              return;
+            }
+            refreshOutputs(Engine.generateMaze({ rows, cols, seed, solve }), 'Client JS Engine');
+          } else if (state.mode === 'spirograph') {
+            const outerR = Number($('spiro-outer').value) || 120;
+            const innerR = Number($('spiro-inner').value) || 45;
+            const penD = Number($('spiro-pen').value) || 65;
+            const steps = Number($('spiro-steps').value) || 1200;
+            state.activeTitle = `Spirograph (R=${outerR}, r=${innerR}, d=${penD})`;
+            const apiData = await callLocalApi('/api/spirograph', { outer_r: outerR, inner_r: innerR, pen_d: penD, steps });
+            if (apiData && apiData.ast) {
+              refreshOutputs(astDictToResult(apiData.ast), 'Loopback :8129 Python API');
+              return;
+            }
+            refreshOutputs(Engine.generateSpirograph({ outerR, innerR, penD, steps }), 'Client JS Engine');
+          }
+        } catch (err) {
+          showError(err.message || String(err));
+        }
+      }
+
+      async function runTspOptimization() {
+        if (!state.activeResult) return;
+        showError('');
+        const opt = Engine.optimizeToolpath2Opt(state.activeResult.segments);
+        state.tspReport = opt.report;
+        state.showAirOverlay = true;
+        $('btn-toggle-air').setAttribute('aria-pressed', 'true');
+        $('btn-toggle-air').textContent = 'Air Overlay: ON';
+        const nextRes = Engine.computeMetrics(opt.segments);
+        refreshOutputs(nextRes, state.apiOnline ? '2-Opt TSP + :8129 API' : '2-Opt TSP Client JS');
+        showToast(`2-Opt TSP: ${opt.report.initialAirTravel}mm -> ${opt.report.optimizedAirTravel}mm (-${opt.report.reductionPercent}%)`);
+      }
+
+      function switchMode(mode) {
+        state.mode = mode;
+        document.querySelectorAll('.ct-tab').forEach((btn) => {
+          const active = btn.getAttribute('data-mode') === mode;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        ['lsystem', 'logo', 'truchet', 'maze', 'spirograph'].forEach((m) => {
+          const pane = $(`pane-${m}`);
+          if (pane) pane.hidden = m !== mode;
+        });
+        synthesize();
+      }
+
+      function downloadBlob(content, filename, mime) {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function downloadPng() {
+        if (!state.svgMarkup) return;
+        const blob = new Blob([state.svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 1200;
+          canvas.height = 1200;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = isLightTheme() ? '#FFFFFF' : '#05070B';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          URL.revokeObjectURL(url);
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'cyber-turtle-studio.png';
+          a.click();
+        };
+        img.src = url;
+      }
+
+      async function probeBackend() {
+        try {
+          const res = await fetch('/api/health', { cache: 'no-store' });
+          if (!res.ok) throw new Error('offline');
+          const data = await res.json();
+          if (data && data.healthy) {
+            state.apiOnline = true;
+            $('runtime-label').textContent = `Loopback :${data.port || 8129} API v${data.version || Engine.VERSION}`;
+            try {
+              const pRes = await fetch('/api/presets', { cache: 'no-store' });
+              if (pRes.ok) {
+                const pData = await pRes.json();
+                if (Array.isArray(pData.presets) && pData.presets.length >= 20) {
+                  state.presets = pData.presets;
+                  populatePresets();
+                }
+              }
+            } catch (_) {}
+            return;
+          }
+        } catch (_) {}
+        state.apiOnline = false;
+        $('runtime-label').textContent = `Client JS v${Engine.VERSION} (Zero Egress)`;
+      }
+
+      // Wire events
+      document.querySelectorAll('.ct-tab').forEach((btn) => {
+        btn.addEventListener('click', () => switchMode(btn.getAttribute('data-mode')));
+      });
+
+      $('preset-select').addEventListener('change', (e) => {
+        loadPresetIntoForm(e.target.value);
+        synthesize();
+      });
+      $('lsystem-angle').addEventListener('input', (e) => {
+        $('val-angle').textContent = `${e.target.value}°`;
+        synthesize();
+      });
+      $('lsystem-iter').addEventListener('input', (e) => {
+        $('val-iter').textContent = e.target.value;
+        synthesize();
+      });
+      $('logo-sample-select').addEventListener('change', (e) => {
+        const sample = Engine.LOGO_SAMPLES[e.target.value];
+        if (sample) $('logo-script').value = sample.code;
+        synthesize();
+      });
+      $('btn-synthesize').addEventListener('click', synthesize);
+      $('btn-tsp-optimize').addEventListener('click', runTspOptimization);
+      $('btn-toggle-air').addEventListener('click', () => {
+        state.showAirOverlay = !state.showAirOverlay;
+        $('btn-toggle-air').setAttribute('aria-pressed', String(state.showAirOverlay));
+        $('btn-toggle-air').textContent = `Air Overlay: ${state.showAirOverlay ? 'ON' : 'OFF'}`;
+        renderSvgStage();
+      });
+      $('btn-animate').addEventListener('click', () => {
+        state.animateSvg = !state.animateSvg;
+        $('btn-animate').setAttribute('aria-pressed', String(state.animateSvg));
+        $('btn-animate').textContent = `Animate: ${state.animateSvg ? 'ON' : 'OFF'}`;
+        renderSvgStage();
+      });
+      $('gcode-bed').addEventListener('change', () => state.activeResult && refreshOutputs(state.activeResult, $('stage-source-label').textContent.replace(/^Engine:\s*/, '')));
+      $('gcode-mode').addEventListener('change', () => state.activeResult && refreshOutputs(state.activeResult, $('stage-source-label').textContent.replace(/^Engine:\s*/, '')));
+
+      $('btn-dl-svg').addEventListener('click', () => {
+        downloadBlob(state.svgMarkup, 'cyber-turtle-studio.svg', 'image/svg+xml;charset=utf-8');
+        showToast('Downloaded sanitized SVG');
+      });
+      $('btn-dl-png').addEventListener('click', () => {
+        downloadPng();
+        showToast('Exported 1200x1200 PNG');
+      });
+      $('btn-dl-gcode').addEventListener('click', () => {
+        downloadBlob(state.gcodeText, 'cyber-turtle-studio.gcode', 'text/plain;charset=utf-8');
+        showToast('Downloaded auto-fit G-Code');
+      });
+      $('btn-copy-gcode').addEventListener('click', () => {
+        navigator.clipboard?.writeText(state.gcodeText)?.catch?.(() => {});
+        showToast('Copied CNC G-Code');
+      });
+      $('btn-copy-braille').addEventListener('click', () => {
+        navigator.clipboard?.writeText(state.brailleText)?.catch?.(() => {});
+        showToast('Copied 2x4 Braille art');
+      });
+      $('btn-theme-toggle').addEventListener('click', () => {
+        applyTheme(isLightTheme() ? 'dark' : 'light', true);
+      });
+
+      // Studio iframe postMessage theme sync
+      window.addEventListener('message', (event) => {
+        const d = event.data;
+        if (!d || typeof d !== 'object') return;
+        const incoming = d.theme || d.mode;
+        if (incoming === 'light' || incoming === 'dark') {
+          applyTheme(incoming, false);
+        }
+      });
+
+      const tutorial = window.createSovereignTutorial
+        ? window.createSovereignTutorial({
+            toolId: 'cyber-turtle-studio',
+            toolName: 'Cyber Turtle Studio v2.6.0',
+            tagline: 'L-Systems • Bounded Logo DSL • 2-Opt TSP • CNC G-Code',
+            accentColor: '#10B981',
+            steps: [
+              { icon: '1.', title: 'Pick a Fractal or Write Logo DSL', desc: 'Choose from 28 presets (including Pythagoras Tree) or switch to Logo DSL, Truchet, Maze, or Spirograph.' },
+              { icon: '2.', title: 'Optimize Air Travel with 2-Opt TSP', desc: 'Click Run 2-Opt TSP to reorder polylines and visualize dashed pen-up travel savings.' },
+              { icon: '3.', title: 'Export Sanitized SVG, G-Code, or Braille', desc: 'Download pen-up gated 200mm-bed G-Code, theme-aware SVG, PNG, or copy 2x4 Unicode Braille.' },
+            ],
+          })
+        : null;
+      $('btn-quickstart').addEventListener('click', () => tutorial && tutorial.open());
+
+      // Bootstrap
+      applyTheme(document.documentElement.getAttribute('data-theme') || 'dark', false);
+      populatePresets();
+      loadPresetIntoForm('koch_snowflake');
+      $('logo-script').value = Engine.LOGO_SAMPLES.flower.code;
+      probeBackend().finally(() => synthesize());
+    })();
+  </script>
+</body>
+</html>

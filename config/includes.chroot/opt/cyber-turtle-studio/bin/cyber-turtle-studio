@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Cyber Turtle Studio v2.6.0 — Sovereign Multi-OS CLI Launcher.
+
+Resolves runtime root dynamically (/opt/cyber-turtle-studio -> $CYBER_TURTLE_HOME
+-> script-relative repo -> user workspace) without leaking literal home paths.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import urllib.request
+import webbrowser
+from pathlib import Path
+from typing import Optional
+
+TOOL_ID = "cyber-turtle-studio"
+TOOL_NAME = "Cyber Turtle Studio"
+TOOL_VERSION = "2.6.0"
+TOOL_CATEGORY = "Media & 3D"
+DEFAULT_PORT = 8129
+LOCAL_URL = f"http://127.0.0.1:{DEFAULT_PORT}"
+STUDIO_URL = "https://zoth.nullai.tech/tools/cyber-turtle-studio"
+COFFEE_URL = "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+SOLANA_ADDR = "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+
+
+def _resolve_runtime_root() -> Optional[Path]:
+    candidates = []
+    env_home = os.environ.get("CYBER_TURTLE_HOME", "").strip()
+    if env_home:
+        candidates.append(Path(env_home).expanduser())
+    candidates.append(Path("/opt/cyber-turtle-studio"))
+    try:
+        script_root = Path(__file__).resolve().parent.parent
+        candidates.append(script_root)
+    except Exception:
+        pass
+    candidates.append(Path.home() / "NullAITech" / "cyber-turtle-studio")
+
+    for cand in candidates:
+        if (cand / "src" / "cyber_turtle_studio").is_dir():
+            return cand.resolve()
+    return None
+
+
+def _display_path(p: Optional[Path]) -> str:
+    if p is None:
+        return "/opt/cyber-turtle-studio"
+    text = str(p)
+    home = str(Path.home())
+    if home and text.startswith(home):
+        return "~" + text[len(home):]
+    return text
+
+
+def _probe_health(port: int = DEFAULT_PORT) -> bool:
+    try:
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/health", method="GET")
+        with urllib.request.urlopen(req, timeout=0.6) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
+def _print_status(runtime_root: Optional[Path], as_json: bool) -> int:
+    preset_count = 28
+    mcp_tools = [
+        "turtle_execute_logo",
+        "turtle_generate_lsystem",
+        "turtle_export_svg",
+        "turtle_export_gcode",
+        "turtle_presets",
+        "turtle_diagnostics",
+        "turtle_optimize_toolpath",
+        "turtle_generate_truchet",
+        "turtle_generate_maze",
+    ]
+    version = TOOL_VERSION
+
+    if runtime_root is not None:
+        src_dir = str(runtime_root / "src")
+        if src_dir not in sys.path:
+            sys.path.insert(0, src_dir)
+        try:
+            from cyber_turtle_studio import __version__ as pkg_ver
+            from cyber_turtle_studio.catalog import PRESETS
+            from cyber_turtle_studio.mcp_server import MCPServer
+
+            version = pkg_ver
+            preset_count = len(PRESETS)
+            mcp_tools = [t["name"] for t in MCPServer().get_tool_definitions()]
+        except Exception:
+            pass
+
+    online = _probe_health(DEFAULT_PORT)
+    info = {
+        "id": TOOL_ID,
+        "name": TOOL_NAME,
+        "version": version,
+        "category": TOOL_CATEGORY,
+        "installed": runtime_root is not None,
+        "runtime_root": _display_path(runtime_root),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_URL,
+        "live_api_online": online,
+        "preset_count": preset_count,
+        "mcp_tool_count": len(mcp_tools),
+        "mcp_tools": mcp_tools,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "support": {
+            "stripe_buy_coffee": COFFEE_URL,
+            "solana_wallet": SOLANA_ADDR,
+        },
+        "status": "ONLINE" if online else "READY",
+    }
+    if as_json:
+        print(json.dumps(info, indent=2))
+    else:
+        print(f"Cyber Turtle Studio v{version} [{TOOL_CATEGORY}] — {info['status']}")
+        print(f"  Runtime Root : {info['runtime_root']}")
+        print(f"  Local Port   : {LOCAL_URL} ({'live' if online else 'on-demand'})")
+        print(f"  Catalog      : {preset_count} presets | {len(mcp_tools)} MCP stdio tools")
+        print(f"  Workbench    : {STUDIO_URL}")
+        print(f"  Support      : {COFFEE_URL} | solana:{SOLANA_ADDR}")
+    return 0
+
+
+def main() -> int:
+    args = sys.argv[1:]
+    runtime_root = _resolve_runtime_root()
+
+    if args in (["--version"], ["-v"]):
+        print(f"{TOOL_ID} {TOOL_VERSION}")
+        return 0
+
+    if not args or set(args).issubset({"--status", "--json"}):
+        return _print_status(runtime_root, as_json=("--json" in args))
+
+    if args[0] in ("desktop", "web", "open"):
+        if _probe_health(DEFAULT_PORT):
+            webbrowser.open(LOCAL_URL)
+            return 0
+        if runtime_root is None:
+            print("Error: Cyber Turtle Studio runtime root not found.", file=sys.stderr)
+            return 1
+        src_dir = str(runtime_root / "src")
+        if src_dir not in sys.path:
+            sys.path.insert(0, src_dir)
+        from cyber_turtle_studio.ui_server import start_server
+
+        start_server(host="127.0.0.1", port=DEFAULT_PORT, open_browser=True)
+        return 0
+
+    if runtime_root is None:
+        print("Error: Cyber Turtle Studio runtime root not found.", file=sys.stderr)
+        return 1
+
+    src_dir = str(runtime_root / "src")
+    if src_dir not in sys.path:
+        sys.path.insert(0, src_dir)
+
+    from cyber_turtle_studio.cli import main as native_cli_main
+
+    return int(native_cli_main(args) or 0)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
