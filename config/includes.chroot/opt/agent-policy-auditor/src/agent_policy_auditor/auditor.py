@@ -1,6 +1,6 @@
 """Static Manifest, Tool Schema & System Prompt Security Auditor.
 
-Engineered by 1nc0gn30 • NullAI Platform.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
 Audits AI agent tool definitions, MCP manifests, and system prompts
 against OWASP LLM Top 10 and MITRE ATLAS security standards.
 100% Python Standard Library — Zero External Dependencies.
@@ -9,16 +9,15 @@ against OWASP LLM Top 10 and MITRE ATLAS security standards.
 from __future__ import annotations
 
 import json
-import math
 import re
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 SECRET_PATTERNS = [
     (r"sk-[a-zA-Z0-9]{20,}", "OpenAI API Secret Key"),
     (r"ghp_[a-zA-Z0-9]{36}", "GitHub Personal Access Token"),
     (r"AKIA[0-9A-Z]{16}", "AWS Access Key ID"),
-    (r"-----BEGIN (?:RSA )?PRIVATE KEY-----", "SSH/TLS Private Key Header"),
+    (r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----", "SSH/TLS Private Key Header"),
     (r"(?:api[_-]?key|secret|password|token)\s*[:=]\s*['\"][a-zA-Z0-9_\-]{16,}['\"]", "Hardcoded API Credential"),
 ]
 
@@ -27,7 +26,24 @@ SHELL_TOOL_PATTERNS = [
 ]
 
 DESTRUCTIVE_PATTERNS = [
-    r"\b(?:rm\s+-rf|del\s+/f|mkfs|drop\s+database|format\s+[a-z]:)\b",
+    r"\b(?:rm\s+-rf|del\s+/f|mkfs|drop\s+database|format\s+[a-z]:|file_system_purge)\b",
+    r"\bsudo\b",
+]
+
+PROMPT_INJECTION_PATTERNS = [
+    (r"ignore\s+(?:all\s+)?previous\s+instructions", "Direct instruction override"),
+    (r"bypass\s+(?:policy|guardrails|security|restrictions)", "Policy guardrail evasion"),
+    (r"override\s+(?:permissions|policy|guardrails|safety)", "Permission override directive"),
+    (r"(?:developer|debug)\s+mode.{0,80}(?:print|dump|reveal|grant|secret|hmac|key)", "Debug-mode privilege escalation"),
+    (r"grant\s+shell_exec\s+unconditionally", "Unconditional SHELL_EXEC escalation"),
+    (r"(?:print|reveal|exfiltrate|dump)\s+(?:the\s+)?(?:private\s+)?(?:hmac|secret|api)\s*keys?", "Cryptographic key exfiltration attempt"),
+]
+
+WILDCARD_SCOPE_PATTERNS = [
+    (r'"(?:target|path|scope|allowed_dir|root|directory)"\s*:\s*"(?:\*|/\*|\*\*/\*)"', "Wildcard filesystem scope grant"),
+    (r'"(?:allowed_paths|paths|directories)"\s*:\s*\[\s*"(?:\*|/\*)"\s*\]', "Wildcard filesystem paths list"),
+    (r'"(?:allowed_domains|domain_whitelist|allowlist|egress_hosts)"\s*:\s*\[\s*"\*"\s*\]', "Wildcard outbound network allowlist"),
+    (r"\b0\.0\.0\.0/0\b", "Unrestricted CIDR 0.0.0.0/0 egress grant"),
 ]
 
 
@@ -50,15 +66,14 @@ class ManifestAuditReport:
     compliance_frameworks: Dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-        d = asdict(self)
-        return d
+        return asdict(self)
 
 
 class ManifestAuditor:
     """Evaluates agent tool schemas, MCP manifests, and prompts."""
 
     def audit_manifest(self, data: Any, name: str = "agent_manifest") -> ManifestAuditReport:
-        """Run comprehensive audit against tool schema or prompt dictionary."""
+        """Run comprehensive static security audit against a tool schema or prompt."""
         findings: List[AuditFinding] = []
         raw_text = ""
 
@@ -67,10 +82,16 @@ class ManifestAuditor:
         elif isinstance(data, str):
             raw_text = data
             try:
-                data = json.loads(data)
+                parsed = json.loads(data)
+                data = parsed if isinstance(parsed, (dict, list)) else {"prompt": data}
             except Exception:
-                # Treat as raw prompt text
                 data = {"prompt": data}
+        elif data is None:
+            data = {}
+            raw_text = ""
+        else:
+            raw_text = str(data)
+            data = {"prompt": raw_text}
 
         # 1. Audit for Hardcoded Secrets
         for pattern, label in SECRET_PATTERNS:
@@ -81,65 +102,100 @@ class ManifestAuditor:
                     severity="CRITICAL",
                     description=f"Detected hardcoded credential ({label}) inside agent definition.",
                     remediation="Extract credentials to external vault or environment lease variables.",
-                    evidence=f"Found {len(matches)} match(es)"
+                    evidence=f"Found {len(matches)} match(es)",
                 ))
 
-        # 2. Audit Tools for Unsandboxed Shell Execution
-        tools = []
+        # 2. Audit Tools for Unsandboxed Shell Execution & Unconstrained File Writes
+        tools: List[Any] = []
         if isinstance(data, dict):
-            if "tools" in data and isinstance(data["tools"], list):
+            if isinstance(data.get("tools"), list):
                 tools = data["tools"]
-            elif "functions" in data and isinstance(data["functions"], list):
+            elif isinstance(data.get("functions"), list):
                 tools = data["functions"]
+        elif isinstance(data, list):
+            tools = data
 
         for t in tools:
-            t_name = str(t.get("name", "")).lower()
+            if not isinstance(t, dict):
+                continue
+            t_raw_name = str(t.get("name", "unnamed_tool"))
+            t_name = t_raw_name.lower()
             t_desc = str(t.get("description", "")).lower()
-            schema = json.dumps(t.get("parameters", {}))
+            schema = json.dumps(t.get("parameters", {})).lower()
 
-            is_shell = any(re.search(pat, t_name) for pat in SHELL_TOOL_PATTERNS)
+            is_shell = (
+                any(re.search(pat, t_name) for pat in SHELL_TOOL_PATTERNS)
+                or bool(re.search(r"(?:execute|run)s?\s+(?:raw\s+|arbitrary\s+)?(?:shell|bash|terminal|os)\s+(?:command|script)", t_desc))
+            )
             if is_shell:
-                # Check if sandbox or quota parameter exists
-                if not any(k in schema.lower() for k in ["sandbox", "capsule", "timeout", "quota", "container"]):
+                if not any(k in schema for k in ["sandbox", "capsule", "timeout", "quota", "container"]):
                     findings.append(AuditFinding(
                         rule_id="EXEC-002-UNSANDBOXED-SHELL",
                         severity="HIGH",
-                        description=f"Tool '{t.get('name')}' provides shell execution without sandbox or quota boundaries.",
+                        description=f"Tool '{t_raw_name}' provides shell execution without sandbox or quota boundaries.",
                         remediation="Wrap subprocess in Agent Capsule Jail (:8105) or apply resource limits.",
-                        evidence=f"Tool: {t.get('name')}"
+                        evidence=f"Tool: {t_raw_name}",
                     ))
 
-            # Check for arbitrary filesystem writes without path constraints
-            if any(k in t_name for k in ["write", "file", "save", "modify"]):
-                if not any(k in schema.lower() for k in ["allowed_dir", "root", "workspace", "jail", "sandbox"]):
-                    findings.append(AuditFinding(
-                        rule_id="FS-003-UNCONSTRAINED-WRITE",
-                        severity="MEDIUM",
-                        description=f"Tool '{t.get('name')}' allows arbitrary file writes without workspace root constraints.",
-                        remediation="Enforce strict working directory path prefix validation or ephemeral scratch spaces.",
-                        evidence=f"Tool: {t.get('name')}"
-                    ))
+            if any(k in t_name for k in ["write", "file", "save", "modify", "purge", "delete"]):
+                if "read_only" not in t_desc and "read-only" not in t_desc and not t_name.startswith("read_"):
+                    if not any(k in schema for k in ["allowed_dir", "root", "workspace", "jail", "sandbox"]):
+                        findings.append(AuditFinding(
+                            rule_id="FS-003-UNCONSTRAINED-WRITE",
+                            severity="MEDIUM",
+                            description=f"Tool '{t_raw_name}' allows arbitrary file writes or deletion without workspace root constraints.",
+                            remediation="Enforce strict working directory path prefix validation or ephemeral scratch spaces.",
+                            evidence=f"Tool: {t_raw_name}",
+                        ))
 
-        # 3. Check for Destructive Commands
+        # 3. Check for Destructive Commands / Privilege Escalation
+        seen_destructive = False
         for pat in DESTRUCTIVE_PATTERNS:
-            if re.search(pat, raw_text, re.IGNORECASE):
+            m = re.search(pat, raw_text, re.IGNORECASE)
+            if m and not seen_destructive:
+                seen_destructive = True
                 findings.append(AuditFinding(
                     rule_id="DEST-004-IRREVERSIBLE-ACTION",
                     severity="CRITICAL",
-                    description="Detected destructive system commands without human confirmation invariant.",
+                    description="Detected destructive or privileged system commands without human confirmation invariant.",
                     remediation="Require explicit lease authorization or human approval gate.",
-                    evidence=pat
+                    evidence=m.group(0),
                 ))
 
         # 4. Check for Unrestricted Cloud Egress
-        if any(w in raw_text.lower() for w in ["fetch", "curl", "http_request", "urllib", "requests"]):
-            if "domain_whitelist" not in raw_text and "allowlist" not in raw_text:
+        lower_raw = raw_text.lower()
+        if any(w in lower_raw for w in ["fetch", "curl", "http_request", "urllib", "requests"]):
+            if "domain_whitelist" not in lower_raw and "allowlist" not in lower_raw:
                 findings.append(AuditFinding(
                     rule_id="NET-005-UNFILTERED-EGRESS",
                     severity="LOW",
                     description="Agent incorporates outbound network capabilities without explicit domain allowlisting.",
                     remediation="Route outbound calls through Agent Egress Sentinel (:8095/:8096).",
-                    evidence="Network tools present without domain whitelist"
+                    evidence="Network tools present without domain allowlist",
+                ))
+
+        # 5. Check for Wildcard Filesystem / Network Scope Grants
+        for pat, label in WILDCARD_SCOPE_PATTERNS:
+            m = re.search(pat, raw_text, re.IGNORECASE)
+            if m:
+                findings.append(AuditFinding(
+                    rule_id="SCOPE-006-WILDCARD-GRANT",
+                    severity="HIGH",
+                    description=f"Detected overly broad permission scope ({label}).",
+                    remediation="Replace wildcard '*' grants with explicit directory prefixes or domain allowlists.",
+                    evidence=m.group(0)[:80],
+                ))
+
+        # 6. Check for Prompt-Injection & Policy-Evasion Surfaces
+        for pat, label in PROMPT_INJECTION_PATTERNS:
+            m = re.search(pat, raw_text, re.IGNORECASE)
+            if m:
+                findings.append(AuditFinding(
+                    rule_id="INJ-007-PROMPT-INJECTION",
+                    severity="CRITICAL",
+                    description=f"Detected adversarial prompt-injection or guardrail-evasion pattern ({label}).",
+                    remediation="Sanitize untrusted prompt templates and isolate system directives from user input.",
+                    evidence=m.group(0)[:80],
                 ))
 
         # Calculate Score
@@ -147,7 +203,7 @@ class ManifestAuditor:
             "CRITICAL": 35,
             "HIGH": 20,
             "MEDIUM": 10,
-            "LOW": 5
+            "LOW": 5,
         }
         total_deduction = sum(deductions.get(f.severity, 5) for f in findings)
         score = max(0, 100 - total_deduction)
@@ -166,18 +222,17 @@ class ManifestAuditor:
         else:
             risk = "SAFE"
 
-
         compliance = {
             "NIST_AI_RMF": "COMPLIANT" if score >= 80 else "NON_COMPLIANT",
             "OWASP_LLM_TOP_10": "PASS" if not any(f.severity in ["HIGH", "CRITICAL"] for f in findings) else "ACTION_REQUIRED",
-            "ZOTH_ZERO_EGRESS_INVARIANT": "VERIFIED" if score >= 85 else "QUARANTINED"
+            "ZOTH_ZERO_EGRESS_INVARIANT": "VERIFIED" if score >= 85 else "QUARANTINED",
         }
 
         return ManifestAuditReport(
-            manifest_name=name,
+            manifest_name=str(name or "agent_manifest"),
             security_score=score,
             risk_level=risk,
             total_findings=len(findings),
             findings=findings,
-            compliance_frameworks=compliance
+            compliance_frameworks=compliance,
         )

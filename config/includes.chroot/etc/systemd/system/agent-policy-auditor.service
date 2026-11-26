@@ -1,5 +1,5 @@
 [Unit]
-Description=ZothOS Agent Policy Auditor & Capability Leaser
+Description=ZothOS Agent Policy Auditor & Capability Leaser (v2.6.0)
 After=network.target multi-user.target
 Wants=network.target
 
@@ -7,11 +7,17 @@ Wants=network.target
 Type=simple
 User=zoth
 EnvironmentFile=-/etc/zothos/paths.conf
-WorkingDirectory=%h
+WorkingDirectory=/opt/agent-policy-auditor
 ExecStart=/usr/local/bin/zoth-run-repo agent-policy-auditor /opt/zothos-ai-env/bin/python3 -m agent_policy_auditor.cli serve --host 127.0.0.1 --port 8106
 Restart=always
 RestartSec=3
-KillMode=process
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/zoth-policy /tmp /home/zoth/.local/share/zoth
+MemoryMax=512M
+CPUQuota=75%
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1

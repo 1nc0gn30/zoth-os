@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Portable ZothOS / host shim for agent-policy-auditor (v2.6.0)
+# Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+SCRIPT_PATH="$(readlink -f "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+CANDIDATE_FROM_SCRIPT="$(dirname "$SCRIPT_DIR")"
+
+REPO_DIR=""
+for candidate in \
+  "${ZOTH_REPO_DIR:-}" \
+  "$CANDIDATE_FROM_SCRIPT" \
+  "/opt/agent-policy-auditor" \
+  "${HOME}/NullAITech/agent-policy-auditor"; do
+  if [ -n "$candidate" ] && [ -d "$candidate/src/agent_policy_auditor" ]; then
+    REPO_DIR="$candidate"
+    break
+  fi
+done
+
+if [ -z "$REPO_DIR" ]; then
+  echo "[!] agent-policy-auditor source directory not found (checked /opt/agent-policy-auditor and \$HOME/NullAITech/agent-policy-auditor)" >&2
+  exit 1
+fi
+
+if [ "${1:-}" = "--tui" ] || [ "${1:-}" = "tui" ]; then
+  shift
+  if [ -x "$SCRIPT_DIR/agent-policy-auditor-tui" ]; then
+    exec "$SCRIPT_DIR/agent-policy-auditor-tui" "$@"
+  elif [ -x "$REPO_DIR/bin/agent-policy-auditor-tui" ]; then
+    exec "$REPO_DIR/bin/agent-policy-auditor-tui" "$@"
+  else
+    exec agent-policy-auditor-tui "$@"
+  fi
+fi
+
+if [ "${1:-}" = "--electron" ] || [ "${1:-}" = "electron" ] || [ "${1:-}" = "desktop" ]; then
+  shift
+  ELECTRON_BIN="$(command -v electron || echo /usr/local/bin/electron)"
+  exec "$ELECTRON_BIN" "$REPO_DIR/electron/main.cjs" "$@"
+fi
+
+export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
+exec python3 -m agent_policy_auditor.cli "$@"

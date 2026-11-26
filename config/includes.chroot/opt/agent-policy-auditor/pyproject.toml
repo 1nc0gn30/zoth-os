@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-policy-auditor"
-version = "0.1.0"
-description = "Autonomous Agent Policy Broker, Time-Bound Capability Leaser & Manifest Auditor"
+version = "2.6.0"
+description = "Autonomous Agent Policy Broker, Time-Bound Capability Leaser, Stdio MCP Server & Manifest Auditor"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "NullAI", email = "contact@nullai.tech" }
+    { name = "Neal Frazier Tech (@1nc0gn30) • NullAI Platform", email = "1nc0gn30@users.noreply.github.com" }
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,9 +21,9 @@ dependencies = []
 
 [project.scripts]
 agent-policy = "agent_policy_auditor.cli:main"
+agent-policy-auditor = "agent_policy_auditor.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 pythonpath = ["src"]
-

@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""
+agent-policy-auditor-tui: Live Terminal Monitor for Agent Policy Auditor (:8106).
+Queries /health, /api/stats, /api/leases, and /api/audit/events over loopback
+with offline SQLite fallback.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sqlite3
+import sys
+import time
+import urllib.request
+from typing import Any, Dict, List, Optional
+
+VERSION = "2.6.0"
+
+
+def _default_db_path() -> str:
+    env_db = os.environ.get("AGENT_POLICY_DB", "").strip()
+    if env_db:
+        return env_db
+    return os.path.expanduser("~/.local/share/zoth/policy_leases.db")
+
+
+def _fetch_json(url: str, timeout: float = 1.5) -> Optional[Dict[str, Any]]:
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as resp:
+            if resp.status == 200:
+                return json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+    return None
+
+
+def _read_sqlite_snapshot(db_path: str) -> Dict[str, Any]:
+    stats: Dict[str, Any] = {
+        "total_leases_granted": 0,
+        "active_leases_count": 0,
+        "revoked_leases_count": 0,
+        "violations_blocked": 0,
+        "total_budget_allocated_usd": 0.0,
+        "total_budget_consumed_usd": 0.0,
+    }
+    leases: List[Dict[str, Any]] = []
+    events: List[Dict[str, Any]] = []
+
+    if not os.path.isfile(db_path):
+        return {"stats": stats, "leases": leases, "events": events}
+
+    now = time.time()
+    conn = sqlite3.connect(db_path, timeout=2.0)
+    conn.row_factory = sqlite3.Row
+    try:
+        cur = conn.cursor()
+        tables = {r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
+        if "leases" in tables:
+            rows = cur.execute(
+                "SELECT lease_id, agent_id, capability, target, expires_at, max_budget_usd, used_budget_usd, active, revoked FROM leases"
+            ).fetchall()
+            stats["total_leases_granted"] = len(rows)
+            for r in rows:
+                stats["total_budget_allocated_usd"] += float(r["max_budget_usd"] or 0.0)
+                stats["total_budget_consumed_usd"] += float(r["used_budget_usd"] or 0.0)
+                if r["revoked"]:
+                    stats["revoked_leases_count"] += 1
+                elif r["active"] and float(r["expires_at"] or 0.0) > now:
+                    stats["active_leases_count"] += 1
+                    leases.append({
+                        "lease_id": r["lease_id"],
+                        "agent_id": r["agent_id"],
+                        "capability": r["capability"],
+                        "target": r["target"],
+                        "max_budget_usd": float(r["max_budget_usd"] or 0.0),
+                        "used_budget_usd": float(r["used_budget_usd"] or 0.0),
+                        "ttl_seconds": max(0.0, float(r["expires_at"] or 0.0) - now),
+                    })
+            stats["total_budget_allocated_usd"] = round(stats["total_budget_allocated_usd"], 4)
+            stats["total_budget_consumed_usd"] = round(stats["total_budget_consumed_usd"], 4)
+            leases.sort(key=lambda x: x["ttl_seconds"])
+        if "broker_metrics" in tables:
+            m = cur.execute("SELECT val FROM broker_metrics WHERE key = 'violations_blocked'").fetchone()
+            if m is not None:
+                stats["violations_blocked"] = int(m["val"])
+        if "audit_events" in tables:
+            ev_rows = cur.execute(
+                "SELECT id, ts, event_type, agent_id, lease_id, capability, target, allowed, detail "
+                "FROM audit_events ORDER BY id DESC LIMIT 10"
+            ).fetchall()
+            events = [dict(r) for r in ev_rows]
+    finally:
+        conn.close()
+
+    return {"stats": stats, "leases": leases[:20], "events": events}
+
+
+def collect_snapshot(port: int, db_path: str) -> Dict[str, Any]:
+    base = f"http://127.0.0.1:{port}"
+    health = _fetch_json(f"{base}/health")
+    if health and health.get("status") == "ok":
+        stats_res = _fetch_json(f"{base}/api/stats") or {}
+        leases_res = _fetch_json(f"{base}/api/leases") or {}
+        events_res = _fetch_json(f"{base}/api/audit/events?limit=10") or {}
+        return {
+            "service": "agent-policy-auditor",
+            "version": health.get("version", VERSION),
+            "mode": "live",
+            "online": True,
+            "port": port,
+            "health": health,
+            "stats": stats_res,
+            "leases": (leases_res.get("leases") or [])[:20],
+            "events": (events_res.get("events") or [])[:10],
+        }
+
+    offline = _read_sqlite_snapshot(db_path)
+    return {
+        "service": "agent-policy-auditor",
+        "version": VERSION,
+        "mode": "offline-sqlite",
+        "online": False,
+        "port": port,
+        "db_path": db_path,
+        "health": None,
+        "stats": offline["stats"],
+        "leases": offline["leases"],
+        "events": offline["events"],
+    }
+
+
+def render_text(snap: Dict[str, Any]) -> str:
+    s = snap.get("stats") or {}
+    status_label = (
+        f"ONLINE http://127.0.0.1:{snap['port']}"
+        if snap["online"]
+        else f"OFFLINE (SQLite: {snap.get('db_path', 'policy_leases.db')})"
+    )
+    lines = [
+        "=" * 76,
+        f"  AGENT POLICY AUDITOR v{snap['version']} — LIVE CAPABILITY BROKER MONITOR",
+        f"  Status: {status_label}",
+        "=" * 76,
+        f"  Active Leases  : {s.get('active_leases_count', 0):<8}  Total Granted    : {s.get('total_leases_granted', 0)}",
+        f"  Revoked Leases : {s.get('revoked_leases_count', 0):<8}  Violations Block : {s.get('violations_blocked', 0)}",
+        f"  Budget Cap USD : ${float(s.get('total_budget_allocated_usd', 0.0)):<7.2f}  Budget Consumed  : ${float(s.get('total_budget_consumed_usd', 0.0)):.4f}",
+        "-" * 76,
+        "  ACTIVE CAPABILITY LEASES (up to 8):",
+    ]
+    leases = snap.get("leases") or []
+    if not leases:
+        lines.append("    (no active leases — run `agent-policy lease grant ...` or use :8106 cockpit)")
+    else:
+        for l in leases[:8]:
+            lines.append(
+                f"    {str(l.get('lease_id', '')):<18} {str(l.get('agent_id', '')):<16} "
+                f"[{str(l.get('capability', '')):<12}] {str(l.get('target', '')):<16} "
+                f"{float(l.get('ttl_seconds', 0.0)):.0f}s"
+            )
+    lines.append("-" * 76)
+    lines.append("  RECENT AUDIT EVENTS (up to 6):")
+    events = snap.get("events") or []
+    if not events:
+        lines.append("    (no persisted audit events yet)")
+    else:
+        for ev in events[:6]:
+            verdict = "ALLOW" if ev.get("allowed", True) else "DENY "
+            lines.append(
+                f"    [{verdict}] {str(ev.get('event_type', '')):<16} "
+                f"{str(ev.get('agent_id', '') or ev.get('lease_id', '')):<16} "
+                f"{str(ev.get('detail', ''))[:32]}"
+            )
+    lines.append("=" * 76)
+    lines.append("  Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform")
+    return "\n".join(lines)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="agent-policy-auditor-tui",
+        description="Live Terminal Monitor for Agent Policy Auditor (127.0.0.1:8106)",
+    )
+    parser.add_argument("-v", "--version", action="version", version=f"agent-policy-auditor-tui {VERSION}")
+    parser.add_argument("--port", type=int, default=8106, help="Daemon loopback port (default: 8106)")
+    parser.add_argument("--db", default=_default_db_path(), help="SQLite fallback database path")
+    parser.add_argument("--once", action="store_true", help="Render a single telemetry frame and exit")
+    parser.add_argument("--status", action="store_true", help="Print single status snapshot and exit")
+    parser.add_argument("--json", action="store_true", help="Output structured JSON snapshot")
+    parser.add_argument("--interval", type=float, default=1.5, help="Refresh interval in seconds (default: 1.5)")
+    args = parser.parse_args()
+
+    snap = collect_snapshot(port=args.port, db_path=args.db)
+    if args.json:
+        print(json.dumps(snap, indent=2))
+        return 0
+    if args.once or args.status or not sys.stdout.isatty():
+        print(render_text(snap))
+        return 0
+
+    try:
+        while True:
+            sys.stdout.write("\033[2J\033[H")
+            sys.stdout.write(render_text(collect_snapshot(port=args.port, db_path=args.db)) + "\n")
+            sys.stdout.flush()
+            time.sleep(max(0.25, args.interval))
+    except KeyboardInterrupt:
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

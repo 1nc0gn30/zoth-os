@@ -1,11 +1,13 @@
 {
   "name": "agent-policy-auditor",
-  "version": "2.5.0",
-  "description": "Autonomous capability leasing broker, permission manager, and static manifest security auditor for sovereign AI agents.",
-  "author": "1nc0gn30",
+  "version": "2.6.0",
+  "description": "Time-bound HMAC-SHA256 capability leasing broker, action verifier, stdio MCP server, and OWASP LLM manifest security auditor for AI agents.",
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
   "license": "MIT",
   "scripts": {
-    "serve": "python3 -m http.server 8106 --directory public",
-    "test": "python3 -m unittest discover tests"
+    "start": "PYTHONPATH=src python3 -m agent_policy_auditor.cli serve --port 8106",
+    "serve": "PYTHONPATH=src python3 -m agent_policy_auditor.cli serve --port 8106",
+    "mcp": "PYTHONPATH=src python3 -m agent_policy_auditor.cli mcp",
+    "test": "PYTHONPATH=src python3 -m pytest -v tests"
   }
 }
