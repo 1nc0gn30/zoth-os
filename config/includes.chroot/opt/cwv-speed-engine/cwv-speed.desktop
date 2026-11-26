@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=CWV Speed Engine
+Comment=Core Web Vitals diagnostic engine, HTML AST speed transformer, W3C Speculation Rules, performance budget simulator, and 8-tool MCP server.
+Exec=/usr/local/bin/cwv-speed-engine desktop
+TryExec=/usr/local/bin/cwv-speed-engine
+Icon=cwv-speed-engine
+Terminal=false
+Categories=Development;WebDevelopment;Utility;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch CWV Speed Engine Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "CWV Speed Engine TUI" -- /usr/local/bin/cwv-speed-engine-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8128)
+Exec=xdg-open http://127.0.0.1:8128

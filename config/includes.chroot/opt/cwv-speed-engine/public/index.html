@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CWV Speed Studio v2.6.0 — Core Web Vitals Optimization Engine &amp; HTML Transformer</title>
+  <meta name="description" content="Core Web Vitals diagnostic engine, HTML AST speed transformer, W3C Speculation Rules, performance budget simulator, PWA generator, and 8-tool MCP server.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://cwv-speed-studio.netlify.app/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="CWV Speed Studio v2.6.0 — Core Web Vitals Optimization Engine">
+  <meta property="og:description" content="Audit LCP, CLS, INP, FCP, and TTFB, transform HTML ASTs, generate Speculation Rules &amp; PWA bundles, and export Lighthouse budgets.">
+  <meta property="og:url" content="https://cwv-speed-studio.netlify.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://cwv-speed-studio.netlify.app/assets/banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CWV Speed Engine v2.6.0 tachometer gauge and feature overview banner">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="CWV Speed Studio v2.6.0 — Core Web Vitals Optimization Engine">
+  <meta name="twitter:description" content="Core Web Vitals diagnostic engine, HTML AST speed transformer, Speculation Rules, and 8-tool MCP server.">
+  <meta name="twitter:image" content="https://cwv-speed-studio.netlify.app/assets/banner.png">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "@id": "https://cwv-speed-studio.netlify.app/#app",
+        "name": "CWV Speed Engine",
+        "softwareVersion": "2.6.0",
+        "url": "https://cwv-speed-studio.netlify.app/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "description": "Core Web Vitals diagnostic engine, HTML AST speed transformer, W3C Speculation Rules generator, performance budget simulator, and 8-tool JSON-RPC 2.0 MCP server.",
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does CWV Speed Engine v2.6.0 audit and optimize Core Web Vitals?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CWV Speed Engine analyzes HTML markup and validated public HTTP(S) URLs for LCP, CLS, INP, FCP, and TTFB bottlenecks across mobile and desktop profiles, transforms <head> render-blocking scripts, injects explicit image dimensions and fetchpriority hints, generates W3C Speculation Rules, and exports Lighthouse budget.json and immutable edge caching headers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does CWV Speed Engine run locally with SSRF protection and MCP support?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The Python 3.8+ standard-library server on 127.0.0.1:8128 enforces strict SSRF IP/scheme/redirect guardrails, loopback Host/Origin checks, and exposes 8 JSON-RPC 2.0 stdio MCP tools (cwv_audit_site through cwv_audit_performance_budget)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is CWV Speed Engine free and open access, and how can I support it?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CWV Speed Engine is 100% free and open-access software with zero paywalls, login gates, or license locks. Optional community support is available via Buy Us a Coffee on Stripe (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or Solana Tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <meta name="theme-color" content="#FAF8F3">
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('theme');
+        var stored = localStorage.getItem('cwv-speed-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = (q === 'dark' || q === 'light') ? q : ((stored === 'dark' || stored === 'light') ? stored : (prefersDark ? 'dark' : 'light'));
+        document.documentElement.setAttribute('data-theme', mode);
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/wave.css">
+</head>
+<body>
+
+  <!-- Single Clean Open-Access Support Bar -->
+  <div id="zoth-coffee-support-bar">
+    <span class="support-pill-label">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+    <a class="support-link-coffee" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
+    <a class="support-link-solana" id="solanaTipLink" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip (GG2e...dXoK)</a>
+  </div>
+
+  <!-- Top Header -->
+  <header class="studio-header">
+    <a href="/" class="brand-container">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <title>CWV Speed Engine Speedometer</title>
+        <path d="M12 2a10 10 0 1 0 10 10H12V2z" fill="currentColor" fill-opacity="0.14"/>
+        <path d="M12 12 19 5"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+      <span class="brand-title">
+        CWV Speed Engine
+        <span class="brand-badge">v2.6.0</span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <span class="status-chip" id="engineStatusChip">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="engineStatusText">Engine Active</span>
+      </span>
+      <button type="button" class="btn btn-secondary" id="themeToggleBtn" aria-label="Toggle Light and Dark Theme">☀ Light</button>
+      <button type="button" class="btn btn-primary" id="quickAuditBtn">⚡ Run Audit</button>
+    </div>
+  </header>
+
+  <!-- Hero Score & Metrics Summary -->
+  <section class="hero-summary" aria-label="Core Web Vitals Summary">
+    <div class="gauge-wrapper">
+      <div class="gauge-svg-container">
+        <svg class="gauge-svg" viewBox="0 0 140 140" role="img" aria-label="Core Web Vitals composite score gauge">
+          <title>CWV Speed Score Gauge</title>
+          <circle class="gauge-bg-circle" cx="70" cy="70" r="60"></circle>
+          <circle class="gauge-value-circle" id="gaugeCircle" cx="70" cy="70" r="60"></circle>
+        </svg>
+        <div class="gauge-text">
+          <div class="gauge-number" id="scoreValue">--</div>
+          <div class="gauge-label">Speed Score</div>
+        </div>
+      </div>
+      <div class="gauge-badge" id="scoreRatingBadge">Ready</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card" id="cardLCP">
+        <div class="metric-header">
+          <span class="metric-title">LCP</span>
+          <span class="metric-rating-dot" id="dotLCP" data-rating="GOOD" aria-label="LCP rating indicator"></span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value" id="valLCP">--</span>
+          <span class="metric-unit">s</span>
+        </div>
+        <span class="metric-target">Target &le; 2.5s</span>
+      </div>
+
+      <div class="metric-card" id="cardCLS">
+        <div class="metric-header">
+          <span class="metric-title">CLS</span>
+          <span class="metric-rating-dot" id="dotCLS" data-rating="GOOD" aria-label="CLS rating indicator"></span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value" id="valCLS">--</span>
+          <span class="metric-unit"></span>
+        </div>
+        <span class="metric-target">Target &le; 0.10</span>
+      </div>
+
+      <div class="metric-card" id="cardINP">
+        <div class="metric-header">
+          <span class="metric-title">INP</span>
+          <span class="metric-rating-dot" id="dotINP" data-rating="GOOD" aria-label="INP rating indicator"></span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value" id="valINP">--</span>
+          <span class="metric-unit">ms</span>
+        </div>
+        <span class="metric-target">Target &le; 200ms</span>
+      </div>
+
+      <div class="metric-card" id="cardFCP">
+        <div class="metric-header">
+          <span class="metric-title">FCP</span>
+          <span class="metric-rating-dot" id="dotFCP" data-rating="GOOD" aria-label="FCP rating indicator"></span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value" id="valFCP">--</span>
+          <span class="metric-unit">s</span>
+        </div>
+        <span class="metric-target">Target &le; 1.8s</span>
+      </div>
+
+      <div class="metric-card" id="cardTTFB">
+        <div class="metric-header">
+          <span class="metric-title">TTFB</span>
+          <span class="metric-rating-dot" id="dotTTFB" data-rating="GOOD" aria-label="TTFB rating indicator"></span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value" id="valTTFB">--</span>
+          <span class="metric-unit">ms</span>
+        </div>
+        <span class="metric-target">Target &le; 800ms</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wrapping Accessible Navigation Tab Bar -->
+  <nav class="tab-bar-container" aria-label="Workstation Panels">
+    <div class="tab-bar" role="tablist">
+      <button type="button" role="tab" aria-selected="true" class="tab-btn active" data-tab="auditor">⚡ CWV Auditor</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="transformer">⚙ HTML Transformer</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="diff">⚖ Performance Diff</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="speculation">⇢ Speculation Rules</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="budget">▤ Budget &amp; LoAF</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="pwa">▣ PWA Studio</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="og">▣ OpenGraph</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="cache">★ Cache Headers</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="mcp">◈ MCP Hub (8 Tools)</button>
+      <button type="button" role="tab" aria-selected="false" class="tab-btn" data-tab="guide">▣ CLI &amp; Thresholds</button>
+    </div>
+  </nav>
+
+  <!-- Main Workspace Panels -->
+  <main class="studio-content">
+
+    <!-- 1. Auditor -->
+    <section class="tab-panel active" id="panel-auditor" aria-label="Core Web Vitals Auditor">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h1 class="card-title">Core Web Vitals Auditor</h1>
+            <p class="card-subtitle">Audit raw HTML locally or probe a public http(s) URL through the SSRF-hardened :8128 API with mobile &amp; desktop profiles.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="loadSampleBtn">Load Sample HTML</button>
+            <button type="button" class="btn btn-success" id="exportCwvKitBtn">↓ Export CWV Kit (.zip)</button>
+          </div>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="auditUrlInput">Public Live URL (optional — uses :8128 SSRF-guarded fetch)</label>
+              <input type="url" id="auditUrlInput" aria-label="Public live URL to audit" placeholder="https://example.com (leave empty to audit HTML below)">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="auditHtmlInput">Raw HTML Document</label>
+              <textarea id="auditHtmlInput" aria-label="Raw HTML document input" class="code-editor" placeholder="<!DOCTYPE html><html>..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="auditDeviceSelect">Device Profile</label>
+              <select id="auditDeviceSelect" aria-label="Device simulation profile">
+                <option value="mobile" selected>Mobile (4G Throttled CPU / Network)</option>
+                <option value="desktop">Desktop (Broadband)</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="runAuditBtn">⚡ Run Speed Audit</button>
+            <p id="auditStatusMsg" style="margin-top:10px;font-size:12.5px;color:var(--text-secondary);font-family:var(--font-mono);"></p>
+          </div>
+
+          <div>
+            <h2 style="font-size:15px;font-weight:800;margin-bottom:12px;">Diagnostic Findings &amp; Remediation</h2>
+            <div id="diagnosticList" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. HTML Transformer -->
+    <section class="tab-panel" id="panel-transformer" aria-label="HTML Speed Transformer">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">HTML Speed Transformer</h2>
+            <p class="card-subtitle">Apply deterministic CLS dimension injection, hero fetchpriority, below-fold lazy loading, font preconnects, and &lt;head&gt;-scoped script deferral.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-success" id="copyOptBtn">✦ Copy HTML</button>
+            <button type="button" class="btn btn-secondary" id="dlOptBtn">↓ Download HTML</button>
+          </div>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="transformInputHtml">Original HTML</label>
+              <textarea id="transformInputHtml" aria-label="Original HTML for transformation" class="code-editor"></textarea>
+            </div>
+            <div class="studio-card" style="padding:14px;background:var(--surface-alt);margin-bottom:14px;">
+              <h3 style="font-size:13px;font-weight:800;margin-bottom:6px;">Transformation Passes</h3>
+              <div class="toggle-row">
+                <label class="toggle-label-wrap" for="optDims">
+                  <input type="checkbox" id="optDims" aria-label="Inject explicit image dimensions" checked>
+                  <span>Inject Explicit width/height (CLS)</span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <label class="toggle-label-wrap" for="optLazy">
+                  <input type="checkbox" id="optLazy" aria-label="Add native lazy loading and async decoding" checked>
+                  <span>Below-Fold loading=&quot;lazy&quot; &amp; decoding=&quot;async&quot;</span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <label class="toggle-label-wrap" for="optFont">
+                  <input type="checkbox" id="optFont" aria-label="Add font preconnect and display swap" checked>
+                  <span>Font Preconnect &amp; &amp;display=swap</span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <label class="toggle-label-wrap" for="optDefer">
+                  <input type="checkbox" id="optDefer" aria-label="Defer render-blocking scripts in head" checked>
+                  <span>Defer Render-Blocking &lt;head&gt; Scripts</span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <label class="toggle-label-wrap" for="optHero">
+                  <input type="checkbox" id="optHero" aria-label="Preload hero image with fetchpriority high" checked>
+                  <span>Preload Hero Image (fetchpriority=&quot;high&quot;)</span>
+                </label>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="runTransformBtn">⚡ Transform HTML</button>
+          </div>
+
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="transformOutputHtml">Optimized Output HTML</label>
+              <textarea id="transformOutputHtml" aria-label="Optimized output HTML" class="code-editor" readonly></textarea>
+            </div>
+            <div class="studio-card" style="padding:14px;background:var(--good-bg);border-color:var(--good);">
+              <h3 style="font-size:13px;font-weight:800;color:var(--good);margin-bottom:6px;">Applied Transformations</h3>
+              <ul id="transformChangesList" style="padding-left:18px;font-size:12.5px;color:var(--text-primary);"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Performance Diff Comparator -->
+    <section class="tab-panel" id="panel-diff" aria-label="Performance Diff Comparator">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Performance Diff Comparator</h2>
+            <p class="card-subtitle">Measure exact CWV score and LCP/CLS/INP/FCP/TTFB deltas between baseline and candidate HTML documents (identical inputs report 0 delta).</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="runDiffBtn">⚖ Run Performance Diff</button>
+        </div>
+
+        <div class="section-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="diffBaselineInput">Baseline HTML (Before)</label>
+            <textarea id="diffBaselineInput" aria-label="Baseline HTML document" class="code-editor"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="diffCandidateInput">Candidate HTML (After)</label>
+            <textarea id="diffCandidateInput" aria-label="Candidate HTML document" class="code-editor"></textarea>
+          </div>
+        </div>
+
+        <div class="studio-card" style="margin-top:14px;background:var(--surface-alt);">
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:10px;">Comparative Delta Analysis</h3>
+          <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;margin-bottom:14px;">
+            <div id="diffScoreDelta" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--good);">0 pts</div>
+            <div id="diffSummaryText" style="font-size:13px;color:var(--text-secondary);">Click &quot;Run Performance Diff&quot; to compare baseline vs. candidate HTML.</div>
+          </div>
+          <div id="diffDeltasGrid" class="metrics-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. W3C Speculation Rules -->
+    <section class="tab-panel" id="panel-speculation" aria-label="W3C Speculation Rules Generator">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">W3C Speculation Rules &amp; 103 Early Hints</h2>
+            <p class="card-subtitle">Extract internal routes from HTML, guard side-effect paths (/logout, /cart, /checkout, /admin), and generate &lt;script type=&quot;speculationrules&quot;&gt;.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="copySpecBtn">✦ Copy Rules</button>
+            <button type="button" class="btn btn-primary" id="runSpecBtn">⇢ Generate Rules</button>
+          </div>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="specBaseUrl">Base Origin URL</label>
+              <input type="url" id="specBaseUrl" aria-label="Base origin URL for speculation rules" value="https://example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="specAggressiveness">Prerender Eagerness</label>
+              <select id="specAggressiveness" aria-label="Speculation aggressiveness">
+                <option value="conservative">Conservative (pointerdown / 1 prerender)</option>
+                <option value="balanced" selected>Balanced (moderate hover / 3 prerenders)</option>
+                <option value="aggressive">Aggressive (eager / 5 prerenders)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="specHtmlInput">HTML Navigation Markup</label>
+              <textarea id="specHtmlInput" aria-label="HTML markup for speculation link extraction" class="code-editor"></textarea>
+            </div>
+          </div>
+          <div>
+            <div class="code-block-container" style="margin-bottom:14px;">
+              <div class="code-block-header">
+                <span>speculation-rules.html</span>
+                <span id="specStatsLabel">W3C Speculation Rules</span>
+              </div>
+              <pre class="code-content" id="specOutputPre"></pre>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header">
+                <span>103 Early Hints / Excluded Guards</span>
+                <span>Safety Filter</span>
+              </div>
+              <pre class="code-content" id="specHintsPre"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Performance Budget & LoAF -->
+    <section class="tab-panel" id="panel-budget" aria-label="Performance Budget and LoAF Simulator">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Performance Budget &amp; LoAF Simulator</h2>
+            <p class="card-subtitle">Evaluate JS/CSS/Image/Font byte budgets across Fast 3G, 4G, and 5G profiles, flag Long Animation Frame (LoAF) script risks, and export Lighthouse budget.json.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="dlBudgetJsonBtn">↓ Download budget.json</button>
+            <button type="button" class="btn btn-primary" id="runBudgetBtn">▤ Run Budget Audit</button>
+          </div>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group">
+                <label class="form-label" for="budgetScriptKb">Script Budget (KB)</label>
+                <input type="number" id="budgetScriptKb" aria-label="Script budget in kilobytes" value="170" min="10">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="budgetTotalKb">Total Budget (KB)</label>
+                <input type="number" id="budgetTotalKb" aria-label="Total page budget in kilobytes" value="650" min="50">
+              </div>
+            </div>
+            <div id="budgetTableWrap" style="margin-bottom:14px;"></div>
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:8px;">LoAF Blocking Script Risks</h3>
+            <div id="loafRisksList"></div>
+          </div>
+
+          <div>
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:8px;">Network Transfer Simulation</h3>
+            <div id="budgetNetworkGrid" class="metrics-grid" style="margin-bottom:14px;"></div>
+            <div class="code-block-container">
+              <div class="code-block-header">
+                <span>budget.json</span>
+                <span>Lighthouse Budget Format</span>
+              </div>
+              <pre class="code-content" id="budgetJsonPre"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. PWA Studio -->
+    <section class="tab-panel" id="panel-pwa" aria-label="PWA and Service Worker Studio">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">PWA &amp; Service Worker Studio</h2>
+            <p class="card-subtitle">Generate W3C site.webmanifest, strategy-differentiated sw.js, and offline.html, then export a real .zip archive.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="dlPwaZipBtn">▣ Download PWA Bundle (.zip)</button>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="pwaName">Application Name</label>
+              <input type="text" id="pwaName" aria-label="PWA application name" value="CWV Speed App">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pwaShortName">Short Name</label>
+              <input type="text" id="pwaShortName" aria-label="PWA short name" value="SpeedApp">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group">
+                <label class="form-label" for="pwaThemeColor">Theme Color</label>
+                <input type="text" id="pwaThemeColor" aria-label="PWA theme color hex" value="#047857">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pwaBgColor">Background Color</label>
+                <input type="text" id="pwaBgColor" aria-label="PWA background color hex" value="#FAF8F3">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pwaStrategy">Service Worker Caching Strategy</label>
+              <select id="pwaStrategy" aria-label="Service worker caching strategy">
+                <option value="stale-while-revalidate" selected>Stale-While-Revalidate (Instant Cache + Background Refresh)</option>
+                <option value="cache-first">Cache-First (Static Assets &amp; Fonts)</option>
+                <option value="network-first">Network-First (Fresh Network + Offline Fallback)</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="genPwaBtn">Generate PWA Suite</button>
+          </div>
+
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="pwaManifestPreview">site.webmanifest</label>
+              <textarea id="pwaManifestPreview" aria-label="Generated site webmanifest JSON" class="code-editor" style="min-height:150px;" readonly></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pwaSwPreview">sw.js (Service Worker)</label>
+              <textarea id="pwaSwPreview" aria-label="Generated service worker JavaScript" class="code-editor" style="min-height:200px;" readonly></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. OpenGraph Previewer (Zero External Egress!) -->
+    <section class="tab-panel" id="panel-og" aria-label="OpenGraph and Social Previewer">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">OpenGraph &amp; Social Previewer</h2>
+            <p class="card-subtitle">Live zero-egress previews for Google Search SERP and Twitter/X Cards with HTML-escaped meta tag output.</p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="copyOgBtn">✦ Copy Meta Tags</button>
+        </div>
+
+        <div class="section-grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="ogTitleInput">Page Title (50-60 chars)</label>
+              <input type="text" id="ogTitleInput" aria-label="OpenGraph page title" value="CWV Speed Engine v2.6.0 | Core Web Vitals Workstation">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ogDescInput">Description (120-160 chars)</label>
+              <textarea id="ogDescInput" aria-label="OpenGraph description" style="min-height:84px;">Core Web Vitals diagnostic engine, HTML AST speed transformer, W3C Speculation Rules, performance budget simulator, and 8-tool MCP server.</textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ogUrlInput">Canonical URL</label>
+              <input type="url" id="ogUrlInput" aria-label="OpenGraph canonical URL" value="https://cwv-speed-studio.netlify.app/">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ogImageInput">OpenGraph Image Path or URL (1200x630)</label>
+              <input type="text" id="ogImageInput" aria-label="OpenGraph image path or URL" value="/assets/banner.png">
+            </div>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:800;margin-bottom:8px;">Google Search Preview</h3>
+            <div class="serp-card" style="margin-bottom:16px;">
+              <div class="serp-cite" id="serpCiteUrl">cwv-speed-studio.netlify.app</div>
+              <span class="serp-title" id="serpPreviewTitle">CWV Speed Engine v2.6.0</span>
+              <div class="serp-desc" id="serpPreviewDesc"></div>
+            </div>
+
+            <h3 style="font-size:13px;font-weight:800;margin-bottom:8px;">Twitter / X Card Preview</h3>
+            <div class="twitter-card-preview">
+              <div class="twitter-img-box">
+                <img id="twitterImgEl" src="/assets/banner.png" width="1200" height="630" alt="OpenGraph 1200 by 630 social card preview">
+              </div>
+              <div class="serp-cite" id="twitterDomainPreview">cwv-speed-studio.netlify.app</div>
+              <div style="font-weight:800;font-size:14px;margin:2px 0;" id="twitterTitlePreview">CWV Speed Engine v2.6.0</div>
+              <div class="serp-desc" id="twitterDescPreview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Cache Headers Exporter -->
+    <section class="tab-panel" id="panel-cache" aria-label="Cache-Control and Headers Exporter">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Cache-Control &amp; Security Headers Exporter</h2>
+            <p class="card-subtitle">Generate immutable static asset caching and security header rules across 6 edge platforms.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="copyCacheBtn">✦ Copy Config</button>
+            <button type="button" class="btn btn-secondary" id="dlCacheBtn">↓ Download Config</button>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-bottom:14px;" id="cachePlatGroup">
+          <button type="button" class="btn btn-secondary active" data-plat="netlify">Netlify</button>
+          <button type="button" class="btn btn-secondary" data-plat="vercel">Vercel</button>
+          <button type="button" class="btn btn-secondary" data-plat="nginx">Nginx</button>
+          <button type="button" class="btn btn-secondary" data-plat="cloudflare">Cloudflare</button>
+          <button type="button" class="btn btn-secondary" data-plat="nextjs">Next.js</button>
+          <button type="button" class="btn btn-secondary" data-plat="apache">Apache</button>
+        </div>
+
+        <div class="code-block-container">
+          <div class="code-block-header">
+            <span id="cacheConfigFilename">_headers</span>
+            <span>Immutable Cache &amp; Security Rules</span>
+          </div>
+          <pre class="code-content" id="cacheConfigContent"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. MCP Hub (Strictly 8 real cwv_* tools) -->
+    <section class="tab-panel" id="panel-mcp" aria-label="AI Agent and MCP Hub">
+      <div class="studio-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">AI Agent &amp; MCP Hub (8 Registered Tools)</h2>
+            <p class="card-subtitle">JSON-RPC 2.0 stdio MCP server via <code>cwv-speed-engine mcp</code> or <code>python3 -m cwv_speed_engine.mcp_server</code>.</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary" id="copyMcpBtn">✦ Copy Config</button>
+            <button type="button" class="btn btn-secondary" id="dlMcpBtn">↓ Download Config</button>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-bottom:14px;" id="mcpClientGroup">
+          <button type="button" class="btn btn-secondary active" data-client="claude">Claude Desktop</button>
+          <button type="button" class="btn btn-secondary" data-client="cursor">Cursor</button>
+          <button type="button" class="btn btn-secondary" data-client="cline">Cline (VS Code)</button>
+          <button type="button" class="btn btn-secondary" data-client="windsurf">Windsurf</button>
+          <button type="button" class="btn btn-secondary" data-client="zed">Zed</button>
+        </div>
+
+        <div class="section-grid-2">
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span id="mcpConfigLabel">claude_desktop_config.json</span>
+              <span>MCP Stdio Transport</span>
+            </div>
+            <pre class="code-content" id="mcpConfigContent"></pre>
+          </div>
+          <div>
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:10px;">Registered MCP Tools (8)</h3>
+            <div id="mcpToolsList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Guide & Verified CLI Commands -->
+    <section class="tab-panel" id="panel-guide" aria-label="Core Web Vitals Thresholds and CLI Guide">
+      <div class="studio-card">
+        <h2 class="card-title">Core Web Vitals Thresholds &amp; Verified CLI Commands</h2>
+        <p class="card-subtitle" style="margin-bottom:18px;">Official Google Core Web Vitals thresholds paired with verified <code>cwv-speed-engine</code> v2.6.0 CLI &amp; Braille TUI commands.</p>
+
+        <div class="section-grid-2">
+          <div>
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:10px;">CWV Thresholds</h3>
+            <table class="cwv-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Good</th>
+                  <th>Needs Work</th>
+                  <th>Poor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>LCP</strong> (Largest Contentful Paint)</td><td>&le; 2.5s</td><td>2.5s – 4.0s</td><td>&gt; 4.0s</td></tr>
+                <tr><td><strong>CLS</strong> (Cumulative Layout Shift)</td><td>&le; 0.10</td><td>0.10 – 0.25</td><td>&gt; 0.25</td></tr>
+                <tr><td><strong>INP</strong> (Interaction to Next Paint)</td><td>&le; 200ms</td><td>200ms – 500ms</td><td>&gt; 500ms</td></tr>
+                <tr><td><strong>FCP</strong> (First Contentful Paint)</td><td>&le; 1.8s</td><td>1.8s – 3.0s</td><td>&gt; 3.0s</td></tr>
+                <tr><td><strong>TTFB</strong> (Time to First Byte)</td><td>&le; 800ms</td><td>800ms – 1800ms</td><td>&gt; 1800ms</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:10px;">Verified CLI &amp; TUI Reference</h3>
+            <div class="code-block-container">
+              <div class="code-block-header">
+                <span>cwv-speed-engine v2.6.0</span>
+                <span>Python 3.8+ Stdlib</span>
+              </div>
+              <pre class="code-content"># 1. Audit a local HTML file (mobile or desktop JSON)
+cwv-speed-engine audit ./public/index.html --device mobile --json
+
+# 2. Optimize HTML asset loading &amp; CLS dimensions
+cwv-speed-engine optimize ./public/index.html --output ./optimized.html
+
+# 3. Generate W3C Speculation Rules &amp; audit performance budgets
+cwv-speed-engine speculation ./public/index.html --aggressiveness balanced --format json
+cwv-speed-engine budget ./public/index.html --script-budget 170 --lighthouse
+
+# 4. Run CI/CD quality gate check
+cwv-speed-engine check ./public/index.html --min-score 85 --json
+
+# 5. Launch hardened :8128 workstation, Braille TUI, or stdio MCP server
+cwv-speed-engine serve --host 127.0.0.1 --port 8128
+cwv-speed-engine-tui --once
+cwv-speed-engine mcp</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="studio-footer">
+    <div>
+      Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/cwv-speed-engine" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) &bull; <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+    </div>
+    <div style="margin-top:6px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+      <a href="/norfolk-web-performance.html">Norfolk Studio</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/support.html">Support</a>
+    </div>
+  </footer>
+
+  <script src="/cwv-engine.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      const E = window.CWVSpeedEngine;
+      let backendAvailable = false;
+      let currentCachePlatform = 'netlify';
+      let currentMcpClient = 'claude';
+      let latestBudgetJson = null;
+
+      const SAMPLE_HTML = [
+        '<!DOCTYPE html>',
+        '<html lang="en">',
+        '<head>',
+        '  <meta charset="UTF-8">',
+        '  <title>Sample Storefront</title>',
+        '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700">',
+        '  <scr' + 'ipt src="https://cdn.example.com/analytics-heavy.js"></scr' + 'ipt>',
+        '  <scr' + 'ipt src="/assets/app-main.js"></scr' + 'ipt>',
+        '</head>',
+        '<body>',
+        '  <header>',
+        '    <nav><a href="/docs">Docs</a> <a href="/features">Features</a> <a href="/checkout">Checkout</a> <a href="/logout">Logout</a></nav>',
+        '    <h1>Storefront Performance Benchmark</h1>',
+        '  </header>',
+        '  <main>',
+        '    <img src="/assets/hero-banner.png" alt="Hero Banner">',
+        '    <section class="products">',
+        '      <img src="/assets/item-1.png" alt="Product 1">',
+        '      <img src="/assets/item-2.png" alt="Product 2">',
+        '      <img src="/assets/item-3.png" alt="Product 3">',
+        '    </section>',
+        '  </main>',
+        '</body>',
+        '</html>',
+      ].join('\n');
+
+      // Toast helper
+      let toastTimer = null;
+      function showToast(msg) {
+        const el = document.getElementById('toast');
+        if (!el) return;
+        clearTimeout(toastTimer);
+        el.textContent = msg;
+        el.classList.add('show');
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+      }
+
+      // Theme sync (?theme=, localStorage, prefers-color-scheme, toggle, Studio postMessage)
+      function applyTheme(mode, persist) {
+        const next = mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', next === 'dark' ? '#08080B' : '#FAF8F3');
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) btn.textContent = next === 'dark' ? '☀ Light' : '☾ Dark';
+        if (persist) {
+          try { localStorage.setItem('cwv-speed-theme', next); } catch (_) {}
+        }
+      }
+
+      window.addEventListener('message', (ev) => {
+        if (ev && ev.data && (ev.data.type === 'zoth-theme' || ev.data.theme)) {
+          const t = ev.data.theme || ev.data.mode;
+          if (t === 'dark' || t === 'light') applyTheme(t, false);
+        }
+      });
+
+      function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+          const active = b.getAttribute('data-tab') === tabId;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        document.querySelectorAll('.tab-panel').forEach((p) => {
+          p.classList.toggle('active', p.id === 'panel-' + tabId);
+        });
+      }
+
+      function updateGauge(score, metrics) {
+        const clamped = Math.max(0, Math.min(100, Math.round(score || 0)));
+        document.getElementById('scoreValue').textContent = String(clamped);
+
+        const circle = document.getElementById('gaugeCircle');
+        circle.style.strokeDashoffset = String(377 - (clamped / 100) * 377);
+
+        const badge = document.getElementById('scoreRatingBadge');
+        if (clamped >= 90) {
+          circle.style.stroke = 'var(--good-dot)';
+          badge.style.background = 'var(--good-bg)';
+          badge.style.color = 'var(--good)';
+          badge.textContent = '✓ Good Rating';
+        } else if (clamped >= 50) {
+          circle.style.stroke = 'var(--warn-dot)';
+          badge.style.background = 'var(--warn-bg)';
+          badge.style.color = 'var(--warn)';
+          badge.textContent = '▲ Needs Improvement';
+        } else {
+          circle.style.stroke = 'var(--poor-dot)';
+          badge.style.background = 'var(--poor-bg)';
+          badge.style.color = 'var(--poor)';
+          badge.textContent = '✕ Poor Rating';
+        }
+
+        const mapping = [
+          ['lcp', 'valLCP', 'dotLCP'],
+          ['cls', 'valCLS', 'dotCLS'],
+          ['inp', 'valINP', 'dotINP'],
+          ['fcp', 'valFCP', 'dotFCP'],
+          ['ttfb', 'valTTFB', 'dotTTFB'],
+        ];
+        mapping.forEach(([key, valId, dotId]) => {
+          if (metrics && metrics[key]) {
+            const m = metrics[key];
+            document.getElementById(valId).textContent = String(m.value);
+            const rating = m.rating || E.rateMetric(key, m.value);
+            const dot = document.getElementById(dotId);
+            dot.setAttribute('data-rating', rating);
+            dot.setAttribute('title', key.toUpperCase() + ': ' + rating);
+          }
+        });
+      }
+
+      // Strictly DOM-constructed diagnostics (zero innerHTML — preserves literal <head>, <link>, etc.)
+      function renderDiagnostics(listEl, diagnostics) {
+        listEl.textContent = '';
+        (diagnostics || []).forEach((d) => {
+          const item = document.createElement('div');
+          item.className = 'diagnostic-item';
+
+          const badge = document.createElement('span');
+          const sev = String(d.severity || 'INFO').toUpperCase();
+          const cls = d.passed ? 'badge-pass' : sev === 'CRITICAL' ? 'badge-critical' : sev === 'WARNING' ? 'badge-warning' : 'badge-info';
+          badge.className = 'diag-badge ' + cls;
+          badge.textContent = sev;
+
+          const body = document.createElement('div');
+          const title = document.createElement('div');
+          title.className = 'diag-title';
+          title.textContent = d.title || '';
+
+          const desc = document.createElement('div');
+          desc.className = 'diag-desc';
+          desc.textContent = (d.description || '') + (d.impact ? ' (' + d.impact + ')' : '');
+
+          const rec = document.createElement('div');
+          rec.className = 'diag-rec';
+          rec.textContent = 'Fix: ' + (d.recommendation || '');
+
+          body.appendChild(title);
+          body.appendChild(desc);
+          body.appendChild(rec);
+          item.appendChild(badge);
+          item.appendChild(body);
+          listEl.appendChild(item);
+        });
+      }
+
+      async function runAudit(silent) {
+        const urlVal = document.getElementById('auditUrlInput').value.trim();
+        const htmlVal = document.getElementById('auditHtmlInput').value;
+        const device = document.getElementById('auditDeviceSelect').value || 'mobile';
+        const statusEl = document.getElementById('auditStatusMsg');
+        const listEl = document.getElementById('diagnosticList');
+
+        if (urlVal) {
+          if (!backendAvailable) {
+            statusEl.textContent = 'Live URL fetching requires local :8128 server; auditing pasted HTML locally instead.';
+          } else {
+            statusEl.textContent = 'Auditing ' + urlVal + ' [' + device + '] via SSRF-hardened :8128 API...';
+            try {
+              const resp = await fetch('/api/audit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: urlVal, device }),
+              });
+              const data = await resp.json();
+              if (!resp.ok) {
+                statusEl.textContent = 'Blocked / Error (' + resp.status + '): ' + (data.error || 'Target rejected');
+                showToast('URL audit blocked (' + resp.status + ')');
+                return;
+              }
+              updateGauge(data.score, data.metrics);
+              renderDiagnostics(listEl, data.diagnostics);
+              statusEl.textContent = 'Live audit complete [' + device + '] — Score: ' + data.score + '/100';
+              if (!silent) showToast('Live URL audit complete: ' + data.score + '/100');
+              return;
+            } catch (err) {
+              statusEl.textContent = 'Live API unreachable; running client-side HTML audit.';
+            }
+          }
+        }
+
+        const report = E.auditHtml(htmlVal || SAMPLE_HTML, device);
+        updateGauge(report.score, report.metrics);
+        renderDiagnostics(listEl, report.diagnostics);
+        statusEl.textContent = 'Client AST audit complete [' + device + '] — Score: ' + report.score + '/100';
+        if (!silent) showToast('Audit complete (' + device + '): ' + report.score + '/100');
+      }
+
+      function runTransform(silent) {
+        const html = document.getElementById('transformInputHtml').value;
+        const res = E.transformHtml(html, {
+          dimensions: document.getElementById('optDims').checked,
+          lazy_loading: document.getElementById('optLazy').checked,
+          font_preconnect: document.getElementById('optFont').checked,
+          defer_scripts: document.getElementById('optDefer').checked,
+          preload_hero: document.getElementById('optHero').checked,
+          critical_css: true,
+        });
+        document.getElementById('transformOutputHtml').value = res.optimized_html;
+        document.getElementById('diffCandidateInput').value = res.optimized_html;
+        const list = document.getElementById('transformChangesList');
+        list.textContent = '';
+        (res.changes.length ? res.changes : ['No changes needed; baseline rules already satisfied.']).forEach((c) => {
+          const li = document.createElement('li');
+          li.textContent = c;
+          list.appendChild(li);
+        });
+        if (!silent) showToast('HTML transformation complete (' + res.changes.length + ' passes)');
+      }
+
+      async function runDiff(silent) {
+        const baseline = document.getElementById('diffBaselineInput').value;
+        const candidate = document.getElementById('diffCandidateInput').value;
+        const device = document.getElementById('auditDeviceSelect').value || 'mobile';
+
+        let diff = null;
+        if (backendAvailable) {
+          try {
+            const resp = await fetch('/api/diff', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ baseline, candidate, device }),
+            });
+            if (resp.ok) diff = await resp.json();
+          } catch (_) {}
+        }
+        if (!diff) diff = E.compareHtmlDiff(baseline, candidate, device);
+
+        const deltaEl = document.getElementById('diffScoreDelta');
+        const sign = diff.score_delta > 0 ? '+' : '';
+        deltaEl.textContent = sign + diff.score_delta + ' pts';
+        deltaEl.style.color = diff.score_delta > 0 ? 'var(--good)' : diff.score_delta < 0 ? 'var(--poor)' : 'var(--text-primary)';
+        document.getElementById('diffSummaryText').textContent = diff.summary || '';
+
+        const grid = document.getElementById('diffDeltasGrid');
+        grid.textContent = '';
+        ['lcp', 'cls', 'inp', 'fcp', 'ttfb'].forEach((k) => {
+          const m = diff.metric_deltas && diff.metric_deltas[k];
+          if (!m) return;
+          const card = document.createElement('div');
+          card.className = 'metric-card';
+          const t = document.createElement('span');
+          t.className = 'metric-title';
+          t.textContent = k.toUpperCase() + ' Delta';
+          const v = document.createElement('div');
+          v.className = 'metric-value';
+          const dSign = m.delta > 0 ? '+' : '';
+          v.textContent = dSign + m.delta + (m.unit || '');
+          v.style.color = m.delta < 0 ? 'var(--good)' : m.delta > 0 ? 'var(--poor)' : 'var(--text-primary)';
+          const sub = document.createElement('span');
+          sub.className = 'metric-target';
+          sub.textContent = m.baseline + (m.unit || '') + ' → ' + m.candidate + (m.unit || '');
+          card.appendChild(t);
+          card.appendChild(v);
+          card.appendChild(sub);
+          grid.appendChild(card);
+        });
+        if (!silent) showToast('Performance diff computed (' + sign + diff.score_delta + ' pts)');
+      }
+
+      async function runSpeculation(silent) {
+        const html = document.getElementById('specHtmlInput').value;
+        const baseUrl = document.getElementById('specBaseUrl').value.trim() || 'https://example.com';
+        const aggressiveness = document.getElementById('specAggressiveness').value || 'balanced';
+
+        const localPlan = E.generateSpeculationRules(html, baseUrl, aggressiveness);
+        document.getElementById('specOutputPre').textContent = localPlan.script_tag;
+        document.getElementById('specStatsLabel').textContent =
+          localPlan.prerender_urls.length + ' prerender · ' + localPlan.prefetch_urls.length + ' prefetch · ' + localPlan.excluded_urls.length + ' guarded';
+        const hintsLines = []
+          .concat(localPlan.early_hints.length ? localPlan.early_hints : ['# No Early Hints generated'])
+          .concat(['', '# Excluded side-effect paths:'])
+          .concat(localPlan.excluded_urls.length ? localPlan.excluded_urls.map((u) => 'BLOCKED: ' + u) : ['(none)']);
+        document.getElementById('specHintsPre').textContent = hintsLines.join('\n');
+        if (!silent) showToast('Speculation Rules synthesized');
+      }
+
+      function runBudget(silent) {
+        const html = document.getElementById('auditHtmlInput').value || SAMPLE_HTML;
+        const scriptBudget = Number(document.getElementById('budgetScriptKb').value) || 170;
+        const totalBudget = Number(document.getElementById('budgetTotalKb').value) || 650;
+        const report = E.auditPerformanceBudget(html, { script: scriptBudget, total: totalBudget });
+        latestBudgetJson = report.lighthouse_budget_json;
+
+        const wrap = document.getElementById('budgetTableWrap');
+        wrap.textContent = '';
+        const tbl = document.createElement('table');
+        tbl.className = 'cwv-table';
+        const thead = document.createElement('thead');
+        const htr = document.createElement('tr');
+        ['Resource', 'Est. KB', 'Budget KB', 'Status'].forEach((h) => {
+          const th = document.createElement('th');
+          th.textContent = h;
+          htr.appendChild(th);
+        });
+        thead.appendChild(htr);
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        report.checks.forEach((c) => {
+          const tr = document.createElement('tr');
+          [c.resourceType, c.actualKb + ' KB', c.budgetKb + ' KB', c.status].forEach((val, idx) => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            if (idx === 3) {
+              td.style.fontWeight = '800';
+              td.style.color = c.status === 'PASS' ? 'var(--good)' : 'var(--poor)';
+            }
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        wrap.appendChild(tbl);
+
+        const loafEl = document.getElementById('loafRisksList');
+        loafEl.textContent = '';
+        if (report.loaf_risks.length === 0) {
+          const ok = document.createElement('div');
+          ok.className = 'diagnostic-item';
+          ok.textContent = 'No synchronous LoAF main-thread blockers detected.';
+          loafEl.appendChild(ok);
+        } else {
+          report.loaf_risks.forEach((r) => {
+            const row = document.createElement('div');
+            row.className = 'diagnostic-item';
+            const b = document.createElement('span');
+            b.className = 'diag-badge badge-warning';
+            b.textContent = '~' + r.estimatedBlockingMs + 'ms';
+            const txt = document.createElement('div');
+            const t = document.createElement('div');
+            t.className = 'diag-title';
+            t.textContent = r.script;
+            const d = document.createElement('div');
+            d.className = 'diag-desc';
+            d.textContent = r.reason;
+            txt.appendChild(t);
+            txt.appendChild(d);
+            row.appendChild(b);
+            row.appendChild(txt);
+            loafEl.appendChild(row);
+          });
+        }
+
+        const netGrid = document.getElementById('budgetNetworkGrid');
+        netGrid.textContent = '';
+        report.networks.forEach((n) => {
+          const card = document.createElement('div');
+          card.className = 'metric-card';
+          const lbl = document.createElement('span');
+          lbl.className = 'metric-title';
+          lbl.textContent = n.profile.split(' ')[0] + ' ' + n.profile.split(' ')[1];
+          const val = document.createElement('div');
+          val.className = 'metric-value';
+          val.textContent = n.downloadMs + 'ms';
+          const sub = document.createElement('span');
+          sub.className = 'metric-target';
+          sub.textContent = n.profile;
+          card.appendChild(lbl);
+          card.appendChild(val);
+          card.appendChild(sub);
+          netGrid.appendChild(card);
+        });
+
+        document.getElementById('budgetJsonPre').textContent = JSON.stringify(report.lighthouse_budget_json, null, 2);
+        if (!silent) showToast('Budget audit complete (' + report.total_kb + ' KB total)');
+      }
+
+      function generatePwa(silent) {
+        const res = E.generatePwa({
+          name: document.getElementById('pwaName').value,
+          short_name: document.getElementById('pwaShortName').value,
+          theme_color: document.getElementById('pwaThemeColor').value,
+          background_color: document.getElementById('pwaBgColor').value,
+          strategy: document.getElementById('pwaStrategy').value,
+        });
+        document.getElementById('pwaManifestPreview').value = res.manifest_json;
+        document.getElementById('pwaSwPreview').value = res.service_worker;
+        if (!silent) showToast('PWA suite generated (' + res.strategy + ')');
+        return res;
+      }
+
+      function triggerDownloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function downloadZipBundle(bundleType) {
+        const pwaCfg = {
+          name: document.getElementById('pwaName').value,
+          short_name: document.getElementById('pwaShortName').value,
+          theme_color: document.getElementById('pwaThemeColor').value,
+          background_color: document.getElementById('pwaBgColor').value,
+          strategy: document.getElementById('pwaStrategy').value,
+          html: document.getElementById('auditHtmlInput').value || SAMPLE_HTML,
+          base_url: document.getElementById('specBaseUrl').value || 'https://example.com',
+          aggressiveness: document.getElementById('specAggressiveness').value || 'balanced',
+        };
+        if (backendAvailable) {
+          try {
+            const resp = await fetch('/api/export-zip', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bundle_type: bundleType, data: pwaCfg }),
+            });
+            if (resp.ok) {
+              const blob = await resp.blob();
+              triggerDownloadBlob(blob, 'cwv-speed-' + bundleType + '-bundle.zip');
+              showToast('Downloaded ' + bundleType + ' ZIP archive');
+              return;
+            }
+          } catch (_) {}
+        }
+
+        // Pure client-side real ZIP archive fallback (never .txt!)
+        const pwa = E.generatePwa(pwaCfg);
+        const files = {
+          'site.webmanifest': pwa.manifest_json,
+          'sw.js': pwa.service_worker,
+          'offline.html': pwa.offline_html,
+        };
+        if (bundleType === 'cwv_kit') {
+          const spec = E.generateSpeculationRules(pwaCfg.html, pwaCfg.base_url, pwaCfg.aggressiveness);
+          const bud = E.auditPerformanceBudget(pwaCfg.html);
+          files['speculation-rules.html'] = spec.script_tag;
+          files['budget.json'] = JSON.stringify(bud.lighthouse_budget_json, null, 2);
+          files['_headers'] = document.getElementById('cacheConfigContent').textContent;
+        }
+        const zipBytes = E.createStoredZip(files);
+        triggerDownloadBlob(new Blob([zipBytes], { type: 'application/zip' }), 'cwv-speed-' + bundleType + '-bundle.zip');
+        showToast('Downloaded real ' + bundleType + ' .zip archive');
+      }
+
+      function updateSocialPreviews() {
+        const title = document.getElementById('ogTitleInput').value;
+        const desc = document.getElementById('ogDescInput').value;
+        const url = document.getElementById('ogUrlInput').value;
+        const safeImg = E.sanitizeImageUrl(document.getElementById('ogImageInput').value);
+
+        document.getElementById('serpPreviewTitle').textContent = title;
+        document.getElementById('serpPreviewDesc').textContent = desc;
+        document.getElementById('twitterTitlePreview').textContent = title;
+        document.getElementById('twitterDescPreview').textContent = desc;
+        try {
+          const parsed = new URL(url);
+          document.getElementById('serpCiteUrl').textContent = parsed.hostname + parsed.pathname;
+          document.getElementById('twitterDomainPreview').textContent = parsed.hostname;
+        } catch (_) {}
+
+        const imgEl = document.getElementById('twitterImgEl');
+        if (imgEl.getAttribute('src') !== safeImg) imgEl.setAttribute('src', safeImg);
+      }
+
+      function loadCacheConfig(plat) {
+        currentCachePlatform = plat;
+        document.querySelectorAll('#cachePlatGroup button').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-plat') === plat);
+        });
+        const map = {
+          netlify: {
+            filename: '_headers',
+            content: '/*\n  Cache-Control: public, max-age=0, must-revalidate\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: SAMEORIGIN\n  Referrer-Policy: strict-origin-when-cross-origin\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/sw.js\n  Cache-Control: public, max-age=0, must-revalidate',
+          },
+          vercel: {
+            filename: 'vercel.json',
+            content: JSON.stringify({ headers: [{ source: '/(.*)\\.(css|js|woff2|webp|avif)', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] }] }, null, 2),
+          },
+          nginx: {
+            filename: 'nginx.conf',
+            content: 'location ~* \\.(?:css|js|woff2|avif|webp|png|svg)$ {\n  expires 1y;\n  add_header Cache-Control "public, max-age=31536000, immutable";\n  access_log off;\n}',
+          },
+          cloudflare: {
+            filename: '_headers',
+            content: '/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/sw.js\n  Cache-Control: public, max-age=0, must-revalidate',
+          },
+          nextjs: {
+            filename: 'next.config.js',
+            content: "module.exports = {\n  async headers() {\n    return [{ source: '/_next/static/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] }];\n  },\n};",
+          },
+          apache: {
+            filename: '.htaccess',
+            content: '<IfModule mod_headers.c>\n  <FilesMatch "\\.(js|css|woff2|webp|avif)$">\n    Header set Cache-Control "public, max-age=31536000, immutable"\n  </FilesMatch>\n</IfModule>',
+          },
+        };
+        const chosen = map[plat] || map.netlify;
+        document.getElementById('cacheConfigFilename').textContent = chosen.filename;
+        document.getElementById('cacheConfigContent').textContent = chosen.content;
+      }
+
+      function loadMcpClient(client) {
+        currentMcpClient = client;
+        document.querySelectorAll('#mcpClientGroup button').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-client') === client);
+        });
+        const labels = {
+          claude: 'claude_desktop_config.json',
+          cursor: 'cursor-mcp.json',
+          cline: 'cline_mcp_settings.json',
+          windsurf: 'mcp_config.json',
+          zed: 'settings.json',
+        };
+        const toolNames = E.REAL_MCP_TOOLS.map((t) => t.name);
+        const configs = {
+          claude: { mcpServers: { 'cwv-speed-engine': { command: 'cwv-speed-engine', args: ['mcp'] } } },
+          cursor: { mcpServers: { 'cwv-speed-engine': { command: 'cwv-speed-engine', args: ['mcp'] } } },
+          cline: { mcpServers: { 'cwv-speed-engine': { command: 'cwv-speed-engine', args: ['mcp'], disabled: false, autoApprove: toolNames } } },
+          windsurf: { mcpServers: { 'cwv-speed-engine': { command: 'cwv-speed-engine', args: ['mcp'] } } },
+          zed: { context_servers: { 'cwv-speed-engine': { command: { path: 'cwv-speed-engine', args: ['mcp'] } } } },
+        };
+        document.getElementById('mcpConfigLabel').textContent = labels[client] || 'mcp-config.json';
+        document.getElementById('mcpConfigContent').textContent = JSON.stringify(configs[client] || configs.claude, null, 2);
+      }
+
+      function renderMcpToolsList() {
+        const container = document.getElementById('mcpToolsList');
+        container.textContent = '';
+        E.REAL_MCP_TOOLS.forEach((tool) => {
+          const item = document.createElement('div');
+          item.className = 'diagnostic-item';
+          const badge = document.createElement('span');
+          badge.className = 'diag-badge badge-info';
+          badge.textContent = 'MCP';
+          const body = document.createElement('div');
+          const title = document.createElement('div');
+          title.className = 'diag-title';
+          title.textContent = tool.signature;
+          const desc = document.createElement('div');
+          desc.className = 'diag-desc';
+          desc.textContent = tool.desc;
+          body.appendChild(title);
+          body.appendChild(desc);
+          item.appendChild(badge);
+          item.appendChild(body);
+          container.appendChild(item);
+        });
+      }
+
+      async function probeBackend() {
+        try {
+          const resp = await fetch('/api/health', { method: 'GET' });
+          if (resp.ok) {
+            const data = await resp.json();
+            backendAvailable = true;
+            document.getElementById('engineStatusText').textContent = 'API v' + (data.version || E.VERSION) + ' Active';
+          }
+        } catch (_) {
+          backendAvailable = false;
+          document.getElementById('engineStatusText').textContent = 'Client Engine Active';
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        applyTheme(document.documentElement.getAttribute('data-theme') || 'light', false);
+
+        document.getElementById('auditHtmlInput').value = SAMPLE_HTML;
+        document.getElementById('transformInputHtml').value = SAMPLE_HTML;
+        document.getElementById('diffBaselineInput').value = SAMPLE_HTML;
+        document.getElementById('specHtmlInput').value = SAMPLE_HTML;
+
+        // Wire events
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+          const curr = document.documentElement.getAttribute('data-theme');
+          applyTheme(curr === 'dark' ? 'light' : 'dark', true);
+        });
+        document.getElementById('solanaTipLink').addEventListener('click', () => {
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK').catch(() => {});
+            showToast('Copied Solana address GG2eQb...dXoK');
+          }
+        });
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+          btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+        });
+        document.getElementById('quickAuditBtn').addEventListener('click', () => { switchTab('auditor'); runAudit(false); });
+        document.getElementById('runAuditBtn').addEventListener('click', () => runAudit(false));
+        document.getElementById('auditDeviceSelect').addEventListener('change', () => runAudit(false));
+        document.getElementById('loadSampleBtn').addEventListener('click', () => {
+          document.getElementById('auditUrlInput').value = '';
+          document.getElementById('auditHtmlInput').value = SAMPLE_HTML;
+          runAudit(false);
+        });
+        document.getElementById('exportCwvKitBtn').addEventListener('click', () => downloadZipBundle('cwv_kit'));
+
+        document.getElementById('runTransformBtn').addEventListener('click', () => runTransform(false));
+        document.getElementById('copyOptBtn').addEventListener('click', () => {
+          navigator.clipboard?.writeText(document.getElementById('transformOutputHtml').value);
+          showToast('Copied optimized HTML');
+        });
+        document.getElementById('dlOptBtn').addEventListener('click', () => {
+          triggerDownloadBlob(new Blob([document.getElementById('transformOutputHtml').value], { type: 'text/html;charset=utf-8' }), 'index.optimized.html');
+          showToast('Downloaded index.optimized.html');
+        });
+
+        document.getElementById('runDiffBtn').addEventListener('click', () => runDiff(false));
+        document.getElementById('runSpecBtn').addEventListener('click', () => runSpeculation(false));
+        document.getElementById('copySpecBtn').addEventListener('click', () => {
+          navigator.clipboard?.writeText(document.getElementById('specOutputPre').textContent);
+          showToast('Copied Speculation Rules');
+        });
+
+        document.getElementById('runBudgetBtn').addEventListener('click', () => runBudget(false));
+        document.getElementById('dlBudgetJsonBtn').addEventListener('click', () => {
+          const text = JSON.stringify(latestBudgetJson || [], null, 2);
+          triggerDownloadBlob(new Blob([text], { type: 'application/json;charset=utf-8' }), 'budget.json');
+          showToast('Downloaded budget.json');
+        });
+
+        document.getElementById('genPwaBtn').addEventListener('click', () => generatePwa(false));
+        document.getElementById('pwaStrategy').addEventListener('change', () => generatePwa(false));
+        document.getElementById('dlPwaZipBtn').addEventListener('click', () => downloadZipBundle('pwa'));
+
+        ['ogTitleInput', 'ogDescInput', 'ogUrlInput', 'ogImageInput'].forEach((id) => {
+          document.getElementById(id).addEventListener('input', updateSocialPreviews);
+        });
+        document.getElementById('copyOgBtn').addEventListener('click', () => {
+          const t = E.escapeHtml(document.getElementById('ogTitleInput').value);
+          const d = E.escapeHtml(document.getElementById('ogDescInput').value);
+          const u = E.escapeHtml(document.getElementById('ogUrlInput').value);
+          const im = E.escapeHtml(E.sanitizeImageUrl(document.getElementById('ogImageInput').value));
+          const snippet = [
+            '<meta property="og:title" content="' + t + '">',
+            '<meta property="og:description" content="' + d + '">',
+            '<meta property="og:url" content="' + u + '">',
+            '<meta property="og:image" content="' + im + '">',
+            '<meta name="twitter:card" content="summary_large_image">',
+            '<meta name="twitter:title" content="' + t + '">',
+            '<meta name="twitter:description" content="' + d + '">',
+            '<meta name="twitter:image" content="' + im + '">',
+          ].join('\n');
+          navigator.clipboard?.writeText(snippet);
+          showToast('Copied escaped OpenGraph meta tags');
+        });
+
+        document.querySelectorAll('#cachePlatGroup button').forEach((btn) => {
+          btn.addEventListener('click', () => loadCacheConfig(btn.getAttribute('data-plat')));
+        });
+        document.getElementById('copyCacheBtn').addEventListener('click', () => {
+          navigator.clipboard?.writeText(document.getElementById('cacheConfigContent').textContent);
+          showToast('Copied ' + currentCachePlatform + ' cache headers');
+        });
+        document.getElementById('dlCacheBtn').addEventListener('click', () => {
+          const fn = document.getElementById('cacheConfigFilename').textContent || '_headers';
+          triggerDownloadBlob(new Blob([document.getElementById('cacheConfigContent').textContent], { type: 'text/plain;charset=utf-8' }), fn);
+          showToast('Downloaded ' + fn);
+        });
+
+        document.querySelectorAll('#mcpClientGroup button').forEach((btn) => {
+          btn.addEventListener('click', () => loadMcpClient(btn.getAttribute('data-client')));
+        });
+        document.getElementById('copyMcpBtn').addEventListener('click', () => {
+          navigator.clipboard?.writeText(document.getElementById('mcpConfigContent').textContent);
+          showToast('Copied ' + currentMcpClient + ' MCP config');
+        });
+        document.getElementById('dlMcpBtn').addEventListener('click', () => {
+          const fn = document.getElementById('mcpConfigLabel').textContent || 'mcp-config.json';
+          triggerDownloadBlob(new Blob([document.getElementById('mcpConfigContent').textContent], { type: 'application/json;charset=utf-8' }), fn);
+          showToast('Downloaded ' + fn);
+        });
+
+        // Initial deterministic renders
+        loadCacheConfig('netlify');
+        loadMcpClient('claude');
+        renderMcpToolsList();
+        generatePwa(true);
+        updateSocialPreviews();
+        runTransform(true);
+        runAudit(true);
+        runDiff(true);
+        runSpeculation(true);
+        runBudget(true);
+        probeBackend();
+
+        if (window.createSovereignTutorial) {
+          window.createSovereignTutorial({
+            toolId: 'cwv-speed-engine',
+            toolName: 'CWV Speed Engine v2.6.0',
+            tagline: 'Core Web Vitals Diagnostics, AST Transformer & 8-Tool MCP Hub',
+            steps: [
+              { icon: '⚡', title: 'Audit HTML or Public URLs', desc: 'Inspect LCP, CLS, INP, FCP, and TTFB across mobile and desktop profiles.' },
+              { icon: '⚙', title: 'Transform & Diff', desc: 'Defer <head> scripts, add CLS dimensions, and measure exact score deltas.' },
+              { icon: '📦', title: 'Export Production Kit', desc: 'Download budget.json, Speculation Rules, edge cache headers, and PWA .zip bundles.' },
+            ],
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

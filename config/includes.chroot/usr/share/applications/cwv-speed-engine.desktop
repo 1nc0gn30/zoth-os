@@ -2,12 +2,12 @@
 Version=1.0
 Type=Application
 Name=CWV Speed Engine
-Comment=100% in-browser Core Web Vitals diagnostic engine, client DOM AST speed transformer, PWA manifest builder, tachometer gauge brand media, and
+Comment=Core Web Vitals diagnostic engine, HTML AST speed transformer, W3C Speculation Rules, performance budget simulator, and 8-tool MCP server.
 Exec=/usr/local/bin/cwv-speed-engine desktop
 TryExec=/usr/local/bin/cwv-speed-engine
 Icon=cwv-speed-engine
 Terminal=false
-Categories=X-Zoth-Dev;Development;Utility;ArtificialIntelligence;
+Categories=Development;WebDevelopment;Utility;
 StartupNotify=true
 Actions=TUI;WebApp;
 
