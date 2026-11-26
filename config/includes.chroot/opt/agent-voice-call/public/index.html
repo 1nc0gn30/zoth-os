@@ -1,24 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Zoth Sovereign Voice Call • Live Agent Cockpit</title>
-  <meta name="description" content="Autonomous full-duplex sovereign voice calling cockpit with live P2P audio streaming, speech turn debriefs, and SimpleX call bridges.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Voice Call v2.6.0 • Local-First AI Voice Station</title>
+  <meta name="description" content="Zero-dependency local-first AI voice calling workstation on 127.0.0.1:8114 with Kokoro/Piper/espeak-ng TTS, 6 voice personas, persisted local debriefs, and JSON-RPC 2.0 stdio MCP.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://call.nullai.tech/">
 
   <!-- OpenGraph & Twitter -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Zoth Sovereign Voice Call • Live Agent Cockpit">
-  <meta property="og:description" content="Autonomous full-duplex sovereign voice calling cockpit with live P2P audio streaming, speech turn debriefs, and SimpleX call bridges.">
+  <meta property="og:title" content="Agent Voice Call v2.6.0 • Local-First AI Voice Station">
+  <meta property="og:description" content="Local-first Python voice calling station (:8114) with offline TTS synthesis, local Ollama dialogue, persisted transcripts, and 4-tool stdio MCP server.">
   <meta property="og:url" content="https://call.nullai.tech/">
-  <meta property="og:image" content="https://call.nullai.tech/favicon.svg">
+  <meta property="og:image" content="https://call.nullai.tech/og-banner.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
-  <meta name="twitter:title" content="Zoth Sovereign Voice Call • Live Agent Cockpit">
-  <meta name="twitter:description" content="Autonomous full-duplex sovereign voice calling cockpit with live P2P audio streaming, speech turn debriefs, and SimpleX call bridges.">
+  <meta name="twitter:title" content="Agent Voice Call v2.6.0 • Local-First AI Voice Station">
+  <meta name="twitter:description" content="Local-first Python voice calling station (:8114) with offline TTS synthesis, local Ollama dialogue, persisted transcripts, and 4-tool stdio MCP server.">
+  <meta name="twitter:image" content="https://call.nullai.tech/og-banner.jpg">
 
   <!-- Schema.org AEO & SEO Graph -->
   <script type="application/ld+json">
@@ -27,11 +30,12 @@
     "@graph": [
       {
         "@type": "WebApplication",
-        "name": "Zoth Sovereign Voice Call",
+        "name": "Agent Voice Call",
+        "softwareVersion": "2.6.0",
         "url": "https://call.nullai.tech/",
         "applicationCategory": "CommunicationApplication",
-        "operatingSystem": "Linux, macOS, Windows, iOS, Android",
-        "description": "Autonomous full-duplex sovereign voice calling cockpit with live P2P audio streaming, speech turn debriefs, and SimpleX call bridges.",
+        "operatingSystem": "Linux, macOS, Windows",
+        "description": "Zero-dependency local-first Python voice calling workstation on 127.0.0.1:8114 with Kokoro/Piper/espeak-ng TTS, local Ollama dialogue, persisted debriefs, and stdio MCP.",
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -40,8 +44,8 @@
           "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "creator": {
-          "@type": "Person",
-          "name": "1nc0gn30",
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
           "url": "https://nullai.tech"
         }
       },
@@ -50,18 +54,26 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What is Zoth Sovereign Voice Call?",
+            "name": "Does Agent Voice Call send audio to cloud APIs by default?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "It is an autonomous full-duplex P2P voice calling cockpit allowing natural voice conversations with sovereign AI agents with real-time speech turn debriefs."
+              "text": "No. Synthesis is strictly local-first by default (local Kokoro :9394, local Piper or espeak-ng, and pure-Python PCM fallback). Cloud edge-tts is disabled unless explicitly opted in via ZOTH_ALLOW_CLOUD_TTS=1."
             }
           },
           {
             "@type": "Question",
-            "name": "Is Zoth Sovereign Voice Call free and open-access?",
+            "name": "How are voice call transcripts stored?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Zoth Sovereign Voice Call is 100% free, open-access, and unlocked by default with zero paywalls. Optional support is accepted via Buy Us a Coffee (Stripe) or Solana Tip."
+              "text": "Completed call debriefs are persisted locally with 0600 file permissions under ~/.local/share/zoth/voice_calls/debriefs.jsonl and exposed on GET /api/call/history and the agent_voice_call_debriefs MCP tool."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Agent Voice Call free and open-access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Agent Voice Call is 100% free, open-access, and unlocked by default with zero paywalls. Optional support is accepted via Buy Us a Coffee (Stripe) or Solana Tip."
             }
           }
         ]
@@ -70,165 +82,185 @@
   }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get('theme');
+      var saved = null;
+      try { saved = localStorage.getItem('avc-theme'); } catch (e) {}
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var resolved = (qTheme === 'light' || qTheme === 'dark') ? qTheme : (saved === 'light' || saved === 'dark' ? saved : (prefersLight ? 'light' : 'dark'));
+      document.documentElement.setAttribute('data-theme', resolved);
+      if (params.get('embed') === '1') {
+        document.documentElement.setAttribute('data-embed', '1');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/wave.css">
-  <link rel="stylesheet" href="/wave-states.css">
 </head>
 <body>
 
-<div id="zoth-coffee-support-bar" style="width: 100%; background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 50;">
-  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
-  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
-  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
-</div>
-
-  <!-- Floating Emergency Unmute Banner (Shown if Browser Blocks Autoplay) -->
-  <div class="unmute-banner" id="unmuteBanner" style="display: none;">
-    <span class="unmute-banner-icon">✦</span>
-    <span class="unmute-banner-text">Audio paused by browser • Tap here to unmute agent</span>
-    <button class="unmute-banner-btn" id="btnUnmuteTap">Unmute ✦</button>
+  <!-- Floating Unmute Banner (Shown only if browser blocks autoplay) -->
+  <div class="unmute-banner" id="unmuteBanner" role="status" aria-live="polite" style="display: none;">
+    <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    <span class="unmute-banner-text">Audio paused by browser • Tap to unmute</span>
+    <button type="button" class="unmute-banner-btn" id="btnUnmuteTap">Unmute</button>
   </div>
 
-  <div class="call-container">
-    <!-- Top Telemetry Header -->
+  <div class="call-shell">
+    <!-- Top Telemetry & Controls Header -->
     <header class="call-header">
-      <div class="live-pill">
-        <span class="live-dot"></span>
-        <span class="live-text" id="connectionStatus">READY</span>
+      <div class="brand-cluster">
+        <div class="brand-title-row">
+          <span class="brand-title">Agent Voice Call</span>
+          <span class="version-badge">v2.6.0</span>
+        </div>
+        <div class="live-pill" aria-live="polite">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="live-text" id="connectionStatus">READY</span>
+        </div>
       </div>
-      <div class="call-timer" id="callTimer">00:00</div>
+
+      <div class="telemetry-cluster">
+        <div class="call-timer" id="callTimer" aria-label="Call duration">00:00</div>
+        <span class="engine-badge" id="ttsEngineBadge" title="Active Local-First TTS Engine">LOCAL TTS</span>
+        <span class="channel-badge" id="channelBadge">WEB BRIDGE</span>
+      </div>
+
       <div class="header-actions">
-        <button class="test-speaker-btn" id="btnTestSpeaker" title="Test Speaker Volume">
-          <span class="speaker-icon">✦</span>
-          <span class="speaker-label">Test</span>
+        <button type="button" class="icon-action-btn" id="btnTestSpeaker" aria-label="Test speaker audio" title="Test speaker audio">
+          <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <span>Test</span>
         </button>
-        <div class="channel-badge" id="channelBadge">SIGNAL BRIDGE</div>
+        <button type="button" class="icon-action-btn" id="btnThemeToggle" aria-label="Toggle Light and Dark theme" title="Toggle Light / Dark theme">
+          <svg class="ui-icon theme-icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span id="lblTheme">Theme</span>
+        </button>
       </div>
     </header>
 
-    <!-- Main Visual Stage (Pantheon Golden Orb) -->
-    <main class="call-stage">
-      <div class="persona-card">
-        <div class="persona-avatar-wrap">
-          <canvas id="orbCanvas" width="280" height="280"></canvas>
-        </div>
-        <h1 class="persona-name" id="personaName">AZOTH</h1>
-        <p class="persona-role" id="personaRole">Sovereign Strategic Intelligence</p>
-      </div>
-
-      <!-- Live Speech Bubble & Transcript Feed -->
-      <div class="transcript-viewport" id="transcriptViewport">
-        <div class="turn-bubble agent-turn initial-turn" id="initialAgentBubble">
-          <div class="turn-header-row">
-            <span class="turn-speaker">AZOTH</span>
-            <button class="turn-replay-btn" id="btnReplayInitial" title="Replay voice audio">✦ Replay</button>
+    <!-- Balanced 2-Pane Responsive Stage -->
+    <main class="call-workspace">
+      <!-- Left Pane: Acoustic Orb, Active Persona, Voice Switcher & Primary Call Controls -->
+      <section class="stage-pane orb-pane" aria-label="Voice Persona and Call Controls">
+        <div class="persona-card">
+          <div class="persona-avatar-wrap">
+            <canvas id="orbCanvas" width="260" height="260" aria-label="Live audio activity orb visualization"></canvas>
           </div>
-          <p class="turn-text" id="liveAgentText">"I am on the line. Tap the mic or speak naturally—I am listening."</p>
+          <h1 class="persona-name" id="personaName">AZOTH</h1>
+          <p class="persona-role" id="personaRole">Deep, Strategic, Resonant Baritone</p>
         </div>
-        <div class="turn-bubble user-turn" id="userLiveBubble" style="display: none;">
-          <div class="turn-header-row">
-            <span class="turn-speaker">YOU</span>
-            <span class="mic-live-indicator" id="userSpeechIndicator">● LIVE</span>
-          </div>
-          <p class="turn-text" id="liveUserText">Listening...</p>
-        </div>
-      </div>
 
-      <!-- Quick Text Fallback Input (Optional) -->
-      <div class="text-fallback-wrap">
-        <input type="text" id="inputFallBackText" class="text-fallback-input" placeholder="Type a message or speak..." autocomplete="off">
-        <button id="btnSendFallBack" class="text-fallback-send" title="Send message">↑</button>
-      </div>
+        <!-- 6-Persona Selector Strip -->
+        <div class="persona-grid" id="personaGrid" role="group" aria-label="Select voice persona">
+          <button type="button" class="persona-pill active" data-voice="azoth">Azoth</button>
+          <button type="button" class="persona-pill" data-voice="ghostbyte">Ghostbyte</button>
+          <button type="button" class="persona-pill" data-voice="athena">Athena</button>
+          <button type="button" class="persona-pill" data-voice="mercury">Mercury</button>
+          <button type="button" class="persona-pill" data-voice="kitsune">Kitsune</button>
+          <button type="button" class="persona-pill" data-voice="chronos">Chronos</button>
+        </div>
+
+        <!-- Primary Call Controls -->
+        <div class="control-row">
+          <button type="button" class="ctrl-btn secondary-btn" id="btnVoiceSelector" aria-label="Cycle voice persona" title="Cycle voice persona">
+            <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
+            <span class="btn-label" id="lblVoice">Voice: Azoth</span>
+          </button>
+
+          <button type="button" class="ctrl-btn mic-btn" id="btnMic" aria-label="Toggle microphone voice capture or send message" title="Toggle microphone or send utterance">
+            <div class="mic-ripple" aria-hidden="true"></div>
+            <svg class="ui-icon mic-svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+
+          <button type="button" class="ctrl-btn end-call-btn" id="btnEndCall" aria-label="End call and save transcript debrief" title="End call and save debrief">
+            <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+            <span class="btn-label">End</span>
+          </button>
+        </div>
+
+        <p class="mic-helper-note" id="micHelperNote">Local-first TTS (Kokoro :9394 → offline espeak-ng/Piper → PCM). Tap mic to speak or type in the transcript pane.</p>
+      </section>
+
+      <!-- Right Pane: Live Transcript, Input Bar & Persisted Local Debriefs -->
+      <section class="stage-pane transcript-pane" aria-label="Live Transcript and Call History">
+        <div class="pane-header">
+          <h2 class="pane-title">Live Transcript</h2>
+          <span class="session-id-tag" id="sessionIdBadge">SESSION: CONNECTING</span>
+        </div>
+
+        <div class="transcript-viewport" id="transcriptViewport" aria-live="polite" aria-relevant="additions text">
+          <div class="turn-bubble agent-turn initial-turn" id="initialAgentBubble">
+            <div class="turn-header-row">
+              <span class="turn-speaker">AZOTH</span>
+              <button type="button" class="turn-replay-btn" id="btnReplayInitial" aria-label="Replay welcome voice audio" title="Replay welcome audio">
+                <svg class="ui-icon ui-icon-sm" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Replay</span>
+              </button>
+            </div>
+            <p class="turn-text" id="liveAgentText">"I am on the line. Tap the microphone or type a message below to begin."</p>
+          </div>
+          <div class="turn-bubble user-turn" id="userLiveBubble" style="display: none;">
+            <div class="turn-header-row">
+              <span class="turn-speaker">YOU</span>
+              <span class="mic-live-indicator" id="userSpeechIndicator">● LIVE</span>
+            </div>
+            <p class="turn-text" id="liveUserText">Listening...</p>
+          </div>
+        </div>
+
+        <!-- Accessible Message Input -->
+        <div class="text-fallback-wrap">
+          <label for="inputFallBackText" class="sr-only">Type a message to speak to the agent</label>
+          <input type="text" id="inputFallBackText" class="text-fallback-input" aria-label="Type a message or speak" placeholder="Type a message or tap the mic..." autocomplete="off">
+          <button type="button" id="btnSendFallBack" class="text-fallback-send" aria-label="Send message to agent" title="Send message">
+            <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Persisted Local Debriefs -->
+        <div class="debrief-history-box">
+          <div class="pane-header compact">
+            <h3 class="pane-subtitle">Persisted Local Debriefs</h3>
+            <span class="history-count-tag" id="debriefCountTag">0 saved</span>
+          </div>
+          <div class="debrief-list" id="debriefList">
+            <p class="debrief-empty">Completed calls are saved locally (0600) to ~/.local/share/zoth/voice_calls/debriefs.jsonl.</p>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Bottom Mobile Call Controls -->
-    <footer class="call-controls">
-      <div class="control-row">
-        <!-- Voice Persona Switcher -->
-        <button class="ctrl-btn secondary-btn" id="btnVoiceSelector" title="Switch Voice Persona">
-          <span class="btn-icon">✦</span>
-          <span class="btn-label" id="lblVoice">Voice: Azoth</span>
-        </button>
-
-        <!-- Main Push-to-Talk / Mic Button -->
-        <button class="ctrl-btn mic-btn active" id="btnMic" title="Microphone Active">
-          <div class="mic-ripple"></div>
-          <span class="mic-icon" id="micIcon">✦</span>
-        </button>
-
-        <!-- End Call Button -->
-        <button class="ctrl-btn end-call-btn" id="btnEndCall" title="End Call & Send Debrief">
-          <span class="btn-icon">✦</span>
-          <span class="btn-label">End</span>
-        </button>
+    <!-- Single Consolidated Attribution & Open-Access Support Footer (Hidden in ?embed=1 mode) -->
+    <footer class="standalone-footer" id="standaloneSupportFooter">
+      <div class="footer-attribution">
+        <span>Engineered by <strong>Neal Frazier Tech (@1nc0gn30)</strong> • NullAI Platform</span>
       </div>
-
-      <div class="call-footer-note">
-        <span>★ Sovereign P2P Audio • Engineered by <a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color:#D4AF37;text-decoration:none;">Neal Frazier Tech (@1nc0gn30)</a> • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color:#38BDF8;text-decoration:none;">NullAI Platform</a> • <a href="https://github.com/1nc0gn30/agent-voice-call" target="_blank" rel="noopener noreferrer" style="color:#94A3B8;text-decoration:none;">GitHub</a> • <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="color:#FACC15;text-decoration:none;">☕ Buy Us a Coffee</a> • <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="color:#14F195;text-decoration:none;">◎ Solana Tip</a></span>
-      </div>
+      <nav class="footer-links" aria-label="Project and support links">
+        <a class="footer-pill-link" href="https://github.com/1nc0gn30/agent-voice-call" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+        <a class="footer-pill-link" href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+        <a class="footer-pill-link coffee-link" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+        <a class="footer-pill-link solana-link" id="btnSolanaTip" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip</a>
+      </nav>
     </footer>
   </div>
 
-  <!-- Initial Join Call Overlay (Hidden by default so workstation opens directly) -->
-  <div class="call-join-overlay" id="joinOverlay" style="display: none;">
-    <div class="join-card">
-      <div class="join-avatar-glow">✦</div>
-      <h2 class="join-title">LIVE VOICE CALL</h2>
-      <p class="join-subtitle">Full-duplex sovereign voice bridge with <span id="joinVoiceName" class="gold-text">AZOTH</span></p>
-      <button class="join-btn" id="btnJoinCall">
-        <span class="join-btn-text">CONNECT AUDIO & START CALL</span>
-        <span class="join-btn-icon">⚡</span>
-      </button>
-      <div class="join-hint">
-        <span>★ Sovereign Local Audio • Zero Autoplay Block • High-Fidelity Speech</span>
-      </div>
-    </div>
-  </div>
-
   <!-- End Call Modal Summary -->
-  <div class="modal-backdrop" id="endModal" style="display: none;">
+  <div class="modal-backdrop" id="endModal" role="dialog" aria-modal="true" aria-labelledby="endModalTitle" style="display: none;">
     <div class="modal-card">
-      <div class="modal-icon">✅</div>
-      <h2>Voice Call Completed</h2>
-      <p id="modalDuration">Duration: 01:24 • 4 turns</p>
+      <h2 id="endModalTitle">Voice Call Completed</h2>
+      <p id="modalDuration">Duration: 00:00 • 0 turns</p>
       <div class="modal-debrief-box" id="modalDebriefText">
-        Call transcript and executive action items have been dispatched to your Signal and SimpleX chat.
+        Call transcript persisted locally to ~/.local/share/zoth/voice_calls/debriefs.jsonl.
       </div>
-
-      <!-- Open-Access Community Support Box -->
-      <div style="margin: 16px 0; padding: 12px; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: #D4AF37; margin-bottom: 6px;">☕ Support Sovereign Voice Call (100% Free &amp; Open Access)</div>
-        <p style="font-size: 0.72rem; color: #94A3B8; margin: 0 0 10px 0;">Unlimited speech turns, SimpleX audio bridges, and all 6 Pantheon neural personas unlocked by default.</p>
-        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-          <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; background: #D4AF37; color: #040508; border-radius: 6px; text-decoration: none; display: inline-block;">☕ Buy Us a Coffee (Stripe)</a>
-          <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; background: rgba(20,241,149,0.16); color: #14F195; border: 1px solid rgba(20,241,149,0.45); border-radius: 6px; text-decoration: none; display: inline-block;">◎ Solana Tip (GG2e...dXoK)</a>
-        </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn" id="btnNewSession">Start New Call Session</button>
       </div>
-
-      <button class="modal-btn" onclick="window.close(); location.href='/call';">Done</button>
     </div>
   </div>
 
   <script src="/call_app.js"></script>
-  
-
-  <script src="/sovereign_tutorial.js"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", function() {
-      if (window.createSovereignTutorial) {
-        window.createSovereignTutorial({
-          toolId: "agent-voice-call",
-          toolName: "Agent Voice Call",
-          tagline: "Talk out loud to your AI agents with zero lag and fun 3D avatars!",
-          accentColor: "#38BDF8",
-          steps: [{"icon": "\ud83c\udf99\ufe0f", "title": "Real Voice Chat", "desc": "Press Start Call and just talk! The AI listens, understands, and replies through your speakers with natural timing."}, {"icon": "\u26a1", "title": "Interrupt Anytime", "desc": "You don't have to wait for the AI to finish talking. Start speaking mid-sentence and it immediately pauses to hear you."}, {"icon": "\ud83c\udfad", "title": "3D Living Avatar", "desc": "Watch the 3D mascot emote and move its mouth in sync with every word spoken."}]
-        });
-      }
-    });
-  </script>
-
 </body>
 </html>

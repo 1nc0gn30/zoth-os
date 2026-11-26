@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Agent Voice Call
-Comment=Autonomous sovereign real-time voice cockpit, live audio WebSocket streaming, multi-persona voice synthesizer, and zero-telemetry call proto
+Comment=Local-first Python voice calling workstation (:8114), offline TTS synthesis, 6 voice personas, persisted 0600 debriefs, and 4-tool stdio MCP
 Exec=/usr/local/bin/agent-voice-call desktop
 TryExec=/usr/local/bin/agent-voice-call
 Icon=agent-voice-call
@@ -12,8 +12,8 @@ StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
-Name=Launch Agent Voice Call Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Agent Voice Call TUI" -- /usr/local/bin/agent-voice-call-tui
+Name=Launch Agent Voice Call Live TUI
+Exec=/usr/local/bin/zoth-konsole --title "Agent Voice Call TUI" -- /usr/local/bin/agent-voice-call-tui --watch
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8114)

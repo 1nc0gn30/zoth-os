@@ -1,0 +1,30 @@
+[Unit]
+Description=ZothOS Agent Voice Call — Local-First Voice Calling Station & REST API (v2.6.0)
+After=network.target multi-user.target kokoro-voice.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+EnvironmentFile=-/etc/zothos/paths.conf
+WorkingDirectory=/opt/agent-voice-call
+ExecStart=/usr/bin/python3 /usr/local/bin/agent-voice-call serve --host 127.0.0.1 --port 8114
+Restart=always
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/var/lib/zoth-voice /tmp %h/.local/share/zoth/voice_calls
+MemoryMax=512M
+CPUQuota=75%
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+Environment=PORT=8114
+Environment=KOKORO_PORT=9394
+Environment=VOICE_CALL_DATA_DIR=/var/lib/zoth-voice
+
+[Install]
+WantedBy=multi-user.target
