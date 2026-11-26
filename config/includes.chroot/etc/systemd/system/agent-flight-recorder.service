@@ -1,5 +1,5 @@
 [Unit]
-Description=ZothOS Agent Flight Recorder & Telemetry Forensics Hub
+Description=ZothOS Agent Flight Recorder & Telemetry Forensics Hub (v2.6.0)
 After=network.target multi-user.target
 Wants=network.target
 
@@ -11,7 +11,12 @@ WorkingDirectory=%h
 ExecStart=/usr/local/bin/zoth-run-repo agent-flight-recorder /opt/zothos-ai-env/bin/python3 -m agent_flight_recorder.cli serve --host 127.0.0.1 --port 8104
 Restart=always
 RestartSec=3
-KillMode=process
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/tmp %h/.local/share/agent-flight-recorder %h/NullAITech/agent-flight-recorder
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1

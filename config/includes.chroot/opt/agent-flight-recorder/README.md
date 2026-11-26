@@ -1,120 +1,129 @@
-<div align="center">
-  <img src="assets/hero-banner.svg" alt="Agent Flight Recorder — Sovereign Architecture Banner" width="100%" />
-</div>
+# Agent Flight Recorder (`v2.6.0`)
 
-<br />
+![Agent Flight Recorder Hero Banner](assets/hero-banner.svg)
 
-# Agent Flight Recorder
+**Agent Flight Recorder** (`agent-flight-recorder`) is a zero-dependency Python 3.10+ local daemon (`127.0.0.1:8104`), CLI, live terminal TUI, and stdio MCP forensics hub for AI agents. It records command execution streams, network egress, capsule runs, file mutations, prompt scans, and engrams into a **WAL-mode SQLite** database (`flight_recorder.db`) protected by an **append-only SHA-256 hash chain**.
 
-[![Zero External Dependencies](https://img.shields.io/badge/dependencies-0%20external%20pip-gold.svg)](pyproject.toml)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![NullAI Platform](https://img.shields.io/badge/platform-NullAI-black.svg)](https://nullai.tech)
-
-**Autonomous Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents.**
-
-Captures high-resolution session timelines and provides an interactive in-browser scrubber (like a digital audio workstation or video editor) that allows developers to replay an agent's execution second-by-second.
+- **Zoth Studio v2 Dossier**: [https://zoth.nullai.tech/tools/agent-flight-recorder](https://zoth.nullai.tech/tools/agent-flight-recorder)
+- **Repository**: [https://github.com/1nc0gn30/agent-flight-recorder](https://github.com/1nc0gn30/agent-flight-recorder)
+- **Default Loopback Endpoint**: `http://127.0.0.1:8104`
 
 ---
 
-## ⚡ Key Architectural Capabilities
+## What It Does
 
-- **Zero External Pip Dependencies**: 100% Python 3.10+ standard library (`http.server`, `socket`, `sqlite3`, `json`, `urllib.parse`, `threading`, `dataclasses`, `time`).
-- **Multi-Source Forensic Telemetry Ingestion (Port 8104)**:
-  - Ingests events with millisecond timestamps from:
-    - **Prompt Firewall (:8098)**: Prompt injection attempts and PII redaction.
-    - **Egress Sentinel (:8095/:8096)**: Outbound domain traffic and connection spikes.
-    - **Mock Twin (:8097)**: Deterministic mock replays and token savings.
-    - **Neuro-Memory Daemon (:8094)**: Synaptic associative memory engrams.
-    - **Subprocess Execution**: Standard stdout/stderr stream and system CPU/RAM spikes.
-- **Interactive Time-Scrubbing Cockpit (Port 8104 UI)**:
-  - Drag the timeline scrubber (0:00 to N:NN) to dynamically inspect:
-    - Synchronized terminal output emitted up to that exact timestamp.
-    - Active network topological connection graph at that moment in time.
-    - Neural memory engrams recalled or synthesized.
-    - Peak threat score gauge and system resource utilization.
-  - Automated playback controls with 1x, 2x, and 4x speed multipliers.
-- **Voice Incident Briefing (Kokoro TTS :9394 Ready)**:
-  - Generates natural-language mission debriefs synthesized from timeline telemetry.
-- **Single-File Offline Incident Bundle Exporter**:
-  - Exports a self-contained, standalone single-file HTML replay viewer with embedded JSON data that runs offline in any browser with zero server required.
+- **Process & Stream Recording (`SessionRecorder`)**: Wraps agent commands (`agent-flight-recorder record -- <cmd>`), capturing timestamped `stdout`/`stderr`, real child CPU/RSS telemetry (`os.wait4` + `/proc`), wall duration, and exit status. Proxy env injection is strictly opt-in (`--with-proxy`).
+- **SHA-256 Append-Only Hash Chain (`storage.py`)**: Every recorded event computes `event_hash = sha256(canonical_json({session_id, seq, offset_ms, event_type, payload, prev_hash}))` in SQLite WAL mode with `PRAGMA foreign_keys=ON`. Tampering with any row is immediately flagged by `GET /api/verify/<session_id>`, CLI `verify`, or MCP `flight_recorder_verify`.
+- **Cross-Daemon Ingestion (`/api/ingest`)**: Receives structured telemetry from sibling daemons (`agent-capsule-jail :8105`, `agent-policy-auditor :8106`, `agent-prompt-firewall :8098`, `agent-egress-sentinel :8095`) and automatically creates parent session rows (e.g., `capsule-jail-audit`) so events never orphan.
+- **Live SSE Cockpit & Dual-Theme UI**: Subscribes live to `/api/stream`, scrubs millisecond-by-millisecond, filters all event types in the Raw Event Inspector, and supports Editorial Ivory Light Mode and Obsidian Dark Mode (`?theme=light|dark`, `?embed=1`).
+- **Multi-Format Exports**: Exports self-contained XSS-escaped offline HTML replay bundles, JSON, spreadsheet-formula-safe CSV, and Markdown incident reports.
 
 ---
 
-## 🚀 Quickstart
+## How It Works
 
-### 1. Record an Agent Execution
-```bash
-./bin/agent-flight record --command "python3 -m agent_core"
-```
-Or record any shell command directly:
-```bash
-./bin/agent-flight record -- python3 -c "print('Agent initialized'); import urllib.request; print('Done')"
-```
-
-### 2. Launch the Time-Scrubbing Flight Deck UI
-```bash
-./bin/agent-flight serve --port 8104
-```
-Open [http://localhost:8104](http://localhost:8104) to scrub through recorded flights.
-
-### 3. Export Standalone Offline Incident Bundle
-```bash
-./bin/agent-flight export --session <session_id> -o incident.html
-```
-
-### 4. Check Telemetry Storage Status
-```bash
-./bin/agent-flight status
+```text
+Agent Process / Sibling Local Daemons (:8095, :8098, :8105, :8106)
+        │
+        ├── CLI Wrapper (SessionRecorder, os.wait4 rusage) ──┐
+        ├── POST /api/ingest (Origin + Host + 1 MiB guard) ──┼──► FlightStorage (SQLite WAL + SHA-256 Chain)
+        └── Stdio MCP Server (agent-flight-recorder mcp) ────┘              │
+                                                                            ▼
+                                                  FlightDeckServer (127.0.0.1:8104)
+                                                  ├── Live SSE (/api/stream, /api/events/stream)
+                                                  ├── Scrubber & Verifier (/api/scrub, /api/verify)
+                                                  └── Exporters (HTML, JSON, CSV, Markdown)
 ```
 
 ---
 
-## 🛡 API Endpoints
+## Quickstart
 
-| Endpoint | Method | Description |
-|:---|:---:|:---|
-| `/api/sessions` | `GET` | Lists recent recorded flight sessions |
-| `/api/session/<id>` | `GET` | Fetches metadata and duration for a session |
-| `/api/timeline/<id>` | `GET` | Returns all millisecond-precision forensic events |
-| `/api/scrub/<id>?offset_ms=N` | `GET` | Computes state snapshot at offset N ms |
-| `/api/briefing/<id>` | `GET` | Generates text briefing for Kokoro TTS |
-| `/api/export/bundle?session_id=<id>` | `GET` | Downloads standalone single-file HTML replay bundle |
-| `/api/ingest` | `POST` | Ingests forensic telemetry events from external tools |
-| `/api/stream` | `GET` | Server-Sent Events (SSE) live telemetry stream |
+```bash
+git clone https://github.com/1nc0gn30/agent-flight-recorder.git
+cd agent-flight-recorder
+
+# Start the local loopback daemon on 127.0.0.1:8104
+python3 server.py --host 127.0.0.1 --port 8104
+```
+
+Open `http://127.0.0.1:8104` in your browser (add `?theme=light` or `?theme=dark` as desired).
 
 ---
 
-## 🧪 Testing
+## ZothOS CLI, Live TUI & Stdio MCP Commands
 
-Run the zero-dependency test suite:
 ```bash
-pytest -v
+# Daemon & storage telemetry
+agent-flight-recorder --version
+agent-flight-recorder --status
+agent-flight-recorder --json
+
+# Record an agent execution session into SQLite
+agent-flight-recorder record --title "Repo Audit Run" -- python3 my_agent.py
+
+# Verify a session's SHA-256 hash chain (exit 0 valid, exit 2 tampered)
+agent-flight-recorder verify --session <session_id> --json
+
+# Export a standalone XSS-safe HTML incident bundle
+agent-flight-recorder export --session <session_id> --output incident-report.html
+
+# Launch the live terminal forensics TUI (queries :8104 with offline SQLite fallback)
+agent-flight-recorder-tui --once
+agent-flight-recorder-tui --json
+
+# Run the zero-dependency JSON-RPC 2.0 stdio MCP server
+agent-flight-recorder mcp --db flight_recorder.db
+```
+
+### Stdio MCP Tools (`agent-flight-recorder mcp`)
+
+| Tool | Purpose |
+| :--- | :--- |
+| `flight_recorder_scrub` | Reconstruct terminal output, egress nodes, engrams, threats, capsule runs, and chain head at `offset_ms` |
+| `flight_recorder_sessions` | List recorded sessions and SQLite storage metrics |
+| `flight_recorder_ingest` | Append a SHA-256 hash-chained event (auto-creating missing sessions) |
+| `flight_recorder_verify` | Verify a session's append-only SHA-256 hash chain for tamper detection |
+
+---
+
+## REST API Reference (`127.0.0.1:8104`)
+
+All API endpoints enforce strict loopback `Host` header validation (defeating DNS rebinding), strict local/Studio `Origin` validation with `Vary: Origin`, `1 MiB` POST body cap (`413`), and JSON schema validation (`400`).
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Dual-theme time-scrubbing flight deck (`public/index.html`) |
+| `GET` | `/health`, `/api/health` | Service health (`status`, actual bound `port`, `version: "2.6.0"`) |
+| `GET` | `/api/stats` | Session count, event count, total recorded duration, and DB size |
+| `GET` | `/api/sessions?limit=50` | Recent recorded sessions (`limit` 1..500) |
+| `GET` | `/api/events?session_id=&event_type=&q=&limit=100` | Filtered raw timeline events |
+| `GET` | `/api/session/<id>` | Metadata and SHA-256 chain summary for a single session |
+| `GET` | `/api/timeline/<id>` | Ordered hash-chained event list for `<id>` |
+| `GET` | `/api/scrub/<id>?offset_ms=1500` | Cumulative forensic state snapshot up to `offset_ms` |
+| `GET` | `/api/verify/<id>` | Verify SHA-256 hash chain (`valid`, `event_count`, `head_hash`, `broken_at_event_id`) |
+| `GET` | `/api/briefing/<id>` | Executive incident briefing summary for `<id>` |
+| `GET` | `/api/stream`, `/api/events/stream` | Real-time Server-Sent Events (SSE) flight telemetry stream |
+| `POST` | `/api/ingest` | Ingest a forensic event (`session_id`, `event_type`, `severity`, `payload`) |
+| `GET` / `POST` | `/api/export/bundle` | Self-contained, XSS-escaped offline HTML replay bundle |
+| `GET` | `/api/export/json` | Structured JSON export with SHA-256 verification metadata |
+| `GET` | `/api/export/csv` | Formula-injection-safe CSV event export |
+| `GET` | `/api/export/markdown` | Markdown post-mortem incident report |
+
+---
+
+## Testing & Verification
+
+```bash
+PYTHONPATH=src python3 -m pytest -q tests
 ```
 
 ---
 
-## 💼 Sovereign SaaS Licensing
+## Support & License
 
-- **Founding Member License**: $19 lifetime access (regular $79).
-- **Payment Rails**:
-  - Stripe: [Instant Stripe Checkout](https://github.com/1nc0gn30/zoth-os)
-  - Solana Tip: Integration ID `428790dd-7ad1-407c-8ecf-c048c77a4cb8`
-- **Instant Activation**: Pass `?licensed=true` in the browser or enter your receipt key in the Pro modal.
+100% free and open-source software under the MIT License (zero paywalls).
 
----
-
-## 📜 Attribution
-
-Engineered by **NullAI** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
-
-## Network exposure
-
-The server binds to `127.0.0.1` by default. To reach it from other devices,
-opt in explicitly with `--host 0.0.0.0` (or set `ZOTH_BIND_HOST=0.0.0.0`; an IP
-in `HOST` is also honoured, a plain hostname is ignored) and only on a trusted
-network.
-
-Browser requests are only accepted from `localhost` / `127.0.0.1` pages:
-cross-site POSTs get `403` and CORS never answers `*`, so a website you visit
-can't drive this local server. CLI and agent clients are unaffected.
+- Optional support (Stripe): [Buy Us a Coffee](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- Optional support (Solana): `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+- Engineered by **Neal Frazier Tech** (`@1nc0gn30`) • **NullAI Platform** ([https://nullai.tech](https://nullai.tech))

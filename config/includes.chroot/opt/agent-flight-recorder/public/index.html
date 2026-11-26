@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub</title>
-  <meta name="description" content="Autonomous, zero-dependency Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI agents. Replay execution second-by-second with terminal sync, network graph, and engrams.">
+  <title>Agent Flight Recorder v2.6.0 • Black Box Time-Scrubbing Telemetry Forensics Hub</title>
+  <meta name="description" content="Zero-dependency Python 3.10+ Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI agents. SHA-256 hash-chained SQLite storage, live SSE cockpit, stdio MCP server, and offline HTML/JSON/CSV/Markdown exports.">
   <link rel="canonical" href="https://flight.nullai.tech/">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
   <link rel="apple-touch-icon" href="/assets/icon.png">
 
   <!-- Social & OpenGraph Meta -->
-  <meta property="og:title" content="Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub">
-  <meta property="og:description" content="Autonomous Black Box Flight Recorder for AI agents. Replay execution second-by-second with synchronized terminal stream, egress graph, and memory engrams.">
+  <meta property="og:title" content="Agent Flight Recorder v2.6.0 • Black Box Time-Scrubbing Telemetry Forensics Hub">
+  <meta property="og:description" content="Local Python black box flight recorder for AI agents on 127.0.0.1:8104. Replay execution millisecond-by-millisecond with SHA-256 hash-chain verification, live SSE, and offline bundles.">
   <meta property="og:url" content="https://flight.nullai.tech/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://flight.nullai.tech/assets/banner.png">
@@ -21,12 +21,24 @@
   <meta name="twitter:creator" content="@1nc0gn30">
   <meta name="twitter:image" content="https://flight.nullai.tech/assets/banner.png">
 
-  <!-- Solana Tip Payments Integration -->
-
-  <!-- Typography Pairing -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Early Dual-Theme & Embed Bootstrap (Zero Flash, Zero Egress) -->
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var qTheme = params.get('theme');
+        var stored = localStorage.getItem('afr_theme');
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = (qTheme === 'light' || qTheme === 'dark')
+          ? qTheme
+          : (stored === 'light' || stored === 'dark' ? stored : (prefersLight ? 'light' : 'dark'));
+        document.documentElement.setAttribute('data-theme', theme);
+        if (params.get('embed') === '1') {
+          document.documentElement.setAttribute('data-embed', '1');
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- AEO Schema.org JSON-LD Graph -->
   <script type="application/ld+json">
@@ -34,25 +46,26 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         "@id": "https://flight.nullai.tech/#app",
         "name": "Agent Flight Recorder",
+        "softwareVersion": "2.6.0",
         "url": "https://flight.nullai.tech/",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Linux, macOS, Windows (Python 3.10+)",
-        "description": "Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents. Ingests events, synchronizes terminal outputs, and generates single-file incident bundles.",
+        "description": "Local Python 3.10+ Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub on 127.0.0.1:8104. Stores events in WAL-mode SQLite with an append-only SHA-256 hash chain, live SSE stream, stdio MCP server, and offline HTML/JSON/CSV/Markdown exports.",
         "creator": {
           "@type": "Person",
-          "name": "1nc0gn30",
-          "alternateName": "NullAI",
+          "name": "Neal Frazier",
+          "alternateName": "Neal Frazier Tech (@1nc0gn30)",
           "url": "https://nullai.tech"
         },
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": "https://github.com/1nc0gn30/zoth-os"
+          "url": "https://flight.nullai.tech/"
         }
       },
       {
@@ -64,23 +77,23 @@
             "name": "What is Agent Flight Recorder?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Agent Flight Recorder is an autonomous black box flight recorder and time-scrubbing forensics hub for AI agents. It captures high-resolution session timelines and provides an interactive in-browser scrubber that lets developers replay an agent's execution second-by-second."
+              "text": "Agent Flight Recorder is a zero-dependency Python 3.10+ black box flight recorder and time-scrubbing telemetry forensics hub running on 127.0.0.1:8104. It captures agent terminal output, network egress, capsule runs, file mutations, prompt scans, and engrams into a SHA-256 hash-chained SQLite database."
             }
           },
           {
             "@type": "Question",
-            "name": "Does Agent Flight Recorder require external pip packages?",
+            "name": "How does Agent Flight Recorder verify telemetry integrity and privacy?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. The backend runtime requires 0 external pip packages and runs entirely on the standard Python 3.10+ library with SQLite time-series storage and loopback HTTP/SSE streaming on port 8104."
+              "text": "All telemetry remains strictly on your local machine in SQLite WAL storage with zero external cloud dependencies. Each event is linked via an append-only SHA-256 hash chain verifiable through GET /api/verify/<session_id>, CLI 'agent-flight-recorder verify', or the stdio MCP tool 'flight_recorder_verify'."
             }
           },
           {
             "@type": "Question",
-            "name": "Can I export incident recordings to share with auditors offline?",
+            "name": "Is Agent Flight Recorder free and what export formats are supported?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. With 1-click export, Agent Flight Recorder produces a self-contained, single-file HTML bundle with embedded JSON data that functions fully offline in any browser without a server."
+              "text": "Yes. Agent Flight Recorder is 100% free and open source under the MIT License with zero paywalls. You can export recorded sessions as self-contained offline HTML replay bundles, JSON, formula-safe CSV, or Markdown reports. Optional community support is available via Stripe or Solana."
             }
           }
         ]
@@ -94,20 +107,49 @@
       --bg: #08080B;
       --card-bg: #121217;
       --card-surface: #181820;
+      --terminal-bg: #05060A;
+      --header-bg: rgba(8, 8, 11, 0.92);
       --border: #272733;
-      --border-accent: rgba(212, 175, 55, 0.35);
+      --border-accent: rgba(212, 175, 55, 0.38);
       --gold: #D4AF37;
+      --gold-ink: #08080B;
       --gold-glow: rgba(212, 175, 55, 0.22);
       --telemetry-blue: #38BDF8;
-      --telemetry-glow: rgba(56, 189, 248, 0.25);
+      --telemetry-ink: #08080B;
+      --telemetry-glow: rgba(56, 189, 248, 0.22);
       --emerald: #10B981;
       --ruby: #EF4444;
       --amber: #F59E0B;
       --text: #F3F4F6;
       --text-muted: #9CA3AF;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'Space Grotesk', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.42);
+      --grid-line: rgba(56, 189, 248, 0.10);
+      --font-display: "Syne", "Space Grotesk", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-body: "Space Grotesk", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    html[data-theme="light"] {
+      --bg: #FAF7F0;
+      --card-bg: #FFFFFF;
+      --card-surface: #F3EFE6;
+      --terminal-bg: #F3EFE6;
+      --header-bg: rgba(250, 247, 240, 0.94);
+      --border: rgba(28, 25, 23, 0.14);
+      --border-accent: rgba(154, 114, 9, 0.40);
+      --gold: #9A7209;
+      --gold-ink: #FFFFFF;
+      --gold-glow: rgba(154, 114, 9, 0.18);
+      --telemetry-blue: #0369A1;
+      --telemetry-ink: #FFFFFF;
+      --telemetry-glow: rgba(3, 105, 161, 0.16);
+      --emerald: #047857;
+      --ruby: #BE123C;
+      --amber: #B45309;
+      --text: #1C1917;
+      --text-muted: #57534E;
+      --shadow-card: 0 8px 26px rgba(28, 25, 23, 0.07);
+      --grid-line: rgba(3, 105, 161, 0.12);
     }
 
     * {
@@ -116,24 +158,55 @@
       padding: 0;
     }
 
+    html {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
       min-height: 100vh;
       overflow-x: hidden;
+      max-width: 100vw;
       line-height: 1.5;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .container {
       max-width: 1240px;
       margin: 0 auto;
-      padding: 0 1.25rem;
+      padding: 0 1rem;
     }
 
+    /* Embed Mode (?embed=1): Strip duplicate outer header/footer inside Studio iframe */
+    html[data-embed="1"] header,
+    html[data-embed="1"] footer,
+    html[data-embed="1"] .hero {
+      display: none !important;
+    }
+
+    html[data-embed="1"] main.container {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    /* Single Compact Header */
     header {
       border-bottom: 1px solid var(--border);
-      background: rgba(8, 8, 11, 0.85);
+      background: var(--header-bg);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
@@ -144,92 +217,108 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 70px;
+      min-height: 64px;
+      padding: 8px 0;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: var(--text);
-    }
-
-    .brand-icon {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(212, 175, 55, 0.08);
-      color: var(--gold);
+      min-height: 44px;
     }
 
     .brand-title {
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--telemetry-blue);
+      font-family: var(--font-mono);
+      font-weight: 600;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .badge-free {
-      background: rgba(156, 163, 175, 0.12);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
       border-radius: 9999px;
-      font-size: 0.75rem;
       font-family: var(--font-mono);
-      font-weight: 600;
-    }
-
-    .badge-pro {
-      background: rgba(212, 175, 55, 0.18);
-      color: var(--gold);
-      border: 1px solid var(--gold);
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
+      font-size: 0.72rem;
       font-weight: 700;
-      box-shadow: 0 0 12px var(--gold-glow);
+      border: 1px solid var(--border);
+      background: var(--card-surface);
+      color: var(--text-muted);
     }
 
+    .status-pill.live {
+      border-color: var(--emerald);
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+    }
+
+    .status-pill.offline {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Buttons & Controls (>= 44px tap targets everywhere) */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 16px;
+      gap: 6px;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
+      font-size: 0.84rem;
+      font-weight: 700;
+      font-family: var(--font-body);
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: all 0.16s ease;
       min-height: 44px;
+      min-width: 44px;
+      white-space: nowrap;
     }
 
     .btn-gold {
       background: var(--gold);
-      color: #000;
+      color: var(--gold-ink);
       border: 1px solid var(--gold);
     }
 
     .btn-gold:hover {
-      background: #E5C158;
-      box-shadow: 0 0 16px var(--gold-glow);
+      filter: brightness(1.08);
+      box-shadow: 0 4px 16px var(--gold-glow);
     }
 
     .btn-outline {
-      background: transparent;
+      background: var(--card-surface);
       border: 1px solid var(--border);
       color: var(--text);
     }
@@ -241,117 +330,61 @@
 
     .btn-cyan {
       background: var(--telemetry-blue);
-      color: #000;
+      color: var(--telemetry-ink);
       border: 1px solid var(--telemetry-blue);
     }
 
     .btn-cyan:hover {
-      box-shadow: 0 0 16px var(--telemetry-glow);
+      filter: brightness(1.06);
+      box-shadow: 0 4px 16px var(--telemetry-glow);
     }
 
-    /* Sales Banner */
-    .sales-banner {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(18, 18, 23, 0.95));
-      border: 1px solid var(--border-accent);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin: 1.5rem auto 1rem;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-    }
-
-    .banner-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .banner-content {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .urgency-pill {
-      background: rgba(239, 68, 68, 0.18);
-      color: #F87171;
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 4px;
-      letter-spacing: 0.05em;
-    }
-
-    .price-strike {
-      text-decoration: line-through;
-      color: var(--text-muted);
-      margin: 0 4px;
-    }
-
-    .price-highlight {
-      color: var(--gold);
-      font-weight: 700;
-      font-size: 1.05rem;
-    }
-
-    .banner-ctas {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* Hero Section */
+    /* Compact Hero Section */
     .hero {
-      padding: 2.25rem 0 1.75rem;
+      padding: 1.5rem 0 1.25rem;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 2.5rem;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.75rem;
       align-items: center;
     }
 
     .hero-title {
       font-family: var(--font-display);
-      font-size: 2.5rem;
-      line-height: 1.15;
+      font-size: 2.15rem;
+      line-height: 1.14;
       font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.75rem;
     }
 
     .hero-title span {
       color: var(--telemetry-blue);
-      text-shadow: 0 0 24px var(--telemetry-glow);
     }
 
     .hero-subtitle {
-      font-size: 1.05rem;
+      font-size: 0.96rem;
       color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-      max-width: 580px;
+      line-height: 1.58;
+      margin-bottom: 1.1rem;
+      max-width: 58ch;
     }
 
     .hero-pills {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .hero-pill {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       font-family: var(--font-mono);
       color: var(--text);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
     }
@@ -363,72 +396,114 @@
       background: var(--telemetry-blue);
     }
 
-    /* Hero Canvas Card */
     .hero-canvas-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
+      border-radius: 14px;
+      padding: 1rem;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 300px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      min-height: 230px;
+      box-shadow: var(--shadow-card);
     }
 
     #flightWaveformCanvas {
       width: 100%;
-      height: 240px;
+      height: 190px;
       display: block;
     }
 
     .canvas-caption {
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
+      margin-top: 0.45rem;
+      font-size: 0.72rem;
       font-family: var(--font-mono);
       color: var(--text-muted);
       letter-spacing: 0.05em;
+      text-align: center;
     }
 
     /* Cockpit Main Workspace */
     .cockpit-section {
-      margin-bottom: 3rem;
+      margin-bottom: 2.25rem;
     }
 
     .cockpit-toolbar {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.25rem;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
+      box-shadow: var(--shadow-card);
     }
 
     .session-meta-row {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
+      flex: 1;
+      min-width: 220px;
     }
 
-    .session-select {
+    .session-select,
+    .filter-select,
+    .search-input {
       background: var(--card-surface);
       border: 1px solid var(--border);
       color: var(--text);
       font-family: var(--font-mono);
       font-size: 0.82rem;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      min-height: 44px;
+    }
+
+    .session-select {
       cursor: pointer;
-      min-height: 40px;
       max-width: 420px;
+      width: 100%;
+    }
+
+    .export-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chain-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--card-surface);
+      color: var(--text-muted);
+    }
+
+    .chain-badge.valid {
+      border-color: var(--emerald);
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+    }
+
+    .chain-badge.invalid {
+      border-color: var(--ruby);
+      color: var(--ruby);
+      background: rgba(239, 68, 68, 0.12);
     }
 
     /* Scrubber Deck */
@@ -436,9 +511,9 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-card);
     }
 
     .scrubber-header {
@@ -447,116 +522,125 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .time-indicator {
       font-family: var(--font-mono);
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--telemetry-blue);
-      text-shadow: 0 0 12px var(--telemetry-glow);
     }
 
     .playback-actions {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .scrubber-slider-wrap {
-      margin: 1rem 0 0.5rem;
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
     }
 
+    /* Range input with >=44px accessible touch area */
     .flight-slider {
       width: 100%;
-      height: 10px;
+      height: 44px;
       accent-color: var(--gold);
-      background: var(--card-surface);
-      border-radius: 5px;
+      background: transparent;
       cursor: pointer;
     }
 
     .speed-btn-group {
-      display: flex;
+      display: inline-flex;
       gap: 4px;
       background: var(--card-surface);
       padding: 3px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid var(--border);
     }
 
     .speed-btn {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--text-muted);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      min-height: 44px;
+      min-width: 44px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
     .speed-btn.active {
       background: var(--gold);
-      color: #000;
-      font-weight: 700;
+      color: var(--gold-ink);
+      font-weight: 800;
     }
 
-    /* Cockpit 4-Pane Grid */
+    /* Cockpit 2-Column Grid */
     .cockpit-grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
     }
 
     .cockpit-pane {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.15rem;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
       min-width: 0;
+      box-shadow: var(--shadow-card);
     }
 
     .pane-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
     }
 
     .pane-title {
       font-family: var(--font-display);
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 700;
       color: var(--text);
     }
 
     .terminal-box {
-      background: #000;
+      background: var(--terminal-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
       font-family: var(--font-mono);
       font-size: 0.8rem;
       color: var(--emerald);
-      height: 260px;
+      height: 270px;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.45;
+      word-break: break-word;
+      line-height: 1.5;
     }
 
     .network-nodes-box {
       background: var(--card-surface);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px;
-      min-height: 100px;
+      padding: 10px 12px;
+      min-height: 82px;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -565,7 +649,7 @@
 
     .network-pill {
       background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid var(--telemetry-blue);
       padding: 4px 10px;
       border-radius: 6px;
       font-size: 0.75rem;
@@ -589,7 +673,7 @@
       border-radius: 8px;
       padding: 10px 12px;
       list-style-type: none;
-      min-height: 120px;
+      min-height: 98px;
       max-height: 140px;
       overflow-y: auto;
       font-family: var(--font-mono);
@@ -610,12 +694,12 @@
       font-family: var(--font-mono);
     }
 
-    /* Metric Gauges */
     .metric-gauge-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 6px;
+      gap: 8px;
     }
 
     .gauge-bar-wrap {
@@ -634,13 +718,92 @@
       transition: all 0.2s ease;
     }
 
+    /* Raw Event Timeline & Inspector */
+    .inspector-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .inspector-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 0.9rem;
+    }
+
+    .inspector-controls .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .raw-events-list {
+      max-height: 300px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .raw-event-row {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+    }
+
+    .raw-event-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .ev-type-tag {
+      color: var(--telemetry-blue);
+      font-weight: 700;
+    }
+
+    .ev-hash-tag {
+      color: var(--gold);
+      font-size: 0.72rem;
+    }
+
+    .ev-sev {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+
+    .ev-sev.WARN, .ev-sev.ERROR, .ev-sev.CRITICAL {
+      color: var(--ruby);
+      border-color: var(--ruby);
+    }
+
+    .raw-event-payload {
+      color: var(--text-muted);
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
     /* Voice Incident Briefing Section */
     .briefing-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2.5rem;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-card);
     }
 
     .briefing-header {
@@ -649,7 +812,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
 
     .briefing-text-box {
@@ -658,162 +821,45 @@
       border-radius: 8px;
       padding: 14px;
       font-family: var(--font-mono);
-      font-size: 0.88rem;
-      line-height: 1.6;
+      font-size: 0.85rem;
+      line-height: 1.62;
       color: var(--text);
-      min-height: 80px;
+      min-height: 74px;
     }
 
-    /* Frosted Locked Compliance Section */
+    /* Architecture & Offline Bundle Card */
     .compliance-wrapper {
-      position: relative;
-      margin-bottom: 3.5rem;
-    }
-
-    .frosted-locked {
-      filter: blur(6px);
-      pointer-events: none;
-      user-select: none;
-      opacity: 0.6;
+      margin-bottom: 2rem;
     }
 
     .compliance-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-card);
     }
 
     .compliance-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.1rem;
     }
 
-    .lock-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-
-    .lock-card {
-      background: rgba(18, 18, 23, 0.95);
-      border: 1px solid var(--gold);
-      border-radius: 14px;
-      padding: 2rem 2.5rem;
-      text-align: center;
-      max-width: 480px;
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8), 0 0 24px var(--gold-glow);
-    }
-
-    .lock-icon {
-      font-size: 2rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .lock-title {
-      font-family: var(--font-display);
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: var(--gold);
-    }
-
-    .lock-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-bottom: 1.25rem;
-      line-height: 1.5;
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 1.25rem;
-    }
-
-    .modal-box {
-      background: var(--card-bg);
-      border: 1px solid var(--gold);
-      border-radius: 16px;
-      max-width: 520px;
-      width: 100%;
-      padding: 2rem;
-      position: relative;
-      box-shadow: 0 16px 64px rgba(0, 0, 0, 0.9), 0 0 32px var(--gold-glow);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.25rem;
-      cursor: pointer;
-    }
-
-    .modal-title {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
-      color: var(--gold);
-    }
-
-    .modal-features {
-      margin: 1.25rem 0;
-      list-style-type: none;
-    }
-
-    .modal-features li {
-      font-size: 0.88rem;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .modal-input-group {
-      display: flex;
-      gap: 8px;
-      margin: 1rem 0;
-    }
-
-    .modal-input {
-      flex: 1;
+    .feature-tile {
       background: var(--card-surface);
       border: 1px solid var(--border);
+      padding: 1rem;
       border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
     }
 
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
-      padding: 2.5rem 0;
-      margin-top: 3rem;
-      background: rgba(8, 8, 11, 0.6);
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+      background: var(--card-bg);
     }
 
     .footer-inner {
@@ -821,20 +867,26 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 16px;
-      font-size: 0.85rem;
+      gap: 12px;
+      font-size: 0.84rem;
       color: var(--text-muted);
     }
 
     .footer-links {
       display: flex;
-      gap: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 8px 6px;
       color: var(--text-muted);
       text-decoration: none;
-      transition: color 0.2s;
+      transition: color 0.16s ease;
     }
 
     .footer-links a:hover {
@@ -843,78 +895,33 @@
 
     /* Responsive */
     @media (max-width: 960px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-      .cockpit-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero,
+      .cockpit-grid,
       .compliance-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 520px) {
       .container {
-        padding: 0 0.5rem;
-      }
-      .nav-inner {
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .brand-title {
-        font-size: 0.92rem;
-      }
-      .brand-icon {
-        width: 30px;
-        height: 30px;
-      }
-      .header-actions {
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-      .header-actions .btn {
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        min-height: 32px;
-      }
-      #proStatusBadge {
-        display: none;
+        padding: 0 0.75rem;
       }
       .hero-title {
-        font-size: 1.85rem;
+        font-size: 1.7rem;
       }
-      .banner-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .banner-ctas {
-        width: 100%;
-      }
-      .banner-ctas .btn {
-        flex: 1;
-      }
-      .cockpit-toolbar {
+      .cockpit-toolbar,
+      .scrubber-header {
         flex-direction: column;
         align-items: stretch;
       }
       .session-select {
         max-width: 100%;
-        width: 100%;
-      }
-      .scrubber-header {
-        flex-direction: column;
-        align-items: stretch;
       }
       .time-indicator {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
       }
-      .playback-actions {
-        flex-wrap: wrap;
-      }
-      .lock-card {
-        padding: 1.5rem 1rem;
-        margin: 0 10px;
+      .export-btn-row .btn {
+        flex: 1 1 auto;
       }
     }
   </style>
@@ -924,22 +931,25 @@
 </head>
 <body>
 
-  <!-- Navigation Header -->
+  <!-- Single Compact Navigation Header -->
   <header>
     <div class="container">
       <div class="nav-inner">
         <a href="/" class="brand" aria-label="Agent Flight Recorder Home">
-          <img src="assets/icon.png" alt="Agent Flight Recorder Cryptographic Black Box Logo" width="36" height="36" style="border-radius: 8px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); object-fit: cover;">
+          <img src="/assets/icon.png" alt="Agent Flight Recorder Oscilloscope Emblem" width="36" height="36" style="border-radius: 8px; border: 1px solid var(--gold); object-fit: cover;">
           <div>
             <div class="brand-title">AGENT FLIGHT RECORDER</div>
-            <div style="font-size: 0.72rem; color: var(--telemetry-blue); font-family: var(--font-mono);">v0.1.0 • Black Box Telemetry Cockpit</div>
+            <div class="brand-sub">v2.6.0 • Black Box Telemetry (:8104)</div>
           </div>
         </a>
 
         <div class="header-actions">
-          <span class="badge" style="background: rgba(212,175,55,0.15); color: #F59E0B; border: 1px solid rgba(212,175,55,0.3); font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;">v2.5 SOVEREIGN</span>
-          <span id="licenseBadge" class="badge-free" data-alias="pro-badge">⚡ FREE TIER</span>
-          <button class="btn btn-gold open-pro-modal" id="btnHeaderUpgrade" aria-label="Upgrade to Pro License">Upgrade Pro</button>
+          <span id="daemonStatusPill" class="status-pill" aria-live="polite">
+            <span class="status-dot"></span>
+            <span id="daemonStatusText">Probing :8104...</span>
+          </span>
+          <button type="button" class="btn btn-outline" id="btnThemeToggle" aria-label="Toggle Light or Dark Theme">☀ Light</button>
+          <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnBuyCoffee" aria-label="Buy Us a Coffee on Stripe">☕ Buy Us a Coffee</a>
         </div>
       </div>
     </div>
@@ -947,78 +957,57 @@
 
   <main class="container">
 
-    <!-- High-Converting Sales Funnel Banner Above Main Section -->
-    <section class="sales-banner" id="salesBanner" data-alias="paywallBanner" aria-label="Founding Member Lifetime Offer">
-      <div class="banner-inner">
-        <div class="banner-content">
-          <span class="urgency-pill">⚡ FOUNDING MEMBER LAUNCH</span>
-          <div style="font-size: 0.92rem;">
-            <strong>Autonomous Black Box Telemetry:</strong> Lifetime Unlimited Access for 
-            <span class="price-strike">$79</span> 
-            <span class="price-highlight">$19</span> (Save 76%)
-          </div>
-        </div>
-        <div class="banner-ctas">
-          <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeBanner" aria-label="Instant Stripe Checkout">
-            ☕ Buy Us a Coffee (Stripe)
-          </a>
-          <button class="btn btn-cyan btn-solana-tip" id="btnSolanaBanner" aria-label="Solana Web3 Checkout">
-            Solana (SOL)
-          </button>
-          <button class="btn btn-outline open-pro-modal" id="btnActivateBanner" aria-label="Activate with Solana or License Key">
-            Activate Key
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Hero Section -->
+    <!-- Compact Hero Overview -->
     <section class="hero" aria-label="Hero Overview">
       <div>
         <div class="hero-pills">
-          <div class="hero-pill"><div class="hero-pill-dot"></div> Zero External Pip Dependencies</div>
-          <div class="hero-pill"><div class="hero-pill-dot"></div> Port 8104 Forensics Deck</div>
-          <div class="hero-pill"><div class="hero-pill-dot"></div> Single-File Bundle Exporter</div>
+          <div class="hero-pill"><div class="hero-pill-dot"></div> Python 3.10+ Stdlib • WAL SQLite</div>
+          <div class="hero-pill"><div class="hero-pill-dot"></div> SHA-256 Append-Only Hash Chain</div>
+          <div class="hero-pill"><div class="hero-pill-dot"></div> Live SSE + 4-Tool Stdio MCP</div>
         </div>
         <h1 class="hero-title">
-          Black Box Flight Recorder & <span>Time-Scrubbing Telemetry.</span>
+          Black Box Flight Recorder &amp; <span>Time-Scrubbing Forensics.</span>
         </h1>
         <p class="hero-subtitle">
-          Capture high-resolution agent session timelines and replay execution second-by-second. Synchronize terminal streams, active network egress connections, synaptic memory engrams, and prompt injection attacks with zero cloud dependencies.
+          Capture agent session timelines into local SQLite WAL storage and scrub execution millisecond-by-millisecond. Inspect terminal output, network egress, capsule executions, file mutations, and cryptographic SHA-256 chain integrity with zero external cloud calls.
         </p>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <a href="#deck" class="btn btn-cyan" aria-label="Jump to Flight Deck">Launch Scrubber Deck</a>
-          <button class="btn btn-outline open-pro-modal" aria-label="View Pro Capabilities">1-Click Offline Bundle</button>
+          <button type="button" class="btn btn-outline" id="btnHeroExport" aria-label="Export Offline HTML Bundle">Export HTML Bundle</button>
         </div>
       </div>
 
-      <!-- Oscilloscope Telemetry Canvas -->
       <div class="hero-canvas-card" aria-label="Chrono-Reticle Oscilloscope Canvas">
         <canvas id="flightWaveformCanvas" aria-label="Live oscilloscope telemetry wave"></canvas>
-        <div class="canvas-caption">CHRONO-PRISM OSCILLOSCOPE • 100HZ TELEMETRY REPLAY</div>
+        <div class="canvas-caption">CHRONO-PRISM OSCILLOSCOPE • LIVE SCRUBBER NEEDLE</div>
       </div>
     </section>
 
     <!-- Cockpit Main Workspace -->
     <section class="cockpit-section" id="deck" aria-label="Interactive Time-Scrubbing Cockpit">
-      
+
       <!-- Cockpit Toolbar -->
       <div class="cockpit-toolbar">
         <div class="session-meta-row">
-          <label for="sessionSelect" class="sr-only" style="display:none;">Select Flight Session</label>
+          <label for="sessionSelect" class="sr-only">Select Flight Session</label>
           <select id="sessionSelect" class="session-select" aria-label="Select Flight Session">
-            <option value="flt-demo-4802">flt-demo-4802 • Market Sentiment & Trade Dispatch</option>
+            <option value="">Loading sessions...</option>
           </select>
           <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
-            Dur: <strong id="activeSessionDur" style="color: var(--telemetry-blue);">4.85s</strong> • 
-            Events: <strong id="activeSessionEvents" style="color: var(--gold);">14</strong>
+            Dur: <strong id="activeSessionDur" style="color: var(--telemetry-blue);">0.00s</strong> •
+            Events: <strong id="activeSessionEvents" style="color: var(--gold);">0</strong>
           </div>
+          <span id="chainStatusBadge" class="chain-badge" title="SHA-256 append-only hash chain status">
+            SHA-256: Pending
+          </span>
         </div>
 
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-outline open-pro-modal" id="btnExportBundle" aria-label="Export Single File Bundle">
-            Export Bundle (.html)
-          </button>
+        <div class="export-btn-row">
+          <button type="button" class="btn btn-outline" id="btnVerifyChain" aria-label="Verify SHA-256 Hash Chain">Verify Chain</button>
+          <button type="button" class="btn btn-outline" id="btnExportBundle" aria-label="Export Offline HTML Bundle">.html</button>
+          <button type="button" class="btn btn-outline" id="btnExportJson" aria-label="Export JSON Telemetry">.json</button>
+          <button type="button" class="btn btn-outline" id="btnExportCsv" aria-label="Export CSV Telemetry">.csv</button>
+          <button type="button" class="btn btn-outline" id="btnExportMd" aria-label="Export Markdown Report">.md</button>
         </div>
       </div>
 
@@ -1026,68 +1015,68 @@
       <div class="scrubber-deck" aria-label="Timeline Scrubber Bar">
         <div class="scrubber-header">
           <div>
-            <div style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--gold); text-transform: uppercase;">
+            <div style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--gold); text-transform: uppercase; font-weight: 700;">
               CURRENT SCRUBBER POSITION
             </div>
-            <div class="time-indicator" id="timeDisplay">00:00.000 / 00:04.850</div>
+            <div class="time-indicator" id="timeDisplay">00:00.000 / 00:00.000</div>
           </div>
 
           <div class="playback-actions">
-            <button class="btn btn-cyan" id="btnPlayPause" aria-label="Play or Pause Replay">▶ Play</button>
-            <button class="btn btn-outline" id="btnStepBack" aria-label="Step Back 250ms">⏮ -250ms</button>
-            <button class="btn btn-outline" id="btnStepForward" aria-label="Step Forward 250ms">+250ms ⏭</button>
-            
+            <button type="button" class="btn btn-cyan" id="btnPlayPause" aria-label="Play or Pause Replay">▶ Play</button>
+            <button type="button" class="btn btn-outline" id="btnStepBack" aria-label="Step Back 250ms">⏮ -250ms</button>
+            <button type="button" class="btn btn-outline" id="btnStepForward" aria-label="Step Forward 250ms">+250ms ⏭</button>
+
             <div class="speed-btn-group" aria-label="Playback Speed Selector">
-              <button class="speed-btn active" data-speed="1.0" aria-label="1x Speed">1x</button>
-              <button class="speed-btn" data-speed="2.0" aria-label="2x Speed">2x</button>
-              <button class="speed-btn" data-speed="4.0" aria-label="4x Speed">4x</button>
+              <button type="button" class="speed-btn active" data-speed="1.0" aria-label="1x Speed">1x</button>
+              <button type="button" class="speed-btn" data-speed="2.0" aria-label="2x Speed">2x</button>
+              <button type="button" class="speed-btn" data-speed="4.0" aria-label="4x Speed">4x</button>
             </div>
           </div>
         </div>
 
         <div class="scrubber-slider-wrap">
-          <label for="timelineScrubber" class="sr-only" style="display:none;">Timeline Scrubber</label>
-          <input type="range" class="flight-slider" id="timelineScrubber" min="0" max="4850" value="0" aria-label="Timeline Scrubber Slider">
+          <label for="timelineScrubber" class="sr-only">Timeline Scrubber Slider</label>
+          <input type="range" class="flight-slider" id="timelineScrubber" min="0" max="1000" value="0" aria-label="Timeline Scrubber Slider">
         </div>
 
-        <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">
+        <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); gap: 8px;">
           <span>T+00:00.000 (BOOT)</span>
-          <span id="activeSessionCmd" style="color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">python3 -m agent_core</span>
+          <span id="activeSessionCmd" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%;">Waiting for session...</span>
           <span>MISSION END</span>
         </div>
       </div>
 
-      <!-- Cockpit 4-Pane Grid -->
+      <!-- Cockpit 2-Pane Synchronized View -->
       <div class="cockpit-grid">
-        
+
         <!-- Pane 1: Synchronized Terminal Output -->
         <div class="cockpit-pane">
           <div class="pane-title-row">
             <span class="pane-title">Synchronized Terminal Stream</span>
-            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--emerald);">LIVE STDOUT/STDERR</span>
+            <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--emerald); font-weight: 700;">LIVE STDOUT/STDERR</span>
           </div>
           <div class="terminal-box" id="terminalOutput" aria-label="Terminal Stream">[Waiting for process output...]</div>
         </div>
 
-        <!-- Pane 2: Active Network Egress & Engrams -->
+        <!-- Pane 2: Active Network Egress, Engrams & Threat/Token Gauges -->
         <div class="cockpit-pane">
           <div class="pane-title-row">
             <span class="pane-title">Network Egress (Sentinel :8095)</span>
-            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--telemetry-blue);">ACTIVE TOPOLOGY</span>
+            <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--telemetry-blue); font-weight: 700;">ACTIVE TOPOLOGY</span>
           </div>
           <div class="network-nodes-box" id="networkNodesList" aria-label="Active Network Endpoints">
             <span class="empty-hint">No outbound egress at this timestamp.</span>
           </div>
 
-          <div class="pane-title-row" style="margin-top: 0.5rem;">
+          <div class="pane-title-row" style="margin-top: 0.35rem;">
             <span class="pane-title">Synaptic Engrams (Lucy :8094)</span>
-            <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--gold);">NEURAL ANCHORS</span>
+            <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--gold); font-weight: 700;">NEURAL ANCHORS</span>
           </div>
           <ul class="engrams-box" id="engramsList" aria-label="Synaptic Engrams Triggered">
             <li class="empty-hint">No synaptic engrams triggered.</li>
           </ul>
 
-          <div style="margin-top: 0.5rem;">
+          <div style="margin-top: 0.35rem;">
             <div class="metric-gauge-row">
               <span style="font-size: 0.78rem; color: var(--text-muted);">Peak Threat Vector:</span>
               <strong id="gaugeThreatVal" style="font-family: var(--font-mono); color: var(--ruby);">0.00</strong>
@@ -1097,83 +1086,83 @@
             </div>
             <div class="metric-gauge-row">
               <span style="font-size: 0.78rem; color: var(--text-muted);">Mock Replay Token Savings:</span>
-              <strong style="font-family: var(--font-mono); color: var(--emerald);"><span id="statTokensSaved">0</span> tokens ($0.00 spend)</strong>
+              <strong style="font-family: var(--font-mono); color: var(--emerald);"><span id="statTokensSaved">0</span> tokens</strong>
             </div>
           </div>
         </div>
 
       </div>
 
+      <!-- Raw Event Timeline & Inspector (All Event Types + Filter + Search) -->
+      <div class="inspector-card" id="raw-inspector" aria-label="Raw Event Timeline Inspector">
+        <div class="pane-title-row" style="margin-bottom: 0.85rem;">
+          <span class="pane-title">Raw Event Timeline &amp; SHA-256 Inspector</span>
+          <span id="inspectorCount" style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--gold); font-weight: 700;">0 events shown</span>
+        </div>
+
+        <div class="inspector-controls">
+          <label for="eventTypeFilter" class="sr-only">Filter by Event Type</label>
+          <select id="eventTypeFilter" class="filter-select" aria-label="Filter events by type">
+            <option value="all">All Event Types</option>
+            <option value="terminal">Terminal (stdout / stderr)</option>
+            <option value="network_egress">Network Egress</option>
+            <option value="capsule_execution">Capsule Execution (:8105)</option>
+            <option value="file_mutation">File Mutation</option>
+            <option value="synaptic_engram">Synaptic Engram</option>
+            <option value="prompt_scan">Prompt Scan / Security</option>
+            <option value="system_metric">System Metric (CPU / RSS)</option>
+            <option value="mock_replay">Mock Replay</option>
+            <option value="marker">Marker / Custom</option>
+          </select>
+
+          <label for="eventSearchInput" class="sr-only">Search timeline events</label>
+          <input type="search" id="eventSearchInput" class="search-input" placeholder="Search payload, hash, command, domain..." aria-label="Search timeline events">
+        </div>
+
+        <div class="raw-events-list" id="rawEventsList" aria-label="Filtered timeline events">
+          <div class="empty-hint">No events in current scrubber window.</div>
+        </div>
+      </div>
+
       <!-- Voice Incident Briefing Section -->
-      <div class="briefing-card" id="briefing" aria-label="Kokoro Audio Briefing Section">
+      <div class="briefing-card" id="briefing" aria-label="Incident Briefing Section">
         <div class="briefing-header">
           <div>
-            <h2 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text);">
-              Voice Incident Briefing (Kokoro TTS :9394 Ready)
+            <h2 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text);">
+              Incident Debrief Summary (Web Speech / Kokoro TTS :9394)
             </h2>
             <div style="font-size: 0.78rem; color: var(--text-muted);">
-              Automated natural-language mission report synthesized from timeline telemetry.
+              Synthesized directly from recorded session events and SHA-256 chain verification.
             </div>
           </div>
-          <button class="btn btn-gold" id="btnSpeakBriefing" aria-label="Audio Briefing Button">
+          <button type="button" class="btn btn-gold" id="btnSpeakBriefing" aria-label="Read Incident Briefing Aloud">
             Audio Briefing ✦
           </button>
         </div>
 
         <div class="briefing-text-box" id="briefingText">
-          Generating incident briefing...
+          Loading incident briefing...
         </div>
       </div>
 
-      <!-- Frosted Glass Paywall: Deep-Dive Root Cause Analysis -->
-      <div class="compliance-wrapper" id="paywall" aria-label="Pro Forensic Deep-Dive">
-        <div class="section-header" style="margin-bottom: 1rem;">
-          <h2 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--text);">
-            Deep-Dive Forensic Root Cause & Single-File Bundles
-          </h2>
-          <p style="color: var(--text-muted); font-size: 0.88rem;">
-            Export self-contained HTML black box bundles with embedded JSON for offline incident post-mortems.
-          </p>
-        </div>
-
-        <div class="compliance-card frosted-locked" id="proLockedSection">
+      <!-- Offline Forensic Bundles & Architecture Notes -->
+      <div class="compliance-wrapper" id="forensic-bundles" aria-label="Forensic Export Options">
+        <div class="compliance-card">
           <div class="compliance-grid">
-            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
-              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Zero-Server Bundles</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Standalone single-file HTML viewers playable in any browser without a web server.</div>
+            <div class="feature-tile">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Self-Contained HTML Bundles</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">XSS-escaped single-file replay bundles playable offline in any browser with real SHA-256 chain status.</div>
             </div>
-            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
-              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Sub-Millisecond Diffs</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Inspect memory mutations, AST transforms, and byte-level disk diffs at exact offsets.</div>
+            <div class="feature-tile">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">SHA-256 Append-Only Chain</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Every SQLite WAL event hashes its canonical payload plus predecessor hash, detecting any row tampering via <code>/api/verify</code>.</div>
             </div>
-            <div style="background: var(--card-surface); padding: 1rem; border-radius: 8px;">
-              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Post-Mortem Root Cause</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Automated attribution linking exceptions directly to prompt injections or network timeouts.</div>
-            </div>
-          </div>
-          <button class="btn btn-gold" id="btnExportStandalone" aria-label="Export Single File Flight Bundle">Export Standalone Incident Bundle</button>
-        </div>
-
-        <!-- Glowing Lock Overlay -->
-        <div class="lock-overlay" id="forensicsLockOverlay">
-          <div class="lock-card">
-            <div class="lock-icon" aria-hidden="true">★</div>
-            <div class="lock-title">PRO FORENSIC SUITE LOCKED</div>
-            <p class="lock-desc">
-              Unlock Standalone Single-File Incident Bundles, Deep-Dive AST Diffs, and Unlimited Black Box Telemetry exports with permanent founding access.
-            </p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeOverlay" aria-label="Unlock via Stripe">
-                Unlock via Stripe ($19)
-              </a>
-              <button class="btn btn-cyan btn-solana-tip" id="btnSolanaOverlay" aria-label="Solana Web3 Checkout">
-                Solana (SOL)
-              </button>
-              <button class="btn btn-outline open-pro-modal" id="btnKeyOverlay" aria-label="Activate with Key">
-                Activate Key
-              </button>
+            <div class="feature-tile">
+              <div style="font-weight: 700; color: var(--gold); margin-bottom: 4px;">Cross-Daemon &amp; Stdio MCP</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Auto-creates sessions for sibling daemons (<code>capsule-jail-audit</code>) and exposes 4 stdio MCP tools via <code>agent-flight-recorder mcp</code>.</div>
             </div>
           </div>
+          <button type="button" class="btn btn-gold" id="btnExportStandalone" aria-label="Export Single File Flight Bundle">Export Standalone HTML Incident Bundle</button>
         </div>
       </div>
 
@@ -1181,60 +1170,54 @@
 
   </main>
 
-  <!-- Pro Modal -->
-  <div class="modal-backdrop" id="proModal" data-alias="licenseModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-box">
-      <button class="modal-close" id="closeProModal" aria-label="Close Pro Modal">&times;</button>
-      <h3 class="modal-title" id="modalTitle">⭐ AGENT FLIGHT RECORDER PRO</h3>
-      <p style="font-size: 0.88rem; color: var(--text-muted);">
-        Activate your founding member license to unlock single-file offline bundle exports and root-cause forensics.
-      </p>
-
-      <ul class="modal-features">
-        <li><span>✅</span> <strong>Zero-Server HTML Bundles:</strong> Standalone single-file incident players with embedded JSON</li>
-        <li><span>✅</span> <strong>Deep-Dive Root Cause Analysis:</strong> Automated attribution linking faults to prompts or network</li>
-        <li><span>✅</span> <strong>Sub-Millisecond AST Diffs:</strong> Inspect memory mutations and byte-level diffs at exact offsets</li>
-        <li><span>✅</span> <strong>Kokoro Audio Briefings:</strong> In-browser voice incident briefings optimized for loopback port 9394</li>
-        <li><span>✅</span> <strong>Sovereign Defense Chain:</strong> Seamless integration across ports 8094-8106 (Jail, Policy, Sentinel)</li>
-        <li><span>✅</span> <strong>Permanent Lifetime Access:</strong> All future forensic modules, CI/CD telemetry ingest, and updates</li>
-      </ul>
-
-      <div style="display: flex; gap: 10px; margin: 1.25rem 0;">
-        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeModal" style="flex: 1;" aria-label="Stripe Checkout Button">
-          Stripe ($19 Lifetime)
-        </a>
-        <button class="btn btn-outline btn-solana-tip" id="btnModalSolana" style="flex: 1;" aria-label="Solana Tip Checkout">
-          Solana Tip (SOL)
-        </button>
-      </div>
-
-      <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Already have a license or receipt key?</div>
-        <div class="modal-input-group">
-          <input type="text" id="licenseKeyInput" class="modal-input" placeholder="Enter key (e.g. FLIGHT-PRO-2026)" aria-label="License Key Input">
-          <button id="btnActivateKey" data-alias="btnActivateKey" class="btn btn-gold" aria-label="Activate License Key">Activate</button>
-        </div>
-        <div id="activationMsg" style="font-size: 0.78rem; font-family: var(--font-mono);"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer with Subtle Attribution -->
+  <!-- Clean Standardized Footer -->
   <footer>
     <div class="container">
       <div class="footer-inner">
         <div>
-          Engineered by <strong>NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: none;">@1nc0gn30</a>) • <strong>NullAI Platform</strong>
+          Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px;">@1nc0gn30</a>) • <strong>NullAI Platform</strong>
         </div>
         <div class="footer-links">
-          <a href="https://github.com/1nc0gn30/agent-flight-recorder" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+          <a href="https://github.com/1nc0gn30/agent-flight-recorder" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+          <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+          <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" id="footerSolanaTip">◎ Solana Tip (GG2e...dXoK)</a>
           <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
-          <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI</a>
         </div>
       </div>
     </div>
   </footer>
 
   <script src="/flight_deck.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-flight-recorder",
+          toolName: "Agent Flight Recorder",
+          tagline: "Local black box flight recorder & SHA-256 hash-chained forensics hub",
+          accentColor: "#D4AF37",
+          steps: [
+            {
+              icon: "✈",
+              title: "Record or Ingest Telemetry",
+              desc: "Wrap any agent command with 'agent-flight-recorder record -- <cmd>' or POST JSON events to /api/ingest."
+            },
+            {
+              icon: "⏱",
+              title: "Scrub Millisecond-by-Millisecond",
+              desc: "Drag the timeline scrubber or filter the Raw Event Inspector to replay terminal output, egress, capsule runs, and file mutations."
+            },
+            {
+              icon: "🔐",
+              title: "Verify SHA-256 Chain & Export",
+              desc: "Click Verify Chain to validate SQLite integrity, then export as offline HTML, JSON, formula-safe CSV, or Markdown."
+            }
+          ]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

@@ -158,7 +158,8 @@ class TestFlightDeckServerIntegration:
         with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/health") as resp:
             data = json.loads(resp.read().decode("utf-8"))
             assert data["status"] == "online"
-            assert data["port"] == 8104
+            assert data["port"] == self.port
+            assert data["version"] == "2.6.0"
 
     def test_sessions_and_timeline(self):
         with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/sessions") as resp:

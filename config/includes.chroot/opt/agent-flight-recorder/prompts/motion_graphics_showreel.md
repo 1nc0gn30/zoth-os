@@ -2,7 +2,7 @@
 
 **Product**: `agent-flight-recorder`
 **Tagline**: Autonomous Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI Agents
-**Entity**: NullAI (`@1nc0gn30`) • NullAI Platform
+**Entity**: 1nc0gn30 • NullAI (`@1nc0gn30`) • NullAI Platform
 **Hero Anchor Shape**: **The Chrono-Prism Reticle** (Dark Obsidian Cockpit Enclosure with Rotating Cyan `#38BDF8` Oscilloscope Waveform, Gold `#D4AF37` Time-Scrubber Needle, and Emerald `#10B981` Live Terminal Phosphor Trails)
 
 ---
@@ -47,9 +47,9 @@ Dual checkout rails pulse at bottom: Stripe 1-Click + Solana Tip.
 Primary Heading:
 "AGENT FLIGHT RECORDER"
 Subheading:
-"Autonomous Black Box Telemetry Forensics • $19 Lifetime Founding Tier"
+"Autonomous Black Box Telemetry Forensics • $0 Lifetime Founding Tier"
 Attribution:
-"Engineered by 1nc0gn30 • NullAI Platform"
+"Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform"
 Sound Effect: Resonant cinematic analog chord and warm sub-bass resolve.
 ```
 
@@ -64,5 +64,5 @@ Sound Effect: Resonant cinematic analog chord and warm sub-bass resolve.
   1. Scrub session timelines 0:00 to N:NN with synchronized terminal output.
   2. Map network egress endpoints and memory engrams at exact milliseconds.
   3. Generate voice incident briefings ready for Kokoro TTS (:9394).
-[00:22 - 00:30] Resolution & 1-Click Bundle Export: Export self-contained HTML incident files to share with your team. 100% free and open-access.
+[00:22 - 00:30] Resolution & 1-Click Bundle Export: Export self-contained HTML incident files to share with your team. Get open-access sovereign access for $0 today.
 ```

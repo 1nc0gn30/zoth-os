@@ -1,54 +1,79 @@
 /**
- * flight_deck.js - Interactive Time-Scrubbing Telemetry Forensics Hub
- * Client-Side Engine for Port 8104 Cockpit and Static Netlify Deployment.
+ * flight_deck.js - Interactive Time-Scrubbing Telemetry Forensics Hub (v2.6.0)
+ * Live SSE + SHA-256 Hash-Chain Verification + Raw Event Inspector + Multi-Format Export.
  * Zero external npm dependencies.
+ * Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
  */
 
 (function () {
   'use strict';
 
-  // State
   const state = {
-    isPro: false,
+    daemonOnline: false,
+    daemonVersion: '2.6.0',
     currentSessionId: null,
     sessions: [],
     timelineEvents: [],
-    maxOffsetMs: 10000,
+    chainStatus: null,
+    maxOffsetMs: 1000,
     currentOffsetMs: 0,
     isPlaying: false,
     playbackSpeed: 1.0,
     timer: null,
+    sse: null,
+    eventTypeFilter: 'all',
+    searchQuery: '',
   };
 
-  // Demo Fallback Session (Provides 100% utility if running statically on Netlify without backend)
-  const DEMO_SESSION = {
-    session_id: "flt-demo-4802",
-    title: "Autonomous Agent Execution • Market Sentiment & Trade Dispatch",
-    command: "python3 -m agent_core --goal 'Analyze market signals and execute hedge'",
+  // Offline Preview Sample (used ONLY when /api/health is unreachable, e.g., static Netlify)
+  const OFFLINE_DEMO_SESSION = {
+    session_id: 'flt-offline-preview',
+    title: 'Offline Preview • Agent Execution Sample (Start :8104 for Live Data)',
+    command: 'agent-flight-recorder record -- python3 -m agent_core',
     duration_seconds: 4.85,
     exit_code: 0,
-    status: "completed",
-    event_count: 14,
+    status: 'completed',
+    event_count: 10,
   };
 
-  const DEMO_EVENTS = [
-    { id: 1, offset_ms: 0, event_type: "marker", payload: { message: "Black Box Flight Recorder initialized on port 8104" }, severity: "INFO" },
-    { id: 2, offset_ms: 250, event_type: "terminal_stdout", payload: { text: "[*] Sovereign Agent runtime bootstrapping (PID 14209)..." }, severity: "INFO" },
-    { id: 3, offset_ms: 450, event_type: "prompt_scan", payload: { threat_type: "CRITICAL", score: 0.95, blocked: true, details: ["Direct Instruction Override: 'ignore prior rules'"] }, severity: "WARN" },
-    { id: 4, offset_ms: 550, event_type: "terminal_stderr", payload: { text: "[!] FIREWALL INTERCEPT: Blocked hostile prompt injection attempt (score 0.95)" }, severity: "WARN" },
-    { id: 5, offset_ms: 900, event_type: "terminal_stdout", payload: { text: "[*] Sanitized context re-routed through Sentinel Proxy (127.0.0.1:8096)" }, severity: "INFO" },
-    { id: 6, offset_ms: 1200, event_type: "network_egress", payload: { destination: "api.openai.com", host: "api.openai.com", method: "POST", bytes: 1420 }, severity: "INFO" },
-    { id: 7, offset_ms: 1400, event_type: "mock_replay", payload: { model: "gpt-4o", tokens_saved: 35, cost_saved_usd: 0.000175 }, severity: "INFO" },
-    { id: 8, offset_ms: 1650, event_type: "terminal_stdout", payload: { text: "[+] Replayed deterministic synthesis via Mock Twin: $0.00 token cost" }, severity: "INFO" },
-    { id: 9, offset_ms: 2100, event_type: "synaptic_engram", payload: { id: "engram-lucy-891", text: "Market volatility hedge authorized across sovereign liquidity rails.", importance: 0.88 }, severity: "INFO" },
-    { id: 10, offset_ms: 2400, event_type: "system_metric", payload: { cpu_percent: 4.8, memory_mb: 68.4 }, severity: "INFO" },
-    { id: 11, offset_ms: 2900, event_type: "network_egress", payload: { destination: "api.binance.com", host: "api.binance.com", method: "POST", bytes: 840 }, severity: "INFO" },
-    { id: 12, offset_ms: 3600, event_type: "terminal_stdout", payload: { text: "[*] Hedged position confirmed. Writing audit state to disk..." }, severity: "INFO" },
-    { id: 13, offset_ms: 4100, event_type: "file_mutation", payload: { path: "data/audit_trades.json", action: "append", bytes: 512 }, severity: "INFO" },
-    { id: 14, offset_ms: 4850, event_type: "terminal_stdout", payload: { text: "[✓] Mission completed cleanly with 0 errors. Flight recording finalized." }, severity: "INFO" }
+  const OFFLINE_DEMO_EVENTS = [
+    { id: 1, seq: 1, offset_ms: 0, event_type: 'marker', payload: { message: 'Offline preview session loaded (local daemon unreachable)' }, severity: 'INFO', event_hash: 'preview00000001' },
+    { id: 2, seq: 2, offset_ms: 300, event_type: 'terminal_stdout', payload: { text: '[*] Agent runtime initialized in local loopback sandbox' }, severity: 'INFO', event_hash: 'preview00000002' },
+    { id: 3, seq: 3, offset_ms: 650, event_type: 'prompt_scan', payload: { threat_type: 'CRITICAL', score: 0.94, blocked: true, details: ['Blocked instruction override'] }, severity: 'WARN', event_hash: 'preview00000003' },
+    { id: 4, seq: 4, offset_ms: 820, event_type: 'terminal_stderr', payload: { text: '[!] Prompt firewall blocked hostile payload (score 0.94)' }, severity: 'WARN', event_hash: 'preview00000004' },
+    { id: 5, seq: 5, offset_ms: 1400, event_type: 'network_egress', payload: { destination: 'api.openai.com', host: 'api.openai.com', method: 'POST', bytes: 1420 }, severity: 'INFO', event_hash: 'preview00000005' },
+    { id: 6, seq: 6, offset_ms: 1850, event_type: 'mock_replay', payload: { model: 'gpt-4o', tokens_saved: 45 }, severity: 'INFO', event_hash: 'preview00000006' },
+    { id: 7, seq: 7, offset_ms: 2300, event_type: 'capsule_execution', payload: { capsule_id: 'cap-demo-01', command: 'python3 verify.py', exit_code: 0, status: 'success' }, severity: 'INFO', event_hash: 'preview00000007' },
+    { id: 8, seq: 8, offset_ms: 2950, event_type: 'synaptic_engram', payload: { id: 'engram-891', text: 'Verified tool receipt persisted to local memory.', importance: 0.88 }, severity: 'INFO', event_hash: 'preview00000008' },
+    { id: 9, seq: 9, offset_ms: 3800, event_type: 'file_mutation', payload: { path: 'data/audit_log.json', action: 'append', bytes: 512 }, severity: 'INFO', event_hash: 'preview00000009' },
+    { id: 10, seq: 10, offset_ms: 4850, event_type: 'terminal_stdout', payload: { text: '[✓] Execution completed with exit code 0.' }, severity: 'INFO', event_hash: 'preview00000010' },
   ];
 
-  // Format Milliseconds to MM:SS.mmm
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function safeJsonForScript(obj) {
+    return JSON.stringify(obj, null, 2)
+      .replace(/&/g, '\\u0026')
+      .replace(/</g, '\\u003c')
+      .replace(/>/g, '\\u003e')
+      .replace(/\u2028/g, '\\u2028')
+      .replace(/\u2029/g, '\\u2029');
+  }
+
+  function neutralizeCsvCell(val) {
+    const s = val === null || val === undefined ? '' : String(val);
+    const safe = /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+    return '"' + safe.replace(/"/g, '""') + '"';
+  }
+
   function formatTime(ms) {
     if (isNaN(ms) || ms < 0) ms = 0;
     const totalS = ms / 1000;
@@ -57,167 +82,260 @@
     return String(m).padStart(2, '0') + ':' + String(s).padStart(6, '0');
   }
 
-  // --- License Management ---
-  function checkLicense() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === 'true' || urlParams.get('session_id')) {
-      localStorage.setItem('agent_flight_pro', 'true');
-      localStorage.setItem('zoth_flight_licensed', 'true');
-      localStorage.setItem('pro_licensed', 'true');
-      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-    }
-    state.isPro = (
-      localStorage.getItem('agent_flight_pro') === 'true' ||
-      localStorage.getItem('zoth_flight_licensed') === 'true' ||
-      localStorage.getItem('pro_licensed') === 'true'
-    );
-    updateProUI();
+  // --- Theme Toggle ---
+  function updateThemeButton() {
+    const btn = document.getElementById('btnThemeToggle');
+    if (!btn) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    btn.textContent = isLight ? '☾ Dark' : '☀ Light';
+    btn.setAttribute('aria-label', isLight ? 'Switch to Obsidian Dark Theme' : 'Switch to Editorial Ivory Light Theme');
   }
 
-  function activateKey(key) {
-    if (!key || key.trim().length < 4) return false;
-    localStorage.setItem('agent_flight_pro', 'true');
-    localStorage.setItem('zoth_flight_licensed', 'true');
-    localStorage.setItem('pro_licensed', 'true');
-    state.isPro = true;
-    updateProUI();
-    return true;
+  function initThemeToggle() {
+    updateThemeButton();
+    const btn = document.getElementById('btnThemeToggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('afr_theme', next); } catch (e) {}
+      updateThemeButton();
+    });
   }
 
-  window.activateLicenseKey = function(key) {
-    const k = (typeof key === 'string' && key) ? key : (document.getElementById('licenseKeyInput')?.value || '');
-    return activateKey(k);
-  };
-
-  window.openLicenseModal = function() {
-    const modal = document.getElementById('proModal');
-    if (modal) modal.style.display = 'flex';
-  };
-
-  function updateProUI() {
-    const badges = [
-      document.getElementById('licenseBadge'),
-      document.getElementById('pro-badge'),
-      document.getElementById('proStatusBadge')
-    ].filter(Boolean);
-    const paywallBanner = document.getElementById('salesBanner') || document.getElementById('paywallBanner');
-    const paywallCard = document.getElementById('proLockedSection');
-    const lockOverlay = document.getElementById('forensicsLockOverlay');
-
-    if (state.isPro) {
-      badges.forEach(badge => {
-        badge.innerHTML = '⭐ PRO ACTIVE';
-        badge.classList.remove('badge-free');
-        badge.classList.add('badge-pro');
-      });
-      if (paywallBanner) paywallBanner.style.display = 'none';
-      if (paywallCard) paywallCard.classList.remove('frosted-locked');
-      if (lockOverlay) lockOverlay.style.display = 'none';
+  function setDaemonStatus(online, port, version) {
+    state.daemonOnline = online;
+    const pill = document.getElementById('daemonStatusPill');
+    const txt = document.getElementById('daemonStatusText');
+    if (!pill || !txt) return;
+    pill.classList.remove('live', 'offline');
+    if (online) {
+      pill.classList.add('live');
+      txt.textContent = `LIVE :${port} (v${version || '2.6.0'})`;
     } else {
-      badges.forEach(badge => {
-        badge.innerHTML = '⚡ FREE TIER';
-        badge.classList.add('badge-free');
-        badge.classList.remove('badge-pro');
-      });
-      if (paywallBanner) paywallBanner.style.display = 'block';
-      if (paywallCard) paywallCard.classList.add('frosted-locked');
-      if (lockOverlay) lockOverlay.style.display = 'flex';
+      pill.classList.add('offline');
+      txt.textContent = 'Offline Preview';
     }
   }
 
-  // Check if running on local backend port 8104 vs static hosting / test runner
-  const isLocalDaemon = (window.location.port === "8104");
-
-  // --- Data Loading & Sessions ---
-  async function loadSessions() {
-    if (isLocalDaemon) {
-      try {
-        const resp = await fetch('/api/sessions');
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && data.sessions && data.sessions.length > 0) {
-            state.sessions = data.sessions;
-          }
+  async function probeDaemonHealth() {
+    try {
+      const resp = await fetch('/api/health', { cache: 'no-store' });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.service === 'agent-flight-recorder') {
+          state.daemonVersion = data.version || '2.6.0';
+          setDaemonStatus(true, data.port || window.location.port || 8104, state.daemonVersion);
+          return true;
         }
-      } catch (e) {
-        // Fallback to demo
+      }
+    } catch (e) {}
+    setDaemonStatus(false);
+    return false;
+  }
+
+  // --- Live SSE Telemetry Subscription ---
+  function connectSSE() {
+    if (!state.daemonOnline || typeof EventSource === 'undefined') return;
+    if (state.sse) {
+      try { state.sse.close(); } catch (e) {}
+    }
+    try {
+      const es = new EventSource('/api/stream');
+      state.sse = es;
+      es.addEventListener('timeline_event', (ev) => {
+        try {
+          const item = JSON.parse(ev.data);
+          handleLiveEvent(item);
+        } catch (e) {}
+      });
+      es.addEventListener('session_ended', () => {
+        refreshSessionsList(false);
+      });
+    } catch (e) {}
+  }
+
+  function handleLiveEvent(ev) {
+    if (!ev || !ev.session_id) return;
+    const known = state.sessions.find((s) => s.session_id === ev.session_id);
+    if (!known) {
+      refreshSessionsList(false);
+    } else {
+      known.event_count = (known.event_count || 0) + 1;
+    }
+
+    if (ev.session_id === state.currentSessionId) {
+      const exists = state.timelineEvents.some((x) => x.id && x.id === ev.id);
+      if (!exists) {
+        state.timelineEvents.push(ev);
+        const evOffset = Number(ev.offset_ms) || 0;
+        const wasAtEnd = state.currentOffsetMs >= state.maxOffsetMs - 50;
+        if (evOffset > state.maxOffsetMs) {
+          state.maxOffsetMs = Math.max(evOffset, 1000);
+          const scrubber = document.getElementById('timelineScrubber');
+          if (scrubber) scrubber.max = state.maxOffsetMs;
+        }
+        const evCountEl = document.getElementById('activeSessionEvents');
+        if (evCountEl) evCountEl.textContent = String(state.timelineEvents.length);
+        if (wasAtEnd) {
+          state.currentOffsetMs = state.maxOffsetMs;
+          const scrubber = document.getElementById('timelineScrubber');
+          if (scrubber) scrubber.value = state.currentOffsetMs;
+        }
+        scrubTo(state.currentOffsetMs);
+        verifyCurrentSessionChain();
       }
     }
+  }
 
-    if (!state.sessions || state.sessions.length === 0) {
-      state.sessions = [DEMO_SESSION];
+  // --- Sessions & Timeline Loading ---
+  async function refreshSessionsList(autoSelectFirst) {
+    if (state.daemonOnline) {
+      try {
+        const resp = await fetch('/api/sessions?limit=100', { cache: 'no-store' });
+        if (resp.ok) {
+          const data = await resp.json();
+          state.sessions = Array.isArray(data.sessions) ? data.sessions : [];
+        }
+      } catch (e) {}
+    } else {
+      state.sessions = [OFFLINE_DEMO_SESSION];
     }
 
     populateSessionSelect();
-    selectSession(state.sessions[0].session_id);
+    if (autoSelectFirst) {
+      if (state.sessions.length > 0) {
+        await selectSession(state.sessions[0].session_id);
+      } else {
+        state.currentSessionId = null;
+        state.timelineEvents = [];
+        state.maxOffsetMs = 1000;
+        updateSessionHeader(null);
+        scrubTo(0);
+        updateChainBadge(null);
+      }
+    }
   }
 
   function populateSessionSelect() {
     const select = document.getElementById('sessionSelect');
     if (!select) return;
-    select.innerHTML = '';
-    state.sessions.forEach(s => {
+    const prev = state.currentSessionId;
+    select.textContent = '';
+
+    if (!state.sessions || state.sessions.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No sessions recorded yet — ingest or record to begin';
+      select.appendChild(opt);
+      return;
+    }
+
+    state.sessions.forEach((s) => {
       const opt = document.createElement('option');
       opt.value = s.session_id;
-      opt.innerText = `${s.session_id} • ${s.title.slice(0, 42)} (${s.duration_seconds}s)`;
+      const titleShort = String(s.title || 'Session').slice(0, 42);
+      const dur = Number(s.duration_seconds || 0).toFixed(2);
+      opt.textContent = `${s.session_id} • ${titleShort} (${dur}s, ${s.event_count || 0} ev)`;
       select.appendChild(opt);
     });
 
-    select.addEventListener('change', () => {
-      selectSession(select.value);
-    });
+    if (prev && state.sessions.some((s) => s.session_id === prev)) {
+      select.value = prev;
+    }
   }
 
   async function selectSession(sid) {
+    if (!sid) return;
     state.currentSessionId = sid;
     stopPlayback();
 
-    let events = null;
-    let session = state.sessions.find(s => s.session_id === sid);
+    const session = state.sessions.find((s) => s.session_id === sid) || null;
+    let events = [];
 
-    if (isLocalDaemon && sid !== DEMO_SESSION.session_id) {
+    if (state.daemonOnline) {
       try {
-        const resp = await fetch(`/api/timeline/${sid}`);
+        const resp = await fetch(`/api/timeline/${encodeURIComponent(sid)}`, { cache: 'no-store' });
         if (resp.ok) {
           const data = await resp.json();
-          events = data.events;
+          events = Array.isArray(data.events) ? data.events : [];
         }
       } catch (e) {}
-    }
-
-    if (!events || events.length === 0) {
-      events = DEMO_EVENTS;
-      session = session || DEMO_SESSION;
+    } else if (sid === OFFLINE_DEMO_SESSION.session_id) {
+      events = OFFLINE_DEMO_EVENTS.slice();
     }
 
     state.timelineEvents = events;
-    const durMs = (session && session.duration_seconds ? session.duration_seconds * 1000 : 0);
-    const maxEvOffset = events.length > 0 ? Math.max(...events.map(e => e.offset_ms)) : 1000;
+    const durMs = session && session.duration_seconds ? Number(session.duration_seconds) * 1000 : 0;
+    const maxEvOffset = events.length > 0 ? Math.max(...events.map((e) => Number(e.offset_ms) || 0)) : 0;
     state.maxOffsetMs = Math.max(durMs, maxEvOffset, 1000);
 
     const scrubber = document.getElementById('timelineScrubber');
     if (scrubber) {
       scrubber.min = 0;
       scrubber.max = state.maxOffsetMs;
-      scrubber.value = 0;
+      scrubber.value = state.maxOffsetMs;
     }
 
     updateSessionHeader(session);
-    scrubTo(0);
-    generateVoiceBriefing();
+    // Land at latest offset so recorded telemetry is immediately visible on load
+    scrubTo(state.maxOffsetMs);
+    await verifyCurrentSessionChain();
+    await loadVoiceBriefing(sid);
   }
 
   function updateSessionHeader(session) {
-    const elTitle = document.getElementById('activeSessionTitle');
     const elCmd = document.getElementById('activeSessionCmd');
     const elDur = document.getElementById('activeSessionDur');
     const elEvents = document.getElementById('activeSessionEvents');
 
-    if (elTitle && session) elTitle.innerText = session.title;
-    if (elCmd && session) elCmd.innerText = session.command || 'No command specified';
-    if (elDur && session) elDur.innerText = (session.duration_seconds || 0).toFixed(2) + 's';
-    if (elEvents) elEvents.innerText = state.timelineEvents.length;
+    if (elCmd) elCmd.textContent = (session && session.command) ? session.command : (session ? session.title : 'No active session');
+    if (elDur) elDur.textContent = ((session && Number(session.duration_seconds)) || 0).toFixed(2) + 's';
+    if (elEvents) elEvents.textContent = String(state.timelineEvents.length);
+  }
+
+  // --- Real SHA-256 Hash Chain Verification ---
+  function updateChainBadge(info) {
+    const badge = document.getElementById('chainStatusBadge');
+    if (!badge) return;
+    badge.classList.remove('valid', 'invalid');
+    if (!state.daemonOnline) {
+      badge.textContent = 'SHA-256: Offline Preview';
+      return;
+    }
+    if (!info) {
+      badge.textContent = 'SHA-256: No Session';
+      return;
+    }
+    const shortHash = String(info.head_hash || '').slice(0, 12);
+    if (info.valid) {
+      badge.classList.add('valid');
+      badge.textContent = `SHA-256 VALID • ${shortHash}`;
+      badge.title = `Verified ${info.event_count} events • Head: ${info.head_hash}`;
+    } else {
+      badge.classList.add('invalid');
+      badge.textContent = `CHAIN BROKEN @ #${info.broken_at_event_id || '?'}`;
+      badge.title = `Tamper detected: ${info.reason || 'hash mismatch'}`;
+    }
+  }
+
+  async function verifyCurrentSessionChain() {
+    if (!state.daemonOnline || !state.currentSessionId) {
+      state.chainStatus = null;
+      updateChainBadge(null);
+      return;
+    }
+    try {
+      const resp = await fetch(`/api/verify/${encodeURIComponent(state.currentSessionId)}`, { cache: 'no-store' });
+      if (resp.ok) {
+        state.chainStatus = await resp.json();
+        updateChainBadge(state.chainStatus);
+        return;
+      }
+    } catch (e) {}
+    state.chainStatus = null;
+    updateChainBadge(null);
   }
 
   // --- Scrubber Core Logic ---
@@ -225,24 +343,26 @@
     state.currentOffsetMs = targetMs;
     const timeDisp = document.getElementById('timeDisplay');
     if (timeDisp) {
-      timeDisp.innerText = `${formatTime(targetMs)} / ${formatTime(state.maxOffsetMs)}`;
+      timeDisp.textContent = `${formatTime(targetMs)} / ${formatTime(state.maxOffsetMs)}`;
     }
 
-    const filtered = state.timelineEvents.filter(e => e.offset_ms <= targetMs);
+    const filtered = state.timelineEvents.filter((e) => (Number(e.offset_ms) || 0) <= targetMs);
 
     // 1. Synchronized Terminal Output
     const terminalOut = document.getElementById('terminalOutput');
     if (terminalOut) {
       const termLines = filtered
-        .filter(e => ['terminal_stdout', 'terminal_stderr', 'terminal'].includes(e.event_type))
-        .map(e => {
-          const text = e.payload.text || '';
-          if (e.event_type === 'terminal_stderr' || e.severity === 'WARN' || e.severity === 'ERROR') {
-            return `<span style="color: #EF4444;">${escapeHtml(text)}</span>`;
+        .filter((e) => ['terminal_stdout', 'terminal_stderr', 'terminal'].includes(e.event_type))
+        .map((e) => {
+          const text = (e.payload && e.payload.text) || '';
+          if (e.event_type === 'terminal_stderr' || e.severity === 'WARN' || e.severity === 'ERROR' || e.severity === 'CRITICAL') {
+            return `<span style="color: var(--ruby);">${escapeHtml(text)}</span>`;
           }
-          return `<span style="color: #10B981;">${escapeHtml(text)}</span>`;
+          return `<span style="color: var(--emerald);">${escapeHtml(text)}</span>`;
         });
-      terminalOut.innerHTML = termLines.length ? termLines.join('\n') : '<span style="color: #6B7280;">[Waiting for agent subprocess output...]</span>';
+      terminalOut.innerHTML = termLines.length
+        ? termLines.join('\n')
+        : '<span style="color: var(--text-muted);">[No terminal output up to this offset...]</span>';
       terminalOut.scrollTop = terminalOut.scrollHeight;
     }
 
@@ -250,18 +370,26 @@
     const networkContainer = document.getElementById('networkNodesList');
     if (networkContainer) {
       const endpoints = new Set();
-      filtered.filter(e => e.event_type === 'network_egress').forEach(e => {
-        const dest = e.payload.destination || e.payload.host || e.payload.url || 'endpoint';
+      filtered.filter((e) => e.event_type === 'network_egress').forEach((e) => {
+        const dest = (e.payload && (e.payload.destination || e.payload.host || e.payload.url)) || 'endpoint';
         endpoints.add(dest);
       });
-      networkContainer.innerHTML = '';
+      networkContainer.textContent = '';
       if (endpoints.size === 0) {
-        networkContainer.innerHTML = '<span class="empty-hint">No outbound egress at this timestamp.</span>';
+        const hint = document.createElement('span');
+        hint.className = 'empty-hint';
+        hint.textContent = 'No outbound egress at this timestamp.';
+        networkContainer.appendChild(hint);
       } else {
-        endpoints.forEach(ep => {
+        endpoints.forEach((ep) => {
           const pill = document.createElement('div');
           pill.className = 'network-pill';
-          pill.innerHTML = `<span class="pill-dot"></span> <strong>${escapeHtml(ep)}</strong>`;
+          const dot = document.createElement('span');
+          dot.className = 'pill-dot';
+          const strong = document.createElement('strong');
+          strong.textContent = ep;
+          pill.appendChild(dot);
+          pill.appendChild(strong);
           networkContainer.appendChild(pill);
         });
       }
@@ -270,49 +398,128 @@
     // 3. Synaptic Engrams
     const engramsList = document.getElementById('engramsList');
     if (engramsList) {
-      const engrams = filtered.filter(e => e.event_type === 'synaptic_engram');
-      engramsList.innerHTML = '';
+      const engrams = filtered.filter((e) => e.event_type === 'synaptic_engram');
+      engramsList.textContent = '';
       if (engrams.length === 0) {
-        engramsList.innerHTML = '<li class="empty-hint">No synaptic engrams triggered.</li>';
+        const li = document.createElement('li');
+        li.className = 'empty-hint';
+        li.textContent = 'No synaptic engrams triggered.';
+        engramsList.appendChild(li);
       } else {
-        engrams.slice(-4).forEach(en => {
+        engrams.slice(-5).forEach((en) => {
           const li = document.createElement('li');
           li.className = 'engram-item';
-          li.innerHTML = `<strong>${escapeHtml(en.payload.id || 'engram')}:</strong> ${escapeHtml(en.payload.text || '')}`;
+          const strong = document.createElement('strong');
+          strong.textContent = `${(en.payload && en.payload.id) || 'engram'}: `;
+          li.appendChild(strong);
+          li.appendChild(document.createTextNode((en.payload && en.payload.text) || ''));
           engramsList.appendChild(li);
         });
       }
     }
 
-    // 4. Threat Score & Metrics
+    // 4. Threat Score & Token Savings
     let maxThreat = 0.0;
-    filtered.filter(e => e.event_type === 'prompt_scan').forEach(e => {
-      maxThreat = Math.max(maxThreat, parseFloat(e.payload.score || 0.0));
+    filtered.filter((e) => e.event_type === 'prompt_scan').forEach((e) => {
+      maxThreat = Math.max(maxThreat, parseFloat((e.payload && e.payload.score) || 0.0));
     });
 
     const threatVal = document.getElementById('gaugeThreatVal');
     const threatFill = document.getElementById('gaugeThreatFill');
-    if (threatVal) threatVal.innerText = maxThreat.toFixed(2);
+    if (threatVal) threatVal.textContent = maxThreat.toFixed(2);
     if (threatFill) {
       threatFill.style.width = Math.min(100, Math.max(4, maxThreat * 100)) + '%';
-      threatFill.style.background = maxThreat >= 0.7 ? '#EF4444' : (maxThreat >= 0.45 ? '#F59E0B' : '#10B981');
+      threatFill.style.background = maxThreat >= 0.7 ? 'var(--ruby)' : (maxThreat >= 0.45 ? 'var(--amber)' : 'var(--emerald)');
     }
 
-    // Token savings
     let tokens = 0;
-    filtered.filter(e => e.event_type === 'mock_replay').forEach(e => {
-      tokens += parseInt(e.payload.tokens_saved || 35);
+    filtered.filter((e) => e.event_type === 'mock_replay').forEach((e) => {
+      tokens += parseInt((e.payload && e.payload.tokens_saved) || 35, 10);
     });
     const tokensEl = document.getElementById('statTokensSaved');
-    if (tokensEl) tokensEl.innerText = tokens;
+    if (tokensEl) tokensEl.textContent = String(tokens);
+
+    // 5. Raw Event Inspector
+    renderRawInspector(filtered);
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  function renderRawInspector(eventsInWindow) {
+    const listEl = document.getElementById('rawEventsList');
+    const countEl = document.getElementById('inspectorCount');
+    if (!listEl) return;
+
+    const filterType = state.eventTypeFilter;
+    const q = state.searchQuery.trim().toLowerCase();
+
+    const matched = eventsInWindow.filter((ev) => {
+      if (filterType !== 'all') {
+        if (filterType === 'terminal') {
+          if (!['terminal_stdout', 'terminal_stderr', 'terminal'].includes(ev.event_type)) return false;
+        } else if (filterType === 'marker') {
+          if (!['marker', 'custom_event'].includes(ev.event_type)) return false;
+        } else if (ev.event_type !== filterType) {
+          return false;
+        }
+      }
+      if (q) {
+        const hay = `${ev.event_type} ${ev.severity} ${ev.event_hash || ''} ${JSON.stringify(ev.payload || {})}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if (countEl) {
+      countEl.textContent = `${matched.length} of ${eventsInWindow.length} events shown`;
+    }
+
+    listEl.textContent = '';
+    if (matched.length === 0) {
+      const hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.textContent = state.timelineEvents.length === 0
+        ? '0 events recorded in this session yet.'
+        : 'No events match the current scrubber position and filter.';
+      listEl.appendChild(hint);
+      return;
+    }
+
+    matched.slice().reverse().slice(0, 120).forEach((ev) => {
+      const row = document.createElement('div');
+      row.className = 'raw-event-row';
+
+      const head = document.createElement('div');
+      head.className = 'raw-event-head';
+
+      const left = document.createElement('span');
+      const typeSpan = document.createElement('span');
+      typeSpan.className = 'ev-type-tag';
+      typeSpan.textContent = `#${ev.seq || ev.id || 0} ${ev.event_type}`;
+      left.appendChild(typeSpan);
+      left.appendChild(document.createTextNode(` · T+${((Number(ev.offset_ms) || 0) / 1000).toFixed(3)}s `));
+
+      const sev = document.createElement('span');
+      sev.className = `ev-sev ${ev.severity || 'INFO'}`;
+      sev.textContent = ev.severity || 'INFO';
+      left.appendChild(sev);
+
+      const right = document.createElement('span');
+      right.className = 'ev-hash-tag';
+      right.textContent = ev.event_hash ? `sha256:${String(ev.event_hash).slice(0, 12)}` : 'unhashed';
+
+      head.appendChild(left);
+      head.appendChild(right);
+
+      const body = document.createElement('div');
+      body.className = 'raw-event-payload';
+      body.textContent = JSON.stringify(ev.payload || {});
+
+      row.appendChild(head);
+      row.appendChild(body);
+      listEl.appendChild(row);
+    });
   }
 
-  // --- Playback Controls ---
+  // --- Playback Controls (with auto-rewind at end-of-tape) ---
   function togglePlayback() {
     if (state.isPlaying) {
       stopPlayback();
@@ -322,13 +529,18 @@
   }
 
   function startPlayback() {
+    const scrubber = document.getElementById('timelineScrubber');
+    if (state.currentOffsetMs >= state.maxOffsetMs) {
+      state.currentOffsetMs = 0;
+      if (scrubber) scrubber.value = 0;
+      scrubTo(0);
+    }
+
     state.isPlaying = true;
     const btn = document.getElementById('btnPlayPause');
-    if (btn) btn.innerHTML = '⏸ Pause';
+    if (btn) btn.textContent = '⏸ Pause';
 
-    const scrubber = document.getElementById('timelineScrubber');
     const stepMs = 50 * state.playbackSpeed;
-
     state.timer = setInterval(() => {
       state.currentOffsetMs += stepMs;
       if (state.currentOffsetMs >= state.maxOffsetMs) {
@@ -347,14 +559,13 @@
       state.timer = null;
     }
     const btn = document.getElementById('btnPlayPause');
-    if (btn) btn.innerHTML = '▶ Play';
+    if (btn) btn.textContent = '▶ Play';
   }
 
   function setSpeed(speed) {
     state.playbackSpeed = speed;
-    document.querySelectorAll('.speed-btn').forEach(b => {
-      b.classList.remove('active');
-      if (parseFloat(b.dataset.speed) === speed) b.classList.add('active');
+    document.querySelectorAll('.speed-btn').forEach((b) => {
+      b.classList.toggle('active', parseFloat(b.dataset.speed) === speed);
     });
     if (state.isPlaying) {
       stopPlayback();
@@ -362,32 +573,39 @@
     }
   }
 
-  // --- Voice Incident Briefing ---
-  function generateVoiceBriefing() {
+  // --- Incident Briefing ---
+  async function loadVoiceBriefing(sid) {
     const el = document.getElementById('briefingText');
     if (!el) return;
 
+    if (state.daemonOnline && sid) {
+      try {
+        const resp = await fetch(`/api/briefing/${encodeURIComponent(sid)}`, { cache: 'no-store' });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && data.briefing_text) {
+            el.textContent = data.briefing_text;
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+
     const filtered = state.timelineEvents;
-    const threatCount = filtered.filter(e => e.event_type === 'prompt_scan' && (e.payload.blocked || e.payload.score >= 0.7)).length;
-    const mockCount = filtered.filter(e => e.event_type === 'mock_replay').length;
-    const engramCount = filtered.filter(e => e.event_type === 'synaptic_engram').length;
+    const threatCount = filtered.filter((e) => e.event_type === 'prompt_scan' && e.payload && (e.payload.blocked || e.payload.score >= 0.7)).length;
+    const mockCount = filtered.filter((e) => e.event_type === 'mock_replay').length;
+    const engramCount = filtered.filter((e) => e.event_type === 'synaptic_engram').length;
 
-    const script = `Flight Incident Briefing for Session ${state.currentSessionId || 'Active'}. ` +
-      `Recorded ${(state.maxOffsetMs / 1000).toFixed(2)} seconds of autonomous runtime execution. ` +
-      `${threatCount} prompt injection attacks were intercepted and neutralized. ` +
-      `${mockCount} mock API transactions were replayed at zero token cost. ` +
-      `${engramCount} neural memory engrams were synthesized and anchored to Lucy Oracle. ` +
-      `Black box telemetry integrity verified 100%.`;
-
-    el.innerText = script;
+    el.textContent =
+      `Flight Incident Briefing for Session ${sid || 'None'}. ` +
+      `Recorded ${(state.maxOffsetMs / 1000).toFixed(2)} seconds (${filtered.length} events). ` +
+      `${threatCount} prompt threats flagged, ${mockCount} mock replays recorded, and ${engramCount} synaptic engrams logged.`;
   }
 
   function playVoiceBriefing() {
     const el = document.getElementById('briefingText');
     if (!el) return;
-    const text = el.innerText;
-
-    // Use Web Speech Synthesis API
+    const text = el.textContent;
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -396,22 +614,20 @@
       window.speechSynthesis.speak(utterance);
       const btn = document.getElementById('btnSpeakBriefing');
       if (btn) {
-        const orig = btn.innerText;
-        btn.innerText = 'Speaking... 🔊';
-        utterance.onend = () => { btn.innerText = orig; };
+        const orig = btn.textContent;
+        btn.textContent = 'Speaking... 🔊';
+        utterance.onend = () => { btn.textContent = orig; };
       }
-    } else {
-      console.log("Telemetry voice briefing ready.");
     }
   }
 
-  // --- Kinetic Oscilloscope Waveform Canvas ---
+  // --- Theme-Aware Kinetic Oscilloscope Waveform Canvas ---
   function initOscilloscopeCanvas() {
     const canvas = document.getElementById('flightWaveformCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let width = canvas.width = canvas.offsetWidth;
-    let height = canvas.height = canvas.offsetHeight;
+    let width = canvas.width = canvas.offsetWidth || 420;
+    let height = canvas.height = canvas.offsetHeight || 190;
 
     window.addEventListener('resize', () => {
       if (canvas.offsetWidth && canvas.offsetHeight) {
@@ -421,46 +637,43 @@
     });
 
     let phase = 0;
-
     function draw() {
+      const styles = getComputedStyle(document.documentElement);
+      const gridColor = styles.getPropertyValue('--grid-line').trim() || 'rgba(56, 189, 248, 0.1)';
+      const waveColor = styles.getPropertyValue('--telemetry-blue').trim() || '#38BDF8';
+      const needleColor = styles.getPropertyValue('--gold').trim() || '#D4AF37';
+
       ctx.clearRect(0, 0, width, height);
 
-      // Draw background grid lines
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
-      for (let x = 0; x < width; x += 30) {
+      for (let x = 0; x < width; x += 28) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
       }
-      for (let y = 0; y < height; y += 25) {
+      for (let y = 0; y < height; y += 24) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
       }
 
-      // Draw oscilloscope telemetry wave
-      phase += 0.04;
+      phase += 0.035;
       const cy = height / 2;
 
       ctx.beginPath();
-      ctx.strokeStyle = '#38BDF8';
-      ctx.lineWidth = 2;
-      ctx.shadowColor = '#38BDF8';
-      ctx.shadowBlur = 10;
-
+      ctx.strokeStyle = waveColor;
+      ctx.lineWidth = 2.2;
       for (let x = 0; x < width; x++) {
-        const normalizedX = x / width;
-        const wave1 = Math.sin(normalizedX * 12 + phase) * 25;
-        const wave2 = Math.sin(normalizedX * 24 - phase * 1.5) * 12;
-        const pulse = state.isPlaying ? Math.sin(normalizedX * 4 + phase * 3) * 15 : 0;
-        const y = cy + wave1 + wave2 + pulse;
+        const nx = x / width;
+        const w1 = Math.sin(nx * 12 + phase) * 22;
+        const w2 = Math.sin(nx * 24 - phase * 1.4) * 10;
+        const pulse = state.isPlaying ? Math.sin(nx * 4 + phase * 3) * 14 : 0;
+        const y = cy + w1 + w2 + pulse;
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
-      ctx.shadowBlur = 0;
 
-      // Scrubber needle line
-      const needleX = (state.currentOffsetMs / (state.maxOffsetMs || 1)) * width;
-      ctx.strokeStyle = '#D4AF37';
-      ctx.lineWidth = 2;
+      const needleX = Math.max(1, Math.min(width - 1, (state.currentOffsetMs / (state.maxOffsetMs || 1)) * width));
+      ctx.strokeStyle = needleColor;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(needleX, 0);
       ctx.lineTo(needleX, height);
@@ -471,145 +684,131 @@
     draw();
   }
 
-  // --- Client-Side Single-File Bundle Exporter ---
-  function downloadOfflineBundle() {
-    const activeSession = state.sessions.find(s => s.session_id === state.currentSessionId) || DEMO_SESSION;
-    const bundleData = {
-      session: activeSession,
-      events: state.timelineEvents,
-      exported_at: new Date().toISOString(),
-      generator: "Agent Flight Recorder Pro (v0.1.0)"
-    };
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Flight Recording • ${activeSession.session_id}</title>
-<style>
-body { background: #08080B; color: #F3F4F6; font-family: 'JetBrains Mono', monospace; padding: 2rem; margin: 0; }
-h1 { color: #D4AF37; font-family: sans-serif; font-size: 1.4rem; }
-.meta-box { background: #121217; border: 1px solid #272733; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; }
-pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #38BDF8; font-size: 0.85rem; line-height: 1.5; }
-</style>
-</head>
-<body>
-<h1>✈ AGENT FLIGHT RECORDER • STANDALONE INCIDENT BUNDLE</h1>
-<div class="meta-box">
-  <div><strong>Session ID:</strong> ${activeSession.session_id}</div>
-  <div><strong>Command:</strong> ${activeSession.command || 'N/A'}</div>
-  <div><strong>Duration:</strong> ${activeSession.duration_seconds || 0}s • <strong>Events:</strong> ${state.timelineEvents.length}</div>
-  <div><strong>Exported:</strong> ${bundleData.exported_at} • <strong>Security Attestation:</strong> Valid Cryptographic Seal</div>
-</div>
-<h2 style="font-size: 1rem; color: #10B981;">CRYPTOGRAPHIC EVENT TIMELINE</h2>
-<pre id="data">${escapeHtml(JSON.stringify(bundleData, null, 2))}</pre>
-</body>
-</html>`;
-
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+  // --- Multi-Format Exporters (Server-backed when online; safe client fallback offline) ---
+  function triggerBlobDownload(content, mime, filename) {
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `flight-bundle-${state.currentSessionId || 'incident'}.html`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
 
-  // --- Modals & Export ---
-  function initModals() {
-    const modal = document.getElementById('proModal');
-    const openBtns = document.querySelectorAll('.open-pro-modal');
-    const closeBtn = document.getElementById('closeProModal');
-    const btnActivate = document.getElementById('btnActivateKey');
-    const inputKey = document.getElementById('licenseKeyInput');
-    const msg = document.getElementById('activationMsg');
-
-    openBtns.forEach(b => {
-      b.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (modal) modal.style.display = 'flex';
-      });
-    });
-
-    if (closeBtn && modal) {
-      closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+  function exportFormat(fmt) {
+    const sid = state.currentSessionId;
+    if (state.daemonOnline && sid) {
+      const endpoint = fmt === 'html' ? '/api/export/bundle' : `/api/export/${fmt}`;
+      window.location.href = `${endpoint}?session_id=${encodeURIComponent(sid)}`;
+      return;
     }
 
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.style.display = 'none';
-      });
+    const activeSession = state.sessions.find((s) => s.session_id === sid) || OFFLINE_DEMO_SESSION;
+    const safeFile = String(activeSession.session_id || 'incident').replace(/[^A-Za-z0-9._-]/g, '_');
+
+    if (fmt === 'json') {
+      const payload = {
+        schema: 'agent-flight-recorder/v2.6.0',
+        exported_at_utc: new Date().toISOString(),
+        session: activeSession,
+        hash_chain: state.chainStatus || { valid: false, head_hash: 'offline-preview' },
+        events: state.timelineEvents,
+      };
+      triggerBlobDownload(JSON.stringify(payload, null, 2), 'application/json;charset=utf-8', `flight-incident-${safeFile}.json`);
+      return;
     }
 
-    if (btnActivate && inputKey) {
-      btnActivate.addEventListener('click', () => {
-        if (activateKey(inputKey.value)) {
-          if (msg) {
-            msg.innerText = 'License verified! Pro Flight Suite unlocked.';
-            msg.style.color = '#10B981';
-          }
-          setTimeout(() => { if (modal) modal.style.display = 'none'; }, 1000);
-        } else {
-          if (msg) {
-            msg.innerText = 'Invalid license key. Check your Stripe or Solana receipt.';
-            msg.style.color = '#EF4444';
-          }
-        }
+    if (fmt === 'csv') {
+      const header = ['session_id', 'event_id', 'seq', 'offset_ms', 'event_type', 'severity', 'event_hash', 'payload_json'];
+      const rows = [header.join(',')];
+      state.timelineEvents.forEach((ev) => {
+        rows.push([
+          neutralizeCsvCell(activeSession.session_id),
+          neutralizeCsvCell(ev.id || ''),
+          neutralizeCsvCell(ev.seq || ''),
+          neutralizeCsvCell(ev.offset_ms || 0),
+          neutralizeCsvCell(ev.event_type || ''),
+          neutralizeCsvCell(ev.severity || 'INFO'),
+          neutralizeCsvCell(ev.event_hash || ''),
+          neutralizeCsvCell(JSON.stringify(ev.payload || {})),
+        ].join(','));
       });
+      triggerBlobDownload(rows.join('\n') + '\n', 'text/csv;charset=utf-8', `flight-incident-${safeFile}.csv`);
+      return;
     }
 
-    // Action Interceptors: Export Buttons
-    const exportBtns = [
-      document.getElementById('btnExportBundle'),
-      document.getElementById('btnExportStandalone')
-    ].filter(Boolean);
-
-    exportBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (!state.isPro) {
-          if (modal) modal.style.display = 'flex';
-        } else {
-          downloadOfflineBundle();
-        }
+    if (fmt === 'markdown') {
+      const lines = [
+        `# Agent Flight Recorder Report — \`${activeSession.session_id}\``,
+        '',
+        `- **Title:** ${activeSession.title || 'Session'}`,
+        `- **Events:** ${state.timelineEvents.length}`,
+        `- **Generator:** agent-flight-recorder v2.6.0 (Engineered by Neal Frazier Tech @1nc0gn30 • NullAI Platform)`,
+        '',
+        '| Seq | Offset (ms) | Type | Severity | Payload |',
+        '| :-: | --: | :--- | :---: | :--- |',
+      ];
+      state.timelineEvents.forEach((ev, i) => {
+        const p = JSON.stringify(ev.payload || {}).replace(/\|/g, '\\|');
+        lines.push(`| ${ev.seq || i + 1} | ${ev.offset_ms || 0} | \`${ev.event_type}\` | \`${ev.severity || 'INFO'}\` | \`${p}\` |`);
       });
-    });
+      triggerBlobDownload(lines.join('\n') + '\n', 'text/markdown;charset=utf-8', `flight-incident-${safeFile}.md`);
+      return;
+    }
 
-    // Solana Tip Web3 Checkout
-    const solana-tipBtns = document.querySelectorAll('.btn-solana-tip');
-    solana-tipBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.SolanaTip && window.SolanaTip.Payment) {
-          try {
-            window.SolanaTip.Payment({
-              accept: [
-                {
-                  blockchain: 'solana',
-                  token: '11111111111111111111111111111111',
-                  receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-                  amount: 19
-                }
-              ]
-            });
-            return;
-          } catch (err) {
-            console.warn('Solana Direct widget fallback:', err);
-          }
-        }
-        window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
-      });
+    // XSS-safe offline HTML fallback
+    const safeSid = escapeHtml(activeSession.session_id);
+    const safeCmd = escapeHtml(activeSession.command || 'N/A');
+    const bundleJson = safeJsonForScript({
+      session: activeSession,
+      events: state.timelineEvents,
+      hash_chain: state.chainStatus || { valid: false, head_hash: 'offline-preview' },
+      exported_at: new Date().toISOString(),
+      generator: 'Agent Flight Recorder v2.6.0',
     });
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Flight Recording • ${safeSid}</title>
+<style>
+body { background: #08080B; color: #F3F4F6; font-family: ui-monospace, monospace; padding: 1.5rem; margin: 0; }
+h1 { color: #D4AF37; font-family: sans-serif; font-size: 1.3rem; }
+.meta-box { background: #121217; border: 1px solid #272733; padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; }
+pre { background: #05060A; border: 1px solid #272733; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #38BDF8; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+<h1>AGENT FLIGHT RECORDER v2.6.0 • OFFLINE INCIDENT BUNDLE</h1>
+<div class="meta-box">
+  <div><strong>Session ID:</strong> ${safeSid}</div>
+  <div><strong>Command:</strong> ${safeCmd}</div>
+  <div><strong>Events:</strong> ${state.timelineEvents.length} • <strong>Chain:</strong> Offline Preview (unverified)</div>
+</div>
+<pre id="bundleOut"></pre>
+<script>
+const BUNDLE = ${bundleJson};
+document.getElementById('bundleOut').textContent = JSON.stringify(BUNDLE, null, 2);
+</script>
+</body>
+</html>`;
+    triggerBlobDownload(htmlContent, 'text/html;charset=utf-8', `flight-incident-${safeFile}.html`);
   }
 
   // --- Init on DOM Ready ---
-  document.addEventListener('DOMContentLoaded', () => {
-    checkLicense();
-    loadSessions();
+  document.addEventListener('DOMContentLoaded', async () => {
+    initThemeToggle();
     initOscilloscopeCanvas();
-    initModals();
+
+    const select = document.getElementById('sessionSelect');
+    if (select) {
+      select.addEventListener('change', () => {
+        if (select.value) selectSession(select.value);
+      });
+    }
 
     const scrubber = document.getElementById('timelineScrubber');
     if (scrubber) {
@@ -642,14 +841,54 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
       });
     }
 
-    document.querySelectorAll('.speed-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        setSpeed(parseFloat(b.dataset.speed));
-      });
+    document.querySelectorAll('.speed-btn').forEach((b) => {
+      b.addEventListener('click', () => setSpeed(parseFloat(b.dataset.speed)));
     });
+
+    const typeFilter = document.getElementById('eventTypeFilter');
+    if (typeFilter) {
+      typeFilter.addEventListener('change', () => {
+        state.eventTypeFilter = typeFilter.value;
+        scrubTo(state.currentOffsetMs);
+      });
+    }
+
+    const searchInput = document.getElementById('eventSearchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        state.searchQuery = searchInput.value;
+        scrubTo(state.currentOffsetMs);
+      });
+    }
+
+    const btnVerify = document.getElementById('btnVerifyChain');
+    if (btnVerify) btnVerify.addEventListener('click', verifyCurrentSessionChain);
+
+    const bindExport = (id, fmt) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', (e) => { e.preventDefault(); exportFormat(fmt); });
+    };
+    bindExport('btnHeroExport', 'html');
+    bindExport('btnExportBundle', 'html');
+    bindExport('btnExportStandalone', 'html');
+    bindExport('btnExportJson', 'json');
+    bindExport('btnExportCsv', 'csv');
+    bindExport('btnExportMd', 'markdown');
 
     const btnSpeak = document.getElementById('btnSpeakBriefing');
     if (btnSpeak) btnSpeak.addEventListener('click', playVoiceBriefing);
-  });
 
+    const solLink = document.getElementById('footerSolanaTip');
+    if (solLink) {
+      solLink.addEventListener('click', () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK').catch(() => {});
+        }
+      });
+    }
+
+    await probeDaemonHealth();
+    await refreshSessionsList(true);
+    connectSSE();
+  });
 })();

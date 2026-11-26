@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""
+agent-flight-recorder-tui — Live Terminal Forensics Viewer (v2.6.0)
+Queries 127.0.0.1:8104 (/health, /api/stats, /api/sessions, /api/verify/<sid>) with
+honest offline SQLite fallback. Zero external pip dependencies.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.request
+from typing import Any, Dict, List, Optional
+
+VERSION = "2.6.0"
+
+
+def _resolve_repo_dir() -> str:
+    for path in (
+        os.path.expanduser("~/NullAITech/agent-flight-recorder"),
+        "/opt/agent-flight-recorder",
+        os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")),
+    ):
+        if os.path.isdir(os.path.join(path, "src", "agent_flight_recorder")):
+            return path
+    return os.path.expanduser("~/NullAITech/agent-flight-recorder")
+
+
+REPO_DIR = _resolve_repo_dir()
+SRC_DIR = os.path.join(REPO_DIR, "src")
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+
+def _fetch_json(url: str, timeout: float = 1.2) -> Optional[Any]:
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as resp:
+            if resp.status == 200:
+                return json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+    return None
+
+
+def collect_snapshot(port: int, db_path: str) -> Dict[str, Any]:
+    base = f"http://127.0.0.1:{port}"
+    health = _fetch_json(f"{base}/health")
+    online = bool(health and health.get("service") == "agent-flight-recorder")
+
+    stats: Dict[str, Any] = {}
+    sessions: List[Dict[str, Any]] = []
+    latest_chain: Optional[Dict[str, Any]] = None
+    source = "daemon" if online else "sqlite_offline"
+
+    if online:
+        stats = _fetch_json(f"{base}/api/stats") or {}
+        sess_resp = _fetch_json(f"{base}/api/sessions?limit=8") or {}
+        sessions = sess_resp.get("sessions") or []
+        if sessions:
+            sid = sessions[0]["session_id"]
+            latest_chain = _fetch_json(f"{base}/api/verify/{sid}")
+    else:
+        try:
+            from agent_flight_recorder.storage import FlightStorage
+
+            if os.path.exists(db_path):
+                st = FlightStorage(db_path=db_path)
+                stats = st.get_db_stats()
+                sessions = st.get_sessions(limit=8)
+                if sessions:
+                    latest_chain = st.verify_session_chain(sessions[0]["session_id"])
+            else:
+                stats = {
+                    "total_sessions": 0,
+                    "total_events": 0,
+                    "total_recorded_duration_s": 0.0,
+                    "storage_size_bytes": 0,
+                    "storage_size_kb": 0.0,
+                }
+        except Exception as exc:
+            stats = {"error": str(exc)}
+
+    return {
+        "service": "agent-flight-recorder",
+        "version": VERSION,
+        "source": source,
+        "daemon_online": online,
+        "endpoint": base,
+        "db_path": db_path,
+        "health": health,
+        "stats": stats,
+        "sessions": sessions,
+        "latest_chain": latest_chain,
+        "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "attribution": "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+    }
+
+
+def render_text(snap: Dict[str, Any]) -> str:
+    stats = snap.get("stats") or {}
+    sessions = snap.get("sessions") or []
+    chain = snap.get("latest_chain")
+    mode_str = f"LIVE DAEMON ({snap['endpoint']})" if snap["daemon_online"] else f"OFFLINE SQLITE ({snap['db_path']})"
+
+    lines = [
+        "=" * 78,
+        f"  AGENT FLIGHT RECORDER v{VERSION} // LIVE TELEMETRY FORENSICS TUI",
+        f"  Source   : {mode_str}",
+        f"  Time UTC : {snap['timestamp_utc']}",
+        "-" * 78,
+        f"  Sessions : {stats.get('total_sessions', 0):<8}  "
+        f"Events : {stats.get('total_events', 0):<10}  "
+        f"Flight : {stats.get('total_recorded_duration_s', 0)}s  "
+        f"DB : {stats.get('storage_size_kb', 0)} KB",
+    ]
+    if chain:
+        c_state = "VALID" if chain.get("valid") else f"BROKEN@{chain.get('broken_at_event_id')}"
+        lines.append(
+            f"  Latest SHA-256 Chain ({chain.get('session_id')}): {c_state} "
+            f"[head: {str(chain.get('head_hash', ''))[:16]}]"
+        )
+    lines.append("-" * 78)
+    lines.append(f"  {'SESSION ID':<22} {'STATUS':<10} {'EVENTS':>6} {'DUR(s)':>8}  TITLE")
+    if not sessions:
+        lines.append("  (No recorded sessions found)")
+    else:
+        for s in sessions:
+            sid = str(s.get("session_id", ""))[:22]
+            st = str(s.get("status", ""))[:10]
+            ev = int(s.get("event_count") or 0)
+            dur = float(s.get("duration_seconds") or 0.0)
+            title = str(s.get("title", ""))[:30]
+            lines.append(f"  {sid:<22} {st:<10} {ev:>6} {dur:>8.2f}  {title}")
+    lines.append("-" * 78)
+    lines.append("  Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="agent-flight-recorder-tui",
+        description=f"Agent Flight Recorder v{VERSION} — Live Terminal Forensics TUI",
+    )
+    parser.add_argument("-v", "--version", action="version", version=f"agent-flight-recorder-tui v{VERSION}")
+    parser.add_argument("--port", type=int, default=8104, help="Daemon loopback port (default: 8104)")
+    parser.add_argument("--db", default=os.path.join(REPO_DIR, "flight_recorder.db"), help="Offline SQLite fallback DB")
+    parser.add_argument("--once", action="store_true", help="Print one telemetry frame and exit")
+    parser.add_argument("--json", action="store_true", help="Emit live telemetry snapshot as JSON and exit")
+    parser.add_argument("--interval", type=float, default=2.0, help="Refresh interval in seconds for watch mode")
+    args = parser.parse_args()
+
+    if args.json:
+        print(json.dumps(collect_snapshot(args.port, args.db), indent=2))
+        return
+
+    if args.once or not sys.stdout.isatty():
+        print(render_text(collect_snapshot(args.port, args.db)))
+        return
+
+    try:
+        while True:
+            snap = collect_snapshot(args.port, args.db)
+            sys.stdout.write("\033[2J\033[H")
+            sys.stdout.write(render_text(snap) + "\n  Press Ctrl+C to exit.\n")
+            sys.stdout.flush()
+            time.sleep(max(0.5, args.interval))
+    except KeyboardInterrupt:
+        print("\nExited Agent Flight Recorder TUI.")
+
+
+if __name__ == "__main__":
+    main()

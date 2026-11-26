@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+"""
+agent-flight-recorder — ZothOS CLI Wrapper (v2.6.0)
+Auto-resolves ~/NullAITech/agent-flight-recorder or /opt/agent-flight-recorder.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+
+TOOL_ID = "agent-flight-recorder"
+TOOL_REPO = "agent-flight-recorder"
+TOOL_NAME = "Agent Flight Recorder"
+TOOL_DESC = (
+    "Local Python 3.10+ black box flight recorder, SHA-256 hash-chained SQLite timeline, "
+    "time-scrubbing cockpit (:8104), and stdio MCP forensics hub for AI agents."
+)
+TOOL_VERSION = "2.6.0"
+TOOL_CATEGORY = "Forensics & Telemetry"
+TOOL_PORT = 8104
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+
+
+def _resolve_repo_dir() -> str:
+    candidates = [
+        os.path.expanduser(f"~/NullAITech/{TOOL_REPO}"),
+        f"/opt/{TOOL_REPO}",
+        os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")),
+    ]
+    for path in candidates:
+        if os.path.isdir(os.path.join(path, "src", "agent_flight_recorder")):
+            return path
+    return candidates[0]
+
+
+REPO_DIR = _resolve_repo_dir()
+PKG_DIR = os.path.join(REPO_DIR, "src")
+
+
+def _run_native_cli(cli_args):
+    env = os.environ.copy()
+    env["PYTHONPATH"] = PKG_DIR + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+    res = subprocess.run([sys.executable, "-m", "agent_flight_recorder.cli"] + cli_args, cwd=REPO_DIR, env=env)
+    sys.exit(res.returncode)
+
+
+def _query_daemon_and_db(port: int, db_path: str):
+    health = None
+    stats = None
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1.2) as resp:
+            if resp.status == 200:
+                health = json.loads(resp.read().decode("utf-8"))
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/stats", timeout=1.2) as resp:
+            if resp.status == 200:
+                stats = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        pass
+
+    local_stats = None
+    recent_sessions = []
+    if PKG_DIR not in sys.path:
+        sys.path.insert(0, PKG_DIR)
+    try:
+        from agent_flight_recorder.storage import FlightStorage
+
+        if os.path.exists(db_path):
+            st = FlightStorage(db_path=db_path)
+            local_stats = st.get_db_stats()
+            recent_sessions = st.get_sessions(limit=5)
+    except Exception:
+        pass
+
+    return health, stats if stats is not None else local_stats, recent_sessions
+
+
+def main():
+    args = sys.argv[1:]
+
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = shutil.which("electron") or "/usr/local/bin/electron"
+        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, "electron", "main.cjs")] + rem, cwd=REPO_DIR).returncode)
+
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        tui_bin = shutil.which(f"{TOOL_ID}-tui") or os.path.join(REPO_DIR, "bin", f"{TOOL_ID}-tui")
+        sys.exit(subprocess.run([tui_bin] + rem).returncode)
+
+    native_subcommands = {"record", "serve", "export", "verify", "mcp", "status"}
+    if args and args[0] in native_subcommands:
+        _run_native_cli(args)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
+        epilog=(
+            "Subcommands:\n"
+            "  record [--with-proxy] -- <cmd>       Record an agent execution session into SQLite\n"
+            "  serve [--host 127.0.0.1] [--port 8104] Launch Time-Scrubbing Flight Deck UI\n"
+            "  export --session <id> [--output f]   Export XSS-safe standalone HTML incident bundle\n"
+            "  verify [--session <id>] [--json]     Verify SHA-256 hash chain integrity\n"
+            "  mcp [--db <path>]                    Run JSON-RPC 2.0 stdio MCP server (4 tools)\n"
+            "  status [--port 8104] [--json]        Query live daemon & SQLite storage metrics\n"
+            "  tui [--once] [--json]                Launch live terminal telemetry viewer\n"
+            "  electron                             Launch sandboxed Electron workstation\n\n"
+            "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("-v", "--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local daemon & SQLite storage status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local workbench URL")
+    parser.add_argument("--port", type=int, default=TOOL_PORT, help="Loopback daemon port (default: 8104)")
+    parser.add_argument("--db", default=os.path.join(REPO_DIR, "flight_recorder.db"), help="SQLite DB path")
+
+    # Strict parse_args() so unknown subcommands/flags exit with status 2!
+    parsed = parser.parse_args(args)
+
+    port = parsed.port
+    local_port_url = f"http://127.0.0.1:{port}"
+    if parsed.ui:
+        print(local_port_url)
+        return
+
+    health, stats, recent_sessions = _query_daemon_and_db(port, parsed.db)
+    is_live = health is not None
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": os.path.isdir(REPO_DIR),
+        "repo_path": REPO_DIR,
+        "native_cli": os.path.join(PKG_DIR, "agent_flight_recorder", "cli.py"),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": local_port_url,
+        "daemon_live": is_live,
+        "health": health,
+        "stats": stats or {"total_sessions": 0, "total_events": 0, "total_recorded_duration_s": 0.0, "storage_size_kb": 0.0},
+        "recent_sessions": recent_sessions,
+        "license": "100% Free & Open Access (MIT)",
+        "attribution": "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+        "status": "ACTIVE" if is_live else "READY",
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    st_summary = info["stats"]
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Repository : {REPO_DIR}")
+    print(f"  Workbench  : {STUDIO_URL}")
+    print(f"  Local Port : {local_port_url} (Daemon: {'ACTIVE' if is_live else 'OFFLINE'})")
+    print(
+        f"  SQLite DB  : {st_summary.get('total_sessions', 0)} sessions, "
+        f"{st_summary.get('total_events', 0)} events ({st_summary.get('storage_size_kb', 0)} KB)"
+    )
+    print("  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)")
+    print("  Attribution: Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform")
+    print("\nSubcommands:")
+    print("  agent-flight-recorder record -- <cmd>              Record an agent execution session")
+    print("  agent-flight-recorder serve [--port 8104]          Launch Time-Scrubbing Flight Deck UI")
+    print("  agent-flight-recorder export --session <id>        Export standalone HTML incident bundle")
+    print("  agent-flight-recorder verify --session <id>        Verify SHA-256 hash chain integrity")
+    print("  agent-flight-recorder mcp                          Run stdio JSON-RPC 2.0 MCP server")
+    print("  agent-flight-recorder-tui [--once] [--json]        Launch live telemetry TUI")
+
+
+if __name__ == "__main__":
+    main()
