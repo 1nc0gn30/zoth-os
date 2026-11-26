@@ -1,5 +1,5 @@
 [Unit]
-Description=ZothOS Agent Egress Sentinel & Network Telemetry Sniffer
+Description=ZothOS Agent Egress Sentinel v2.6.0 — Userspace Egress Proxy & Radar
 After=network.target multi-user.target
 Wants=network.target
 
@@ -8,10 +8,14 @@ Type=simple
 User=zoth
 EnvironmentFile=-/etc/zothos/paths.conf
 WorkingDirectory=%h
-ExecStart=/usr/local/bin/zoth-run-repo agent-egress-sentinel /opt/zothos-ai-env/bin/python3 -m agent_egress_sentinel.cli serve --web-host 127.0.0.1 --web-port 8095 --proxy-host 127.0.0.1 --proxy-port 8096
+ExecStart=/usr/local/bin/zoth-run-repo agent-egress-sentinel /opt/zothos-ai-env/bin/python3 -m agent_egress_sentinel.cli serve --web-host 127.0.0.1 --web-port 8095 --proxy-host 127.0.0.1 --proxy-port 8195
 Restart=always
 RestartSec=3
-KillMode=process
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+ReadWritePaths=/tmp %h/.agent_egress %h/.config/agent-egress-sentinel %h/.local/share/agent-egress-sentinel
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
