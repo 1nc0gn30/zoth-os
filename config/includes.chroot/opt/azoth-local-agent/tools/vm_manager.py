@@ -5,12 +5,15 @@ Supports Docker/Podman Guest OS, local isolated Sandbox PTY, and QEMU micro-VM h
 """
 
 import os
+import sys
+import shlex
 import subprocess
 import shutil
 import time
 import logging
 from typing import Dict, Any, List, Optional
 from pathlib import Path
+from tools.security import validate_package_name
 
 logger = logging.getLogger("azoth.vm_manager")
 
@@ -25,7 +28,7 @@ class GuestOSManager:
     def __init__(self):
         WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
         try:
-            os.chmod(WORKSPACE_DIR, 0o777)
+            os.chmod(WORKSPACE_DIR, 0o750)
         except Exception:
             pass
         self._backend = self._detect_backend()
@@ -222,11 +225,33 @@ class GuestOSManager:
                     "target": "guest_os"
                 }
         else:
-            # Fallback to local sandbox directory
+            if os.getenv("AZOTH_ALLOW_HOST_FALLBACK") != "1":
+                return {
+                    "stdout": "",
+                    "stderr": (
+                        "Host shell fallback disabled by default: Docker or Podman container runtime is required. "
+                        "Set AZOTH_ALLOW_HOST_FALLBACK=1 explicitly to allow local sandbox host execution."
+                    ),
+                    "exit_code": 126,
+                    "duration_ms": int((time.time() - t0) * 1000),
+                    "backend": "local_sandbox",
+                    "target": "blocked",
+                }
+            # Explicit opt-in local sandbox directory execution
             run_dir = workdir or str(WORKSPACE_DIR)
             cmd_to_run = command.replace("/workspace", str(WORKSPACE_DIR))
+            sandbox_env = os.environ.copy()
+            py_bin_dir = str(Path(sys.executable).parent)
+            sandbox_env["PATH"] = f"{py_bin_dir}:{WORKSPACE_DIR.resolve()}:{sandbox_env.get('PATH', '')}"
             try:
-                res = subprocess.run(["/bin/bash", "-c", cmd_to_run], cwd=run_dir, capture_output=True, text=True, timeout=timeout)
+                res = subprocess.run(
+                    ["/bin/bash", "-c", cmd_to_run],
+                    cwd=run_dir,
+                    env=sandbox_env,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout,
+                )
                 duration_ms = int((time.time() - t0) * 1000)
                 return {
                     "stdout": res.stdout,
@@ -299,21 +324,35 @@ class GuestOSManager:
         return status
 
     def install_package(self, package: str) -> Dict[str, Any]:
-        """Install software inside the guest OS environment."""
+        """Install software inside the guest OS environment with strict package-name validation."""
+        ok_pkg, pkg_or_err = validate_package_name(package)
+        if not ok_pkg:
+            return {
+                "ok": False,
+                "stdout": "",
+                "stderr": pkg_or_err,
+                "error": pkg_or_err,
+                "exit_code": 2,
+                "backend": self._backend,
+            }
+
+        safe_pkg = shlex.quote(pkg_or_err)
         self.ensure_started()
         # Detect package manager
         check_pkg = self.run_command("which apt-get || which apk || which dnf || which pacman", timeout=5)
+        if check_pkg.get("exit_code") == 126:
+            return check_pkg
         pkg_bin = check_pkg.get("stdout", "").strip()
 
         if "apt-get" in pkg_bin:
-            cmd = f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y {package}"
+            cmd = f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -- {safe_pkg}"
         elif "apk" in pkg_bin:
-            cmd = f"apk update && apk add {package}"
+            cmd = f"apk update && apk add -- {safe_pkg}"
         elif "pacman" in pkg_bin:
-            cmd = f"pacman -Sy --noconfirm {package}"
+            cmd = f"pacman -Sy --noconfirm -- {safe_pkg}"
         else:
             # Try pip
-            cmd = f"pip install {package} || pip3 install {package}"
+            cmd = f"pip install -- {safe_pkg} || pip3 install -- {safe_pkg}"
 
         return self.run_command(cmd, timeout=180)
 

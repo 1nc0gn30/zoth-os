@@ -27,9 +27,8 @@ import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Optional
 
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from openai import OpenAI
@@ -39,6 +38,13 @@ from tools.code_runner import close_all_sessions, reset_session, run_python
 from tools.deep_search import deep_search
 from tools.definitions import AGENT_TOOLS, execute_tool
 from tools.duckyscript import DUCKY_PRESETS, run_duckyscript
+from tools.security import (
+    extract_request_token,
+    get_api_token,
+    is_valid_host_header,
+    parse_allowed_origin,
+    verify_api_token,
+)
 from tools.workspace import WORKSPACE_DIR, delete_file, list_files, read_file, write_file
 from tools.x_intelligence import draft_x_thread, inspect_x_post_browser, scout_x_trends, search_x
 from tools.vm_manager import guest_os
@@ -48,17 +54,234 @@ from agent import build_system_prompt, agent_step, extract_thinking, synthesize_
 from prompts.modes import DEFAULT_MODE, MODES, get_mode, list_modes
 
 ROOT = Path(__file__).resolve().parent
+PUBLIC_DIR = ROOT / "public"
 MEMORY_PATH = ROOT / "MEMORY.md"
 ENV_PATH = ROOT / ".env"
+APP_VERSION = "3.1.0"
+MAX_BODY_BYTES = 1_048_576  # 1 MiB
 
-app = FastAPI(title="aZoth Cockpit")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+PRIVILEGED_PREFIXES = (
+    "/api/vm/",
+    "/api/python/",
+    "/api/browser/",
+    "/api/workspace/file",
+    "/api/workspace/delete",
 )
+PRIVILEGED_EXACT = {
+    "/api/ducky/run",
+    "/api/config/save",
+    "/api/engine/set",
+    "/api/mode",
+    "/api/workspace/file",
+    "/api/workspace/file/delete",
+    "/api/workspace/delete",
+}
+
+
+def _requires_token(path: str) -> bool:
+    if path in PRIVILEGED_EXACT:
+        return True
+    return any(path.startswith(pref) for pref in PRIVILEGED_PREFIXES)
+
+
+def _security_headers_list(canonical_origin: Optional[str] = None) -> list[tuple[bytes, bytes]]:
+    hdrs: list[tuple[bytes, bytes]] = [
+        (b"x-frame-options", b"SAMEORIGIN"),
+        (
+            b"content-security-policy",
+            b"frame-ancestors 'self' http://127.0.0.1:3000 http://localhost:3000",
+        ),
+        (b"x-content-type-options", b"nosniff"),
+        (b"referrer-policy", b"strict-origin-when-cross-origin"),
+        (b"vary", b"Origin"),
+    ]
+    if canonical_origin:
+        hdrs.append((b"access-control-allow-origin", canonical_origin.encode("ascii")))
+    return hdrs
+
+
+class _BodyTooLargeError(Exception):
+    pass
+
+
+class LoopbackSecurityMiddleware:
+    """Pure ASGI loopback security middleware.
+
+    Enforces:
+    - Strict loopback Host header allowlist (DNS rebinding & unauthenticated tailnet defense)
+    - Strict parsed loopback Origin allowlist (rejects arbitrary/port-suffix origins with 403, never echoes disallowed Origin, allow_credentials=False)
+    - Streaming 1 MiB request body cap (413 Payload Too Large)
+    - Per-boot CSPRNG token auth on all high-privilege execution/mutation routes
+    - Mandatory security headers on every response
+    """
+
+    def __init__(self, asgi_app):
+        self.app = asgi_app
+
+    async def _send_json(
+        self,
+        send,
+        status: int,
+        payload: dict[str, Any],
+        canonical_origin: Optional[str] = None,
+    ) -> None:
+        body = json.dumps(payload).encode("utf-8")
+        headers = [
+            (b"content-type", b"application/json"),
+            (b"content-length", str(len(body)).encode("ascii")),
+            *_security_headers_list(canonical_origin),
+        ]
+        await send({"type": "http.response.start", "status": status, "headers": headers})
+        await send({"type": "http.response.body", "body": body})
+
+    async def __call__(self, scope, receive, send):
+        scope_type = scope.get("type")
+        if scope_type not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+
+        raw_headers = scope.get("headers") or []
+        headers_map: dict[str, str] = {}
+        for k, v in raw_headers:
+            headers_map[k.decode("latin-1").lower()] = v.decode("latin-1")
+
+        # WebSocket validation (full token/origin enforcement also runs in handle_terminal_websocket)
+        if scope_type == "websocket":
+            qs = scope.get("query_string", b"").decode("latin-1")
+            q_params = {}
+            for pair in qs.split("&"):
+                if "=" in pair:
+                    qk, qv = pair.split("=", 1)
+                    q_params[qk] = qv
+            tok = extract_request_token(headers_map, query_token=q_params.get("token"))
+            is_authed = verify_api_token(tok)
+            if not is_valid_host_header(headers_map.get("host", ""), authenticated=is_authed):
+                await send({"type": "websocket.close", "code": 1008})
+                return
+            origin_hdr = headers_map.get("origin")
+            if origin_hdr is not None and parse_allowed_origin(origin_hdr) is None:
+                await send({"type": "websocket.close", "code": 1008})
+                return
+            await self.app(scope, receive, send)
+            return
+
+        # HTTP scope
+        method = (scope.get("method") or "GET").upper()
+        path = scope.get("path") or "/"
+        tok = extract_request_token(headers_map)
+        is_authed = verify_api_token(tok)
+
+        # 1. Host allowlist
+        if not is_valid_host_header(headers_map.get("host", ""), authenticated=is_authed):
+            await self._send_json(send, 403, {"ok": False, "error": "Forbidden host header"})
+            return
+
+        # 2. Origin allowlist
+        origin_hdr = headers_map.get("origin")
+        canonical_origin: Optional[str] = None
+        if origin_hdr is not None:
+            canonical_origin = parse_allowed_origin(origin_hdr)
+            if canonical_origin is None:
+                await self._send_json(send, 403, {"ok": False, "error": "Forbidden origin"})
+                return
+
+        # 3. OPTIONS preflight for allowed loopback origins
+        if method == "OPTIONS":
+            preflight_headers = [
+                (b"content-length", b"0"),
+                (b"access-control-allow-methods", b"GET, POST, HEAD, OPTIONS"),
+                (b"access-control-allow-headers", b"Content-Type, Authorization, X-Azoth-Token"),
+                (b"access-control-max-age", b"600"),
+                *_security_headers_list(canonical_origin),
+            ]
+            await send({"type": "http.response.start", "status": 204, "headers": preflight_headers})
+            await send({"type": "http.response.body", "body": b""})
+            return
+
+        # 4. Token gate on high-privilege execution & mutation routes
+        if _requires_token(path) and not is_authed:
+            await self._send_json(
+                send,
+                401,
+                {
+                    "ok": False,
+                    "error": "Authentication required: provide X-Azoth-Token or Authorization: Bearer <token>",
+                },
+                canonical_origin=canonical_origin,
+            )
+            return
+
+        # 5. Fast-reject Content-Length > MAX_BODY_BYTES before reading body
+        cl_hdr = headers_map.get("content-length")
+        if cl_hdr is not None:
+            try:
+                if int(cl_hdr.strip()) > MAX_BODY_BYTES:
+                    await self._send_json(
+                        send,
+                        413,
+                        {"ok": False, "error": f"Payload Too Large (max {MAX_BODY_BYTES} bytes)"},
+                        canonical_origin=canonical_origin,
+                    )
+                    return
+            except ValueError:
+                await self._send_json(send, 400, {"ok": False, "error": "Invalid Content-Length header"})
+                return
+
+        # 6. Streaming byte counter on receive()
+        bytes_seen = 0
+
+        async def bounded_receive():
+            nonlocal bytes_seen
+            message = await receive()
+            if message.get("type") == "http.request":
+                chunk = message.get("body", b"")
+                bytes_seen += len(chunk)
+                if bytes_seen > MAX_BODY_BYTES:
+                    raise _BodyTooLargeError()
+            return message
+
+        # 7. Inject security headers & allowed CORS header on every response
+        response_started = False
+
+        async def send_with_headers(message):
+            nonlocal response_started
+            if message.get("type") == "http.response.start":
+                response_started = True
+                existing = list(message.get("headers") or [])
+                # Strip any upstream ACAO/ACAC/Vary to avoid duplicates
+                filtered = [
+                    (k, v)
+                    for (k, v) in existing
+                    if k.lower()
+                    not in (
+                        b"access-control-allow-origin",
+                        b"access-control-allow-credentials",
+                        b"vary",
+                        b"x-frame-options",
+                        b"content-security-policy",
+                        b"x-content-type-options",
+                        b"referrer-policy",
+                    )
+                ]
+                filtered.extend(_security_headers_list(canonical_origin))
+                message = {**message, "headers": filtered}
+            await send(message)
+
+        try:
+            await self.app(scope, bounded_receive, send_with_headers)
+        except _BodyTooLargeError:
+            if not response_started:
+                await self._send_json(
+                    send,
+                    413,
+                    {"ok": False, "error": f"Payload Too Large (max {MAX_BODY_BYTES} bytes)"},
+                    canonical_origin=canonical_origin,
+                )
+
+
+app = FastAPI(title="AZOTH Local Archon Agent", version=APP_VERSION)
+app.add_middleware(LoopbackSecurityMiddleware)
+
 STATIC_DIR = ROOT / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -72,11 +295,23 @@ active_state = {
     "mode": EnvConfigManager.get("AGENT_MODE", DEFAULT_MODE),
 }
 
+
+def _safe_active_state() -> dict[str, Any]:
+    """Return active engine state without leaking api_key."""
+    return {
+        "engine": active_state["engine"],
+        "model": active_state["model"],
+        "base_url": active_state["base_url"],
+        "mode": active_state["mode"],
+        "api_key_configured": bool(active_state.get("api_key") and active_state.get("api_key") != "ollama"),
+    }
+
+
 chat_history: list[dict] = [{"role": "system", "content": build_system_prompt(active_state["mode"])}]
 
 
-def get_client_for_engine() -> tuple[OpenAI, str]:
-    engine = active_state["engine"]
+def get_client_for_engine(engine_override: Optional[str] = None) -> tuple[OpenAI, str]:
+    engine = engine_override or active_state["engine"]
     model = active_state["model"]
     base_url = active_state["base_url"]
     api_key = active_state["api_key"]
@@ -103,6 +338,8 @@ def get_client_for_engine() -> tuple[OpenAI, str]:
 
 class MessageRequest(BaseModel):
     message: str
+    engine: Optional[str] = None
+    mode: Optional[str] = None
 
 
 class EngineConfigRequest(BaseModel):
@@ -206,11 +443,85 @@ class BrowserTakeoverRequest(BaseModel):
 
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>aZoth-local — Autonomous Agent & Grok-Grade Intelligence Studio</title>
+  <title>AZOTH Local Archon Agent v3.1.0 — Sovereign Local Cockpit</title>
+  <meta name="description" content="AZOTH Local Archon Agent v3.1.0: hardened loopback autonomous ReAct agent cockpit (:8136), multi-engine router, sandboxed Playwright browser, DuckyScript studio, Python REPL, and MCP server.">
+  <meta property="og:title" content="AZOTH Local Archon Agent v3.1.0 — Sovereign Local Cockpit">
+  <meta property="og:description" content="Local-first autonomous ReAct agent cockpit on 127.0.0.1:8136 with multi-engine routing, sandboxed browser automation, DuckyScript studio, and JSON-RPC 2.0 MCP server.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/azoth-local-agent">
+  <meta property="og:image" content="https://azoth-local-agent.netlify.app/og-banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="AZOTH Local Archon Agent v3.1.0">
+  <meta name="twitter:description" content="Hardened loopback Archon cockpit (:8136), multi-engine CLI router, Playwright sandbox, DuckyScript engine, and MCP server.">
+  <meta name="twitter:image" content="https://azoth-local-agent.netlify.app/og-banner.jpg">
+  <!-- __AZOTH_CSRF_INJECT__ -->
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get('theme');
+      var saved = null;
+      try { saved = localStorage.getItem('azoth-theme'); } catch (e) {}
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = (qTheme === 'dark' || qTheme === 'light') ? qTheme : ((saved === 'dark' || saved === 'light') ? saved : (prefersDark ? 'dark' : 'light'));
+      document.documentElement.setAttribute('data-theme', theme);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('embed-mode');
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "AZOTH Local Archon Agent",
+        "softwareVersion": "3.1.0",
+        "url": "https://zoth.nullai.tech/tools/azoth-local-agent",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is AZOTH Local Archon Agent 100% free and open-access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. AZOTH Local Archon Agent v3.1.0 is 100% free and open-access with zero paywalls. Optional support is available via Stripe Buy Us a Coffee and Solana tips (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does AZOTH run locally with hardened loopback isolation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. AZOTH binds strictly to 127.0.0.1:8136 with loopback Host/Origin allowlists, per-boot CSPRNG token gating on privileged routes, SSRF guards, and sandboxed workspace containment."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   
   <!-- Local Offline Assets: 100% Private, Zero Third-Party Tracking Cookies -->
   <link rel="stylesheet" href="/static/highlight.css">
@@ -520,6 +831,210 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       font-size: 0.75rem;
       color: #9aa0a6;
     }
+
+    /* Clean horizontal scroll strips on mobile */
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* =====================================================================
+       DUAL-THEME DESIGN TOKENS: Editorial Ivory Light & Obsidian Gold Dark
+       ===================================================================== */
+    :root, :root[data-theme="light"] {
+      --az-canvas: #FAF7F0;
+      --az-surface: #FFFFFF;
+      --az-elevated: #F3EFE6;
+      --az-ink: #181613;
+      --az-ink-sub: #4B463F;
+      --az-accent: #8C6A2E;
+      --az-accent-strong: #6E511D;
+      --az-accent-bg: rgba(140, 106, 46, 0.12);
+      --az-border: rgba(24, 22, 19, 0.14);
+      --az-border-soft: rgba(24, 22, 19, 0.08);
+      --az-emerald: #047857;
+      --az-emerald-bg: #ECFDF5;
+      --az-emerald-border: #A7F3D0;
+      --az-amber: #92400E;
+      --az-amber-bg: #FEF3C7;
+      --az-amber-border: #FCD34D;
+      --az-cyan: #0369A1;
+      --az-cyan-bg: #E0F2FE;
+      --az-cyan-border: #7DD3FC;
+      --az-purple: #6D28D9;
+      --az-purple-bg: #F3E8FF;
+      --az-purple-border: #D8B4FE;
+      --az-input-bg: #FFFFFF;
+      --az-code-bg: #181613;
+      --az-code-ink: #F2EFE8;
+    }
+
+    :root[data-theme="dark"] {
+      --az-canvas: #08080B;
+      --az-surface: #10131C;
+      --az-elevated: #171B27;
+      --az-ink: #F2EFE8;
+      --az-ink-sub: #A7B0C0;
+      --az-accent: #D4AF37;
+      --az-accent-strong: #F5E6AB;
+      --az-accent-bg: rgba(212, 175, 55, 0.14);
+      --az-border: rgba(242, 239, 232, 0.14);
+      --az-border-soft: rgba(242, 239, 232, 0.08);
+      --az-emerald: #34D399;
+      --az-emerald-bg: rgba(16, 185, 129, 0.16);
+      --az-emerald-border: rgba(52, 211, 153, 0.36);
+      --az-amber: #FCD34D;
+      --az-amber-bg: rgba(245, 158, 11, 0.16);
+      --az-amber-border: rgba(251, 191, 36, 0.36);
+      --az-cyan: #38BDF8;
+      --az-cyan-bg: rgba(56, 189, 248, 0.16);
+      --az-cyan-border: rgba(56, 189, 248, 0.36);
+      --az-purple: #C4B5FD;
+      --az-purple-bg: rgba(139, 92, 246, 0.18);
+      --az-purple-border: rgba(167, 139, 250, 0.38);
+      --az-input-bg: #0C0F17;
+      --az-code-bg: #07090F;
+      --az-code-ink: #F2EFE8;
+    }
+
+    body {
+      background-color: var(--az-canvas) !important;
+      color: var(--az-ink) !important;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Map surface, text, border, and subtle backgrounds to active theme tokens */
+    header, aside, footer,
+    .bg-gsurface, .bg-white, .bg-white\/90 {
+      background-color: var(--az-surface) !important;
+      color: var(--az-ink) !important;
+    }
+    main, .bg-glight {
+      background-color: var(--az-canvas) !important;
+    }
+    .bg-gray-50, .bg-gray-50\/70, .bg-gray-100, .bg-gray-200, .bg-gsurfaceVariant {
+      background-color: var(--az-elevated) !important;
+      color: var(--az-ink) !important;
+    }
+    .text-gdark, .text-gtext {
+      color: var(--az-ink) !important;
+    }
+    .text-gsub, .text-gray-500, .text-gray-400 {
+      color: var(--az-ink-sub) !important;
+    }
+    .border-gborder, .border-gborderLight {
+      border-color: var(--az-border) !important;
+    }
+
+    /* Theme-safe pills and accents */
+    .bg-purple-50 { background-color: var(--az-purple-bg) !important; }
+    .border-purple-200 { border-color: var(--az-purple-border) !important; }
+    .text-purple-700, .text-purple-900 { color: var(--az-purple) !important; }
+
+    .bg-amber-50, .bg-amber-50\/70, .bg-amber-50\/80, .bg-amber-100 { background-color: var(--az-amber-bg) !important; }
+    .border-amber-100, .border-amber-200, .border-amber-200\/90, .border-amber-300 { border-color: var(--az-amber-border) !important; }
+    .text-amber-700, .text-amber-800, .text-amber-900, .text-amber-950 { color: var(--az-amber) !important; }
+
+    .bg-cyan-50, .bg-blue-50, .bg-blue-50\/90 { background-color: var(--az-cyan-bg) !important; }
+    .border-cyan-200, .border-blue-200 { border-color: var(--az-cyan-border) !important; }
+    .text-cyan-900, .text-gblue { color: var(--az-cyan) !important; }
+
+    .bg-emerald-50, .bg-green-50, .bg-emerald-100 { background-color: var(--az-emerald-bg) !important; }
+    .border-emerald-200, .border-green-200 { border-color: var(--az-emerald-border) !important; }
+    .text-emerald-800, .text-emerald-900, .text-ggreen { color: var(--az-emerald) !important; }
+
+    /* Gold brand accent button */
+    .az-btn-gold {
+      background-color: var(--az-accent) !important;
+      color: #FFFFFF !important;
+    }
+    :root[data-theme="dark"] .az-btn-gold {
+      background-color: #D4AF37 !important;
+      color: #08080B !important;
+    }
+
+    /* Active mode & tab states */
+    .az-tab-active {
+      color: var(--az-accent-strong) !important;
+      border-bottom-color: var(--az-accent) !important;
+      background-color: var(--az-surface) !important;
+      font-weight: 700 !important;
+    }
+    .az-mode-active {
+      background-color: var(--az-accent) !important;
+      color: #FFFFFF !important;
+    }
+    :root[data-theme="dark"] .az-mode-active {
+      background-color: #D4AF37 !important;
+      color: #08080B !important;
+    }
+
+    input, textarea, select {
+      color: var(--az-ink) !important;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--az-ink-sub) !important;
+      opacity: 0.78;
+    }
+    #ducky-editor, #modal-file-content {
+      background-color: var(--az-code-bg) !important;
+      color: #34D399 !important;
+    }
+    #modal-file-content {
+      color: var(--az-code-ink) !important;
+    }
+    .markdown-body th, .markdown-body td {
+      border-color: var(--az-border) !important;
+    }
+    .markdown-body tr:nth-child(even) {
+      background: var(--az-elevated) !important;
+    }
+    .markdown-body a {
+      color: var(--az-accent-strong) !important;
+    }
+
+    /* Studio iframe embed mode hides redundant support footer */
+    html.embed-mode #azoth-cockpit-footer {
+      display: none !important;
+    }
+
+    /* WCAG Mobile Touch Targets (>= 44x44px) & Clean Wrapping */
+    @media (max-width: 767px) {
+      header button, header a,
+      main button, main a, main input, main select,
+      aside button, aside a, aside input, aside select,
+      footer a, footer button,
+      [role="button"] {
+        min-height: 44px !important;
+        min-width: 44px !important;
+      }
+      footer a {
+        display: inline-flex !important;
+        align-items: center !important;
+      }
+      #header-actions-bar {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        overflow-x: visible !important;
+        gap: 6px !important;
+      }
+      #inspector-tab-bar {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        overflow-x: visible !important;
+        gap: 4px !important;
+        padding: 6px !important;
+      }
+      #inspector-tab-bar button {
+        flex: 1 1 auto !important;
+        border-radius: 10px !important;
+        border: 1px solid var(--az-border) !important;
+        padding: 8px 10px !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-glight text-gtext min-h-screen xl:h-screen flex flex-col antialiased overflow-x-hidden xl:overflow-hidden select-none">
@@ -537,7 +1052,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       <!-- Search Input Header -->
       <div class="p-4 border-b border-gborder flex items-center space-x-3 bg-gray-50/70">
         <svg class="w-5 h-5 text-gblue shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        <input type="text" id="command-input" placeholder="Type a command or search actions (e.g. switch engine, run ducky, browse)..."
+        <input type="text" id="command-input" aria-label="Search commands and quick actions" placeholder="Type a command or search actions (e.g. switch engine, run ducky, browse)..."
                oninput="filterCommands()" onkeydown="handleCommandKey(event)"
                class="flex-1 bg-transparent text-sm text-gdark placeholder-gray-400 focus:outline-none font-medium">
         <span class="text-[10px] font-mono text-gsub bg-white px-2 py-0.5 rounded-md border border-gborder">ESC</span>
@@ -555,104 +1070,100 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <span><strong class="font-mono text-gdark">ENTER</strong> Select</span>
           <span><strong class="font-mono text-gdark">ESC</strong> Close</span>
         </div>
-        <span class="text-gblue font-medium">a-bot Quick Commander</span>
+        <span class="text-gblue font-medium">AZOTH Quick Commander</span>
       </div>
 
     </div>
   </div>
 
   <!-- Top Navigation Header -->
-  <header class="min-h-16 py-2 bg-gsurface border-b border-gborderLight px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 shadow-[0_1px_2px_rgba(60,64,67,0.06)] shrink-0 z-20">
-    <div class="flex items-center space-x-3">
+  <header class="min-h-14 sm:min-h-16 py-2 bg-gsurface border-b border-gborderLight px-3 sm:px-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-2 shadow-[0_1px_2px_rgba(60,64,67,0.06)] shrink-0 z-20">
+    <div class="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
       
       <!-- Header Mascot Icon -->
-      <div id="header-bot-preview" onclick="setTab('customizer')" title="Click to customize mascot" class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 palette-google anim-breathe text-white cursor-pointer hover:scale-105 active:scale-95 shrink-0">
-        <span class="text-base font-bold tracking-tight">aZ</span>
-      </div>
+      <button type="button" id="header-bot-preview" onclick="setTab('customizer')" title="Customize AZOTH Mascot" aria-label="Customize AZOTH mascot" class="w-11 h-11 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 palette-google anim-breathe text-white cursor-pointer hover:scale-105 active:scale-95 shrink-0">
+        <span class="text-sm sm:text-base font-bold tracking-tight">AZ</span>
+      </button>
       
-      <div class="min-w-0">
-        <div class="flex flex-wrap items-center gap-1.5">
-          <span class="font-bold text-base sm:text-lg text-gdark tracking-tight">aZoth-local</span>
-          <span class="text-[10px] sm:text-[11px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200 flex items-center space-x-1">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center flex-wrap gap-1.5 min-w-0">
+          <h1 class="font-bold text-base sm:text-lg text-gdark tracking-tight whitespace-nowrap m-0">AZOTH Local Archon Agent</h1>
+          <span class="text-[10px] sm:text-[11px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200 flex items-center space-x-1 whitespace-nowrap shrink-0">
             <span class="w-1.5 h-1.5 rounded-full bg-purple-600 animate-pulse"></span>
-            <span>Grok-Grade Intelligence</span>
+            <span>v3.1.0 • :8136</span>
           </span>
         </div>
-        <p class="text-[10px] sm:text-[11px] text-gsub font-normal truncate max-w-[260px] sm:max-w-none">DeepSearch Citations • Live X Scouting • Sandbox Browser • Python REPL</p>
+        <p class="hidden sm:block text-[11px] text-gsub font-normal truncate">Hardened Loopback ReAct Agent • DeepSearch • Sandbox Browser • DuckyScript • Python REPL</p>
       </div>
     </div>
 
     <!-- Header Action Bar -->
-    <div class="flex flex-wrap items-center gap-1.5">
+    <div id="header-actions-bar" class="w-full sm:w-auto flex items-center flex-wrap gap-1.5 pb-0.5 sm:pb-0">
       
-      <!-- Grok Mode Switcher Shortcut -->
-      <button onclick="cycleMode()" id="header-mode-badge" title="Cycle Grok Persona Mode (Regular, Fun, Think, Coder)" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-purple-900 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition flex items-center space-x-1.5 shadow-2xs">
+      <!-- Theme Switcher -->
+      <button type="button" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle Editorial Ivory Light / Obsidian Dark Theme" aria-label="Toggle Light and Dark Theme" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-gdark bg-gray-50 border border-gborder rounded-full hover:bg-gray-100 transition flex items-center space-x-1.5 shadow-2xs">
+        <span id="theme-toggle-icon">🌙</span>
+        <span id="theme-toggle-label">Theme</span>
+      </button>
+
+      <!-- Persona Mode Switcher Shortcut -->
+      <button type="button" onclick="cycleMode()" id="header-mode-badge" title="Cycle Persona Mode (Regular, Fun, Think, Coder)" aria-label="Cycle Persona Mode" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-purple-900 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition flex items-center space-x-1.5 shadow-2xs">
         <span id="header-mode-icon">⚡</span>
         <span id="header-mode-label">Truth Mode</span>
       </button>
 
       <!-- Command Palette Trigger Button (Ctrl+K) -->
-      <button onclick="openCommandPalette()" title="Open Command Palette (Ctrl+K)" class="px-2.5 sm:px-3 py-1.5 text-xs text-gsub hover:text-gdark bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition flex items-center space-x-1.5 shadow-2xs">
+      <button type="button" onclick="openCommandPalette()" title="Open Command Palette (Ctrl+K)" aria-label="Open Command Palette" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs text-gsub hover:text-gdark bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition flex items-center space-x-1.5 shadow-2xs">
         <svg class="w-3.5 h-3.5 text-gsub" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         <span class="font-medium hidden sm:inline">Quick Actions</span>
-        <span class="font-mono text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gborder">⌘K</span>
+        <span class="font-mono text-[10px] text-gsub bg-white px-1.5 py-0.5 rounded border border-gborder">⌘K</span>
       </button>
 
       <!-- Active Engine Switcher Shortcut -->
-      <button onclick="setTab('engines')" title="Switch AI Agent Engine" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-gdark bg-gray-50 border border-gborder rounded-full hover:bg-blue-50 hover:border-gblue transition flex items-center space-x-1.5 shadow-2xs">
+      <button type="button" onclick="setTab('engines')" title="Switch AI Agent Engine" aria-label="Switch AI Agent Engine" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-gdark bg-gray-50 border border-gborder rounded-full hover:bg-blue-50 hover:border-gblue transition flex items-center space-x-1.5 shadow-2xs">
         <span id="header-engine-icon" class="text-sm">🦙</span>
         <span id="header-engine-label">Sovereign Local</span>
         <svg class="w-3 h-3 text-gsub" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
       </button>
 
       <!-- DuckyScript Studio Tab Shortcut -->
-      <button onclick="setTab('ducky')" title="Open DuckyScript Automation Studio" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-amber-900 bg-amber-50 border border-amber-200 rounded-full hover:bg-amber-100 transition flex items-center space-x-1 shadow-2xs">
+      <button type="button" onclick="setTab('ducky')" title="Open DuckyScript Automation Studio" aria-label="Open DuckyScript Automation Studio" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-amber-900 bg-amber-50 border border-amber-200 rounded-full hover:bg-amber-100 transition flex items-center space-x-1 shadow-2xs">
         <span>🦆</span>
-        <span class="hidden md:inline">Ducky Studio</span>
+        <span>Ducky</span>
       </button>
 
       <!-- Live Interactive Browser Shortcut -->
-      <button onclick="setTab('browser')" title="Open Interactive Browser Sandbox" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-gblue bg-blue-50 border border-blue-200 rounded-full hover:bg-blue-100 transition flex items-center space-x-1.5 shadow-2xs">
-        <span class="w-2 h-2 rounded-full bg-gblue animate-ping"></span>
-        <span class="hidden md:inline">Live Browser</span>
+      <button type="button" onclick="setTab('browser')" title="Open Interactive Browser Sandbox" aria-label="Open Interactive Browser Sandbox" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-gblue bg-blue-50 border border-blue-200 rounded-full hover:bg-blue-100 transition flex items-center space-x-1.5 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-gblue"></span>
+        <span>Browser</span>
       </button>
 
       <!-- OS Terminal / Virtual Environment Shortcut -->
-      <button onclick="setTab('terminal')" title="Open Isolated Linux Guest OS & Web Terminal" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-900 bg-cyan-50 border border-cyan-200 rounded-full hover:bg-cyan-100 transition flex items-center space-x-1.5 shadow-2xs">
-        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-        <span class="hidden md:inline">OS Terminal</span>
+      <button type="button" onclick="setTab('terminal')" title="Open Isolated Linux Guest OS & Web Terminal" aria-label="Open Isolated Linux Guest OS and Web Terminal" class="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-cyan-900 bg-cyan-50 border border-cyan-200 rounded-full hover:bg-cyan-100 transition flex items-center space-x-1.5 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+        <span>Terminal</span>
       </button>
 
       <!-- Waveform Indicator -->
-      <button onclick="toggleWaveform()" id="waveform-btn" title="Toggle Waveform Indicator (Ctrl+W)" class="p-1.5 px-2 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
-        <svg class="w-3.5 h-3.5 text-gsub" viewBox="0 0 40 16" fill="none"><rect id="waveform-bars" x="0" y="0" width="40" height="16" rx="8" fill="none" stroke="#5f6368" stroke-width="1"/><polyline id="waveform-line" points="0,8 10,4 20,12 30,2 40,8" fill="none" stroke="#1a73e8" stroke-width="1.5"/></svg>
+      <button type="button" onclick="toggleWaveform()" id="waveform-btn" title="Toggle Waveform Indicator (Ctrl+W)" aria-label="Toggle Waveform Indicator" class="shrink-0 whitespace-nowrap p-1.5 px-2.5 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
+        <svg class="w-3.5 h-3.5 text-gsub" viewBox="0 0 40 16" fill="none"><rect id="waveform-bars" x="0" y="0" width="40" height="16" rx="8" fill="none" stroke="currentColor" stroke-width="1"/><polyline id="waveform-line" points="0,8 10,4 20,12 30,2 40,8" fill="none" stroke="#1a73e8" stroke-width="1.5"/></svg>
         <span class="text-[10px] font-mono text-gsub">WAVE</span>
       </button>
 
       <!-- Stealth Mode Toggle -->
-      <button onclick="toggleStealthMode()" id="stealth-btn" title="Toggle Stealth Mode (Ctrl+S)" class="p-1.5 px-2 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
+      <button type="button" onclick="toggleStealthMode()" id="stealth-btn" title="Toggle Stealth Mode (Ctrl+S)" aria-label="Toggle Stealth Mode" class="shrink-0 whitespace-nowrap p-1.5 px-2.5 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
         <svg class="w-3.5 h-3.5 text-gsub" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.64 6.64m3.238 3.238l-3.24-3.24m7.425 7.425l3.24 3.24M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         <span class="text-[10px] font-mono text-gsub">STEALTH</span>
       </button>
 
       <!-- Scan Line Toggle -->
-      <button onclick="toggleScanline()" id="scanline-btn" title="Toggle Scan Line Effect (Ctrl+L)" class="p-1.5 px-2 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
+      <button type="button" onclick="toggleScanline()" id="scanline-btn" title="Toggle Scan Line Effect (Ctrl+L)" aria-label="Toggle Scan Line Effect" class="shrink-0 whitespace-nowrap p-1.5 px-2.5 bg-gray-50 hover:bg-gray-100 border border-gborder rounded-full transition hidden sm:flex items-center space-x-1 shadow-2xs">
         <svg class="w-3.5 h-3.5 text-gsub" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         <span class="text-[10px] font-mono text-gsub">SCAN</span>
       </button>
 
-      <!-- Support: Buy Us a Coffee & Solana Tip -->
-      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" title="Support Open-Access Tools — Buy Us a Coffee" class="px-2.5 py-1.5 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-full transition flex items-center space-x-1 shadow-2xs">
-        <span>☕</span>
-        <span class="hidden lg:inline">Buy Coffee</span>
-      </a>
-      <button onclick="navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK'); showToast('Solana Tip Address Copied: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', 'success');" title="Copy Solana Tip Address: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" class="px-2.5 py-1.5 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-full transition flex items-center space-x-1 shadow-2xs">
-        <span>◎</span>
-        <span class="hidden lg:inline">Tip SOL</span>
-      </button>
-
       <!-- Clear Chat Action -->
-      <button onclick="clearChat()" title="Reset Chat Conversation" class="p-2 text-gsub hover:text-gred hover:bg-red-50 rounded-full transition">
+      <button type="button" onclick="clearChat()" title="Reset Chat Conversation" aria-label="Reset Chat Conversation" class="shrink-0 p-2 text-gsub hover:text-gred hover:bg-red-50 rounded-full transition flex items-center justify-center">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
       </button>
 
@@ -670,40 +1181,40 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         
         <!-- Welcome Hero Banner Card -->
         <div class="bg-white rounded-3xl p-4 sm:p-6 border border-gborder shadow-sm flex flex-col sm:flex-row items-start gap-4 sm:space-x-5 transition hover:shadow-m3-1">
-          <div id="hero-bot-avatar" onclick="setTab('customizer')" title="Click to customize aZoth" class="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl flex items-center justify-center shadow-md transition-all duration-300 palette-google anim-breathe text-white shrink-0 cursor-pointer">
-            <span class="text-2xl font-bold">aZ</span>
-          </div>
+          <button type="button" id="hero-bot-avatar" onclick="setTab('customizer')" title="Customize AZOTH Mascot" aria-label="Customize AZOTH Mascot" class="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl flex items-center justify-center shadow-md transition-all duration-300 palette-google anim-breathe text-white shrink-0 cursor-pointer">
+            <span class="text-2xl font-bold">AZ</span>
+          </button>
           <div class="space-y-2 flex-1 min-w-0">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <h2 class="text-base sm:text-lg font-bold text-gdark flex flex-wrap items-center gap-1.5">
-                <span>Welcome 1nc0gn30, I'm <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 font-extrabold">aZoth-local</span></span>
-                <span class="text-xs text-gsub font-normal">• Grok-Grade Autonomous Agent</span>
+                <span>AZOTH Local Archon Agent</span>
+                <span class="text-xs text-gsub font-normal">• Loopback Autonomous ReAct Orchestrator</span>
               </h2>
-              <span class="text-[11px] bg-green-50 text-ggreen font-semibold px-2.5 py-1 rounded-full border border-green-200 flex items-center space-x-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-ggreen"></span>
-                <span>Chrome Sandboxed Ready</span>
+              <span id="runtime-probe-badge" class="text-[11px] bg-amber-50 text-amber-900 font-semibold px-2.5 py-1 rounded-full border border-amber-200 flex items-center space-x-1.5">
+                <span id="runtime-probe-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span id="runtime-probe-label">Probing Runtime…</span>
               </span>
             </div>
             <p class="text-sm text-gsub leading-relaxed">
-              Engineered with Grok-grade intelligence: live X (Twitter) scouting, multi-source DeepSearch with verifiable citations, sandbox Python execution, and persistent headed browser automation ("VM-ish vibes").
+              Local-first ReAct orchestrator bound to <code>127.0.0.1:8136</code> with multi-engine CLI routing, multi-source DeepSearch citations, sandboxed Python execution, DuckyScript automation, and Playwright browser control.
             </p>
             
-            <!-- Grok Sparks Suggestion Chips -->
+            <!-- Quick Action Suggestion Chips -->
             <div class="pt-2 flex flex-wrap gap-2">
-              <button onclick="triggerSpark('Search live tech discussions and breaking trends on X today')" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-900 font-medium px-3.5 py-1.5 rounded-full border border-purple-200 transition flex items-center space-x-1.5 shadow-2xs">
-                <span>🔥</span><span>Trending on X</span>
+              <button type="button" onclick="triggerSpark('Summarize installed engines and verify active Archon tool schemas')" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-900 font-medium px-3.5 py-2 rounded-full border border-purple-200 transition flex items-center space-x-1.5 shadow-2xs">
+                <span>⚡</span><span>Verify Local Tools</span>
               </button>
-              <button onclick="triggerSpark('DeepSearch the latest AI agent frameworks and breakthroughs this month')" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-900 font-medium px-3.5 py-1.5 rounded-full border border-cyan-200 transition flex items-center space-x-1.5 shadow-2xs">
-                <span>🔬</span><span>DeepSearch AI News</span>
+              <button type="button" onclick="triggerSpark('DeepSearch the latest open-source local AI agent architectures with citations')" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-900 font-medium px-3.5 py-2 rounded-full border border-cyan-200 transition flex items-center space-x-1.5 shadow-2xs">
+                <span>🔬</span><span>DeepSearch Research</span>
               </button>
-              <button onclick="triggerSpark('Run a Python benchmark in the sandbox workspace to test execution speed and file creation')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-medium px-3.5 py-1.5 rounded-full border border-emerald-200 transition flex items-center space-x-1.5 shadow-2xs">
+              <button type="button" onclick="triggerSpark('Run a Python benchmark in the sandbox workspace to verify execution speed and file creation')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-medium px-3.5 py-2 rounded-full border border-emerald-200 transition flex items-center space-x-1.5 shadow-2xs">
                 <span>🐍</span><span>Python Sandbox</span>
               </button>
-              <button onclick="triggerSpark('Search X for recent posts from @elonmusk about xAI Grok')" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-900 font-medium px-3.5 py-1.5 rounded-full border border-blue-200 transition flex items-center space-x-1.5 shadow-2xs">
-                <span>🐦</span><span>Scout Elon on X</span>
+              <button type="button" onclick="triggerSpark('Search live engineering discussions and security advisories on X today')" class="text-xs bg-blue-50 hover:bg-blue-100 text-gblue font-medium px-3.5 py-2 rounded-full border border-blue-200 transition flex items-center space-x-1.5 shadow-2xs">
+                <span>📡</span><span>X Intelligence</span>
               </button>
-              <button onclick="runPresetDucky('x_post')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 font-medium px-3.5 py-1.5 rounded-full border border-amber-200 transition flex items-center space-x-1.5 shadow-2xs">
-                <span>🦆</span><span>Ducky Post to X</span>
+              <button type="button" onclick="setTab('ducky')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 font-medium px-3.5 py-2 rounded-full border border-amber-200 transition flex items-center space-x-1.5 shadow-2xs">
+                <span>🦆</span><span>DuckyScript Studio</span>
               </button>
             </div>
           </div>
@@ -714,47 +1225,47 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       <!-- Bottom Floating Chat Input Capsule -->
       <div class="p-3 sm:p-4 md:p-6 bg-transparent max-w-4xl w-full mx-auto shrink-0">
         
-        <!-- Grok Mode Selector Bar & Quick Tool Chips -->
+        <!-- Mode Selector Bar & Quick Tool Chips -->
         <div class="flex flex-wrap items-center justify-between gap-2 px-1 sm:px-3 pb-2 text-xs">
           <div class="flex flex-wrap items-center gap-1 bg-white/90 backdrop-blur-md p-1 rounded-2xl sm:rounded-full border border-gborder shadow-2xs">
             <span class="text-[10px] font-bold text-gsub uppercase tracking-wider px-2">Mode:</span>
-            <button type="button" onclick="setMode('regular')" id="mode-btn-regular" class="mode-btn px-2.5 py-1 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
+            <button type="button" onclick="setMode('regular')" id="mode-btn-regular" class="mode-btn px-3 py-1.5 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
               <span>⚡</span><span>Truth</span>
             </button>
-            <button type="button" onclick="setMode('fun')" id="mode-btn-fun" class="mode-btn px-2.5 py-1 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
+            <button type="button" onclick="setMode('fun')" id="mode-btn-fun" class="mode-btn px-3 py-1.5 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
               <span>🌶️</span><span>Fun</span>
             </button>
-            <button type="button" onclick="setMode('think')" id="mode-btn-think" class="mode-btn px-2.5 py-1 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
+            <button type="button" onclick="setMode('think')" id="mode-btn-think" class="mode-btn px-3 py-1.5 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
               <span>🧠</span><span>Think</span>
             </button>
-            <button type="button" onclick="setMode('coder')" id="mode-btn-coder" class="mode-btn px-2.5 py-1 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
+            <button type="button" onclick="setMode('coder')" id="mode-btn-coder" class="mode-btn px-3 py-1.5 rounded-full font-medium transition text-gdark hover:bg-gray-100 flex items-center space-x-1">
               <span>💻</span><span>Coder</span>
             </button>
           </div>
           <div class="flex items-center space-x-2">
-            <button type="button" onclick="promptDeepSearch()" title="Exhaustive multi-source search with citations" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-900 border border-cyan-200 px-3 py-1 rounded-full font-medium transition flex items-center space-x-1 shadow-2xs">
+            <button type="button" onclick="promptDeepSearch()" title="Exhaustive multi-source search with citations" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-900 border border-cyan-200 px-3 py-1.5 rounded-full font-medium transition flex items-center space-x-1 shadow-2xs">
               <span>🔬</span><span>DeepSearch</span>
             </button>
-            <button type="button" onclick="promptXScout()" title="Search live posts and handles on X" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 px-3 py-1 rounded-full font-medium transition flex items-center space-x-1 shadow-2xs">
-              <span>🐦</span><span>X Scout</span>
+            <button type="button" onclick="promptXScout()" title="Search live posts and handles on X" class="text-xs bg-blue-50 hover:bg-blue-100 text-gblue border border-blue-200 px-3 py-1.5 rounded-full font-medium transition flex items-center space-x-1 shadow-2xs">
+              <span>📡</span><span>X Scout</span>
             </button>
           </div>
         </div>
 
         <form id="chat-form" onsubmit="sendMessage(event)" class="bg-white rounded-full shadow-[0_2px_10px_rgba(60,64,67,0.1)] border border-gborder p-2 pl-4 sm:pl-6 flex items-center space-x-2 sm:space-x-3 focus-within:shadow-m3-2 focus-within:border-gblue transition-all duration-200">
-          <input type="text" id="user-input" placeholder="Ask aZoth to DeepSearch, scout X/Twitter, execute Python code, run DuckyScript, browse live, or code..." 
+          <input type="text" id="user-input" aria-label="Message AZOTH Local Archon Agent" placeholder="Ask AZOTH to DeepSearch, run Python, execute DuckyScript, browse live, or code..." 
                  onkeydown="handleChatInputKey(event)"
                  class="flex-1 min-w-0 bg-transparent text-sm text-gdark placeholder-gray-400 focus:outline-none py-2 font-medium">
           
-          <button type="button" onclick="openCommandPalette()" title="Commands (⌘K)" class="p-2 text-gsub hover:text-gblue hover:bg-blue-50 rounded-full transition shrink-0">
+          <button type="button" onclick="openCommandPalette()" title="Commands (⌘K)" aria-label="Open Command Palette" class="p-2 text-gsub hover:text-gblue hover:bg-blue-50 rounded-full transition shrink-0 flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </button>
 
-          <button type="button" onclick="setTab('browser')" title="Open Interactive Browser" class="p-2 text-gsub hover:text-gblue hover:bg-blue-50 rounded-full transition shrink-0">
+          <button type="button" onclick="setTab('browser')" title="Open Interactive Browser" aria-label="Open Interactive Browser" class="p-2 text-gsub hover:text-gblue hover:bg-blue-50 rounded-full transition shrink-0 flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
           </button>
 
-          <button type="submit" id="send-btn" title="Send (Ctrl+Enter)" class="w-10 h-10 rounded-full bg-gblue hover:bg-gblueHover text-white flex items-center justify-center shadow-md transition disabled:opacity-50 shrink-0 active:scale-95">
+          <button type="submit" id="send-btn" title="Send (Ctrl+Enter)" aria-label="Send Message" class="w-11 h-11 rounded-full az-btn-gold flex items-center justify-center shadow-md transition disabled:opacity-50 shrink-0 active:scale-95">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </button>
         </form>
@@ -763,29 +1274,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     </main>
 
     <!-- Right: Multi-Tool Inspector Sidebar -->
-    <aside class="w-full xl:w-[520px] bg-white border-t xl:border-t-0 xl:border-l border-gborder flex flex-col shadow-sm select-text shrink-0">
+    <aside class="w-full xl:w-[520px] bg-white border-t xl:border-t-0 xl:border-l border-gborder flex flex-col shadow-sm select-text shrink-0 pb-[env(safe-area-inset-bottom,0px)]">
       
       <!-- Tab Navigation Header -->
-      <div class="flex flex-wrap border-b border-gborder bg-gray-50/70 text-xs font-semibold shrink-0">
-        <button onclick="setTab('browser')" id="tab-btn-browser" class="flex-1 min-w-[72px] py-3 text-gblue border-b-2 border-gblue bg-white font-bold flex items-center justify-center space-x-1 transition">
+      <div id="inspector-tab-bar" class="flex flex-nowrap overflow-x-auto no-scrollbar border-b border-gborder bg-gray-50/70 text-xs font-semibold shrink-0">
+        <button type="button" onclick="setTab('browser')" id="tab-btn-browser" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gblue border-b-2 border-gblue bg-white font-bold flex items-center justify-center gap-1 transition">
           <span>🌐</span><span>Browser</span>
         </button>
-        <button onclick="setTab('terminal')" id="tab-btn-terminal" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('terminal')" id="tab-btn-terminal" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>💻</span><span>OS Env</span>
         </button>
-        <button onclick="setTab('ducky')" id="tab-btn-ducky" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('ducky')" id="tab-btn-ducky" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>🦆</span><span>Ducky</span>
         </button>
-        <button onclick="setTab('engines')" id="tab-btn-engines" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('engines')" id="tab-btn-engines" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>⚡</span><span>Engines</span>
         </button>
-        <button onclick="setTab('workspace')" id="tab-btn-workspace" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('workspace')" id="tab-btn-workspace" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>📁</span><span>Files</span>
         </button>
-        <button onclick="setTab('customizer')" id="tab-btn-customizer" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('customizer')" id="tab-btn-customizer" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>🎨</span><span>Studio</span>
         </button>
-        <button onclick="setTab('topology')" id="tab-btn-topology" class="flex-1 min-w-[72px] py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition">
+        <button type="button" onclick="setTab('topology')" id="tab-btn-topology" class="shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition">
           <span>🗺️</span><span>Topo</span>
         </button>
       </div>
@@ -804,7 +1315,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
           <!-- Browser Address & Controls Bar -->
           <div class="flex items-center space-x-1.5 shrink-0">
-            <input type="text" id="browser-url-input" placeholder="https://x.com" 
+            <input type="text" id="browser-url-input" aria-label="Browser target URL" placeholder="https://example.com" 
                    onkeydown="if(event.key==='Enter') browserGo()"
                    class="flex-1 bg-gray-50 border border-gborder rounded-xl px-3 py-1.5 text-xs font-mono text-gdark focus:outline-none focus:border-gblue">
             <button onclick="browserGo()" class="px-3 py-1.5 bg-gblue text-white text-xs font-bold rounded-xl hover:bg-gblueHover transition shadow-2xs">Go</button>
@@ -899,7 +1410,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               <span class="text-gsub text-[10px]">Relays Enter, Tab, Esc & Text</span>
             </div>
             <div class="flex space-x-1.5">
-              <input type="text" id="browser-type-input" placeholder="Type here and press Enter to send to page..." 
+              <input type="text" id="browser-type-input" aria-label="Type text directly into active browser page" placeholder="Type here and press Enter to send to page..." 
                      onkeydown="handleDirectKey(event)"
                      class="flex-1 bg-white border border-gborder rounded-xl px-3 py-2 text-xs text-gdark focus:outline-none focus:border-gblue">
               <button onclick="sendTypedText()" class="px-3.5 py-2 bg-gray-200 hover:bg-gray-300 text-gdark text-xs font-semibold rounded-xl transition shadow-2xs">Send</button>
@@ -915,7 +1426,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               <span class="text-lg">🦆</span>
               <h3 class="text-xs font-bold uppercase tracking-wider text-gdark">DuckyScript Studio</h3>
             </div>
-            <select id="ducky-preset-select" onchange="loadSelectedPreset()" class="text-xs bg-gray-50 border border-gborder rounded-lg px-2.5 py-1 text-gdark font-medium focus:outline-none focus:border-gblue">
+            <select id="ducky-preset-select" aria-label="Select DuckyScript preset payload" onchange="loadSelectedPreset()" class="text-xs bg-gray-50 border border-gborder rounded-lg px-2.5 py-1 text-gdark font-medium focus:outline-none focus:border-gblue">
               <option value="">Load Preset Payload...</option>
             </select>
           </div>
@@ -935,16 +1446,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
 
           <!-- DuckyScript Code Editor -->
-          <textarea id="ducky-editor" rows="9" 
-                    placeholder="NAVIGATE https://x.com/compose/post&#10;DELAY 3500&#10;STRING Hello from DuckyScript! 🦆&#10;CTRL+ENTER" 
+          <textarea id="ducky-editor" aria-label="DuckyScript payload editor" rows="9" 
+                    placeholder="NAVIGATE https://example.com&#10;DELAY 1500&#10;STRING Hello from DuckyScript!&#10;CTRL+ENTER" 
                     onkeydown="handleDuckyEditorKey(event)"
                     class="w-full flex-1 bg-gray-950 text-emerald-400 font-mono text-xs p-3.5 rounded-2xl border border-gborder focus:outline-none focus:border-gblue leading-relaxed resize-none shadow-inner"></textarea>
 
           <!-- Execution Controls -->
           <div class="flex items-center justify-between pt-1 shrink-0">
             <div class="flex items-center space-x-2 text-xs">
-              <label class="text-gsub font-semibold">Target:</label>
-              <select id="ducky-target" class="bg-gray-50 border border-gborder rounded-lg px-2.5 py-1 text-xs font-medium">
+              <label for="ducky-target" class="text-gsub font-semibold">Target:</label>
+              <select id="ducky-target" aria-label="DuckyScript execution target" class="bg-gray-50 border border-gborder rounded-lg px-2.5 py-1 text-xs font-medium">
                 <option value="browser">Sandboxed Chrome (Zero-Detection)</option>
                 <option value="os">Native Desktop (X11)</option>
               </select>
@@ -1006,11 +1517,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <canvas id="mascot-particles" class="absolute inset-0 pointer-events-none w-full h-full"></canvas>
             
             <div id="studio-bot-preview" onclick="burstMascotParticles()" title="Click for particle spark!" class="relative z-10 w-24 h-24 mx-auto rounded-full flex items-center justify-center shadow-m3-2 transition-all duration-300 palette-google anim-breathe text-white mb-3 cursor-pointer hover:scale-105 active:scale-95">
-              <span class="text-4xl font-bold">a</span>
+              <span class="text-3xl font-bold">AZ</span>
             </div>
             
-            <h4 class="font-bold text-gdark text-base">a-bot Mascot Studio</h4>
-            <p class="text-xs text-gsub mt-0.5">Customize personality, geometry & radiant aura</p>
+            <h4 class="font-bold text-gdark text-base">AZOTH Mascot Studio</h4>
+            <p class="text-xs text-gsub mt-0.5">Customize avatar geometry, motion & aura</p>
           </div>
 
           <!-- Mascot Shape Selector -->
@@ -1101,9 +1612,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="p-3.5 bg-gray-900 text-white rounded-2xl border border-gray-800 space-y-2.5 shadow-xs shrink-0">
             <div class="flex items-center justify-between text-xs">
               <div class="flex items-center space-x-2">
-                <span id="terminal-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="terminal-status-text" class="font-bold text-gray-200">Guest OS: Running</span>
-                <span id="terminal-backend-badge" class="px-2 py-0.5 text-[10px] bg-cyan-950 text-cyan-300 rounded border border-cyan-800 font-mono font-bold">DOCKER</span>
+                <span id="terminal-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span id="terminal-status-text" class="font-bold text-gray-200">Guest OS: Probing…</span>
+                <span id="terminal-backend-badge" class="px-2 py-0.5 text-[10px] bg-cyan-950 text-cyan-300 rounded border border-cyan-800 font-mono font-bold">CHECKING</span>
               </div>
               <div class="flex items-center space-x-1.5">
                 <button onclick="restartGuestOS()" title="Restart Guest OS Environment" class="px-2.5 py-1 text-[11px] bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition border border-gray-700 flex items-center space-x-1">
@@ -1183,6 +1694,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   </div>
 
+  <footer id="azoth-cockpit-footer" class="bg-white border-t border-gborder px-4 py-2 text-[11px] text-gsub flex flex-wrap items-center justify-between gap-2 shrink-0">
+    <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" class="text-gblue hover:underline">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" class="text-gblue hover:underline">NullAI Platform</a></span>
+    <span class="flex items-center gap-3 flex-wrap">
+      <a href="https://github.com/NullAITech/azoth-local-agent" target="_blank" rel="noopener noreferrer" class="hover:text-gdark">GitHub</a>
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="text-amber-800 font-semibold hover:underline">☕ Buy Us a Coffee</a>
+      <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard && navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK'); showToast('Solana Tip Address Copied', 'success');" class="text-emerald-800 font-mono hover:underline">◎ Solana Tip: GG2e...dXoK</a>
+    </span>
+  </footer>
+
   <!-- Workspace File Editor Modal -->
   <div id="file-modal" class="fixed inset-0 bg-black/45 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
     <div class="bg-white rounded-3xl p-6 max-w-3xl w-full shadow-m3-3 border border-gborder flex flex-col space-y-4 max-h-[88vh] animate-in fade-in zoom-in-95 duration-150">
@@ -1191,19 +1711,19 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <span class="text-base">📄</span>
           <h3 id="modal-file-name" class="font-bold text-gdark text-sm font-mono truncate">file.txt</h3>
         </div>
-        <button onclick="closeFileModal()" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
+        <button type="button" onclick="closeFileModal()" aria-label="Close file editor" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
       </div>
       
-      <textarea id="modal-file-content" rows="16" 
+      <textarea id="modal-file-content" aria-label="Workspace file contents editor" rows="16" 
                 onkeydown="handleFileEditorKey(event)"
                 class="w-full flex-1 bg-gray-950 text-gray-100 font-mono text-xs p-4 rounded-2xl border border-gborder focus:outline-none focus:border-gblue leading-relaxed resize-none shadow-inner"></textarea>
       
       <div class="flex items-center justify-between pt-2">
-        <button onclick="deleteCurrentFile()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-gred font-bold rounded-xl text-xs transition">Delete File</button>
+        <button type="button" onclick="deleteCurrentFile()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-gred font-bold rounded-xl text-xs transition">Delete File</button>
         <div class="flex items-center space-x-2">
           <span class="text-[11px] text-gsub font-mono">Ctrl+S to save</span>
-          <button onclick="closeFileModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gdark rounded-xl text-xs font-semibold transition">Cancel</button>
-          <button onclick="saveCurrentFile()" class="px-5 py-2 bg-gblue hover:bg-gblueHover text-white font-bold rounded-xl text-xs transition shadow-md">Save Changes</button>
+          <button type="button" onclick="closeFileModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gdark rounded-xl text-xs font-semibold transition">Cancel</button>
+          <button type="button" onclick="saveCurrentFile()" class="px-5 py-2 az-btn-gold font-bold rounded-xl text-xs transition shadow-md">Save Changes</button>
         </div>
       </div>
     </div>
@@ -1220,45 +1740,45 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <p class="text-[11px] text-gsub">Changes are atomically persisted to <code class="bg-gray-100 px-1 py-0.5 rounded text-[10px]">.env</code></p>
           </div>
         </div>
-        <button onclick="closeConfigModal()" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
+        <button type="button" onclick="closeConfigModal()" aria-label="Close config modal" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
       </div>
 
       <div class="space-y-3 overflow-y-auto flex-1 pr-1 text-xs">
         <div>
-          <label class="block font-semibold text-gdark mb-1">xAI API Key (Grok)</label>
-          <input type="password" id="cfg-xai-key" placeholder="xai-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-xai-key" class="block font-semibold text-gdark mb-1">xAI API Key (Grok)</label>
+          <input type="password" id="cfg-xai-key" aria-label="xAI API Key" placeholder="xai-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">OpenAI API Key</label>
-          <input type="password" id="cfg-openai-key" placeholder="sk-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-openai-key" class="block font-semibold text-gdark mb-1">OpenAI API Key</label>
+          <input type="password" id="cfg-openai-key" aria-label="OpenAI API Key" placeholder="sk-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">Anthropic API Key (Claude)</label>
-          <input type="password" id="cfg-anthropic-key" placeholder="sk-ant-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-anthropic-key" class="block font-semibold text-gdark mb-1">Anthropic API Key (Claude)</label>
+          <input type="password" id="cfg-anthropic-key" aria-label="Anthropic API Key" placeholder="sk-ant-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">Google Gemini API Key</label>
-          <input type="password" id="cfg-gemini-key" placeholder="AIza..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-gemini-key" class="block font-semibold text-gdark mb-1">Google Gemini API Key</label>
+          <input type="password" id="cfg-gemini-key" aria-label="Google Gemini API Key" placeholder="AIza..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">OpenRouter API Key</label>
-          <input type="password" id="cfg-openrouter-key" placeholder="sk-or-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-openrouter-key" class="block font-semibold text-gdark mb-1">OpenRouter API Key</label>
+          <input type="password" id="cfg-openrouter-key" aria-label="OpenRouter API Key" placeholder="sk-or-..." class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div class="pt-2 border-t border-gborderLight">
-          <label class="block font-semibold text-gdark mb-1">OpenAI / Ollama Base URL</label>
-          <input type="text" id="cfg-base-url" placeholder="http://localhost:11434/v1" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-base-url" class="block font-semibold text-gdark mb-1">OpenAI / Ollama Base URL</label>
+          <input type="text" id="cfg-base-url" aria-label="OpenAI or Ollama Base URL" placeholder="http://localhost:11434/v1" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">Default Model</label>
-          <input type="text" id="cfg-model" placeholder="qwen2.5-coder:1.5b" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="cfg-model" class="block font-semibold text-gdark mb-1">Default Model</label>
+          <input type="text" id="cfg-model" aria-label="Default Model Name" placeholder="qwen2.5-coder:1.5b" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
       </div>
 
       <div class="flex items-center justify-between pt-3 border-t border-gborder">
         <span id="cfg-save-status" class="text-[11px] text-gsub"></span>
         <div class="flex items-center space-x-2">
-          <button onclick="closeConfigModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gdark rounded-xl text-xs font-semibold transition">Cancel</button>
-          <button onclick="saveConfigKeys()" class="px-5 py-2 bg-gblue hover:bg-gblueHover text-white font-bold rounded-xl text-xs transition shadow-md">Save & Apply</button>
+          <button type="button" onclick="closeConfigModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gdark rounded-xl text-xs font-semibold transition">Cancel</button>
+          <button type="button" onclick="saveConfigKeys()" class="px-5 py-2 az-btn-gold font-bold rounded-xl text-xs transition shadow-md">Save & Apply</button>
         </div>
       </div>
     </div>
@@ -1275,21 +1795,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <p class="text-[11px] text-gsub">Natural bezier cursor cadence, multi-step & 2FA support</p>
           </div>
         </div>
-        <button onclick="closeSmartLoginModal()" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
+        <button type="button" onclick="closeSmartLoginModal()" aria-label="Close login modal" class="text-gray-400 hover:text-gdark font-bold text-lg p-1">×</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-gdark mb-1">Target Page URL</label>
-          <input type="text" id="login-modal-url" placeholder="https://x.com/i/flow/login" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="login-modal-url" class="block font-semibold text-gdark mb-1">Target Page URL</label>
+          <input type="text" id="login-modal-url" aria-label="Target Page URL" placeholder="https://x.com/i/flow/login" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">Username / Email / Handle</label>
-          <input type="text" id="login-modal-user" placeholder="username or user@email.com" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-gblue">
+          <label for="login-modal-user" class="block font-semibold text-gdark mb-1">Username / Email / Handle</label>
+          <input type="text" id="login-modal-user" aria-label="Username or Email" placeholder="username or user@email.com" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-gblue">
         </div>
         <div>
-          <label class="block font-semibold text-gdark mb-1">Password</label>
-          <input type="password" id="login-modal-pass" placeholder="••••••••••••" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
+          <label for="login-modal-pass" class="block font-semibold text-gdark mb-1">Password</label>
+          <input type="password" id="login-modal-pass" aria-label="Password" placeholder="••••••••••••" class="w-full bg-gray-50 border border-gborder rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-gblue">
         </div>
 
         <!-- Optional custom selectors toggle -->
@@ -1297,16 +1817,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <summary class="hover:text-gdark select-none font-medium">Advanced: Custom Selectors (Optional)</summary>
           <div class="space-y-2 mt-2 pl-2 border-l-2 border-gray-100">
             <div>
-              <label class="block text-[10px] text-gray-500 mb-0.5">Username Selector</label>
-              <input type="text" id="login-modal-sel-user" placeholder="Auto-detect (input[autocomplete=username], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
+              <label for="login-modal-sel-user" class="block text-[10px] text-gray-500 mb-0.5">Username Selector</label>
+              <input type="text" id="login-modal-sel-user" aria-label="Username CSS selector" placeholder="Auto-detect (input[autocomplete=username], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
             </div>
             <div>
-              <label class="block text-[10px] text-gray-500 mb-0.5">Password Selector</label>
-              <input type="text" id="login-modal-sel-pass" placeholder="Auto-detect (input[type=password], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
+              <label for="login-modal-sel-pass" class="block text-[10px] text-gray-500 mb-0.5">Password Selector</label>
+              <input type="text" id="login-modal-sel-pass" aria-label="Password CSS selector" placeholder="Auto-detect (input[type=password], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
             </div>
             <div>
-              <label class="block text-[10px] text-gray-500 mb-0.5">Submit Button Selector</label>
-              <input type="text" id="login-modal-sel-submit" placeholder="Auto-detect (button[type=submit], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
+              <label for="login-modal-sel-submit" class="block text-[10px] text-gray-500 mb-0.5">Submit Button Selector</label>
+              <input type="text" id="login-modal-sel-submit" aria-label="Submit button CSS selector" placeholder="Auto-detect (button[type=submit], ...)" class="w-full bg-gray-50 border border-gborder rounded-lg px-2 py-1 text-[11px] font-mono">
             </div>
           </div>
         </details>
@@ -1334,6 +1854,33 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     let currentEditingPath = '';
     let canvasZoomLevel = 1.0;
 
+    function azothFetch(url, options) {
+      const opts = Object.assign({}, options || {});
+      const headers = Object.assign({}, opts.headers || {});
+      if (window.__AZOTH_CSRF_TOKEN__) {
+        headers['X-Azoth-Token'] = window.__AZOTH_CSRF_TOKEN__;
+      }
+      opts.headers = headers;
+      return fetch(url, opts);
+    }
+
+    function syncThemeUI() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const icon = document.getElementById('theme-toggle-icon');
+      const label = document.getElementById('theme-toggle-label');
+      if (icon) icon.textContent = current === 'dark' ? '☀️' : '🌙';
+      if (label) label.textContent = current === 'dark' ? 'Light' : 'Dark';
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('azoth-theme', next); } catch (e) {}
+      syncThemeUI();
+      showToast(`Switched to ${next === 'dark' ? 'Obsidian Dark' : 'Editorial Ivory Light'} mode`, 'info', 1800);
+    }
+
     const MODE_METADATA = {
       regular: { name: 'Truth Mode', icon: '⚡', tagline: 'Objective & direct' },
       fun: { name: 'Fun Mode', icon: '🌶️', tagline: 'Witty, sharp, and unfiltered' },
@@ -1343,7 +1890,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     async function setMode(modeId) {
       try {
-        const res = await fetch('/api/mode', {
+        const res = await azothFetch('/api/mode', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({mode: modeId})
@@ -1353,7 +1900,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           activeMode = modeId;
           updateModeUI();
           const meta = MODE_METADATA[modeId] || { name: modeId, icon: '⚡' };
-          showToast(`Switched to Grok ${meta.name} ${meta.icon}`, 'engine');
+          showToast(`Switched to ${meta.name} ${meta.icon}`, 'engine');
         }
       } catch (err) {
         showToast(`Failed to switch mode: ${err.message}`, 'error');
@@ -1362,12 +1909,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     function updateModeUI() {
       document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.classList.remove('bg-purple-600', 'bg-gblue', 'text-white', 'shadow-2xs');
+        btn.classList.remove('az-mode-active', 'bg-purple-600', 'bg-gblue', 'text-white', 'shadow-2xs');
         btn.classList.add('text-gdark');
       });
       const activeBtn = document.getElementById('mode-btn-' + activeMode);
       if (activeBtn) {
-        activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-2xs');
+        activeBtn.classList.add('az-mode-active', 'shadow-2xs');
         activeBtn.classList.remove('text-gdark');
       }
       const meta = MODE_METADATA[activeMode] || { name: 'Truth Mode', icon: '⚡' };
@@ -1440,21 +1987,68 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       });
     }
 
+    function sanitizeHtml(dirtyHtml) {
+      const ALLOWED_TAGS = new Set([
+        'P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'DEL', 'CODE', 'PRE',
+        'BLOCKQUOTE', 'UL', 'OL', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+        'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'A', 'SPAN', 'DIV', 'HR',
+        'DETAILS', 'SUMMARY', 'BUTTON'
+      ]);
+      const ALLOWED_ATTRS = new Set(['class', 'href', 'title', 'target', 'rel', 'type', 'data-copy-code']);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(String(dirtyHtml || ''), 'text/html');
+
+      function cleanNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) return;
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          node.remove();
+          return;
+        }
+        const tag = node.tagName.toUpperCase();
+        if (!ALLOWED_TAGS.has(tag)) {
+          node.remove();
+          return;
+        }
+        Array.from(node.attributes).forEach(attr => {
+          const name = attr.name.toLowerCase();
+          const val = (attr.value || '').trim();
+          if (name.startsWith('on') || !ALLOWED_ATTRS.has(name)) {
+            node.removeAttribute(attr.name);
+            return;
+          }
+          if (name === 'href') {
+            const lower = val.replace(/[\u0000-\u001F\s]+/g, '').toLowerCase();
+            if (!(lower.startsWith('http://') || lower.startsWith('https://') || lower.startsWith('#') || lower.startsWith('mailto:'))) {
+              node.removeAttribute(attr.name);
+            } else {
+              node.setAttribute('rel', 'noopener noreferrer');
+              node.setAttribute('target', '_blank');
+            }
+          }
+        });
+        Array.from(node.childNodes).forEach(cleanNode);
+      }
+
+      Array.from(doc.body.childNodes).forEach(cleanNode);
+      return doc.body.innerHTML;
+    }
+
     function renderMarkdown(rawText) {
       if (!window.marked) return escapeHtml(rawText);
       try {
-        let parsed = marked.parse(rawText);
+        let parsed = sanitizeHtml(marked.parse(String(rawText || '')));
         // Enhance pre blocks with code-header & copy button
         parsed = parsed.replace(/<pre><code class="language-([a-zA-Z0-9_\-]+)">([\s\S]*?)<\/code><\/pre>/g, function(match, lang, code) {
+          const safeLang = escapeHtml(lang);
           return `
             <div class="code-container">
               <div class="code-header">
-                <span class="font-bold">${lang.toUpperCase()}</span>
-                <button onclick="copyCodeBlock(this)" class="hover:text-white flex items-center space-x-1 transition text-[11px] px-2 py-0.5 rounded hover:bg-gray-700/60">
+                <span class="font-bold">${safeLang.toUpperCase()}</span>
+                <button type="button" data-copy-code="1" class="hover:text-white flex items-center space-x-1 transition text-[11px] px-2 py-0.5 rounded hover:bg-gray-700/60">
                   <span>📋</span><span>Copy</span>
                 </button>
               </div>
-              <pre class="p-3.5 text-xs font-mono overflow-x-auto text-gray-200"><code class="language-${lang}">${code}</code></pre>
+              <pre class="p-3.5 text-xs font-mono overflow-x-auto text-gray-200"><code class="language-${safeLang}">${code}</code></pre>
             </div>
           `;
         });
@@ -1464,7 +2058,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <div class="code-container">
               <div class="code-header">
                 <span class="font-bold">CODE</span>
-                <button onclick="copyCodeBlock(this)" class="hover:text-white flex items-center space-x-1 transition text-[11px] px-2 py-0.5 rounded hover:bg-gray-700/60">
+                <button type="button" data-copy-code="1" class="hover:text-white flex items-center space-x-1 transition text-[11px] px-2 py-0.5 rounded hover:bg-gray-700/60">
                   <span>📋</span><span>Copy</span>
                 </button>
               </div>
@@ -1478,9 +2072,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       }
     }
 
+    document.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('[data-copy-code]') : null;
+      if (btn) copyCodeBlock(btn);
+    });
+
     function escapeHtml(text) {
       const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return text.replace(/[&<>"']/g, m => map[m]);
+      return String(text == null ? '' : text).replace(/[&<>"']/g, m => map[m]);
     }
 
     // --- TOAST NOTIFICATION SYSTEM ---
@@ -1512,14 +2111,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       const colorClass = colorClasses[type] || colorClasses.info;
 
       toast.className = `pointer-events-auto p-3.5 rounded-2xl shadow-m3-3 border backdrop-blur-md flex items-center justify-between space-x-3 text-xs font-medium toast-enter ${colorClass}`;
-      toast.innerHTML = `
-        <div class="flex items-center space-x-2.5">
-          <span class="text-sm">${icon}</span>
-          <span>${message}</span>
-        </div>
-        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 font-bold ml-2">×</button>
-      `;
+      const body = document.createElement('div');
+      body.className = 'flex items-center space-x-2.5';
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'text-sm';
+      iconSpan.textContent = icon;
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = String(message == null ? '' : message);
+      body.appendChild(iconSpan);
+      body.appendChild(msgSpan);
 
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'opacity-60 hover:opacity-100 font-bold ml-2';
+      closeBtn.setAttribute('aria-label', 'Dismiss notification');
+      closeBtn.textContent = '×';
+      closeBtn.addEventListener('click', () => toast.remove());
+
+      toast.appendChild(body);
+      toast.appendChild(closeBtn);
       container.appendChild(toast);
 
       setTimeout(() => {
@@ -1543,7 +2153,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     }
 
     function copyMessageText(btn) {
-      const bubble = btn.closest('.message-bubble');
+      const card = btn.closest('.flex-col') || btn.parentElement?.parentElement;
+      const bubble = btn.closest('.message-bubble') || (card ? card.querySelector('.message-bubble') : null);
       if (bubble) {
         navigator.clipboard.writeText(bubble.innerText).then(() => {
           showToast('Message text copied to clipboard!', 'copy');
@@ -1561,8 +2172,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
       targets.forEach(el => {
         if (!el) return;
-        el.className = 'flex items-center justify-center shadow-md transition-all duration-300 text-white cursor-pointer ' + 
-          (el.id === 'header-bot-preview' ? 'w-10 h-10 ' : el.id === 'hero-bot-avatar' ? 'w-16 h-16 shrink-0 ' : 'w-24 h-24 mx-auto mb-3 ');
+        el.className = 'flex items-center justify-center shadow-md transition-all duration-300 text-white cursor-pointer shrink-0 ' + 
+          (el.id === 'header-bot-preview' ? 'w-11 h-11 ' : el.id === 'hero-bot-avatar' ? 'w-16 h-16 ' : 'w-24 h-24 mx-auto mb-3 ');
         
         if (botConfig.shape === 'circle') el.classList.add('shape-circle');
         else if (botConfig.shape === 'squircle') el.classList.add('shape-squircle');
@@ -1787,7 +2398,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     // --- INTERACTIVE BROWSER LOGIC ---
     async function refreshLiveBrowser() {
       try {
-        const res = await fetch('/api/browser/state');
+        const res = await azothFetch('/api/browser/state');
         const data = await res.json();
         
         if (data.ok) {
@@ -1818,12 +2429,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     function renderTabs(tabs, activeIndex) {
       const bar = document.getElementById('browser-tabs-bar');
-      bar.innerHTML = tabs.map((t, idx) => `
-        <div onclick="browserSwitchTab(${t.index})" class="flex items-center space-x-1.5 px-3 py-1 rounded-xl text-xs cursor-pointer border transition shrink-0 ${t.active ? 'bg-white text-gblue font-bold border-gborder shadow-2xs' : 'bg-transparent text-gsub hover:text-gdark border-transparent'}">
-          <span class="truncate max-w-[120px]">${t.title || 'Tab ' + (t.index + 1)}</span>
-          <span onclick="event.stopPropagation(); browserCloseTab(${t.index})" class="text-gray-400 hover:text-gred font-bold ml-1">×</span>
-        </div>
-      `).join('');
+      bar.innerHTML = '';
+      (tabs || []).forEach((t) => {
+        const idx = Number(t.index) || 0;
+        const tabDiv = document.createElement('div');
+        tabDiv.className = `flex items-center space-x-1.5 px-3 py-1 rounded-xl text-xs cursor-pointer border transition shrink-0 ${t.active ? 'bg-white text-gblue font-bold border-gborder shadow-2xs' : 'bg-transparent text-gsub hover:text-gdark border-transparent'}`;
+        tabDiv.addEventListener('click', () => browserSwitchTab(idx));
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'truncate max-w-[120px]';
+        titleSpan.textContent = String(t.title || ('Tab ' + (idx + 1)));
+
+        const closeSpan = document.createElement('span');
+        closeSpan.className = 'text-gray-400 hover:text-gred font-bold ml-1';
+        closeSpan.textContent = '×';
+        closeSpan.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          browserCloseTab(idx);
+        });
+
+        tabDiv.appendChild(titleSpan);
+        tabDiv.appendChild(closeSpan);
+        bar.appendChild(tabDiv);
+      });
     }
 
     function trackCanvasCoords(e) {
@@ -1873,7 +2501,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       layer.appendChild(ripple);
       setTimeout(() => ripple.remove(), 600);
 
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'click', x: realX, y: realY})
@@ -1883,7 +2511,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     async function handleCanvasWheel(e) {
       e.preventDefault();
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'wheel', delta_y: Math.sign(e.deltaY) * 320})
@@ -1894,7 +2522,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function handleDirectKey(e) {
       if (['Enter', 'Backspace', 'Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
-        await fetch('/api/browser/input', {
+        await azothFetch('/api/browser/input', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({type: 'key', key: e.key})
@@ -1908,7 +2536,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       const input = document.getElementById('browser-type-input');
       const text = input.value;
       if (!text) return;
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'type', text: text})
@@ -1922,7 +2550,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       const url = document.getElementById('browser-url-input').value.trim();
       if (!url) return;
       showToast(`Navigating to ${url}...`, 'info');
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'navigate', url: url})
@@ -1939,7 +2567,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function browserNewTabPrompt() {
       const url = prompt("Enter destination URL for new tab:", "https://google.com");
       if (url === null) return;
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'new_tab', url: url || 'https://google.com'})
@@ -1949,7 +2577,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     }
 
     async function browserSwitchTab(idx) {
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'switch_tab', tab_index: idx})
@@ -1959,7 +2587,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     }
 
     async function browserCloseTab(idx) {
-      await fetch('/api/browser/input', {
+      await azothFetch('/api/browser/input', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'close_tab', tab_index: idx})
@@ -1981,7 +2609,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
       try {
         const currentUrl = document.getElementById('browser-url-input').value.trim();
-        const res = await fetch('/api/browser/check_auth', {
+        const res = await azothFetch('/api/browser/check_auth', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ url: currentUrl || undefined })
@@ -2059,7 +2687,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       statusEl.innerText = 'Simulating human typing & navigation...';
 
       try {
-        const res = await fetch('/api/browser/login', {
+        const res = await azothFetch('/api/browser/login', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -2104,7 +2732,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function triggerBrowserTakeover() {
       const currentUrl = document.getElementById('browser-url-input').value.trim() || 'https://x.com';
       try {
-        const res = await fetch('/api/browser/takeover', {
+        const res = await azothFetch('/api/browser/takeover', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ url: currentUrl, reason: 'User requested manual 2FA / CAPTCHA takeover' })
@@ -2123,12 +2751,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     async function exportBrowserSession() {
       try {
-        const res = await fetch('/api/browser/session/export', { method: 'POST' });
+        const res = await azothFetch('/api/browser/session/export', { method: 'POST' });
         const data = await res.json();
-        if (data.success) {
-          showToast(`Exported ${data.cookies_count} session cookies to disk!`, 'success');
+        if (data.ok || data.success) {
+          showToast(`Exported ${data.cookies_count || 0} session cookies to workspace!`, 'success');
         } else {
-          showToast(`Export failed: ${data.error}`, 'error');
+          showToast(`Export failed: ${data.error || 'Unknown error'}`, 'error');
         }
       } catch (err) {
         showToast('Session export failed', 'error');
@@ -2138,12 +2766,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     // --- DUCKY SCRIPT LOGIC ---
     async function loadDuckyPresets() {
       try {
-        const res = await fetch('/api/ducky/presets');
+        const res = await azothFetch('/api/ducky/presets');
         const data = await res.json();
         duckyPresets = data.presets || [];
         const select = document.getElementById('ducky-preset-select');
         select.innerHTML = '<option value="">Load Preset Payload...</option>' + 
-          duckyPresets.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+          duckyPresets.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.title)}</option>`).join('');
       } catch (err) {
         console.error('Failed to load ducky presets', err);
       }
@@ -2207,7 +2835,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       out.innerHTML = '<div class="text-amber-400 animate-pulse flex items-center space-x-2"><span>⏳</span><span>Running DuckyScript execution pipeline...</span></div>';
 
       try {
-        const res = await fetch('/api/ducky/run', {
+        const res = await azothFetch('/api/ducky/run', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({script: script, target: target})
@@ -2220,13 +2848,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           
           out.innerHTML = `
             <div class="text-emerald-400 font-bold flex items-center space-x-1 mb-2">
-              <span>✔</span><span>${data.summary}</span>
+              <span>✔</span><span>${escapeHtml(data.summary || 'Executed')}</span>
             </div>
             <div class="space-y-1 pl-1 border-l-2 border-emerald-800">
               ${steps.map((st, i) => `
                 <div class="flex items-center space-x-2 text-gray-300">
                   <span class="text-gray-500 font-mono text-[10px]">#${i+1}</span>
-                  <span class="text-emerald-300 font-mono">${st}</span>
+                  <span class="text-emerald-300 font-mono">${escapeHtml(st)}</span>
                 </div>
               `).join('')}
             </div>
@@ -2234,11 +2862,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           showToast(`DuckyScript executed ${steps.length} steps!`, 'success');
           refreshLiveBrowser();
         } else {
-          out.innerHTML = `<div class="text-rose-400 font-bold">❌ Error: ${data.error}</div>`;
-          showToast(`DuckyScript error: ${data.error}`, 'error');
+          out.innerHTML = `<div class="text-rose-400 font-bold">❌ Error: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+          showToast(`DuckyScript error: ${data.error || 'Unknown error'}`, 'error');
         }
       } catch (err) {
-        out.innerHTML = `<div class="text-rose-400 font-bold">❌ Error: ${err.message}</div>`;
+        out.innerHTML = `<div class="text-rose-400 font-bold">❌ Error: ${escapeHtml(err.message)}</div>`;
         showToast(`Execution failed: ${err.message}`, 'error');
       } finally {
         btn.disabled = false;
@@ -2249,7 +2877,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function loadEngines() {
       const el = document.getElementById('engines-list');
       try {
-        const res = await fetch('/api/engines');
+        const res = await azothFetch('/api/engines');
         const data = await res.json();
         availableEngines = data.engines;
         activeEngine = data.active.engine;
@@ -2257,25 +2885,31 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         document.getElementById('header-engine-label').innerText = data.active_engine_name || 'Ollama';
         document.getElementById('header-engine-icon').innerText = data.active_engine_icon || '🦙';
 
-        el.innerHTML = availableEngines.map(e => {
+        el.innerHTML = '';
+        availableEngines.forEach(e => {
           const isActive = e.id === activeEngine;
-          return `
-            <div onclick="selectEngine('${e.id}')" class="p-3.5 rounded-2xl border cursor-pointer transition ${isActive ? 'bg-blue-50/90 border-gblue shadow-m3-1' : 'bg-white border-gborder hover:border-gray-300 shadow-2xs'}">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <span class="text-xl">${e.icon}</span>
-                  <div>
-                    <h4 class="font-bold text-gdark text-xs">${e.name}</h4>
-                    <span class="text-[10px] text-gsub">${e.type === 'cli' ? 'CLI Agent Binary' : 'Direct API Model'}</span>
-                  </div>
+          const card = document.createElement('div');
+          card.className = `p-3.5 rounded-2xl border cursor-pointer transition ${isActive ? 'bg-blue-50/90 border-gblue shadow-m3-1' : 'bg-white border-gborder hover:border-gray-300 shadow-2xs'}`;
+          card.addEventListener('click', () => selectEngine(e.id));
+          const detail = e.type === 'cli'
+            ? ('CLI Binary: ' + (e.available ? 'Detected' : 'Not installed'))
+            : (e.models ? e.models.slice(0, 3).join(', ') : 'Direct Endpoint');
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="text-xl">${escapeHtml(e.icon || '⚡')}</span>
+                <div>
+                  <h4 class="font-bold text-gdark text-xs">${escapeHtml(e.name)}</h4>
+                  <span class="text-[10px] text-gsub">${e.type === 'cli' ? 'CLI Agent Binary' : 'Direct API Model'}</span>
                 </div>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${e.available ? 'bg-emerald-100 text-ggreen' : 'bg-gray-100 text-gray-400'}">${e.badge}</span>
               </div>
-              <p class="text-[11px] text-gsub mt-2">${e.type === 'cli' ? 'Path: ' + (e.path || 'System PATH') : (e.models ? e.models.slice(0, 3).join(', ') : 'Direct Endpoint')}</p>
-              ${isActive ? '<div class="text-[11px] text-gblue font-bold mt-2 flex items-center space-x-1"><span>✔ Currently Active Agent</span></div>' : ''}
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${e.available ? 'bg-emerald-100 text-ggreen' : 'bg-gray-100 text-gray-400'}">${escapeHtml(e.badge || '')}</span>
             </div>
+            <p class="text-[11px] text-gsub mt-2">${escapeHtml(detail)}</p>
+            ${isActive ? '<div class="text-[11px] text-gblue font-bold mt-2 flex items-center space-x-1"><span>✔ Currently Active Agent</span></div>' : ''}
           `;
-        }).join('');
+          el.appendChild(card);
+        });
       } catch (err) {
         el.innerHTML = '<div class="text-gred p-3 text-xs">Failed to scan engine status.</div>';
       }
@@ -2283,7 +2917,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     async function selectEngine(engineId) {
       try {
-        const res = await fetch('/api/engine/set', {
+        const res = await azothFetch('/api/engine/set', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({engine: engineId})
@@ -2303,7 +2937,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       modal.classList.remove('hidden');
       document.getElementById('cfg-save-status').innerText = 'Loading configuration...';
       try {
-        const res = await fetch('/api/config');
+        const res = await azothFetch('/api/config');
         const data = await res.json();
         if (data.ok) {
           const cfg = data.configs || {};
@@ -2352,7 +2986,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       statusEl.innerText = 'Saving configuration to .env...';
 
       try {
-        const res = await fetch('/api/config/save', {
+        const res = await azothFetch('/api/config/save', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({updates: updates})
@@ -2363,7 +2997,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           closeConfigModal();
           loadEngines();
         } else {
-          statusEl.innerText = 'Error saving config';
+          statusEl.innerText = data.error || 'Error saving config';
         }
       } catch (err) {
         statusEl.innerText = 'Error: ' + err.message;
@@ -2374,18 +3008,27 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function loadWorkspace() {
       const el = document.getElementById('workspace-file-list');
       try {
-        const res = await fetch('/api/workspace');
+        const res = await azothFetch('/api/workspace');
         const data = await res.json();
         if (!data.entries || data.entries.length === 0) {
           el.innerHTML = '<div class="text-gray-400 italic p-3 text-center">Workspace is empty. Click "+ New File" to create one.</div>';
           return;
         }
-        el.innerHTML = data.entries.map(e => `
-          <div onclick="openFileModal('${e.name}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-2xl border border-gborder cursor-pointer transition shadow-2xs">
-            <span class="${e.is_dir ? 'text-amber-700 font-semibold' : 'text-gdark font-medium'}">${e.is_dir ? '📁 ' : '📄 '} ${e.name}</span>
-            <span class="text-gsub text-[10px]">${e.size_bytes ? e.size_bytes + ' B' : ''}</span>
-          </div>
-        `).join('');
+        el.innerHTML = '';
+        data.entries.forEach(e => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-2xl border border-gborder cursor-pointer transition shadow-2xs';
+          row.addEventListener('click', () => openFileModal(e.name));
+          const left = document.createElement('span');
+          left.className = e.is_dir ? 'text-amber-700 font-semibold' : 'text-gdark font-medium';
+          left.textContent = (e.is_dir ? '📁 ' : '📄 ') + String(e.name || '');
+          const right = document.createElement('span');
+          right.className = 'text-gsub text-[10px]';
+          right.textContent = e.size_bytes ? (e.size_bytes + ' B') : '';
+          row.appendChild(left);
+          row.appendChild(right);
+          el.appendChild(row);
+        });
       } catch (err) {
         el.innerHTML = '<div class="text-gred p-2">Failed to load files</div>';
       }
@@ -2395,7 +3038,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       currentEditingPath = filename;
       document.getElementById('modal-file-name').innerText = filename;
       try {
-        const res = await fetch(`/api/workspace/file?path=${encodeURIComponent(filename)}`);
+        const res = await azothFetch(`/api/workspace/file?path=${encodeURIComponent(filename)}`);
         const data = await res.json();
         document.getElementById('modal-file-content').value = data.content || '';
         document.getElementById('file-modal').classList.remove('hidden');
@@ -2430,7 +3073,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function saveCurrentFile() {
       const content = document.getElementById('modal-file-content').value;
       try {
-        await fetch('/api/workspace/file', {
+        await azothFetch('/api/workspace/file', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({path: currentEditingPath, content: content})
@@ -2446,7 +3089,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function deleteCurrentFile() {
       if (!confirm(`Are you sure you want to delete ${currentEditingPath}?`)) return;
       try {
-        await fetch('/api/workspace/file/delete', {
+        await azothFetch('/api/workspace/file/delete', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({path: currentEditingPath})
@@ -2591,15 +3234,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             return c.done ? `
               <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-[11px] text-emerald-800">
                 <span>${icon}</span>
-                <span class="font-semibold">${c.name}</span>
-                <span class="text-emerald-600 flex-1 truncate">(${argsPreview || 'no args'})</span>
-                <span class="text-[10px] bg-emerald-100 px-1.5 py-0.5 rounded-full font-medium ml-auto truncate max-w-[120px]">✔ ${c.summary || 'Done'}</span>
+                <span class="font-semibold">${escapeHtml(c.name)}</span>
+                <span class="text-emerald-600 flex-1 truncate">(${escapeHtml(argsPreview || 'no args')})</span>
+                <span class="text-[10px] bg-emerald-100 px-1.5 py-0.5 rounded-full font-medium ml-auto truncate max-w-[120px]">✔ ${escapeHtml(c.summary || 'Done')}</span>
               </div>
             ` : `
               <div class="flex items-center space-x-2 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl text-[11px] text-blue-800 animate-pulse">
                 <span>${icon}</span>
-                <span class="font-semibold">${c.name}</span>
-                <span class="text-blue-500 flex-1 truncate">(${argsPreview || 'running...'})</span>
+                <span class="font-semibold">${escapeHtml(c.name)}</span>
+                <span class="text-blue-500 flex-1 truncate">(${escapeHtml(argsPreview || 'running...')})</span>
                 <div class="w-3 h-3 rounded-full border-2 border-blue-400 border-t-transparent animate-spin ml-auto shrink-0"></div>
               </div>
             `;
@@ -2781,9 +3424,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         if (el) el.classList.toggle('hidden', !isActive);
         if (btn) {
           if (isActive) {
-            btn.className = 'flex-1 py-3 text-gblue border-b-2 border-gblue bg-white font-bold flex items-center justify-center space-x-1 transition';
+            btn.className = 'shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 az-tab-active border-b-2 font-bold flex items-center justify-center gap-1 transition';
           } else {
-            btn.className = 'flex-1 py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center space-x-1 transition';
+            btn.className = 'shrink-0 xl:flex-1 whitespace-nowrap px-3 xl:px-1.5 py-2.5 sm:py-3 text-gsub hover:text-gdark border-b-2 border-transparent flex items-center justify-center gap-1 transition';
           }
         }
       });
@@ -2795,8 +3438,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (tab === 'customizer') setTimeout(initMascotParticles, 100);
       if (tab === 'topology') {
         if (typeof initTopology === 'function') {
-          initTopology();
-          drawTopology();
+          Promise.resolve(initTopology()).then(() => { drawTopology(); });
         }
       }
     }
@@ -2882,7 +3524,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     function connectTerminalSocket() {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const url = `${protocol}//${location.host}/ws/terminal`;
+      const tok = encodeURIComponent(window.__AZOTH_CSRF_TOKEN__ || '');
+      const url = `${protocol}//${location.host}/ws/terminal?token=${tok}`;
       
       if (termSocket) {
         try { termSocket.close(); } catch(e) {}
@@ -2923,7 +3566,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         term.write(`\r\n\x1b[32mazoth@sandbox\x1b[0m:\x1b[34m~/workspace\x1b[0m$ ${clean}\r\n`);
       }
       try {
-        const res = await fetch('/api/vm/exec', {
+        const res = await azothFetch('/api/vm/exec', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ command: clean, timeout: 15 })
@@ -2967,17 +3610,17 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     async function refreshVMStatus() {
       try {
-        const res = await fetch('/api/vm/status');
+        const res = await azothFetch('/api/vm/status');
         const data = await res.json();
         if (data) {
           const distroEl = document.getElementById('terminal-distro');
           const memEl = document.getElementById('terminal-memory');
           const diskEl = document.getElementById('terminal-disk');
           const badgeEl = document.getElementById('terminal-backend-badge');
-          if (distroEl) distroEl.textContent = data.os_release || data.hostname || 'Debian 12';
+          if (distroEl) distroEl.textContent = data.os_release || data.hostname || 'Sandbox Host';
           if (memEl) memEl.textContent = data.memory || 'Active';
           if (diskEl) diskEl.textContent = data.disk ? data.disk.split(' ')[0] + ' ' + data.disk.split(' ')[1] : '/workspace';
-          if (badgeEl) badgeEl.textContent = (data.backend || 'docker').toUpperCase();
+          if (badgeEl) badgeEl.textContent = (data.backend || 'local_sandbox').toUpperCase();
           updateTerminalStatus(data.running, data.running ? 'Guest OS: Running' : 'Stopped');
         }
       } catch (err) {
@@ -2999,7 +3642,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     async function restartGuestOS() {
       showToast('Restarting Guest OS environment...', 'info');
       try {
-        const res = await fetch('/api/vm/restart', { method: 'POST' });
+        const res = await azothFetch('/api/vm/restart', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
           showToast('Guest OS restarted successfully!', 'success');
@@ -3061,14 +3704,37 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     }, 2500);
 
     // Initial Bootstrap
+    syncThemeUI();
     loadModes();
     loadEngines();
     loadDuckyPresets();
     applyBotTheme();
+    probeRuntimeBadge();
     setTimeout(() => {
       setTab('topology');
     }, 100);
     setTimeout(initMascotParticles, 300);
+
+    async function probeRuntimeBadge() {
+      const badge = document.getElementById('runtime-probe-badge');
+      const dot = document.getElementById('runtime-probe-dot');
+      const label = document.getElementById('runtime-probe-label');
+      try {
+        const [hRes, vmRes] = await Promise.all([
+          azothFetch('/health').then(r => r.json()).catch(() => null),
+          azothFetch('/api/vm/status').then(r => r.json()).catch(() => null),
+        ]);
+        const healthy = hRes && hRes.status === 'healthy';
+        const backend = vmRes && vmRes.backend ? String(vmRes.backend).toUpperCase() : 'LOCAL';
+        if (healthy && label && badge && dot) {
+          badge.className = 'text-[11px] bg-green-50 text-ggreen font-semibold px-2.5 py-1 rounded-full border border-green-200 flex items-center space-x-1.5';
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-ggreen';
+          label.textContent = `Loopback :8136 • ${backend}`;
+        }
+      } catch (e) {
+        if (label) label.textContent = 'Loopback :8136 Offline';
+      }
+    }
 
     // --- WAVEFORM INDICATOR ---
     let waveformActive = false;
@@ -3192,39 +3858,67 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       deepsearch: '🔬', config: '🔑', chat: '💬',
     };
 
-    function initTopology() {
-      topoNodes = [
-        { id: 'agent', label: 'aZoth Agent', x: 0, y: 0, r: 28, type: 'agent', status: 'active' },
-        { id: 'engine', label: 'Engine Router', x: 0, y: 0, r: 22, type: 'engine', status: 'active' },
-        { id: 'browser', label: 'Sandbox Browser', x: 0, y: 0, r: 20, type: 'browser', status: 'active' },
-        { id: 'terminal', label: 'Guest OS Terminal', x: 0, y: 0, r: 20, type: 'terminal', status: 'active' },
-        { id: 'ducky', label: 'DuckyScript Studio', x: 0, y: 0, r: 18, type: 'ducky', status: 'idle' },
-        { id: 'workspace', label: 'Workspace Files', x: 0, y: 0, r: 18, type: 'workspace', status: 'active' },
-        { id: 'search', label: 'DeepSearch', x: 0, y: 0, r: 17, type: 'search', status: 'idle' },
-        { id: 'x_intel', label: 'X Intelligence', x: 0, y: 0, r: 17, type: 'x_intel', status: 'idle' },
-        { id: 'python', label: 'Python REPL', x: 0, y: 0, r: 17, type: 'python', status: 'idle' },
-        { id: 'vm', label: 'Guest OS VM', x: 0, y: 0, r: 19, type: 'vm', status: 'active' },
-        { id: 'config', label: 'Config Vault', x: 0, y: 0, r: 16, type: 'config', status: 'secure' },
-        { id: 'chat', label: 'Chat Stream', x: 0, y: 0, r: 16, type: 'chat', status: 'active' },
+    async function initTopology() {
+      const [hData, eData, mData, vmData] = await Promise.all([
+        azothFetch('/health').then(r => r.json()).catch(() => null),
+        azothFetch('/api/engines').then(r => r.json()).catch(() => null),
+        azothFetch('/api/modes').then(r => r.json()).catch(() => null),
+        azothFetch('/api/vm/status').then(r => r.json()).catch(() => null),
+      ]);
+
+      const daemonActive = Boolean(hData && hData.status === 'healthy');
+      const engines = (eData && Array.isArray(eData.engines)) ? eData.engines : [];
+      const activeModeId = (mData && mData.active) ? mData.active : activeMode;
+      const vmBackend = (vmData && vmData.backend) ? vmData.backend : 'local_sandbox';
+      const vmRunning = Boolean(vmData && vmData.running);
+
+      const nodes = [
+        {
+          id: 'agent',
+          label: `AZOTH :8136 (${(hData && hData.version) || '3.1.0'})`,
+          x: 0, y: 0, r: 28, type: 'agent',
+          status: daemonActive ? 'active' : 'idle',
+        },
+        {
+          id: 'mode',
+          label: `Mode: ${String(activeModeId).toUpperCase()}`,
+          x: 0, y: 0, r: 19, type: 'chat',
+          status: daemonActive ? 'active' : 'idle',
+        },
+        {
+          id: 'vm',
+          label: `VM (${String(vmBackend).toUpperCase()})`,
+          x: 0, y: 0, r: 20, type: 'vm',
+          status: vmRunning ? 'active' : 'idle',
+        },
+        {
+          id: 'config',
+          label: 'Token Guard',
+          x: 0, y: 0, r: 18, type: 'config',
+          status: window.__AZOTH_CSRF_TOKEN__ ? 'secure' : 'idle',
+        },
       ];
-      topoEdges = [
-        { from: 'agent', to: 'engine', strength: 1.0 },
-        { from: 'agent', to: 'browser', strength: 0.8 },
-        { from: 'agent', to: 'terminal', strength: 0.9 },
-        { from: 'agent', to: 'ducky', strength: 0.6 },
-        { from: 'agent', to: 'workspace', strength: 0.7 },
-        { from: 'agent', to: 'search', strength: 0.5 },
-        { from: 'agent', to: 'x_intel', strength: 0.6 },
-        { from: 'agent', to: 'python', strength: 0.7 },
-        { from: 'agent', to: 'chat', strength: 1.0 },
-        { from: 'engine', to: 'config', strength: 0.9 },
-        { from: 'terminal', to: 'vm', strength: 1.0 },
-        { from: 'browser', to: 'vm', strength: 0.7 },
-        { from: 'search', to: 'x_intel', strength: 0.5 },
-        { from: 'workspace', to: 'python', strength: 0.6 },
-        { from: 'chat', to: 'search', strength: 0.4 },
-        { from: 'chat', to: 'workspace', strength: 0.4 },
+      const edges = [
+        { from: 'agent', to: 'mode', strength: 0.9 },
+        { from: 'agent', to: 'vm', strength: 0.85 },
+        { from: 'agent', to: 'config', strength: 1.0 },
       ];
+
+      engines.slice(0, 6).forEach((eng) => {
+        const nid = 'eng-' + String(eng.id || 'unknown');
+        nodes.push({
+          id: nid,
+          label: String(eng.name || eng.id).split(' ')[0],
+          x: 0, y: 0,
+          r: eng.id === (eData && eData.active && eData.active.engine) ? 22 : 17,
+          type: 'engine',
+          status: eng.available ? 'active' : 'idle',
+        });
+        edges.push({ from: 'agent', to: nid, strength: eng.available ? 0.95 : 0.4 });
+      });
+
+      topoNodes = nodes;
+      topoEdges = edges;
       layoutTopology();
       updateTopoStats();
     }
@@ -3391,7 +4085,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             tooltip.classList.remove('hidden');
             tooltip.style.left = (mx + 16) + 'px';
             tooltip.style.top = (my - 10) + 'px';
-            tooltip.innerHTML = `<div class="font-bold">${TOPO_ICONS[node.type]} ${node.label}</div><div>Status: ${node.status}</div><div>Connections: ${topoEdges.filter(e => e.from === node.id || e.to === node.id).length}</div>`;
+            tooltip.innerHTML = `<div class="font-bold">${escapeHtml(TOPO_ICONS[node.type] || '●')} ${escapeHtml(node.label)}</div><div>Status: ${escapeHtml(node.status)}</div><div>Connections: ${topoEdges.filter(e => e.from === node.id || e.to === node.id).length}</div>`;
           }
         } else if (tooltip) {
           tooltip.classList.add('hidden');
@@ -3404,8 +4098,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     setTab = function(tab) {
       origSetTab(tab);
       if (tab === 'topology') {
-        initTopology();
-        drawTopology();
+        Promise.resolve(initTopology()).then(() => { drawTopology(); });
       }
     };
   </script>
@@ -3414,20 +4107,59 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 """
 
 
-@app.get("/", response_class=HTMLResponse)
-def index():
-    return HTMLResponse(content=HTML_TEMPLATE)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
+def index(request: Request):
+    if request.method == "HEAD":
+        return Response(status_code=200, media_type="text/html; charset=utf-8")
+    host = request.headers.get("host", "")
+    # Inject session token ONLY into same-origin loopback GET / responses
+    token_script = ""
+    if is_valid_host_header(host, authenticated=False):
+        tok_json = json.dumps(get_api_token())
+        token_script = f"<script>window.__AZOTH_CSRF_TOKEN__ = {tok_json};</script>"
+    rendered = HTML_TEMPLATE.replace("<!-- __AZOTH_CSRF_INJECT__ -->", token_script, 1)
+    return HTMLResponse(content=rendered)
+
+
+@app.get("/robots.txt")
+def serve_robots():
+    robots_path = PUBLIC_DIR / "robots.txt"
+    if robots_path.is_file():
+        return PlainTextResponse(robots_path.read_text(encoding="utf-8"), media_type="text/plain; charset=utf-8")
+    return PlainTextResponse("User-agent: *\nAllow: /\n", media_type="text/plain; charset=utf-8")
+
+
+@app.get("/sitemap.xml")
+def serve_sitemap():
+    sm_path = PUBLIC_DIR / "sitemap.xml"
+    if sm_path.is_file():
+        return Response(content=sm_path.read_text(encoding="utf-8"), media_type="application/xml; charset=utf-8")
+    return Response(status_code=404)
+
+
+@app.get("/og-banner.jpg")
+def serve_og_banner():
+    og_path = PUBLIC_DIR / "og-banner.jpg"
+    if og_path.is_file():
+        return FileResponse(og_path, media_type="image/jpeg")
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
 @app.get("/api/engines")
 def get_engines():
     engines = EngineRegistry.get_available_engines()
-    active_obj = next((e for e in engines if e["id"] == active_state["engine"]), engines[0])
+    # Strip raw host binary paths from unauthenticated listing if needed, keep clean display
+    safe_engines = []
+    for e in engines:
+        item = dict(e)
+        item.pop("api_key", None)
+        safe_engines.append(item)
+    active_obj = next((e for e in safe_engines if e["id"] == active_state["engine"]), safe_engines[0])
     return {
-        "active": active_state,
+        "active": _safe_active_state(),
         "active_engine_name": active_obj["name"],
         "active_engine_icon": active_obj.get("icon", "⚡"),
-        "engines": engines,
+        "engines": safe_engines,
     }
 
 
@@ -3442,7 +4174,10 @@ def config_get_endpoint():
 
 @app.post("/api/config/save")
 def config_save_endpoint(req: ConfigSaveRequest):
-    success = EnvConfigManager.set_multiple(req.updates, persist=True)
+    try:
+        success = EnvConfigManager.set_multiple(req.updates, persist=True)
+    except ValueError as e:
+        return JSONResponse(status_code=400, content={"ok": False, "error": str(e)})
     return {"ok": success, "configs": EnvConfigManager.get_masked_configs()}
 
 
@@ -3457,8 +4192,11 @@ def set_engine(req: EngineConfigRequest):
         active_state["api_key"] = req.api_key
     if req.base_url:
         active_state["base_url"] = req.base_url
-    EnvConfigManager.set_multiple(updates, persist=True)
-    return {"ok": True, "active": active_state}
+    try:
+        EnvConfigManager.set_multiple(updates, persist=True)
+    except ValueError as e:
+        return JSONResponse(status_code=400, content={"ok": False, "error": str(e)})
+    return {"ok": True, "active": _safe_active_state()}
 
 
 @app.get("/api/browser/state")
@@ -3560,7 +4298,13 @@ async def browser_highlight_endpoint(req: dict[str, Any]):
 
 @app.get("/api/ducky/presets")
 def ducky_presets_endpoint():
-    return {"ok": True, "presets": DUCKY_PRESETS}
+    sanitized = []
+    for p in DUCKY_PRESETS:
+        item = dict(p)
+        if "path" in item:
+            item["path"] = f"presets/{Path(item['path']).name}"
+        sanitized.append(item)
+    return {"ok": True, "presets": sanitized}
 
 
 @app.post("/api/ducky/run")
@@ -3575,25 +4319,36 @@ def workspace_files():
 
 @app.get("/api/workspace/file")
 def workspace_file_get(path: str):
-    return read_file(path)
+    res = read_file(path)
+    if res.get("denied"):
+        return JSONResponse(status_code=403, content=res)
+    return res
 
 
 @app.post("/api/workspace/file")
 def workspace_file_save(req: FileSaveRequest):
-    return write_file(req.path, req.content)
+    res = write_file(req.path, req.content)
+    if res.get("denied"):
+        return JSONResponse(status_code=403, content=res)
+    return res
 
 
 @app.post("/api/workspace/file/delete")
+@app.post("/api/workspace/delete")
 def workspace_file_delete(req: FileDeleteRequest):
-    return delete_file(req.path)
+    res = delete_file(req.path)
+    if res.get("denied"):
+        return JSONResponse(status_code=403, content=res)
+    return res
 
 
 @app.post("/api/chat")
 def chat_endpoint(req: MessageRequest):
     global chat_history
     user_msg = req.message.strip()
-    engine_id = active_state["engine"]
-    current_mode = active_state.get("mode", "regular")
+    engine_id = (req.engine or active_state["engine"]).strip()
+    requested_mode = (req.mode or active_state.get("mode", "regular")).strip().lower()
+    current_mode = requested_mode if requested_mode in MODES else active_state.get("mode", "regular")
 
     cli_engines = ["hermes", "agy", "codex", "grok_cli", "gemini", "claude"]
     if engine_id in cli_engines:
@@ -3618,7 +4373,7 @@ def chat_endpoint(req: MessageRequest):
             return {"ok": False, "error": err}
 
     chat_history.append({"role": "user", "content": user_msg})
-    client, model = get_client_for_engine()
+    client, model = get_client_for_engine(engine_override=engine_id)
 
     try:
         reply = agent_step(client, model, chat_history)
@@ -3635,7 +4390,7 @@ def chat_endpoint(req: MessageRequest):
         # Fallback to deterministic local Archon execution if Ollama daemon is offline
         try:
             fallback = synthesize_local_archon_reply(user_msg, current_mode)
-            clean_reply = fallback.get("output", "")
+            clean_reply = fallback.get("reply") or fallback.get("output", "")
             thinking = fallback.get("thinking", "")
             chat_history.append({"role": "assistant", "content": clean_reply})
             return {
@@ -3666,14 +4421,19 @@ def _sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
-async def _stream_agent_response(user_msg: str) -> AsyncGenerator[str, None]:
+async def _stream_agent_response(
+    user_msg: str,
+    engine_override: Optional[str] = None,
+    mode_override: Optional[str] = None,
+) -> AsyncGenerator[str, None]:
     """
     SSE generator for the agentic ReAct loop.
     Emits: token | think | tool | tool_done | done | error
     """
     global chat_history
-    engine_id = active_state["engine"]
-    current_mode = active_state.get("mode", "regular")
+    engine_id = (engine_override or active_state["engine"]).strip()
+    requested_mode = (mode_override or active_state.get("mode", "regular")).strip().lower()
+    current_mode = requested_mode if requested_mode in MODES else active_state.get("mode", "regular")
 
     cli_engines = ["hermes", "agy", "codex", "grok_cli", "gemini", "claude"]
     if engine_id in cli_engines:
@@ -3710,7 +4470,7 @@ async def _stream_agent_response(user_msg: str) -> AsyncGenerator[str, None]:
         return
 
     chat_history.append({"role": "user", "content": user_msg})
-    client, model = get_client_for_engine()
+    client, model = get_client_for_engine(engine_override=engine_id)
     messages = list(chat_history)
     full_reply = ""
     max_turns = 8
@@ -3746,10 +4506,9 @@ async def _stream_agent_response(user_msg: str) -> AsyncGenerator[str, None]:
                     chat_history.pop()
                     return
                 break
-            yield _sse("error", {"message": str(exc)})
             try:
                 fallback = synthesize_local_archon_reply(user_msg, current_mode)
-                clean_reply = fallback.get("output", "")
+                clean_reply = fallback.get("reply") or fallback.get("output", "")
                 thinking = fallback.get("thinking", "")
                 if thinking:
                     yield _sse("think", {"text": thinking})
@@ -3762,6 +4521,7 @@ async def _stream_agent_response(user_msg: str) -> AsyncGenerator[str, None]:
                 yield _sse("done", {"engine": engine_id, "mode": current_mode, "fallback_used": True})
                 return
             except Exception:
+                yield _sse("error", {"message": str(exc)})
                 chat_history.pop()
                 return
 
@@ -3827,7 +4587,7 @@ async def _stream_agent_response(user_msg: str) -> AsyncGenerator[str, None]:
 async def chat_stream_endpoint(req: MessageRequest):
     """SSE streaming chat — real-time tokens + inline tool call cards."""
     return StreamingResponse(
-        _stream_agent_response(req.message.strip()),
+        _stream_agent_response(req.message.strip(), engine_override=req.engine, mode_override=req.mode),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
@@ -3941,21 +4701,29 @@ def vm_install_endpoint(req: VMInstallRequest):
     return guest_os.install_package(package=req.package)
 
 
-@app.get("/health")
-@app.get("/api/health")
-def health_check():
-    return {"status": "healthy", "service": "azoth-local-agent", "sovereign": True}
+@app.api_route("/health", methods=["GET", "HEAD"])
+@app.api_route("/api/health", methods=["GET", "HEAD"])
+def health_check(request: Request):
+    if request.method == "HEAD":
+        return Response(status_code=200, media_type="application/json")
+    return {
+        "status": "healthy",
+        "service": "azoth-local-agent",
+        "version": APP_VERSION,
+        "port": 8136,
+        "sovereign": True,
+    }
 
 
 def main():
     import argparse
     import uvicorn
-    parser = argparse.ArgumentParser(description="Azoth Local Agent Web UI Cockpit")
-    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8790)), help="Port to bind to (default: 8790)")
-    parser.add_argument("--host", default="127.0.0.1", help="Host interface (default: 127.0.0.1; use 0.0.0.0 only on trusted networks)")
+    parser = argparse.ArgumentParser(description="AZOTH Local Archon Agent Web Cockpit")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8136)), help="Port to bind to (default: 8136)")
+    parser.add_argument("--host", default="127.0.0.1", help="Host interface (default: 127.0.0.1)")
     parser.add_argument("--reload", action="store_true", default=False, help="Enable auto-reload")
     args, _ = parser.parse_known_args()
-    print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{args.port} (listening on {args.host})...")
+    print(f"Launching AZOTH Local Archon Agent v{APP_VERSION} at http://127.0.0.1:{args.port} (listening on {args.host})...")
     uvicorn.run("web_ui:app", host=args.host, port=args.port, reload=args.reload)
 
 

@@ -3,70 +3,402 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AZOTH Local Archon Agent — ZothOS Sovereign Local Cockpit</title>
+  <title>AZOTH Local Archon Agent v3.1.0 — Sovereign Local Workbench</title>
+  <meta name="description" content="AZOTH Local Archon Agent v3.1.0: hardened loopback autonomous ReAct agent (127.0.0.1:8136), DuckyScript linter, 35-tool schema explorer, multi-engine CLI router, and MCP stdio server.">
+  <meta property="og:title" content="AZOTH Local Archon Agent v3.1.0">
+  <meta property="og:description" content="Local-first autonomous ReAct agent cockpit on 127.0.0.1:8136 with DuckyScript linter, 35-tool schema explorer, sandboxed browser automation, and JSON-RPC 2.0 MCP server.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/azoth-local-agent">
+  <meta property="og:image" content="https://azoth-local-agent.netlify.app/og-banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="AZOTH Local Archon Agent v3.1.0">
+  <meta name="twitter:description" content="Hardened loopback autonomous ReAct agent cockpit, DuckyScript validator, 35-tool schema explorer, and MCP server.">
+  <meta name="twitter:image" content="https://azoth-local-agent.netlify.app/og-banner.jpg">
+  <script>
+    (function() {
+      var p = new URLSearchParams(window.location.search).get('theme');
+      var s = null;
+      try { s = localStorage.getItem('azoth-workbench-theme'); } catch (e) {}
+      var t = (p === 'light' || p === 'dark') ? p : (s === 'light' || s === 'dark' ? s : 'dark');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "AZOTH Local Archon Agent",
+        "softwareVersion": "3.1.0",
+        "url": "https://zoth.nullai.tech/tools/azoth-local-agent",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows, Web",
+        "description": "Local-first autonomous ReAct agent, hardened FastAPI loopback cockpit (127.0.0.1:8136), persistent Playwright browser sandbox, DuckyScript macro engine, and JSON-RPC 2.0 MCP server.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does AZOTH Local Archon Agent v3.1.0 do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AZOTH Local Archon Agent runs a hardened loopback FastAPI cockpit on 127.0.0.1:8136, routes prompts across Ollama and local CLI agents (Hermes, AGY, Codex, Grok CLI, Claude, Gemini), executes DuckyScript automation and Python sandboxes, and exposes 36 tools over JSON-RPC 2.0 MCP stdio."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the web workbench work offline without a backend?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The in-browser workbench probes 127.0.0.1:8136 when running locally and provides a deterministic client-side DuckyScript syntax linter, 35-tool schema explorer, and ReAct execution planner with zero external telemetry."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is AZOTH Local Archon Agent free and open-access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. AZOTH Local Archon Agent is 100% free and open-access with zero paywalls. Optional support is accepted via Buy Us a Coffee on Stripe and Solana tips (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <style>
-    :root { --bg: #07080C; --card: #0F111A; --gold: #D4AF37; --emerald: #10B981; --text: #F3F4F6; --muted: #9CA3AF; }
+    :root, :root[data-theme="light"] {
+      --bg: #FAF7F0; --surface: #FFFFFF; --elev: #F3EFE6; --ink: #181613; --sub: #4B463F;
+      --gold: #8C6A2E; --gold-ink: #FFFFFF; --emerald: #047857; --emerald-bg: #ECFDF5;
+      --border: rgba(24,22,19,0.14); --code-bg: #181613; --code-ink: #F2EFE8;
+    }
+    :root[data-theme="dark"] {
+      --bg: #08080B; --surface: #10131C; --elev: #171B27; --ink: #F2EFE8; --sub: #A7B0C0;
+      --gold: #D4AF37; --gold-ink: #08080B; --emerald: #34D399; --emerald-bg: rgba(16,185,129,0.14);
+      --border: rgba(242,239,232,0.14); --code-bg: #05070C; --code-ink: #F2EFE8;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; min-height: 100vh; }
-    .bar { background: linear-gradient(90deg, rgba(16,185,129,0.14), rgba(212,175,55,0.16)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-size: 12px; }
-    .btn-gold { background: var(--gold); color: #08080B; padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; border: none; cursor: pointer; }
-    .btn-sol { background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; cursor: pointer; }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
-    .card { background: var(--card); border: 1px solid rgba(212,175,55,0.28); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
-    h1 { font-size: 1.8rem; color: #F5E6AB; margin-bottom: 8px; }
-    p { color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-    textarea { width: 100%; min-height: 130px; background: #050609; color: #34D399; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; font-family: inherit; margin-bottom: 12px; }
-    pre { background: #050609; color: #F5E6AB; padding: 16px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.2); overflow-x: auto; white-space: pre-wrap; }
+    body { background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; min-height: 100vh; line-height: 1.5; }
+    code, pre, textarea, .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 18px 40px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
+    h1 { font-size: clamp(1.35rem, 2.6vw, 1.85rem); font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; color: var(--gold); }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--elev); color: var(--ink); }
+    .pill-ok { background: var(--emerald-bg); color: var(--emerald); border-color: var(--emerald); }
+    .btn { min-height: 44px; padding: 8px 15px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: var(--elev); color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-gold { background: var(--gold); color: var(--gold-ink); border-color: transparent; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .tab-active { background: var(--gold); color: var(--gold-ink); border-color: transparent; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    label { display: block; font-size: 12px; font-weight: 700; color: var(--sub); margin-bottom: 6px; }
+    textarea, input, select { width: 100%; background: var(--elev); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; font-size: 13px; }
+    textarea { min-height: 150px; background: var(--code-bg); color: #34D399; resize: vertical; }
+    pre { background: var(--code-bg); color: var(--code-ink); padding: 14px; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; font-size: 12px; white-space: pre-wrap; }
+    .tool-row { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--elev); margin-bottom: 8px; }
+    footer { margin-top: 28px; padding: 18px 0; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; color: var(--sub); }
+    footer a { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="bar">
-    <span style="color:#10B981;font-weight:800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS · ZOTHOS LOCAL DAEMON :8136</span>
-    <a class="btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
-    <a class="btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...!'">◎ Solana Tip (GG2e...dXoK)</a>
-  </div>
   <div class="wrap">
-    <div class="card">
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <span style="background:rgba(16,185,129,0.15);color:#34D399;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">ZOTHOS INSTALLED · /usr/local/bin/azoth-local-agent</span>
-        <span style="background:rgba(212,175,55,0.15);color:#F5E6AB;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">v3.0.0 · Swarm & Core</span>
+    <header>
+      <div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <span class="pill">v3.1.0 • Swarm &amp; Core</span>
+          <span id="daemon-pill" class="pill">Probing 127.0.0.1:8136…</span>
+        </div>
+        <h1>AZOTH Local Archon Agent Workbench</h1>
+        <p style="color:var(--sub);font-size:14px;margin-top:4px;">Client-side DuckyScript linter, 35-tool Archon schema explorer, deterministic ReAct planner, and live <code>127.0.0.1:8136</code> cockpit bridge.</p>
       </div>
-      <h1>AZOTH Local Archon Agent</h1>
-      <p>Archon Orchestrator core agent for local zero-telemetry task dispatching and subagent delegation.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
-        <a class="btn-gold" href="http://127.0.0.1:3000/tools/azoth-local-agent">Open Zoth Studio God-Mode Workbench ↗</a>
-        <a class="btn-sol" href="https://zoth.nullai.tech/tools/azoth-local-agent" target="_blank" rel="noopener">Public Web Mirror ↗</a>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <button type="button" class="btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle Light and Dark Theme">Theme</button>
+        <a class="btn btn-gold" href="http://127.0.0.1:8136" id="live-link">Open :8136 Cockpit ↗</a>
+        <a class="btn" href="https://zoth.nullai.tech/tools/azoth-local-agent" target="_blank" rel="noopener noreferrer">Zoth Studio ↗</a>
       </div>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Workbench Modules">
+      <button type="button" class="btn tab-active" id="tab-btn-ducky" onclick="switchPanel('ducky')">DuckyScript Linter</button>
+      <button type="button" class="btn" id="tab-btn-planner" onclick="switchPanel('planner')">ReAct Planner</button>
+      <button type="button" class="btn" id="tab-btn-schemas" onclick="switchPanel('schemas')">35-Tool Schema Explorer</button>
     </div>
-    <div class="card">
-      <h2 style="font-size:1.1rem;color:#D4AF37;margin-bottom:10px;">Interactive Local Execution &amp; CLI Telemetry</h2>
-      <textarea id="inp">{
-  "tool": "azoth-local-agent",
-  "port": 8136,
-  "mode": "sovereign_local_enclave",
-  "zero_egress": true
-}</textarea>
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button class="btn-gold" onclick="runLocal()">Execute Local Synthesis ⚡</button>
-        <button class="btn-sol" onclick="navigator.clipboard.writeText(document.getElementById('out').textContent)">Copy Output</button>
+
+    <!-- 1. DuckyScript Linter -->
+    <section id="panel-ducky" class="card">
+      <h2>Deterministic DuckyScript Static Linter</h2>
+      <div class="grid">
+        <div>
+          <label for="ducky-src">DuckyScript Payload</label>
+          <textarea id="ducky-src" aria-label="DuckyScript payload editor">REM AZOTH Local Archon verified macro
+VAR TARGET=https://example.com
+NAVIGATE $TARGET
+DELAY 1200
+WAIT_FOR h1 4000
+SCREENSHOT verify_home.png</textarea>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+            <button type="button" class="btn btn-gold" onclick="lintDucky()">Validate Syntax &amp; Security</button>
+            <button type="button" class="btn" onclick="copyText('ducky-out')">Copy Report</button>
+          </div>
+        </div>
+        <div>
+          <label for="ducky-out">Validation &amp; Security Report</label>
+          <pre id="ducky-out">Click "Validate Syntax & Security" to inspect opcodes, variables, and path/SSRF guardrails.</pre>
+        </div>
       </div>
-      <pre id="out">$ azoth-local-agent --json
-{
-  "id": "azoth-local-agent",
-  "name": "AZOTH Local Archon Agent",
-  "status": "READY",
-  "binary": "/usr/local/bin/azoth-local-agent",
-  "port": 8136,
-  "license": "100% Free & Open Access"
-}</pre>
-    </div>
+    </section>
+
+    <!-- 2. Deterministic ReAct Planner -->
+    <section id="panel-planner" class="card hidden">
+      <h2>Client-Side Archon ReAct Planner</h2>
+      <div class="grid">
+        <div>
+          <label for="plan-engine">Target Engine</label>
+          <select id="plan-engine" aria-label="Target execution engine" style="margin-bottom:10px;">
+            <option value="ollama">Ollama (Local Offline)</option>
+            <option value="hermes">Hermes Agent CLI</option>
+            <option value="agy">Antigravity CLI (AGY)</option>
+            <option value="codex">Codex CLI</option>
+            <option value="grok_cli">Grok CLI</option>
+            <option value="claude">Claude Code CLI</option>
+          </select>
+          <label for="plan-mode">Persona Mode</label>
+          <select id="plan-mode" aria-label="Archon persona mode" style="margin-bottom:10px;">
+            <option value="regular">regular (Direct Technical Synthesis)</option>
+            <option value="coder">coder (Sandbox Code &amp; Test Execution)</option>
+            <option value="think">think (DeepSearch &amp; Citations)</option>
+            <option value="fun">fun (Informal Register)</option>
+          </select>
+          <label for="plan-prompt">Directive</label>
+          <input id="plan-prompt" type="text" aria-label="Archon task directive" value="Audit workspace Python scripts and verify security headers on local build" style="margin-bottom:10px;">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button type="button" class="btn btn-gold" onclick="compilePlan()">Compile Execution Plan</button>
+            <button type="button" class="btn" onclick="copyText('plan-out')">Copy JSON</button>
+          </div>
+        </div>
+        <div>
+          <label for="plan-out">Compiled ReAct Plan &amp; CLI Command</label>
+          <pre id="plan-out">Click "Compile Execution Plan" to generate a deterministic tool plan and verified azoth CLI invocation.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 35-Tool Schema Explorer -->
+    <section id="panel-schemas" class="card hidden">
+      <h2>AZOTH MCP &amp; Archon Tool Registry (36 Exposed via stdio MCP)</h2>
+      <label for="tool-filter">Filter Tools</label>
+      <input id="tool-filter" type="text" aria-label="Filter registered tools" placeholder="Search browser, ducky, python, vm, deep_search, workspace..." oninput="renderTools()" style="margin-bottom:12px;">
+      <div id="tool-list"></div>
+    </section>
+
+    <footer>
+      <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a></span>
+      <span style="display:flex;flex-wrap:wrap;gap:14px;">
+        <a href="https://github.com/NullAITech/azoth-local-agent" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+        <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');">◎ Solana Tip: GG2e...dXoK</a>
+      </span>
+    </footer>
   </div>
+
   <script>
-    function runLocal() {
-      const v = document.getElementById("inp").value;
-      document.getElementById("out").textContent = "[ZOTHOS-ENCLAVE] Executed at " + new Date().toISOString() + "\n" + v;
+    const ALLOWED_DUCKY = new Set([
+      'REM','VAR','DELAY','RANDOM_DELAY','STRING','STRINGLN','ENTER','TAB','SPACE','ESCAPE','BACKSPACE',
+      'UP','DOWN','LEFT','RIGHT','HOME','END','PAGE_UP','PAGE_DOWN','CTRL+T','CTRL+W','CTRL+L','CTRL+V',
+      'CTRL+C','CTRL+A','CTRL+ENTER','NAVIGATE','CLICK','MOUSE_MOVE','SCROLL','WAIT_FOR','SCREENSHOT','REPLAY','REPEAT','LOG'
+    ]);
+
+    const ARCHON_TOOLS = [
+      { name: 'azoth_agent_query', category: 'Orchestration', desc: 'Dispatch high-level directive across Ollama, Hermes, AGY, Codex, Grok CLI, or Claude.' },
+      { name: 'azoth_run_python', category: 'Sandbox', desc: 'Execute stateful Python code inside sandbox/workspace/.' },
+      { name: 'azoth_read_file', category: 'Workspace', desc: 'Read a workspace-contained file (is_relative_to enforced).' },
+      { name: 'azoth_write_file', category: 'Workspace', desc: 'Write a file strictly inside sandbox/workspace/.' },
+      { name: 'azoth_delete_file', category: 'Workspace', desc: 'Delete a contained workspace file.' },
+      { name: 'azoth_list_files', category: 'Workspace', desc: 'List files inside sandbox/workspace/.' },
+      { name: 'azoth_run_shell', category: 'Workspace', desc: 'Run guarded shell commands inside sandbox/workspace/.' },
+      { name: 'azoth_deep_search', category: 'Research', desc: 'Multi-query DuckDuckGo/Yahoo DeepSearch with citations and SSRF-guarded fetch.' },
+      { name: 'azoth_search_web', category: 'Research', desc: 'Live web search returning titles, URLs, and snippets.' },
+      { name: 'azoth_fetch_page', category: 'Research', desc: 'SSRF-guarded public HTTP/HTTPS page text extractor.' },
+      { name: 'azoth_search_x', category: 'Intelligence', desc: 'Query live X/Twitter posts and handles.' },
+      { name: 'azoth_scout_x_trends', category: 'Intelligence', desc: 'Aggregate trending engineering/tech topics on X.' },
+      { name: 'azoth_duckyscript', category: 'Automation', desc: 'Validate and execute parameterized DuckyScript macros.' },
+      { name: 'azoth_browser_navigate', category: 'Browser', desc: 'Navigate persistent Chromium tab to public HTTP/HTTPS URL.' },
+      { name: 'azoth_browser_extract', category: 'Browser', desc: 'Extract structured DOM text and links from active page.' },
+      { name: 'azoth_browser_screenshot', category: 'Browser', desc: 'Capture viewport screenshot inside sandbox/workspace/.' },
+      { name: 'azoth_browser_click', category: 'Browser', desc: 'Click element by CSS selector or visible text.' },
+      { name: 'azoth_browser_type', category: 'Browser', desc: 'Type text into focused/target input with human cadence.' },
+      { name: 'azoth_browser_scroll', category: 'Browser', desc: 'Scroll active browser viewport.' },
+      { name: 'azoth_browser_login', category: 'Browser', desc: 'Smart human-cadence login helper with 2FA takeover detection.' },
+      { name: 'azoth_browser_check_auth', category: 'Browser', desc: 'Inspect authentication state on active page.' },
+      { name: 'azoth_vm_status', category: 'Guest OS', desc: 'Inspect Docker/Podman/sandbox runtime vitals.' },
+      { name: 'azoth_vm_exec', category: 'Guest OS', desc: 'Execute commands inside Docker/Podman Guest OS container.' },
+      { name: 'azoth_vm_install', category: 'Guest OS', desc: 'Install validated package name inside Guest OS container.' },
+      { name: 'azoth_vm_restart', category: 'Guest OS', desc: 'Restart isolated Guest OS container.' }
+    ];
+
+    function syncThemeBtn() {
+      const t = document.documentElement.getAttribute('data-theme') || 'dark';
+      document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️ Light' : '🌙 Dark';
     }
+    function toggleTheme() {
+      const next = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('azoth-workbench-theme', next); } catch (e) {}
+      syncThemeBtn();
+    }
+
+    function switchPanel(id) {
+      ['ducky', 'planner', 'schemas'].forEach(p => {
+        document.getElementById('panel-' + p).classList.toggle('hidden', p !== id);
+        document.getElementById('tab-btn-' + p).classList.toggle('tab-active', p === id);
+      });
+    }
+
+    function copyText(id) {
+      const txt = document.getElementById(id).textContent || '';
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
+    }
+
+    function lintDucky() {
+      const lines = (document.getElementById('ducky-src').value || '').split(/\r?\n/);
+      const vars = {};
+      const errors = [];
+      const warnings = [];
+      let steps = 0;
+
+      lines.forEach((raw, i) => {
+        const ln = i + 1;
+        const line = raw.trim();
+        if (!line) return;
+        const spaceIdx = line.indexOf(' ');
+        const cmd = (spaceIdx === -1 ? line : line.slice(0, spaceIdx)).toUpperCase();
+        const arg = spaceIdx === -1 ? '' : line.slice(spaceIdx + 1).trim();
+        if (!ALLOWED_DUCKY.has(cmd)) {
+          errors.push(`Line ${ln}: Unknown opcode '${cmd}'`);
+          return;
+        }
+        steps++;
+        if (cmd === 'VAR') {
+          const m = arg.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/i);
+          if (!m) errors.push(`Line ${ln}: VAR requires KEY=VALUE`);
+          else vars[m[1]] = m[2].replace(/^['"]|['"]$/g, '');
+        }
+        if (cmd === 'NAVIGATE') {
+          const expanded = arg.replace(/\$([A-Z0-9_]+)/gi, (_, k) => vars[k] || ('$' + k));
+          if (/^(file:|javascript:|data:)/i.test(expanded) || /169\.254\.|127\.0\.0\.1|localhost|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./i.test(expanded)) {
+            errors.push(`Line ${ln}: SSRF guard blocks target '${expanded}'`);
+          }
+        }
+        if ((cmd === 'SCREENSHOT' || cmd === 'REPLAY') && (arg.includes('..') || arg.startsWith('/'))) {
+          warnings.push(`Line ${ln}: Path '${arg}' must resolve inside sandbox/workspace/ (external paths blocked by server)`);
+        }
+      });
+
+      document.getElementById('ducky-out').textContent = JSON.stringify({
+        ok: errors.length === 0,
+        version: '3.1.0',
+        total_opcodes: steps,
+        declared_vars: vars,
+        errors,
+        warnings
+      }, null, 2);
+    }
+
+    function compilePlan() {
+      const engine = document.getElementById('plan-engine').value;
+      const mode = document.getElementById('plan-mode').value;
+      const prompt = document.getElementById('plan-prompt').value.trim();
+      const lower = prompt.toLowerCase();
+      const tools = [];
+      if (/python|bench|script|code|test/.test(lower)) tools.push('azoth_run_python', 'azoth_list_files');
+      if (/search|research|citation|news/.test(lower)) tools.push('azoth_deep_search', 'azoth_fetch_page');
+      if (/browser|web|page|screenshot/.test(lower)) tools.push('azoth_browser_navigate', 'azoth_browser_extract');
+      if (/ducky|macro/.test(lower)) tools.push('azoth_duckyscript');
+      if (/vm|docker|container|shell/.test(lower)) tools.push('azoth_vm_status', 'azoth_vm_exec');
+      if (tools.length === 0) tools.push('azoth_agent_query', 'azoth_list_files');
+
+      const escaped = prompt.replace(/"/g, '\\"');
+      document.getElementById('plan-out').textContent = JSON.stringify({
+        planner: 'azoth-deterministic-client-v3.1.0',
+        engine,
+        mode,
+        selected_tools: tools,
+        security_invariants: [
+          'Loopback Host & Origin allowlist enforced on 127.0.0.1:8136',
+          'Privileged execution routes gated by X-Azoth-Token',
+          'Workspace path containment via is_relative_to()',
+          'Public HTTP/HTTPS SSRF guard active'
+        ],
+        cli_command: `azoth --engine ${engine} --mode ${mode} -q "${escaped}" --json`
+      }, null, 2);
+    }
+
+    function renderTools() {
+      const q = (document.getElementById('tool-filter').value || '').toLowerCase();
+      const list = document.getElementById('tool-list');
+      list.innerHTML = '';
+      ARCHON_TOOLS.filter(t => !q || t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q))
+        .forEach(t => {
+          const row = document.createElement('div');
+          row.className = 'tool-row';
+          const head = document.createElement('div');
+          head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;';
+          const nm = document.createElement('strong');
+          nm.className = 'mono';
+          nm.textContent = t.name;
+          const cat = document.createElement('span');
+          cat.className = 'pill';
+          cat.textContent = t.category;
+          head.appendChild(nm);
+          head.appendChild(cat);
+          const d = document.createElement('div');
+          d.style.cssText = 'font-size:12px;color:var(--sub);';
+          d.textContent = t.desc;
+          row.appendChild(head);
+          row.appendChild(d);
+          list.appendChild(row);
+        });
+    }
+
+    async function probeLocalDaemon() {
+      const pill = document.getElementById('daemon-pill');
+      const isLocal = ['127.0.0.1', 'localhost', ''].includes(window.location.hostname);
+      if (!isLocal) {
+        pill.textContent = 'Client Workbench Ready (Offline Mode)';
+        return;
+      }
+      try {
+        const res = await fetch('http://127.0.0.1:8136/health');
+        if (res.ok) {
+          const d = await res.json();
+          pill.className = 'pill pill-ok';
+          pill.textContent = `● Live Daemon :8136 (v${d.version || '3.1.0'})`;
+          return;
+        }
+      } catch (e) {}
+      pill.textContent = 'Local Daemon :8136 Offline (Client Workbench Ready)';
+    }
+
+    syncThemeBtn();
+    renderTools();
+    lintDucky();
+    probeLocalDaemon();
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
 </body>
 </html>

@@ -10,7 +10,7 @@ const fs = require('fs');
 const rootDir = path.resolve(__dirname, '..');
 const pythonBin = fs.existsSync(path.join(rootDir, '.venv', 'bin', 'python'))
   ? path.join(rootDir, '.venv', 'bin', 'python')
-  : 'python3';
+  : (fs.existsSync('/opt/zothos-ai-env/bin/python3') ? '/opt/zothos-ai-env/bin/python3' : 'python3');
 const args = process.argv.slice(2);
 
 // Check if user requested web mode, desktop app, or CLI

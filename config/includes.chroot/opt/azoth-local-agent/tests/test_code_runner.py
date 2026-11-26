@@ -266,7 +266,12 @@ class TestToolDefinitionsAndWebUI:
         assert res2["result"] == "110"
 
     def test_web_ui_endpoints(self):
-        client = TestClient(web_ui.app)
+        from tools.security import get_api_token
+        client = TestClient(
+            web_ui.app,
+            base_url="http://127.0.0.1:8136",
+            headers={"X-Azoth-Token": get_api_token()},
+        )
 
         # Stateful run via Web UI
         r1 = client.post("/api/python/run", json={"code": "web_x = 90", "session_id": "web_sess"})

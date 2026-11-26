@@ -8,6 +8,11 @@ from tools.vm_manager import guest_os
 from tools.definitions import AGENT_TOOLS, execute_tool
 
 
+@pytest.fixture(autouse=True)
+def _opt_in_host_fallback(monkeypatch):
+    monkeypatch.setenv("AZOTH_ALLOW_HOST_FALLBACK", "1")
+
+
 def test_vm_status_and_backend():
     """Verify Guest OS status reports active backend and environment info."""
     status = guest_os.get_status()

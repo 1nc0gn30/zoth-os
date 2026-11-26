@@ -1,7 +1,7 @@
 {
   "name": "azoth-local-agent",
-  "version": "1.0.0",
-  "description": "Autonomous Local AI Agent Workstation with Sandboxed Browser, VM Management, and Grok-Grade Multi-Engine Intelligence",
+  "version": "3.1.0",
+  "description": "AZOTH Local Archon Agent Workstation with Sandboxed Browser, VM Management, and Multi-Engine Intelligence",
   "main": "electron/main.cjs",
   "bin": {
     "azoth": "./bin/azoth.js",

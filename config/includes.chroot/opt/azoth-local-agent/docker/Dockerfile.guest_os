@@ -46,7 +46,7 @@ RUN echo 'export PS1="\[\033[01;36m\]⚡ azoth@guest-os\[\033[00m\]:\[\033[01;34
     echo ' / /_\ /_ \/ _ \  __| __|  _ \| |  | \___ \ ' >> /home/azoth/.bashrc && \
     echo '/ /_\\ / // (_) | |  | |_| | | | |__| |___) |' >> /home/azoth/.bashrc && \
     echo '\____/___/\___/_|   \__|_| |_|\____/|____/ ' >> /home/azoth/.bashrc && \
-    echo '  ⚡ aZoth Autonomous Linux Guest OS v1.0   ' >> /home/azoth/.bashrc && \
+    echo '  ⚡ AZOTH Local Archon Guest OS v3.1.0     ' >> /home/azoth/.bashrc && \
     echo '  Isolated Virtual Environment for Agents   ' >> /home/azoth/.bashrc && \
     echo 'BANNER' >> /home/azoth/.bashrc
 

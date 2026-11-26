@@ -195,17 +195,26 @@ class SandboxBrowser:
         # Register clean exit handler
         atexit.register(self.close)
 
-    def is_context_alive(self) -> bool:
-        """Check if browser context and playwright instance are alive."""
+    def _is_context_alive_worker(self) -> bool:
         if self.context is None or self.playwright is None:
             return False
         try:
             pages = self.context.pages
             if not pages:
                 return False
-            # Lightweight probe
             _ = pages[0].url
             return True
+        except Exception:
+            return False
+
+    def is_context_alive(self) -> bool:
+        """Check if browser context and playwright instance are alive (thread-safe)."""
+        if self.context is None or self.playwright is None:
+            return False
+        if threading.current_thread() == self._worker_thread:
+            return self._is_context_alive_worker()
+        try:
+            return self._executor.submit(self._is_context_alive_worker).result(timeout=5)
         except Exception:
             return False
 
@@ -390,22 +399,26 @@ class SandboxBrowser:
 
     def new_tab(self, url: str = "https://google.com") -> dict[str, Any]:
         """Open a new browser tab."""
-        def _action(page: Page) -> dict[str, Any]:
-            target_url = url
-            if (
-                not target_url.startswith("http://")
-                and not target_url.startswith("https://")
-                and not target_url.startswith("file://")
-                and target_url != "about:blank"
-            ):
-                target_url = "https://" + target_url
+        from .security import validate_public_http_url
 
+        target_url = (url or "about:blank").strip()
+        if (
+            target_url != "about:blank"
+            and "://" not in target_url
+        ):
+            target_url = "https://" + target_url
+
+        ok_url, url_or_err = validate_public_http_url(target_url, allow_about_blank=True)
+        if not ok_url:
+            return {"ok": False, "error": url_or_err, "url": url}
+
+        def _action(page: Page) -> dict[str, Any]:
             assert self.context is not None
             new_p = self.context.new_page()
             self.active_page_index = len(self.context.pages) - 1
-            if target_url and target_url != "about:blank":
+            if url_or_err and url_or_err != "about:blank":
                 try:
-                    new_p.goto(target_url, wait_until="domcontentloaded", timeout=25000)
+                    new_p.goto(url_or_err, wait_until="domcontentloaded", timeout=25000)
                 except Exception:
                     pass
 
@@ -564,17 +577,19 @@ class SandboxBrowser:
             return {"detected": False}
 
     def navigate(self, url: str) -> dict[str, Any]:
-        """Navigate active tab to a URL."""
-        if (
-            not url.startswith("http://")
-            and not url.startswith("https://")
-            and not url.startswith("file://")
-            and url != "about:blank"
-        ):
-            url = "https://" + url
+        """Navigate active tab to a public HTTP/HTTPS URL (SSRF-guarded)."""
+        from .security import validate_public_http_url
+
+        target_url = (url or "").strip()
+        if target_url != "about:blank" and "://" not in target_url:
+            target_url = "https://" + target_url
+
+        ok_url, url_or_err = validate_public_http_url(target_url, allow_about_blank=True)
+        if not ok_url:
+            return {"ok": False, "error": url_or_err, "url": url}
 
         def _action(page: Page) -> dict[str, Any]:
-            response = page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            response = page.goto(url_or_err, wait_until="domcontentloaded", timeout=30000)
             status = response.status if response else 200
             page.wait_for_timeout(1000)
             title = page.title()
@@ -1363,7 +1378,17 @@ class SandboxBrowser:
     # =========================================================================
 
     def export_session(self, filepath: Optional[str] = None) -> dict[str, Any]:
-        """Export browser cookies, localStorage, and session metadata to a JSON file."""
+        """Export browser cookies, localStorage, and session metadata to a JSON file strictly inside WORKSPACE_DIR."""
+        from .security import resolve_contained_path
+
+        try:
+            if filepath:
+                target_path = resolve_contained_path(filepath, WORKSPACE_DIR)
+            else:
+                target_path = resolve_contained_path("session_export.json", WORKSPACE_DIR)
+        except PermissionError as e:
+            return {"ok": False, "success": False, "denied": True, "error": str(e)}
+
         def _action(page: Page) -> dict[str, Any]:
             assert self.context is not None
             cookies = self.context.cookies()
@@ -1378,9 +1403,6 @@ class SandboxBrowser:
             except Exception:
                 pass
 
-            target_path = Path(filepath) if filepath else (BROWSER_PROFILE_DIR / "session_export.json")
-            if not target_path.is_absolute():
-                target_path = WORKSPACE_DIR / target_path
             target_path.parent.mkdir(parents=True, exist_ok=True)
 
             domains = sorted(list({c.get("domain", "") for c in cookies if c.get("domain")}))
@@ -1399,9 +1421,11 @@ class SandboxBrowser:
             }
 
             target_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            rel = str(target_path.relative_to(WORKSPACE_DIR.resolve()))
             return {
                 "ok": True,
-                "path": str(target_path),
+                "success": True,
+                "path": rel,
                 "filename": target_path.name,
                 "cookies_count": len(cookies),
                 "domains": domains,
@@ -1411,17 +1435,23 @@ class SandboxBrowser:
         try:
             return self._with_recovery(_action)
         except Exception as e:
-            return {"ok": False, "error": str(e)}
+            return {"ok": False, "success": False, "error": str(e)}
 
     def import_session(self, filepath: Optional[str] = None) -> dict[str, Any]:
-        """Import browser cookies and session storage from a JSON backup file."""
-        def _action(page: Page) -> dict[str, Any]:
-            target_path = Path(filepath) if filepath else (BROWSER_PROFILE_DIR / "session_export.json")
-            if not target_path.is_absolute():
-                target_path = WORKSPACE_DIR / target_path
+        """Import browser cookies and session storage from a JSON backup file strictly inside WORKSPACE_DIR."""
+        from .security import resolve_contained_path
 
+        try:
+            if filepath:
+                target_path = resolve_contained_path(filepath, WORKSPACE_DIR)
+            else:
+                target_path = resolve_contained_path("session_export.json", WORKSPACE_DIR)
+        except PermissionError as e:
+            return {"ok": False, "success": False, "denied": True, "error": str(e)}
+
+        def _action(page: Page) -> dict[str, Any]:
             if not target_path.exists():
-                return {"ok": False, "error": f"Session file not found: {target_path}"}
+                return {"ok": False, "error": f"Session file not found: {target_path.name}"}
 
             try:
                 data = json.loads(target_path.read_text(encoding="utf-8"))

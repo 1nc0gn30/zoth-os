@@ -49,6 +49,26 @@ class EnvConfigManager:
     """Thread-safe persistent manager for .env key-values and engine configs."""
 
     _lock = threading.Lock()
+    ALLOWED_KEYS = frozenset({
+        "ACTIVE_ENGINE",
+        "AGENT_MODE",
+        "MODEL",
+        "OPENAI_BASE_URL",
+        "OLLAMA_HOST",
+        "OPENAI_API_KEY",
+        "XAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GEMINI_API_KEY",
+        "OPENROUTER_API_KEY",
+        "HERMES_PATH",
+        "AGY_PATH",
+        "CODEX_PATH",
+        "GROK_PATH",
+        "GEMINI_PATH",
+        "CLAUDE_PATH",
+        "OLLAMA_PATH",
+        "CLI_AGENT_TIMEOUT",
+    })
 
     @classmethod
     def get_env_path(cls) -> Path:
@@ -98,8 +118,28 @@ class EnvConfigManager:
         return cls.set_multiple({key: value}, persist=persist)
 
     @classmethod
+    def validate_updates(cls, updates: dict[str, Any]) -> tuple[bool, str]:
+        """Validate config update keys against allowlist and reject CR/LF/NUL injection."""
+        if not isinstance(updates, dict):
+            return False, "Updates payload must be a JSON object."
+        for k, v in updates.items():
+            if not isinstance(k, str) or k not in cls.ALLOWED_KEYS:
+                return False, f"Config key '{k}' is not in the allowed configuration allowlist."
+            if any(ch in k for ch in ("\r", "\n", "\x00", "=")):
+                return False, f"Invalid characters in config key '{k}'."
+            if v is not None:
+                sval = str(v)
+                if any(ch in sval for ch in ("\r", "\n", "\x00")):
+                    return False, f"Newline or NUL characters are forbidden in value for '{k}'."
+        return True, ""
+
+    @classmethod
     def set_multiple(cls, updates: dict[str, str], persist: bool = True) -> bool:
-        """Atomically update multiple key-value pairs in memory and .env file."""
+        """Atomically update multiple allowlisted key-value pairs in memory and .env file."""
+        ok, err = cls.validate_updates(updates)
+        if not ok:
+            raise ValueError(err)
+
         with cls._lock:
             for k, v in updates.items():
                 if v is None:
@@ -137,9 +177,13 @@ class EnvConfigManager:
                     if k not in handled_keys and v is not None:
                         new_lines.append(f"{k}={v}")
 
-                # Atomic file write
+                # Atomic file write with 0600 permissions
                 tmp_path = env_path.with_suffix(".tmp")
                 tmp_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+                try:
+                    os.chmod(tmp_path, 0o600)
+                except Exception:
+                    pass
                 tmp_path.replace(env_path)
 
                 load_dotenv(env_path, override=True)
@@ -249,8 +293,8 @@ def discover_all_clis() -> dict[str, Optional[str]]:
     """Scan and return discovered executable paths for all supported CLIs."""
     home_bin = str(Path.home() / ".local" / "bin")
     return {
-        "hermes": find_cli("hermes", [f"{home_bin}/hermes", "/root/.local/bin/hermes"], env_override="HERMES_PATH"),
-        "agy": find_cli("agy", [f"{home_bin}/agy", "/root/.local/bin/agy"], env_override="AGY_PATH"),
+        "hermes": find_cli("hermes", [f"{home_bin}/hermes", "/opt/.local/bin/hermes"], env_override="HERMES_PATH"),
+        "agy": find_cli("agy", [f"{home_bin}/agy", "/opt/.local/bin/agy"], env_override="AGY_PATH"),
         "codex": find_cli("codex", ["/usr/bin/codex", f"{home_bin}/codex"], env_override="CODEX_PATH"),
         "grok": find_cli("grok", [f"{home_bin}/grok", "/usr/local/bin/grok"], env_override="GROK_PATH"),
         "gemini": find_cli(

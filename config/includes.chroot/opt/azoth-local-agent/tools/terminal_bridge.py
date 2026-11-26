@@ -17,6 +17,7 @@ from typing import Optional
 
 from fastapi import WebSocket, WebSocketDisconnect
 from .vm_manager import guest_os
+from .security import extract_request_token, is_valid_host_header, parse_allowed_origin, verify_api_token
 
 logger = logging.getLogger("azoth.terminal_bridge")
 
@@ -24,8 +25,27 @@ logger = logging.getLogger("azoth.terminal_bridge")
 async def handle_terminal_websocket(websocket: WebSocket, mode: str = "guest_os"):
     """
     Manages a live WebSocket connection to a Linux PTY running the Guest OS shell.
-    Supports terminal resize, ANSI rendering, and bidirectional input/output.
+    Validates Host, loopback Origin, and session API token BEFORE websocket.accept().
     """
+    headers = {k.lower(): v for k, v in websocket.headers.items()}
+    query_token = websocket.query_params.get("token")
+    provided_token = extract_request_token(headers, query_token=query_token)
+    is_authed = verify_api_token(provided_token)
+
+    host = headers.get("host", "")
+    if not is_valid_host_header(host, authenticated=is_authed):
+        await websocket.close(code=1008)
+        return
+
+    origin = headers.get("origin")
+    if origin is not None and parse_allowed_origin(origin) is None:
+        await websocket.close(code=1008)
+        return
+
+    if not is_authed:
+        await websocket.close(code=1008)
+        return
+
     await websocket.accept()
 
     # Ensure the guest OS environment is running

@@ -14,9 +14,12 @@ from pathlib import Path
 
 # Ensure project root is in sys.path when running on the host
 script_dir = Path(__file__).resolve().parent
+_ON_HOST = False
 for candidate in [script_dir, script_dir.parent, script_dir.parent.parent]:
-    if (candidate / "tools" / "browser.py").exists() and str(candidate) not in sys.path:
-        sys.path.insert(0, str(candidate))
+    if (candidate / "tools" / "browser.py").exists():
+        _ON_HOST = True
+        if str(candidate) not in sys.path:
+            sys.path.insert(0, str(candidate))
 
 _WORKING_HOST = None
 
@@ -28,12 +31,16 @@ def get_candidate_hosts() -> list[str]:
         hosts.append(os.environ["AZOTH_API_URL"].rstrip("/"))
 
     hosts.extend([
+        "http://127.0.0.1:8136",
         "http://127.0.0.1:8790",
-        "http://192.168.122.1:8790",
-        "http://100.64.0.10:8790",
-        "http://10.88.0.1:8790",
-        "http://172.17.0.1:8790",
+    ])
+    if _ON_HOST:
+        return hosts
+
+    hosts.extend([
+        "http://host.containers.internal:8136",
         "http://host.containers.internal:8790",
+        "http://host.docker.internal:8136",
         "http://host.docker.internal:8790",
     ])
 
@@ -58,6 +65,7 @@ def call_api(endpoint: str, method: str = "GET", data: dict = None) -> dict:
     global _WORKING_HOST
     body = json.dumps(data).encode("utf-8") if data is not None else None
     headers = {"Content-Type": "application/json"} if data is not None else {}
+    req_timeout = 0.6 if _ON_HOST else 1.2
 
     candidate_hosts = [_WORKING_HOST] if _WORKING_HOST else get_candidate_hosts()
     for host in candidate_hosts:
@@ -66,7 +74,7 @@ def call_api(endpoint: str, method: str = "GET", data: dict = None) -> dict:
         url = f"{host}{endpoint}"
         try:
             req = urllib.request.Request(url, data=body, headers=headers, method=method)
-            with urllib.request.urlopen(req, timeout=3) as resp:
+            with urllib.request.urlopen(req, timeout=req_timeout) as resp:
                 if resp.status == 200:
                     _WORKING_HOST = host
                     return json.loads(resp.read().decode("utf-8"))
@@ -77,15 +85,35 @@ def call_api(endpoint: str, method: str = "GET", data: dict = None) -> dict:
 
 def call_direct_browser(action_name: str, **kwargs) -> dict:
     """Fallback to direct Python browser instance if running on host."""
-    try:
-        from tools.browser import get_browser
-        browser = get_browser()
-        fn = getattr(browser, action_name, None)
-        if callable(fn):
-            return fn(**kwargs)
-        return {"ok": False, "error": f"Unknown browser action '{action_name}'"}
-    except Exception as e:
-        return {"ok": False, "error": f"Direct browser call failed: {e}"}
+    import time
+    last_err = None
+    for attempt in range(2):
+        browser = None
+        try:
+            from tools.browser import get_browser
+            browser = get_browser()
+            fn = getattr(browser, action_name, None)
+            if not callable(fn):
+                return {"ok": False, "error": f"Unknown browser action '{action_name}'"}
+            result = fn(**kwargs)
+            if isinstance(result, dict) and result.get("ok") is False and attempt == 0:
+                last_err = result.get("error")
+                browser.close()
+                browser = None
+                time.sleep(0.5)
+                continue
+            return result
+        except Exception as e:
+            last_err = e
+            if attempt == 0:
+                time.sleep(0.5)
+        finally:
+            if browser is not None:
+                try:
+                    browser.close()
+                except Exception:
+                    pass
+    return {"ok": False, "error": f"Direct browser call failed: {last_err}"}
 
 
 def main():

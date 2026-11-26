@@ -1,7 +1,10 @@
 """Integration verification test for live multi-engine CLI routing & fallback."""
 
+import os
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -15,6 +18,12 @@ from engines.manager import (
     execute_cli_agent_stream,
 )
 
+LIVE_CLI_E2E = os.getenv("RUN_LIVE_CLI_E2E", "").lower() in ("1", "true", "yes")
+skip_live_cli = pytest.mark.skipif(
+    not LIVE_CLI_E2E,
+    reason="Live external CLI routing test skipped by default; set RUN_LIVE_CLI_E2E=1 to run.",
+)
+
 
 def test_discovered_tools():
     clis = discover_all_clis()
@@ -24,6 +33,7 @@ def test_discovered_tools():
         print(f"  {name:10} -> {status}")
 
 
+@skip_live_cli
 def test_streaming_callback():
     print("\n--- Testing Streaming Execution Engine ---")
     chunks_received = []
@@ -57,6 +67,7 @@ def test_streaming_callback():
     print(f"Total chunks captured: {len(chunks_received)}")
 
 
+@skip_live_cli
 def test_fallback_routing_live():
     print("\n--- Testing Live Fallback Routing ---")
     events = []

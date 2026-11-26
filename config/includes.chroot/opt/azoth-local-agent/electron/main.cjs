@@ -38,17 +38,20 @@ function isBackendRunning() {
 function startBackend() {
   const rootDir = path.resolve(__dirname, '..');
   const env = { ...process.env, PORT: String(BACKEND_PORT), PYTHONUNBUFFERED: '1' };
-  let cmd = 'python3';
+  const venvPython = path.join(rootDir, '.venv', 'bin', 'python');
+  const optPython = '/opt/zothos-ai-env/bin/python3';
+  const pythonBin = fs.existsSync(venvPython) ? venvPython : (fs.existsSync(optPython) ? optPython : 'python3');
+  let cmd = pythonBin;
   let args = ['server.py', '--port', String(BACKEND_PORT)];
 
   if (fs.existsSync(path.join(rootDir, 'server.js'))) {
     cmd = 'node';
     args = ['server.js', '--port', String(BACKEND_PORT)];
   } else if (fs.existsSync(path.join(rootDir, 'server.py'))) {
-    cmd = 'python3';
+    cmd = pythonBin;
     args = ['server.py', '--port', String(BACKEND_PORT)];
   } else if (fs.existsSync(path.join(rootDir, 'zoth_relay', 'server.py'))) {
-    cmd = 'python3';
+    cmd = pythonBin;
     args = ['-m', 'zoth_relay.server', '--port', String(BACKEND_PORT)];
   } else if (fs.existsSync(path.join(rootDir, 'src'))) {
     const srcDir = path.join(rootDir, 'src');

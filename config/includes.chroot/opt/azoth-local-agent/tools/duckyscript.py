@@ -237,33 +237,45 @@ class DuckyScriptEngine:
         return get_browser()
 
     def resolve_macro_content(self, macro_name_or_path: str) -> Tuple[str, str]:
-        """Resolve a macro by filename, preset ID, or path. Returns (resolved_id, content)."""
-        target = macro_name_or_path.strip()
+        """Resolve a macro by preset ID or contained workspace/presets path. Returns (resolved_id, content)."""
+        from .security import resolve_contained_path
 
-        # 1. Check direct file path
+        target = macro_name_or_path.strip()
+        if not target:
+            raise ValueError("Macro name or path cannot be empty.")
+
+        ws_resolved = WORKSPACE_DIR.resolve()
+        presets_resolved = PRESETS_DIR.resolve()
+
+        # 1. Explicit absolute or path-like target: strictly enforce containment inside WORKSPACE_DIR or PRESETS_DIR
         p = Path(target)
-        if p.exists() and p.is_file():
-            return p.stem, p.read_text(encoding="utf-8")
+        if p.is_absolute() or "/" in target or "\\" in target or ".." in target:
+            safe_p = resolve_contained_path(target, WORKSPACE_DIR, extra_allowed_dirs=[PRESETS_DIR])
+            if safe_p.exists() and safe_p.is_file():
+                return safe_p.stem, safe_p.read_text(encoding="utf-8")
+            raise FileNotFoundError(f"Macro '{target}' not found inside sandbox workspace or presets.")
 
         # 2. Check tools/presets/
         preset_candidates = [
-            PRESETS_DIR / target,
-            PRESETS_DIR / f"{target}.ducky",
-            PRESETS_DIR / f"{target}.txt",
+            presets_resolved / target,
+            presets_resolved / f"{target}.ducky",
+            presets_resolved / f"{target}.txt",
         ]
         for pc in preset_candidates:
-            if pc.exists() and pc.is_file():
-                return pc.stem, pc.read_text(encoding="utf-8")
+            resolved_pc = pc.resolve()
+            if resolved_pc.is_relative_to(presets_resolved) and resolved_pc.exists() and resolved_pc.is_file():
+                return resolved_pc.stem, resolved_pc.read_text(encoding="utf-8")
 
         # 3. Check sandbox/workspace/
         workspace_candidates = [
-            WORKSPACE_DIR / target,
-            WORKSPACE_DIR / f"{target}.ducky",
-            WORKSPACE_DIR / f"{target}.txt",
+            ws_resolved / target,
+            ws_resolved / f"{target}.ducky",
+            ws_resolved / f"{target}.txt",
         ]
         for wc in workspace_candidates:
-            if wc.exists() and wc.is_file():
-                return wc.stem, wc.read_text(encoding="utf-8")
+            resolved_wc = wc.resolve()
+            if resolved_wc.is_relative_to(ws_resolved) and resolved_wc.exists() and resolved_wc.is_file():
+                return resolved_wc.stem, resolved_wc.read_text(encoding="utf-8")
 
         # 4. Check in-memory DUCKY_PRESETS
         for preset in load_all_presets():
@@ -271,7 +283,7 @@ class DuckyScriptEngine:
                 return preset["id"], preset["template"]
 
         raise FileNotFoundError(
-            f"Macro '{target}' could not be found in presets ({PRESETS_DIR}) or workspace ({WORKSPACE_DIR})."
+            f"Macro '{target}' could not be found in presets or workspace."
         )
 
     def validate(self, script_content: str, initial_vars: Optional[Dict[str, str]] = None) -> dict[str, Any]:
@@ -532,10 +544,10 @@ class DuckyScriptEngine:
                 # 4. State Capture (SCREENSHOT)
                 # -------------------------------------------------------------
                 elif cmd == "SCREENSHOT":
+                    from .security import resolve_contained_path
+
                     filename = arg.strip() if arg.strip() else f"screenshot_{int(time.time())}.png"
-                    out_path = Path(filename)
-                    if not out_path.is_absolute():
-                        out_path = WORKSPACE_DIR / filename
+                    out_path = resolve_contained_path(filename, WORKSPACE_DIR)
                     out_path.parent.mkdir(parents=True, exist_ok=True)
 
                     if target == "browser":

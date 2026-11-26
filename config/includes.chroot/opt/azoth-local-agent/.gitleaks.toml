@@ -1,0 +1,14 @@
+title = "azoth-local-agent gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Allowlist bundled xterm.js vendor asset, gitignored local browser_profile cache, and synthetic unit test fixture"
+paths = [
+  '''sandbox/browser_profile/''',
+  '''static/xterm\.js''',
+]
+regexes = [
+  '''xai-test-key-12345''',
+]

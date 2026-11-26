@@ -102,16 +102,36 @@ def search_web(query: str, max_results: int = 5) -> dict[str, Any]:
 
 
 def fetch_page(url: str, max_chars: int = 8000) -> dict[str, Any]:
-    """Fetch a public webpage over HTTP and extract clean text."""
-    if not url.startswith("http://") and not url.startswith("https://"):
-        url = "https://" + url
+    """Fetch a public webpage over HTTP/HTTPS (SSRF-guarded) and extract clean text."""
+    from tools.security import validate_public_http_url
+
+    target_url = (url or "").strip()
+    if "://" not in target_url:
+        target_url = "https://" + target_url
+
+    ok_url, url_or_err = validate_public_http_url(target_url, allow_about_blank=False)
+    if not ok_url:
+        return {"ok": False, "error": url_or_err, "url": url}
 
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     }
 
     try:
-        resp = requests.get(url, headers=headers, timeout=15)
+        current_url = url_or_err
+        resp = None
+        for _ in range(5):
+            resp = requests.get(current_url, headers=headers, timeout=15, allow_redirects=False)
+            if resp.status_code in (301, 302, 303, 307, 308) and resp.headers.get("location"):
+                next_url = urllib.parse.urljoin(current_url, resp.headers["location"])
+                ok_next, next_or_err = validate_public_http_url(next_url, allow_about_blank=False)
+                if not ok_next:
+                    return {"ok": False, "error": f"Redirect blocked: {next_or_err}", "url": url}
+                current_url = next_or_err
+                continue
+            break
+
+        assert resp is not None
         resp.raise_for_status()
         content_type = resp.headers.get("content-type", "")
 
@@ -129,7 +149,7 @@ def fetch_page(url: str, max_chars: int = 8000) -> dict[str, Any]:
 
         return {
             "ok": True,
-            "url": url,
+            "url": current_url,
             "content": text_clean,
             "status_code": resp.status_code,
         }

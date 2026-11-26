@@ -1,0 +1,21 @@
+[Unit]
+Description=AZOTH Local Archon Agent Web Cockpit v3.1.0 (127.0.0.1:8136)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/azoth-local-agent
+ExecStart=/usr/bin/env python3 /opt/azoth-local-agent/server.py --port 8136 --host 127.0.0.1
+Restart=always
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryMax=1.5G
+CPUQuota=200%
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target

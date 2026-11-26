@@ -1,6 +1,6 @@
 # aZoth Local Sandbox Shell Initialization
 export PS1="\[\033[01;32m\]⚡ azoth@sandbox\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
-cd /opt/azoth-local-agent/sandbox/workspace 2>/dev/null || true
+cd "$(dirname "${BASH_SOURCE[0]}")/workspace" 2>/dev/null || true
 cat << 'EOF'
    ___               _   _      ____  ____  
   / _ \___  ___ _ __| |_| |__  / __ \/ ___| 

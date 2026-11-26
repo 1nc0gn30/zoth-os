@@ -128,7 +128,7 @@ def render_banner(engine: str, model: str, mode: str):
     mode_obj = get_mode(mode)
     if HAS_RICH:
         banner = (
-            f"[bold cyan]aZoth-local[/bold cyan] [green]v2.5[/green] — [bold white]Autonomous Local Agent (Grok-Grade Intelligence)[/bold white]\n"
+            f"[bold cyan]AZOTH Local Archon Agent[/bold cyan] [green]v3.1.0[/green] — [bold white]Autonomous Local Agent[/bold white]\n"
             f"[dim]Engine:[/dim] [yellow]{engine}[/yellow]  |  [dim]Model:[/dim] [cyan]{model}[/cyan]  |  [dim]Mode:[/dim] [magenta]{mode_obj.icon} {mode_obj.name}[/magenta]\n"
             f"[dim]Capabilities:[/dim] [white]Live X Scouting • DeepSearch Citations • Browser Sandbox • Python REPL[/white]\n"
             f"[dim]Sandbox:[/dim] [magenta]{WORKSPACE_DIR}[/magenta]\n\n"
@@ -137,7 +137,7 @@ def render_banner(engine: str, model: str, mode: str):
         console.print(Panel(banner, border_style="cyan", title="⚡ aZoth Agent Active ⚡"))
     else:
         print("=" * 70)
-        print(f"aZoth-local v2.5 — Autonomous Local Agent (Grok-Grade Intelligence)")
+        print(f"AZOTH Local Archon Agent v3.1.0 — Autonomous Local Agent")
         print(f"Engine: {engine} | Model: {model} | Mode: {mode_obj.icon} {mode_obj.name}")
         print("Capabilities: Live X Scouting • DeepSearch Citations • Browser Sandbox • Python REPL")
         print("Supported: Ollama • Hermes • AGY • Codex • Grok • Claude • Gemini")
@@ -533,15 +533,15 @@ def main() -> int:
 
     if args.version or args.subcommand == "version":
         if args.json:
-            print(json.dumps({"tool": "azoth-local-agent", "version": "3.0.0", "port": args.port}))
+            print(json.dumps({"tool": "azoth-local-agent", "version": "3.1.0", "port": args.port}))
         else:
-            print("azoth-local-agent v3.0.0 (Sovereign Archon Orchestrator)")
+            print("azoth-local-agent v3.1.0 (AZOTH Local Archon Agent)")
         return 0
 
     if args.status or args.subcommand in ("status", "engines"):
         engines = EngineRegistry.get_available_engines()
         if args.json:
-            print(json.dumps({"tool": "azoth-local-agent", "version": "3.0.0", "port": args.port, "mode": args.mode, "engines": engines}, indent=2))
+            print(json.dumps({"tool": "azoth-local-agent", "version": "3.1.0", "port": args.port, "mode": args.mode, "engines": engines}, indent=2))
         else:
             cmd_engines()
         return 0
@@ -609,7 +609,7 @@ def main() -> int:
         print(json.dumps({
             "tool": "azoth-local-agent",
             "name": "AZOTH Local Archon Agent",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "status": "operational",
             "port": args.port,
             "url": f"http://127.0.0.1:{args.port}",

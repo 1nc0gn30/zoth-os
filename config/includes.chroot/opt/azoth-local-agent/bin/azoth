@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# AZOTH Local Archon Agent unified launcher (v3.1.0)
+# Resolves /opt/azoth-local-agent (ZothOS ISO) or $HOME/NullAITech/azoth-local-agent cleanly.
+set -euo pipefail
+
+resolve_root() {
+  if [ -n "${AZOTH_ROOT:-}" ] && [ -f "$AZOTH_ROOT/agent.py" ]; then
+    printf '%s\n' "$AZOTH_ROOT"
+  elif [ -f "$HOME/NullAITech/azoth-local-agent/agent.py" ]; then
+    printf '%s\n' "$HOME/NullAITech/azoth-local-agent"
+  elif [ -f "/opt/azoth-local-agent/agent.py" ]; then
+    printf '%s\n' "/opt/azoth-local-agent"
+  else
+    echo "azoth-local-agent: installation root not found (checked \$HOME/NullAITech/azoth-local-agent and /opt/azoth-local-agent)" >&2
+    exit 1
+  fi
+}
+
+ROOT="$(resolve_root)"
+if [ -x "$ROOT/.venv/bin/python" ]; then
+  PY="$ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3)"
+fi
+
+case "${1:-}" in
+  desktop|electron|--electron)
+    shift
+    if command -v electron >/dev/null 2>&1; then
+      exec electron "$ROOT/electron/main.cjs" "$@"
+    elif [ -x "/usr/local/bin/electron" ]; then
+      exec /usr/local/bin/electron "$ROOT/electron/main.cjs" "$@"
+    else
+      exec "$PY" "$ROOT/server.py" --host 127.0.0.1 --port 8136 "$@"
+    fi
+    ;;
+  tui|--tui)
+    shift
+    if [ -x "$ROOT/bin/azoth-local-agent-tui" ]; then
+      exec "$ROOT/bin/azoth-local-agent-tui" "$@"
+    elif command -v azoth-local-agent-tui >/dev/null 2>&1; then
+      exec azoth-local-agent-tui "$@"
+    else
+      echo "azoth-local-agent-tui binary not found" >&2
+      exit 1
+    fi
+    ;;
+  *)
+    exec "$PY" "$ROOT/agent.py" "$@"
+    ;;
+esac

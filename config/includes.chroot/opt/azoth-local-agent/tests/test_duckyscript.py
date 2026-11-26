@@ -234,7 +234,8 @@ STRING should not run
 # 4. State Capture (SCREENSHOT) Tests
 # =============================================================================
 class TestScreenshot:
-    def test_screenshot_command(self, mock_engine, tmp_path):
+    def test_screenshot_command(self, mock_engine, tmp_path, monkeypatch):
+        monkeypatch.setattr("tools.duckyscript.WORKSPACE_DIR", tmp_path)
         engine, browser = mock_engine
         screenshot_file = tmp_path / "test_capture.png"
         script = f"""
@@ -262,7 +263,8 @@ REPLAY google_scrape
         assert any("https://www.google.com" in url for url in browser.navigated_urls)
         assert any("plumbers in norfolk" in t for t in browser.typed_texts)
 
-    def test_replay_nested_with_variables(self, mock_engine, tmp_path):
+    def test_replay_nested_with_variables(self, mock_engine, tmp_path, monkeypatch):
+        monkeypatch.setattr("tools.duckyscript.WORKSPACE_DIR", tmp_path)
         engine, browser = mock_engine
         sub_macro = tmp_path / "sub_macro.ducky"
         sub_macro.write_text("""
@@ -279,7 +281,8 @@ REPLAY {sub_macro}
         assert browser.typed_texts == ["SubMacro: HelloFromParent"]
         assert any("[sub_macro] STRING 'SubMacro: HelloFromParent'" in s for s in res["executed_steps"])
 
-    def test_replay_circular_recursion_detection(self, mock_engine, tmp_path):
+    def test_replay_circular_recursion_detection(self, mock_engine, tmp_path, monkeypatch):
+        monkeypatch.setattr("tools.duckyscript.WORKSPACE_DIR", tmp_path)
         engine, _ = mock_engine
         macro_a = tmp_path / "macro_a.ducky"
         macro_b = tmp_path / "macro_b.ducky"

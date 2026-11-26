@@ -6,7 +6,7 @@ Persistent notes the agent can load each session. Edit freely; keep it lean.
 - (e.g. Prefer concise bullets over long essays)
 
 ## Active focus
-- (e.g. SMB outreach framing for Austin service businesses)
+- (e.g. Architecture notes and local task context)
 
 ## Scratch
 - 

@@ -81,9 +81,22 @@ def run_mcp_server():
             send_response(None, None, {"code": -32700, "message": "Parse error"})
             continue
 
+        if not isinstance(req, dict):
+            send_response(None, None, {"code": -32600, "message": "Invalid Request: JSON-RPC payload must be an object"})
+            continue
+
         req_id = req.get("id")
         method = req.get("method")
+        if not isinstance(method, str) or not method:
+            send_response(req_id, None, {"code": -32600, "message": "Invalid Request: missing or non-string method"})
+            continue
+
         params = req.get("params", {})
+        if params is None:
+            params = {}
+        if not isinstance(params, dict):
+            send_response(req_id, None, {"code": -32602, "message": "Invalid params: expected JSON object"})
+            continue
 
         if method == "initialize":
             send_response(req_id, {
@@ -93,7 +106,7 @@ def run_mcp_server():
                 },
                 "serverInfo": {
                     "name": "azoth-local-agent",
-                    "version": "3.0.0"
+                    "version": "3.1.0"
                 }
             })
             continue
@@ -112,6 +125,9 @@ def run_mcp_server():
         if method == "tools/call":
             tool_name = params.get("name", "")
             args = params.get("arguments", {})
+            if not isinstance(tool_name, str) or not tool_name or not isinstance(args, dict):
+                send_response(req_id, None, {"code": -32602, "message": "Invalid params: 'name' must be string and 'arguments' must be object"})
+                continue
 
             # Handle Meta-tool
             if tool_name == "azoth_agent_query":

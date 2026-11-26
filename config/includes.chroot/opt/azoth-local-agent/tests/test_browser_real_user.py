@@ -15,6 +15,9 @@ import sys
 import subprocess
 import time
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 # Add project root to sys.path
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,6 +28,12 @@ from tools.browser import get_browser, BROWSER_PROFILE_DIR, WORKSPACE_DIR
 from tools.definitions import execute_tool, AGENT_TOOLS
 from tools.vm_manager import guest_os
 
+LIVE_BROWSER_E2E = os.getenv("RUN_LIVE_BROWSER_E2E", "").lower() in ("1", "true", "yes")
+skip_live_browser = pytest.mark.skipif(
+    not LIVE_BROWSER_E2E,
+    reason="Live Chromium/VM browser E2E skipped by default; set RUN_LIVE_BROWSER_E2E=1 to run.",
+)
+
 
 def log_test(name: str, passed: bool, detail: str = ""):
     symbol = "✔" if passed else "✖"
@@ -33,6 +42,7 @@ def log_test(name: str, passed: bool, detail: str = ""):
     print(f"{color}{symbol} [{name}]{reset} {detail}")
 
 
+@skip_live_browser
 def test_human_interaction(browser):
     """Test human_type and human_click on a mock interactive form."""
     html = """
@@ -64,9 +74,10 @@ def test_human_interaction(browser):
     passed_click = (click_res.get("ok") is True and "Antigravity Agent 2026" in result_val)
     log_test("Human Curved Bezier Click", passed_click, f"Result div content: '{result_val}'")
 
-    return passed_typing and passed_click
+    assert passed_typing and passed_click
 
 
+@skip_live_browser
 def test_check_auth(browser):
     """Test checking authentication state on both unauthenticated and authenticated pages."""
     # 1. Test unauthenticated page
@@ -95,9 +106,10 @@ def test_check_auth(browser):
     passed_auth = (auth_res.get("authenticated") is True and auth_res.get("user") == "neo")
     log_test("Check Auth: Authenticated Page", passed_auth, f"Authenticated: {auth_res.get('authenticated')}, User: {auth_res.get('user')}")
 
-    return passed_unauth and passed_auth
+    assert passed_unauth and passed_auth
 
 
+@skip_live_browser
 def test_smart_login(browser):
     """Test smart login auto-detecting credentials and submitting on mock login page."""
     login_html = """
@@ -137,7 +149,7 @@ def test_smart_login(browser):
     passed_export = (export_res.get("ok") is True and export_file.exists())
     log_test("Session Cookie Export", passed_export, f"Export ok: {export_res.get('ok')}, file: {export_file.name}")
 
-    return passed_login and passed_export
+    assert passed_login and passed_export
 
 
 def test_tool_definitions_and_dispatch():
@@ -155,14 +167,21 @@ def test_tool_definitions_and_dispatch():
     all_registered = all(req in tool_names for req in required_tools)
     log_test("Tool Registration", all_registered, f"Found all {len(required_tools)} browser real-user tools")
 
-    # Dispatch browser_check_auth via execute_tool
-    dispatch_res = execute_tool("browser_check_auth", {})
+    # Dispatch browser_check_auth via execute_tool (mock live Chromium unless RUN_LIVE_BROWSER_E2E=1)
+    if LIVE_BROWSER_E2E:
+        dispatch_res = execute_tool("browser_check_auth", {})
+    else:
+        mock_browser = MagicMock()
+        mock_browser.check_auth.return_value = {"ok": True, "authenticated": False, "user": None}
+        with patch("tools.definitions.get_browser", return_value=mock_browser):
+            dispatch_res = execute_tool("browser_check_auth", {})
     dispatch_ok = isinstance(dispatch_res, dict) and "authenticated" in dispatch_res
     log_test("Execute Tool: browser_check_auth", dispatch_ok, f"Result keys: {list(dispatch_res.keys()) if isinstance(dispatch_res, dict) else dispatch_res}")
 
-    return all_registered and dispatch_ok
+    assert all_registered and dispatch_ok
 
 
+@skip_live_browser
 def test_guest_os_browser_cli_bridge():
     """Verify azoth-browser CLI works from host and inside Guest OS container."""
     # 1. Host execution
@@ -205,10 +224,10 @@ def test_guest_os_browser_cli_bridge():
         except Exception:
             passed_vm_auth = False
         log_test("Guest OS Container Auth Check (azoth-browser check-auth)", passed_vm_auth, f"Exit code: {vm_auth.get('exit_code')}, Parsed JSON: {passed_vm_auth}")
-        return passed_host_cli and passed_vm_cli and passed_vm_auth
+        assert passed_host_cli and passed_vm_cli and passed_vm_auth
     else:
         log_test("Guest OS Container CLI", True, "Skipped container test (backend not active)")
-        return passed_host_cli
+        assert passed_host_cli
 
 
 def run_all_tests():
@@ -218,15 +237,19 @@ def run_all_tests():
 
     browser = get_browser()
     results = []
-
-    try:
-        results.append(test_human_interaction(browser))
-        results.append(test_check_auth(browser))
-        results.append(test_smart_login(browser))
-        results.append(test_tool_definitions_and_dispatch())
-        results.append(test_guest_os_browser_cli_bridge())
-    finally:
-        pass
+    checks = [
+        lambda: test_human_interaction(browser),
+        lambda: test_check_auth(browser),
+        lambda: test_smart_login(browser),
+        test_tool_definitions_and_dispatch,
+        test_guest_os_browser_cli_bridge,
+    ]
+    for fn in checks:
+        try:
+            fn()
+            results.append(True)
+        except AssertionError:
+            results.append(False)
 
     passed_count = sum(1 for r in results if r)
     total_count = len(results)

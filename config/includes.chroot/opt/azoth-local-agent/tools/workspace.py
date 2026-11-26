@@ -31,17 +31,24 @@ DANGEROUS_COMMANDS = [
 ]
 
 
-def resolve_safe_path(input_path: str, allow_parent: bool = False) -> Path:
-    """Resolve path relative to sandbox workspace."""
-    p = Path(input_path)
-    if not p.is_absolute():
-        p = (WORKSPACE_DIR / p).resolve()
-    else:
-        p = p.resolve()
+from tools.security import resolve_contained_path
 
-    if not allow_parent and not str(p).startswith(str(WORKSPACE_DIR.resolve())):
-        raise PermissionError(f"Path '{input_path}' is outside the sandbox workspace.")
-    return p
+
+def resolve_safe_path(input_path: str, allow_parent: bool = False) -> Path:
+    """Resolve path strictly relative to sandbox workspace via is_relative_to()."""
+    if allow_parent:
+        p = Path(input_path)
+        return (WORKSPACE_DIR / p).resolve() if not p.is_absolute() else p.resolve()
+    return resolve_contained_path(input_path, WORKSPACE_DIR)
+
+
+def _rel_workspace_path(resolved: Path) -> str:
+    base = WORKSPACE_DIR.resolve()
+    try:
+        rel = resolved.relative_to(base)
+        return "." if str(rel) == "." else str(rel)
+    except ValueError:
+        return resolved.name
 
 
 def is_dangerous(command: str) -> bool:
@@ -105,7 +112,9 @@ def read_file(path: str, max_bytes: int = 200_000) -> dict[str, Any]:
         content = resolved.read_text(encoding="utf-8", errors="replace")
         if len(content) > max_bytes:
             content = content[:max_bytes] + "\n... [truncated]"
-        return {"ok": True, "path": str(resolved), "filename": resolved.name, "content": content}
+        return {"ok": True, "path": _rel_workspace_path(resolved), "filename": resolved.name, "content": content}
+    except PermissionError as e:
+        return {"ok": False, "denied": True, "error": str(e)}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -118,11 +127,13 @@ def write_file(path: str, content: str) -> dict[str, Any]:
         resolved.write_text(content, encoding="utf-8")
         return {
             "ok": True,
-            "path": str(resolved),
+            "path": _rel_workspace_path(resolved),
             "filename": resolved.name,
             "bytes_written": len(content.encode("utf-8")),
             "summary": f"Wrote {len(content.encode('utf-8'))} bytes to {resolved.name}",
         }
+    except PermissionError as e:
+        return {"ok": False, "denied": True, "error": str(e)}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -138,6 +149,8 @@ def delete_file(path: str) -> dict[str, Any]:
         else:
             resolved.unlink()
         return {"ok": True, "summary": f"Deleted {resolved.name}"}
+    except PermissionError as e:
+        return {"ok": False, "denied": True, "error": str(e)}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -158,9 +171,11 @@ def list_files(path: str = ".") -> dict[str, Any]:
             })
         return {
             "ok": True,
-            "path": str(resolved),
+            "path": _rel_workspace_path(resolved),
             "entries": entries,
             "summary": f"{len(entries)} items in {resolved.name}",
         }
+    except PermissionError as e:
+        return {"ok": False, "denied": True, "error": str(e)}
     except Exception as e:
         return {"ok": False, "error": str(e)}

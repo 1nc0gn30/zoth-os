@@ -1,20 +1,21 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=aZoth Local Agent
-GenericName=Autonomous AI Agent & Multi-Engine Intelligence Studio
-Comment=Local-first Autonomous Coding & Research Agent, Sandboxed Browser, VM Management & Grok-Grade Cockpit
-Exec=/usr/local/bin/azoth desktop
-Icon=/opt/azoth-local-agent/assets/icon.png
+Name=AZOTH Local Archon Agent
+GenericName=Autonomous Local Archon Agent & Multi-Engine Orchestrator
+Comment=Local-first Autonomous Archon Agent, Hardened FastAPI Cockpit (:8136), Sandboxed Browser, VM Bridge & MCP Server
+Exec=/usr/local/bin/azoth-local-agent desktop
+TryExec=/usr/local/bin/azoth-local-agent
+Icon=azoth-local-agent
 Terminal=false
-Categories=Development;System;Utility;ArtificialIntelligence;
+Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
 StartupNotify=true
-Actions=CLI;Web;
+Actions=TUI;WebApp;
 
-[Desktop Action CLI]
-Name=Open aZoth CLI
-Exec=x-terminal-emulator -e "/usr/local/bin/azoth --help"
+[Desktop Action TUI]
+Name=Launch AZOTH Local Archon Agent TUI
+Exec=/usr/local/bin/zoth-konsole --title "AZOTH Local Archon Agent TUI" -- /usr/local/bin/azoth-local-agent-tui
 
-[Desktop Action Web]
-Name=Open Cockpit Web UI (Port 8790)
-Exec=/usr/local/bin/azoth web
+[Desktop Action WebApp]
+Name=Open Local Web Cockpit (Port 8136)
+Exec=xdg-open http://127.0.0.1:8136

@@ -127,13 +127,13 @@ class TestEnvConfigManager:
         assert raw.get("MODEL") == "test-model"
 
         # Test Set Single
-        success = EnvConfigManager.set("XAI_API_KEY", "EXAMPLE_PLACEHOLDER", persist=True)
+        success = EnvConfigManager.set("XAI_API_KEY", "xai-test-key-12345", persist=True)  # gitleaks:allow
         assert success is True
-        assert os.getenv("XAI_API_KEY") == "EXAMPLE_PLACEHOLDER"
+        assert os.getenv("XAI_API_KEY") == "xai-test-key-12345"  # gitleaks:allow
 
         # Test Set Multiple
         success = EnvConfigManager.set_multiple({
-            "OPENAI_API_KEY": "sk-test-open-key-9999",
+            "OPENAI_API_KEY": "sk-test-open-key-9999",  # gitleaks:allow
             "ACTIVE_ENGINE": "gemini",
         }, persist=True)
         assert success is True

@@ -50,7 +50,6 @@ def test_stealth_and_anti_detection(browser):
     log_test("Anti-Detection: Headed User-Agent", passed_ua, f"UA: {ua[:60]}...")
     
     assert passed_webdriver and has_chrome and passed_lang and passed_plugins and passed_ua
-    return True
 
 
 def test_navigation_and_tab_management(browser):
@@ -76,7 +75,7 @@ def test_navigation_and_tab_management(browser):
     passed_close = close_res.get("ok") is True
     log_test("Multi-Tab: close_tab", passed_close, f"Remaining tabs: {len(browser.list_tabs())}")
 
-    return passed_nav and passed_new_tab and passed_switch and passed_close
+    assert passed_nav and passed_new_tab and passed_switch and passed_close
 
 
 def test_session_export_and_import(browser):
@@ -93,7 +92,7 @@ def test_session_export_and_import(browser):
                 "secure": False,
             }
         ])
-        page.evaluate("() => { window.localStorage.setItem('abot_user', 'neal_1nc0gn30'); }")
+        page.evaluate("() => { window.localStorage.setItem('abot_user', 'agent_1nc0gn30'); }")
     browser.with_page(_setup_session)
 
     # 1. Export session
@@ -126,7 +125,6 @@ def test_session_export_and_import(browser):
     log_test("Session: import_session", passed_import, f"Restored cookie token: {passed_import}")
 
     assert passed_export and passed_clear and passed_import
-    return True
 
 
 def test_highlights_and_coordinates(browser):
@@ -167,7 +165,6 @@ def test_highlights_and_coordinates(browser):
     log_test("Visual Inspection: clear_highlights", passed_clear_hl, f"Overlays removed: {clear_hl.get('removed_count')}")
 
     assert passed_hl and passed_coord and passed_interactive and passed_clear_hl
-    return True
 
 
 def test_screenshot_and_live_state_performance(browser):
@@ -193,7 +190,7 @@ def test_screenshot_and_live_state_performance(browser):
     t_burst = (time.time() - t1) * 1000.0
     log_test("Live State: Throttled burst polling (5 frames)", True, f"Total burst time: {t_burst:.1f}ms (Avg {t_burst/5:.1f}ms/frame)")
 
-    return passed_ss and passed_fast
+    assert passed_ss and passed_fast
 
 
 def test_crash_recovery_and_resilience(browser):
@@ -201,13 +198,9 @@ def test_crash_recovery_and_resilience(browser):
     # Make sure we have a page open
     _ = browser.current_page
 
-    # Simulate sudden browser crash / window close
+    # Simulate sudden browser crash / window close on Playwright worker thread
     print("  Simulating external browser window closure / crash...")
-    if browser.context:
-        try:
-            browser.context.close()
-        except Exception:
-            pass
+    browser.close()
 
     # Verify is_context_alive is False
     passed_dead = not browser.is_context_alive()
@@ -225,7 +218,7 @@ def test_crash_recovery_and_resilience(browser):
     passed_takeover = takeover_res.get("ok") is True
     log_test("Lifecycle: open_takeover_window", passed_takeover, f"Status: {takeover_res.get('message')}")
 
-    return passed_dead and passed_recover and passed_takeover
+    assert passed_dead and passed_recover and passed_takeover
 
 
 def test_tool_definitions_dispatcher():
@@ -240,8 +233,15 @@ def test_tool_definitions_dispatcher():
     res_extract = execute_tool("browser_extract", {"max_chars": 500})
     passed_extract = res_extract.get("ok") is True and "text_content" in res_extract
 
+    try:
+        from tools import browser as _b_mod
+        if _b_mod._browser_instance and _b_mod._browser_instance.is_context_alive():
+            _b_mod._browser_instance.close()
+    except Exception:
+        pass
+
     log_test("Tool Dispatcher: execute_tool for hardened browser tools", passed_nav and passed_scroll and passed_extract, "execute_tool works across all browser schemas")
-    return passed_nav and passed_scroll and passed_extract
+    assert passed_nav and passed_scroll and passed_extract
 
 
 def main():

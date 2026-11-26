@@ -169,7 +169,12 @@ class TestAgentToolsDispatch:
 class TestWebUiEndpoints:
     @pytest.fixture
     def client(self):
-        return TestClient(web_ui.app)
+        from tools.security import get_api_token
+        return TestClient(
+            web_ui.app,
+            base_url="http://127.0.0.1:8136",
+            headers={"X-Azoth-Token": get_api_token()},
+        )
 
     def test_modes_endpoints(self, client):
         res = client.get("/api/modes")
