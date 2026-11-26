@@ -1,0 +1,14 @@
+[Unit]
+Description=Chronicle Vault Incremental Sync Timer (Every 30 Minutes & On Boot)
+Documentation=https://github.com/1nc0gn30/zoth-memory-vault
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+Persistent=true
+RandomizedDelaySec=2min
+AccuracySec=30s
+Unit=chronicle-vault-sync.service
+
+[Install]
+WantedBy=timers.target

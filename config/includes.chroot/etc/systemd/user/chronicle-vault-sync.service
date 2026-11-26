@@ -1,0 +1,18 @@
+[Unit]
+Description=Chronicle Vault Incremental Sync (Hermes + AGY Watermarked Sync)
+Documentation=https://github.com/1nc0gn30/zoth-memory-vault
+ConditionPathExists=/usr/local/bin/zoth-memory-vault
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/zoth-memory-vault sync-recent --hours 24 --lock-file %t/chronicle-vault-sync.lock --json
+NoNewPrivileges=yes
+PrivateTmp=yes
+UMask=0077
+KillMode=control-group
+TimeoutStartSec=120
+MemoryMax=512M
+CPUQuota=100%
+Nice=15
+IOSchedulingClass=idle
+SyslogIdentifier=chronicle-vault-sync
