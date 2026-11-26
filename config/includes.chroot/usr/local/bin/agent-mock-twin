@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# zothos-repo-shim
-_here="$(readlink -f "$0")"
-_repo="${ZOTH_REPO_DIR:-/home/zoth/NullAITech/agent-mock-twin}"
-_real="$_repo/bin/agent-mock-twin"
-if [ -f "$_real" ] && [ "$(readlink -f "$_real")" != "$_here" ]; then exec "$_real" "$@"; fi
+# Portable ZothOS / host shim for agent-mock-twin (v2.6.0)
+SCRIPT_PATH="$(readlink -f "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+CANDIDATE_FROM_SCRIPT="$(dirname "$SCRIPT_DIR")"
 
-set -e
+REPO_DIR=""
+for candidate in \
+  "${ZOTH_REPO_DIR:-}" \
+  "$CANDIDATE_FROM_SCRIPT" \
+  "${HOME}/NullAITech/agent-mock-twin" \
+  "/opt/agent-mock-twin"; do
+  if [ -n "$candidate" ] && [ -d "$candidate/src/agent_mock_twin" ]; then
+    REPO_DIR="$candidate"
+    break
+  fi
+done
 
-# Resolves repo root and adds src to PYTHONPATH for zero-pip execution
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
+if [ -z "$REPO_DIR" ]; then
+  echo "[!] agent-mock-twin source directory not found (checked /opt/agent-mock-twin and \$HOME/NullAITech/agent-mock-twin)" >&2
+  exit 1
+fi
+
 export PYTHONPATH="$REPO_DIR/src:${PYTHONPATH:-}"
-
 exec python3 -m agent_mock_twin.cli "$@"

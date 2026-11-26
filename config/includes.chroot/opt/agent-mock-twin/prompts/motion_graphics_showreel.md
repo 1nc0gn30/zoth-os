@@ -32,7 +32,7 @@ The Hero Anchor Shape represents the seamless duplication of an AI agent's live 
 ```markdown
 **Prompt for Motion Graphics Engine (15s Product Showreel)**:
 
-Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 vertical and 16:9 widescreen formats for **AGENT MOCK TWIN** (by NullAI).
+Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 vertical and 16:9 widescreen formats for **AGENT MOCK TWIN** (by 1nc0gn30 • NullAI).
 
 **Style & Aesthetic**:
 - Ultra-dark obsidian void (`#08080B`) with micro-geometric grid lines.
@@ -59,7 +59,7 @@ Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 verti
 - **Scene 4 (0:11 – 0:15) — Call to Action**:
   - *Visual*: Sleek glassmorphic Bento dashboard showing active route matrix, latency slider, and Pro badge. Dual Stripe and Solana payment icons appear with subtle shine.
   - *Text Overlay*: "AGENT MOCK TWIN. Run Free Offline."
-  - *Footer Attribution*: "Engineered by 1nc0gn30 • NullAI Platform".
+  - *Footer Attribution*: "Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform".
   - *Audio*: Reverberant sub-bass resolve with clean mechanical click.
 ```
 
@@ -73,5 +73,5 @@ Create a high-energy, 15-second cinematic motion graphics showreel in 9:16 verti
 1. **Act I (0-8s) — The Friction**: Modern agent swarms burn thousands of dollars in token egress just asserting basic logic in CI/CD. Rate limits drop connections, prompt drifts cause flaky test assertions, and staging environments break when LLM providers experience outages.
 2. **Act II (8-18s) — The Architecture**: Introduce `agent-mock-twin`. Zero external dependencies. Ingests standard HAR recordings from `agent-egress-sentinel` or OpenAPI specs. Multi-tier matching engine: Exact hash matching, fuzzy semantic JSON overlap, and automatic provider fallback synthesis (OpenAI, Anthropic, Gemini).
 3. **Act III (18-25s) — The Benchmark**: Demonstrate automated test suite execution: 1,400 agent turns executed in 4.2 seconds offline. Flawless simulation of latency jitter (20ms-120ms) and chaos injection (rate limit stress testing).
-4. **Act IV (25-30s) — The Sovereign Solution**: Founding Member lifetime access (100% Free). Dual checkout via Stripe Credit Cards and Solana Tip. "Deploy autonomous agents without a leash."
+4. **Act IV (25-30s) — The Sovereign Solution**: Founding Member lifetime access ($0 vs $0). Dual checkout via Stripe Credit Cards and Solana Tip. "Deploy autonomous agents without a leash."
 ```

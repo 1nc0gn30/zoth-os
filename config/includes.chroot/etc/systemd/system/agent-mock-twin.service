@@ -11,7 +11,13 @@ WorkingDirectory=%h
 ExecStart=/usr/local/bin/zoth-run-repo agent-mock-twin /opt/zothos-ai-env/bin/python3 -m agent_mock_twin.cli serve --host 127.0.0.1 --port 8097
 Restart=always
 RestartSec=3
-KillMode=process
+KillMode=control-group
+TimeoutStopSec=10
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+ReadWritePaths=/tmp %h/.local/share/agent-mock-twin %h/NullAITech/agent-mock-twin
+MemoryMax=512M
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1

@@ -1,11 +1,12 @@
 """
-matcher.py: Multi-tier request matching engine (Exact -> Fuzzy Semantic -> Fallback Synthesis).
+matcher.py: Multi-tier request matching engine (Exact -> OpenAPI {param} Template -> Fuzzy Semantic -> Fallback Synthesis).
 Zero external pip dependencies.
 """
 
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
 import random
 import time
@@ -13,11 +14,54 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .parser import RecordedRoute, estimate_tokens, extract_json_keys, hash_body, normalize_path
 
+VALID_CHAOS_TYPES = (
+    "429_rate_limit",
+    "500_internal_error",
+    "503_service_unavailable",
+    "timeout_hang",
+)
+
+DETERMINISTIC_EPOCH = 1700000000
+
+
+def _match_path_template(template_path: str, actual_path: str) -> Optional[Tuple[int, Dict[str, str]]]:
+    """Safe literal-segment OpenAPI `{param}` matcher (zero arbitrary regex -> ReDoS-proof).
+
+    Returns (literal_segment_count, extracted_params) if `template_path` contains at least one
+    `{param}` segment and matches `actual_path` segment-for-segment, else None.
+    """
+    tpl = normalize_path(template_path)
+    act = normalize_path(actual_path)
+    if "{" not in tpl or "}" not in tpl:
+        return None
+
+    tpl_segs = [s for s in tpl.split("/") if s != ""]
+    act_segs = [s for s in act.split("/") if s != ""]
+    if len(tpl_segs) != len(act_segs):
+        return None
+
+    params: Dict[str, str] = {}
+    literal_count = 0
+    for t_seg, a_seg in zip(tpl_segs, act_segs):
+        if t_seg.startswith("{") and t_seg.endswith("}") and len(t_seg) > 2:
+            param_name = t_seg[1:-1].strip()
+            if not param_name or "{" in param_name or "}" in param_name or not a_seg:
+                return None
+            params[param_name] = a_seg
+        else:
+            if t_seg != a_seg:
+                return None
+            literal_count += 1
+
+    if not params:
+        return None
+    return literal_count, params
+
 
 @dataclasses.dataclass
 class MatchResult:
     route: RecordedRoute
-    match_type: str  # "exact" | "fuzzy" | "fallback" | "chaos"
+    match_type: str  # "exact" | "template" | "fuzzy" | "fallback" | "chaos"
     confidence: float  # 0.0 to 1.0
     latency_ms: int
     tokens_saved: int
@@ -35,10 +79,10 @@ class RequestMatcher:
         chaos_type: str = "429_rate_limit",
         usd_per_1k_tokens: float = 0.005,
     ):
-        self.base_latency_ms = base_latency_ms
-        self.jitter_ms = jitter_ms
-        self.chaos_rate = chaos_rate
-        self.chaos_type = chaos_type
+        self.base_latency_ms = max(0, min(10000, int(base_latency_ms)))
+        self.jitter_ms = max(0, min(5000, int(jitter_ms)))
+        self.chaos_rate = max(0.0, min(1.0, float(chaos_rate)))
+        self.chaos_type = chaos_type if chaos_type in VALID_CHAOS_TYPES else "429_rate_limit"
         self.usd_per_1k_tokens = usd_per_1k_tokens
 
     def match(
@@ -57,8 +101,10 @@ class RequestMatcher:
 
         # 0. Check Chaos Fault Injection
         if self.chaos_rate > 0.0 and random.random() < self.chaos_rate:
-            chaos_route = self._synthesize_chaos(method, norm_path)
+            chaos_route = self._synthesize_chaos(method, norm_path, body)
             sim_latency = self._compute_latency()
+            if self.chaos_type == "timeout_hang":
+                sim_latency = max(sim_latency, min(2000, self.base_latency_ms + 250))
             return MatchResult(
                 route=chaos_route,
                 match_type="chaos",
@@ -87,8 +133,8 @@ class RequestMatcher:
                 usd_saved=usd,
             )
 
-        # 1b. Exact Match on Path + Method if body is empty or GET request
-        if method in ("GET", "HEAD", "OPTIONS") or req_hash == "empty":
+        # 1b. Exact Match on Path + Method if body is empty or GET/HEAD/OPTIONS/DELETE request
+        if method in ("GET", "HEAD", "OPTIONS", "DELETE") or req_hash == "empty":
             path_matches = [r for r in candidates if r.method == method and r.path == norm_path]
             if path_matches:
                 matched = path_matches[0]
@@ -104,40 +150,13 @@ class RequestMatcher:
                     usd_saved=usd,
                 )
 
-        # 2. Fuzzy Semantic Match: Method + Path with JSON key & model similarity
+        # 2. Fuzzy Semantic Match: Exact Method + Path with JSON key & model similarity
         same_path_candidates = [
             r for r in candidates
             if r.method == method and r.path == norm_path
         ]
         if same_path_candidates:
-            best_route: Optional[RecordedRoute] = None
-            best_score = -1.0
-
-            req_model = self._extract_model(body)
-
-            for cand in same_path_candidates:
-                score = 0.5  # Base score for matching method & path
-                cand_keys = set(cand.body_keys)
-
-                # Key Jaccard similarity
-                if req_keys and cand_keys:
-                    jaccard = len(req_keys & cand_keys) / len(req_keys | cand_keys)
-                    score += jaccard * 0.3
-                elif not req_keys and not cand_keys:
-                    score += 0.2
-
-                # Model name match
-                cand_model = self._extract_model(cand.raw_body)
-                if req_model and cand_model:
-                    if req_model == cand_model:
-                        score += 0.2
-                    elif req_model.split("-")[0] == cand_model.split("-")[0]:
-                        score += 0.1
-
-                if score > best_score:
-                    best_score = score
-                    best_route = cand
-
+            best_route, best_score = self._score_candidates(same_path_candidates, body, req_keys)
             if best_route and best_score >= 0.4:
                 sim_latency = self._compute_latency()
                 tokens = best_route.token_estimate or estimate_tokens(body, best_route.response_body)
@@ -150,6 +169,33 @@ class RequestMatcher:
                     tokens_saved=tokens,
                     usd_saved=usd,
                 )
+
+        # 2b. Safe Literal-Segment OpenAPI `{param}` Path-Template Matching (ReDoS-proof)
+        template_hits: List[Tuple[int, int, RecordedRoute, Dict[str, str]]] = []
+        for idx, cand in enumerate(candidates):
+            if cand.method != method:
+                continue
+            tpl_match = _match_path_template(cand.path, norm_path)
+            if tpl_match is not None:
+                lit_count, params = tpl_match
+                body_bonus = 1 if cand.body_hash == req_hash else 0
+                template_hits.append((lit_count, body_bonus, idx, cand, params))
+
+        if template_hits:
+            # Sort by most literal segments, then exact body hash match, then deterministic insertion order
+            template_hits.sort(key=lambda item: (-item[0], -item[1], item[2]))
+            _, body_bonus, _, matched, _params = template_hits[0]
+            sim_latency = self._compute_latency()
+            tokens = matched.token_estimate or estimate_tokens(body, matched.response_body)
+            usd = round((tokens / 1000.0) * self.usd_per_1k_tokens, 5)
+            return MatchResult(
+                route=matched,
+                match_type="template",
+                confidence=0.98 if body_bonus else 0.92,
+                latency_ms=sim_latency,
+                tokens_saved=tokens,
+                usd_saved=usd,
+            )
 
         # 3. Fallback Response Synthesis (Unseen Endpoints)
         fallback_route = self._synthesize_fallback(method, norm_path, body)
@@ -164,6 +210,39 @@ class RequestMatcher:
             tokens_saved=tokens,
             usd_saved=usd,
         )
+
+    def _score_candidates(
+        self,
+        candidates: List[RecordedRoute],
+        body: str,
+        req_keys: set,
+    ) -> Tuple[Optional[RecordedRoute], float]:
+        best_route: Optional[RecordedRoute] = None
+        best_score = -1.0
+        req_model = self._extract_model(body)
+
+        for cand in candidates:
+            score = 0.5
+            cand_keys = set(cand.body_keys)
+
+            if req_keys and cand_keys:
+                jaccard = len(req_keys & cand_keys) / len(req_keys | cand_keys)
+                score += jaccard * 0.3
+            elif not req_keys and not cand_keys:
+                score += 0.2
+
+            cand_model = self._extract_model(cand.raw_body)
+            if req_model and cand_model:
+                if req_model == cand_model:
+                    score += 0.2
+                elif req_model.split("-")[0] == cand_model.split("-")[0]:
+                    score += 0.1
+
+            if score > best_score:
+                best_score = score
+                best_route = cand
+
+        return best_route, best_score
 
     def _compute_latency(self) -> int:
         """Compute latency with random jitter."""
@@ -189,18 +268,22 @@ class RequestMatcher:
             pass
         return None
 
+    @staticmethod
+    def _deterministic_id(prefix: str, method: str, path: str, body: str) -> str:
+        digest = hashlib.sha256(f"{method}:{path}:{hash_body(body)}".encode("utf-8")).hexdigest()[:12]
+        return f"{prefix}{digest}"
+
     def _synthesize_fallback(self, method: str, path: str, body: str) -> RecordedRoute:
-        """Synthesize deterministic mock response for known provider formats."""
-        now_ts = int(time.time())
+        """Synthesize 100% deterministic mock response for known provider formats."""
+        det_suffix = hashlib.sha256(f"{method}:{path}:{hash_body(body)}".encode("utf-8")).hexdigest()[:12]
         req_model = self._extract_model(body) or "mock-twin-v1"
 
         if "/chat/completions" in path:
-            # OpenAI Chat Completion
             content = "Deterministic mock twin response for autonomous agent testing ($0 token cost)."
             res_body = json.dumps({
-                "id": f"chatcmpl-mock-twin-{now_ts}",
+                "id": f"chatcmpl-mock-twin-{det_suffix}",
                 "object": "chat.completion",
-                "created": now_ts,
+                "created": DETERMINISTIC_EPOCH,
                 "model": req_model,
                 "choices": [
                     {
@@ -219,7 +302,7 @@ class RequestMatcher:
                 },
             }, indent=2)
             return RecordedRoute(
-                id=f"synth_{now_ts}",
+                id=f"synth_{det_suffix}",
                 method=method,
                 path=path,
                 query_params={},
@@ -237,9 +320,8 @@ class RequestMatcher:
             )
 
         if "/messages" in path:
-            # Anthropic Claude Messages
             res_body = json.dumps({
-                "id": f"msg_mock_twin_{now_ts}",
+                "id": f"msg_mock_twin_{det_suffix}",
                 "type": "message",
                 "role": "assistant",
                 "model": req_model,
@@ -257,7 +339,7 @@ class RequestMatcher:
                 },
             }, indent=2)
             return RecordedRoute(
-                id=f"synth_{now_ts}",
+                id=f"synth_{det_suffix}",
                 method=method,
                 path=path,
                 query_params={},
@@ -275,21 +357,20 @@ class RequestMatcher:
             )
 
         if "/embeddings" in path:
-            # OpenAI Embeddings
             res_body = json.dumps({
                 "object": "list",
                 "data": [
                     {
                         "object": "embedding",
                         "index": 0,
-                        "embedding": [0.0123, -0.0456, 0.0789, 0.0012] * 384,  # 1536 dims
+                        "embedding": [0.0123, -0.0456, 0.0789, 0.0012] * 384,
                     }
                 ],
                 "model": req_model,
                 "usage": {"prompt_tokens": 12, "total_tokens": 12},
             })
             return RecordedRoute(
-                id=f"synth_{now_ts}",
+                id=f"synth_{det_suffix}",
                 method=method,
                 path=path,
                 query_params={},
@@ -307,7 +388,6 @@ class RequestMatcher:
             )
 
         if "/models" in path:
-            # Models List
             res_body = json.dumps({
                 "object": "list",
                 "data": [
@@ -317,7 +397,7 @@ class RequestMatcher:
                 ],
             })
             return RecordedRoute(
-                id=f"synth_{now_ts}",
+                id=f"synth_{det_suffix}",
                 method=method,
                 path=path,
                 query_params={},
@@ -334,18 +414,44 @@ class RequestMatcher:
                 description="Synthesized Models List Fallback",
             )
 
+        if "/api/generate" in path:
+            res_body = json.dumps({
+                "model": req_model,
+                "created_at": "2026-11-26T00:00:00Z",
+                "response": "Deterministic offline Ollama twin response ($0 token cost).",
+                "done": True,
+                "eval_count": 32,
+            }, indent=2)
+            return RecordedRoute(
+                id=f"synth_{det_suffix}",
+                method=method,
+                path=path,
+                query_params={},
+                headers={"content-type": "application/json"},
+                body_hash=hash_body(body),
+                body_keys=extract_json_keys(body),
+                raw_body=body,
+                response_status=200,
+                response_headers={"content-type": "application/json", "x-mock-twin": "fallback-ollama"},
+                response_body=res_body,
+                source="synthetic",
+                provider="ollama",
+                token_estimate=32,
+                description="Synthesized Ollama Generate Fallback",
+            )
+
         # Generic REST Fallback
         res_body = json.dumps({
             "mock": True,
             "twin": "agent-mock-twin",
+            "id": f"synth_{det_suffix}",
             "method": method,
             "path": path,
-            "timestamp": now_ts,
             "status": "synthesized",
             "message": "Deterministic offline mock twin endpoint.",
         }, indent=2)
         return RecordedRoute(
-            id=f"synth_{now_ts}",
+            id=f"synth_{det_suffix}",
             method=method,
             path=path,
             query_params={},
@@ -362,18 +468,20 @@ class RequestMatcher:
             description=f"Generic Synthesized {method} {path}",
         )
 
-    def _synthesize_chaos(self, method: str, path: str) -> RecordedRoute:
+    def _synthesize_chaos(self, method: str, path: str, body: str = "") -> RecordedRoute:
         """Create artificial chaos/fault response."""
-        now_ts = int(time.time())
+        det_suffix = hashlib.sha256(f"chaos:{self.chaos_type}:{method}:{path}:{hash_body(body)}".encode("utf-8")).hexdigest()[:12]
         if self.chaos_type == "500_internal_error":
-            body = json.dumps({"error": {"message": "Simulated internal server error (Chaos Injection)", "type": "server_error", "code": 500}})
+            res_body = json.dumps({"error": {"message": "Simulated internal server error (Chaos Injection)", "type": "server_error", "code": 500}})
             status = 500
         elif self.chaos_type == "503_service_unavailable":
-            body = json.dumps({"error": {"message": "Service temporarily overloaded (Chaos Injection)", "type": "service_unavailable", "code": 503}})
+            res_body = json.dumps({"error": {"message": "Service temporarily overloaded (Chaos Injection)", "type": "service_unavailable", "code": 503}})
             status = 503
+        elif self.chaos_type == "timeout_hang":
+            res_body = json.dumps({"error": {"message": "Upstream gateway timeout simulated (Chaos Injection)", "type": "gateway_timeout", "code": 504}})
+            status = 504
         else:
-            # 429 Too Many Requests
-            body = json.dumps({
+            res_body = json.dumps({
                 "error": {
                     "message": "Rate limit reached for requests (Simulated Chaos Fault Injection)",
                     "type": "requests",
@@ -383,7 +491,7 @@ class RequestMatcher:
             status = 429
 
         return RecordedRoute(
-            id=f"chaos_{now_ts}",
+            id=f"chaos_{det_suffix}",
             method=method,
             path=path,
             query_params={},
@@ -397,7 +505,7 @@ class RequestMatcher:
                 "x-mock-twin": "chaos-fault-injection",
                 "retry-after": "5",
             },
-            response_body=body,
+            response_body=res_body,
             source="synthetic",
             provider="custom",
             token_estimate=0,

@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist historical sanitized demo commits in public/index.html"
+commits = [
+  "5e926753160a94d2323c777730848a7bb8e21111",
+  "e4dfc25ed77fcb852d58e57f793753e6302b7c21"
+]

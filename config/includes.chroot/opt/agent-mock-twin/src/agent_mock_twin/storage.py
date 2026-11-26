@@ -1,6 +1,6 @@
 """
-storage.py: SQLite storage engine with zero external pip dependencies.
-Stores routes, hits, and telemetry with microsecond in-memory routing cache.
+storage.py: SQLite WAL storage engine with zero external pip dependencies.
+Stores routes, hits, and telemetry with a write-generation-aware in-memory routing cache.
 """
 
 from __future__ import annotations
@@ -10,28 +10,53 @@ import os
 import sqlite3
 import threading
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from .parser import RecordedRoute
+from .parser import RecordedRoute, sanitize_headers
 
 
 class MockStorage:
-    """Thread-safe SQLite storage for mock routes and telemetry hits."""
+    """Thread-safe SQLite WAL storage for mock routes and telemetry hits."""
 
     def __init__(self, db_path: str = "agent_mock.db"):
         self.db_path = db_path
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._routes_cache: List[RecordedRoute] = []
+        self._db_sig: Optional[Tuple[int, int, int, int]] = None
         self._init_db()
-        self._load_cache()
+        self._load_cache(force=True)
 
     def _get_connection(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        conn = sqlite3.connect(self.db_path, timeout=5.0, check_same_thread=False)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA foreign_keys=ON")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        conn.execute("PRAGMA busy_timeout=5000")
         return conn
+
+    def _stat_db_signature(self) -> Optional[Tuple[int, int, int, int]]:
+        """Capture (db_mtime_ns, db_size, wal_mtime_ns, wal_size) to detect external writes."""
+        if self.db_path == ":memory:":
+            return None
+        try:
+            st = os.stat(self.db_path)
+            db_m, db_s = st.st_mtime_ns, st.st_size
+        except OSError:
+            db_m, db_s = 0, 0
+        wal_path = f"{self.db_path}-wal"
+        try:
+            wst = os.stat(wal_path)
+            wal_m, wal_s = wst.st_mtime_ns, wst.st_size
+        except OSError:
+            wal_m, wal_s = 0, 0
+        return (db_m, db_s, wal_m, wal_s)
 
     def _init_db(self) -> None:
         with self._lock:
+            parent = os.path.dirname(os.path.abspath(self.db_path))
+            if self.db_path != ":memory:" and parent and not os.path.isdir(parent):
+                os.makedirs(parent, exist_ok=True)
             conn = self._get_connection()
             try:
                 cur = conn.cursor()
@@ -86,17 +111,18 @@ class MockStorage:
             finally:
                 conn.close()
 
-    def _load_cache(self) -> None:
+    def _load_cache(self, force: bool = False) -> None:
         with self._lock:
+            current_sig = self._stat_db_signature()
+            if not force and current_sig is not None and current_sig == self._db_sig:
+                return
             conn = self._get_connection()
             try:
                 cur = conn.cursor()
-                cur.execute("SELECT * FROM mock_routes ORDER BY created_at ASC")
+                cur.execute("SELECT * FROM mock_routes ORDER BY created_at ASC, rowid ASC")
                 rows = cur.fetchall()
-                loaded = []
-                for r in rows:
-                    loaded.append(self._row_to_route(r))
-                self._routes_cache = loaded
+                self._routes_cache = [self._row_to_route(r) for r in rows]
+                self._db_sig = self._stat_db_signature()
             finally:
                 conn.close()
 
@@ -107,12 +133,12 @@ class MockStorage:
             method=row["method"],
             path=row["path"],
             query_params=json.loads(row["query_params"] or "{}"),
-            headers=json.loads(row["headers"] or "{}"),
+            headers=sanitize_headers(json.loads(row["headers"] or "{}")),
             body_hash=row["body_hash"] or "empty",
             body_keys=json.loads(row["body_keys"] or "[]"),
             raw_body=row["raw_body"] or "",
             response_status=row["response_status"],
-            response_headers=json.loads(row["response_headers"] or "{}"),
+            response_headers=sanitize_headers(json.loads(row["response_headers"] or "{}")),
             response_body=row["response_body"] or "",
             source=row["source"],
             provider=row["provider"],
@@ -120,70 +146,77 @@ class MockStorage:
             description=row["description"] or "",
         )
 
+    @staticmethod
+    def _route_tuple(route: RecordedRoute) -> Tuple[Any, ...]:
+        return (
+            route.id,
+            route.method,
+            route.path,
+            json.dumps(route.query_params),
+            json.dumps(sanitize_headers(route.headers)),
+            route.body_hash,
+            json.dumps(route.body_keys),
+            route.raw_body,
+            int(route.response_status),
+            json.dumps(sanitize_headers(route.response_headers)),
+            route.response_body,
+            route.source,
+            route.provider,
+            int(route.token_estimate),
+            route.description,
+        )
+
+    _UPSERT_SQL = """
+        INSERT INTO mock_routes (
+            id, method, path, query_params, headers, body_hash, body_keys,
+            raw_body, response_status, response_headers, response_body,
+            source, provider, token_estimate, description
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            method=excluded.method,
+            path=excluded.path,
+            query_params=excluded.query_params,
+            headers=excluded.headers,
+            body_hash=excluded.body_hash,
+            body_keys=excluded.body_keys,
+            raw_body=excluded.raw_body,
+            response_status=excluded.response_status,
+            response_headers=excluded.response_headers,
+            response_body=excluded.response_body,
+            source=excluded.source,
+            provider=excluded.provider,
+            token_estimate=excluded.token_estimate,
+            description=excluded.description
+    """
+
     def save_route(self, route: RecordedRoute) -> bool:
         """Upsert a single route and update memory cache."""
+        return self.save_routes([route]) == 1
+
+    def save_routes(self, routes: List[RecordedRoute]) -> int:
+        """Batch upsert multiple routes inside a single SQLite transaction."""
+        if not routes:
+            return 0
         with self._lock:
             conn = self._get_connection()
             try:
                 cur = conn.cursor()
-                cur.execute("""
-                    INSERT INTO mock_routes (
-                        id, method, path, query_params, headers, body_hash, body_keys,
-                        raw_body, response_status, response_headers, response_body,
-                        source, provider, token_estimate, description
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT(id) DO UPDATE SET
-                        method=excluded.method,
-                        path=excluded.path,
-                        query_params=excluded.query_params,
-                        headers=excluded.headers,
-                        body_hash=excluded.body_hash,
-                        body_keys=excluded.body_keys,
-                        raw_body=excluded.raw_body,
-                        response_status=excluded.response_status,
-                        response_headers=excluded.response_headers,
-                        response_body=excluded.response_body,
-                        source=excluded.source,
-                        provider=excluded.provider,
-                        token_estimate=excluded.token_estimate,
-                        description=excluded.description
-                """, (
-                    route.id,
-                    route.method,
-                    route.path,
-                    json.dumps(route.query_params),
-                    json.dumps(route.headers),
-                    route.body_hash,
-                    json.dumps(route.body_keys),
-                    route.raw_body,
-                    route.response_status,
-                    json.dumps(route.response_headers),
-                    route.response_body,
-                    route.source,
-                    route.provider,
-                    route.token_estimate,
-                    route.description,
-                ))
+                cur.executemany(self._UPSERT_SQL, [self._route_tuple(r) for r in routes])
                 conn.commit()
 
-                # Update in-memory cache
-                self._routes_cache = [r for r in self._routes_cache if r.id != route.id]
-                self._routes_cache.append(route)
-                return True
+                by_id = {r.id: r for r in self._routes_cache}
+                for r in routes:
+                    by_id[r.id] = r
+                self._routes_cache = list(by_id.values())
+                self._db_sig = self._stat_db_signature()
+                return len(routes)
             finally:
                 conn.close()
 
-    def save_routes(self, routes: List[RecordedRoute]) -> int:
-        """Batch save multiple routes."""
-        count = 0
-        for r in routes:
-            if self.save_route(r):
-                count += 1
-        return count
-
     def get_routes(self) -> List[RecordedRoute]:
-        """Return list of all cached routes."""
+        """Return cached routes, reloading only if an external process modified the DB."""
         with self._lock:
+            self._load_cache(force=False)
             return list(self._routes_cache)
 
     def record_hit(
@@ -213,15 +246,18 @@ class MockStorage:
                     ts, method, path, match_type, status_code,
                     latency_ms, tokens_saved, usd_saved, provider, route_id
                 ))
+                hit_id = int(cur.lastrowid or 0)
 
                 if route_id:
                     cur.execute("UPDATE mock_routes SET hit_count = hit_count + 1 WHERE id = ?", (route_id,))
 
                 conn.commit()
+                self._db_sig = self._stat_db_signature()
             finally:
                 conn.close()
 
         return {
+            "id": hit_id,
             "timestamp": ts,
             "method": method,
             "path": path,
@@ -236,6 +272,7 @@ class MockStorage:
 
     def get_recent_hits(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Retrieve recent hits for replay log."""
+        safe_limit = max(1, min(500, int(limit)))
         with self._lock:
             conn = self._get_connection()
             try:
@@ -246,15 +283,16 @@ class MockStorage:
                     FROM mock_hits
                     ORDER BY id DESC
                     LIMIT ?
-                """, (limit,))
+                """, (safe_limit,))
                 rows = cur.fetchall()
                 return [dict(r) for r in rows]
             finally:
                 conn.close()
 
     def get_stats(self) -> Dict[str, Any]:
-        """Aggregate global server stats."""
+        """Aggregate global server stats without redundant route cache reloads."""
         with self._lock:
+            self._load_cache(force=False)
             conn = self._get_connection()
             try:
                 cur = conn.cursor()
@@ -300,5 +338,6 @@ class MockStorage:
                 cur.execute("DELETE FROM mock_routes")
                 conn.commit()
                 self._routes_cache = []
+                self._db_sig = self._stat_db_signature()
             finally:
                 conn.close()

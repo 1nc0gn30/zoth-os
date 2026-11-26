@@ -9,9 +9,65 @@ import base64
 import dataclasses
 import hashlib
 import json
-import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Tuple
 from urllib.parse import parse_qs, urlparse
+
+# RFC 7230 token characters allowed in HTTP header names
+_RFC7230_TCHAR = frozenset(
+    "!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+)
+
+
+def is_valid_header_name(name: str) -> bool:
+    """Validate an HTTP header field-name per RFC 7230 (no CRLF, whitespace, or control chars)."""
+    if not isinstance(name, str) or not name or len(name) > 256:
+        return False
+    return all(ch in _RFC7230_TCHAR for ch in name)
+
+
+def has_crlf_or_ctl(value: str) -> bool:
+    """Detect CR, LF, NUL, or unsafe ASCII control characters in HTTP header values."""
+    if not isinstance(value, str):
+        return True
+    for ch in value:
+        code = ord(ch)
+        if ch in ("\r", "\n", "\x00") or (code < 0x20 and ch != "\t") or code == 0x7F:
+            return True
+    return False
+
+
+def sanitize_headers(headers: Any) -> Dict[str, str]:
+    """Return a copy of headers with invalid RFC 7230 names dropped and CR/LF/CTL stripped."""
+    if not isinstance(headers, dict):
+        return {}
+    clean: Dict[str, str] = {}
+    for raw_k, raw_v in headers.items():
+        k = str(raw_k).strip()
+        if not is_valid_header_name(k):
+            continue
+        v = str(raw_v)
+        if has_crlf_or_ctl(v):
+            # Truncate at first CR/LF/NUL to prevent header injection if legacy DB row exists
+            v = v.split("\r", 1)[0].split("\n", 1)[0].split("\x00", 1)[0]
+            v = "".join(ch for ch in v if (ord(ch) >= 0x20 and ord(ch) != 0x7F) or ch == "\t")
+        clean[k] = v
+    return clean
+
+
+def find_header_crlf_violation(headers: Any) -> Tuple[bool, str]:
+    """Check whether a headers mapping contains CRLF or invalid RFC 7230 header names/values."""
+    if headers is None:
+        return False, ""
+    if not isinstance(headers, dict):
+        return True, "Headers must be a JSON object"
+    for raw_k, raw_v in headers.items():
+        k = str(raw_k)
+        v = str(raw_v)
+        if not is_valid_header_name(k):
+            return True, f"Invalid HTTP header name: {k!r}"
+        if has_crlf_or_ctl(v):
+            return True, f"Forbidden CRLF/control character in header {k!r}"
+    return False, ""
 
 
 @dataclasses.dataclass
@@ -37,12 +93,63 @@ class RecordedRoute:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> RecordedRoute:
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        if not isinstance(data, dict):
+            raise ValueError("Route entry must be a JSON object")
+        method = str(data.get("method", "GET")).upper()
+        path = normalize_path(str(data.get("path", "/")))
+        raw_body = str(data.get("raw_body", "") or "")
+        b_hash = str(data.get("body_hash") or hash_body(raw_body))
+        b_keys = data.get("body_keys")
+        if not isinstance(b_keys, list):
+            b_keys = extract_json_keys(raw_body)
+        resp_body = data.get("response_body", "")
+        if isinstance(resp_body, (dict, list)):
+            resp_body = json.dumps(resp_body)
+        else:
+            resp_body = str(resp_body or "")
+        route_id = str(
+            data.get("id")
+            or hashlib.sha256(f"{method}:{path}:{b_hash}".encode("utf-8")).hexdigest()[:16]
+        )
+        resp_headers = sanitize_headers(data.get("response_headers") or {"content-type": "application/json"})
+        if "content-type" not in {k.lower() for k in resp_headers}:
+            resp_headers["content-type"] = "application/json"
+        req_headers = sanitize_headers(data.get("headers") or {})
+        query_params = data.get("query_params")
+        if not isinstance(query_params, dict):
+            query_params = {}
+        try:
+            resp_status = int(data.get("response_status", 200))
+        except (TypeError, ValueError):
+            resp_status = 200
+        resp_status = max(100, min(599, resp_status))
+        provider = str(data.get("provider") or detect_provider("", path, raw_body))
+        try:
+            token_est = int(data.get("token_estimate") or estimate_tokens(raw_body, resp_body))
+        except (TypeError, ValueError):
+            token_est = estimate_tokens(raw_body, resp_body)
+        return cls(
+            id=route_id,
+            method=method,
+            path=path,
+            query_params=query_params,
+            headers=req_headers,
+            body_hash=b_hash,
+            body_keys=[str(k) for k in b_keys],
+            raw_body=raw_body,
+            response_status=resp_status,
+            response_headers=resp_headers,
+            response_body=resp_body,
+            source=str(data.get("source", "har")),
+            provider=provider,
+            token_estimate=max(0, token_est),
+            description=str(data.get("description", "") or f"{provider.upper()} {method} {path}"),
+        )
 
 
 def normalize_path(path: str) -> str:
     """Normalize path by stripping query strings, fragments, and trailing slashes."""
-    p = path.split("?")[0].split("#")[0].strip()
+    p = str(path or "/").split("?")[0].split("#")[0].strip()
     if not p.startswith("/"):
         p = "/" + p
     if len(p) > 1 and p.endswith("/"):
@@ -54,7 +161,6 @@ def hash_body(body: str) -> str:
     """Deterministic hash of request body."""
     if not body:
         return "empty"
-    # Try compacting JSON to avoid whitespace mismatch
     try:
         parsed = json.loads(body)
         compact = json.dumps(parsed, sort_keys=True, separators=(",", ":"))
@@ -97,7 +203,6 @@ def detect_provider(url: str, path: str, body: str) -> str:
 
 def estimate_tokens(req_body: str, res_body: str) -> int:
     """Estimate token count from response JSON or heuristic."""
-    # Check OpenAI style usage
     try:
         parsed = json.loads(res_body)
         if isinstance(parsed, dict) and "usage" in parsed:
@@ -112,7 +217,6 @@ def estimate_tokens(req_body: str, res_body: str) -> int:
     except Exception:
         pass
 
-    # Heuristic: ~4 chars per token
     combined_len = len(req_body or "") + len(res_body or "")
     return max(10, combined_len // 4)
 
@@ -134,52 +238,63 @@ class HarParser:
             entries = data
 
         for idx, entry in enumerate(entries):
+            if not isinstance(entry, dict):
+                continue
             req = entry.get("request", {})
             res = entry.get("response", {})
-            if not req:
+            if not isinstance(req, dict) or not req:
                 continue
+            if not isinstance(res, dict):
+                res = {}
 
-            method = req.get("method", "GET").upper()
-            raw_url = req.get("url", "")
+            method = str(req.get("method", "GET")).upper()
+            raw_url = str(req.get("url", ""))
             parsed_url = urlparse(raw_url)
             path = normalize_path(parsed_url.path or "/")
 
-            # Query params
             query_params: Dict[str, Any] = {}
             if parsed_url.query:
                 query_params.update(parse_qs(parsed_url.query))
             for q in req.get("queryString", []):
-                q_name = q.get("name")
-                if q_name:
-                    query_params[q_name] = q.get("value", "")
+                if isinstance(q, dict):
+                    q_name = q.get("name")
+                    if q_name:
+                        query_params[str(q_name)] = q.get("value", "")
 
-            # Headers
             headers: Dict[str, str] = {}
             for h in req.get("headers", []):
-                h_name = h.get("name", "").lower()
-                # Skip volatile connection headers
-                if h_name not in ("user-agent", "host", "connection", "accept-encoding"):
-                    headers[h_name] = h.get("value", "")
+                if not isinstance(h, dict):
+                    continue
+                h_name = str(h.get("name", "")).lower().strip()
+                if h_name and h_name not in ("user-agent", "host", "connection", "accept-encoding"):
+                    headers[h_name] = str(h.get("value", ""))
+            headers = sanitize_headers(headers)
 
-            # Request Body
             post_data = req.get("postData", {})
-            raw_body = post_data.get("text", "")
+            raw_body = str(post_data.get("text", "")) if isinstance(post_data, dict) else ""
             b_hash = hash_body(raw_body)
             b_keys = extract_json_keys(raw_body)
 
-            # Response
-            res_status = int(res.get("status", 200))
-            res_headers: Dict[str, str] = {}
+            try:
+                res_status = max(100, min(599, int(res.get("status", 200))))
+            except (TypeError, ValueError):
+                res_status = 200
+
+            raw_res_headers: Dict[str, str] = {}
             for h in res.get("headers", []):
-                h_name = h.get("name", "").lower()
-                res_headers[h_name] = h.get("value", "")
-            if "content-type" not in res_headers:
+                if not isinstance(h, dict):
+                    continue
+                h_name = str(h.get("name", "")).lower().strip()
+                if h_name:
+                    raw_res_headers[h_name] = str(h.get("value", ""))
+            res_headers = sanitize_headers(raw_res_headers)
+            if "content-type" not in {k.lower() for k in res_headers}:
                 res_headers["content-type"] = "application/json"
             res_headers["x-mock-twin"] = "true"
 
             content = res.get("content", {})
-            res_body = content.get("text", "")
-            if content.get("encoding") == "base64" and res_body:
+            res_body = str(content.get("text", "")) if isinstance(content, dict) else ""
+            if isinstance(content, dict) and content.get("encoding") == "base64" and res_body:
                 try:
                     res_body = base64.b64decode(res_body).decode("utf-8", errors="replace")
                 except Exception:
@@ -245,48 +360,48 @@ class OpenAPIParser:
 
                 method_upper = method.upper()
 
-                # Extract request example / schema
                 raw_body = ""
                 request_body = op.get("requestBody", {})
                 if isinstance(request_body, dict):
                     content = request_body.get("content", {})
-                    app_json = content.get("application/json", {})
-                    if "example" in app_json:
-                        raw_body = json.dumps(app_json["example"])
-                    elif "examples" in app_json and app_json["examples"]:
-                        first_ex = next(iter(app_json["examples"].values()), {})
-                        if isinstance(first_ex, dict) and "value" in first_ex:
-                            raw_body = json.dumps(first_ex["value"])
+                    app_json = content.get("application/json", {}) if isinstance(content, dict) else {}
+                    if isinstance(app_json, dict):
+                        if "example" in app_json:
+                            raw_body = json.dumps(app_json["example"])
+                        elif "examples" in app_json and isinstance(app_json["examples"], dict) and app_json["examples"]:
+                            first_ex = next(iter(app_json["examples"].values()), {})
+                            if isinstance(first_ex, dict) and "value" in first_ex:
+                                raw_body = json.dumps(first_ex["value"])
 
                 b_hash = hash_body(raw_body)
                 b_keys = extract_json_keys(raw_body)
 
-                # Extract response example
                 responses = op.get("responses", {})
                 res_status = 200
                 res_body = '{"status":"ok","mock":true}'
 
-                for status_code in ("200", "201", "default"):
-                    if status_code in responses:
-                        res_obj = responses[status_code]
-                        if isinstance(res_obj, dict):
-                            if status_code.isdigit():
-                                res_status = int(status_code)
-                            content = res_obj.get("content", {})
-                            app_json = content.get("application/json", {})
-                            if "example" in app_json:
-                                res_body = json.dumps(app_json["example"])
-                                break
-                            if "examples" in app_json and app_json["examples"]:
-                                first_ex = next(iter(app_json["examples"].values()), {})
-                                if isinstance(first_ex, dict) and "value" in first_ex:
-                                    res_body = json.dumps(first_ex["value"])
-                                    break
-                            # Synthesize minimal mock from schema
-                            schema = app_json.get("schema", {})
-                            if schema:
-                                res_body = json.dumps(OpenAPIParser._sample_from_schema(schema))
-                                break
+                if isinstance(responses, dict):
+                    for status_code in ("200", "201", "default"):
+                        if status_code in responses:
+                            res_obj = responses[status_code]
+                            if isinstance(res_obj, dict):
+                                if status_code.isdigit():
+                                    res_status = int(status_code)
+                                content = res_obj.get("content", {})
+                                app_json = content.get("application/json", {}) if isinstance(content, dict) else {}
+                                if isinstance(app_json, dict):
+                                    if "example" in app_json:
+                                        res_body = json.dumps(app_json["example"])
+                                        break
+                                    if "examples" in app_json and isinstance(app_json["examples"], dict) and app_json["examples"]:
+                                        first_ex = next(iter(app_json["examples"].values()), {})
+                                        if isinstance(first_ex, dict) and "value" in first_ex:
+                                            res_body = json.dumps(first_ex["value"])
+                                            break
+                                    schema = app_json.get("schema", {})
+                                    if isinstance(schema, dict) and schema:
+                                        res_body = json.dumps(OpenAPIParser._sample_from_schema(schema))
+                                        break
 
                 provider = detect_provider("", norm_path, raw_body)
                 token_est = estimate_tokens(raw_body, res_body)
@@ -314,7 +429,7 @@ class OpenAPIParser:
                         source="openapi",
                         provider=provider,
                         token_estimate=token_est,
-                        description=op.get("summary") or f"{provider.upper()} {method_upper} {norm_path} (from OpenAPI)",
+                        description=str(op.get("summary") or f"{provider.upper()} {method_upper} {norm_path} (from OpenAPI)"),
                     )
                 )
 
@@ -327,11 +442,12 @@ class OpenAPIParser:
         if t == "object":
             props = schema.get("properties", {})
             out = {}
-            for k, prop in props.items():
-                if isinstance(prop, dict):
-                    out[k] = OpenAPIParser._sample_from_schema(prop)
-                else:
-                    out[k] = "mock_val"
+            if isinstance(props, dict):
+                for k, prop in props.items():
+                    if isinstance(prop, dict):
+                        out[k] = OpenAPIParser._sample_from_schema(prop)
+                    else:
+                        out[k] = "mock_val"
             if not out:
                 return {"mock": True, "twin": "agent-mock-twin"}
             return out
@@ -341,9 +457,9 @@ class OpenAPIParser:
         elif t == "string":
             return schema.get("default") or schema.get("example") or "mock_string"
         elif t == "integer":
-            return schema.get("default") or 42
+            return schema.get("default") if "default" in schema else 42
         elif t == "number":
-            return schema.get("default") or 3.14
+            return schema.get("default") if "default" in schema else 3.14
         elif t == "boolean":
             return schema.get("default") if "default" in schema else True
         return {"mock": True}

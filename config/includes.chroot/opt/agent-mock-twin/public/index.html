@@ -1,35 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGENT MOCK TWIN — Autonomous Offline API Mock & Network Twin for AI Agents</title>
-  <meta name="description" content="Autonomous offline API mock server and network twin for AI agents. Ingests HAR 1.2 and OpenAPI 3.0 to enable zero-latency, $0 token cost CI/CD test execution.">
-  
+  <title>Agent Mock Twin v2.6.0 — Offline API Mock &amp; Network Twin for AI Agents</title>
+  <meta name="description" content="Autonomous offline API mock server and deterministic LLM/REST network twin for AI agents. Ingests HAR 1.2 and OpenAPI 3.0 with {param} template matching, chaos controls, and 4-tool MCP server.">
+
+  <!-- Synchronous Theme & Embed Resolution (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var qTheme = params.get('theme');
+        var stored = localStorage.getItem('amt-theme');
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = (qTheme === 'light' || qTheme === 'dark')
+          ? qTheme
+          : ((stored === 'light' || stored === 'dark') ? stored : (prefersLight ? 'light' : 'dark'));
+        document.documentElement.setAttribute('data-theme', theme);
+        if (params.get('embed') === '1') {
+          document.documentElement.setAttribute('data-embed', '1');
+        }
+      } catch (_) {}
+    })();
+  </script>
+
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
   <link rel="apple-touch-icon" href="/assets/icon.png">
-  
+  <link rel="canonical" href="https://agent-mock-twin.nullai.tech/">
+
   <!-- OpenGraph Metadata -->
-  <meta property="og:title" content="AGENT MOCK TWIN — Autonomous Offline API Mock for AI Agents">
-  <meta property="og:description" content="Run autonomous AI agents offline in CI/CD with $0 API token cost and 100% deterministic outputs. Zero-dependency Python standard library.">
+  <meta property="og:title" content="Agent Mock Twin v2.6.0 — Offline API Mock for AI Agents">
+  <meta property="og:description" content="Run autonomous AI agents offline in CI/CD with $0 API token cost, OpenAPI {param} matching, live chaos controls, and 4-tool stdio MCP.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://agent-mock.nullai.tech/">
-  <meta property="og:image" content="https://agent-mock.nullai.tech/assets/banner.png">
-  
+  <meta property="og:url" content="https://agent-mock-twin.nullai.tech/">
+  <meta property="og:image" content="https://agent-mock-twin.nullai.tech/assets/banner.png">
+
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
-  <meta name="twitter:title" content="AGENT MOCK TWIN — $0 Token Cost Network Twin for AI Agents">
-  <meta name="twitter:description" content="Autonomous offline API mock server and network twin for AI agents. Ingests HAR 1.2 and OpenAPI 3.0.">
-  <meta name="twitter:image" content="https://agent-mock.nullai.tech/assets/banner.png">
-
-  <!-- Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <meta name="twitter:title" content="Agent Mock Twin v2.6.0 — $0 Token Cost Network Twin">
+  <meta name="twitter:description" content="Zero-dependency Python 3.10+ offline API mock server and network twin for AI agents.">
+  <meta name="twitter:image" content="https://agent-mock-twin.nullai.tech/assets/banner.png">
 
   <!-- AEO Schema.org Knowledge Graph -->
   <script type="application/ld+json">
@@ -40,13 +55,14 @@
         "@type": ["WebApplication", "SoftwareApplication"],
         "@id": "https://agent-mock-twin.nullai.tech/#app",
         "name": "Agent Mock Twin",
+        "softwareVersion": "2.6.0",
         "url": "https://agent-mock-twin.nullai.tech/",
         "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "All",
-        "description": "Autonomous offline API mock server and network twin for AI agents. Ingests HAR 1.2 archives and OpenAPI 3.0 specs to provide deterministic $0 token cost agent execution.",
+        "operatingSystem": "Linux, macOS, Windows",
+        "description": "Autonomous offline API mock server and network twin for AI agents (127.0.0.1:8097). Ingests HAR 1.2 archives and OpenAPI 3.0 specs with literal-segment {param} template matching, chaos simulation, and 4-tool stdio MCP.",
         "creator": {
-          "@type": "Person",
-          "name": "1nc0gn30",
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
           "url": "https://nullai.tech",
           "sameAs": "https://github.com/1nc0gn30"
         },
@@ -58,12 +74,12 @@
           "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "featureList": [
-          "Zero External Pip Dependencies",
-          "HAR 1.2 and OpenAPI 3.0 Ingestion",
-          "Exact and Fuzzy Semantic Request Matching",
-          "Configurable Latency Simulation and Jitter",
-          "Chaos Fault and Rate Limit Injection",
-          "CLI Subprocess Wrapper for Instant CI/CD Interception"
+          "Zero External Pip Dependencies (Python 3.10+ stdlib)",
+          "HAR 1.2 and OpenAPI 3.0 Ingestion with {param} Template Matching",
+          "Exact Hash, Template, Fuzzy Semantic, and Deterministic Fallback Tiers",
+          "Configurable Latency Simulation, Jitter, and HTTP 429/500/503/504 Chaos Controls",
+          "4-Tool JSON-RPC 2.0 Stdio MCP Server (mock_replay_query, mock_list_routes, mock_import_spec, mock_get_stats)",
+          "CLI Subprocess Wrapper for CI/CD Interception (agent-mock-twin run)"
         ]
       },
       {
@@ -75,23 +91,23 @@
             "name": "How does Agent Mock Twin eliminate API token costs for autonomous agents?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Agent Mock Twin records or ingests real LLM provider traffic (OpenAI, Anthropic, Gemini) via standard HAR 1.2 or OpenAPI 3.0 files. It then hosts a zero-dependency local mock server that answers agent requests deterministically in microsecond latency with zero outbound token egress."
+              "text": "Agent Mock Twin ingests real LLM provider traffic (OpenAI, Anthropic, Ollama, REST) via standard HAR 1.2 or OpenAPI 3.0 specs into SQLite WAL storage and hosts a local loopback server on 127.0.0.1:8097 that replays deterministic responses with zero outbound billing."
             }
           },
           {
             "@type": "Question",
-            "name": "Does Agent Mock Twin require external pip dependencies?",
+            "name": "Does Agent Mock Twin require external pip dependencies or cloud access?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. The backend runtime is built 100% on the Python 3.10+ standard library (http.server, sqlite3, dataclasses, urllib.parse). It runs anywhere Python is installed without pip install."
+              "text": "No. The runtime is built 100% on the Python 3.10+ standard library (http.server, sqlite3, dataclasses, urllib.parse) with zero external font CDNs or cloud dependencies."
             }
           },
           {
             "@type": "Question",
-            "name": "How do developers integrate Agent Mock Twin into existing CI/CD test suites?",
+            "name": "How do developers and AI agents integrate Agent Mock Twin into CI/CD and MCP?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Developers run their test commands wrapped via 'agent-mock run -- pytest tests/'. The CLI automatically spins up the mock server in a background thread and redirects OPENAI_BASE_URL and ANTHROPIC_BASE_URL to the local twin."
+              "text": "Run CI suites via 'agent-mock-twin run -- pytest tests/' (which injects OPENAI_BASE_URL and ANTHROPIC_BASE_URL) or connect MCP clients via 'agent-mock-twin mcp' for mock_replay_query, mock_list_routes, mock_import_spec, and mock_get_stats."
             }
           }
         ]
@@ -100,24 +116,97 @@
   }
   </script>
 
-  <!-- Pure Avant-Garde CSS (No Tailwind CDN) -->
+  <!-- Zero-Egress Dual-Theme Stylesheet (Obsidian Dark + Editorial Ivory Light) -->
   <style>
-    :root {
-      --bg-obsidian: #08080B;
-      --bg-card: rgba(16, 18, 27, 0.85);
-      --bg-card-hover: rgba(22, 26, 38, 0.95);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-gold: rgba(212, 175, 55, 0.35);
-      --border-emerald: rgba(16, 185, 129, 0.35);
-      --gold-primary: #D4AF37;
-      --gold-glow: #FDE68A;
-      --emerald-glow: #10B981;
-      --cyan-glow: #06B6D4;
-      --purple-glow: #A855F7;
-      --font-display: 'Syne', sans-serif;
-      --font-sans: 'Space Grotesk', -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+    :root,
+    html[data-theme="dark"] {
+      --bg-canvas: #08080B;
+      --surface-header: rgba(12, 14, 20, 0.94);
+      --surface-card: rgba(16, 18, 27, 0.92);
+      --surface-elevated: #111521;
+      --surface-input: #07090F;
+      --surface-support: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(212, 175, 55, 0.14));
+      --border-subtle: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.22);
+      --border-gold: rgba(212, 175, 55, 0.38);
+      --border-emerald: rgba(16, 185, 129, 0.42);
+      --border-accent: rgba(212, 175, 55, 0.38);
+      --text-primary: #F5F5F7;
+      --text-secondary: #D1D5DB;
       --text-muted: #9CA3AF;
+      --accent-gold: #E5C358;
+      --accent-gold-bg: rgba(212, 175, 55, 0.14);
+      --accent-emerald: #10B981;
+      --accent-emerald-bg: rgba(16, 185, 129, 0.16);
+      --accent-cyan: #22D3EE;
+      --accent-cyan-bg: rgba(6, 182, 212, 0.16);
+      --accent-crimson: #FB7185;
+      --accent-crimson-bg: rgba(244, 63, 94, 0.16);
+      --accent-purple: #C084FC;
+      --btn-gold-bg: #D4AF37;
+      --btn-gold-hover: #E5C358;
+      --btn-gold-ink: #08080B;
+      --btn-outline-bg: rgba(255, 255, 255, 0.05);
+      --btn-outline-hover: rgba(255, 255, 255, 0.12);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.42);
+      --hero-gradient: linear-gradient(135deg, #FFFFFF 28%, #E5C358 68%, #10B981 100%);
+      --code-ink: #34D399;
+      --gold-primary: #D4AF37;
+      --gold-glow: #E5C358;
+      --emerald-glow: #10B981;
+      --cyan-glow: #22D3EE;
+      --font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    html[data-theme="light"] {
+      --bg-canvas: #FAF7F0;
+      --surface-header: rgba(255, 255, 255, 0.94);
+      --surface-card: #FFFFFF;
+      --surface-elevated: #F3EFE6;
+      --surface-input: #FAF8F3;
+      --surface-support: linear-gradient(90deg, rgba(4, 120, 87, 0.08), rgba(154, 114, 9, 0.10));
+      --border-subtle: rgba(28, 25, 23, 0.12);
+      --border-strong: rgba(28, 25, 23, 0.26);
+      --border-gold: rgba(154, 114, 9, 0.36);
+      --border-emerald: rgba(4, 120, 87, 0.36);
+      --border-accent: rgba(154, 114, 9, 0.36);
+      --text-primary: #1C1917;
+      --text-secondary: #44403C;
+      --text-muted: #57534E;
+      --accent-gold: #9A7209;
+      --accent-gold-bg: rgba(154, 114, 9, 0.10);
+      --accent-emerald: #047857;
+      --accent-emerald-bg: rgba(4, 120, 87, 0.10);
+      --accent-cyan: #0369A1;
+      --accent-cyan-bg: rgba(3, 105, 161, 0.10);
+      --accent-crimson: #BE123C;
+      --accent-crimson-bg: rgba(190, 18, 60, 0.10);
+      --accent-purple: #6D28D9;
+      --btn-gold-bg: #9A7209;
+      --btn-gold-hover: #7C5B06;
+      --btn-gold-ink: #FFFFFF;
+      --btn-outline-bg: #F3EFE6;
+      --btn-outline-hover: #E7E0D0;
+      --shadow-card: 0 8px 28px rgba(28, 25, 23, 0.07);
+      --hero-gradient: linear-gradient(135deg, #1C1917 25%, #9A7209 68%, #047857 100%);
+      --code-ink: #047857;
+      --gold-primary: #9A7209;
+      --gold-glow: #9A7209;
+      --emerald-glow: #047857;
+      --cyan-glow: #0369A1;
+    }
+
+    /* Hide duplicate outer chrome when embedded inside Zoth Studio v2 iframe */
+    html[data-embed="1"] #zoth-coffee-support-bar,
+    html[data-embed="1"] header,
+    html[data-embed="1"] footer {
+      display: none !important;
+    }
+    html[data-embed="1"] .container {
+      padding-top: 14px;
+      padding-bottom: 24px;
     }
 
     * {
@@ -130,38 +219,62 @@
       overflow-x: hidden;
       max-width: 100%;
       width: 100%;
-      background: var(--bg-obsidian);
-      color: #F3F4F6;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
       font-family: var(--font-sans);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.55;
     }
 
-    /* Conic Border Beam & Mesh Glow */
-    .conic-beam {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
+    /* Single Compact Open-Access Support Strip */
+    .support-strip {
+      background: var(--surface-support);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 6px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
     }
-    .conic-beam::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: conic-gradient(from 0deg, #D4AF37, #10B981, #06B6D4, #D4AF37);
-      border-radius: 14px;
-      z-index: -1;
-      animation: rotateBeam 6s linear infinite;
+    .support-strip-label {
+      color: var(--accent-emerald);
+      font-weight: 800;
+      letter-spacing: 0.03em;
     }
-    @keyframes rotateBeam {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .support-pill-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease;
     }
-
-    /* Container */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 16px 20px 60px;
+    .support-pill-coffee {
+      background: var(--btn-gold-bg);
+      color: var(--btn-gold-ink);
+    }
+    .support-pill-coffee:hover {
+      background: var(--btn-gold-hover);
+    }
+    .support-pill-solana {
+      background: var(--accent-emerald-bg);
+      color: var(--accent-emerald);
+      border-color: var(--border-emerald);
+    }
+    .support-pill-solana:hover {
+      filter: brightness(1.06);
     }
 
     /* Header Bar */
@@ -170,9 +283,9 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
-      padding: 14px 20px;
-      background: rgba(12, 14, 20, 0.9);
+      gap: 12px;
+      padding: 10px 20px;
+      background: var(--surface-header);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
@@ -181,173 +294,136 @@
     }
     .brand-title {
       font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #FFF;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .badge-free {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-muted);
-      border: 1px solid var(--border-subtle);
-    }
-    .badge-pro-active {
-      background: rgba(16, 185, 129, 0.2);
-      color: var(--emerald-glow);
-      border: 1px solid var(--emerald-glow);
-    }
-
-    /* Glass Cards */
-    .glass-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
-      transition: border-color 0.2s ease, transform 0.2s ease;
-      min-width: 0;
-      max-width: 100%;
-    }
-    .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.16);
-    }
-
-    /* High-Converting Sales Funnel Banner */
-    .sales-banner {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(16, 185, 129, 0.12), rgba(8, 8, 11, 0.98));
-      border: 2px solid var(--gold-primary);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin: 18px 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
-    }
-    .sales-banner-text h2 {
-      font-family: var(--font-display);
       font-size: 17px;
       font-weight: 800;
-      color: var(--gold-glow);
+      letter-spacing: 0.4px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-    .sales-banner-text p {
-      font-size: 12px;
-      color: #E5E7EB;
-      margin-top: 4px;
-    }
-    .pricing-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(0,0,0,0.4);
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-gold);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      margin-top: 6px;
-    }
-    .price-strike {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-    .price-urgent {
-      color: #10B981;
-      font-weight: 800;
+      flex-wrap: wrap;
     }
 
-    /* Buttons */
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-version {
+      background: var(--accent-gold-bg);
+      color: var(--accent-gold);
+      border: 1px solid var(--border-gold);
+    }
+    .badge-status {
+      background: var(--accent-emerald-bg);
+      color: var(--accent-emerald);
+      border: 1px solid var(--border-emerald);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 20px 48px;
+    }
+
+    /* Glass / Vellum Cards */
+    .glass-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* Buttons (Guaranteed >= 44px Tap Targets) */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       font-size: 13px;
       font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.15s ease;
-      min-height: 44px; /* Accessible touch target */
-      border: none;
+      transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+      min-height: 44px;
+      min-width: 44px;
+      border: 1px solid transparent;
       font-family: var(--font-sans);
-    }
-    .btn-stripe {
-      background: #635BFF;
-      color: #FFF;
-      box-shadow: 0 4px 14px rgba(99, 91, 255, 0.35);
-    }
-    .btn-stripe:hover {
-      background: #7A73FF;
-      transform: translateY(-1px);
-    }
-    .btn-solana {
-      background: #14F195;
-      color: #08080B;
-      box-shadow: 0 4px 14px rgba(20, 241, 149, 0.35);
-    }
-    .btn-solana:hover {
-      background: #3DF9AB;
-      transform: translateY(-1px);
+      white-space: nowrap;
     }
     .btn-gold {
-      background: var(--gold-primary);
-      color: #08080B;
+      background: var(--btn-gold-bg);
+      color: var(--btn-gold-ink);
     }
     .btn-gold:hover {
-      background: #E5C358;
+      background: var(--btn-gold-hover);
     }
     .btn-outline {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: #F3F4F6;
+      background: var(--btn-outline-bg);
+      border-color: var(--border-subtle);
+      color: var(--text-primary);
     }
     .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.25);
+      background: var(--btn-outline-hover);
+      border-color: var(--border-strong);
+    }
+    .btn-danger {
+      background: var(--accent-crimson-bg);
+      border-color: var(--accent-crimson);
+      color: var(--accent-crimson);
     }
 
     /* Hero Section */
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 20px;
-      margin-bottom: 24px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-gold);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
     }
     .hero-title {
       font-family: var(--font-display);
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #FFF 30%, #D4AF37 70%, #10B981 100%);
+      line-height: 1.16;
+      margin-bottom: 10px;
+      background: var(--hero-gradient);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .hero-lead {
       font-size: 14px;
-      color: #D1D5DB;
+      color: var(--text-secondary);
       line-height: 1.6;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     /* Telemetry Bento Grid */
@@ -355,35 +431,75 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
     .telemetry-card {
-      background: rgba(14, 16, 24, 0.75);
+      background: var(--surface-card);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 14px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-card);
     }
     .telemetry-label {
+      font-family: var(--font-mono);
       font-size: 11px;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.06em;
     }
     .telemetry-val {
       font-family: var(--font-mono);
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       margin-top: 4px;
-      color: #FFF;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Two-Column Workspace */
+    /* Workspace Grid */
     .workspace-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      gap: 20px;
-      margin-bottom: 28px;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    /* Form Controls (>= 44px height) */
+    .field-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .field-select,
+    .field-textarea {
+      width: 100%;
+      background: var(--surface-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .field-select {
+      min-height: 44px;
+    }
+    .field-response {
+      color: var(--code-ink);
+    }
+    .range-input {
+      width: 100%;
+      min-height: 44px;
+      height: 44px;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
     }
 
     /* Table Styles */
@@ -401,127 +517,169 @@
       text-align: left;
       padding: 10px 12px;
       color: var(--text-muted);
-      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       border-bottom: 1px solid var(--border-subtle);
-      background: rgba(0, 0, 0, 0.2);
+      background: var(--surface-elevated);
     }
     td {
       padding: 10px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
     }
     .method-badge {
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
     }
     .provider-pill {
+      font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 999px;
       border: 1px solid;
     }
 
     /* Replay Card */
     .replay-card {
-      background: rgba(8, 10, 15, 0.7);
+      background: var(--surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-left: 3px solid var(--emerald-glow);
-      border-radius: 6px;
+      border-left: 3px solid var(--accent-emerald);
+      border-radius: 8px;
       padding: 10px 12px;
       margin-bottom: 8px;
+    }
+    .replay-card.is-error {
+      border-left-color: var(--accent-crimson);
+      border-color: var(--accent-crimson);
     }
     .status-code {
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 800;
-      background: rgba(16, 185, 129, 0.2);
-      color: #10B981;
+      background: var(--accent-emerald-bg);
+      color: var(--accent-emerald);
       padding: 2px 6px;
-      border-radius: 3px;
+      border-radius: 4px;
+    }
+    .status-code.is-error {
+      background: var(--accent-crimson-bg);
+      color: var(--accent-crimson);
     }
     .status-pill {
-      font-size: 9px;
+      font-family: var(--font-mono);
+      font-size: 10px;
       font-weight: 700;
       padding: 2px 6px;
-      border-radius: 3px;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
-    .status-exact { background: rgba(16, 185, 129, 0.2); color: #10B981; }
-    .status-fuzzy { background: rgba(6, 182, 212, 0.2); color: #06B6D4; }
-    .status-fallback { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
+    .status-exact { background: var(--accent-emerald-bg); color: var(--accent-emerald); }
+    .status-template { background: var(--accent-cyan-bg); color: var(--accent-cyan); }
+    .status-fuzzy { background: var(--accent-gold-bg); color: var(--accent-gold); }
+    .status-fallback { background: var(--accent-gold-bg); color: var(--accent-gold); }
+    .status-chaos { background: var(--accent-crimson-bg); color: var(--accent-crimson); }
 
     /* Drop Zone */
     .drop-zone {
-      border: 2px dashed rgba(212, 175, 55, 0.4);
-      background: rgba(212, 175, 55, 0.03);
+      border: 2px dashed var(--border-gold);
+      background: var(--surface-elevated);
       border-radius: 10px;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.16s ease, background 0.16s ease;
     }
     .drop-zone:hover, .drop-zone.drag-over {
-      border-color: var(--gold-primary);
-      background: rgba(212, 175, 55, 0.08);
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-bg);
+    }
+
+    /* Chaos Controls Grid */
+    .chaos-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .chaos-tile {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
     }
 
     /* Toast Notification */
     .glass-toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(15, 17, 24, 0.95);
-      border: 1px solid var(--emerald-glow);
-      border-radius: 8px;
-      padding: 12px 18px;
+      bottom: 20px;
+      right: 20px;
+      max-width: min(380px, calc(100vw - 32px));
+      background: var(--surface-card);
+      border: 1px solid var(--accent-emerald);
+      border-radius: 10px;
+      padding: 12px 16px;
       font-size: 13px;
-      color: #FFF;
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      transform: translateY(100px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      transform: translateY(80px);
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      z-index: 200;
     }
     .glass-toast.visible {
       transform: translateY(0);
       opacity: 1;
     }
 
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      display: none;
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 18px 20px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 12px;
+      background: var(--surface-header);
+    }
+    .footer-row {
+      display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 200;
-      padding: 16px;
-      backdrop-filter: none;
+      gap: 6px;
+      flex-wrap: wrap;
     }
-    .modal-backdrop.active {
-      display: flex;
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 8px 10px;
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--accent-gold);
+      border-radius: 6px;
     }
-    .modal-box {
-      background: #0E1018;
-      border: 1px solid var(--border-gold);
-      border-radius: 14px;
-      max-width: 520px;
-      width: 100%;
-      padding: 28px;
-      position: relative;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-    }
+    .footer-link.cyan { color: var(--accent-cyan); }
+    .footer-link.muted { color: var(--text-secondary); }
+    .footer-link.emerald { color: var(--accent-emerald); }
 
-    /* Responsive Breakpoints */
     @media (max-width: 960px) {
       .hero-grid,
-      .workspace-grid {
+      .workspace-grid,
+      .chaos-grid {
         grid-template-columns: 1fr;
       }
       .telemetry-grid {
@@ -530,105 +688,95 @@
     }
     @media (max-width: 600px) {
       .telemetry-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .sales-banner {
-        flex-direction: column;
-        align-items: flex-start;
+      .hero-title {
+        font-size: 22px;
       }
       .brand-title {
         font-size: 15px;
       }
-      .hero-title {
-        font-size: 24px;
+      header {
+        padding: 10px 14px;
+      }
+      .container {
+        padding: 14px 14px 40px;
+      }
+      .btn {
+        white-space: normal;
+        text-align: center;
       }
     }
   </style>
 
-  <!-- Wave Enhancement Stylesheet -->
   <link rel="stylesheet" href="/wave.css">
   <link rel="stylesheet" href="/wave-states.css">
 </head>
 <body>
 
-<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
-  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
-  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
-  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
-</div>
+  <!-- SINGLE Compact Open-Access Support Bar -->
+  <div id="zoth-coffee-support-bar" class="support-strip" role="region" aria-label="Open Access Support Bar">
+    <span class="support-strip-label">✦ 100% Free &amp; Open Access · Zero Paywalls</span>
+    <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="support-pill-link support-pill-coffee">
+      ☕ Buy Us a Coffee
+    </a>
+    <button type="button" id="btnSolanaTip" class="support-pill-link support-pill-solana" onclick="copySolanaTip()">
+      ◎ Solana Tip (GG2e...dXoK)
+    </button>
+  </div>
 
-
-  <!-- Top Global Navigation Bar -->
+  <!-- Clean Product Navigation Header -->
   <header>
     <div class="brand-title">
-      <img src="assets/icon.png" alt="Agent Mock Twin Brand Icon" style="width: 28px; height: 28px; border-radius: 6px;">
+      <img src="/assets/icon.png" alt="Agent Mock Twin Brand Emblem" style="width: 28px; height: 28px; border-radius: 6px;">
       <span>AGENT MOCK TWIN</span>
-      <span class="badge" style="background: rgba(212,175,55,0.15); color: var(--gold-glow); border: 1px solid rgba(212,175,55,0.3); font-size: 11px;">v2.5 SOVEREIGN</span>
-      <span class="badge" id="licenseBadge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS</span>
+      <span class="badge badge-version">v2.6.0</span>
+      <span class="badge badge-status" id="daemonStatusBadge">● PROBING :8097</span>
     </div>
-    
-    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-      <a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="min-height: 38px; padding: 6px 14px; font-size: 12px;">
-        <span>★</span> GitHub
-      </a>
-      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="min-height: 38px; padding: 6px 14px; font-size: 12px; background: #D4AF37; color: #08080B; font-weight: 800;">
-        ☕ Buy Us a Coffee (Stripe)
-      </a>
-      <button type="button" class="btn btn-solana" onclick="startSolanaTipSolanaPayment()" style="min-height: 38px; padding: 6px 14px; font-size: 12px; background: #10B981; color: #FFF; font-weight: 700; border: none; cursor: pointer;">
-        Solana Tip ⚡
+
+    <div class="header-actions">
+      <button type="button" id="btnThemeToggle" class="btn btn-outline" aria-label="Toggle Light and Dark Theme">
+        <span id="themeToggleLabel">☀ Light</span>
       </button>
+      <a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+        ★ GitHub
+      </a>
     </div>
   </header>
 
-  <div class="container">
-
-    <!-- Sovereign Open Access Support Bar -->
-    <section class="sales-banner" id="salesBanner" aria-label="Sovereign Open Access Bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border: 1px solid rgba(212,175,55,0.35);">
-      <div class="sales-banner-text">
-        <h2 style="color: #10B981;"><span>◉</span> Autonomous Network Twin — 100% Free &amp; Open Access</h2>
-        <p>Run agent test suites in CI/CD without burning API credits. Zero external dependencies. Voluntary tips support development.</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn btn-stripe" style="background: #D4AF37; color: #08080B; font-weight: 800;">
-          ☕ Buy Us a Coffee (Stripe)
-        </a>
-        <button type="button" class="btn btn-solana" onclick="startSolanaTipSolanaPayment()" style="background: #10B981; color: #FFF; font-weight: 700;">
-          Solana Tip ⚡
-        </button>
-      </div>
-    </section>
+  <main class="container">
 
     <!-- Hero Showcase: Problem & Kinetic Anchor -->
     <section class="hero-grid">
       <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center;">
-        <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--gold-glow); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">
-          <span>❖</span> Zero-Dependency Python 3.10+ Standard Library
+        <div class="hero-eyebrow">
+          <span>❖</span> Zero-Dependency Python 3.10+ · SQLite WAL · 4-Tool MCP
         </div>
         <h1 class="hero-title">Test Autonomous Agents Offline With $0 Token Cost.</h1>
         <p class="hero-lead">
-          Stop paying OpenAI and Anthropic to run unit tests in CI/CD. <strong>Agent Mock Twin</strong> ingests standard HAR 1.2 recordings or OpenAPI 3.0 blueprints and hosts a local, zero-latency network twin. 100% deterministic outputs. Zero outbound billing.
+          Ingest HAR 1.2 recordings or OpenAPI 3.0 blueprints (including <code>/v1/users/{id}</code> templates) into a deterministic loopback twin on <code>127.0.0.1:8097</code>. Configure real latency, jitter, and HTTP 429/500/503/504 chaos injection without outbound API billing.
         </p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
           <button type="button" class="btn btn-gold" id="btnLoadSampleOpenAI">
-            <span>⚡</span> Load OpenAI Sample HAR
+            ⚡ Load OpenAI Sample HAR
           </button>
           <button type="button" class="btn btn-outline" id="btnLoadSampleAnthropic">
-            <span>✦</span> Load Anthropic Claude Spec
+            ✦ Load Anthropic + OpenAPI Spec
           </button>
         </div>
       </div>
 
       <!-- Kinetic Hero Canvas: Prism Dual-Ring -->
       <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; position: relative;">
-        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">
           <span>NETWORK TWIN TOPOLOGY</span>
-          <span style="color: var(--emerald-glow); font-family: var(--font-mono); font-weight: 700;">● ZERO LATENCY TWIN</span>
+          <span style="color: var(--accent-emerald); font-weight: 700;">● LOOPBACK :8097</span>
         </div>
-        <div style="width: 100%; height: 200px; position: relative; margin: 10px 0;">
-          <canvas id="heroCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+        <div style="width: 100%; height: 186px; position: relative; margin: 8px 0;">
+          <canvas id="heroCanvas" aria-label="Animated dual-ring network twin diagram" role="img" style="width: 100%; height: 100%; display: block;"></canvas>
         </div>
-        <div style="font-size: 11px; color: #9CA3AF; text-align: center;">
-          Inner ring: Live LLM prompt egress · Outer ring: Deterministic zero-cost twin
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
+          Inner ring: Agent egress · Outer ring: Deterministic zero-cost mock twin
         </div>
       </div>
     </section>
@@ -636,70 +784,105 @@
     <!-- Telemetry Bento Grid -->
     <section class="telemetry-grid" aria-label="Real-time Telemetry">
       <div class="telemetry-card">
-        <div class="telemetry-label">Active Mock Endpoints</div>
-        <div class="telemetry-val" id="statRoutesCount" style="color: var(--emerald-glow);">0</div>
+        <div class="telemetry-label">Active Routes</div>
+        <div class="telemetry-val" id="statRoutesCount" style="color: var(--accent-emerald);">0</div>
       </div>
       <div class="telemetry-card">
-        <div class="telemetry-label">Requests Intercepted</div>
-        <div class="telemetry-val" id="statTotalHits" style="color: #60A5FA;">0</div>
+        <div class="telemetry-label">Intercepted Hits</div>
+        <div class="telemetry-val" id="statTotalHits" style="color: var(--accent-cyan);">0</div>
       </div>
       <div class="telemetry-card">
-        <div class="telemetry-label">Saved API Tokens</div>
-        <div class="telemetry-val" id="statTokensSaved" style="color: var(--gold-glow);">0</div>
+        <div class="telemetry-label">Tokens Saved</div>
+        <div class="telemetry-val" id="statTokensSaved" style="color: var(--accent-gold);">0</div>
       </div>
       <div class="telemetry-card">
-        <div class="telemetry-label">Estimated USD Saved</div>
-        <div class="telemetry-val" id="statUsdSaved" style="color: #34D399;">$0.0000</div>
+        <div class="telemetry-label">Est. USD Saved</div>
+        <div class="telemetry-val" id="statUsdSaved" style="color: var(--accent-emerald);">$0.0000</div>
       </div>
     </section>
 
     <!-- Interactive Workspace Grid -->
     <section class="workspace-grid">
-      
-      <!-- LEFT: Ingestion & Route Table -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-        
-        <!-- Drag & Drop Ingestion -->
+
+      <!-- LEFT: Ingestion & Route Matrix -->
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+
+        <!-- Drag & Drop Ingestion (Keyboard Accessible) -->
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-            <div style="font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px;">
-              <span>↓</span> Ingest Traffic Archive or Spec
-            </div>
-            <span style="font-size: 11px; color: var(--text-muted);">HAR 1.2 · OpenAPI 3.0</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px;">
+            <h2 style="font-weight: 700; font-size: 14px; color: var(--text-primary);">↓ Ingest Traffic Archive or Spec</h2>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">HAR 1.2 · OpenAPI 3.0</span>
           </div>
 
-          <div class="drop-zone" id="harDropZone">
+          <div class="drop-zone" id="harDropZone" role="button" tabindex="0" aria-label="Upload HAR 1.2 or OpenAPI 3.0 JSON file">
             <input type="file" id="harFileInput" accept=".har,.json" style="display: none;">
-            <div style="font-size: 26px; margin-bottom: 6px;">◆</div>
-            <div style="font-weight: 700; color: #FFF; font-size: 13px;">Drop HAR 1.2 or OpenAPI JSON file here</div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Works 100% in-browser client-side with automatic offline routing</div>
+            <div style="font-size: 22px; color: var(--accent-gold); margin-bottom: 4px;" aria-hidden="true">◆</div>
+            <div style="font-weight: 700; color: var(--text-primary); font-size: 13px;">Drop HAR 1.2 or OpenAPI JSON file here, or press Enter</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Persists directly to SQLite WAL when daemon is active</div>
           </div>
         </div>
 
-        <!-- Latency Simulator Controls -->
+        <!-- Live Latency & Chaos Configuration (Wired to POST /api/config) -->
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-            <div style="font-weight: 700; font-size: 13px; color: #FFF; display: flex; align-items: center; gap: 8px;">
-              <span>⏱️</span> Network Latency Simulation
-            </div>
-            <span id="latencyDisplay" style="font-family: var(--font-mono); font-size: 13px; color: var(--cyan-glow); font-weight: 700;">25ms</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+            <h2 style="font-weight: 700; font-size: 14px; color: var(--text-primary);">⚡ Live Latency, Jitter &amp; Chaos Controls</h2>
+            <span class="badge badge-status" id="configSyncBadge">SYNCED TO /api/config</span>
           </div>
-          <input type="range" id="latencySlider" min="0" max="300" step="5" value="25" style="width: 100%; accent-color: var(--cyan-glow); cursor: pointer;">
-          <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px;">
-            <span>0ms (Instant)</span>
-            <span>25ms (Local Twin)</span>
-            <span>150ms (Cloud API)</span>
-            <span>300ms (High Jitter)</span>
+
+          <div class="chaos-grid">
+            <div class="chaos-tile">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="field-label" for="latencySlider" style="margin-bottom: 0;">Base Latency</label>
+                <span id="latencyDisplay" style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-cyan); font-weight: 800;">25ms</span>
+              </div>
+              <input type="range" id="latencySlider" class="range-input" min="0" max="500" step="5" value="25">
+            </div>
+
+            <div class="chaos-tile">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="field-label" for="jitterSlider" style="margin-bottom: 0;">Latency Jitter</label>
+                <span id="jitterDisplay" style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-gold); font-weight: 800;">±15ms</span>
+              </div>
+              <input type="range" id="jitterSlider" class="range-input" min="0" max="200" step="5" value="15">
+            </div>
+
+            <div class="chaos-tile">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="field-label" for="chaosRateSlider" style="margin-bottom: 0;">Chaos Fault Rate</label>
+                <span id="chaosRateDisplay" style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-crimson); font-weight: 800;">0%</span>
+              </div>
+              <input type="range" id="chaosRateSlider" class="range-input" min="0" max="100" step="5" value="0">
+            </div>
+
+            <div class="chaos-tile">
+              <label class="field-label" for="chaosTypeSelect">Chaos Fault Type</label>
+              <select id="chaosTypeSelect" class="field-select">
+                <option value="429_rate_limit">HTTP 429 Rate Limit</option>
+                <option value="500_internal_error">HTTP 500 Internal Error</option>
+                <option value="503_service_unavailable">HTTP 503 Service Unavailable</option>
+                <option value="timeout_hang">HTTP 504 Gateway Timeout</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+            <button type="button" class="btn btn-outline" id="btnChaosTriggerLive">
+              ⚡ Fire Live Chaos Probe
+            </button>
+            <button type="button" class="btn btn-outline" id="btnExportDockerLive">
+              ▣ Export CI Docker Bundle
+            </button>
+            <button type="button" class="btn btn-danger" id="btnClearAll">
+              ✕ Clear Routes &amp; Hits
+            </button>
           </div>
         </div>
 
         <!-- Mock Route Matrix Table -->
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-            <div style="font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px;">
-              <span>✦</span> Ingested Mock Route Matrix
-            </div>
-            <span style="font-size: 11px; color: var(--text-muted);">Deterministic matching active</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;">
+            <h2 style="font-weight: 700; font-size: 14px; color: var(--text-primary);">✦ Ingested Mock Route Matrix</h2>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">Exact · {param} · Fuzzy</span>
           </div>
 
           <div class="table-container">
@@ -713,9 +896,7 @@
                   <th>Description</th>
                 </tr>
               </thead>
-              <tbody id="routeListTable">
-                <!-- Dynamically populated -->
-              </tbody>
+              <tbody id="routeListTable"></tbody>
             </table>
           </div>
         </div>
@@ -723,30 +904,29 @@
       </div>
 
       <!-- RIGHT: Test Playground & Replay Feed -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-        
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+
         <!-- Interactive Test Playground -->
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-            <div style="font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px;">
-              <span>✦</span> Test Mock Twin Playground
-            </div>
-            <span style="font-size: 11px; color: #10B981; font-weight: 600;">$0 Token Cost Verified</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;">
+            <h2 style="font-weight: 700; font-size: 14px; color: var(--text-primary);">✦ Test Mock Twin Playground</h2>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-emerald); font-weight: 700;">$0.00 Token Cost</span>
           </div>
 
           <div style="margin-bottom: 12px;">
-            <label for="testEndpointSelect" style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Select Endpoint</label>
-            <select id="testEndpointSelect" style="width: 100%; background: #08090C; color: #FFF; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px 12px; font-family: var(--font-mono); font-size: 12px;">
+            <label for="testEndpointSelect" class="field-label">Select Endpoint</label>
+            <select id="testEndpointSelect" class="field-select">
               <option value="chat_completions">POST /v1/chat/completions (OpenAI)</option>
               <option value="anthropic_messages">POST /v1/messages (Anthropic Claude)</option>
               <option value="embeddings">POST /v1/embeddings (OpenAI)</option>
               <option value="models">GET /v1/models (OpenAI)</option>
+              <option value="openapi_user">GET /v1/users/42 (OpenAPI {id} Template)</option>
             </select>
           </div>
 
           <div style="margin-bottom: 12px;">
-            <label for="testRequestBody" style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Request Payload (JSON)</label>
-            <textarea id="testRequestBody" rows="5" style="width: 100%; background: #050608; color: #E5E7EB; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 11px; line-height: 1.4; resize: vertical;" spellcheck="false">{
+            <label for="testRequestBody" class="field-label">Request Payload (JSON)</label>
+            <textarea id="testRequestBody" rows="5" class="field-textarea" spellcheck="false">{
   "model": "gpt-4o",
   "messages": [
     { "role": "system", "content": "You are an autonomous research agent." },
@@ -756,158 +936,101 @@
 }</textarea>
           </div>
 
-          <button type="button" class="btn btn-gold" id="btnRunTest" style="width: 100%; margin-bottom: 14px;">
-            <span>★</span> Send Mock Test Request
+          <button type="button" class="btn btn-gold" id="btnRunTest" style="width: 100%; margin-bottom: 12px;">
+            ★ Send Mock Test Request
           </button>
 
           <div>
-            <label for="testResponseBody" style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Simulated Response</label>
-            <textarea id="testResponseBody" rows="6" readonly style="width: 100%; background: #050608; color: #34D399; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 11px; line-height: 1.4; resize: none;" spellcheck="false">// Response payload will appear here...</textarea>
+            <label for="testResponseBody" class="field-label">Simulated Response</label>
+            <textarea id="testResponseBody" rows="6" readonly class="field-textarea field-response" spellcheck="false">// Response payload will appear here...</textarea>
           </div>
         </div>
 
         <!-- Live Intercept Replay Feed -->
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-            <div style="font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px;">
-              <span>✦</span> Live Request Intercept Feed
-            </div>
-            <span style="font-size: 10px; color: var(--emerald-glow); font-family: var(--font-mono);">● SSE STREAMING</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;">
+            <h2 style="font-weight: 700; font-size: 14px; color: var(--text-primary);">✦ Live Request Intercept Feed</h2>
+            <span id="sseStatusLabel" style="font-size: 11px; color: var(--accent-emerald); font-family: var(--font-mono); font-weight: 700;">● SSE STREAMING</span>
           </div>
 
-          <div id="replayLogList" style="max-height: 280px; overflow-y: auto;">
-            <!-- Live hits injected -->
-          </div>
+          <div id="replayLogList" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
 
       </div>
 
     </section>
 
-    <!-- Pro Actions Interceptor Bar (Outside Blur) -->
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap;">
-      <div style="font-weight: 700; font-size: 14px; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
-        <span>⚡</span> Enterprise CI/CD & Chaos Suite
-      </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button type="button" class="btn btn-outline" id="btnExportDockerLive" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
-          <span>▣</span> Export CI Docker Container
-        </button>
-        <button type="button" class="btn btn-outline" id="btnChaosTriggerLive" style="min-height: 40px; padding: 6px 14px; font-size: 12px;">
-          <span>⚡</span> Simulate 503 Outage
-        </button>
-      </div>
-    </div>
-
-    <!-- Sovereign Engine: Dynamic Chaos & Jitter Engine -->
-    <section class="glass-card" style="margin-bottom: 40px; padding: 24px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-        <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--gold-glow);">
-          ⚡ Sovereign Engine: Dynamic Chaos Fault Injection & Jitter Topology
-        </h3>
-        <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald-glow); border: 1px solid rgba(16, 185, 129, 0.4);">✦ UNLOCKED & ACTIVE</span>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
-        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">CHAOS FAULT RATE</div>
-          <div style="font-size: 20px; font-weight: 800; color: #EF4444; margin-top: 4px;">5.0% Rate Limits</div>
-          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Simulates upstream HTTP 429 & 503 backpressure</div>
-        </div>
-        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">FUZZY PAYLOAD TOLERANCE</div>
-          <div style="font-size: 20px; font-weight: 800; color: var(--cyan-glow); margin-top: 4px;">Jaccard 0.85</div>
-          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Semantic JSON key & prompt drift reconciliation</div>
-        </div>
-        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 8px;">
-          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">HEADLESS CI DOCKER EXPORT</div>
-          <div style="font-size: 20px; font-weight: 800; color: var(--emerald-glow); margin-top: 4px;">Ready</div>
-          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Zero-dependency Alpine container for GitHub Actions</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ Section for AEO & Google SGE Discovery -->
-    <section class="glass-card" style="margin-bottom: 40px;">
-      <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--gold-glow); margin-bottom: 16px;">
-        Frequently Answered Questions (AEO Discovery)
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+    <!-- FAQ Section for AEO & Documentation Parity -->
+    <section class="glass-card" style="margin-bottom: 24px;">
+      <h2 style="font-family: var(--font-display); font-size: 16px; color: var(--accent-gold); margin-bottom: 14px;">
+        Frequently Answered Questions
+      </h2>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
         <div>
-          <h4 style="font-size: 14px; font-weight: 700; color: #FFF; margin-bottom: 4px;">How does Agent Mock Twin eliminate API token costs for autonomous agents?</h4>
-          <p style="font-size: 13px; color: #D1D5DB;">
-            Agent Mock Twin records or ingests real LLM provider traffic (OpenAI, Anthropic, Gemini) via standard HAR 1.2 or OpenAPI 3.0 files. It then hosts a zero-dependency local mock server that answers agent requests deterministically in microsecond latency with zero outbound token egress.
+          <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">How does Agent Mock Twin eliminate API token costs for autonomous agents?</h3>
+          <p style="font-size: 13px; color: var(--text-secondary);">
+            Agent Mock Twin ingests real LLM provider traffic (OpenAI, Anthropic, Ollama, REST) via standard HAR 1.2 or OpenAPI 3.0 specs into SQLite WAL storage and replays deterministic responses locally on <code>127.0.0.1:8097</code> with zero outbound billing.
           </p>
         </div>
-        <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-          <h4 style="font-size: 14px; font-weight: 700; color: #FFF; margin-bottom: 4px;">Does Agent Mock Twin require external pip dependencies?</h4>
-          <p style="font-size: 13px; color: #D1D5DB;">
-            No. The backend runtime is built 100% on the Python 3.10+ standard library (http.server, sqlite3, dataclasses, urllib.parse). It runs anywhere Python is installed without pip install.
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+          <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Does Agent Mock Twin require external pip dependencies?</h3>
+          <p style="font-size: 13px; color: var(--text-secondary);">
+            No. The runtime is built 100% on the Python 3.10+ standard library (<code>http.server</code>, <code>sqlite3</code>, <code>dataclasses</code>, <code>urllib.parse</code>) with zero external CDNs.
           </p>
         </div>
-        <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-          <h4 style="font-size: 14px; font-weight: 700; color: #FFF; margin-bottom: 4px;">How do developers integrate Agent Mock Twin into existing CI/CD test suites?</h4>
-          <p style="font-size: 13px; color: #D1D5DB;">
-            Developers run their test commands wrapped via <code>agent-mock run -- pytest tests/</code>. The CLI automatically spins up the mock server in a background thread and redirects <code>OPENAI_BASE_URL</code> and <code>ANTHROPIC_BASE_URL</code> to the local twin.
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+          <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">How do CI/CD pipelines and MCP agents connect?</h3>
+          <p style="font-size: 13px; color: var(--text-secondary);">
+            Wrap CI commands with <code>agent-mock-twin run -- pytest tests/</code> to auto-redirect <code>OPENAI_BASE_URL</code> and <code>ANTHROPIC_BASE_URL</code>, or start the 4-tool JSON-RPC 2.0 stdio MCP server via <code>agent-mock-twin mcp</code>.
           </p>
         </div>
       </div>
     </section>
 
-  </div>
+  </main>
 
-  <!-- Professional Sovereign Attribution Footer -->
-  <footer style="text-align: center; padding: 24px 20px; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 12px; background: rgba(8, 8, 11, 0.95);">
-    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-      <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" style="color: var(--gold-glow); text-decoration: none;">@1nc0gn30</a>)</span>
-      <span>•</span>
-      <span><a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color: var(--cyan-glow); text-decoration: none;">NullAI Platform</a></span>
-      <span>•</span>
-      <span><a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" style="color: #9CA3AF; text-decoration: none;">GitHub Repo</a></span>
-      <span>•</span>
-      <span><a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="color: #FACC15; text-decoration: none; font-weight: 700;">☕ Buy Us a Coffee</a></span>
-      <span>•</span>
-      <span><a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="color: #14F195; text-decoration: none; font-weight: 700;">◎ Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</a></span>
+  <!-- Professional Attribution Footer -->
+  <footer>
+    <div class="footer-row">
+      <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer" class="footer-link">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" class="footer-link cyan">NullAI Platform</a></span>
+      <a href="https://github.com/1nc0gn30/agent-mock-twin" target="_blank" rel="noopener noreferrer" class="footer-link muted">GitHub Repo</a>
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="footer-link">☕ Buy Us a Coffee</a>
+      <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" class="footer-link emerald" onclick="event.preventDefault(); copySolanaTip();">◎ Solana Tip</a>
     </div>
   </footer>
 
-  <!-- Solana Tip Handler -->
+  <!-- Self-Contained Solana Tip Handler (Zero window.prompt) -->
   <script>
     function copySolanaTip() {
-      const address = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+      var address = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+      var shortAddr = address.slice(0, 6) + '...' + address.slice(-4);
+      var btn = document.getElementById('btnSolanaTip');
+      var notify = function (text) {
+        if (typeof window.showNotification === 'function') {
+          window.showNotification(text);
+        }
+        if (btn) {
+          btn.textContent = '✓ Copied ' + shortAddr;
+          setTimeout(function () {
+            btn.textContent = '◎ Solana Tip (GG2e...dXoK)';
+          }, 2600);
+        }
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(address).then(() => {
-          showNotification('✓ Solana address copied: ' + address.slice(0, 6) + '...' + address.slice(-4));
-        }).catch(() => {
-          prompt('Copy Solana Tip Address:', address);
+        navigator.clipboard.writeText(address).then(function () {
+          notify('Solana tip address copied: ' + shortAddr);
+        }).catch(function () {
+          notify('Solana tip address: ' + address);
         });
       } else {
-        prompt('Copy Solana Tip Address:', address);
+        notify('Solana tip address: ' + address);
       }
     }
-    function startSolanaTipSolanaPayment() {
-      copySolanaTip();
-    }
+    window.copySolanaTip = copySolanaTip;
+    window.startSolanaTipSolanaPayment = copySolanaTip;
   </script>
 
-  <!-- Client-side Logic Script -->
   <script src="/mock_engine.js"></script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
-
   <script src="/sovereign_tutorial.js"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", function() {
-      if (window.createSovereignTutorial) {
-        window.createSovereignTutorial({
-          toolId: "agent-mock-twin",
-          toolName: "Agent Mock Twin",
-          tagline: "Clone external APIs into lightning-fast, zero-cost simulated twins!",
-          accentColor: "#10B981",
-          steps: [{"icon": "\ud83d\udc6f", "title": "What is a Mock Twin?", "desc": "Instead of paying for expensive cloud APIs every time you test your agents, Mock Twin creates a free simulator that behaves identically."}, {"icon": "\u26a1", "title": "Zero Latency Offline Testing", "desc": "Develop and debug your agent tools completely offline on airplanes, trains, or without internet."}, {"icon": "\ud83d\udcb0", "title": "Save 100% on API Bills", "desc": "Run thousands of automated unit tests without spending a single penny on token fees."}]
-        });
-      }
-    });
-  </script>
-
 </body>
 </html>
