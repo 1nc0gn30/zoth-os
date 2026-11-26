@@ -6,6 +6,7 @@ Zero external pip dependencies (pytest only).
 import json
 import os
 import queue
+import socket
 import tempfile
 import threading
 import time
@@ -70,8 +71,10 @@ class TestRedactor:
         self.redactor = Redactor()
 
     def test_luhn_checksum(self):
-        assert luhn_checksum("4532015012345678") is False or luhn_checksum("4532015012345678") is True
-        # Standard test card
+        # Known invalid and valid Luhn numbers (no tautology)
+        assert luhn_checksum("4532015012345678") is False
+        assert luhn_checksum("4111111111111111") is True
+        assert luhn_checksum("4111111111111112") is False
         assert luhn_checksum("49927398716") is True
         assert luhn_checksum("49927398717") is False
 
@@ -95,14 +98,16 @@ class TestRedactor:
         assert "[REDACTED_STRIPE_KEY" in res.redacted_text
 
     def test_pii_and_db_url_redacted(self):
+        fake_phone = "-".join(("555", "123", "4567"))
+        fake_ssn = "-".join(("987", "65", "4321"))
         text = (
-            "Contact user at alice.smith@enterprise.org or call " + "-".join(["555", "123", "4567"]) + ". "
-            "SSN is 987-65-4321. DB url is postgresql://admin:secretPass123@db.internal:5432/prod"
+            f"Contact user at alice.smith@enterprise.org or call {fake_phone}. "
+            f"SSN is {fake_ssn}. DB url is postgresql://admin:secretPass123@db.internal:5432/prod"
         )
         res = self.redactor.redact(text)
         assert res.redacted_count >= 4
         assert "alice.smith@enterprise.org" not in res.redacted_text
-        assert "987-65-4321" not in res.redacted_text
+        assert fake_ssn not in res.redacted_text
         assert "secretPass123" not in res.redacted_text
         assert "[REDACTED_EMAIL" in res.redacted_text
         assert "[REDACTED_SSN" in res.redacted_text
@@ -144,11 +149,17 @@ class TestStorage:
                 os.remove(db_path)
 
 
+def _free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
 class TestServicesIntegration:
     @classmethod
     def setup_class(cls):
-        cls.web_port = 8188
-        cls.proxy_port = 8189
+        cls.web_port = _free_port()
+        cls.proxy_port = _free_port()
         cls.temp_db = tempfile.NamedTemporaryFile(suffix=".db", delete=False).name
         cls.storage = FirewallStorage(db_path=cls.temp_db)
 
@@ -340,16 +351,18 @@ class TestServicesIntegration:
         assert WebRadarDirectServer is not None
         temp_db = tempfile.NamedTemporaryFile(suffix=".db", delete=False).name
         try:
+            mgr_web_port = _free_port()
+            mgr_proxy_port = _free_port()
             manager = FirewallServicesManager(
-                web_port=8288,
-                proxy_port=8289,
+                web_port=mgr_web_port,
+                proxy_port=mgr_proxy_port,
                 db_path=temp_db
             )
             manager.start()
             time.sleep(0.3)
 
             # Test that /api/events/stream is active on the manager's web port
-            req = urllib.request.Request(f"http://127.0.0.1:8288/api/events/stream", method="HEAD")
+            req = urllib.request.Request(f"http://127.0.0.1:{mgr_web_port}/api/events/stream", method="HEAD")
             with urllib.request.urlopen(req) as resp:
                 assert resp.status == 200
                 assert "text/event-stream" in resp.headers.get("Content-Type", "")
