@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ZOTHOS COCKPIT TUI - Sovereign Interactive Operations Dashboard v2.0
+ZOTHOS COCKPIT TUI - Sovereign Interactive Operations Dashboard v2.6.0
 =====================================================================
 A standalone, high-performance terminal operations center for ZOTHOS Linux.
 Integrates live hardware & network metrics, instant reality mode switching,
@@ -26,7 +26,7 @@ import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-VERSION = "2.0.0-Azoth"
+VERSION = "2.6.0"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ANSI Color Constants (for headless/status CLI mode)
@@ -521,7 +521,7 @@ SECURITY_TOOLS: List[Dict[str, Any]] = [
         "bin": "ligolo-ng",
         "alt_bin": "ligolo",
         "gui": False,
-        "desc": "Next-gen TUN-interface network tunneling & pivoting",
+        "desc": "Userspace TUN-interface network tunneling & pivoting",
         "launch_cli": ["ligolo"],
     },
     {
@@ -766,6 +766,7 @@ def render_headless_status() -> None:
 def dump_json_status() -> None:
     """Outputs all telemetry and services as structured JSON for scripts and daemons."""
     metrics = SystemMetrics()
+    time.sleep(0.08)
     cpu_pct, loads, cores, cpu_model = metrics.get_cpu()
     ram_used, ram_total, ram_pct, swap_used, swap_total = metrics.get_ram()
     disk_used, disk_total, disk_free, disk_pct = metrics.get_disk("/")
@@ -1458,7 +1459,7 @@ def curses_main(stdscr: curses.window, initial_tab: int = 0) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="ZOTHOS Cockpit - Sovereign Interactive Operations Dashboard v2.5"
+        description=f"ZOTHOS Cockpit - Sovereign Interactive Operations Dashboard v{VERSION}"
     )
     parser.add_argument(
         "--status",
