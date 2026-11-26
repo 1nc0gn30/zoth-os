@@ -2,19 +2,11 @@
 Version=1.0
 Type=Application
 Name=CertPath Roadmap Studio
-Comment=100% in-browser certification DAG solver, career roadmap planner, and study guide generator with 137 credentials, procedural DAG brand media
-Exec=/usr/local/bin/certpath-roadmap-studio desktop
-TryExec=/usr/local/bin/certpath-roadmap-studio
-Icon=certpath-roadmap-studio
+GenericName=Certification DAG & Career Planner
+Comment=137-credential certification DAG solver, Monte Carlo velocity simulator, and financial ROI studio (v2.6.0)
+Exec=zoth-konsole -- /usr/local/bin/certpath-roadmap-studio-tui
+Icon=/opt/certpath-roadmap-studio/public/assets/icon.png
 Terminal=false
-Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
+Categories=Development;Education;Utility;
+Keywords=certification;roadmap;dag;cybersecurity;aws;oscp;roi;zothos;
 StartupNotify=true
-Actions=TUI;WebApp;
-
-[Desktop Action TUI]
-Name=Launch CertPath Roadmap Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "CertPath Roadmap Studio TUI" -- /usr/local/bin/certpath-roadmap-studio-tui
-
-[Desktop Action WebApp]
-Name=Open Local Web Workstation (:8093)
-Exec=xdg-open http://127.0.0.1:8093

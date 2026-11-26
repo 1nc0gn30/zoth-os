@@ -1,0 +1,104 @@
+/* ============================================================
+   CERTPATH ROADMAP STUDIO v2.6.0 — Dual-Theme Token System
+   Editorial Ivory Light (#FAF8F3) & Obsidian Gold Dark (#08080B)
+   100% Zero-Egress Local Typography · WCAG AA (>= 4.5:1) Verified
+   ============================================================ */
+
+:root,
+[data-theme="light"] {
+  --bg-primary: #FAF8F3;
+  --bg-surface: #FFFFFF;
+  --bg-surface-variant: #F3EFE6;
+  --bg-canvas: #FBF9F4;
+
+  --text-primary: #101828;
+  --text-secondary: #344054;
+  --text-tertiary: #475467;
+
+  --accent: #7A5808;
+  --accent-hover: #5E4306;
+  --accent-surface: #FEF6E0;
+  --on-accent: #FFFFFF;
+
+  --accent-sky: #0369A1;
+  --accent-sky-surface: #E0F2FE;
+
+  --accent-emerald: #047857;
+  --accent-emerald-surface: #ECFDF5;
+
+  --accent-amber: #92400E;
+  --accent-amber-surface: #FEF3C7;
+
+  --accent-red: #B91C1C;
+  --accent-red-surface: #FEE2E2;
+
+  --border-color: #D5CEC0;
+  --border-subtle: #E7E1D4;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 28px rgba(16, 24, 40, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #08080B;
+  --bg-surface: #12121A;
+  --bg-surface-variant: #1A1A26;
+  --bg-canvas: #0B0B12;
+
+  --text-primary: #EDEFF2;
+  --text-secondary: #B4BCC8;
+  --text-tertiary: #94A3B8;
+
+  --accent: #D4AF37;
+  --accent-hover: #E5C158;
+  --accent-surface: rgba(212, 175, 55, 0.16);
+  --on-accent: #08080B;
+
+  --accent-sky: #38BDF8;
+  --accent-sky-surface: rgba(56, 189, 248, 0.15);
+
+  --accent-emerald: #34D399;
+  --accent-emerald-surface: rgba(52, 211, 153, 0.15);
+
+  --accent-amber: #FBBF24;
+  --accent-amber-surface: rgba(251, 191, 36, 0.16);
+
+  --accent-red: #F87171;
+  --accent-red-surface: rgba(248, 113, 113, 0.16);
+
+  --border-color: #2A2A38;
+  --border-subtle: #1F1F2B;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.72);
+
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

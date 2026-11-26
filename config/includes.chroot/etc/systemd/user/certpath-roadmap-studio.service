@@ -1,0 +1,21 @@
+[Unit]
+Description=CertPath Roadmap Studio Loopback Workstation & REST API (v2.6.0, :8093)
+Documentation=https://github.com/1nc0gn30/certpath-roadmap-studio
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/certpath-roadmap-studio
+Environment=PYTHONPATH=/opt/certpath-roadmap-studio/src:%h/NullAITech/certpath-roadmap-studio/src
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env python3 -m certpath_roadmap_studio.cli serve --host 127.0.0.1 --port 8093 --no-browser
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryMax=1G
+CPUQuota=200%
+
+[Install]
+WantedBy=default.target

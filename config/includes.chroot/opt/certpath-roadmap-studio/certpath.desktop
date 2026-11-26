@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=CertPath Roadmap Studio
+GenericName=Certification DAG & Career Planner
+Comment=137-credential certification DAG solver, Monte Carlo velocity simulator, and financial ROI studio (v2.6.0)
+Exec=zoth-konsole -- /usr/local/bin/certpath-roadmap-studio-tui
+Icon=/opt/certpath-roadmap-studio/public/assets/icon.png
+Terminal=false
+Categories=Development;Education;Utility;
+Keywords=certification;roadmap;dag;cybersecurity;aws;oscp;roi;zothos;
+StartupNotify=true

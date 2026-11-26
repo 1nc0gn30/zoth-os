@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""CertPath Roadmap Studio v2.6.0 — Live Telemetry & DAG Benchmark TUI.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+Zero third-party dependencies (100% Python Standard Library).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.request
+from pathlib import Path
+from typing import Any, Dict
+
+TOOL_ID = "certpath-roadmap-studio"
+TOOL_NAME = "CertPath Roadmap Studio"
+TOOL_VERSION = "2.6.0"
+LOCAL_URL = "http://127.0.0.1:8093"
+ATTRIBUTION = "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+
+
+def _resolve_src_path() -> Path:
+    candidates = [
+        Path("/opt/certpath-roadmap-studio/src"),
+        Path(__file__).resolve().parent.parent / "src",
+        Path.home() / "NullAITech" / "certpath-roadmap-studio" / "src",
+    ]
+    for p in candidates:
+        if (p / "certpath_roadmap_studio" / "catalog.py").exists():
+            return p
+    return candidates[-1]
+
+
+def _probe_live_daemon() -> Dict[str, Any]:
+    t0 = time.perf_counter()
+    try:
+        req = urllib.request.Request(f"{LOCAL_URL}/api/health", headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            data = json.loads(resp.read().decode("utf-8"))
+            return {
+                "online": resp.status == 200 and data.get("status") == "healthy",
+                "http_status": resp.status,
+                "latency_ms": latency_ms,
+                "endpoint": f"{LOCAL_URL}/api/health",
+                "reported_version": data.get("version"),
+            }
+    except Exception:
+        return {
+            "online": False,
+            "http_status": None,
+            "latency_ms": None,
+            "endpoint": f"{LOCAL_URL}/api/health",
+            "reported_version": None,
+        }
+
+
+def run_benchmark() -> Dict[str, Any]:
+    src_dir = _resolve_src_path()
+    if str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+
+    t0 = time.perf_counter()
+    from certpath_roadmap_studio.catalog import CertificationCatalog
+    from certpath_roadmap_studio.dag_engine import DAGEngine
+    from certpath_roadmap_studio.mcp_server import MCPServer
+    from certpath_roadmap_studio.roadmap_planner import RoadmapPlanner
+    from certpath_roadmap_studio.roi_calculator import calculate_cert_roi
+
+    cat = CertificationCatalog()
+    dag = DAGEngine(cat)
+    planner = RoadmapPlanner(cat, dag)
+    mcp = MCPServer(cat, dag, planner)
+
+    is_dag = dag.is_dag()
+    cycles = dag.detect_cycles()
+    roles = planner.get_roles()
+
+    sample_cert = cat.get("cyber-oscp") or next((c for c in cat.get_all() if c.cost_usd > 0), cat.get_all()[0])
+    oscp_prereqs = dag.resolve_prerequisites(sample_cert.id, include_target=False)
+    sample_roi = calculate_cert_roi(sample_cert)
+    sample_plan = planner.generate_roadmap("penetration_tester", weekly_hours=15)
+
+    elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+    daemon = _probe_live_daemon()
+
+    return {
+        "tool_id": TOOL_ID,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "attribution": ATTRIBUTION,
+        "status": "ONLINE" if daemon["online"] else "READY",
+        "daemon": daemon,
+        "telemetry": {
+            "total_certs": len(cat),
+            "total_roles": len(roles),
+            "categories_count": len(cat.get_categories()),
+            "providers_count": len(cat.get_providers()),
+            "is_dag": is_dag,
+            "cycles_count": len(cycles),
+            "mcp_tool_count": len(mcp._tools),
+            "sample_cert_id": sample_cert.id,
+            "sample_prereq_count": len(oscp_prereqs),
+            "sample_plan_hours": sample_plan.total_hours,
+            "sample_roi_annual_premium_usd": round(sample_roi.annual_salary_premium_usd, 2),
+            "elapsed_ms": elapsed_ms,
+        },
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+    }
+
+
+def render_tui(report: Dict[str, Any]) -> str:
+    t = report["telemetry"]
+    d = report["daemon"]
+    status_str = f"ONLINE ({d['latency_ms']} ms)" if d["online"] else "OFFLINE (on-demand :8093)"
+    dag_str = "ACYCLIC (0 cycles)" if t["is_dag"] else f"CYCLES DETECTED ({t['cycles_count']})"
+
+    # Compact U+2800 Braille progress bar reflecting catalog/DAG readiness
+    bar = "⣿" * 24 if t["is_dag"] and t["total_certs"] >= 137 else "⣶" * 16 + "⣀" * 8
+    lines = [
+        "╔══════════════════════════════════════════════════════════════════════╗",
+        f"║  CERTPATH ROADMAP STUDIO v{TOOL_VERSION}  •  LIVE TELEMETRY & DAG BENCHMARK  ║",
+        "╠══════════════════════════════════════════════════════════════════════╣",
+        f"║  Daemon (:8093)   : {status_str:<48} ║",
+        f"║  Catalog Size     : {t['total_certs']} credentials across {t['categories_count']} domains / {t['providers_count']} providers   ║",
+        f"║  DAG Integrity    : {dag_str:<48} ║",
+        f"║  Career Roles     : {t['total_roles']} archetypes · {t['mcp_tool_count']} stdio MCP tools              ║",
+        f"║  Sample Benchmark : {t['sample_cert_id']} ({t['sample_prereq_count']} prereqs, +${t['sample_roi_annual_premium_usd']:,.0f}/yr)       ║",
+        f"║  Engine Latency   : {t['elapsed_ms']} ms  [{bar}]           ║",
+        "╟──────────────────────────────────────────────────────────────────────╢",
+        f"║  {ATTRIBUTION:<66} ║",
+        "╚══════════════════════════════════════════════════════════════════════╝",
+    ]
+    return "\n".join(lines)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog=f"{TOOL_ID}-tui",
+        description=f"{TOOL_NAME} v{TOOL_VERSION} — Live Telemetry & DAG Benchmark TUI",
+    )
+    parser.add_argument("--json", action="store_true", help="Emit structured JSON telemetry")
+    parser.add_argument("--status", action="store_true", help="Print concise daemon and catalog status")
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID}-tui v{TOOL_VERSION}")
+    args = parser.parse_args()
+
+    report = run_benchmark()
+    if args.json:
+        print(json.dumps(report, indent=2))
+        return 0
+    if args.status:
+        t = report["telemetry"]
+        print(
+            f"{TOOL_NAME} v{TOOL_VERSION} | status={report['status']} | certs={t['total_certs']} "
+            f"| is_dag={t['is_dag']} | roles={t['total_roles']} | mcp_tools={t['mcp_tool_count']} "
+            f"| elapsed_ms={t['elapsed_ms']}"
+        )
+        return 0
+
+    print(render_tui(report))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
