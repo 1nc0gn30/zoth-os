@@ -1,96 +1,119 @@
 #!/usr/bin/env python3
-"""Unified Command Line Interface for agent-capsule-jail.
-Engineered by 1nc0gn30 • NullAI Platform.
+"""Unified Command Line Interface for agent-capsule-jail (v2.6.0).
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
 100% Python Standard Library — Zero External Dependencies.
 """
-import sys, os, json, subprocess, argparse
+from __future__ import annotations
 
-TOOL_ID = 'agent-capsule-jail'
-TOOL_REPO = 'agent-capsule-jail'
-TOOL_NAME = 'Agent Capsule Jail'
-TOOL_DESC = 'Autonomous kernel enclave sandbox, resource quota manager, and secret stripping engine.'
-TOOL_VERSION = '2.5.0'
-TOOL_CATEGORY = 'Security & Enclave'
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+
+TOOL_ID = "agent-capsule-jail"
+TOOL_NAME = "Agent Capsule Jail"
+TOOL_DESC = "Ephemeral bubblewrap namespace sandbox, cgroup/rlimit quota enforcer, and SHA-256 receipt enclave."
+TOOL_VERSION = "2.6.0"
 TOOL_PORT = 8105
-REPO_DIR = os.path.expanduser('~/NullAITech/agent-capsule-jail')
-PY_CLI = os.path.expanduser('~/NullAITech/agent-capsule-jail/src/agent_capsule_jail/cli.py')
-PKG_DIR = os.path.expanduser('~/NullAITech/agent-capsule-jail/src')
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-def main():
-    args = sys.argv[1:]
-    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
-        import shutil as _sh
-        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
-        elec = _sh.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
-    if '--tui' in args or (args and args[0] == 'tui'):
-        rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
-    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version', '--help', '-h'):
-        env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = 'agent_capsule_jail.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-        else:
-            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
-        sys.exit(res.returncode)
 
-    parser = argparse.ArgumentParser(
-        prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+def resolve_repo_dir() -> str:
+    for candidate in (
+        os.path.expanduser("~/NullAITech/agent-capsule-jail"),
+        "/opt/agent-capsule-jail",
+    ):
+        if os.path.isdir(os.path.join(candidate, "src", "agent_capsule_jail")):
+            return candidate
+    return os.path.expanduser("~/NullAITech/agent-capsule-jail")
+
+
+def run_cli_module(cli_args: list[str]) -> int:
+    repo_dir = resolve_repo_dir()
+    pkg_dir = os.path.join(repo_dir, "src")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = pkg_dir + os.pathsep + env.get("PYTHONPATH", "")
+    res = subprocess.run(
+        [sys.executable, "-m", "agent_capsule_jail.cli"] + cli_args,
+        cwd=repo_dir if os.path.isdir(repo_dir) else None,
+        env=env,
     )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('subcommand', nargs='*', help='Subcommand (exec, serve, status, token)')
-    parsed, unknown = parser.parse_known_args(args)
+    return res.returncode
 
-    if parsed.subcommand and parsed.subcommand[0] in ('exec', 'serve', 'status', 'token'):
-        env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = 'agent_capsule_jail.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-            sys.exit(res.returncode)
 
-    info = {
-        "id": TOOL_ID,
-        "repo": TOOL_REPO,
-        "name": TOOL_NAME,
-        "version": TOOL_VERSION,
-        "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
-        "native_cli": PY_CLI,
-        "studio_workbench_url": STUDIO_URL,
-        "local_endpoint": LOCAL_PORT_URL,
-        "license": "100% Free & Open Access (Zero Paywalls)",
-        "support": {
-            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
-        },
-        "status": "READY"
-    }
+def main() -> int:
+    args = sys.argv[1:]
+    repo_dir = resolve_repo_dir()
 
-    if parsed.json:
-        print(json.dumps(info, indent=2))
-        return
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = shutil.which("electron") or "/usr/local/bin/electron"
+        return subprocess.run(
+            [elec, os.path.join(repo_dir, "electron", "main.cjs")] + rem,
+            cwd=repo_dir,
+        ).returncode
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
-    print(f"  Repository : {REPO_DIR}")
-    print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
-    print()
-    print("Commands:")
-    print("  agent-capsule exec <cmd>      Run isolated ephemeral command")
-    print("  agent-capsule status          Query live server telemetry")
-    print("  agent-capsule serve           Launch REST API server & GUI")
-    print("  agent-capsule token           Display active execution auth token")
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        tui_bin = shutil.which(f"{TOOL_ID}-tui") or os.path.join(repo_dir, "bin", f"{TOOL_ID}-tui")
+        return subprocess.run([tui_bin] + rem).returncode
 
-if __name__ == '__main__':
-    main()
+    if args and args[0] in ("exec", "serve", "status", "token", "mcp", "test"):
+        return run_cli_module(args)
+
+    if args and args[0] == "--ui":
+        print(f"Standalone Workbench : {LOCAL_PORT_URL}")
+        print(f"Zoth Studio Route    : {STUDIO_URL}")
+        return 0
+
+    if args and args[0] in ("--version", "-V"):
+        print(f"{TOOL_ID} v{TOOL_VERSION}")
+        return 0
+
+    if args and args[0] in ("--status", "--json"):
+        cli_args = ["status"]
+        if "--json" in args:
+            cli_args.append("--json")
+        for i, a in enumerate(args):
+            if a in ("--port", "--host") and i + 1 < len(args):
+                cli_args.extend([a, args[i + 1]])
+        return run_cli_module(cli_args)
+
+    if args and args[0] in ("-h", "--help"):
+        parser = argparse.ArgumentParser(
+            prog=TOOL_ID,
+            description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog=(
+                "Subcommands:\n"
+                "  exec [opts] -- <cmd>  Execute command/script inside ephemeral bwrap capsule\n"
+                "  serve [--port 8105]   Run authenticated loopback HTTP API & Web UI\n"
+                "  status [--json]       Query live daemon health, sandbox mode & stats\n"
+                "  token                 Display active per-user X-Capsule-Token\n"
+                "  mcp                   Run zero-dependency JSON-RPC 2.0 stdio MCP server\n"
+                "  tui [--once|--json]   Launch live terminal telemetry dashboard\n"
+                "  electron              Launch desktop Electron workstation wrapper\n"
+                "\n"
+                "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+            ),
+        )
+        parser.add_argument("--version", "-V", action="store_true", help="Print unified version (2.6.0)")
+        parser.add_argument("--status", action="store_true", help="Query live daemon & sandbox status")
+        parser.add_argument("--json", action="store_true", help="Output live status JSON telemetry")
+        parser.add_argument("--ui", action="store_true", help="Print standalone and Studio workbench URLs")
+        parser.add_argument("--tui", action="store_true", help="Launch live terminal telemetry TUI")
+        parser.add_argument("--electron", action="store_true", help="Launch desktop Electron wrapper")
+        parser.print_help()
+        return 0
+
+    if not args:
+        return run_cli_module(["status"])
+
+    # Forward any unknown subcommand directly to cli.py so argparse returns exit code 2 cleanly
+    return run_cli_module(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

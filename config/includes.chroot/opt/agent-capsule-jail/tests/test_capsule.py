@@ -1,6 +1,6 @@
 """Automated unit and integration test suite for agent-capsule-jail.
 
-Engineered by 1nc0gn30 • NullAI Platform.
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
 100% Python Standard Library — Zero External Dependencies.
 """
 
@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import socket
 import tempfile
 import time
 import unittest
@@ -152,7 +153,9 @@ class TestCapsuleApiAndTelemetry(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.port = 8195  # Test port (different from 8105)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("127.0.0.1", 0))
+            cls.port = s.getsockname()[1]
         os.environ["CAPSULE_TOKEN"] = "test-token"
         cls.server = CapsuleServer(host="127.0.0.1", port=cls.port)
         cls.server.start(block=False)

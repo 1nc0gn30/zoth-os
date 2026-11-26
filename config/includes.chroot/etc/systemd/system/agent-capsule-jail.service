@@ -1,7 +1,6 @@
 [Unit]
-Description=ZothOS Agent Capsule Jail & Ephemeral Process Enclave
-After=network.target multi-user.target
-Wants=network.target
+Description=ZothOS Agent Capsule Jail & Ephemeral Process Enclave (v2.6.0)
+After=network.target
 
 [Service]
 Type=simple
@@ -9,9 +8,13 @@ User=zoth
 EnvironmentFile=-/etc/zothos/paths.conf
 WorkingDirectory=%h
 ExecStart=/usr/local/bin/zoth-run-repo agent-capsule-jail /opt/zothos-ai-env/bin/python3 -m agent_capsule_jail.cli serve --host 127.0.0.1 --port 8105
-Restart=always
+Restart=on-failure
 RestartSec=3
-KillMode=process
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+ReadWritePaths=/tmp %h/.config/agent-capsule-jail
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1

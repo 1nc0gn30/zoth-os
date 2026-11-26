@@ -1,10 +1,13 @@
 {
   "name": "agent-capsule-jail",
-  "version": "2.5.0",
-  "description": "Autonomous kernel enclave sandbox, resource quota manager, and secret stripping engine for AI agents with dual Stripe + Solana checkout rails.",
+  "version": "2.6.0",
+  "description": "Ephemeral bubblewrap namespace sandbox, cgroup/rlimit quota enforcer, secret-stripping runner, and SHA-256 forensic receipt enclave for AI agents.",
   "scripts": {
-    "serve": "python3 -m http.server 8105 --directory public"
+    "start": "python3 server.py --port 8105",
+    "serve": "python3 server.py --port 8105",
+    "mcp": "PYTHONPATH=src python3 -m agent_capsule_jail.cli mcp",
+    "test": "PYTHONPATH=src python3 -m pytest -q tests"
   },
-  "author": "1nc0gn30",
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
   "license": "MIT"
 }
