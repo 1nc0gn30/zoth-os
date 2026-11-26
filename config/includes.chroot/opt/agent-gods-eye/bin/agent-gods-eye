@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Agent God's Eye CLI wrapper (v2.6.0).
+
+Resolves canonical repo via $ZOTH_REPO_DIR, sibling src/, user home NullAITech, or /opt/agent-gods-eye.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+"""
+
+import os
+import pwd
+import sys
+
+
+def _resolve_repo_dir() -> str:
+    candidates = []
+    env_dir = os.environ.get("ZOTH_REPO_DIR")
+    if env_dir:
+        candidates.append(env_dir)
+    here_repo = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    candidates.append(here_repo)
+    candidates.append(os.path.expanduser("~/NullAITech/agent-gods-eye"))
+    try:
+        pw_home = pwd.getpwuid(os.getuid()).pw_dir
+        if pw_home:
+            candidates.append(os.path.join(pw_home, "NullAITech", "agent-gods-eye"))
+    except Exception:
+        pass
+    candidates.append("/opt/agent-gods-eye")
+
+    for cand in candidates:
+        if cand and os.path.isdir(os.path.join(cand, "src", "agent_gods_eye")):
+            return cand
+    return here_repo
+
+
+_repo_dir = _resolve_repo_dir()
+_src_dir = os.path.join(_repo_dir, "src")
+if os.path.isdir(_src_dir) and _src_dir not in sys.path:
+    sys.path.insert(0, _src_dir)
+
+from agent_gods_eye.cli import main  # noqa: E402
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,25 @@
+[Unit]
+Description=ZothOS Agent God's Eye OSINT Tactical Radar & REST API (v2.6.0)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+EnvironmentFile=-/etc/zothos/paths.conf
+WorkingDirectory=%h
+ExecStart=/usr/local/bin/zoth-run-repo agent-gods-eye /opt/zothos-ai-env/bin/python3 -m agent_gods_eye.cli serve --host 127.0.0.1 --port 8112
+Restart=always
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/tmp %h/.local/share/agent-gods-eye %h/NullAITech/agent-gods-eye
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,54 @@
+/* ==========================================================================
+   AGENT GOD'S EYE v2.6.0 — WAVE PRECISION INTERACTIVE STATES
+   Zero dead paywall selectors · Theme-aware hover, empty & error states
+   ========================================================================== */
+
+.btn:active,
+.radar-btn:active,
+.chip:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.bento-grid .card {
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.bento-grid .card:hover {
+  border-color: var(--gold);
+}
+
+#targetsTableBody:empty::after {
+  content: "NO THREAT VECTORS CATALOGED IN CURRENT SWEEP";
+  display: block;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+#streamConsole:empty::after {
+  content: "[AWAITING TELEMETRY STREAM...]";
+  display: block;
+  padding: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+.form-control::placeholder {
+  color: var(--text-dim);
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

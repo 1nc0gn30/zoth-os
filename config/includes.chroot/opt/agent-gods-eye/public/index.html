@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent God's Eye v2.6.0 — Autonomous Shodan OSINT Tactical Radar &amp; Threat Surface Recon</title>
+  <meta name="description" content="Autonomous zero-dependency Shodan OSINT tactical radar. Interactive dual-theme 3D planetary globe, SCADA/camera/VNC attack surface reconnaissance, threat scoring (0-100), and live SSE telemetry.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+
+  <!-- OpenGraph Meta Tags -->
+  <meta property="og:title" content="Agent God's Eye v2.6.0 — Autonomous Shodan OSINT Tactical Radar">
+  <meta property="og:description" content="Zero-dependency Shodan OSINT tactical radar, dual-theme 3D planetary globe, threat scoring, JSON/CSV export, live TUI, and stdio MCP server.">
+  <meta property="og:url" content="https://agent-gods-eye.nullai.tech/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://agent-gods-eye.nullai.tech/assets/banner.png">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Agent God's Eye v2.6.0 — Autonomous Shodan OSINT Tactical Radar">
+  <meta name="twitter:description" content="Global geospatial threat vector radar &amp; autonomous attack surface reconnaissance. 100% Python standard library.">
+  <meta name="twitter:image" content="https://agent-gods-eye.nullai.tech/assets/banner.png">
+
+  <!-- AEO & SEO Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Agent God's Eye",
+        "softwareVersion": "2.6.0",
+        "url": "https://agent-gods-eye.nullai.tech/",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Linux, macOS, Windows",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30)",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Agent God's Eye and how does it map global attack surfaces?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Agent God's Eye is a local Python 3.10+ Shodan OSINT tactical radar daemon (127.0.0.1:8112) with a 3D planetary globe, RFC 5737 offline demo mode, strict SSRF/IP validation, exposure threat scoring (0-100), JSON/CSV exports, live TUI, and stdio MCP server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Agent God's Eye handle privacy and target IP safety?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The daemon binds strictly to loopback 127.0.0.1:8112, validates Origin and Host headers, never stores Shodan API keys in browser localStorage, blocks loopback/RFC1918/cloud-metadata IPs on /api/host/<ip>, and uses strictly RFC 5737 test ranges in offline demo mode."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Agent God's Eye free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Agent God's Eye is 100% free and open-access with zero paywalls or feature gates. Optional support is accepted via Buy Us a Coffee (Stripe) or Solana tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Early Theme & Embed Resolution (zero paint flash) -->
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get('theme');
+      var stored = null;
+      try { stored = window.localStorage.getItem('age-theme'); } catch (e) {}
+      var sysLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var theme = (qTheme === 'light' || qTheme === 'dark') ? qTheme : (stored || (sysLight ? 'light' : 'dark'));
+      document.documentElement.setAttribute('data-theme', theme);
+      if (params.get('embed') === '1') {
+        document.documentElement.setAttribute('data-embed', '1');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/wave.css">
+  <link rel="stylesheet" href="/wave-states.css">
+</head>
+<body>
+
+  <div id="zoth-coffee-support-bar" class="coffee-bar">
+    <span class="coffee-tagline">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+    <div class="coffee-actions">
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="coffee-btn coffee-btn-stripe">☕ Buy Us a Coffee</a>
+      <button type="button" id="btnCopySolanaBar" class="coffee-btn coffee-btn-solana" data-solana="GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip (GG2e...dXoK)</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- HEADER & STATUS -->
+    <header class="header">
+      <div class="brand-wrap">
+        <img src="/assets/icon.png" alt="Agent God's Eye Planetary Reticle Logo" class="brand-icon" width="40" height="40">
+        <h1 class="brand-title">
+          AGENT GOD'S EYE
+          <span class="brand-version">v2.6.0</span>
+        </h1>
+      </div>
+      <div class="header-actions">
+        <div id="shodanStatus" class="status-badge status-offline" role="status" aria-live="polite">
+          <span class="status-dot"></span>
+          <span id="shodanStatusText">CHECKING RADAR...</span>
+        </div>
+        <button type="button" id="btnThemeToggle" class="btn btn-outline theme-toggle-btn" aria-label="Toggle Editorial Ivory Light or Obsidian Dark theme">
+          <span id="themeToggleLabel">☀ Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- EMBED COMPACT STATUS STRIP (visible only when ?embed=1) -->
+    <div class="embed-strip" aria-label="Embedded Radar Status">
+      <span class="brand-version">v2.6.0</span>
+      <span id="embedModeText" class="embed-mode-label">CONNECTING...</span>
+    </div>
+
+    <!-- MAIN COCKPIT -->
+    <main>
+
+      <!-- BENTO METRICS -->
+      <section class="bento-grid" aria-label="Tactical Telemetry Overview">
+        <div class="card col-3">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="card-title-icon">✦</span> Active Plan
+            </span>
+          </div>
+          <div class="metric-box">
+            <div id="metricPlan" class="metric-val val-gold">OFFLINE</div>
+            <div id="metricCredits" class="metric-sub">0 Query / 0 Scan</div>
+          </div>
+        </div>
+
+        <div class="card col-3">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="card-title-icon">◎</span> Surface Targets
+            </span>
+          </div>
+          <div class="metric-box">
+            <div id="metricTotal" class="metric-val val-cyan">0</div>
+            <div class="metric-sub">Cataloged in Local SQLite</div>
+          </div>
+        </div>
+
+        <div class="card col-3">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="card-title-icon">⚠</span> Critical Nodes
+            </span>
+          </div>
+          <div class="metric-box">
+            <div id="metricThreats" class="metric-val val-ruby">0</div>
+            <div class="metric-sub">Threat Score &ge; 75 (SCADA/Cams)</div>
+          </div>
+        </div>
+
+        <div class="card col-3">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="card-title-icon">✦</span> Geographies
+            </span>
+          </div>
+          <div class="metric-box">
+            <div id="metricCountries" class="metric-val val-emerald">0</div>
+            <div class="metric-sub">Unique Jurisdictions</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3D KINETIC PLANETARY RADAR -->
+      <section class="card col-12 section-gap" aria-label="3D Tactical Planetary Radar">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="card-title-icon">◎</span> Kinetic 3D Planetary Radar Stage
+          </h2>
+          <span class="card-hint">
+            Drag to rotate · Click node to focus
+          </span>
+        </div>
+
+        <div class="radar-stage">
+          <canvas id="globeCanvas" aria-label="Interactive 3D planetary OSINT target globe"></canvas>
+
+          <div class="radar-overlay-hud">
+            <span class="hud-tag" id="hudCoord">LAT: 00.00° | LON: 00.00°</span>
+            <span class="hud-tag hud-tag-gold" id="hudTarget">
+              TARGET: SCANNING SURFACE...
+            </span>
+          </div>
+
+          <div class="radar-controls-hud">
+            <button type="button" id="btnView3D" class="radar-btn">⏸ Pause Orbit</button>
+            <button type="button" id="btnResetGlobe" class="radar-btn">↻ Reset Vector</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TACTICAL SEARCH & FILTER CONTROL -->
+      <section class="card col-12 section-gap" aria-label="Tactical Vector Filter">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="card-title-icon">⌕</span> Surface Vector Query Engine
+          </h2>
+          <span id="queryModeHint" class="card-hint">
+            Shodan API &amp; RFC 5737 Offline Filter
+          </span>
+        </div>
+
+        <div class="search-bar-wrap">
+          <form id="searchForm" class="search-input-group">
+            <label for="searchInput" class="sr-only">Shodan OSINT Search Query</label>
+            <input type="text" id="searchInput" class="form-control text-mono" placeholder="port:554 has_screenshot:true country:US" value="port:554 has_screenshot:true">
+            <button type="submit" class="btn btn-cyan">
+              <span>⚡ Execute Recon Sweep</span>
+            </button>
+          </form>
+
+          <div class="preset-chips" role="group" aria-label="Preset OSINT queries">
+            <button type="button" class="chip preset-chip active" data-query="port:554 has_screenshot:true">
+              ✦ Surveillance RTSP / Webcams
+            </button>
+            <button type="button" class="chip preset-chip" data-query="port:502 modbus">
+              ✦ Industrial SCADA / Modbus
+            </button>
+            <button type="button" class="chip preset-chip" data-query="port:27017 mongodb">
+              ✦ Exposed MongoDB
+            </button>
+            <button type="button" class="chip preset-chip" data-query="port:5900 vnc">
+              ▣ Open VNC Remote Desktops
+            </button>
+            <button type="button" class="chip preset-chip" data-query="has_vuln:true">
+              ⚠ Exploit Surface (CVEs)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECON TARGETS & SSE STREAM SPLIT -->
+      <div class="bento-grid">
+
+        <!-- TARGETS TABLE -->
+        <section class="card col-8" aria-label="Detected Surface Targets">
+          <div class="card-header card-header-wrap">
+            <h2 class="card-title">
+              <span class="card-title-icon">✦</span> Cataloged Host Nodes
+            </h2>
+            <div class="export-inline-actions">
+              <button type="button" class="btn btn-outline btn-compact" id="btn-export-targets" data-export-format="json">
+                ↓ Export JSON
+              </button>
+              <button type="button" class="btn btn-outline btn-compact" id="btn-export-csv" data-export-format="csv">
+                ↓ Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Threat</th>
+                  <th>IP Address</th>
+                  <th>Location</th>
+                  <th>Organization / ISP</th>
+                  <th>Ports</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="targetsTableBody">
+                <tr>
+                  <td colspan="6" class="table-placeholder">
+                    Initializing tactical scan...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- LIVE SSE TELEMETRY STREAM -->
+        <section class="card col-4" aria-label="Live Telemetry Feed">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="card-title-icon">✦</span> Live Telemetry Feed
+            </h2>
+            <span id="sseStatusTag" class="sse-status-tag">
+              ● SSE CONNECTING
+            </span>
+          </div>
+
+          <div id="streamConsole" class="stream-box" role="log" aria-live="polite">
+            <div class="stream-entry">
+              <span class="stream-time">[INIT]</span> Connecting to Agent God's Eye radar telemetry stream...
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- EXPORT BUNDLE SECTION -->
+      <section class="card col-12 export-section" id="export-section" aria-labelledby="exportTitle">
+        <div class="card-header">
+          <h2 id="exportTitle" class="card-title"><span>↓ Export Targets</span></h2>
+        </div>
+        <p class="export-desc">Download every tracked target as JSON or formula-safe CSV. 100% free and unlocked with zero paywalls.</p>
+        <div class="export-bundle-actions">
+          <button type="button" class="btn btn-primary" id="btn-export-bundle-json" data-export-format="json">
+            ↓ Download JSON Surface Bundle
+          </button>
+          <button type="button" class="btn btn-outline" id="btn-export-bundle-csv" data-export-format="csv">
+            ↓ Download Formula-Safe CSV
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- HOST INSPECTION MODAL -->
+    <div id="hostModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="hostModalHeading">
+      <div class="modal-card">
+        <button type="button" id="btnCloseHostModal" class="modal-close" aria-label="Close host inspection">&times;</button>
+        <span id="hostModalHeading" class="modal-eyebrow">SHODAN HOST INTELLIGENCE</span>
+        <div id="hostModalContent" class="modal-content-wrap">
+          <!-- Populated safely via DOM builders in godseye_radar.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTRIBUTION FOOTER -->
+    <footer class="footer">
+      <div>
+        Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/1nc0gn30/agent-gods-eye" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+        <button type="button" id="btnCopySolanaFooter" class="footer-copy-btn" data-solana="GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip (GG2e...dXoK)</button>
+        <span class="footer-port-tag">Loopback 127.0.0.1:8112 · v2.6.0</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/godseye_radar.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-gods-eye",
+          toolName: "Agent God's Eye v2.6.0",
+          tagline: "Autonomous Shodan OSINT Tactical Radar & 3D Planetary Surface Reconnaissance",
+          accentColor: "#D4AF37",
+          steps: [
+            {
+              icon: "◎",
+              title: "Query Global Attack Surfaces",
+              desc: "Run Shodan filter sweeps (port:554, port:502 modbus, has_vuln:true) against live Shodan APIs or the built-in RFC 5737 offline demo catalog."
+            },
+            {
+              icon: "⚡",
+              title: "Inspect Hosts & Exposure Scores",
+              desc: "Click any glowing node on the 3D planetary globe or table row to inspect open ports, banners, geolocation, and correlated CVEs."
+            },
+            {
+              icon: "↓",
+              title: "Stream SSE & Export Bundles",
+              desc: "Monitor live reconnaissance events in the SSE console and export tracked targets as JSON or formula-safe CSV."
+            }
+          ]
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
