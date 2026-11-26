@@ -1,0 +1,15 @@
+/* AudioCipher Stego Studio v2.6.0 — Interactive State Polish */
+.btn-primary:active,
+.btn-secondary:active,
+.btn-action:active,
+.dial-btn:active {
+  transform: scale(0.98);
+}
+
+#toast-container:empty {
+  display: none;
+}
+
+.result-box:empty {
+  opacity: 0.65;
+}

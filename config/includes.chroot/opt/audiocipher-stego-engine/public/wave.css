@@ -1,0 +1,32 @@
+/* ============================================================
+   AudioCipher Stego Studio v2.6.0 — Dual-Theme Surface Tokens
+   Theme-aware focus, motion, and typography polish.
+   ============================================================ */
+
+button:focus-visible,
+a:focus-visible,
+.mode-item:focus-visible,
+.dial-btn:focus-visible,
+textarea:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+@keyframes result-appear {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.result-box {
+  animation: result-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
