@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agy-hermes-proxy"
+version = "2.0.0"
+description = "Hardened loopback OpenAI-compatible bridge from Hermes Agent and ZothOS services to the Antigravity CLI (agy) runtime."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Neal Frazier", email = "neal@nullai.tech" }]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "pydantic>=2.7.0",
+    "uvicorn>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.27.0",
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+agy-hermes-proxy = "agy_hermes_proxy.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

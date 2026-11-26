@@ -1,0 +1,29 @@
+[Unit]
+Description=AGY-Hermes OpenAI-Compatible Bridge (:18000)
+Documentation=https://github.com/1nc0gn30/agy-hermes-proxy
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/agy-hermes-proxy serve --host 127.0.0.1 --port 18000
+Restart=always
+RestartSec=3
+Environment="PATH=/opt/zothos-ai-env/bin:%h/.gemini/antigravity-cli/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=%h"
+Environment="AGY_PROXY_MAX_CONCURRENCY=4"
+Environment="AGY_PROXY_TIMEOUT_SECONDS=180"
+Environment="AGY_PROXY_MAX_BODY_BYTES=1048576"
+
+# Process & resource governance
+KillMode=control-group
+TimeoutStopSec=10
+MemoryMax=1G
+CPUQuota=200%
+TasksMax=128
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=default.target
