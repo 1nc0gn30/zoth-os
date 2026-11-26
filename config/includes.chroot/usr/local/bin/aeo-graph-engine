@@ -1,50 +1,82 @@
 #!/usr/bin/env python3
-import sys, os, json, subprocess, argparse
+"""AEO Graph Engine & Studio — Sovereign ZothOS CLI Launcher (v2.1.0)."""
 
-TOOL_ID = 'aeo-graph-engine'
-TOOL_REPO = 'aeo-graph-engine'
-TOOL_NAME = 'AEO Graph Engine & Studio'
-TOOL_DESC = '100% in-browser Answer Engine Optimization (AEO/GEO) workbench, Schema.org JSON-LD @graph generator, live semantic crawler, and MCP export with 100% free open access.'
-TOOL_VERSION = '1.4.0'
-TOOL_CATEGORY = 'Autonomous Web'
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+
+TOOL_ID = "aeo-graph-engine"
+TOOL_REPO = "aeo-graph-engine"
+TOOL_NAME = "AEO Graph Engine & Studio"
+TOOL_DESC = (
+    "Zero-dependency Answer Engine Optimization (AEO/GEO) compiler, Schema.org JSON-LD @graph "
+    "generator, SSRF-hardened crawler, 15+ provider AI hub, and 12-tool MCP server."
+)
+TOOL_VERSION = "2.1.0"
+TOOL_CATEGORY = "Autonomous Web"
 TOOL_PORT = 8127
-REPO_DIR = os.path.expanduser('~/NullAITech/aeo-graph-engine')
-PY_CLI = os.path.expanduser('~/NullAITech/aeo-graph-engine/src/aeo_graph_engine/cli.py')
-PKG_DIR = os.path.expanduser('~/NullAITech/aeo-graph-engine/src')
+REPO_DIR = os.path.expanduser("~/NullAITech/aeo-graph-engine")
+PY_CLI = os.path.expanduser("~/NullAITech/aeo-graph-engine/src/aeo_graph_engine/cli.py")
+PKG_DIR = os.path.expanduser("~/NullAITech/aeo-graph-engine/src")
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
+
+def probe_daemon():
+    try:
+        with urllib.request.urlopen(f"{LOCAL_PORT_URL}/health", timeout=1.5) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode("utf-8"))
+                return True, data
+    except Exception:
+        pass
+    return False, None
+
+
 def main():
     args = sys.argv[1:]
-    if '--electron' in args or (args and args[0] in ('desktop', 'electron')):
-        import shutil as _sh
-        rem = [a for a in args if a not in ('--electron', 'desktop', 'electron')]
-        elec = _sh.which('electron') or '/usr/local/bin/electron'
-        sys.exit(subprocess.run([elec, os.path.join(REPO_DIR, 'electron', 'main.cjs')] + rem, cwd=REPO_DIR).returncode)
-    if '--tui' in args or (args and args[0] == 'tui'):
-        rem = [a for a in args if a not in ('--tui', 'tui')]
-        sys.exit(subprocess.run([f'/usr/local/bin/{TOOL_ID}-tui'] + rem).returncode)
-    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in ('--status', '--info', '--ui', '--studio', '--json', '--version'):
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = shutil.which("electron") or "/usr/local/bin/electron"
+        sys.exit(
+            subprocess.run([elec, os.path.join(REPO_DIR, "electron", "main.cjs")] + rem, cwd=REPO_DIR).returncode
+        )
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        tui_bin = shutil.which(f"{TOOL_ID}-tui") or f"/usr/local/bin/{TOOL_ID}-tui"
+        sys.exit(subprocess.run([tui_bin] + rem).returncode)
+
+    # Delegate real subcommands & engine flags directly to Python CLI (unknown subcommands exit 2)
+    wrapper_only_flags = ("--status", "--info", "--ui", "--studio", "--json", "--version")
+    if PY_CLI and os.path.exists(PY_CLI) and args and args[0] not in wrapper_only_flags:
         env = os.environ.copy()
-        if PKG_DIR:
-            env['PYTHONPATH'] = PKG_DIR + os.pathsep + env.get('PYTHONPATH', '')
-            pkg_mod = os.path.basename(os.path.dirname(PY_CLI)) + '.cli'
-            res = subprocess.run([sys.executable, '-m', pkg_mod] + args, cwd=REPO_DIR, env=env)
-        else:
-            res = subprocess.run([sys.executable, PY_CLI] + args, cwd=REPO_DIR, env=env)
+        env["PYTHONPATH"] = PKG_DIR + os.pathsep + env.get("PYTHONPATH", "")
+        res = subprocess.run([sys.executable, "-m", "aeo_graph_engine.cli"] + args, cwd=REPO_DIR, env=env)
         sys.exit(res.returncode)
 
     parser = argparse.ArgumentParser(
         prog=TOOL_ID,
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
     )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('payload', nargs='*', help='Optional input payload or subcommand')
-    parsed, unknown = parser.parse_known_args(args)
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Live-probe local :8127 daemon & installation status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON status telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local AEO Studio URL")
+    parser.add_argument("--studio", action="store_true", help="Print Zoth Studio v2 route URL")
+    parsed = parser.parse_args(args)
 
+    if parsed.ui:
+        print(LOCAL_PORT_URL)
+        return
+    if parsed.studio:
+        print(STUDIO_URL)
+        return
+
+    running, health = probe_daemon()
     info = {
         "id": TOOL_ID,
         "repo": TOOL_REPO,
@@ -56,23 +88,28 @@ def main():
         "native_cli": PY_CLI,
         "studio_workbench_url": STUDIO_URL,
         "local_endpoint": LOCAL_PORT_URL,
+        "daemon_running": running,
+        "daemon_health": health,
+        "status": "RUNNING" if running else "IDLE (on-demand)",
         "license": "100% Free & Open Access (Zero Paywalls)",
         "support": {
             "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
-            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
         },
-        "status": "READY"
     }
 
     if parsed.json:
         print(json.dumps(info, indent=2))
         return
 
-    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    state_txt = f"RUNNING (v{(health or {}).get('version', TOOL_VERSION)})" if running else "IDLE (start with: aeo-graph-engine serve --port 8127)"
+    print(f"AEO Graph Engine & Studio (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Daemon     : {state_txt}")
+    print(f"  Local UI   : {LOCAL_PORT_URL}")
+    print(f"  Studio URL : {STUDIO_URL}")
     print(f"  Repository : {REPO_DIR}")
-    print(f"  Workbench  : {STUDIO_URL}")
-    print(f"  Local Port : {LOCAL_PORT_URL}")
-    print(f"  Access     : 100% Free & Open Access (☕ https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X | ◎ GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)")
+    print(f"  Commands   : serve | scan | check | extract | prompt | mcp | knowledge-graph | claims | framework")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,61 +1,117 @@
 #!/usr/bin/env python3
-"""⚡ Aeo Graph Engine — Sovereign Unicode U+2800 Braille TUI & Benchmark Harness
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
-Paired Uncommon-Web Library: Canvas UI (canvasui-html-effects)
+"""AEO Graph Engine & Studio (v2.1.0) — Live Terminal Status, Validator & Benchmark TUI.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
-import argparse, json, math, os, sys, time
 
-BRAILLE_BASE = 0x2800
-METRICS = ["AST/Engine Latency (ms)", "Throughput (ops/s)", "Memory Footprint (MB)", "Zero-Trust Audit Status"]
-SUMMARY = "Sovereign Aeo Graph Engine engine with deterministic local execution and real-time telemetry."
-UW_SLUG = "canvasui-html-effects"
-UW_INSTALL = "npx shadcn@latest add https://canvasui.dev/r/liquid-react.json https://canvasui.dev/r/shatter-react.json https://canvasui.dev/r/peel-react.json https://canvasui.dev/r/ripple-react.json https://canvasui.dev/r/cloth-react.json https://canvasui.dev/r/vhs-react.json"
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.request
+from pathlib import Path
 
-def braille_sparkline(vals):
-    out = []
-    for i in range(0, len(vals) - 1, 2):
-        v1 = max(0, min(3, int(vals[i] * 3.99)))
-        v2 = max(0, min(3, int(vals[i+1] * 3.99)))
-        dots1 = (0x40, 0x04, 0x02, 0x01)[v1]
-        dots2 = (0x80, 0x20, 0x10, 0x08)[v2]
-        out.append(chr(BRAILLE_BASE | dots1 | dots2))
-    return "".join(out)
+REPO_DIR = Path(os.path.expanduser("~/NullAITech/aeo-graph-engine"))
+SRC_DIR = REPO_DIR / "src"
+if SRC_DIR.exists() and str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
-def main():
-    ap = argparse.ArgumentParser(description="Aeo Graph Engine Sovereign TUI & Benchmark")
-    ap.add_argument("--json", action="store_true", help="Output JSON telemetry and exit")
-    ap.add_argument("--status", action="store_true", help="Check live status and render TUI")
-    ap.add_argument("--benchmark", action="store_true", help="Run deterministic latency benchmark")
-    ap.add_argument("--frames", type=int, default=18, help="TUI frames to render")
-    args, _ = ap.parse_known_args()
+LOCAL_URL = "http://127.0.0.1:8127"
+
+
+def probe_endpoint(path: str):
+    try:
+        with urllib.request.urlopen(f"{LOCAL_URL}{path}", timeout=1.5) as resp:
+            if resp.status == 200:
+                return json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+    return None
+
+
+def run_engine_self_benchmark():
+    from aeo_graph_engine import __version__
+    from aeo_graph_engine.core import generate_llms_txt, generate_robots_txt, generate_schema_graph
+    from aeo_graph_engine.mcp_server import MCPServer
+    from aeo_graph_engine.validator import AEODiagnosticReport, validate_schema_jsonld_dict
 
     t0 = time.perf_counter()
-    samples = [0.5 + 0.45 * math.sin(i * 0.35) for i in range(48)]
-    elapsed_ms = round((time.perf_counter() - t0) * 1000.0 + 0.42, 3)
+    cfg = {"site_name": "BenchmarkApp", "domain": "benchmark.example"}
+    graph = generate_schema_graph(cfg, niche="developer_tools")
+    llms = generate_llms_txt(cfg, niche="developer_tools")
+    robots = generate_robots_txt(cfg, niche="developer_tools")
+    report = AEODiagnosticReport("self-benchmark")
+    validate_schema_jsonld_dict(graph, report)
+    elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+
+    mcp = MCPServer()
+    tools_res = mcp.handle_message({"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}})
+    mcp_tools = [t["name"] for t in tools_res.get("result", {}).get("tools", [])]
+
+    return {
+        "version": __version__,
+        "compile_validate_ms": elapsed_ms,
+        "graph_nodes": len(graph.get("@graph", [])),
+        "llms_lines": len(llms.splitlines()),
+        "robots_lines": len(robots.splitlines()),
+        "validation_score": report.score,
+        "validation_errors": len(report.errors),
+        "mcp_tools_count": len(mcp_tools),
+        "mcp_tools": mcp_tools,
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        prog="aeo-graph-engine-tui",
+        description="AEO Graph Engine & Studio (v2.1.0) — Live Diagnostics & Schema Benchmark TUI",
+    )
+    ap.add_argument("--json", action="store_true", help="Output live telemetry JSON and exit")
+    ap.add_argument("--status", action="store_true", help="Check live :8127 daemon & engine diagnostics")
+    ap.add_argument("--benchmark", action="store_true", help="Run real Schema.org compile+validate benchmark")
+    ap.add_argument("--validate", metavar="PATH", help="Validate a JSON-LD file or directory")
+    args = ap.parse_args()
+
+    health = probe_endpoint("/health")
+    providers = probe_endpoint("/api/providers") if health else None
+    bench = run_engine_self_benchmark()
+
+    validation_result = None
+    if args.validate:
+        from aeo_graph_engine.validator import validate_aeo_bundle
+
+        target = Path(args.validate)
+        validation_result = validate_aeo_bundle(target).to_dict()
+
+    payload = {
+        "tool": "aeo-graph-engine",
+        "version": bench["version"],
+        "daemon_url": LOCAL_URL,
+        "daemon_online": bool(health),
+        "daemon_health": health,
+        "local_ai_providers_online": (providers or {}).get("local_online_count", 0) if providers else None,
+        "recommended_ai_provider": (providers or {}).get("recommended_provider") if providers else None,
+        "benchmark": bench,
+        "validation": validation_result,
+    }
 
     if args.json:
-        print(json.dumps({
-            "tool": "aeo-graph-engine",
-            "title": "Aeo Graph Engine",
-            "architect": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
-            "summary": SUMMARY,
-            "uncommon_web": {"slug": UW_SLUG, "install": UW_INSTALL},
-            "audio_lufs": -14.0,
-            "benchmark_ms": elapsed_ms,
-            "metrics": METRICS,
-            "braille_signature": braille_sparkline(samples),
-        }, indent=2))
+        print(json.dumps(payload, indent=2))
         return
 
+    state = f"\033[1;32mONLINE (v{health.get('version')})\033[0m" if health else "\033[1;33mIDLE (on-demand)\033[0m"
     print("\033[1;33m╭──────────────────────────────────────────────────────────────────────────╮\033[0m")
-    print(f"\033[1;33m│\033[0m ⚡ \033[1;37mAeo Graph Engine                \033[0m │ \033[36m1nc0gn30 • NullAI Platform\033[0m         \033[1;33m│\033[0m")
+    print(f"\033[1;33m│\033[0m \033[1;37mAEO Graph Engine & Studio v{bench['version']:<6}\033[0m │ \033[36mNeal Frazier Tech • NullAI\033[0m         \033[1;33m│\033[0m")
     print("\033[1;33m├──────────────────────────────────────────────────────────────────────────┤\033[0m")
-    print(f"\033[1;33m│\033[0m {SUMMARY[:72]:<72} \033[1;33m│\033[0m")
-    print(f"\033[1;33m│\033[0m Uncommon-Web: \033[32m{UW_SLUG:<24}\033[0m Audio: \033[35m-14.0 LUFS Mastered\033[0m   \033[1;33m│\033[0m")
-    for idx, m in enumerate(METRICS[:4]):
-        wave = braille_sparkline([0.5 + 0.45 * math.sin((i + idx * 3) * 0.4) for i in range(40)])
-        print(f"\033[1;33m│\033[0m  • {m[:24]:<24} \033[33m{wave}\033[0m  PASS   \033[1;33m│\033[0m")
+    print(f"\033[1;33m│\033[0m  Daemon (:8127) : {state}")
+    print(f"\033[1;33m│\033[0m  Compile+Valid  : \033[32m{bench['compile_validate_ms']} ms\033[0m ({bench['graph_nodes']} @graph nodes, score {bench['validation_score']}/100)")
+    print(f"\033[1;33m│\033[0m  MCP Tools      : \033[36m{bench['mcp_tools_count']} registered\033[0m ({', '.join(bench['mcp_tools'][:3])}...)")
+    if providers:
+        print(f"\033[1;33m│\033[0m  Local AI Hub   : \033[32m{providers.get('local_online_count', 0)} ready\033[0m (recommended: {providers.get('recommended_provider')})")
+    if validation_result:
+        print(f"\033[1;33m│\033[0m  Target Audit   : score={validation_result['score']}/100 errors={validation_result['errors_count']}")
     print("\033[1;33m╰──────────────────────────────────────────────────────────────────────────╯\033[0m")
+
 
 if __name__ == "__main__":
     main()
