@@ -1,119 +1,101 @@
-<div align="center">
-  <img src="assets/hero-banner.svg" alt="Agent Budget Sentinel — Sovereign Architecture Banner" width="100%" />
-</div>
+# Agent Budget Sentinel (`v2.6.0`)
 
-<br />
+![Agent Budget Sentinel Banner](public/assets/banner.png)
 
-# ⚡ Agent Budget Sentinel
+**Agent Budget Sentinel** (`agent-budget-sentinel`) is a zero-dependency Python 3.10+ spending guardrail, token-cost circuit breaker, SSRF-hardened inline LLM reverse proxy (`127.0.0.1:8111`), live telemetry cockpit (`127.0.0.1:8110`), and stdio JSON-RPC 2.0 MCP server. It intercepts runaway agent loops and enforces hard USD ceilings and per-minute velocity limits with SQLite persistence (`budget.db`).
 
-> ⚡ **Live Web Application**: [https://agent-budget-sentinel.netlify.app](https://agent-budget-sentinel.netlify.app)  
-> 💳 **Unlock Pro Lifetime License ($19 One-Time, $0/mo)**: **[Instant Pro Unlock via Stripe](https://github.com/1nc0gn30/zoth-os)** *(Use promo code `FOUNDER25` for 25% off)*  
-> 🏆 **All-Access Sovereign Pro Bundle (All 44 Tools — $49 Lifetime)**: **[Get All 44 Studios via Stripe](https://github.com/1nc0gn30/zoth-os)**
-
-**Autonomous LLM Token Cost Circuit Breaker & Inline Spending Guardrail for AI Agents**  
-*Engineered by NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform*
-
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-gold.svg)](https://www.python.org/downloads/)
-[![Zero External Dependencies](https://img.shields.io/badge/dependencies-zero_pip-emerald.svg)](#architecture)
-[![Port 8110 / 8111](https://img.shields.io/badge/mesh_ports-8110_|_8111-cyan.svg)](#ports)
-[![Sovereign Standard](https://img.shields.io/badge/standard-nullai_sovereign-blue.svg)](https://nullai.tech)
+- **Zoth Studio v2 Route**: `http://127.0.0.1:3000/tools/agent-budget-sentinel`
+- **Repository**: [https://github.com/1nc0gn30/agent-budget-sentinel](https://github.com/1nc0gn30/agent-budget-sentinel)
+- **Loopback Endpoints**: Web Cockpit `http://127.0.0.1:8110` · Inline Breaker Proxy `http://127.0.0.1:8111`
 
 ---
 
-## 🎯 What is Agent Budget Sentinel?
+## What It Does & How It Works
 
-Autonomous AI agents running recursive tool loops, multi-agent debates, and self-refinement chains are notoriously prone to **infinite loop burnouts**—generating runaway cloud bills in minutes.
+Autonomous tool-calling loops can burn API budgets rapidly during recursive retries. `agent-budget-sentinel` sits inline between agent runtimes and LLM APIs:
 
-`agent-budget-sentinel` is an autonomous, **zero-dependency** inline HTTP proxy and spending guardrail. It sits transparently between your AI agents and upstream LLM providers (OpenAI, Anthropic, Gemini, DeepSeek, or local twins). When token consumption breaches your designated spending ceiling or trips an emergency velocity spike, it immediately activates its **Circuit Breaker**, cutting off outbound calls with `HTTP 429 Too Many Requests` and saving your treasury from financial ruin.
+- **Deterministic 3-State Circuit Breaker (`CircuitBreaker`)**: Transitions across `CLOSED` (normal operation), `WARN` (80% ceiling reached), and `TRIPPED` (hard ceiling, velocity limit, or manual kill switch engaged — returning **`HTTP 429 Too Many Requests`** across both `GET` and `POST` forwarded calls).
+- **Pure-Python `cl100k_base` BPE Tokenizer (`BPETokenizer`)**: Sub-millisecond embedded LZMA vocabulary with zero pip dependencies and mid-flight SSE stream guillotine.
+- **2025/2026 & `$0.00` Local Sovereign Pricing (`CostCalculator`)**: Covers OpenAI (`gpt-5`, `gpt-4.1`, `gpt-4o`, `o3`, `o4-mini`, `o1`), Anthropic (`claude-opus-5.5`, `claude-sonnet-5.5`, `claude-opus-4`, `claude-sonnet-4`, `claude-3-5-*`), Google (`gemini-4-neon`, `gemini-3.8-flash`, `gemini-2.5-pro`), DeepSeek (`deepseek-r1`, `deepseek-v3`), and `$0.00` local models (`ollama/*`, `agy/*`, `hermes/*`, `azoth/*`).
+- **SSRF & Strict CORS Guard (`net_guard.py`)**: Enforces `http`/`https` schemes only on `X-Target-Url`, blocks loopback/RFC1918/IMDS (`169.254.169.254`)/`file://` with `HTTP 403` (opt-in local upstreams via `AGENT_BUDGET_ALLOW_LOCAL_UPSTREAMS=127.0.0.1:11434`), and rejects spoofed loopback origins (`127.0.0.1:8110.evil.com`) with `HTTP 403`.
+- **SQLite Restart Hydration (`BudgetStorage`)**: Persists transactions, ceilings, and events in `budget.db` and hydrates cumulative spend on daemon restart so header telemetry always matches the ledger.
 
----
-
-## 🛡 Sovereign Architectural Highlights
-
-1. **Zero External Pip Dependencies**:
-   - 100% Python standard library (`http.server`, `socket`, `sqlite3`, `json`, `urllib.parse`, `threading`, `dataclasses`).
-   - Whisper-quiet, event-driven blocking I/O with 0% CPU burn when idle.
-2. **Inline Circuit Breaker State Machine**:
-   - `CLOSED`: Normal operation (<80% of budget limit).
-   - `WARN`: Spending between 80% and 99% of limit (dispatches telemetry warning events).
-   - `TRIPPED`: Spending >= 100% or manual kill switch active. Halts requests immediately.
-3. **Comprehensive Pricing Matrix**:
-   - Built-in real-time rates for GPT-4o, GPT-4o-mini, o1, Claude 3.5 Sonnet, Claude 3.5 Haiku, Gemini 1.5 Pro, DeepSeek V3/R1, and Llama 3.3.
-4. **Avant-Garde Web Deck (:8110)**:
-   - Real-time Server-Sent Events (SSE) telemetry radar.
-   - Interactive Try-Before-You-Buy token cost calculator.
-   - Emergency operator kill switch and burst test simulation harness.
-5. **Dual Cash Registers & Monetization Funnel**:
-   - Above-the-fold high-converting sales banner (100% free open-access).
-   - Stripe & Solana Tip instant activation rails.
-   - Frosted glass output paywall over advanced multi-agent quota hierarchy modes.
-
----
-
-## 🚀 Quickstart & Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/1nc0gn30/agent-budget-sentinel.git
-cd agent-budget-sentinel
-
-# Make CLI executable
-chmod +x bin/agent-budget
-
-# Launch the Web Deck (:8110) and Inline Proxy (:8111) with a $5.00 emergency ceiling
-./bin/agent-budget serve --budget 5.00
-```
-
-### Route Your Agents Through the Circuit Breaker
-
-```bash
-# Option 1: Using OpenAI environment variable
-export OPENAI_BASE_URL="http://127.0.0.1:8111/v1"
-python my_agent.py
-
-# Option 2: Automatic wrapper
-./bin/agent-budget run -- python my_agent.py
+```text
+Agent Process (OPENAI_BASE_URL / ANTHROPIC_BASE_URL -> http://127.0.0.1:8111)
+        │
+        ▼
+BudgetProxyServer (:8111) ──► net_guard (SSRF/CORS) ──► CircuitBreaker (CLOSED / WARN / TRIPPED)
+        │                                                       │
+        ├── Allowed: Forward upstream & stream SSE guillotine   ├── Tripped: Return HTTP 429
+        ▼                                                       ▼
+BudgetStorage (SQLite) ◄──► BudgetWebServer (:8110) + SSE (/api/stream) + Stdio MCP (`agent-budget mcp`)
 ```
 
 ---
 
-## 📡 REST API & Integration
+## Quickstart & ZothOS CLI / MCP Commands
+
+```bash
+# Start Web Cockpit (:8110) and Inline Breaker Proxy (:8111)
+agent-budget serve --host 127.0.0.1 --web-port 8110 --proxy-port 8111 --budget 5.00 --velocity-limit 2.00
+
+# Live telemetry & TUI monitor
+agent-budget --status
+agent-budget --json
+agent-budget-sentinel-tui --status
+
+# Update hard ceiling, emergency trip, and reset
+agent-budget set-budget 10.00
+agent-budget trip --reason "Halting runaway subagent"
+agent-budget reset
+
+# Wrap any agent process with OPENAI_BASE_URL / ANTHROPIC_BASE_URL + ceiling
+agent-budget run --max-budget 2.50 -- python3 my_agent.py
+
+# Launch zero-dependency stdio JSON-RPC 2.0 MCP Server
+agent-budget mcp --host 127.0.0.1 --port 8110
+```
+
+### Exposed MCP Tools (`agent-budget mcp`)
+- `budget_circuit_breaker_status`: Inspect live spend/state (`CLOSED | WARN | TRIPPED`) or run `trip` / `reset` / `set-budget`.
+- `budget_set_ceiling`: Update hard USD cap and optional velocity cap.
+- `budget_trip`: Engage immediate HTTP 429 kill switch.
+- `budget_reset`: Restore `CLOSED` state (optionally clearing ledger).
+- `budget_estimate_cost`: Local BPE token & USD cost estimator (zero egress).
+
+---
+
+## REST API Reference (`127.0.0.1:8110`)
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/health` | Health check & circuit breaker status |
-| `GET` | `/api/stats` | Comprehensive spending telemetry, token counts, and breaker state |
-| `GET` | `/api/transactions` | Intercepted API calls ledger |
-| `GET` | `/api/stream` | Server-Sent Events (SSE) live push stream |
-| `POST` | `/api/budget` | Dynamically update budget ceiling (`{"max_budget_usd": 10.0}`) |
-| `POST` | `/api/trip` | Emergency operator kill switch (`{"reason": "Manual trip"}`) |
-| `POST` | `/api/reset` | Reset circuit breaker to `CLOSED` (`{"reset_spend": false}`) |
-| `POST` | `/api/simulate` | Test token estimation and breaker response safely |
+| `GET` | `/` | Dual-theme Web Cockpit (supports `?theme=light|dark` and `?embed=1`) |
+| `GET` | `/health`, `/api/health` | Service health, `version` (`2.6.0`), ports, and `breaker_state` |
+| `GET` | `/api/stats` | Hydrated spend, ceiling, velocity, tokens, model breakdown, and 24h histogram |
+| `GET` | `/api/transactions?limit=50` | Recent transactions (`limit` validated `1..500`, `400` on invalid input) |
+| `GET` | `/api/pricing` | Cloud & `$0.00` local sovereign model pricing directory |
+| `GET` | `/api/stream`, `/api/events` | Real-time Server-Sent Events (SSE) telemetry stream |
+| `POST` | `/api/budget` | Update & persist `max_budget_usd` (`> 0` finite) / `velocity_limit` (`>= 0`) |
+| `POST` | `/api/trip` | Engage emergency circuit breaker (`{"reason": "..."}`) |
+| `POST` | `/api/reset` | Reset breaker to `CLOSED` (`{"reset_spend": false}`) |
+| `POST` | `/api/simulate`, `/api/simulate_runaway` | Simulate single call or burst loop without external API spend |
 
 ---
 
-## 🧪 Automated Test Suite
+## Testing & Verification
 
 ```bash
-python3 -m pytest -v
+PYTHONPATH=src python3 -m pytest -q tests
+agent-budget --help
+agent-budget --json
 ```
-
-All tests execute with 100% standard library compliance and sub-second execution.
 
 ---
 
-## 📜 License & Sovereign Attribution
+## Support & License
 
-Engineered by **NullAI** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech).  
-Licensed under the MIT License.
+100% free and open-access under the MIT License (zero paywalls).
 
-## Network exposure
-
-The server binds to `127.0.0.1` by default. To reach it from other devices,
-opt in explicitly with `--host 0.0.0.0` (or set `ZOTH_BIND_HOST=0.0.0.0`; an IP
-in `HOST` is also honoured, a plain hostname is ignored) and only on a trusted
-network.
-
-Browser requests are only accepted from `localhost` / `127.0.0.1` pages:
-cross-site POSTs get `403` and CORS never answers `*`, so a website you visit
-can't drive this local server. CLI and agent clients are unaffected.
+- Optional support (Stripe): [Buy Us a Coffee](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- Optional support (Solana): `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
+- Engineered by **Neal Frazier Tech** (`@1nc0gn30`) • **NullAI Platform** ([https://nullai.tech](https://nullai.tech))
