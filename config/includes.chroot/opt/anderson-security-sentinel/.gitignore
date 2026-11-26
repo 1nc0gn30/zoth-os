@@ -1,0 +1,75 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Caches, Logs, PIDs & Temp
+.cache/
+.pytest_cache/
+*.log
+*.pid
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Environment Variables & Secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+*secrets*
+*token*
+*.credential*
+
+# Sensitive Configuration, Baselines & Caches
+config.json
+settings.json
+*.local.json
+usb_baseline.json
+ble_devices.json
+network_cache.json
+wifi_cache.json
+rf_telemetry.json
+
+# Private Biometrics & Forensics (Keep strictly local)
+enrolled_faces.npz
+*.npz
+intruders/
+intruders/*
+!intruders/.gitkeep
+dossiers/
+*.dossier
+*.pdf
+dossier_*.html
+*.pcap
+*.pcapng
+*.dump
+
+# Environments & IDEs
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+node_modules/
+.DS_Store
+Thumbs.db
+
+.venv*/
+*.pth
+*.onnx
+data/minds/spool.jsonl
+release-artifacts/
+build/*.iso*
+build/live_workspace/
+build/release-*/
+*.db
+*.db-wal
+*.db-shm
+shots/
+shots-therm/

@@ -1,0 +1,370 @@
+/* ==========================================================================
+   Anderson Security Sentinel // Wave States & Interactive Feedback
+   Tactical Terminal HUD Seam & Phosphor Pulse
+   Refined :focus-visible, hover, empty and error presentation
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. High-Visibility Keyboard Focus Rings (:focus-visible)
+   Token: WCAG AA compliant 2px seam with 2px offset and phosphor halo
+   -------------------------------------------------------------------------- */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 12px rgba(0, 255, 136, 0.55);
+}
+
+.btn-buy-stripe:focus-visible {
+  outline: 2px solid #7a73ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 14px rgba(122, 115, 255, 0.6);
+}
+
+.btn-buy-solana:focus-visible {
+  outline: 2px solid #b373ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 14px rgba(179, 115, 255, 0.6);
+}
+
+.btn-unlock-link:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  border-style: solid;
+  border-color: #00ff88;
+  box-shadow: 0 0 0 2px #05080a, 0 0 12px rgba(0, 255, 136, 0.5);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 16px rgba(0, 255, 136, 0.7);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid #00e5ff;
+  outline-offset: 2px;
+  border-color: #00e5ff;
+  box-shadow: 0 0 0 2px #05080a, 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+.btn-arm:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 16px rgba(0, 255, 136, 0.65);
+}
+
+.btn-xs:focus-visible {
+  outline: 2px solid #00e5ff;
+  outline-offset: 2px;
+  color: #ffffff;
+  border-color: #00e5ff;
+  box-shadow: 0 0 0 2px #05080a, 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+#license-input:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 1px;
+  border-color: #00ff88;
+  background-color: #090e15;
+  box-shadow: 0 0 0 2px #05080a, 0 0 14px rgba(0, 255, 136, 0.4);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid #ff1744;
+  outline-offset: 2px;
+  color: #ff1744;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px #05080a, 0 0 12px rgba(255, 23, 68, 0.5);
+}
+
+.footer-attribution a:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Tactile Hover Feedback & Mechanical Response
+   Token: Duration 140ms, Easing cubic-bezier(0.16, 1, 0.3, 1)
+   -------------------------------------------------------------------------- */
+
+.btn-buy-stripe,
+.btn-buy-solana,
+.btn-unlock-link,
+.btn-primary,
+.btn-secondary,
+.btn-arm,
+.btn-xs,
+.btn-scan,
+.modal-close,
+.footer-attribution a,
+.glass-card {
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-buy-stripe:hover {
+  background-color: #5147e5;
+  border-color: #928bf9;
+  box-shadow: 0 4px 14px rgba(99, 91, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-buy-stripe:active {
+  transform: translateY(0);
+}
+
+.btn-buy-solana:hover {
+  background-color: #8222fa;
+  border-color: #c48eff;
+  box-shadow: 0 4px 14px rgba(153, 69, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-buy-solana:active {
+  transform: translateY(0);
+}
+
+.btn-unlock-link:hover {
+  background-color: rgba(0, 255, 136, 0.1);
+  border-color: #00ff88;
+  color: #38ef9f;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-unlock-link:active {
+  transform: translateY(0);
+}
+
+.btn-primary:hover {
+  background-color: #1aff96;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.65);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-arm:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.btn-arm:active {
+  transform: translateY(0);
+}
+
+.btn-xs:hover {
+  color: #e2e8f0;
+  border-color: rgba(0, 229, 255, 0.45);
+  background-color: rgba(15, 23, 42, 0.9);
+  transform: translateY(-1px);
+}
+
+.btn-xs:active {
+  transform: translateY(0);
+}
+
+.btn-scan:hover {
+  background-color: rgba(0, 255, 136, 0.25);
+  border-color: #00ff88;
+  box-shadow: 0 0 14px rgba(0, 255, 136, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-scan:active {
+  transform: translateY(0);
+}
+
+#btnToggleOpsec:hover {
+  border-color: rgba(0, 255, 136, 0.6);
+  color: #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.25);
+}
+
+#btnHeaderUnlock:hover {
+  background-color: rgba(0, 255, 136, 0.25) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.45);
+  transform: translateY(-1px);
+}
+
+.optics-mode-buttons button:hover,
+.view-mode-buttons button:hover,
+.inspector-tabs button:hover {
+  color: #ffffff;
+  background-color: rgba(0, 229, 255, 0.15);
+}
+
+.modal-close:hover {
+  color: #ff1744;
+  transform: scale(1.1);
+}
+
+.modal-close:active {
+  transform: scale(0.95);
+}
+
+.footer-attribution a:hover {
+  color: #38ef9f;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 255, 136, 0.32);
+}
+
+/* --------------------------------------------------------------------------
+   3. Empty State Presentation
+   Tactical terminal placeholders for empty containers and data slots
+   -------------------------------------------------------------------------- */
+
+.cameras-list-grid:empty,
+#camerasListGrid:empty {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cameras-list-grid:empty::before,
+#camerasListGrid:empty::before {
+  content: "[ NO SURVEILLANCE ARRAYS DETECTED IN AMBIENT RF ]";
+  display: block;
+  width: 100%;
+  padding: 24px 16px;
+  text-align: center;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: #64748b;
+  border: 1px dashed rgba(100, 116, 139, 0.35);
+  border-radius: 6px;
+  background: rgba(4, 8, 14, 0.4);
+}
+
+#toast:empty {
+  display: none !important;
+}
+
+#enrolledCount:empty::before {
+  content: "0";
+}
+
+#fpsCounter:empty::before {
+  content: "-- FPS";
+}
+
+/* --------------------------------------------------------------------------
+   4. Error, Warning & Alert Presentation
+   High-contrast phosphor states for threats and alert indicators
+   -------------------------------------------------------------------------- */
+
+.metric-pill.defcon.alert {
+  border-color: rgba(255, 23, 68, 0.6);
+  background: rgba(255, 23, 68, 0.12);
+  box-shadow: 0 0 12px rgba(255, 23, 68, 0.35);
+}
+
+.metric-pill.defcon.warn {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+.badge-urgency {
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+}
+
+.badge-camera-tag {
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.25);
+}
+
+.cam-stat-val.text-red {
+  color: #ff2a55;
+  text-shadow: 0 0 8px rgba(255, 23, 68, 0.5);
+}
+
+.cam-stat-val.text-amber {
+  color: #fbbf24;
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.btn-arm.disarmed {
+  background: rgba(255, 23, 68, 0.22);
+  border: 1px solid #ff1744;
+  color: #ff1744;
+  box-shadow: 0 0 14px rgba(255, 23, 68, 0.35);
+}
+
+.btn-arm.disarmed:hover {
+  background: rgba(255, 23, 68, 0.35);
+  box-shadow: 0 0 20px rgba(255, 23, 68, 0.55);
+}
+
+.header-tag .dot.alert {
+  background: #ff1744;
+  box-shadow: 0 0 10px #ff1744;
+}
+
+/* --------------------------------------------------------------------------
+   5. Accessibility & Motion Safety Overrides
+   Immediate state switches with zero transition or translation overhead
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a,
+  input,
+  .btn-buy-stripe,
+  .btn-buy-solana,
+  .btn-unlock-link,
+  .btn-primary,
+  .btn-secondary,
+  .btn-arm,
+  .btn-xs,
+  .btn-scan,
+  .modal-close,
+  .glass-card,
+  .status-pulse,
+  .badge-camera-tag .cam-dot,
+  .header-tag .dot.live,
+  .toast {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .btn-buy-stripe:hover,
+  .btn-buy-solana:hover,
+  .btn-unlock-link:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-arm:hover,
+  .btn-xs:hover,
+  .btn-scan:hover,
+  .modal-close:hover,
+  #btnHeaderUnlock:hover {
+    transform: none !important;
+  }
+}

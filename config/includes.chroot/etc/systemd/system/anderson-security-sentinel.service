@@ -1,0 +1,25 @@
+[Unit]
+Description=Anderson Security Sentinel — Biometric & RF Perimeter Defense Daemon (:8103)
+After=network.target graphical.target sound.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/anderson-security-sentinel
+ExecStart=/opt/zothos-ai-env/bin/python3 /opt/anderson-security-sentinel/server.py --host 127.0.0.1 --port 8103
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=10
+Environment=PATH=/opt/zothos-ai-env/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+
+# Hardening & Resource Ceilings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/tmp /var/tmp /home
+MemoryMax=768M
+CPUQuota=150%
+
+[Install]
+WantedBy=multi-user.target

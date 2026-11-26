@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Anderson Security Sentinel // Wave Surface Enhancements
+   Refined type hierarchy, high-visibility focus states & choreographed entry
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Typography & Metric Hierarchy
+   -------------------------------------------------------------------------- */
+
+.brand-text h1 {
+  letter-spacing: 0.1em;
+  font-feature-settings: 'tnum' 1;
+}
+
+.brand-text .subtitle {
+  color: #7d8f9f;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+.card-header .header-tag {
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+/* Eyebrows, telemetry labels & metadata */
+.metric-pill .label,
+.rf-metric .rf-label,
+.cam-stat .cam-stat-label,
+.waveform-header .waveform-label,
+.arm-switch-container .switch-label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* High-contrast telemetry figures & dynamic values */
+.metric-pill .value,
+.rf-metric .rf-val,
+.cam-stat .cam-stat-val,
+.waveform-header .waveform-metric {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.badge-status {
+  letter-spacing: 0.12em;
+}
+
+/* --------------------------------------------------------------------------
+   2. High-Visibility Interactive Focus States (WCAG AA Compliant)
+   -------------------------------------------------------------------------- */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.45);
+}
+
+.btn-buy-stripe:focus-visible {
+  outline: 2px solid #7a73ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 10px rgba(99, 91, 255, 0.55);
+}
+
+.btn-buy-solana:focus-visible {
+  outline: 2px solid #b373ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 10px rgba(153, 69, 255, 0.55);
+}
+
+#license-input:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 1px;
+  border-color: #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+  color: #00ff88;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Choreographed Result & Inspection Panel Reveal Motion
+   Tokens: Duration 260ms, Easing cubic-bezier(0.16, 1, 0.3, 1) [EASE_OUT_EXPO]
+   -------------------------------------------------------------------------- */
+
+@keyframes waveResultReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inspector-panel {
+  animation: waveResultReveal 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast {
+  animation: waveResultReveal 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --------------------------------------------------------------------------
+   4. Motion Safety & Accessibility Overrides
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .inspector-panel,
+  .toast,
+  button,
+  a,
+  input {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

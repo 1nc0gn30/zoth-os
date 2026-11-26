@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anderson Security Sentinel v2.6.0 // Biometric &amp; RF Perimeter Defense</title>
+  <meta name="description" content="Autonomous biometric workstation perimeter defense daemon with OpenCV YuNet/SFace facial recognition, 802.11 Wi-Fi VRTI RF tomography, USB/BLE tripwire guard, and thermal FLIR optics.">
+  <link rel="canonical" href="https://anderson-security-sentinel.netlify.app/">
+
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:title" content="Anderson Security Sentinel v2.6.0 // Biometric &amp; RF Perimeter Defense">
+  <meta property="og:description" content="Biometric facial perimeter, Wi-Fi VRTI RF tomography, USB/BLE tripwire, SHA-256 dossiers, and 4-tool stdio MCP.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://anderson-security-sentinel.netlify.app/">
+  <meta property="og:image" content="https://anderson-security-sentinel.netlify.app/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Anderson Security Sentinel v2.6.0">
+  <meta name="twitter:description" content="Biometric facial perimeter, Wi-Fi VRTI RF tomography, USB/BLE tripwire, and SHA-256 dossiers.">
+  <meta name="twitter:image" content="https://anderson-security-sentinel.netlify.app/assets/banner.png">
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get('theme');
+      var sysLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var theme = (qTheme === 'light' || qTheme === 'dark') ? qTheme : (sysLight ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Zero-Egress Relative Styling (works both at Netlify root / and daemon /public/index.html) -->
+  <link rel="stylesheet" href="./wave.css">
+  <link rel="stylesheet" href="./wave-states.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/icon.png">
+
+  <!-- AEO & SEO Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Anderson Security Sentinel",
+        "softwareVersion": "2.6.0",
+        "url": "https://anderson-security-sentinel.netlify.app/",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Linux, macOS, Windows & ZothOS Bare Metal",
+        "description": "Local loopback biometric workstation perimeter defense daemon with YuNet/SFace facial recognition, Wi-Fi VRTI RF tomography, USB/BLE tripwire guard, and thermal FLIR optics.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech",
+            "url": "https://nullai.tech"
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "1nc0gn30",
+          "url": "https://nealfrazier.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Anderson Security Sentinel protect a workstation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Anderson Security Sentinel combines local OpenCV YuNet/SFace biometric facial recognition, 802.11 Wi-Fi VRTI RF tomography, sysfs USB BadUSB tripwire monitoring, BlueZ BLE proximity tracking, and SHA-256 chain-of-custody forensic dossiers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Anderson Security Sentinel send webcam or network data to the cloud?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zero cloud egress. All biometric calculations, video processing, and RF radar renders execute strictly locally on your machine."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Anderson Security Sentinel free and open-access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Anderson Security Sentinel is 100% free and open-access with zero paywalls. Optional tips are accepted via Buy Us a Coffee (Stripe) or Solana."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    html[data-theme="light"] .header-tag,
+    html[data-theme="light"] .card-header .header-tag {
+      color: #181613 !important;
+    }
+    .output-dossier-card {
+      position: relative;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card, #0e1118);
+      border: 1px solid var(--matrix-green, #00ff88);
+      color: var(--matrix-green, #00ff88);
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      z-index: 10000;
+      display: none;
+      max-width: 420px;
+    }
+    .footer-attribution {
+      border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+      padding: 1.5rem 1rem 2rem;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted, #94a3b8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-attribution a {
+      color: var(--accent-gold, #D4AF37);
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 4px 10px;
+    }
+    .footer-support-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .support-pill-gold {
+      background: var(--accent-gold, #D4AF37);
+      color: var(--accent-gold-ink, #08080B) !important;
+      border-radius: 6px;
+      padding: 8px 14px !important;
+    }
+    .support-pill-sol {
+      background: rgba(4, 120, 87, 0.16);
+      color: var(--matrix-green, #00ff88) !important;
+      border: 1px solid var(--matrix-green, #00ff88);
+      border-radius: 6px;
+      padding: 8px 14px !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="matrix-grid-bg" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="cyber-header">
+    <div class="brand" style="display: flex; align-items: center; gap: 12px;">
+      <img src="./assets/icon.png" alt="Anderson Security Sentinel Shield Icon" width="40" height="40" style="border-radius: 8px;">
+      <div class="status-pulse active" id="headerPulse"></div>
+      <div class="brand-text">
+        <h1>ANDERSON <span>SENTINEL</span></h1>
+        <p class="subtitle">v2.6.0 // BIOMETRIC PERIMETER &amp; RF TOMOGRAPHY PREVIEW</p>
+      </div>
+    </div>
+
+    <div class="header-status-group">
+      <div class="metric-pill">
+        <span class="label">FPS</span>
+        <span class="value" id="fpsCounter">60 FPS</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">ENROLLED</span>
+        <span class="value" id="enrolledCount">0</span>
+      </div>
+      <div class="metric-pill defcon" id="defconPill">
+        <span class="label">DEFCON</span>
+        <span class="value" id="defconVal">5 [CLEAR]</span>
+      </div>
+      <div class="badge-status armed" id="systemStateBadge">ARMED</div>
+      <button type="button" class="btn-theme-toggle" id="btnPublicTheme">☀ LIGHT</button>
+    </div>
+  </header>
+
+  <main class="dashboard-grid" style="grid-template-columns: minmax(0, 1fr); max-width: 1280px; margin: 0 auto;">
+    <section class="feed-section">
+      <div class="glass-card video-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot live"></span> CLIENT-SIDE OPTICS PREVIEW // WEBRTC &amp; SYNTHETIC SHADERS
+          </div>
+          <div class="hud-controls flex-gap">
+            <div class="optics-mode-buttons">
+              <button type="button" class="btn-xs active" id="btnOpticsNormal">OPTICAL</button>
+              <button type="button" class="btn-xs" id="btnOpticsThermal">THERMAL FLIR</button>
+              <button type="button" class="btn-xs" id="btnOpticsPredator">PREDATOR</button>
+            </div>
+            <button type="button" class="btn-xs" id="btnToggleHud">HUD: ON</button>
+          </div>
+        </div>
+
+        <div class="stream-container">
+          <canvas id="videoCanvas" width="640" height="480" aria-label="Anderson Security Sentinel optics preview canvas" style="max-width:100%; height:auto; display:block;"></canvas>
+          <div class="hud-reticle" aria-hidden="true"></div>
+          <div class="hud-corner top-left" aria-hidden="true"></div>
+          <div class="hud-corner top-right" aria-hidden="true"></div>
+          <div class="hud-corner bottom-left" aria-hidden="true"></div>
+          <div class="hud-corner bottom-right" aria-hidden="true"></div>
+          <div class="hud-watermark">NULLAI BIOMETRIC CORE</div>
+        </div>
+
+        <div class="stream-action-bar">
+          <button type="button" class="btn-primary" id="btnEnroll">✦ ENROLL OPERATOR FACE</button>
+          <button type="button" class="btn-secondary" id="btnClearFaces">✕ CLEAR TEMPLATES</button>
+          <div class="arm-switch-container">
+            <span class="switch-label">PERIMETER:</span>
+            <button type="button" class="btn-arm armed" id="btnToggleArm">ARMED</button>
+          </div>
+        </div>
+
+        <div class="waveform-container">
+          <div class="waveform-header">
+            <span class="waveform-label">BIOMETRIC SIGNAL TELEMETRY // LIVENESS RADAR</span>
+            <span class="waveform-metric" id="waveformMetric">SIGNAL: NOMINAL</span>
+          </div>
+          <canvas id="waveformCanvas" width="800" height="36" aria-label="Biometric liveness waveform"></canvas>
+        </div>
+      </div>
+
+      <!-- WiFi X-Ray Spatial Radar -->
+      <div class="glass-card wifi-xray-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot cyan"></span> WIFI X-RAY SPATIAL RADAR // RF TOMOGRAPHY
+            <span class="badge-camera-tag" id="camTagBadge"><span class="cam-dot"></span> <span id="camCountVal">3</span> CAMS DETECTED</span>
+          </div>
+          <div class="hud-controls flex-gap">
+            <div class="view-mode-buttons">
+              <button type="button" class="btn-xs active" id="btnRadarTopDown">RADAR</button>
+              <button type="button" class="btn-xs" id="btnRadarIso">2.5D ISO</button>
+              <button type="button" class="btn-xs" id="btnRadar3D">3D ORBIT</button>
+              <button type="button" class="btn-xs" id="btnRadarBuilding">BUILDING</button>
+              <button type="button" class="btn-xs" id="btnRadarHeatmap">HEATMAP</button>
+            </div>
+            <button type="button" class="btn-xs active" id="btnToggleOpsec">OPSEC: ON</button>
+          </div>
+        </div>
+
+        <div class="radar-canvas-container" style="height: 360px;">
+          <canvas id="wifiRadarCanvas" aria-label="Synthetic RF tomography radar" style="width:100%; height:100%; display:block;"></canvas>
+          <div class="radar-corner top-left" aria-hidden="true"></div>
+          <div class="radar-corner top-right" aria-hidden="true"></div>
+          <div class="radar-corner bottom-left" aria-hidden="true"></div>
+          <div class="radar-corner bottom-right" aria-hidden="true"></div>
+        </div>
+
+        <div class="rf-metrics-bar">
+          <div class="rf-metric"><span class="rf-label">AMBIENT NODES</span><span class="rf-val" id="rfNodeCount">6 BEACONS</span></div>
+          <div class="rf-metric"><span class="rf-label">NEAREST BEACON</span><span class="rf-val truncate" id="rfNearestNode">NullAI-Net-5G (-42 dBm)</span></div>
+          <div class="rf-metric"><span class="rf-label">ESTIMATED ROOM</span><span class="rf-val" id="rfRoomDim">14.2m × 9.8m</span></div>
+          <div class="rf-metric disturbance">
+            <div class="rf-dist-header"><span class="rf-label">RF DISTURBANCE</span><span class="rf-val" id="rfDisturbanceVal">3.8%</span></div>
+            <div class="rf-meter-track"><div class="rf-meter-fill" id="rfDisturbanceBar" style="width: 3.8%;"></div></div>
+          </div>
+        </div>
+
+        <div class="rf-metrics-bar sub">
+          <div class="rf-metric highlight-cyan"><span class="rf-label">THROUGH-WALL TARGET</span><span class="rf-val" id="rfTargetLocator">CLEAR [0 INTRUSIONS]</span></div>
+          <div class="rf-metric highlight-pink"><span class="rf-label">LUNG RESPIRATION (RF)</span><span class="rf-val" id="rfRespirationBpm">15 BPM</span></div>
+          <div class="rf-metric highlight-amber"><span class="rf-label">MICRO-DOPPLER SPEED</span><span class="rf-val" id="rfDopplerSpeed">0.00 m/s [STATIC]</span></div>
+          <div class="rf-metric highlight-violet"><span class="rf-label">TOMOGRAPHY ENGINE</span><span class="rf-val" id="rfTomographyVoxels">VRTI 625 VOXELS</span></div>
+        </div>
+      </div>
+
+      <!-- RF Inspector Deck -->
+      <div class="glass-card rf-inspector-card">
+        <div class="card-header">
+          <div class="header-tag"><span class="dot green"></span> RF SPECTRUM &amp; SURVEILLANCE TELEMETRY DECK</div>
+          <div class="hud-controls flex-gap">
+            <div class="inspector-tabs">
+              <button type="button" class="btn-xs active" id="btnTabCameras">CAMERAS (<span id="camTabCount">3</span>)</button>
+              <button type="button" class="btn-xs" id="btnTabBuilding">BUILDING</button>
+              <button type="button" class="btn-xs" id="btnTabRfFacts">RF FACTS</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="inspector-panel active" id="panelCameras">
+          <div class="cameras-summary-bar">
+            <div class="cam-stat"><span class="cam-stat-label">CAMERAS IN AMBIENT RF</span><span class="cam-stat-val text-red" id="camSummaryCount">3 DETECTED</span></div>
+            <div class="cam-stat"><span class="cam-stat-label">NEAREST OPTICAL SENSOR</span><span class="cam-stat-val text-amber" id="camNearestVal">Wyze-Cam-V3 (6.2m)</span></div>
+            <div class="cam-stat"><span class="cam-stat-label">SURVEILLANCE THREAT LEVEL</span><span class="cam-stat-val" id="camThreatLevel">MODERATE [ISOLATED]</span></div>
+          </div>
+          <div class="cameras-list-grid" id="camerasListGrid"></div>
+        </div>
+
+        <div class="inspector-panel" id="panelBuilding" style="display: none;">
+          <div class="building-hero-grid">
+            <div class="bldg-stat-card"><span class="bldg-label">ESTIMATED FOOTPRINT</span><span class="bldg-val cyan" id="bldgFootprintArea">139.1 m² (1,497 SQ FT)</span><small class="bldg-sub">Dual-band microwave convex hull</small></div>
+            <div class="bldg-stat-card"><span class="bldg-label">EXTERIOR DIMENSIONS</span><span class="bldg-val green" id="bldgDimensions">14.2m × 9.8m</span><small class="bldg-sub">Outer perimeter envelope</small></div>
+            <div class="bldg-stat-card"><span class="bldg-label">INTERIOR PARTITION WALLS</span><span class="bldg-val amber" id="bldgWallCount">3 DEMISING WALLS</span><small class="bldg-sub">Differential RF attenuation</small></div>
+            <div class="bldg-stat-card"><span class="bldg-label">STRUCTURAL CONFIDENCE</span><span class="bldg-val violet" id="bldgConfidence">96.4%</span><small class="bldg-sub">Multi-node spatial triangulation</small></div>
+          </div>
+        </div>
+
+        <div class="inspector-panel" id="panelRfFacts" style="display: none; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.65; color: var(--text-secondary);">
+          <p>• <strong>Through-Wall Micro-Doppler Tomography:</strong> 2.4 GHz and 5 GHz differential RSSI attenuation maps room geometry and detects moving RF shadow anomalies.</p>
+          <p>• <strong>Local Loopback Daemon (:8103):</strong> Run <code>python3 server.py --host 127.0.0.1 --port 8103</code> for live YuNet/SFace biometrics, Linux sysfs USB tripwire, BlueZ BLE proximity, and 4-tool stdio MCP.</p>
+          <p>• <strong>Zero Cloud Guarantee:</strong> Zero outbound fonts, zero cloud telemetry, and strict loopback Host/Origin protection.</p>
+        </div>
+      </div>
+
+      <!-- Forensic Incident Audit Dossier -->
+      <div class="glass-card output-dossier-card">
+        <div class="card-header">
+          <div class="header-tag"><span class="dot violet"></span> FORENSIC INCIDENT AUDIT DOSSIER // SHA-256 EXPORT</div>
+          <button type="button" class="btn-xs btn-scan" id="btnExportReport">EXPORT DOSSIER (.JSON)</button>
+        </div>
+
+        <div id="exportPreview" style="padding: 1rem; font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.7; color: var(--text-secondary);">
+          <div style="color: var(--matrix-green); font-weight: 800; margin-bottom: 0.4rem;">[ANDERSON-SENTINEL-v2.6.0-FORENSIC-EXPORT]</div>
+          <div>OPERATOR: NEAL FRAZIER TECH (@1nc0gn30)</div>
+          <div>DEFCON LEVEL: 5 [CLEAR] · PERIMETER INTEGRITY: NOMINAL</div>
+          <div>USB SYSFS TRIPWIRE: 0 UNAUTHORIZED BUS INJECTIONS · BLE COUNTER-SURVEILLANCE: ACTIVE</div>
+          <div>LOCAL DAEMON: python3 server.py --host 127.0.0.1 --port 8103 · MCP: anderson-security-sentinel mcp</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Action completed!</div>
+
+  <!-- Single Canonical Footer Attribution & Support Bar -->
+  <footer class="footer-attribution">
+    <div>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a> • <a href="https://github.com/1nc0gn30/anderson-security-sentinel" target="_blank" rel="noopener noreferrer">GitHub Repo</a></div>
+    <div class="footer-support-bar">
+      <a class="support-pill-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <a class="support-pill-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip: GG2e...dXoK</a>
+    </div>
+  </footer>
+
+  <!-- Zero-Egress Relative Scripts -->
+  <script src="./js/matrix_rain.js"></script>
+  <script src="./js/wifi_radar.js"></script>
+  <script src="./js/standalone_app.js"></script>
+  <script src="./sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var btn = document.getElementById('btnPublicTheme');
+      if (btn) {
+        var sync = function () {
+          var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+          btn.textContent = cur === 'light' ? '☾ DARK' : '☀ LIGHT';
+        };
+        sync();
+        btn.addEventListener('click', function () {
+          var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', cur === 'light' ? 'dark' : 'light');
+          sync();
+        });
+      }
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: 'anderson-security-sentinel',
+          toolName: 'Anderson Security Sentinel v2.6.0',
+          tagline: 'Biometric facial perimeter, 802.11 Wi-Fi VRTI RF tomography, USB/BLE tripwire, and SHA-256 forensic dossiers.',
+          accentColor: '#D4AF37',
+          steps: [
+            { icon: '✦', title: 'Biometric Facial Perimeter', desc: 'OpenCV YuNet + SFace verifies authorized operators, alerts on shoulder surfers, and captures forensic snapshots.' },
+            { icon: '◎', title: 'Wi-Fi VRTI RF Tomography', desc: 'Maps ambient 2.4/5 GHz RSSI variance into a 25x25 spatial voxel grid with Kalman target tracking.' },
+            { icon: '❖', title: 'USB/BLE Tripwire & SHA-256 Dossier', desc: 'Monitors sysfs USB peripherals, BlueZ BLE proximity, and exports sealed forensic JSON/HTML dossiers.' }
+          ]
+        });
+      }
+    });
+  </script>
+</body>
+</html>

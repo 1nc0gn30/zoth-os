@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anderson Security Sentinel v2.6.0 // Biometric &amp; RF Perimeter Defense</title>
+  <meta name="description" content="Local loopback biometric workstation perimeter daemon with OpenCV YuNet/SFace facial recognition, 802.11 Wi-Fi VRTI RF tomography, USB/BLE tripwire guard, SHA-256 dossiers, and 4-tool stdio MCP.">
+  <meta property="og:title" content="Anderson Security Sentinel v2.6.0 // Biometric &amp; RF Perimeter Defense">
+  <meta property="og:description" content="Local loopback biometric workstation perimeter daemon with Wi-Fi VRTI RF tomography, USB/BLE tripwire, SHA-256 dossiers, and 4-tool stdio MCP.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://anderson-security-sentinel.netlify.app/">
+  <meta property="og:image" content="https://anderson-security-sentinel.netlify.app/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Anderson Security Sentinel v2.6.0">
+  <meta name="twitter:description" content="Biometric facial perimeter, Wi-Fi VRTI RF tomography, USB/BLE tripwire, and SHA-256 forensic dossiers.">
+  <meta name="twitter:image" content="https://anderson-security-sentinel.netlify.app/assets/banner.png">
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get('theme');
+      var stored = null;
+      try { stored = localStorage.getItem('anderson-theme'); } catch (e) {}
+      var sysLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var theme = (qTheme === 'light' || qTheme === 'dark') ? qTheme : (stored === 'light' || stored === 'dark' ? stored : (sysLight ? 'light' : 'dark'));
+      document.documentElement.setAttribute('data-theme', theme);
+      var embedded = params.get('embed') === '1' || (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+      if (embedded) {
+        document.documentElement.setAttribute('data-embed', '1');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico">
+  <!-- Schema.org JSON-LD AEO/SEO Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Anderson Security Sentinel",
+        "softwareVersion": "2.6.0",
+        "url": "https://anderson-security-sentinel.netlify.app/",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Linux, macOS, Windows & ZothOS Bare Metal",
+        "description": "Local loopback biometric perimeter defense daemon combining OpenCV YuNet/SFace facial recognition, 802.11 Wi-Fi VRTI RF tomography, USB/BLE tripwire protection, and SHA-256 forensic dossiers.",
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "1nc0gn30",
+          "url": "https://nealfrazier.tech",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech",
+            "url": "https://nullai.tech"
+          }
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech",
+            "url": "https://nullai.tech"
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Anderson Security Sentinel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Anderson Security Sentinel is a local loopback (127.0.0.1:8103) biometric and RF workstation perimeter daemon combining YuNet/SFace facial recognition, 802.11 Wi-Fi VRTI tomography, sysfs USB tripwire monitoring, BlueZ BLE proximity radar, SHA-256 forensic dossiers, and a 4-tool stdio MCP server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Anderson Security Sentinel free and private?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Anderson Security Sentinel is 100% free and open-access with zero paywalls and zero cloud egress. Optional support is accepted via Buy Us a Coffee (Stripe) or Solana tip."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="matrix-grid-bg" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- Sovereign Top Utility Ribbon (hidden inside Studio iframe / ?embed=1) -->
+  <div class="sovereign-support-bar" id="sovereignTopBar">
+    <span class="ribbon-status">✦ 100% FREE &amp; OPEN ACCESS · ZERO-EGRESS LOCAL DAEMON :8103</span>
+    <a class="btn-ribbon-link" href="/docs">Offline OpenAPI /docs</a>
+    <a class="btn-ribbon-link accent studio-external-link" href="http://127.0.0.1:3000/tools/anderson-security-sentinel">Open Zoth Studio Deck ↗</a>
+  </div>
+
+  <!-- Header -->
+  <header class="cyber-header">
+    <div class="brand">
+      <div class="status-pulse active" id="headerPulse"></div>
+      <div class="brand-text">
+        <h1>ANDERSON <span>SENTINEL</span></h1>
+        <p class="subtitle">v2.6.0 // BIOMETRIC &amp; RF PERIMETER DEFENSE (:8103)</p>
+      </div>
+    </div>
+
+    <div class="header-status-group">
+      <div class="metric-pill">
+        <span class="label">FPS</span>
+        <span class="value" id="fpsCounter">--</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">ENROLLED</span>
+        <span class="value" id="enrolledCount">0</span>
+      </div>
+      <div class="metric-pill defcon" id="defconPill">
+        <span class="label">DEFCON</span>
+        <span class="value" id="defconVal">5 [CLEAR]</span>
+      </div>
+      <div class="badge-status armed" id="systemStateBadge">ARMED</div>
+      <button type="button" class="btn-theme-toggle" id="btnThemeToggle" aria-label="Toggle Light and Dark Theme">☀ LIGHT</button>
+    </div>
+  </header>
+
+  <!-- Intruder Alert Flasher Banner (hidden by default) -->
+  <div class="alert-banner" id="intruderAlertBanner" role="alert">
+    <div class="alert-icon" aria-hidden="true">⚠</div>
+    <div class="alert-text">
+      <strong>SECURITY BREACH DETECTED:</strong> UNAUTHORIZED TARGET SPOTTED AT CONSOLE. DISPATCHING VOCAL WARNING...
+    </div>
+  </div>
+
+  <main class="dashboard-grid">
+    <!-- Left Column: Live Video Stream, RF Radar & Hardware -->
+    <section class="feed-section">
+      <div class="glass-card video-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot live"></span> LIVE CAMERA OPTICS // LOOPBACK STREAM
+          </div>
+          <div class="hud-controls flex-gap">
+            <div class="optics-mode-buttons">
+              <button type="button" class="btn-xs active" id="btnOpticsNormal">OPTICAL</button>
+              <button type="button" class="btn-xs" id="btnOpticsThermal">THERMAL FLIR</button>
+              <button type="button" class="btn-xs" id="btnOpticsPredator">PREDATOR</button>
+            </div>
+            <button type="button" class="btn-xs" id="btnToggleHud">HUD: ON</button>
+          </div>
+        </div>
+
+        <div class="stream-container">
+          <img src="/video_feed" id="videoFeed" alt="Anderson Security Sentinel live optical and biometric perimeter feed">
+          <div class="hud-reticle" aria-hidden="true"></div>
+          <div class="hud-corner top-left" aria-hidden="true"></div>
+          <div class="hud-corner top-right" aria-hidden="true"></div>
+          <div class="hud-corner bottom-left" aria-hidden="true"></div>
+          <div class="hud-corner bottom-right" aria-hidden="true"></div>
+          <div class="hud-watermark">NULLAI BIOMETRIC CORE</div>
+        </div>
+
+        <!-- Stream Action Bar -->
+        <div class="stream-action-bar">
+          <button type="button" class="btn-primary" id="btnEnroll">
+            <span class="icon" aria-hidden="true">✦</span> ENROLL OPERATOR FACE
+          </button>
+          <button type="button" class="btn-secondary" id="btnClearFaces">
+            <span class="icon" aria-hidden="true">✕</span> CLEAR TEMPLATES
+          </button>
+          <div class="arm-switch-container">
+            <span class="switch-label">PERIMETER:</span>
+            <button type="button" class="btn-arm armed" id="btnToggleArm">ARMED</button>
+          </div>
+        </div>
+
+        <!-- Biometric Signal Waveform Bar -->
+        <div class="waveform-container">
+          <div class="waveform-header">
+            <span class="waveform-label">BIOMETRIC SIGNAL TELEMETRY // LIVENESS RADAR</span>
+            <span class="waveform-metric" id="waveformMetric">SIGNAL: NOMINAL</span>
+          </div>
+          <canvas id="waveformCanvas" width="800" height="36" aria-label="Biometric liveness waveform canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- WiFi X-Ray Spatial Radar & RF Tomography Card -->
+      <div class="glass-card wifi-xray-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot cyan"></span> WIFI X-RAY SPATIAL RADAR // RF TOMOGRAPHY
+            <span class="badge-camera-tag" id="camTagBadge"><span class="cam-dot"></span> <span id="camCountVal">0</span> CAMS DETECTED</span>
+          </div>
+          <div class="hud-controls flex-gap">
+            <div class="view-mode-buttons">
+              <button type="button" class="btn-xs active" id="btnRadarTopDown">RADAR</button>
+              <button type="button" class="btn-xs" id="btnRadarIso">2.5D ISO</button>
+              <button type="button" class="btn-xs" id="btnRadar3D">3D ORBIT</button>
+              <button type="button" class="btn-xs" id="btnRadarBuilding">BUILDING</button>
+              <button type="button" class="btn-xs" id="btnRadarHeatmap">HEATMAP</button>
+            </div>
+            <div class="band-filter-buttons">
+              <button type="button" class="btn-xs active" id="btnFilterAll">ALL</button>
+              <button type="button" class="btn-xs" id="btnFilter24">2.4G</button>
+              <button type="button" class="btn-xs" id="btnFilter5">5G</button>
+            </div>
+            <button type="button" class="btn-xs active" id="btnToggleOpsec" title="OPSEC Privacy Mode: Masks SSIDs and MACs from public view">OPSEC: ON</button>
+            <button type="button" class="btn-xs btn-scan" id="btnForceScan">SCAN NOW</button>
+          </div>
+        </div>
+
+        <!-- Real-time Through-Wall Disturbance Alert Banner -->
+        <div class="rf-disturbance-banner" id="rfDisturbanceAlert">
+          <div class="rf-alert-icon" aria-hidden="true">⚡</div>
+          <div class="rf-alert-text">THROUGH-WALL MOTION DETECTED IN ADJACENT SPACE</div>
+        </div>
+
+        <!-- Radar Canvas Wrapper -->
+        <div class="radar-canvas-container">
+          <canvas id="wifiRadarCanvas" aria-label="Wi-Fi X-Ray RF spatial tomography radar"></canvas>
+          <div class="radar-corner top-left" aria-hidden="true"></div>
+          <div class="radar-corner top-right" aria-hidden="true"></div>
+          <div class="radar-corner bottom-left" aria-hidden="true"></div>
+          <div class="radar-corner bottom-right" aria-hidden="true"></div>
+        </div>
+
+        <!-- RF Metrics Bar: Tier 1 -->
+        <div class="rf-metrics-bar">
+          <div class="rf-metric">
+            <span class="rf-label">AMBIENT NODES</span>
+            <span class="rf-val" id="rfNodeCount">-- BEACONS</span>
+          </div>
+          <div class="rf-metric">
+            <span class="rf-label">NEAREST BEACON</span>
+            <span class="rf-val truncate" id="rfNearestNode">SCANNING...</span>
+          </div>
+          <div class="rf-metric">
+            <span class="rf-label">ESTIMATED ROOM</span>
+            <span class="rf-val" id="rfRoomDim">-- × --</span>
+          </div>
+          <div class="rf-metric disturbance">
+            <div class="rf-dist-header">
+              <span class="rf-label">RF DISTURBANCE</span>
+              <span class="rf-val" id="rfDisturbanceVal">0.0%</span>
+            </div>
+            <div class="rf-meter-track">
+              <div class="rf-meter-fill" id="rfDisturbanceBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RF Metrics Bar: Tier 2 -->
+        <div class="rf-metrics-bar sub">
+          <div class="rf-metric highlight-cyan">
+            <span class="rf-label">THROUGH-WALL TARGET</span>
+            <span class="rf-val" id="rfTargetLocator">CLEAR [0 DETECTIONS]</span>
+          </div>
+          <div class="rf-metric highlight-pink">
+            <span class="rf-label">LUNG RESPIRATION (RF)</span>
+            <span class="rf-val" id="rfRespirationBpm">CALIBRATING...</span>
+          </div>
+          <div class="rf-metric highlight-amber">
+            <span class="rf-label">MICRO-DOPPLER SPEED</span>
+            <span class="rf-val" id="rfDopplerSpeed">0.00 m/s [STATIC]</span>
+          </div>
+          <div class="rf-metric highlight-violet">
+            <span class="rf-label">TOMOGRAPHY ENGINE</span>
+            <span class="rf-val" id="rfTomographyVoxels">VRTI 625 VOXELS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real RF Facts & Surveillance Spectrum Inspector Deck -->
+      <div class="glass-card rf-inspector-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot green"></span> RF SPECTRUM &amp; SURVEILLANCE TELEMETRY DECK
+          </div>
+          <div class="hud-controls flex-gap">
+            <div class="inspector-tabs">
+              <button type="button" class="btn-xs active" id="btnTabCameras">CAMERAS (<span id="camTabCount">0</span>)</button>
+              <button type="button" class="btn-xs" id="btnTabBuilding">BUILDING</button>
+              <button type="button" class="btn-xs" id="btnTabRfFacts">RF FACTS</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 1: Surveillance Cameras -->
+        <div class="inspector-panel active" id="panelCameras">
+          <div class="cameras-summary-bar">
+            <div class="cam-stat">
+              <span class="cam-stat-label">CAMERAS IN AMBIENT RF</span>
+              <span class="cam-stat-val text-red" id="camSummaryCount">0 DETECTED</span>
+            </div>
+            <div class="cam-stat">
+              <span class="cam-stat-label">NEAREST OPTICAL SENSOR</span>
+              <span class="cam-stat-val text-amber" id="camNearestVal">NONE</span>
+            </div>
+            <div class="cam-stat">
+              <span class="cam-stat-label">SURVEILLANCE THREAT LEVEL</span>
+              <span class="cam-stat-val" id="camThreatLevel">LOW [CLEAR]</span>
+            </div>
+          </div>
+          <div class="cameras-list-grid" id="camerasListGrid">
+            <div class="empty-state">No surveillance cameras or optical devices detected in ambient RF spectrum.</div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Building Architecture -->
+        <div class="inspector-panel" id="panelBuilding" style="display: none;">
+          <div class="building-hero-grid">
+            <div class="bldg-stat-card">
+              <span class="bldg-label">ESTIMATED FOOTPRINT</span>
+              <span class="bldg-val cyan" id="bldgFootprintArea">-- m² (-- SQ FT)</span>
+              <small class="bldg-sub">Dual-band differential microwave convex hull</small>
+            </div>
+            <div class="bldg-stat-card">
+              <span class="bldg-label">EXTERIOR DIMENSIONS</span>
+              <span class="bldg-val green" id="bldgDimensions">--m × --m</span>
+              <small class="bldg-sub">Calculated outer perimeter envelope</small>
+            </div>
+            <div class="bldg-stat-card">
+              <span class="bldg-label">INTERIOR PARTITION WALLS</span>
+              <span class="bldg-val amber" id="bldgWallCount">-- DEMISING WALLS</span>
+              <small class="bldg-sub">Excess 2.4/5GHz differential attenuation</small>
+            </div>
+            <div class="bldg-stat-card">
+              <span class="bldg-label">STRUCTURAL CONFIDENCE</span>
+              <span class="bldg-val violet" id="bldgConfidence">--%</span>
+              <small class="bldg-sub">Based on multi-node spatial triangulation</small>
+            </div>
+          </div>
+          <div class="bldg-details-bar">
+            <div class="bldg-physics-note">
+              <strong>MICROWAVE ATTENUATION PHYSICS:</strong>
+              <span>Excess Wall Loss = (RSSI<sub>2.4GHz</sub> - RSSI<sub>5GHz</sub>) - 7.6 dB. Drywall partitions estimated at ~3.2 dB per wall, reinforced concrete at ~8.5 dB.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Real RF Facts & Spectrum Table -->
+        <div class="inspector-panel" id="panelRfFacts" style="display: none;">
+          <div class="rf-facts-filter-bar">
+            <input type="text" class="cyber-input rf-search" id="rfFactsSearch" aria-label="Filter RF spectrum table" placeholder="Filter by SSID, Hardware Vendor, or BSSID...">
+            <span class="rf-table-count" id="rfTableCount">0 NODES</span>
+          </div>
+          <div class="rf-facts-table-wrap">
+            <table class="rf-facts-table">
+              <thead>
+                <tr>
+                  <th>SSID</th>
+                  <th>VENDOR / HARDWARE</th>
+                  <th>BSSID</th>
+                  <th>SIGNAL (dBm)</th>
+                  <th>SNR</th>
+                  <th>BAND / CH</th>
+                  <th>WALLS</th>
+                  <th>DISTANCE</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="rfFactsTableBody">
+                <tr><td colspan="9" class="text-center">Collecting RF telemetry...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hardware Defense Bar -->
+      <div class="glass-card hw-defense-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot violet"></span> HARDWARE PERIMETER // USB TRIPWIRE &amp; BLE PROXIMITY
+          </div>
+        </div>
+        <div class="hw-defense-grid">
+          <div class="hw-node-card">
+            <div class="hw-node-header">
+              <span class="hw-title">USB HARDWARE TRIPWIRE</span>
+              <button type="button" class="btn-xs" id="btnRecalibrateUsb">RE-BASELINE</button>
+            </div>
+            <div class="hw-val" id="usbGuardVal">SYNCING SYSFS BASELINE...</div>
+            <small class="hw-subtext">Instant lockdown upon unauthorized BadUSB / HID insertion.</small>
+          </div>
+          <div class="hw-node-card">
+            <div class="hw-node-header">
+              <span class="hw-title">BLE OPERATOR BEACON</span>
+              <span class="badge-tag-mini" id="bleStatusBadge">STANDBY</span>
+            </div>
+            <div class="hw-val" id="bleGuardVal">NO TRUSTED BEACON CONFIGURED</div>
+            <small class="hw-subtext">Configure trusted_bluetooth_macs in settings for proximity verification.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Audio Verification Deck -->
+      <div class="glass-card audio-deck">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot"></span> VOCAL RESPONSE VERIFICATION
+          </div>
+        </div>
+        <div class="voice-buttons-grid three-col">
+          <button type="button" class="btn-test-voice welcome" id="btnTestWelcome">
+            <div class="voice-badge">AUTHORIZED GREETING</div>
+            <div class="voice-text">"Welcome back, Mr. Anderson."</div>
+            <span class="btn-subtext">Trigger Welcome Line</span>
+          </button>
+          <button type="button" class="btn-test-voice intruder" id="btnTestIntruder">
+            <div class="voice-badge alert">INTRUDER DETERRENT</div>
+            <div class="voice-text">"Security alert. Unauthorized presence detected. Perimeter logging active."</div>
+            <span class="btn-subtext">Trigger Deterrent Line</span>
+          </button>
+          <button type="button" class="btn-test-voice shoulder" id="btnTestShoulder">
+            <div class="voice-badge warning">SHOULDER SURFER ALERT</div>
+            <div class="voice-text">"Warning. Someone is looking over your shoulder."</div>
+            <span class="btn-subtext">Trigger Shoulder Alert</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Telemetry, Logs & Controls -->
+    <section class="sidebar-section">
+      <!-- Live Console Log -->
+      <div class="glass-card log-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot"></span> SECURITY TELEMETRY FEED
+          </div>
+          <div class="hud-controls flex-gap">
+            <a href="/api/export_dossier_html" target="_blank" rel="noopener noreferrer" class="btn-xs highlight" id="btnLegalDossier">HTML DOSSIER</a>
+            <button type="button" class="btn-xs" id="btnExportAudit">JSON AUDIT</button>
+            <span class="log-count" id="logCount">0 EVENTS</span>
+          </div>
+        </div>
+        <div class="console-box" id="consoleBox"></div>
+      </div>
+
+      <!-- Intruder Gallery -->
+      <div class="glass-card snaps-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot alert"></span> INTRUDER FORENSIC LOG
+          </div>
+          <button type="button" class="btn-xs" id="btnRefreshSnaps">REFRESH</button>
+        </div>
+        <div class="snaps-grid" id="snapsGrid">
+          <div class="empty-state">No breach snapshots recorded. Perimeter secure.</div>
+        </div>
+      </div>
+
+      <!-- Settings / Sensitivity Tuning -->
+      <div class="glass-card tuning-card">
+        <div class="card-header">
+          <div class="header-tag">
+            <span class="dot"></span> RADAR TUNING &amp; THRESHOLDS
+          </div>
+        </div>
+        <div class="tuning-form">
+          <div class="control-row">
+            <label for="similarityThreshold">Cosine Similarity Threshold: <span id="threshVal">0.36</span></label>
+            <input type="range" id="similarityThreshold" min="0.25" max="0.65" step="0.01" value="0.36">
+            <small>Lower = more lenient, Higher = stricter matching.</small>
+          </div>
+
+          <div class="control-row">
+            <label for="welcomeCooldown">Welcome Cooldown: <span id="welcomeCdVal">18s</span></label>
+            <input type="range" id="welcomeCooldown" min="5" max="60" step="1" value="18">
+          </div>
+
+          <div class="control-row">
+            <label for="intruderCooldown">Intruder Warning Cooldown: <span id="intruderCdVal">7s</span></label>
+            <input type="range" id="intruderCooldown" min="3" max="30" step="1" value="7">
+          </div>
+
+          <div class="control-row">
+            <label for="walkAwayLock">Walk-Away Absence Lock: <span id="walkAwayCdVal">Off</span></label>
+            <input type="range" id="walkAwayLock" min="0" max="60" step="5" value="0">
+            <small>Auto-locks terminal when you step away from the laptop.</small>
+          </div>
+
+          <div class="control-row">
+            <label for="ttsEngine">Speech Engine</label>
+            <select id="ttsEngine" class="cyber-select">
+              <option value="edge">Edge Neural TTS (Christopher Neural)</option>
+              <option value="espeak">eSpeak-NG (100% Local Offline)</option>
+            </select>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="shoulderSurferAlert" class="cyber-checkbox" checked>
+              <span>Shoulder-Surfing Detection</span>
+            </label>
+            <small>Alerts if a secondary face looks over your shoulder.</small>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="autoLockdown" class="cyber-checkbox">
+              <span>Auto-Lock Screen on Breach</span>
+            </label>
+            <small>Locks Linux desktop session when an unauthorized face is spotted.</small>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="desktopNotify" class="cyber-checkbox" checked>
+              <span>Native Desktop Notifications (notify-send)</span>
+            </label>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="playSoundEffects" class="cyber-checkbox" checked>
+              <span>Tactical SFX (Chimes, Claxon &amp; Sonar)</span>
+            </label>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="wifiXrayEnabled" class="cyber-checkbox" checked>
+              <span>WiFi X-Ray RF Tomography Daemon</span>
+            </label>
+            <small>Active 802.11 ambient scan &amp; spatial room mapping.</small>
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="rfPresenceAlerts" class="cyber-checkbox" checked>
+              <span>Through-Wall RF Motion Alerts</span>
+            </label>
+            <small>Detects human body displacement via RF variance spikes.</small>
+          </div>
+
+          <div class="control-row">
+            <label for="wifiScanInterval">RF Scan Interval: <span id="wifiScanIntervalVal">3.0s</span></label>
+            <input type="range" id="wifiScanInterval" min="1.5" max="8.0" step="0.5" value="3.0">
+          </div>
+
+          <div class="control-row">
+            <label class="toggle-label-wrap">
+              <input type="checkbox" id="rfAudioPing" class="cyber-checkbox" checked>
+              <span>Subtle Sonar Ping on RF Disturbance</span>
+            </label>
+          </div>
+
+          <div class="control-row">
+            <label for="webhookUrl">HTTPS Webhook Notification URL</label>
+            <input type="url" id="webhookUrl" class="cyber-input" placeholder="https://discord.com/api/webhooks/...">
+            <small>Public HTTPS endpoints only (loopback/RFC1918/metadata blocked).</small>
+          </div>
+
+          <button type="button" class="btn-secondary full-width" id="btnSaveSettings">SAVE CONFIGURATION</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cyber-footer" id="sovereignFooter">
+    <p class="footer-row">
+      <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a> • <a href="https://github.com/1nc0gn30/anderson-security-sentinel" target="_blank" rel="noopener noreferrer">GitHub Repo</a></span>
+    </p>
+    <div class="footer-support-row">
+      <a class="btn-sovereign-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <a class="btn-sovereign-sol" id="btnSolanaTip" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip: GG2e...dXoK</a>
+    </div>
+  </footer>
+
+  <script src="/static/js/matrix_rain.js"></script>
+  <script src="/static/js/wifi_radar.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anderson Sentinel v2.6.0 — Control</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root{
+    --bg:#FAF7F0;
+    --card:#FFFFFF;
+    --ink:#181613;
+    --ink-soft:#475467;
+    --line:#DFD8C8;
+    --line-soft:#F3EFE6;
+    --live:#047857;
+    --live-soft:#ECFDF5;
+    --warn:#B45309;
+    --warn-soft:#FEF3C7;
+    --dead:#64748B;
+    --dead-soft:#F3EFE6;
+    --mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --sans:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#08080B;
+      --card:#0E1118;
+      --ink:#F5F1E6;
+      --ink-soft:#94A3B8;
+      --line:rgba(212,175,55,0.25);
+      --line-soft:#141824;
+      --live:#00FF88;
+      --live-soft:rgba(0,255,136,0.12);
+      --warn:#F59E0B;
+      --warn-soft:rgba(245,158,11,0.14);
+      --dead:#94A3B8;
+      --dead-soft:#141824;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);}
+  body{
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(14px,3vw,34px);
+    min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px;}
+
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;
+         border-bottom:2px solid var(--ink);padding-bottom:12px;}
+  .brand{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .brand h1{margin:0;font-size:clamp(20px,3.4vw,30px);letter-spacing:-.02em;font-weight:700;overflow-wrap:anywhere;}
+  .brand p{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+  .clock{font-family:var(--mono);font-size:12px;color:var(--ink-soft);letter-spacing:.1em;}
+
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;
+        letter-spacing:.16em;text-transform:uppercase;padding:7px 13px;border-radius:999px;border:1px solid var(--line);
+        background:var(--dead-soft);color:var(--dead);white-space:nowrap;}
+  .pill .dot{width:9px;height:9px;border-radius:50%;background:currentColor;flex:0 0 auto;}
+  .pill.on{background:var(--live-soft);color:var(--live);border-color:#bfe6d2;}
+  .pill.busy{background:var(--warn-soft);color:var(--warn);border-color:#f0d7b4;}
+  .pill.busy .dot{animation:blip 1s ease-in-out infinite;}
+  @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:clamp(14px,2.4vw,20px);background:var(--card);}
+  .card h2{margin:0 0 12px;font-size:12px;font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+
+  /* master switch */
+  .master{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;}
+  .master .title{font-size:clamp(17px,2.4vw,21px);font-weight:600;letter-spacing:-.01em;}
+  .master .sub{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-top:5px;overflow-wrap:anywhere;}
+  .switch{position:relative;display:inline-flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+  .switch input{position:absolute;opacity:0;width:1px;height:1px;}
+  .track{width:86px;height:44px;border-radius:999px;background:var(--dead-soft);border:1px solid var(--line);
+         display:flex;align-items:center;padding:3px;transition:background .22s ease,border-color .22s ease;flex:0 0 auto;}
+  .knob{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--line);
+        box-shadow:0 1px 3px rgba(11,15,20,.16);transition:transform .22s cubic-bezier(.4,1.4,.5,1);}
+  .switch input:checked + .track{background:var(--live);border-color:var(--live);}
+  .switch input:checked + .track .knob{transform:translateX(42px);}
+  .switch input:focus-visible + .track{outline:3px solid #9fd7bd;outline-offset:2px;}
+  .switch input:disabled + .track{opacity:.4;cursor:not-allowed;}
+  .switch .label{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.14em;min-width:44px;}
+
+  .buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin-top:16px;}
+  button{font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+         padding:11px 17px;border-radius:9px;border:1px solid var(--ink);background:#fff;color:var(--ink);
+         cursor:pointer;transition:background .14s ease,color .14s ease,opacity .14s ease;}
+  button:hover:not(:disabled){background:var(--ink);color:#fff;}
+  button.primary{border-color:var(--live);color:var(--live);}
+  button.primary:hover:not(:disabled){background:var(--live);color:#fff;}
+  button:disabled{opacity:1;background:#fafbfc;border-color:#dde2e7;color:#6b7580;cursor:not-allowed;}
+  button:focus-visible{outline:3px solid #9fd7bd;outline-offset:2px;}
+
+  .msg{margin-top:14px;font-family:var(--mono);font-size:12.5px;padding:10px 12px;border-radius:9px;
+       border:1px solid var(--line);background:var(--dead-soft);color:var(--ink-soft);overflow-wrap:anywhere;}
+  .msg.ok{background:var(--live-soft);border-color:#bfe6d2;color:#075c3a;}
+  .msg.err{background:var(--warn-soft);border-color:#f0d7b4;color:#8a460c;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .cell{background:var(--card);padding:13px 14px;min-width:0;}
+  .cell .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+  .cell .v{font-family:var(--mono);font-size:19px;font-weight:500;margin-top:5px;overflow-wrap:anywhere;letter-spacing:-.01em;}
+  .cell .v.sm{font-size:14px;}
+  .cell .v.good{color:var(--live);}
+  .cell .v.bad{color:var(--warn);}
+
+  .logs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;}
+  pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--card);color:var(--ink);
+      border:1px solid var(--line-soft);border-radius:9px;padding:12px;max-height:250px;overflow:auto;
+      white-space:pre-wrap;overflow-wrap:anywhere;}
+  pre .empty{color:var(--dead);}
+
+  footer{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);border-top:1px solid var(--line);
+         padding-top:12px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between;overflow-wrap:anywhere;}
+  footer code{font-family:var(--mono);color:var(--ink);}
+
+  @media (max-width:560px){
+    .master{grid-template-columns:1fr;}
+    .track{width:74px;height:40px;}
+    .knob{width:32px;height:32px;}
+    .switch input:checked + .track .knob{transform:translateX(34px);}
+    .cell .v{font-size:17px;}
+    .buttons{grid-template-columns:repeat(2,minmax(0,1fr));}
+    button{font-size:12px;letter-spacing:.05em;padding:12px 10px;}
+  }
+  @media (max-width:420px){
+    .buttons{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <h1>Anderson Sentinel</h1>
+      <p>Activation control</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <span class="clock" id="clock">--:--:--</span>
+      <span class="pill" id="pill"><span class="dot"></span><span id="pillText">Checking</span></span>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="master">
+      <div>
+        <div class="title">Sentinel daemon</div>
+        <div class="sub" id="masterSub">contacting panel…</div>
+      </div>
+      <label class="switch" title="Activate / deactivate the sentinel daemon">
+        <input type="checkbox" id="master" role="switch" aria-label="Activate sentinel daemon">
+        <span class="track"><span class="knob"></span></span>
+        <span class="label" id="masterLabel">OFF</span>
+      </label>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" id="btnActivate">Activate</button>
+      <button id="btnDeactivate">Deactivate</button>
+      <button id="btnRestart">Restart</button>
+      <button id="btnArm" disabled>Arm perimeter</button>
+      <button id="btnDisarm" disabled>Disarm</button>
+      <button id="btnRefresh">Refresh</button>
+    </div>
+
+    <div class="msg" id="msg" role="status" aria-live="polite">Ready.</div>
+  </section>
+
+  <section class="card">
+    <h2>Telemetry</h2>
+    <div class="grid">
+      <div class="cell"><div class="k">Process</div><div class="v" id="tState">—</div></div>
+      <div class="cell"><div class="k">PID</div><div class="v" id="tPid">—</div></div>
+      <div class="cell"><div class="k">CPU</div><div class="v" id="tCpu">—</div></div>
+      <div class="cell"><div class="k">Memory</div><div class="v" id="tMem">—</div></div>
+      <div class="cell"><div class="k">Uptime</div><div class="v" id="tUp">—</div></div>
+      <div class="cell"><div class="k">Port 8103</div><div class="v" id="tPort">—</div></div>
+      <div class="cell"><div class="k">Health</div><div class="v sm" id="tHealth">—</div></div>
+      <div class="cell"><div class="k">Armed</div><div class="v" id="tArmed">—</div></div>
+      <div class="cell"><div class="k">Camera</div><div class="v sm" id="tCam">—</div></div>
+      <div class="cell"><div class="k">Package temp</div><div class="v" id="tTemp">—</div></div>
+      <div class="cell"><div class="k">Load 1m</div><div class="v" id="tLoad">—</div></div>
+      <div class="cell"><div class="k">Fans</div><div class="v sm" id="tFan">—</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Logs</h2>
+    <div class="logs">
+      <div>
+        <h2 style="margin-bottom:8px">Daemon output</h2>
+        <pre id="logDaemon"><span class="empty">no daemon output yet</span></pre>
+      </div>
+      <div>
+        <h2 style="margin-bottom:8px">Control actions</h2>
+        <pre id="logActions"><span class="empty">no actions yet</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>panel <code>control/panel.py</code> · daemon <code>server.py --port 8103</code></span>
+    <span>pid file <code>~/.config/anderson_security/daemon.pid</code></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    clock: $('clock'), pill: $('pill'), pillText: $('pillText'), master: $('master'),
+    masterLabel: $('masterLabel'), masterSub: $('masterSub'), msg: $('msg'),
+    activate: $('btnActivate'), deactivate: $('btnDeactivate'), restart: $('btnRestart'),
+    arm: $('btnArm'), disarm: $('btnDisarm'), refresh: $('btnRefresh'),
+    tState: $('tState'), tPid: $('tPid'), tCpu: $('tCpu'), tMem: $('tMem'), tUp: $('tUp'),
+    tPort: $('tPort'), tHealth: $('tHealth'), tArmed: $('tArmed'), tCam: $('tCam'),
+    tTemp: $('tTemp'), tLoad: $('tLoad'), tFan: $('tFan'),
+    logDaemon: $('logDaemon'), logActions: $('logActions')
+  };
+
+  let busy = false;
+  let lastRunning = null;
+
+  const set = (el, text, cls) => { el.textContent = text; el.className = 'v' + (cls ? ' ' + cls : ''); };
+  const bytes = (n) => n == null ? '—' : (n >= 1073741824 ? (n / 1073741824).toFixed(2) + ' GB' : (n / 1048576).toFixed(1) + ' MB');
+  const duration = (s) => {
+    if (s == null) return '—';
+    if (s < 60) return s + 's';
+    if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+    return Math.floor(s / 3600) + 'h ' + Math.floor((s % 3600) / 60) + 'm';
+  };
+  const tri = (v) => v === true ? 'YES' : v === false ? 'NO' : '—';
+
+  function paint(s) {
+    const d = s.daemon, h = s.host;
+    const running = !!d.running;
+
+    els.pill.className = 'pill' + (busy ? ' busy' : (running ? ' on' : ''));
+    els.pillText.textContent = busy ? 'Working' : (running ? 'Daemon running' : 'Daemon stopped');
+    els.clock.textContent = s.ts || '--:--:--';
+
+    els.master.checked = running;
+    els.master.disabled = busy;
+    els.masterLabel.textContent = running ? 'ON' : 'OFF';
+
+    let sub = running
+      ? 'pid ' + d.pid + ' · listening on :' + d.port
+      : 'not running · :' + d.port + ' closed';
+    if (d.extra_pids && d.extra_pids.length) sub += ' · extra pids ' + d.extra_pids.join(', ');
+    els.masterSub.textContent = sub;
+
+    set(els.tState, running ? 'RUNNING' : 'STOPPED', running ? 'good' : '');
+    set(els.tPid, d.pid == null ? '—' : String(d.pid));
+    set(els.tCpu, d.cpu_pct == null ? '—' : d.cpu_pct.toFixed(1) + '%');
+    set(els.tMem, bytes(d.rss_bytes));
+    set(els.tUp, duration(d.uptime_sec));
+    set(els.tPort, d.port_open ? 'OPEN' : 'CLOSED', d.port_open ? 'good' : (running ? 'bad' : ''));
+    els.tHealth.textContent = d.health_ok ? 'answering' : (d.port_open ? 'no reply' : '—');
+    els.tHealth.className = 'v sm' + (d.health_ok ? ' good' : (d.port_open ? ' bad' : ''));
+    set(els.tArmed, tri(d.armed), d.armed === true ? 'good' : '');
+    els.tCam.textContent = d.camera_active == null ? '—' : (d.camera_active ? 'streaming' : 'idle');
+    els.tCam.className = 'v sm' + (d.camera_active ? ' good' : '');
+    els.tTemp.textContent = h.package_c == null ? '—' : h.package_c.toFixed(0) + '°C';
+    els.tTemp.className = 'v' + (h.package_c == null ? '' : (h.package_c >= 88 ? ' bad' : h.package_c <= 72 ? ' good' : ''));
+    els.tLoad.textContent = (h.load || []).length ? h.load[0].toFixed(2) : '—';
+    els.tFan.textContent = (h.fans_rpm || []).length ? h.fans_rpm.join(' / ') + ' rpm' : '—';
+
+    els.arm.disabled = busy || !running;
+    els.disarm.disabled = busy || !running;
+    els.activate.disabled = busy || running;
+    els.deactivate.disabled = busy || !running;
+    els.restart.disabled = busy || !running;
+    els.refresh.disabled = busy;
+
+    els.logDaemon.textContent = (s.log || []).length ? s.log.join('\n') : 'no daemon output yet';
+    els.logActions.textContent = (s.actions || []).length
+      ? s.actions.map((a) => a.ts.replace('T', ' ') + '  ' + (a.ok ? 'ok  ' : 'fail') + '  ' + a.action + ' — ' + a.message).join('\n')
+      : 'no actions yet';
+
+    if (lastRunning !== null && lastRunning !== running) {
+      say(running ? 'Daemon activated.' : 'Daemon deactivated.', true);
+    }
+    lastRunning = running;
+  }
+
+  function say(text, ok) {
+    els.msg.textContent = text;
+    els.msg.className = 'msg' + (ok === true ? ' ok' : ok === false ? ' err' : '');
+  }
+
+  async function refresh() {
+    try {
+      const res = await fetch('/api/state', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      paint(await res.json());
+    } catch (err) {
+      els.pill.className = 'pill';
+      els.pillText.textContent = 'Panel unreachable';
+      els.master.disabled = true;
+      say('Panel request failed: ' + err.message, false);
+    }
+  }
+
+  async function act(name, label) {
+    if (busy) return;
+    busy = true;
+    say(label + '…');
+    paint(lastSnapshot || { daemon: {}, host: {}, log: [], actions: [] });
+    try {
+      const res = await fetch('/api/' + name, {
+        method: 'POST',
+        headers: { 'X-Sentinel-Action': '1', 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      const body = await res.json();
+      lastSnapshot = body.state || lastSnapshot;
+      busy = false;
+      if (lastSnapshot) paint(lastSnapshot);
+      say(body.message, !!body.ok);
+    } catch (err) {
+      busy = false;
+      say('Panel request failed: ' + err.message, false);
+      refresh();
+    }
+  }
+
+  let lastSnapshot = null;
+  const wrapped = async (name, label) => {
+    const r = await fetch('/api/state', { cache: 'no-store' });
+    if (r.ok) { lastSnapshot = await r.json(); }
+    act(name, label);
+  };
+
+  els.master.addEventListener('change', () => {
+    const want = els.master.checked;
+    els.master.checked = !want; // optimistic; paint() restores truth
+    wrapped(want ? 'activate' : 'deactivate', want ? 'Activating' : 'Deactivating');
+  });
+  els.activate.addEventListener('click', () => wrapped('activate', 'Activating'));
+  els.deactivate.addEventListener('click', () => wrapped('deactivate', 'Deactivating'));
+  els.restart.addEventListener('click', () => wrapped('restart', 'Restarting'));
+  els.arm.addEventListener('click', () => wrapped('arm', 'Arming perimeter'));
+  els.disarm.addEventListener('click', () => wrapped('disarm', 'Disarming'));
+  els.refresh.addEventListener('click', () => { say('Refreshed.'); refresh(); });
+
+  refresh();
+  setInterval(refresh, 2000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "anderson-security-sentinel",
+  "version": "2.6.0",
+  "description": "Autonomous biometric workstation perimeter defense, 802.11 RF tomography, USB/BLE tripwire, and SHA-256 forensic dossier daemon",
+  "homepage": "https://anderson-security-sentinel.netlify.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nc0gn30/anderson-security-sentinel.git"
+  },
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "python3 server.py --host 127.0.0.1 --port 8103",
+    "serve": "python3 server.py --host 127.0.0.1 --port 8103",
+    "test": "pytest -v tests/",
+    "test:ui": "python3 scripts/verify_ui.py",
+    "electron": "electron electron/main.cjs",
+    "screenshots": "python3 scripts/generate_screenshots.py"
+  },
+  "keywords": [
+    "security",
+    "face-recognition",
+    "opencv",
+    "yunet",
+    "sface",
+    "fastapi",
+    "rf-tomography",
+    "mcp"
+  ],
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "license": "MIT"
+}

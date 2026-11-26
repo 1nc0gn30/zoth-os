@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06070B"/>
+      <stop offset="50%" stop-color="#0C101B"/>
+      <stop offset="100%" stop-color="#07080E"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#00FF88"/>
+    </linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(212,175,55,0.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="320" rx="18" fill="url(#bg)" stroke="#D4AF37" stroke-opacity="0.55" stroke-width="1.5"/>
+  <rect width="1200" height="320" rx="18" fill="url(#grid)"/>
+
+  <!-- Emblem -->
+  <g transform="translate(52, 48)">
+    <rect width="78" height="78" rx="18" fill="url(#accent)" opacity="0.95"/>
+    <path d="M39 14 L62 24 L62 44 C62 56 51 64 39 68 C27 64 16 56 16 44 L16 24 Z" fill="#08080B" stroke="#FFFFFF" stroke-width="2.2"/>
+    <circle cx="39" cy="40" r="7" fill="#D4AF37"/>
+    <circle cx="39" cy="40" r="3" fill="#00FF88"/>
+  </g>
+
+  <!-- Header Copy -->
+  <g transform="translate(152, 62)">
+    <rect x="0" y="-14" width="440" height="22" rx="11" fill="rgba(212,175,55,0.10)" stroke="#D4AF37" stroke-opacity="0.55"/>
+    <text x="12" y="1" fill="#D4AF37" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="700" letter-spacing="1.1">v2.6.0 // LOCAL DAEMON :8103 // ZERO-EGRESS LOOPBACK</text>
+    <text x="0" y="36" fill="#FFFFFF" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="800" letter-spacing="0.4">ANDERSON SECURITY SENTINEL</text>
+    <text x="0" y="62" fill="#9CA3AF" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13.5">Biometric facial perimeter, 802.11 Wi-Fi VRTI tomography, USB/BLE tripwire, SHA-256 dossiers &amp; 4-tool stdio MCP.</text>
+  </g>
+
+  <!-- 3 Feature Cards -->
+  <g transform="translate(52, 168)">
+    <rect x="0" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#D4AF37" stroke-opacity="0.4"/>
+    <text x="18" y="30" fill="#D4AF37" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="700">PILLAR 01 // BIOMETRICS &amp; RF</text>
+    <text x="18" y="56" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="700">YuNet + SFace &amp; Wi-Fi VRTI X-Ray</text>
+    <text x="18" y="78" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="10.5">USB Tripwire • BLE Radar • Thermal FLIR</text>
+
+    <rect x="372" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#00FF88" stroke-opacity="0.4"/>
+    <text x="390" y="30" fill="#00FF88" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="700">PILLAR 02 // LOOPBACK SECURITY</text>
+    <text x="390" y="56" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="700">ASGI Host/Origin/CSRF Guard &amp; SHA-256</text>
+    <text x="390" y="78" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="10.5">LOCAL DAEMON :8103 • Offline /docs</text>
+
+    <rect x="744" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#38BDF8" stroke-opacity="0.4"/>
+    <text x="762" y="30" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="700">PILLAR 03 // CLI, TUI &amp; MCP</text>
+    <text x="762" y="56" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="700">4-Tool Stdio MCP &amp; Zoth Studio v2 Deck</text>
+    <text x="762" y="78" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="10.5">anderson-security-sentinel mcp | tui</text>
+  </g>
+
+  <text x="600" y="298" text-anchor="middle" fill="#9CA3AF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">
+    ENGINEERED BY NEAL FRAZIER TECH (@1nc0gn30) • NULLAI PLATFORM • ZOTH.NULLAI.TECH
+  </text>
+</svg>

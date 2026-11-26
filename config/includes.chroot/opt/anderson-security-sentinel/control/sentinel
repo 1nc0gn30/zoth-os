@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Anderson Sentinel — command-line front door to the control panel.
+#
+#   control/sentinel on         activate the sentinel daemon
+#   control/sentinel off        deactivate it (whole process group)
+#   control/sentinel restart    off then on
+#   control/sentinel arm|disarm arm / disarm the perimeter
+#   control/sentinel status     telemetry summary
+#   control/sentinel open       open the GUI in a browser
+#   control/sentinel gui        open the GUI in a dedicated app window
+#   control/sentinel panel      start the panel service if it is not running
+#   control/sentinel logs       panel service log
+#
+# Talks to the panel over HTTP (the same path the GUI uses), so there is
+# exactly one implementation of start/stop logic.
+set -uo pipefail
+
+PANEL_URL="${ANDERSON_PANEL_URL:-http://127.0.0.1:8150}"
+UNIT="anderson-control.service"
+if [ -x /opt/zothos-ai-env/bin/python3 ]; then PY=/opt/zothos-ai-env/bin/python3; else PY=python3; fi
+
+usage() { grep '^#' "$0" | sed -n '2,15p' | sed 's/^# \{0,1\}//'; }
+
+panel_up() { curl -sf --max-time 2 "$PANEL_URL/health" >/dev/null 2>&1; }
+
+ensure_panel() {
+  panel_up && return 0
+  systemctl --user start "$UNIT" 2>/dev/null || true
+  for _ in $(seq 1 25); do
+    panel_up && return 0
+    sleep 0.3
+  done
+  echo "control panel is not answering on $PANEL_URL" >&2
+  systemctl --user --no-pager status "$UNIT" >&2 || true
+  return 1
+}
+
+pretty_action() {
+  "$PY" -c 'import json,sys
+d=json.load(sys.stdin)
+print(("ok   " if d.get("ok") else "FAIL ") + d.get("action","") + ": " + str(d.get("message","")))
+s=d.get("state",{}).get("daemon",{})
+if s: print("       running=%s pid=%s :%s open=%s health=%s armed=%s" % (
+    s.get("running"), s.get("pid"), s.get("port"), s.get("port_open"), s.get("health_ok"), s.get("armed")))'
+}
+
+pretty_state() {
+  "$PY" -c 'import json,sys
+d=json.load(sys.stdin); s=d["daemon"]; h=d["host"]
+def v(x, suffix=""):
+    return "-" if x is None else "%s%s" % (x, suffix)
+print("  process     %s%s" % ("RUNNING" if s["running"] else "STOPPED", (" (pid %s)" % s["pid"]) if s["pid"] else ""))
+print("  port %-6s %s        health  %s" % (s["port"], "OPEN" if s["port_open"] else "CLOSED", "answering" if s["health_ok"] else "-"))
+print("  cpu         %s      memory  %s" % (v(s["cpu_pct"], "%"), v(s["rss_bytes"])))
+print("  uptime      %s      armed   %s" % (v(s["uptime_sec"], "s"), v(s["armed"])))
+print("  camera      %s      enrolled %s" % (v(s["camera_active"]), v(s["enrolled"])))
+print("  package     %s C     load %s   fans %s" % (v(h["package_c"]), h["load"][0] if h["load"] else "-", h["fans_rpm"] or "-"))'
+}
+
+action() {
+  ensure_panel || return 1
+  curl -s --max-time 120 -X POST "$PANEL_URL/api/$1" | pretty_action
+}
+
+# Open the panel as its own window (no browser chrome) so it reads as an app.
+# Falls back to the default browser when no Chromium-family shell is present.
+open_window() {
+  local chrome
+  for chrome in google-chrome-stable google-chrome chromium chromium-browser; do
+    if command -v "$chrome" >/dev/null 2>&1; then
+      setsid "$chrome" --app="$PANEL_URL" --window-name="Anderson Sentinel Control" \
+        >/dev/null 2>&1 &
+      echo "opened app window via $chrome"
+      return 0
+    fi
+  done
+  xdg-open "$PANEL_URL" >/dev/null 2>&1 &
+  echo "opened $PANEL_URL in the default browser"
+}
+
+case "${1:-status}" in
+  on|activate)        action activate ;;
+  off|deactivate)     action deactivate ;;
+  restart)            action restart ;;
+  arm)                action arm ;;
+  disarm)             action disarm ;;
+  status|state)       ensure_panel || exit 1; curl -s --max-time 15 "$PANEL_URL/api/state" | pretty_state ;;
+  open|ui)            ensure_panel || exit 1; xdg-open "$PANEL_URL" >/dev/null 2>&1 & echo "opened $PANEL_URL" ;;
+  gui|window)         ensure_panel || exit 1; open_window ;;
+  single|panel)       ensure_panel && echo "panel up on $PANEL_URL" ;;
+  logs)               systemctl --user -n 25 --no-pager --full status "$UNIT" ;;
+  -h|--help|help)     usage ;;
+  *)                  echo "unknown command: $1" >&2; usage; exit 2 ;;
+esac
