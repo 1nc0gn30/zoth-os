@@ -2,12 +2,13 @@
 Version=1.0
 Type=Application
 Name=CronRhythm Studio
-Comment=High-precision cron AST parser, 24x7 rhythm heatmap, countdown timeline, multi-dialect transpiler across K8s, GitHub Actions, AWS EventBridg
+GenericName=Cron AST Parser & 24x7 Rhythm Matrix
+Comment=Zero-dependency POSIX/Quartz cron AST parser, 24x7 rhythm heatmap, DST anomaly auditor, fleet optimizer, and multi-dialect transpiler across Kubernetes, GitHub Actions, AWS EventBridge, and Systemd
 Exec=/usr/local/bin/cron-rhythm-studio desktop
 TryExec=/usr/local/bin/cron-rhythm-studio
 Icon=cron-rhythm-studio
 Terminal=false
-Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
+Categories=Development;System;Utility;
 StartupNotify=true
 Actions=TUI;WebApp;
 

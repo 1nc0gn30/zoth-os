@@ -1,0 +1,41 @@
+{
+  "name": "cron-rhythm-studio",
+  "version": "2.6.0",
+  "description": "Zero-Dependency AST Schedule Parser, 24×7 Rhythm Matrix, Multi-Dialect Transpiler & DST Anomaly Auditor — Desktop & Web Workstation",
+  "main": "electron/main.cjs",
+  "homepage": "https://cronrhythm.nullai.tech",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nc0gn30/cron-rhythm-studio.git"
+  },
+  "bin": {
+    "cron-rhythm": "./bin/cron-rhythm.js",
+    "cron-rhythm-studio": "./bin/cron-rhythm.js"
+  },
+  "scripts": {
+    "start": "python3 -m cron_rhythm_studio.cli serve --port 5174",
+    "serve:public": "python3 -m http.server 5174 --directory public",
+    "electron": "electron .",
+    "app": "electron .",
+    "test": "pytest tests/",
+    "test:ui": "python3 scripts/verify_ui.py"
+  },
+  "keywords": [
+    "cron",
+    "rhythm",
+    "scheduler",
+    "ast",
+    "transpiler",
+    "dst",
+    "matrix",
+    "zero-egress",
+    "sovereign",
+    "electron",
+    "nullai"
+  ],
+  "author": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^34.5.8"
+  }
+}
