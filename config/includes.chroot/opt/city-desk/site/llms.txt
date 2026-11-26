@@ -1,0 +1,17 @@
+# City Desk v2.6.0 (Neal Frazier Tech • NullAI Platform)
+> 1,000 Finished Local Trade Websites & Interactive Lead Synthesizers Across 50 US Cities and 20 Service Trades — Engineered by Neal Frazier Tech (@1nc0gn30).
+
+- **Canonical URL**: https://city-desk.netlify.app
+- **Creator**: Neal Frazier Tech (@1nc0gn30) — https://nullai.tech
+- **Contact**: contact@nullai.tech
+- **Machine-Readable Web APIs**:
+  - `https://city-desk.netlify.app/api/index.json`
+  - `https://city-desk.netlify.app/api/services.json`
+  - `https://city-desk.netlify.app/api/faq.json`
+  - `https://city-desk.netlify.app/offers.json`
+  - `https://city-desk.netlify.app/.well-known/agent.json`
+  - `https://city-desk.netlify.app/.well-known/mcp.json`
+
+## Open-Access Fulfillment
+- **Standalone HTML + Schema.org Bundle ($0 / Open-Access)**: 100% free and unlocked across all 1,000 localized trade pages.
+- **Optional Support**: https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X

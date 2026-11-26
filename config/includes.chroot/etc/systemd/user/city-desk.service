@@ -1,0 +1,22 @@
+[Unit]
+Description=City Desk Local Trade Offer Page Publisher & Hardened REST Server (v2.6.0, :8087)
+Documentation=https://github.com/1nc0gn30/city-desk
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/city-desk
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env python3 /opt/city-desk/server.py --host 127.0.0.1 --port 8087
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+UMask=0077
+MemoryMax=512M
+CPUQuota=150%
+SyslogIdentifier=city-desk
+
+[Install]
+WantedBy=default.target

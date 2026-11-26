@@ -1,140 +1,230 @@
 #!/usr/bin/env python3
-# ZothOS Desktop (Electron) & Braille TUI Interceptor
-import os as _z_os, sys as _z_sys, shutil as _z_sh, subprocess as _z_sp
-if '--electron' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] in ('desktop', 'electron')):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--electron', 'desktop', 'electron')]
-    _z_rdir = _z_os.path.expanduser('~/NullAITech/city-desk')
-    _z_el = _z_sh.which('electron') or '/usr/local/bin/electron'
-    _z_sys.exit(_z_sp.run([_z_el, _z_os.path.join(_z_rdir, 'electron', 'main.cjs')] + _z_rem, cwd=_z_rdir).returncode)
-if '--tui' in _z_sys.argv[1:] or (_z_sys.argv[1:] and _z_sys.argv[1] == 'tui'):
-    _z_rem = [a for a in _z_sys.argv[1:] if a not in ('--tui', 'tui')]
-    _z_sys.exit(_z_sp.run(['/usr/local/bin/city-desk-tui'] + _z_rem).returncode)
-import sys, os, json, subprocess, argparse, urllib.request, urllib.error
+"""
+City Desk CLI (v2.6.0) — Local Trade Offer Page Compiler & Hardened Loopback Server
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+from __future__ import annotations
 
-TOOL_ID = 'city-desk'
-TOOL_REPO = 'city-desk'
-TOOL_NAME = 'City Desk'
-TOOL_DESC = '1,000 localized service landing pages across 20 trades and 50 mid-size cities with live customizer and standalone HTML export.'
-TOOL_VERSION = '2.5.0'
-TOOL_CATEGORY = 'Growth & SEO'
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
+
+TOOL_ID = "city-desk"
+TOOL_REPO = "city-desk"
+TOOL_NAME = "City Desk"
+TOOL_DESC = (
+    "Deterministic 1,000-page local trade offer compiler (20 trades x 50 US cities) "
+    "with hardened 127.0.0.1:8087 REST workstation and standalone HTML export."
+)
+TOOL_VERSION = "2.6.0"
+TOOL_CATEGORY = "Growth & SEO"
 TOOL_PORT = 8087
-REPO_DIR = os.path.expanduser('~/NullAITech/city-desk')
-SERVER_SCRIPT = os.path.join(REPO_DIR, 'server.py')
-BUILD_SCRIPT = os.path.join(REPO_DIR, 'build.js')
 STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
 LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
 
-def check_daemon_status():
+
+def resolve_app_dir() -> Path:
+    env_dir = os.environ.get("CITY_DESK_HOME")
+    candidates = []
+    if env_dir:
+        candidates.append(Path(env_dir))
+    script_root = Path(__file__).resolve().parent.parent
+    if (script_root / "server.py").is_file():
+        candidates.append(script_root)
+    candidates.append(Path("/opt/city-desk"))
+    candidates.append(Path.home() / "NullAITech" / "city-desk")
+    for cand in candidates:
+        if (cand / "server.py").is_file():
+            return cand
+    return Path("/opt/city-desk")
+
+
+def resolve_tui_cmd(app_dir: Path) -> list[str]:
+    for cand in (
+        app_dir / "bin" / "city-desk-tui",
+        Path("/usr/local/bin/city-desk-tui"),
+        Path.home() / ".local" / "bin" / "city-desk-tui",
+    ):
+        if cand.is_file():
+            return [sys.executable, str(cand)]
+    return ["city-desk-tui"]
+
+
+def check_daemon_status(port: int = TOOL_PORT):
     try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={"User-Agent": "ZothOS-CLI"})
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{port}/health",
+            headers={"User-Agent": f"CityDesk-CLI/{TOOL_VERSION}"},
+        )
         with urllib.request.urlopen(req, timeout=1.5) as resp:
             if resp.status == 200:
-                data = json.loads(resp.read().decode('utf-8'))
-                return True, data
+                return True, json.loads(resp.read().decode("utf-8"))
     except Exception:
         pass
     return False, None
 
-def query_endpoint(endpoint):
+
+def load_local_catalog(app_dir: Path):
+    services_file = app_dir / "site" / "api" / "services.json"
+    offers_file = app_dir / "site" / "offers.json"
+    trades = []
+    cities = []
+    offers = []
+    if services_file.is_file():
+        try:
+            raw = json.loads(services_file.read_text(encoding="utf-8"))
+            for item in raw.get("trades", []):
+                trades.append(
+                    {
+                        "slug": item.get("slug", ""),
+                        "name": item.get("name", ""),
+                        "price": int(item.get("agencyValueUSD", item.get("price", 0))),
+                        "line": item.get("line", ""),
+                    }
+                )
+        except Exception:
+            pass
+    if offers_file.is_file():
+        try:
+            offers = json.loads(offers_file.read_text(encoding="utf-8"))
+            seen = set()
+            for o in offers:
+                parts = [p for p in str(o.get("path", "")).split("/") if p]
+                slug = parts[1] if len(parts) >= 2 and parts[0] == "cities" else ""
+                if slug and slug not in seen:
+                    seen.add(slug)
+                    cities.append(
+                        {"slug": slug, "name": o.get("city", ""), "state": o.get("state", "")}
+                    )
+        except Exception:
+            pass
+    return trades, cities, offers
+
+
+def query_endpoint(endpoint: str, app_dir: Path):
     try:
-        req = urllib.request.Request(f"{LOCAL_PORT_URL}{endpoint}", headers={"User-Agent": "ZothOS-CLI"})
+        req = urllib.request.Request(
+            f"{LOCAL_PORT_URL}{endpoint}",
+            headers={"User-Agent": f"CityDesk-CLI/{TOOL_VERSION}"},
+        )
         with urllib.request.urlopen(req, timeout=2.0) as resp:
-            return json.loads(resp.read().decode('utf-8'))
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        trades, cities, _ = load_local_catalog(app_dir)
+        if endpoint == "/api/trades":
+            return {"status": "ok", "source": "local-site", "count": len(trades), "trades": trades}
+        if endpoint == "/api/cities":
+            return {"status": "ok", "source": "local-site", "count": len(cities), "cities": cities}
+        return {"status": "error", "message": "Daemon offline"}
 
-def main():
+
+def main() -> None:
+    app_dir = resolve_app_dir()
+    argv = sys.argv[1:]
+
+    if "--electron" in argv or (argv and argv[0] in ("desktop", "electron")):
+        rem = [a for a in argv if a not in ("--electron", "desktop", "electron")]
+        el = shutil.which("electron") or "/usr/local/bin/electron"
+        main_cjs = app_dir / "electron" / "main.cjs"
+        if not main_cjs.is_file():
+            print(f"Electron entry not found at {main_cjs}", file=sys.stderr)
+            sys.exit(1)
+        sys.exit(subprocess.run([el, str(main_cjs)] + rem, cwd=str(app_dir)).returncode)
+
+    if "--tui" in argv or (argv and argv[0] == "tui"):
+        rem = [a for a in argv if a not in ("--tui", "tui")]
+        sys.exit(subprocess.run(resolve_tui_cmd(app_dir) + rem).returncode)
+
     parser = argparse.ArgumentParser(
-        prog='city-desk',
-        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}"
+        prog="city-desk",
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
     )
-    parser.add_argument('--version', action='version', version=f"{TOOL_ID} v{TOOL_VERSION}")
-    parser.add_argument('--status', action='store_true', help='Check local ZothOS installation & daemon status')
-    parser.add_argument('--json', action='store_true', help='Output deterministic JSON telemetry')
-    parser.add_argument('--ui', action='store_true', help='Print local ZothOS workbench URL')
-    parser.add_argument('--trades', action='store_true', help='List all 20 supported trade services')
-    parser.add_argument('--cities', action='store_true', help='List all 50 target municipal cities')
-    parser.add_argument('--build', action='store_true', help='Rebuild all 1,000 localized landing pages')
-    parser.add_argument('--serve', action='store_true', help='Start background daemon server on port 8087')
-
+    parser.add_argument("--version", "-v", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local installation & daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local workstation URL")
+    parser.add_argument("--trades", action="store_true", help="List all 20 canonical service trades")
+    parser.add_argument("--cities", action="store_true", help="List all 50 canonical US cities")
+    parser.add_argument("--build", action="store_true", help="Compile all 1,000 localized trade pages")
+    parser.add_argument("--serve", action="store_true", help="Start hardened loopback server on 127.0.0.1:8087")
+    parser.add_argument("--port", type=int, default=TOOL_PORT, help="Loopback server port (default: 8087)")
     args = parser.parse_args()
 
-    is_running, daemon_data = check_daemon_status()
+    is_running, daemon_data = check_daemon_status(args.port)
 
     if args.serve:
         if is_running:
-            print(f"City Desk daemon already active on {LOCAL_PORT_URL}")
+            print(f"City Desk daemon already active on http://127.0.0.1:{args.port}")
             return
-        subprocess.run([sys.executable, SERVER_SCRIPT, "--port", str(TOOL_PORT)])
-        return
+        sys.exit(
+            subprocess.run(
+                [sys.executable, str(app_dir / "server.py"), "--host", "127.0.0.1", "--port", str(args.port)],
+                cwd=str(app_dir),
+            ).returncode
+        )
 
     if args.build:
-        print("✦ Rebuilding 1,000 City Desk localized landing pages...")
-        res = subprocess.run(["node", BUILD_SCRIPT], cwd=REPO_DIR)
+        res = subprocess.run(["node", str(app_dir / "build.js")], cwd=str(app_dir))
         sys.exit(res.returncode)
 
     if args.trades:
-        data = query_endpoint("/api/trades")
+        data = query_endpoint("/api/trades", app_dir)
         if args.json:
             print(json.dumps(data, indent=2))
         else:
             trades = data.get("trades", [])
-            print(f"✦ City Desk Supported Trades ({len(trades)} total):")
+            print(f"City Desk Canonical Trades ({len(trades)}):")
             for t in trades:
-                print(f"  - {t['name'].ljust(15)}: ${t['price']} — {t['line']}")
+                print(f"  - {t['slug']:<18} ${t['price']:<5} {t['name']} — {t['line']}")
         return
 
     if args.cities:
-        data = query_endpoint("/api/cities")
+        data = query_endpoint("/api/cities", app_dir)
         if args.json:
             print(json.dumps(data, indent=2))
         else:
             cities = data.get("cities", [])
-            print(f"✦ City Desk Target Cities ({len(cities)} total):")
+            print(f"City Desk Canonical US Cities ({len(cities)}):")
             for c in cities:
-                print(f"  - {c['name']}, {c['state']} ({c['slug']})")
+                print(f"  - {c['slug']:<20} {c['name']}, {c['state']}")
         return
 
+    trades, cities, offers = load_local_catalog(app_dir)
     info = {
         "id": TOOL_ID,
         "repo": TOOL_REPO,
         "name": TOOL_NAME,
         "version": TOOL_VERSION,
         "category": TOOL_CATEGORY,
-        "installed": os.path.exists(REPO_DIR),
-        "repo_path": REPO_DIR,
+        "installed": (app_dir / "server.py").is_file(),
+        "app_dir": str(app_dir),
         "daemon_running": is_running,
-        "total_pages": 1000,
+        "trades_count": len(trades),
+        "cities_count": len(cities),
+        "total_pages": len(offers),
         "studio_workbench_url": STUDIO_URL,
-        "local_endpoint": LOCAL_PORT_URL,
+        "local_endpoint": f"http://127.0.0.1:{args.port}",
         "daemon_telemetry": daemon_data,
-        "license": "100% Free & Open Access (Zero Paywalls)"
+        "license": "100% Free & Open Access (Zero Paywalls)",
     }
 
     if args.json:
         print(json.dumps(info, indent=2))
     elif args.ui:
-        print(LOCAL_PORT_URL)
+        print(f"http://127.0.0.1:{args.port}")
     else:
-        print(f"=====================================================")
-        print(f"  {TOOL_NAME} (v{TOOL_VERSION})")
-        print(f"  {TOOL_DESC}")
-        print(f"=====================================================")
-        print(f"  Installed:       {'Yes' if info['installed'] else 'No'}")
-        print(f"  Daemon Port:     {LOCAL_PORT_URL} ({'Running' if is_running else 'Offline'})")
-        print(f"  Pages Indexed:   1,000 (20 Trades × 50 Cities)")
-        print(f"  Studio Route:    {STUDIO_URL}")
-        print(f"  License:         100% Free & Open Access (Zero Paywalls)")
-        print(f"  Coffee Tip:      https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X")
-        print(f"  Solana Tip:      GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK")
-        print(f"-----------------------------------------------------")
-        print(f"Usage:")
-        print(f"  city-desk --status")
-        print(f"  city-desk --trades")
-        print(f"  city-desk --cities")
-        print(f"  city-desk --build")
-        print(f"  city-desk --json")
-        print(f"=====================================================")
+        print(f"{TOOL_NAME} v{TOOL_VERSION} — {TOOL_DESC}")
+        print(f"  Installed:     {'Yes' if info['installed'] else 'No'} ({info['app_dir']})")
+        print(f"  Daemon (:8087): {'Running' if is_running else 'Idle (on-demand)'}")
+        print(f"  Catalog:       {len(trades)} trades x {len(cities)} cities = {len(offers)} compiled pages")
+        print(f"  Studio Route:  {STUDIO_URL}")
+        print("  Commands:      --status | --trades | --cities | --build | --serve | --tui | --json")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

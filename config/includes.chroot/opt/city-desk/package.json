@@ -1,0 +1,32 @@
+{
+  "name": "city-desk",
+  "version": "2.6.0",
+  "description": "Deterministic Local Trade Offer Page Compiler & Hardened Loopback Publisher (20 trades x 50 US cities)",
+  "main": "city_engine.js",
+  "bin": {
+    "city-desk": "./bin/city-desk"
+  },
+  "homepage": "https://city-desk.netlify.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nc0gn30/city-desk.git"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "serve": "python3 server.py --host 127.0.0.1 --port 8087",
+    "start": "python3 server.py --host 127.0.0.1 --port 8087",
+    "test": "node --test test/build.test.js",
+    "test:security": "pytest -q test/test_server_security.py",
+    "test:ui": "python3 scripts/verify_ui.py"
+  },
+  "keywords": [
+    "city-desk",
+    "local-seo",
+    "landing-page-generator",
+    "trade-services",
+    "schema-org",
+    "nullai"
+  ],
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "license": "MIT"
+}

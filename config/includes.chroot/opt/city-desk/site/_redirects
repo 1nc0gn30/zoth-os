@@ -1,0 +1,3 @@
+/cities/:city/:trade/* /cities/boise-id/:trade/index.html 200
+/cities/:city/:trade /cities/boise-id/:trade/index.html 200
+/cities/:city/* /cities/boise-id/index.html 200

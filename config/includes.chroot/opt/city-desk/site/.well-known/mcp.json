@@ -1,0 +1,18 @@
+{
+  "mcpVersion": "2025-01-01",
+  "name": "city-desk-discovery",
+  "version": "2.6.0",
+  "provider": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "resources": [
+    {
+      "uri": "https://city-desk.netlify.app/api/services.json",
+      "name": "20 Service Trade Blueprints",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://city-desk.netlify.app/offers.json",
+      "name": "1,000 City x Trade Pages",
+      "mimeType": "application/json"
+    }
+  ]
+}

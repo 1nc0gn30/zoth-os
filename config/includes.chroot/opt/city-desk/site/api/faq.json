@@ -1,0 +1,12 @@
+{
+  "faqs": [
+    {
+      "question": "Is City Desk 100% free and open-access?",
+      "answer": "Yes. All 1,000 localized trade pages, live customizers, and standalone HTML + Schema.org bundle downloads are 100% free and unlocked by default."
+    },
+    {
+      "question": "Are there any monthly agency retainers?",
+      "answer": "No. Standalone HTML exports run statically on any host without recurring retainers."
+    }
+  ]
+}

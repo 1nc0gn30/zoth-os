@@ -2,17 +2,17 @@
 Version=1.0
 Type=Application
 Name=City Desk
-Comment=One studio writes the finished page for a trade and a city. 1,000 localized service pages across 20 trades and 50 mid-size cities with live 
+Comment=Deterministic 1,000-page local trade offer compiler (20 trades x 50 US cities) with live synthesizer and standalone HTML export.
 Exec=/usr/local/bin/city-desk desktop
 TryExec=/usr/local/bin/city-desk
 Icon=city-desk
 Terminal=false
-Categories=X-Zoth-Dev;Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Dev;Development;Utility;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
-Name=Launch City Desk Braille TUI
+Name=Launch City Desk Inventory TUI
 Exec=/usr/local/bin/zoth-konsole --title "City Desk TUI" -- /usr/local/bin/city-desk-tui
 
 [Desktop Action WebApp]

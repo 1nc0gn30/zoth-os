@@ -1,0 +1,160 @@
+#!/usr/bin/env python3
+"""
+City Desk TUI (v2.6.0) — Live :8087 Health & Compiled Site Inventory Telemetry.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import time
+import urllib.request
+from collections import Counter
+from pathlib import Path
+from typing import Any, Dict, List
+
+VERSION = "2.6.0"
+BRAILLE_BASE = 0x2800
+
+
+def resolve_app_dir() -> Path:
+    env_dir = os.environ.get("CITY_DESK_HOME")
+    candidates = []
+    if env_dir:
+        candidates.append(Path(env_dir))
+    script_root = Path(__file__).resolve().parent.parent
+    if (script_root / "server.py").is_file():
+        candidates.append(script_root)
+    candidates.append(Path("/opt/city-desk"))
+    candidates.append(Path.home() / "NullAITech" / "city-desk")
+    for cand in candidates:
+        if (cand / "server.py").is_file():
+            return cand
+    return Path("/opt/city-desk")
+
+
+def braille_sparkline(values: List[float]) -> str:
+    if not values:
+        return ""
+    lo = min(values)
+    hi = max(values)
+    span = (hi - lo) if hi > lo else 1.0
+    norm = [(v - lo) / span for v in values]
+    if len(norm) % 2 == 1:
+        norm.append(norm[-1])
+    out = []
+    for i in range(0, len(norm), 2):
+        v1 = max(0, min(3, int(norm[i] * 3.99)))
+        v2 = max(0, min(3, int(norm[i + 1] * 3.99)))
+        dots1 = (0x40, 0x04, 0x02, 0x01)[v1]
+        dots2 = (0x80, 0x20, 0x10, 0x08)[v2]
+        out.append(chr(BRAILLE_BASE | dots1 | dots2))
+    return "".join(out)
+
+
+def probe_daemon(port: int) -> Dict[str, Any]:
+    t0 = time.perf_counter()
+    try:
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{port}/health",
+            headers={"User-Agent": f"CityDesk-TUI/{VERSION}"},
+        )
+        with urllib.request.urlopen(req, timeout=1.2) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            return {"running": True, "latency_ms": latency_ms, "health": data}
+    except Exception:
+        return {"running": False, "latency_ms": None, "health": None}
+
+
+def collect_inventory(app_dir: Path, port: int) -> Dict[str, Any]:
+    t0 = time.perf_counter()
+    site_dir = app_dir / "site"
+    offers_file = site_dir / "offers.json"
+    services_file = site_dir / "api" / "services.json"
+
+    offers: List[Dict[str, Any]] = []
+    trades: List[Dict[str, Any]] = []
+    if offers_file.is_file():
+        offers = json.loads(offers_file.read_text(encoding="utf-8"))
+    if services_file.is_file():
+        trades = json.loads(services_file.read_text(encoding="utf-8")).get("trades", [])
+
+    prices = [float(t.get("agencyValueUSD", t.get("price", 0))) for t in trades]
+    state_counts = Counter(str(o.get("state", "")) for o in offers)
+    unique_cities = len({f"{o.get('city')},{o.get('state')}" for o in offers})
+    html_pages = sum(1 for _ in site_dir.rglob("*.html")) if site_dir.is_dir() else 0
+    scan_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+    daemon = probe_daemon(port)
+
+    return {
+        "tool": "city-desk",
+        "version": VERSION,
+        "architect": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+        "app_dir": str(app_dir),
+        "daemon": daemon,
+        "inventory": {
+            "trades_count": len(trades),
+            "cities_count": unique_cities,
+            "offers_count": len(offers),
+            "compiled_html_files": html_pages,
+            "states_covered": len(state_counts),
+            "price_min_usd": int(min(prices)) if prices else 0,
+            "price_max_usd": int(max(prices)) if prices else 0,
+            "price_avg_usd": round(sum(prices) / len(prices), 2) if prices else 0,
+            "top_states": state_counts.most_common(5),
+        },
+        "benchmark_ms": scan_ms,
+        "price_distribution_braille": braille_sparkline(prices),
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="City Desk Live Telemetry & Inventory TUI")
+    parser.add_argument("--version", action="version", version=f"city-desk-tui {VERSION}")
+    parser.add_argument("--json", action="store_true", help="Output real JSON telemetry and exit")
+    parser.add_argument("--status", action="store_true", help="Print concise one-line status and exit")
+    parser.add_argument("--benchmark", action="store_true", help="Measure real catalog parse & HTML scan latency")
+    parser.add_argument("--port", type=int, default=8087, help="Loopback server port (default: 8087)")
+    args, _unknown = parser.parse_known_args()
+
+    app_dir = resolve_app_dir()
+    report = collect_inventory(app_dir, args.port)
+
+    if args.json:
+        print(json.dumps(report, indent=2))
+        return
+
+    inv = report["inventory"]
+    daemon = report["daemon"]
+    state_str = (
+        f"ONLINE ({daemon['latency_ms']} ms)" if daemon["running"] else "IDLE (on-demand :8087)"
+    )
+
+    if args.status:
+        print(
+            f"city-desk v{VERSION} | daemon={state_str} | "
+            f"trades={inv['trades_count']} cities={inv['cities_count']} offers={inv['offers_count']} "
+            f"html={inv['compiled_html_files']} scan={report['benchmark_ms']}ms"
+        )
+        return
+
+    print("╭──────────────────────────────────────────────────────────────────────────╮")
+    print(f"│ City Desk v{VERSION:<10} │ Neal Frazier Tech (@1nc0gn30) • NullAI Platform  │")
+    print("├──────────────────────────────────────────────────────────────────────────┤")
+    print(f"│ Loopback :8087   : {state_str:<53} │")
+    print(
+        f"│ Matrix Inventory : {inv['trades_count']} trades x {inv['cities_count']} cities = "
+        f"{inv['offers_count']} offers ({inv['compiled_html_files']} HTML) │"
+    )
+    print(
+        f"│ Price Spectrum   : ${inv['price_min_usd']} – ${inv['price_max_usd']} "
+        f"(avg ${inv['price_avg_usd']})  {report['price_distribution_braille']:<14} │"
+    )
+    print(f"│ Scan Latency     : {report['benchmark_ms']} ms across {inv['states_covered']} US states{' ' * 29}│")
+    print("╰──────────────────────────────────────────────────────────────────────────╯")
+
+
+if __name__ == "__main__":
+    main()
