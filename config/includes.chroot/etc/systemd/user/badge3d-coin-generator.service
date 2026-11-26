@@ -1,0 +1,20 @@
+[Unit]
+Description=Badge3D Coin Generator Web Workstation & REST API v2.6.0 (127.0.0.1:8084)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/badge3d-coin-generator
+ExecStart=/usr/bin/python3 /opt/badge3d-coin-generator/server.py --host 127.0.0.1 --port 8084
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryMax=1G
+CPUQuota=200%
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target

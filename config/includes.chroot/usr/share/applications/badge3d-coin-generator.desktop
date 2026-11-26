@@ -2,12 +2,13 @@
 Version=1.0
 Type=Application
 Name=Badge3D Coin Generator
-Comment=100% in-browser WebGL 3D coin, medallion, and relief badge generator with real-time PBR metallic shaders, watertight STL/OBJ export, and 100
+GenericName=Parametric 3D Coin & Relief Studio
+Comment=Zero-egress 3D coin, medallion, and relief badge workstation with PBR metallic shaders, watertight STL/OBJ/GLB export, and Marlin G-code slicing.
 Exec=/usr/local/bin/badge3d-coin-generator desktop
 TryExec=/usr/local/bin/badge3d-coin-generator
 Icon=badge3d-coin-generator
 Terminal=false
-Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;Development;Graphics;3DGraphics;Utility;
 StartupNotify=true
 Actions=TUI;WebApp;
 
