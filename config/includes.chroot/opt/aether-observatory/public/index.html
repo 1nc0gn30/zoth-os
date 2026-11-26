@@ -4,25 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AETHER-OBSERVATORY — Cyber-Physical Telemetry &amp; Sonification Workstation</title>
-  <meta name="description" content="Sovereign cyber-physical telemetry, live 3D daemon/port constellation, flight-recorder time machine and WebAudio acoustic sonification workstation — Neal Frazier Tech / NullAI Platform.">
+  <meta name="description" content="Sovereign cyber-physical telemetry, live 3D daemon/port constellation, SQLite flight-recorder time machine, MCP server and WebAudio sonification workstation — Neal Frazier Tech / NullAI Platform.">
   <meta name="theme-color" content="#07090E">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="AETHER-OBSERVATORY">
-  <meta property="og:description" content="Telemetry of the machine, rendered as starfield and sung as drone. Live process/port constellation, SQLite flight recorder, WebAudio sonification.">
-  <meta property="og:url" content="http://127.0.0.1:8160/">
-  <meta property="og:image" content="http://127.0.0.1:8160/favicon.svg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:description" content="Live 3D daemon/port constellation, SQLite flight recorder time machine, stdio MCP server, and WebAudio harmonic sonification. 100% open-access and zero-egress.">
+  <meta property="og:url" content="https://aether-observatory.nullai.tech/">
+  <meta property="og:image" content="https://aether-observatory.nullai.tech/og-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="AETHER-OBSERVATORY Cyber-Physical Telemetry and Sonification Workstation">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="AETHER-OBSERVATORY — Cyber-Physical Telemetry &amp; Sonification Workstation">
+  <meta name="twitter:description" content="Live 3D daemon/port constellation, SQLite flight recorder time machine, stdio MCP server, and WebAudio harmonic sonification.">
+  <meta name="twitter:image" content="https://aether-observatory.nullai.tech/og-banner.png">
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="canonical" href="http://127.0.0.1:8160/">
-  <link rel="license" href="/RAILWAY-ATTRIBUTION.md">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="canonical" href="https://aether-observatory.nullai.tech/">
 
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
@@ -32,15 +33,17 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "name": "AETHER-OBSERVATORY",
-        "url": "http://127.0.0.1:8160/",
+        "softwareVersion": "2.0.0",
+        "url": "https://aether-observatory.nullai.tech/",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Linux",
-        "author": { "@type": "Person", "name": "Neal Frazier", "sameAs": "https://x.com/1nc0gn30" },
+        "creator": { "@type": "Person", "name": "Neal Frazier", "url": "https://nealfrazier.tech", "sameAs": ["https://github.com/1nc0gn30", "https://x.com/1nc0gn30"] },
+        "publisher": { "@type": "Organization", "name": "Neal Frazier Tech • NullAI Platform", "url": "https://nullai.tech" },
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "description": "Sovereign cyber-physical telemetry, 3D process/port constellation, flight-recorder time machine and WebAudio acoustic sonification workstation.",
-        "featureList": "Live CPU/thermal/RAM telemetry; 3D daemon & port constellation with vector/braille/Bayer render modes; SQLite snapshot time machine with T1/T2 diff; WebAudio harmonic sonification with FFT waterfall"
+        "description": "Zero-egress cyber-physical telemetry workstation with a 3D daemon/port constellation, SQLite flight recorder time machine, stdio MCP server, local AI anomaly triage, and WebAudio harmonic sonification.",
+        "featureList": "Live CPU/thermal/RAM telemetry; 3D daemon & port constellation with Vector/Braille/Bayer-8x8 modes; SQLite snapshot time machine with T1/T2 diff and Markdown/JSON export; WebAudio harmonic sonification with compressor limiter and FFT waterfall; stdio JSON-RPC 2.0 MCP server; optional local AI triage"
       },
       {
         "@type": "FAQPage",
@@ -48,22 +51,22 @@
           {
             "@type": "Question",
             "name": "Is the telemetry data real or simulated?",
-            "acceptedAnswer": { "@type": "Answer", "text": "100% real. Every number is sampled live from /proc, /sys/class/thermal, the sensors(1) binary and ss -tlnp on the host machine. There are no mocks, no setTimeout fabrications, no placeholder figures anywhere in the application." }
+            "acceptedAnswer": { "@type": "Answer", "text": "100% real. Every reading is sampled live from /proc, /sys/class/thermal, sensors(1), and ss -tlnp on the host machine using zero-egress Node.js built-ins. There are no mocks or fabricated placeholders." }
           },
           {
             "@type": "Question",
-            "name": "What is the time machine?",
-            "acceptedAnswer": { "@type": "Answer", "text": "A persistent SQLite ring-buffer records a compact telemetry frame every 10 seconds (24h retention). The scrubber lets you replay history and diff any two timestamps to surface spawned/terminated daemons, thermal spikes and load swings, exportable as Markdown or JSON." }
+            "name": "What is the time machine flight recorder?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A persistent SQLite ring-buffer records a compact telemetry frame every 10 seconds (24h retention, 8,640 rows). You can scrub history, diff any two epoch timestamps for spawned/terminated ports and thermal/load swings, and export Markdown or JSON incident reports." }
           },
           {
             "@type": "Question",
             "name": "How does the sonification work?",
-            "acceptedAnswer": { "@type": "Answer", "text": "An opt-in WebAudio engine maps CPU load to pitch, memory pressure to filter opening, thermal rise to brightness and active socket count to harmonic density, rendered as a phased saw/sine drone with a live 60fps FFT waterfall. Audio only starts after you press PLAY DRONE and stops with one click." }
+            "acceptedAnswer": { "@type": "Answer", "text": "An opt-in WebAudio synthesizer routes phased oscillators through a lowpass filter and DynamicsCompressorNode master limiter, mapping live CPU load, memory pressure, package temperature, and open sockets to pitch, harmonics, brightness, and LFO drift alongside an FFT waterfall." }
           },
           {
             "@type": "Question",
             "name": "Is this tool free or paywalled?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Completely free — no paywalls, no accounts, no tracking cookies, no external analytics. If it is useful there is a voluntary Buy Me a Coffee link in the documentation drawer." }
+            "acceptedAnswer": { "@type": "Answer", "text": "100% free and open-access with zero paywalls, accounts, or tracking. Voluntary support is available via Buy Us a Coffee (Stripe) or Solana tip." }
           }
         ]
       }
@@ -74,7 +77,7 @@
 <body>
   <a class="skip-link" href="#main">Skip to workstation</a>
 
-  <!-- Braille aperture intro -->
+  <!-- Braille aperture intro (auto-skips on embed, reduced-motion, or repeat visit) -->
   <div id="intro-gate" role="dialog" aria-label="Intro — press Escape to skip">
     <canvas id="intro-canvas" width="660" height="220" aria-hidden="true"></canvas>
     <button class="skip" id="intro-skip">[ ESC TO SKIP ]</button>
@@ -86,44 +89,42 @@
     <span class="kicker">DEEP SOCKET INSPECTOR</span>
     <h3 id="d-node-name">—</h3>
     <dl id="d-node-facts"></dl>
-    <span class="kicker">PROC COMMAND</span>
+    <span class="kicker">REDACTED PROC COMMAND</span>
     <p id="d-node-cmd" class="num" style="word-break:break-all;font-size:11px;color:var(--ink-dim);margin-top:var(--sp-2)">—</p>
   </aside>
 
   <!-- Documentation drawer -->
   <aside class="drawer docs-drawer" id="docs-drawer" role="complementary" aria-label="Documentation" aria-hidden="true">
     <button class="close-btn" id="docs-close" aria-label="Close documentation">✕</button>
-    <span class="kicker">FIELD MANUAL — every panel does real work</span>
-    <h3 style="margin-top:var(--sp-1)">operating instructions</h3>
+    <span class="kicker">FIELD MANUAL — v2.0.0 ZERO-EGRESS WORKSTATION</span>
+    <h3 style="margin-top:var(--sp-1)">Operating Instructions</h3>
     <ol class="story">
       <li>
-        <h4>Sky Map — the constellation viewport</h4>
-        <p>The centerpiece renders every TCP daemon currently listening on this host as a 3D orbital star. Drag to orbit the camera (yaw/pitch), scroll to zoom (FOV), click any star to lock focus and open the deep socket inspector — real PID, real uptime from <span class="num">/proc/&lt;pid&gt;/stat</span>, real measured latency. Try the three render pipelines from the mode rack: <b>01 VECTOR</b> (perspective starfield + depth-sorted edges), <b>02 BRAILLE</b> (Unicode U+2800 2×4 sub-pixel matrix — silent, generative monochrome), <b>03 DITHER</b> (Bayer 8×8 one-bit halftone with phosphor scanlines).</p>
+        <h4>Sky Map — 3D Daemon &amp; Port Constellation</h4>
+        <p>Every listening TCP socket from <span class="num">ss -tlnp</span> is mapped to concentric 3D orbits and joined with the Zoth Studio registry. Drag to orbit, wheel/pinch to zoom, click any star to open the Deep Socket Inspector with PID, protocol, uptime from <span class="num">/proc/&lt;pid&gt;/stat</span>, latency, and secret-redacted command line. Switch between <b>01 VECTOR</b>, <b>02 BRAILLE</b> (U+2800 2×4 sub-pixel matrix, interactive), and <b>03 DITHER</b> (Bayer 8×8 halftone).</p>
       </li>
       <li>
-        <h4>Meters — split-flap flight odometers</h4>
-        <p>Mechanical flap drums read the machine aloud: uptime since boot, live listening socket count, and CPU package temperature from <span class="num">sensors(1)</span> / <span class="num">/sys/class/thermal/*</span>. Every value flips only when the real reading changes.</p>
+        <h4>Meters — Split-Flap Flight Odometers</h4>
+        <p>Live uptime hours, listening socket count, and CPU package temperature (prioritizing <span class="num">Package id 0</span> / <span class="num">x86_pkg_temp</span> over NVMe sensors).</p>
       </li>
       <li>
-        <h4>Sonorium — the acoustic telemetry deck</h4>
-        <p>Press <b>PLAY DRONE</b> (opt-in; browsers require a user gesture for audio). Four rotary knobs conduct real system physics into synthesis: <b>CPU LOAD → PITCH</b>, <b>MEM PRESSURE → HARMONICS</b>, <b>THERMAL → BRIGHTNESS (filter cutoff)</b>, <b>SOCKETS → DRIFT (LFO)</b>. Drag a knob vertically; watch the 60fps FFT waterfall paint what the drone hears. Drag=relative, wheel=fine, keys ↑↓←→ are accessible.</p>
+        <h4>Sonorium — WebAudio Acoustic Telemetry Deck</h4>
+        <p>Press <b>PLAY DRONE</b> to initialize WebAudio on user gesture. Live CPU load, RAM pressure, package thermal, and open sockets modulate pitch, harmonic richness, lowpass cutoff, and LFO drift through a <span class="num">DynamicsCompressorNode</span> master limiter into a 60fps FFT waterfall. Drag any rotary dial vertically (or use wheel / arrow keys) to override.</p>
       </li>
       <li>
-        <h4>Timeline — the flight recorder</h4>
-        <p>A SQLite ring-buffer snaps a telemetry frame every ten seconds (24 h rolling). Scrub the strip to scrub memory; press <b>DIFF</b> and tap two epochs to compare them — terminated ports, spawned daemons, thermal spikes and load swings surface as chips. EXPORT emits a clean Markdown or JSON incident report of exactly that window.</p>
+        <h4>Time Machine &amp; Sovereign AI Triage</h4>
+        <p>A persistent SQLite ring-buffer records a compact frame every 10 seconds (8,640 rows = 24h). Scrub chronologically in <b>SCRUB</b> mode, compare any two timestamps in <b>DIFF T1/T2</b> mode, download Markdown or JSON reports, or run optional local AI triage via AGY Bridge (:18000), Ollama (:11434), or built-in deterministic rules.</p>
       </li>
     </ol>
     <div class="dirty-note">
-      LIVE FEED — nothing on this page is mocked. CPU reads /proc/stat deltas, thermals read
-      /sys/class/thermal + sensors(1), sockets read ss -tlnp matched against the Zoth Studio registry
-      (zoth-studio-v2/toolsData.js), and the git pulse walks ~/NullAITech repos for 14-day commit activity.
+      CLI &amp; MCP: <span class="num">aether-observatory status [--json] | constellation [--json] | snapshot [--json] | mcp | serve --port 8160</span>.
+      Zero external fonts, zero trackers, loopback-only CORS.
     </div>
-    <p style="font-size:12px;color:var(--ink-faint)">
-      Telemetry cadence: 10s persists to <span class="num">data/aether-flight.db</span> · stream over SSE · CLI:
-      <span class="num">aether-observatory status|constellation|snapshot|serve</span>.
-    </p>
-    <a class="coffee-link" href="https://buymeacoffee.com/1nc0gn30" target="_blank" rel="noopener">
-      ☕ Buy Me a Coffee — optional, never guarded
+    <a class="coffee-link" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">
+      ☕ Buy Us a Coffee
+    </a>
+    <a class="coffee-link" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" title="Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">
+      ◎ Solana Tip
     </a>
   </aside>
 
@@ -132,11 +133,11 @@
     <header class="top-rail">
       <div class="brand">
         <h1><span class="aether">AETHER</span> OBSERVATORY</h1>
-        <span class="sub">cyber-physical telemetry &amp; sonar</span>
+        <span class="sub">cyber-physical telemetry &amp; sonar · v2.0.0</span>
       </div>
       <div class="top-actions">
-        <span class="live-pill" id="live-pill" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="live-pill-text">+0%</span><span aria-hidden="true">&nbsp;·&nbsp;</span><span id="live-clock" class="num">--:--:--</span></span>
-        <button class="btn" id="docs-open" style="min-height:44px">FIELD MANUAL</button>
+        <span class="live-pill" id="live-pill" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="live-pill-text">0%</span><span aria-hidden="true">&nbsp;·&nbsp;</span><span id="live-clock" class="num">--:--:--</span></span>
+        <button class="btn" id="docs-open">FIELD MANUAL</button>
         <div class="theme-rack" role="group" aria-label="Theme switcher">
           <div class="jaw" aria-hidden="true"></div>
           <button id="theme-dark" aria-pressed="true">DARK</button>
@@ -175,8 +176,8 @@
             <div class="digits" id="odo-sockets" data-odo aria-label="Listening sockets"></div>
           </div>
           <div class="odo">
-            <div class="label">Package thermal</div>
-            <div class="digits" id="odo-thermal" data-odo aria-label="CPU temperature"></div>
+            <div class="label">CPU Package thermal</div>
+            <div class="digits" id="odo-thermal" data-odo aria-label="CPU package temperature"></div>
           </div>
         </div>
       </section>
@@ -198,7 +199,7 @@
         <div class="card-head"><h2>Thermal &amp; Memory</h2><span class="tag">sensors · /proc/meminfo</span></div>
         <div class="chart-grid">
           <div class="chart-panel">
-            <h3>Package °C</h3>
+            <h3>CPU Package °C</h3>
             <canvas id="chart-thermal" height="120" aria-label="Thermal history chart"></canvas>
           </div>
           <div class="chart-panel">
@@ -217,27 +218,26 @@
 
       <!-- ROW 3: Sonorium -->
       <section class="card c-span-12" style="animation-delay:240ms" aria-label="Sonification deck">
-        <div class="card-head"><h2>Sonorium</h2><span class="tag">WEBAUDIO · FFT WATERFALL</span></div>
+        <div class="card-head"><h2>Sonorium</h2><span class="tag">WEBAUDIO · LIMITER · FFT WATERFALL</span></div>
         <div class="sono-controls">
           <button class="sono-toggle" id="sono-toggle" aria-pressed="false">▶ PLAY DRONE (optional)</button>
-          <span class="sono-note" id="sono-note">maps live CPU/Pkg°C/MEM/socket physics → pitched saw/sine drone · drag knobs vertically · wheel for fine · ↑↓ keys</span>
+          <span class="sono-note" id="sono-note">maps live CPU / Pkg°C / MEM / sockets → saw+sine drone + compressor limiter · drag knobs vertically or use ↑↓ keys</span>
         </div>
         <div class="knob-rack">
           <div class="knob"><div class="dial" data-knob="pitch" tabindex="0" role="slider" aria-label="Pitch — follows CPU load" aria-valuemin="0" aria-valuemax="100" aria-valuenow="38"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Pitch ↥ CPU</div><div class="k-value num" id="kv-pitch">38</div></div>
           <div class="knob"><div class="dial" data-knob="harm" tabindex="0" role="slider" aria-label="Harmonic entry — follows memory pressure" aria-valuemin="0" aria-valuemax="100" aria-valuenow="26"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Harms ↥ MEM</div><div class="k-value num" id="kv-harm">26</div></div>
-          <div class="knob"><div class="dial" data-knob="bright" tabindex="0" role="slider" aria-label="Filter brightness — follows peak core temp"aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Bright ↥ TEMP</div><div class="k-value num" id="kv-bright">50</div></div>
+          <div class="knob"><div class="dial" data-knob="bright" tabindex="0" role="slider" aria-label="Filter brightness — follows CPU package temp" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Bright ↥ TEMP</div><div class="k-value num" id="kv-bright">50</div></div>
           <div class="knob"><div class="dial" data-knob="drift" tabindex="0" role="slider" aria-label="LFO drift rate — follows active sockets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30"><svg viewBox="0 0 84 84" aria-hidden="true"></svg></div><div class="k-label">Drift ↥ SOCK</div><div class="k-value num" id="kv-drift">30</div></div>
         </div>
         <canvas id="fft-waterfall" aria-label="FFT waterfall spectrogram" style="margin-top:var(--sp-4)"></canvas>
       </section>
 
-      <!-- ROW 4: git pulse -->
+      <!-- ROW 4: git pulse + timeline -->
       <section class="card c-span-5" style="animation-delay:300ms" aria-label="Git pulse">
-        <div class="card-head"><h2>Git Pulse</h2><span class="tag">~/NullAITech · 14d</span></div>
-        <div id="git-list" style="display:grid;gap:var(--sp-2)"></div>
+        <div class="card-head"><h2>Git Pulse</h2><span class="tag">~/NullAITech · 14d active</span></div>
+        <div id="git-list" style="display:grid;gap:var(--sp-1)"></div>
       </section>
 
-      <!-- ROW 4b: timeline -->
       <section class="card beam c-span-7" style="animation-delay:360ms" aria-label="Time machine">
         <div class="card-head">
           <h2>Time Machine</h2><span class="tag">SQLite ring · 10s frame</span>
@@ -250,7 +250,7 @@
             <button id="tm-scrub" aria-pressed="true">SCRUB</button>
             <button id="tm-diff" aria-pressed="false">DIFF T1/T2</button>
           </div>
-          <span class="tm-readout" id="tm-readout">—</span>
+          <span class="tm-readout" id="tm-readout">hover or drag timeline to inspect snapshots</span>
           <span style="flex:1"></span>
           <button class="btn" id="tm-export-md" disabled>EXPORT MD</button>
           <button class="btn" id="tm-export-json" disabled>EXPORT JSON</button>
@@ -260,13 +260,39 @@
           <div class="diff-chips" id="tm-diff-chips"></div>
         </div>
       </section>
+
+      <!-- ROW 5: Sovereign AI Anomaly Triage -->
+      <section class="card c-span-12" id="ai-triage-card" style="animation-delay:420ms" aria-label="Sovereign AI anomaly triage">
+        <div class="card-head">
+          <h2>Sovereign Anomaly Triage</h2>
+          <span class="tag">LOCAL PROVIDERS + DETERMINISTIC RULES</span>
+          <span class="grow"></span>
+          <span class="tm-readout" id="ai-provider-count">probing providers…</span>
+        </div>
+        <div class="ai-controls">
+          <div class="ai-field">
+            <label for="ai-provider">Provider</label>
+            <select id="ai-provider" class="ai-select">
+              <option value="auto">Auto (Best Local)</option>
+              <option value="deterministic">Deterministic Rules (Offline)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="ai-analyze-btn">RUN TRIAGE</button>
+        </div>
+        <div class="ai-output" id="ai-output">
+          <div class="ai-meta" id="ai-meta">Ready — analyzes live CPU/thermal/memory/constellation signals and any active Time Machine T1→T2 diff.</div>
+          <div id="ai-summary">Click RUN TRIAGE to inspect current telemetry anomalies using AGY Bridge (:18000), Ollama (:11434), local CLIs, or offline deterministic rules.</div>
+          <div class="diff-chips" id="ai-chips" style="margin-top:var(--sp-3)"></div>
+        </div>
+      </section>
     </main>
 
     <footer class="foot">
-      <span>AETHER-OBSERVATORY v1.0.0 · Neal Frazier Tech · <a href="https://x.com/1nc0gn30" rel="noopener">@1nc0gn30</a> · NullAI Platform</span>
+      <span>Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/aether-observatory" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) · <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a> · v2.0.0</span>
       <span style="flex:1"></span>
       <span id="foot-port" class="num">http://127.0.0.1:8160</span>
-      <a href="https://buymeacoffee.com/1nc0gn30" target="_blank" rel="noopener">☕ buy me a coffee</a>
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" title="Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip</a>
       <span id="git-dirty-note" class="dirty-note" style="display:none;margin:0"></span>
     </footer>
   </div>

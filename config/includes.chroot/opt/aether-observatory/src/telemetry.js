@@ -1,37 +1,67 @@
 // AETHER-OBSERVATORY — Core OS Telemetry Sampler
-// Reads REAL data from /proc, /sys, and system binaries. No mocks, ever.
+// Reads real data from /proc, /sys, and system binaries via execFile (never shell).
+// Async TTL-cached subprocesses prevent single-threaded Node event-loop starvation.
 
 import fs from 'node:fs';
 import os from 'node:os';
-import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import { execFile, execFileSync } from 'node:child_process';
+import { promisify } from 'node:util';
 
-const NULLAI_ROOT = '/home/zoth/NullAITech';
+const execFileAsync = promisify(execFile);
+
+export const NULLAI_ROOT = process.env.NULLAI_ROOT || path.join(os.homedir(), 'NullAITech');
 const TOOLS_DATA = path.join(NULLAI_ROOT, 'zoth-studio-v2/src/data/toolsData.js');
 
 // ---------- helpers ----------
 const readSafe = (p) => { try { return fs.readFileSync(p, 'utf8'); } catch { return null; } };
-const execSafe = (bin, args = [], timeout = 2500) => {
-  try { return execFileSync(bin, args, { encoding: 'utf8', timeout, stdio: ['ignore', 'pipe', 'ignore'] }); }
-  catch { return null; }
+
+const execSafeSync = (bin, args = [], timeout = 2500) => {
+  try {
+    return execFileSync(bin, args, { encoding: 'utf8', timeout, stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch {
+    return null;
+  }
 };
 
-// ---------- CPU load (real sampled jiffies over 400ms) ----------
-let lastCpu = null;
-function cpuSampleSync() {
-  const first = os.cpus().map(c => c.times);
-  const before = Date.now();
-  while (Date.now() - before < 110) { /* short busy-free yield via sync spin (~110ms max, only on demand) */ }
-  const second = os.cpus().map(c => c.times);
-  return second.map((s, i) => {
-    const f = first[i];
-    const total = (s.user - f.user) + (s.nice - f.nice) + (s.sys - f.sys) + (s.idle - f.idle) + (s.irq - f.irq);
-    const busy = (s.user - f.user) + (s.nice - f.nice) + (s.sys - f.sys) + (s.irq - f.irq);
-    return total > 0 ? Math.min(100, Math.max(0, (busy / total) * 100)) : 0;
-  });
+async function execSafeAsync(bin, args = [], timeout = 2500) {
+  try {
+    const { stdout } = await execFileAsync(bin, args, {
+      encoding: 'utf8',
+      timeout,
+      maxBuffer: 2 * 1024 * 1024,
+      windowsHide: true,
+    });
+    return stdout;
+  } catch {
+    return null;
+  }
 }
 
-// async version — non-blocking 250ms sampling window
+// TTL cache with in-flight deduplication so concurrent requests share one probe
+function makeTtlCache(ttlMs, loader) {
+  let cached = null;
+  let expiresAt = 0;
+  let inflight = null;
+  return async (force = false) => {
+    const now = Date.now();
+    if (!force && cached !== null && now < expiresAt) return cached;
+    if (inflight) return inflight;
+    inflight = (async () => {
+      try {
+        const val = await loader();
+        cached = val;
+        expiresAt = Date.now() + ttlMs;
+        return val;
+      } finally {
+        inflight = null;
+      }
+    })();
+    return inflight;
+  };
+}
+
+// ---------- CPU load (non-blocking 250ms sample window) ----------
 export function sampleCpu() {
   return new Promise((resolve) => {
     const first = os.cpus().map(c => c.times);
@@ -50,8 +80,8 @@ export function sampleCpu() {
   });
 }
 
-// ---------- Thermal zones ----------
-export function readThermals() {
+// ---------- Thermal zones & sensors parsing ----------
+function readSysfsZones() {
   const zones = [];
   const base = '/sys/class/thermal';
   try {
@@ -61,40 +91,88 @@ export function readThermals() {
       if (Number.isFinite(raw)) zones.push({ zone: z, label: type, celsius: +(raw / 1000).toFixed(1) });
     }
   } catch { /* no thermal sysfs */ }
-  // Also parse `sensors` for coretemp / package readings when present
-  const s = execSafe('sensors', [], 2000);
-  let packageC = null, fanRpm = null;
-  if (s) {
-    const pkg = s.match(/(?:Package id 0|CPU|Composite):\s*\+([\d.]+)°C/);
-    if (pkg) packageC = parseFloat(pkg[1]);
-    const fan = s.match(/fan\d+:\s*(\d+)\s*RPM/);
-    if (fan) fanRpm = parseInt(fan[1], 10);
-    // coretemp per-core lines
-    const cores = [...s.matchAll(/Core (\d+):\s*\+([\d.]+)°C/g)].map(m => ({ core: `core-${m[1]}`, celsius: parseFloat(m[2]) }));
-    if (cores.length) return { zones, packageC, fanRpm, coreTemps: cores };
-  }
-  // Fallback: derive package as max zone
-  if (packageC === null && zones.length) packageC = Math.max(...zones.map(z => z.celsius));
-  return { zones, packageC, fanRpm, coreTemps: [] };
+  return zones;
 }
+
+// Prioritize true CPU package temperature over NVMe SSD "Composite:" sensors
+export function parseSensorsOutput(s, zones = []) {
+  let packageC = null;
+  let fanRpm = null;
+  let coreTemps = [];
+
+  if (s) {
+    // 1. Explicit CPU package labels (Intel coretemp, AMD k10temp, generic CPU)
+    const cpuPkg =
+      s.match(/Package id \d+:\s*\+([\d.]+)°C/) ||
+      s.match(/(?:Tctl|Tdie):\s*\+([\d.]+)°C/) ||
+      s.match(/CPU(?:\s+Temp(?:erature)?)?:\s*\+([\d.]+)°C/);
+    if (cpuPkg) packageC = parseFloat(cpuPkg[1]);
+
+    const fan = s.match(/fan\d+:\s*(\d+)\s*RPM/i);
+    if (fan) fanRpm = parseInt(fan[1], 10);
+
+    coreTemps = [...s.matchAll(/Core (\d+):\s*\+([\d.]+)°C/g)].map(m => ({
+      core: `core-${m[1]}`,
+      celsius: parseFloat(m[2]),
+    }));
+
+    // If CPU package line absent but per-core temps exist, use max core temp
+    if (packageC === null && coreTemps.length) {
+      packageC = Math.max(...coreTemps.map(c => c.celsius));
+    }
+  }
+
+  // Fallback to sysfs x86_pkg_temp or highest thermal zone (never NVMe Composite ahead of CPU)
+  if (packageC === null && zones.length) {
+    const pkgZone = zones.find(z => /x86_pkg_temp|cpu|pkg/i.test(z.label));
+    packageC = pkgZone ? pkgZone.celsius : Math.max(...zones.map(z => z.celsius));
+  }
+
+  return { zones, packageC, fanRpm, coreTemps };
+}
+
+export function readThermals() {
+  const zones = readSysfsZones();
+  const s = execSafeSync('sensors', [], 2000);
+  return parseSensorsOutput(s, zones);
+}
+
+export const readThermalsAsync = makeTtlCache(3000, async () => {
+  const zones = readSysfsZones();
+  const s = await execSafeAsync('sensors', [], 2500);
+  return parseSensorsOutput(s, zones);
+});
 
 // ---------- Memory ----------
 export function readMemory() {
   const raw = readSafe('/proc/meminfo');
   const m = {};
-  if (raw) for (const line of raw.split('\n')) {
-    const mm = line.match(/^(\w+):\s+(\d+)\s+kB/);
-    if (mm) m[mm[1]] = parseInt(mm[2], 10);
+  if (raw) {
+    for (const line of raw.split('\n')) {
+      const mm = line.match(/^(\w+):\s+(\d+)\s+kB/);
+      if (mm) m[mm[1]] = parseInt(mm[2], 10);
+    }
   }
-  const total = m.MemTotal || 0, free = m.MemFree || 0, avail = m.MemAvailable || 0;
-  const buffers = m.Buffers || 0, cached = (m.Cached || 0) + (m.SReclaimable || 0);
-  const used = total - free - buffers - cached;
+  const total = m.MemTotal || 0;
+  const free = m.MemFree || 0;
+  const avail = m.MemAvailable || 0;
+  const buffers = m.Buffers || 0;
+  const cached = (m.Cached || 0) + (m.SReclaimable || 0);
+  const used = Math.max(0, total - free - buffers - cached);
+  const swapTotal = m.SwapTotal || 0;
+  const swapFree = m.SwapFree || 0;
+  const swapUsed = Math.max(0, swapTotal - swapFree);
   return {
-    totalKb: total, usedKb: used, freeKb: free, availableKb: avail,
-    buffersKb: buffers, cachedKb: cached,
-    swapTotalKb: m.SwapTotal || 0, swapUsedKb: (m.SwapTotal || 0) - (m.SwapFree || 0),
+    totalKb: total,
+    usedKb: used,
+    freeKb: free,
+    availableKb: avail,
+    buffersKb: buffers,
+    cachedKb: cached,
+    swapTotalKb: swapTotal,
+    swapUsedKb: swapUsed,
     usedPct: total ? +(100 * used / total).toFixed(1) : 0,
-    swapPct: (m.SwapTotal || 0) ? +(100 * ((m.SwapTotal - m.SwapFree) / m.SwapTotal)).toFixed(1) : 0
+    swapPct: swapTotal ? +(100 * swapUsed / swapTotal).toFixed(1) : 0,
   };
 }
 
@@ -102,17 +180,21 @@ export function readMemory() {
 export function readDiskIO() {
   const raw = readSafe('/proc/diskstats');
   const devs = [];
-  if (raw) for (const line of raw.split('\n')) {
-    const p = line.trim().split(/\s+/);
-    if (p.length < 14) continue;
-    const name = p[2];
-    if (/^(nvme\d+n\d+|\bsd[a-z]+\b|\bvd[a-z]+\b|mmcblk\d+)$/.test(name)) {
-      devs.push({
-        device: name,
-        readsCompleted: parseInt(p[3], 10), sectorsRead: parseInt(p[5], 10),
-        writesCompleted: parseInt(p[7], 10), sectorsWritten: parseInt(p[9], 10),
-        ioInFlight: parseInt(p[11], 10)
-      });
+  if (raw) {
+    for (const line of raw.split('\n')) {
+      const p = line.trim().split(/\s+/);
+      if (p.length < 14) continue;
+      const name = p[2];
+      if (/^(nvme\d+n\d+|\bsd[a-z]+\b|\bvd[a-z]+\b|mmcblk\d+)$/.test(name)) {
+        devs.push({
+          device: name,
+          readsCompleted: parseInt(p[3], 10),
+          sectorsRead: parseInt(p[5], 10),
+          writesCompleted: parseInt(p[7], 10),
+          sectorsWritten: parseInt(p[9], 10),
+          ioInFlight: parseInt(p[11], 10),
+        });
+      }
     }
   }
   return devs;
@@ -122,35 +204,56 @@ export function readDiskIO() {
 export function readNet() {
   const raw = readSafe('/proc/net/dev');
   const devs = [];
-  if (raw) for (const line of raw.split('\n').slice(2)) {
-    const p = line.split(':');
-    if (p.length < 2) continue;
-    const f = p[1].trim().split(/\s+/);
-    devs.push({ iface: p[0].trim(), rxBytes: parseInt(f[0], 10), txBytes: parseInt(f[8], 10), rxPackets: parseInt(f[1], 10), txPackets: parseInt(f[9], 10) });
+  if (raw) {
+    for (const line of raw.split('\n').slice(2)) {
+      const p = line.split(':');
+      if (p.length < 2) continue;
+      const f = p[1].trim().split(/\s+/);
+      devs.push({
+        iface: p[0].trim(),
+        rxBytes: parseInt(f[0], 10),
+        txBytes: parseInt(f[8], 10),
+        rxPackets: parseInt(f[1], 10),
+        txPackets: parseInt(f[9], 10),
+      });
+    }
   }
   return devs;
 }
 
 // ---------- Listening sockets (real `ss -tlnp`) ----------
-export function readListeners() {
-  const out = execSafe('ss', ['-tlnp'], 2500);
+export function parseListenersOutput(out) {
   const listeners = [];
   if (!out) return listeners;
   for (const line of out.split('\n').slice(1)) {
     const p = line.trim().split(/\s+/);
-    if (p.length < 6) continue;
+    if (p.length < 5) continue;
     const la = p[3];
     const portMatch = la.match(/:(\d+)$/);
     if (!portMatch) continue;
+    const localAddr = la.split(':').slice(0, -1).join(':') || la;
+    const isV6 = localAddr.includes('[') || localAddr.includes('::') || localAddr === '*';
     const proc = line.match(/users:\(\("([^"]+)",pid=(\d+)/);
     listeners.push({
-      proto: p[0], localAddr: la.split(':').slice(0, -1).join(':') || la,
+      proto: isV6 ? 'tcp6' : 'tcp',
+      state: p[0],
+      localAddr,
       port: parseInt(portMatch[1], 10),
-      processName: proc ? proc[1] : null, pid: proc ? parseInt(proc[2], 10) : null
+      processName: proc ? proc[1] : null,
+      pid: proc ? parseInt(proc[2], 10) : null,
     });
   }
   return listeners;
 }
+
+export function readListeners() {
+  return parseListenersOutput(execSafeSync('ss', ['-tlnp'], 2500));
+}
+
+export const readListenersAsync = makeTtlCache(3000, async () => {
+  const out = await execSafeAsync('ss', ['-tlnp'], 2500);
+  return parseListenersOutput(out);
+});
 
 // proc uptime for a pid
 export function procUptime(pid) {
@@ -158,15 +261,45 @@ export function procUptime(pid) {
   const uptime = parseFloat(readSafe('/proc/uptime')?.split(' ')[0] || 'NaN');
   const stat = readSafe(`/proc/${pid}/stat`);
   if (!stat || !Number.isFinite(uptime)) return null;
-  const startTicks = parseInt(stat.split(' ')[21], 10);
-  const hertz = 100; // standard CONFIG_HZ on this kernel
+  // Comm field can contain spaces inside parentheses; parse fields after last ')'
+  const closeIdx = stat.lastIndexOf(')');
+  const rest = closeIdx > -1 ? stat.slice(closeIdx + 2).split(' ') : stat.split(' ').slice(2);
+  const startTicks = parseInt(rest[19], 10);
+  if (!Number.isFinite(startTicks)) return null;
+  const hertz = 100;
   const secs = uptime - (startTicks / hertz);
   return secs > 0 ? Math.floor(secs) : 0;
 }
 
+// Redact secrets/tokens/passwords from process cmdlines before API/UI exposure
+export function redactCmdline(raw) {
+  if (!raw) return '';
+  let out = String(raw);
+  // Flag followed by space and secret value: --token abc, --api-key xyz, --password secret
+  out = out.replace(
+    /(--?(?:token|api[-_]?key|password|passwd|secret|auth[-_]?token|access[-_]?key|private[-_]?key|bearer))\s+([^\s'"]+)/gi,
+    '$1 [REDACTED]'
+  );
+  // Key=value forms: password=foo, API_KEY=bar, token=baz
+  out = out.replace(
+    /\b([A-Za-z0-9_.-]*(?:token|api[-_]?key|password|passwd|secret|auth|key)[A-Za-z0-9_.-]*)=([^\s'"]+)/gi,
+    '$1=[REDACTED]'
+  );
+  // Authorization Bearer tokens
+  out = out.replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [REDACTED]');
+  // Common provider token prefixes (sk-*, ghp_*, gho_*, xoxb-*, AIza*)
+  out = out.replace(/\b(?:sk-[A-Za-z0-9_-]{12,}|gh[po]_[A-Za-z0-9]{16,}|xox[baprs]-[A-Za-z0-9-]{12,}|AIza[0-9A-Za-z_-]{20,})\b/g, '[REDACTED]');
+  return out.trim().slice(0, 200);
+}
+
 export function procCmdline(pid) {
   if (!pid) return '';
-  try { return fs.readFileSync(`/proc/${pid}/cmdline`, 'utf8').replace(/\0/g, ' ').trim().slice(0, 200); } catch { return ''; }
+  try {
+    const raw = fs.readFileSync(`/proc/${pid}/cmdline`, 'utf8').replace(/\0/g, ' ');
+    return redactCmdline(raw);
+  } catch {
+    return '';
+  }
 }
 
 // ---------- Zoth registry (toolsData.js) ----------
@@ -176,7 +309,6 @@ export function zothRegistry() {
   const tools = [];
   const raw = readSafe(TOOLS_DATA);
   if (raw) {
-    // Extract tool objects with id/name/localPort/category via regex on the data file
     const blocks = raw.split(/},\s*\{/);
     for (const b of blocks) {
       const id = (b.match(/id:\s*'([^']+)'/) || [])[1];
@@ -184,50 +316,141 @@ export function zothRegistry() {
       const port = (b.match(/localPort:\s*(\d+)/) || [])[1];
       const cat = (b.match(/category:\s*'([^']+)'/) || [])[1];
       const pub = /published:\s*true/.test(b);
-      if (id && name && port) tools.push({ id, name: name.replace(/\\'/g, "'"), localPort: parseInt(port, 10), category: cat || 'Uncategorized', published: pub });
+      if (id && name && port) {
+        tools.push({
+          id,
+          name: name.replace(/\\'/g, "'"),
+          localPort: parseInt(port, 10),
+          category: cat || 'Uncategorized',
+          published: pub,
+        });
+      }
     }
   }
   registryCache = { at: Date.now(), tools };
   return tools;
 }
 
-// ---------- Git pulse across NullAITech ----------
+// ---------- Git pulse across NullAITech (async, bounded concurrency, sorted by latest commit) ----------
+async function scanGitRepo(dir) {
+  const log = await execSafeAsync(
+    'git',
+    ['-C', dir, 'log', '--since=14 days ago', '--pretty=%H|%aI|%an|%s', '-n', '40'],
+    2000
+  );
+  if (!log || !log.trim()) return null;
+  const commits = log.trim().split('\n').map(l => {
+    const parts = l.split('|');
+    const hash = parts[0];
+    const date = parts[1];
+    const author = parts[2];
+    const subject = parts.slice(3).join('|');
+    return { hash: hash?.slice(0, 10), date, author, subject: (subject || '').slice(0, 140) };
+  });
+  const [statusOut, branchOut] = await Promise.all([
+    execSafeAsync('git', ['-C', dir, 'status', '--porcelain'], 1800),
+    execSafeAsync('git', ['-C', dir, 'rev-parse', '--abbrev-ref', 'HEAD'], 1500),
+  ]);
+  const dirty = statusOut ? statusOut.split('\n').filter(Boolean).length : 0;
+  const branch = (branchOut || '').trim();
+  return {
+    repo: path.basename(dir),
+    branch,
+    commits14d: commits.length,
+    dirtyFiles: dirty,
+    lastCommit: commits[0]?.date || null,
+    lastSubject: commits[0]?.subject || '',
+    recent: commits.slice(0, 5),
+  };
+}
+
+const gitPulseCached = makeTtlCache(60000, async () => {
+  const repos = [];
+  let candidates = [];
+  try {
+    candidates = fs.readdirSync(NULLAI_ROOT, { withFileTypes: true })
+      .filter(e => e.isDirectory() && !e.name.startsWith('.'))
+      .map(e => path.join(NULLAI_ROOT, e.name))
+      .filter(d => fs.existsSync(path.join(d, '.git')))
+      .map(dir => {
+        let mtime = 0;
+        for (const p of [path.join(dir, '.git', 'logs', 'HEAD'), path.join(dir, '.git', 'HEAD'), path.join(dir, '.git')]) {
+          try { mtime = Math.max(mtime, fs.statSync(p).mtimeMs); break; } catch {}
+        }
+        return { dir, mtime };
+      })
+      .sort((a, b) => b.mtime - a.mtime)
+      .slice(0, 18)
+      .map(x => x.dir);
+  } catch {
+    return [];
+  }
+
+  // Bounded concurrency worker pool (4 concurrent git subprocesses max on top 18 active repos)
+  const CONCURRENCY = 4;
+  let idx = 0;
+  const workers = Array.from({ length: Math.min(CONCURRENCY, candidates.length) }, async () => {
+    while (idx < candidates.length) {
+      const dir = candidates[idx++];
+      const info = await scanGitRepo(dir);
+      if (info) repos.push(info);
+    }
+  });
+  await Promise.all(workers);
+  repos.sort((a, b) => (b.lastCommit || '').localeCompare(a.lastCommit || ''));
+  return repos;
+});
+
+export async function gitPulseAsync(limitRepos = 14) {
+  const all = await gitPulseCached();
+  return all.slice(0, Math.max(1, limitRepos));
+}
+
+// Kept for backwards compatibility if any sync caller invokes gitPulse()
 export function gitPulse(limitRepos = 14) {
   const repos = [];
   try {
     const entries = fs.readdirSync(NULLAI_ROOT, { withFileTypes: true })
       .filter(e => e.isDirectory() && !e.name.startsWith('.'))
-      .map(e => path.join(NULLAI_ROOT, e.name));
-    let scanned = 0;
+      .map(e => path.join(NULLAI_ROOT, e.name))
+      .filter(d => fs.existsSync(path.join(d, '.git')));
     for (const dir of entries) {
-      if (scanned >= limitRepos) break;
-      if (!fs.existsSync(path.join(dir, '.git'))) continue;
-      scanned++;
-      const log = execSafe('git', ['-C', dir, 'log', '--since=14 days ago', '--pretty=%H|%aI|%an|%s', '-n', '40'], 2500);
+      const log = execSafeSync('git', ['-C', dir, 'log', '--since=14 days ago', '--pretty=%H|%aI|%an|%s', '-n', '10'], 1500);
       if (!log || !log.trim()) continue;
       const commits = log.trim().split('\n').map(l => {
-        const [hash, date, author, subject] = l.split('|');
-        return { hash: hash?.slice(0, 10), date, author, subject: subject?.slice(0, 140) };
+        const parts = l.split('|');
+        return { hash: parts[0]?.slice(0, 10), date: parts[1], author: parts[2], subject: parts.slice(3).join('|').slice(0, 140) };
       });
-      const lastCommit = commits[0]?.date || null;
-      const statusOut = execSafe('git', ['-C', dir, 'status', '--porcelain'], 2000);
+      const statusOut = execSafeSync('git', ['-C', dir, 'status', '--porcelain'], 1200);
       const dirty = statusOut ? statusOut.split('\n').filter(Boolean).length : 0;
-      const branch = (execSafe('git', ['-C', dir, 'rev-parse', '--abbrev-ref', 'HEAD'], 1500) || '').trim();
-      repos.push({ repo: path.basename(dir), branch, commits14d: commits.length, dirtyFiles: dirty, lastCommit, recent: commits.slice(0, 5) });
+      const branch = (execSafeSync('git', ['-C', dir, 'rev-parse', '--abbrev-ref', 'HEAD'], 1000) || '').trim();
+      repos.push({
+        repo: path.basename(dir),
+        branch,
+        commits14d: commits.length,
+        dirtyFiles: dirty,
+        lastCommit: commits[0]?.date || null,
+        lastSubject: commits[0]?.subject || '',
+        recent: commits.slice(0, 5),
+      });
     }
   } catch { /* root unreadable */ }
   repos.sort((a, b) => (b.lastCommit || '').localeCompare(a.lastCommit || ''));
-  return repos;
+  return repos.slice(0, limitRepos);
 }
 
-// ---------- Full live frame ----------
-export async function liveFrame() {
-  const [cores, thermals] = await Promise.all([sampleCpu(), Promise.resolve(readThermals())]);
+// ---------- Full live frame (100% async, non-blocking) ----------
+const liveFrameCached = makeTtlCache(1200, async () => {
+  const [cores, thermals, listeners] = await Promise.all([
+    sampleCpu(),
+    readThermalsAsync(),
+    readListenersAsync(),
+  ]);
   const mem = readMemory();
   const disks = readDiskIO();
   const net = readNet();
-  const listeners = readListeners();
   const loads = os.loadavg();
+  const coreCount = os.cpus().length || 1;
   return {
     ts: new Date().toISOString(),
     epoch: Date.now(),
@@ -237,32 +460,48 @@ export async function liveFrame() {
     bootTime: new Date(Date.now() - os.uptime() * 1000).toISOString(),
     cpu: {
       model: os.cpus()[0]?.model || 'unknown',
-      coreCount: os.cpus().length,
-      load1: +loads[0].toFixed(2), load5: +loads[1].toFixed(2), load15: +loads[2].toFixed(2),
-      loadPerCore: +(loads[0] / os.cpus().length).toFixed(3),
+      coreCount,
+      load1: +loads[0].toFixed(2),
+      load5: +loads[1].toFixed(2),
+      load15: +loads[2].toFixed(2),
+      loadPerCore: +(loads[0] / coreCount).toFixed(3),
       coresPct: cores,
-      busyPct: +((cores.reduce((a, b) => a + b, 0) / (cores.length || 1))).toFixed(1)
+      busyPct: +((cores.reduce((a, b) => a + b, 0) / (cores.length || 1))).toFixed(1),
     },
     thermals,
     memory: mem,
     disks,
     net: net.filter(d => d.rxBytes > 0 || d.txBytes > 0),
     listening: { count: listeners.length, ports: listeners.map(l => l.port).sort((a, b) => a - b) },
-    processCount: (() => { try { return fs.readdirSync('/proc').filter(d => /^\d+$/.test(d)).length; } catch { return 0; } })()
+    processCount: (() => { try { return fs.readdirSync('/proc').filter(d => /^\d+$/.test(d)).length; } catch { return 0; } })(),
   };
+});
+
+export async function liveFrame(force = false) {
+  return liveFrameCached(force);
 }
 
 // ---------- Compact frame for SQLite ring buffer ----------
 export function compactFrame(t) {
   return {
-    ts: t.ts, epoch: t.epoch,
-    load1: t.cpu.load1, load5: t.cpu.load5, load15: t.cpu.load15,
-    busyPct: t.cpu.busyPct, loadPerCore: t.cpu.loadPerCore,
-    packageC: t.thermals.packageC, maxZoneC: t.thermals.zones.length ? Math.max(...t.thermals.zones.map(z => z.celsius)) : null,
-    memUsedPct: t.memory.usedPct, swapUsedPct: t.memory.swapPct,
-    memUsedKb: t.memory.usedKb, memTotalKb: t.memory.totalKb,
-    listeners: t.listening.count, ports: t.listening.ports,
-    processes: t.processCount, uptimeSec: t.uptimeSec,
-    rxBytes: t.net.reduce((a, d) => a + d.rxBytes, 0), txBytes: t.net.reduce((a, d) => a + d.txBytes, 0)
+    ts: t.ts,
+    epoch: t.epoch,
+    load1: t.cpu.load1,
+    load5: t.cpu.load5,
+    load15: t.cpu.load15,
+    busyPct: t.cpu.busyPct,
+    loadPerCore: t.cpu.loadPerCore,
+    packageC: t.thermals.packageC,
+    maxZoneC: t.thermals.zones.length ? Math.max(...t.thermals.zones.map(z => z.celsius)) : null,
+    memUsedPct: t.memory.usedPct,
+    swapUsedPct: t.memory.swapPct,
+    memUsedKb: t.memory.usedKb,
+    memTotalKb: t.memory.totalKb,
+    listeners: t.listening.count,
+    ports: t.listening.ports,
+    processes: t.processCount,
+    uptimeSec: t.uptimeSec,
+    rxBytes: t.net.reduce((a, d) => a + d.rxBytes, 0),
+    txBytes: t.net.reduce((a, d) => a + d.txBytes, 0),
   };
 }

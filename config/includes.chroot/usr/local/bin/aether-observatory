@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# aether-observatory CLI + daemon entry — works from any install location.
+# aether-observatory CLI + daemon + MCP entry — works from any install location.
 # Resolves the project root from the script's location (with symlink support).
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do
@@ -18,10 +18,12 @@ if [ ! -f "$BIN_DIR/aether-observatory.js" ]; then
   done
 fi
 
-# serve needs the server module; everything else runs through the node CLI
 if [ "$1" = "serve" ]; then
   shift
   exec node "$BIN_DIR/../src/server.js" "$@"
+elif [ "$1" = "mcp" ]; then
+  shift
+  exec node "$BIN_DIR/../src/mcp_server.js" "$@"
 else
   exec node "$BIN_DIR/aether-observatory.js" "$@"
 fi

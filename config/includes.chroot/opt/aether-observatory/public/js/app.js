@@ -1,28 +1,36 @@
-// AETHER — main application. Wires telemetry API → constellation, odometers, sonifier, time machine.
+// AETHER — main application. Wires telemetry API & SSE → constellation, odometers, sonifier, time machine, AI triage.
+// Zero unescaped innerHTML sinks; live dual-theme synchronization across all canvases.
 
 import './intro.js';
 import { Constellation } from './constellation.js';
 import { RotaryKnob, Sonifier } from './sonifier.js';
 import { TimeMachine } from './timemachine.js';
 
+// ---------- embed mode ----------
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.get('embed') === '1' || window.self !== window.top) {
+  document.documentElement.classList.add('embedded');
+}
+
 // ---------- theme ----------
 const root = document.documentElement;
 const THEMES = {
   dark: {
     bg0: '#07090E', panel: 'rgba(255,255,255,0.035)', line: 'rgba(255,255,255,0.12)',
-    ink: '#E7E2D4', inkDim: '#9BA3B4', inkFaint: '#5C6478',
+    ink: '#E7E2D4', inkDim: '#A6AEBF', inkFaint: '#7A8396',
     gold: '#D4AF37', cyan: '#38BDF8', violet: '#8B5CF6',
     heatWarn: '#F59E0B', heatHot: '#EF4444',
-    cat: { noc: '#38BDF8', data: '#34D399', gen: '#F472B6', sec: '#F59E0B', dev: '#A78BFA', unknown: '#94A3B8' }
+    cat: { noc: '#38BDF8', data: '#34D399', gen: '#F472B6', sec: '#F59E0B', dev: '#A78BFA', unknown: '#94A3B8' },
   },
   light: {
-    bg0: '#F7F4EB', panel: 'rgba(17,19,24,0.035)', line: 'rgba(17,19,24,0.12)',
-    ink: '#111318', inkDim: '#4A4F5C', inkFaint: '#A0A4B0',
-    gold: '#8C6239', cyan: '#0E7FB4', violet: '#6D28D9',
+    bg0: '#F7F4EB', panel: 'rgba(17,19,24,0.035)', line: 'rgba(17,19,24,0.14)',
+    ink: '#111318', inkDim: '#46423D', inkFaint: '#676158',
+    gold: '#8C6239', cyan: '#0B7498', violet: '#6D28D9',
     heatWarn: '#B45309', heatHot: '#B91C1C',
-    cat: { noc: '#0E7FB4', data: '#059669', gen: '#BE185D', sec: '#B45309', dev: '#6D28D9', unknown: '#64748B' }
-  }
+    cat: { noc: '#0B7498', data: '#156A43', gen: '#BE185D', sec: '#B45309', dev: '#6D28D9', unknown: '#64748B' },
+  },
 };
+
 function applyPalette() {
   const t = root.dataset.theme === 'light' ? THEMES.light : THEMES.dark;
   window.__AETHER_COLORS = t;
@@ -30,24 +38,31 @@ function applyPalette() {
 }
 applyPalette();
 
+let constellation = null;
+let redrawAllCharts = null;
+
 const themeBtns = { dark: document.getElementById('theme-dark'), light: document.getElementById('theme-light') };
 function setTheme(t) {
   root.dataset.theme = t;
   themeBtns.dark.setAttribute('aria-pressed', String(t === 'dark'));
   themeBtns.light.setAttribute('aria-pressed', String(t === 'light'));
-  applyPalette();
+  const palette = applyPalette();
+  constellation?.setColors(palette);
+  redrawAllCharts?.();
   try { localStorage.setItem('aether-theme', t); } catch {}
 }
+
 try {
-  const urlTheme = new URLSearchParams(location.search).get('theme');
+  const urlTheme = urlParams.get('theme');
   const saved = (urlTheme === 'light' || urlTheme === 'dark') ? urlTheme : localStorage.getItem('aether-theme');
   if (saved === 'light' || saved === 'dark') setTheme(saved);
 } catch {}
+
 themeBtns.dark.addEventListener('click', () => setTheme('dark'));
 themeBtns.light.addEventListener('click', () => setTheme('light'));
 matchMedia('(prefers-color-scheme: light)').addEventListener?.('change', (e) => setTheme(e.matches ? 'light' : 'dark'));
 
-// viewport hint — touch-aware text (PR 2)
+// Viewport hint — touch-aware text
 {
   const vh = document.getElementById('viewport-hint');
   if (vh) {
@@ -75,34 +90,43 @@ const brailleEl = document.getElementById('constellation-braille');
 const inspector = {
   name: document.getElementById('d-node-name'),
   facts: document.getElementById('d-node-facts'),
-  cmd: document.getElementById('d-node-cmd')
+  cmd: document.getElementById('d-node-cmd'),
 };
+
+function fmtUptime(s) {
+  if (s == null) return '—';
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return (d ? `${d}d ` : '') + (h ? `${h}h ` : '') + `${m}m`;
+}
+
 function showInspector(node) {
-  if (!node) { closeDrawer(nodeDrawer); nodeDrawer.setAttribute('aria-hidden', 'true'); return; }
+  if (!node) { closeDrawer(nodeDrawer); return; }
   inspector.name.textContent = node.name;
+  const zothLabel = node.zothTool ? `Yes · ${node.category || 'Zoth Tool'}` : 'System daemon';
   const facts = [
-    ['PORT', ':' + node.port],
+    ['PORT', `:${node.port} (${node.proto || 'tcp'})`],
+    ['BIND', node.addr || '—'],
     ['PID', node.pid ?? '—'],
-    ['ZOTH TOOL', node.zothTool ? node.zothTool : 'not a Zoth daemon'],
+    ['ZOTH TOOL', zothLabel],
     ['UPTIME', fmtUptime(node.uptimeSec)],
-    ['LATENCY', node.latencyMs == null ? '—' : node.latencyMs + ' ms'],
-    ['CATEGORY', node.category || '—']
+    ['LATENCY', node.latencyMs == null ? '—' : `${node.latencyMs} ms`],
+    ['CATEGORY', node.category || 'System'],
   ];
-  inspector.facts.innerHTML = '';
+  inspector.facts.replaceChildren();
   for (const [k, v] of facts) {
     const dt = document.createElement('dt'); dt.textContent = k;
-    const dd = document.createElement('dd'); dd.textContent = v ?? '—';
+    const dd = document.createElement('dd'); dd.textContent = String(v ?? '—');
     inspector.facts.append(dt, dd);
   }
   inspector.cmd.textContent = node.cmdline || '(cmdline unreadable for this process)';
   openDrawer(nodeDrawer);
 }
-function fmtUptime(s) {
-  if (s == null) return '—';
-  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
-  return (d ? d + 'd ' : '') + (h ? h + 'h ' : '') + m + 'm';
-}
-const constellation = new Constellation(canvas, brailleEl, applyPalette(), showInspector);
+
+constellation = new Constellation(canvas, brailleEl, applyPalette(), showInspector);
+window.__constellation = constellation;
+
 document.getElementById('reset-camera').addEventListener('click', () => constellation.resetCamera());
 const modeBtns = [...document.querySelectorAll('.mode-rack button')];
 modeBtns.forEach(b => b.addEventListener('click', () => {
@@ -112,89 +136,114 @@ modeBtns.forEach(b => b.addEventListener('click', () => {
 
 // ---------- odometers ----------
 function renderOdometer(el, value, unitLabel) {
-  const units = String(value).padStart(Math.max(2, el.dataset.len || 3), '0').split('');
+  const digits = String(Math.max(0, Math.round(Number(value) || 0))).padStart(Math.max(2, Number(el.dataset.len) || 3), '0').split('');
   const inUnit = el.querySelectorAll('.flap:not(.unit)');
-  let changed = false;
-  for (let i = 0; i < units.length; i++) {
+  for (let i = 0; i < digits.length; i++) {
     let flap = inUnit[i];
     if (!flap) {
       flap = document.createElement('div');
       flap.className = 'flap';
-      el.appendChild(flap);
+      const unitEl = el.querySelector('.flap.unit');
+      if (unitEl) el.insertBefore(flap, unitEl);
+      else el.appendChild(flap);
     }
-    if (flap.textContent !== units[i]) {
-      flap.textContent = units[i];
+    if (flap.textContent !== digits[i]) {
+      flap.textContent = digits[i];
       flap.classList.remove('flip');
-      void flap.offsetWidth; // restart animation
+      void flap.offsetWidth;
       flap.classList.add('flip');
-      changed = true;
     }
   }
-  // trim extra flaps
   const all = el.querySelectorAll('.flap:not(.unit)');
-  for (let i = units.length; i < all.length; i++) all[i].remove();
+  for (let i = digits.length; i < all.length; i++) all[i].remove();
   let unit = el.querySelector('.flap.unit');
   if (unitLabel && !unit?.textContent.includes(unitLabel)) {
     if (unit) unit.remove();
     unit = document.createElement('div');
     unit.className = 'flap unit';
-    unit.textContent = ' ' + unitLabel;
+    unit.textContent = unitLabel;
     el.appendChild(unit);
   }
 }
+
 const odoUptime = document.getElementById('odo-uptime');
 const odoSockets = document.getElementById('odo-sockets');
 const odoThermal = document.getElementById('odo-thermal');
-odoUptime.dataset.len = 2; odoSockets.dataset.len = 3; odoThermal.dataset.len = 3;
+odoUptime.dataset.len = '2';
+odoSockets.dataset.len = '3';
+odoThermal.dataset.len = '3';
 
 // ---------- charts ----------
 class Ring {
   constructor(n) { this.a = new Array(n).fill(0); this.i = 0; this.n = n; }
-  push(v) { this.a[this.i] = v; this.i = (this.i + 1) % this.n; }
+  push(v) {
+    if (typeof v !== 'number' || !Number.isFinite(v)) return;
+    this.a[this.i] = v;
+    this.i = (this.i + 1) % this.n;
+  }
   get ordered() { return [...this.a.slice(this.i), ...this.a.slice(0, this.i)]; }
 }
+
 const HIST = 90;
 const cpuHist = new Ring(HIST), thermHist = new Ring(HIST), memHist = new Ring(HIST);
 
 function drawChart(el, values, { max, stroke, fill }) {
   const ctx = el.getContext('2d');
-  const w = el.width = el.clientWidth * (window.devicePixelRatio || 1);
-  const h = el.height = 120 * (window.devicePixelRatio || 1);
-  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-  const W = el.clientWidth, H = 120;
+  const dpr = window.devicePixelRatio || 1;
+  const W = Math.max(10, el.clientWidth || 300);
+  const H = 120;
+  el.width = Math.round(W * dpr);
+  el.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, H);
   const vals = values.ordered;
   const n = vals.length;
   const xFor = i => (i / (n - 1)) * W;
-  const yFor = v => H - 4 - (Math.min(max, v) / max) * (H - 8);
+  const yFor = v => H - 4 - (Math.min(max, Math.max(0, v)) / max) * (H - 8);
   if (fill) {
     ctx.beginPath();
-    vals.forEach((v, i) => i ? ctx.lineTo(xFor(i), yFor(v)) : ctx.moveTo(xFor(i), yFor(v)));
+    vals.forEach((v, i) => (i ? ctx.lineTo(xFor(i), yFor(v)) : ctx.moveTo(xFor(i), yFor(v))));
     ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
     ctx.fillStyle = fill; ctx.fill();
   }
   ctx.beginPath();
-  vals.forEach((v, i) => i ? ctx.lineTo(xFor(i), yFor(v)) : ctx.moveTo(xFor(i), yFor(v)));
-  ctx.strokeStyle = stroke; ctx.lineWidth = 1.6; ctx.stroke();
+  vals.forEach((v, i) => (i ? ctx.lineTo(xFor(i), yFor(v)) : ctx.moveTo(xFor(i), yFor(v))));
+  ctx.strokeStyle = stroke; ctx.lineWidth = 1.7; ctx.stroke();
 }
+
 const chartCpu = document.getElementById('chart-cpu');
 const chartThermal = document.getElementById('chart-thermal');
 const chartMem = document.getElementById('chart-mem');
 
-// ---------- readings ----------
+redrawAllCharts = () => {
+  const colors = applyPalette();
+  drawChart(chartCpu, cpuHist, { max: 100, stroke: colors.gold, fill: colors.gold + '18' });
+  drawChart(chartThermal, thermHist, { max: 100, stroke: colors.cyan, fill: colors.cyan + '14' });
+  drawChart(chartMem, memHist, { max: 100, stroke: colors.violet, fill: colors.violet + '14' });
+};
+
 const R = (id) => document.getElementById(id);
-const heatClass = (c) => {
+const heatColor = (c) => {
   const p = applyPalette();
-  if (c == null) return '#5C6478';
+  if (c == null) return p.inkFaint;
   if (c >= 80) return p.heatHot;
   if (c >= 65) return p.heatWarn;
   return p.cyan;
 };
 
 // ---------- sonifier + knobs ----------
-const sonifier = new Sonifier(document.getElementById('sono-toggle'), document.getElementById('fft-waterfall'));
-const knobEls = document.querySelectorAll('[data-knob]');
 const knobs = {};
+const sonifier = new Sonifier(
+  document.getElementById('sono-toggle'),
+  document.getElementById('fft-waterfall'),
+  (mapped) => {
+    for (const [k, val] of Object.entries(mapped)) {
+      knobs[k]?.setFromTelemetry(val);
+    }
+  }
+);
+window.__sonifier = sonifier;
+
 ['pitch', 'harm', 'bright', 'drift'].forEach(k => {
   const el = document.querySelector(`[data-knob="${k}"]`);
   const out = document.getElementById(`kv-${k}`);
@@ -202,9 +251,9 @@ const knobs = {};
     initial: sonifier.params[k],
     onChange: (v) => {
       sonifier.params[k] = Math.round(v);
-      out.textContent = Math.round(v);
+      out.textContent = String(Math.round(v));
       sonifier.apply();
-    }
+    },
   });
 });
 
@@ -218,67 +267,66 @@ const timeMachine = new TimeMachine(document.getElementById('timeline-canvas'), 
   exportJson: document.getElementById('tm-export-json'),
   diffOut: document.getElementById('tm-diff-out'),
   diffChips: document.getElementById('tm-diff-chips'),
-  diffRange: document.getElementById('tm-diff-range')
+  diffRange: document.getElementById('tm-diff-range'),
 });
+window.__timeMachine = timeMachine;
 
 // ---------- telemetry loop ----------
 const livePill = document.getElementById('live-pill-text');
 const liveClock = document.getElementById('live-clock');
-const sseFallback = { busy: 0 };
 
 function fmtKB(kb) {
   if (kb == null) return '—';
-  if (kb > 1024 * 1024) return (kb / 1024 / 1024).toFixed(1) + ' GiB';
-  if (kb > 1024) return (kb / 1024).toFixed(0) + ' MiB';
-  return kb + ' KiB';
+  if (kb > 1024 * 1024) return `${(kb / 1024 / 1024).toFixed(1)} GiB`;
+  if (kb > 1024) return `${(kb / 1024).toFixed(0)} MiB`;
+  return `${kb} KiB`;
 }
 
 async function pollTelemetry() {
-  let frame;
-  try { frame = await fetch('/api/telemetry/live').then(r => r.json()); }
+  let f;
+  try { f = await fetch('/api/telemetry/live').then(r => (r.ok ? r.json() : null)); }
   catch { return; }
-  const f = frame;
-  sseFallback.busy = f.cpu?.busyPct ?? 0;
+  if (!f) return;
 
-  // pill — interpolated swing between frames
   const busy = f.cpu?.busyPct ?? 0;
-  livePill.textContent = (busy >= 0 ? '+' : '') + Math.round(busy) + '%';
+  livePill.textContent = `${Math.round(busy)}% CPU`;
   R('r-load1').textContent = f.cpu?.load1?.toFixed(2) ?? '—';
   R('r-load5').textContent = f.cpu?.load5?.toFixed(2) ?? '—';
   R('r-load15').textContent = f.cpu?.load15?.toFixed(2) ?? '—';
-  R('r-busy').textContent = busy.toFixed(1) + '%';
-  R('r-procs').textContent = f.processCount ?? '—';
+  R('r-busy').textContent = `${busy.toFixed(1)}%`;
+  R('r-procs').textContent = String(f.processCount ?? '—');
 
   const pkg = f.thermals?.packageC;
-  const heat = applyPalette();
-  R('r-pkg').textContent = pkg != null ? pkg.toFixed(1) + '°C' : '—';
-  R('r-pkg').style.background = pkg != null ? heatClass(pkg) + '22' : 'transparent';
-  R('r-pkg').style.color = pkg != null ? heatClass(pkg) : '';
-  const hottest = (f.thermals?.zones ?? []).reduce((a, z) => z.tempC > (a?.tempC ?? -Infinity) ? z : a, null);
-  R('r-zone').textContent = hottest ? `${hottest.tempC.toFixed(1)}°C` : '—';
-  R('r-fan').textContent = f.fanRpm != null ? f.fanRpm + ' rpm' : '—';
-  R('r-ram').textContent = f.memory ? fmtKB(f.memory.usedKb) + ' / ' + fmtKB(f.memory.totalKb) : '—';
-  R('r-swap').textContent = f.memory?.swapTotalKb ? fmtKB(f.memory.swapUsedKb) + ' / ' + fmtKB(f.memory.swapTotalKb) : '—';
+  R('r-pkg').textContent = pkg != null ? `${pkg.toFixed(1)}°C` : '—';
+  R('r-pkg').style.background = pkg != null ? `${heatColor(pkg)}22` : 'transparent';
+  R('r-pkg').style.color = pkg != null ? heatColor(pkg) : '';
+
+  // Fix: read real z.celsius and f.thermals.fanRpm
+  const hottest = (f.thermals?.zones ?? []).reduce((a, z) => (z.celsius > (a?.celsius ?? -Infinity) ? z : a), null);
+  R('r-zone').textContent = hottest ? `${hottest.celsius.toFixed(1)}°C (${hottest.label})` : '—';
+  R('r-zone').style.color = hottest ? heatColor(hottest.celsius) : '';
+  const fanRpm = f.thermals?.fanRpm;
+  R('r-fan').textContent = fanRpm != null ? `${fanRpm} rpm` : '—';
+  R('r-ram').textContent = f.memory ? `${fmtKB(f.memory.usedKb)} / ${fmtKB(f.memory.totalKb)}` : '—';
+  R('r-swap').textContent = f.memory?.swapTotalKb ? `${fmtKB(f.memory.swapUsedKb)} / ${fmtKB(f.memory.swapTotalKb)}` : '0';
 
   cpuHist.push(busy);
-  thermHist.push(pkg ?? 0);
-  memHist.push(f.memory?.usedPct ?? 0);
+  if (pkg != null) thermHist.push(pkg);
+  if (f.memory?.usedPct != null) memHist.push(f.memory.usedPct);
 
-  renderOdometer(odoUptime, Math.floor((f.uptimeSec ?? 0) / 3600) % 100, 'HR');
+  // Real total uptime hours (no % 100 truncation)
+  const totalHours = Math.floor((f.uptimeSec ?? 0) / 3600);
+  renderOdometer(odoUptime, totalHours, 'HR');
   renderOdometer(odoSockets, f.listening?.count ?? 0, null);
   renderOdometer(odoThermal, Math.round(pkg ?? 0), '°C');
 
   sonifier.telemetry(f);
-
-  const colors = applyPalette();
-  drawChart(chartCpu, cpuHist, { max: 100, stroke: colors.gold, fill: colors.gold + '18' });
-  drawChart(chartThermal, thermHist, { max: 100, stroke: colors.cyan, fill: colors.cyan + '14' });
-  drawChart(chartMem, memHist, { max: 100, stroke: colors.violet, fill: colors.violet + '12' });
+  redrawAllCharts();
 }
-setInterval(pollTelemetry, 2000);
+
+setInterval(pollTelemetry, 2500);
 pollTelemetry();
 
-// clock — cadenced, not fake
 function tickClock() {
   liveClock.textContent = new Date().toTimeString().slice(0, 8);
 }
@@ -287,41 +335,63 @@ setInterval(tickClock, 1000);
 
 // ---------- constellation nodes ----------
 async function pollNodes() {
-  let nodes;
-  try { nodes = await fetch('/api/constellation/nodes').then(r => r.json()); }
+  let data;
+  try { data = await fetch('/api/constellation/nodes').then(r => (r.ok ? r.json() : null)); }
   catch { return; }
-  constellation.setNodes((nodes.nodes || []).map(n => ({ ...n, category: n.category || '' })));
-  window.__constellation = window.__constellation || constellation;
+  if (!data) return;
+  constellation.setNodes((data.nodes || []).map(n => ({ ...n, category: n.category || 'System' })));
   window.__nodeCount = constellation.nodes.length;
-  window.__nodeSample = constellation.nodes.slice(0, 4).map(n => ({ k: n.key, r: n.radius?.toFixed(2), s: n.speed?.toFixed(3) }));
-  // ▶ PROBE HOOK: persist latest constellation state to localStorage (for CDP probing)
-  window.__lastProjection = () => constellation.nodes.slice(0, 8).map(n => ({ k: n.key, sx: n.screenX, sy: n.screenY, depth: n.depth?.toFixed(2), color: constellation.nodeColor(n), mode: constellation.mode }));
 }
 setInterval(pollNodes, 8000);
 pollNodes();
 
-// ---------- git pulse ----------
+// ---------- git pulse (XSS-safe DOM construction, real commit subjects) ----------
 async function pollGit() {
   let data;
-  try { data = await fetch('/api/git/pulse').then(r => r.json()); }
+  try { data = await fetch('/api/git/pulse').then(r => (r.ok ? r.json() : null)); }
   catch { return; }
+  if (!data) return;
   const list = document.getElementById('git-list');
-  list.innerHTML = '';
+  list.replaceChildren();
   const note = document.getElementById('git-dirty-note');
   const repos = (data.repos || []).slice(0, 7);
   let dirtyCount = 0;
+
   for (const repo of repos) {
     dirtyCount += repo.dirtyFiles ?? 0;
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:baseline;gap:var(--sp-3);padding:var(--sp-2) 0;border-bottom:1px solid var(--line)';
-    row.innerHTML = `
-      <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${repo.repo}</span>
-      <span style="font-family:var(--font-mono);font-size:10px;color:var(--gold);min-width:36px">${repo.branch || ''}</span>
-      <span style="flex:1;font-size:12px;color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${repo.lastCommit ?? ''}">${repo.lastCommit?.message?.slice(0, 40) ?? ''}</span>
-      <span style="font-family:var(--font-mono);font-size:11px;color:var(--cyan)" title="commits in 14d">${repo.commits14d ?? 0}ᶜ</span>
-      <span style="font-family:var(--font-mono);font-size:11px;color:${repo.dirtyFiles ? 'var(--heat-warn)' : 'var(--ink-faint)'}" title="dirty files">${repo.dirtyFiles ? repo.dirtyFiles + '±' : '·'}</span>`;
+    row.className = 'git-row';
+
+    const sRepo = document.createElement('span');
+    sRepo.className = 'git-repo';
+    sRepo.textContent = repo.repo || 'unknown';
+    sRepo.title = repo.repo || '';
+
+    const sBranch = document.createElement('span');
+    sBranch.className = 'git-branch';
+    sBranch.textContent = repo.branch || '';
+
+    const subject = repo.lastSubject || repo.recent?.[0]?.subject || '';
+    const sSubj = document.createElement('span');
+    sSubj.className = 'git-subj';
+    sSubj.textContent = subject.slice(0, 56);
+    sSubj.title = `${subject}${repo.lastCommit ? ` (${repo.lastCommit})` : ''}`;
+
+    const sCommits = document.createElement('span');
+    sCommits.className = 'git-commits';
+    sCommits.title = 'commits in 14d';
+    sCommits.textContent = `${repo.commits14d ?? 0}c`;
+
+    const sDirty = document.createElement('span');
+    sDirty.className = 'git-dirty';
+    sDirty.style.color = repo.dirtyFiles ? 'var(--ember)' : 'var(--ink-faint)';
+    sDirty.title = 'dirty files';
+    sDirty.textContent = repo.dirtyFiles ? `${repo.dirtyFiles}±` : '·';
+
+    row.append(sRepo, sBranch, sSubj, sCommits, sDirty);
     list.appendChild(row);
   }
+
   if (dirtyCount > 0) {
     note.style.display = 'inline-block';
     note.textContent = `▲ ${dirtyCount} dirty files across ${repos.filter(r => r.dirtyFiles).length} repos`;
@@ -332,11 +402,11 @@ async function pollGit() {
 setInterval(pollGit, 60000);
 pollGit();
 
-// ---------- SSE stream over polling ---
+// ---------- SSE live stream (fixed compactFrame keys) ----------
 async function stream() {
   try {
     const res = await fetch('/api/stream');
-    if (!res.body) return;
+    if (!res.ok || !res.body) return;
     const reader = res.body.getReader();
     const dec = new TextDecoder();
     let buf = '';
@@ -351,14 +421,85 @@ async function stream() {
         if (!line) continue;
         try {
           const f = JSON.parse(line.slice(5));
-          cpuHist.push(f.cpuBusy);
-          thermHist.push(f.pkgC);
-          memHist.push(f.memPct);
-          sseFallback.busy = f.cpuBusy;
+          if (typeof f.busyPct === 'number') cpuHist.push(f.busyPct);
+          if (typeof f.packageC === 'number') thermHist.push(f.packageC);
+          if (typeof f.memUsedPct === 'number') memHist.push(f.memUsedPct);
+          redrawAllCharts();
         } catch {}
       }
     }
   } catch {}
-  setTimeout(stream, 4000); // reconnect
+  setTimeout(stream, 4000);
 }
 stream();
+
+// ---------- Sovereign AI Anomaly Triage ----------
+const aiSelect = document.getElementById('ai-provider');
+const aiBtn = document.getElementById('ai-analyze-btn');
+const aiMeta = document.getElementById('ai-meta');
+const aiSummary = document.getElementById('ai-summary');
+const aiChips = document.getElementById('ai-chips');
+const aiCount = document.getElementById('ai-provider-count');
+
+async function loadProviders() {
+  try {
+    const data = await fetch('/api/providers').then(r => (r.ok ? r.json() : null));
+    if (!data?.providers) return;
+    const ready = data.providers.filter(p => p.available && !p.guarded).length;
+    aiCount.textContent = `${ready} local provider(s) ready`;
+    aiSelect.replaceChildren();
+    const autoOpt = document.createElement('option');
+    autoOpt.value = 'auto';
+    autoOpt.textContent = 'Auto (Best Local Provider)';
+    aiSelect.appendChild(autoOpt);
+    for (const p of data.providers) {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      const suffix = !p.available ? ' (offline)' : p.guarded ? ' (guarded)' : '';
+      opt.textContent = `${p.label}${suffix}`;
+      aiSelect.appendChild(opt);
+    }
+  } catch {
+    aiCount.textContent = 'deterministic rules ready';
+  }
+}
+
+async function runTriage() {
+  aiBtn.disabled = true;
+  aiBtn.textContent = 'ANALYZING…';
+  try {
+    const range = timeMachine.getSelectedEpochs();
+    const res = await fetch('/api/ai/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: aiSelect.value,
+        ...(range || {}),
+      }),
+    });
+    const data = await res.json();
+    aiMeta.textContent = `Mode: ${data.mode} · Provider: ${data.provider} (${data.model || 'n/a'}) · ${data.latencyMs ?? 0}ms${data.notice ? ` · ${data.notice}` : ''}`;
+    aiSummary.textContent = data.summary || 'No summary returned.';
+    aiChips.replaceChildren();
+    for (const a of (data.anomalies || [])) {
+      const chip = document.createElement('span');
+      chip.className = `chip ${a.severity === 'high' ? 'gone' : a.severity === 'medium' ? 'warn' : 'neutral'}`;
+      chip.textContent = `[${String(a.severity || 'info').toUpperCase()}] ${a.detail}`;
+      aiChips.appendChild(chip);
+    }
+    if (!(data.anomalies || []).length) {
+      const ok = document.createElement('span');
+      ok.className = 'chip spawn';
+      ok.textContent = 'NOMINAL · Zero threshold anomalies detected';
+      aiChips.appendChild(ok);
+    }
+  } catch (err) {
+    aiMeta.textContent = `Error: ${err.message}`;
+  } finally {
+    aiBtn.disabled = false;
+    aiBtn.textContent = 'RUN TRIAGE';
+  }
+}
+
+aiBtn?.addEventListener('click', runTriage);
+loadProviders();

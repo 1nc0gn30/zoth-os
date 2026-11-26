@@ -1,7 +1,7 @@
 {
   "name": "aether-observatory",
-  "version": "1.0.0",
-  "description": "Sovereign cyber-physical telemetry, 3D process/port constellation, time-machine flight recorder & WebAudio sonification workstation — Neal Frazier Tech / NullAI Platform",
+  "version": "2.0.0",
+  "description": "Sovereign cyber-physical telemetry, 3D process/port constellation, time-machine flight recorder, MCP server & WebAudio sonification workstation — Neal Frazier Tech / NullAI Platform",
   "type": "module",
   "main": "src/server.js",
   "bin": {
@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "node src/server.js --port 8160",
-    "serve": "node src/server.js"
+    "serve": "node src/server.js",
+    "mcp": "node src/mcp_server.js",
+    "test": "node --test tests/test_observatory.mjs"
   },
   "engines": {
     "node": ">=22.0.0"

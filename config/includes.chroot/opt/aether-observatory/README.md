@@ -1,98 +1,71 @@
-# AETHER-OBSERVATORY
+# AETHER-OBSERVATORY (`v2.0.0`)
 
-> **Avant-garde cyber-physical telemetry, 3D process/port constellation, time-machine flight recorder, and WebAudio acoustic sonification workstation.**
+> **Zero-egress cyber-physical telemetry workstation: 3D process/port constellation, SQLite flight recorder with diff/export, stdio JSON-RPC 2.0 MCP server, local sovereign AI anomaly triage, and WebAudio acoustic sonification.**
 
-Built by Neal Frazier Tech [@1nc0gn30](https://x.com/1nc0gn30) · NullAI Platform · 2026-11-15
+Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30/aether-observatory)) · [NullAI Platform](https://nullai.tech)
 
 ---
 
-## What it is
+## What It Does
 
-A single-page observatory that treats the local Linux workstation as a *physical* instrument. Real hardware telemetry (`/sys/class/thermal`, `/proc/stat`, `/proc/meminfo`, `ss -tlnp`), a live 3D orbital map of every listening daemon, a persistent SQLite flight recorder, an opt-in WebAudio drone sonifier that harmonizes with CPU/temp/socket load, and a T1-vs-T2 incident diff engine for any two snapshots.
+A single-page local telemetry workstation built on zero-dependency Node.js `>=22` (`node:http` + `node:sqlite`). It instruments real host hardware and sockets (`/proc/stat`, `/proc/meminfo`, `/proc/diskstats`, `/proc/net/dev`, `/sys/class/thermal`, `sensors(1)`, `ss -tlnp`) via async TTL-cached `execFile` probes (zero shell execution, zero external CDN requests, zero fake mocks).
 
-No mocks, no `setTimeout`-driven fake data — every panel measures the real machine.
+- **3D Daemon & Port Constellation**: Maps all listening TCP/TCP6 sockets onto concentric golden-angle 3D orbits joined with the Zoth Studio tool registry, with three interactive pipelines (**01 VECTOR**, **02 BRAILLE**, **03 DITHER**) and a secret-redacted Deep Socket Inspector drawer.
+- **Flight Odometers & Live Telemetry**: Split-flap odometers and real-time charts for CPU load/busy%, true CPU package temperature (`Package id 0` / `Tctl` / `x86_pkg_temp`), fan RPM, memory/swap pressure, and 14-day Git activity across `~/NullAITech`.
+- **Sonorium (WebAudio)**: Opt-in procedural drone routed through a lowpass filter and `DynamicsCompressorNode` master limiter into a 60fps FFT waterfall, dynamically modulated by live CPU, RAM, package thermal, and open socket counts.
+- **Time Machine Flight Recorder**: Persistent SQLite ring-buffer (`data/aether-flight.db`, 8,640 rows = 24h @ 10s cadence) with chronological scrubber, T1→T2 port/thermal/load diff, and one-click Markdown/JSON export.
+- **Sovereign AI Anomaly Triage**: Optional local triage via AGY Bridge (`:18000`), Ollama (`:11434`), AZOTH (`:8136`), or local CLIs, with an honest offline deterministic rule engine fallback.
+- **Stdio MCP Server**: Built-in JSON-RPC 2.0 MCP server (`aether-observatory mcp`) exposing `aether_observatory_telemetry`, `aether_constellation_nodes`, `aether_timeline_diff`, and `aether_snapshot_now`.
 
-## Quick start
+## Quick Start
 
 ```bash
-# Install the CLI once (already done for you)
-which aether-observatory
+# Verify CLI installation
+aether-observatory --version
+aether-observatory --help
 
-# Run the daemon (or use --port to change it)
+# Run the loopback daemon (default 127.0.0.1:8160)
 aether-observatory serve --port 8160
 
-# Open the observatory
-http://127.0.0.1:8160
+# CLI commands (all support --json)
+aether-observatory status --json
+aether-observatory constellation --json
+aether-observatory snapshot --json
+
+# Start stdio JSON-RPC 2.0 MCP server
+aether-observatory mcp
 ```
 
-## API
+Open the standalone workstation at `http://127.0.0.1:8160` (supports `?theme=light|dark` and `?embed=1`).
 
-| Endpoint                   | Description                                                         |
-|----------------------------|---------------------------------------------------------------------|
-| `GET /health`              | Liveness probe (`{"ok":true}`)                                      |
-| `GET /api/telemetry/live`  | CPU model/coreCount/load1/busyPct, thermals (11 zones), mem, `ss -tlnp` count, process count |
-| `GET /api/constellation/nodes` | Live `ss -tlnp` joined with zoth-studio registry (`~/NullAITech/zoth-studio-v2/src/data/toolsData.js`). Returns `{port, name, pid, zothTool, uptimeSec, latencyMs}` |
-| `GET /api/git/pulse`       | All repos under `~/NullAITech/*` with branch, 14-day commits, dirty files |
-| `GET /api/timeline/snapshots` | SQLite ring-buffer (8640 rows = 24h @ 10s) of historical telemetry frames |
-| `GET /api/timeline/diff?t1=&t2=` | Spawned/killed ports, thermal spikes, load deltas between two snapshot IDs |
-| `GET /api/stream`          | SSE live telemetry stream (250ms)                                   |
+## HTTP & SSE API (`127.0.0.1:8160`)
 
-## UI features
+All API, SSE, and `OPTIONS` preflight endpoints enforce strict loopback-only CORS (`127.0.0.1`, `localhost`, `[::1]`, `zoth.nullai.tech`) and reject foreign `Origin` headers with `HTTP 403`.
 
-- **Aperture intro** — 1.6s Braille aperture (U+2800), ESC-skip, deterministic seed, removed from DOM when done.
-- **3 Modes** — VECTOR-ORBITAL / BRAILLE-SUBPIXEL / BAYER-8X8-DITHER (1-bit halftone + scanlines).
-- **Interactive camera** — drag to orbit, wheel/pinch to zoom, click node to inspect (drawer with PID/uptime/latency/addresses).
-- **Split-flap odometers** — Uptime, listening sockets, thermal package.
-- **Hardware knobs** — rotary SVG dials for Pitch/Harmonics/Brightness/Drift (drag vertically, wheel fine, ↑↓ keys).
-- **Time machine** — scrubber + DIFF T1/T2 mode + Markdown/JSON export.
-- **Dual theme** — Obsidian Sovereign Dark `#07090E` + gold #D4AF37 / cyan #38BDF8 · Editorial Ivory Light `#F7F4EB` + ink #111318 / bronze #8C6239.
-- **Docs drawer** — full in-app documentation; coffee link in footer.
-- **JSON-LD** — WebApplication + FAQPage schema.org markup for SEO/a11y.
-- **a11y** — skip-link, ARIA labels, prefers-reduced-motion, ≥44px touch targets on mobile.
+| Method & Endpoint | Description |
+| :--- | :--- |
+| `GET /health` · `GET /api/health` | Service health (`{"status":"ok","service":"aether-observatory","version":"2.0.0","port":8160,"bind":"127.0.0.1","db":...,"totalSnapshots":...}`) |
+| `GET /api/telemetry` · `GET /api/telemetry/live` | Live CPU, core %, CPU package temp (`Package id 0` priority), thermal zones, fan RPM, memory/swap, disk I/O, network counters, listening ports, process count |
+| `GET /api/constellation/nodes` | Live `ss -tlnp` listeners joined with `toolsData.js` (`port`, `proto` `tcp`/`tcp6`, `pid`, `uptimeSec`, `latencyMs`, secret-redacted `cmdline`) |
+| `GET /api/git/pulse` | Top 14 most recently active git repos under `NULLAI_ROOT` (default `~/NullAITech`) with branch, latest commit subject, 14-day count, and dirty file count |
+| `GET /api/timeline/snapshots?limit=240` | SQLite ring-buffer frames (`limit` strictly validated integer `1..2000`; returns `totalCount`, `count`, `frames`) |
+| `GET /api/timeline/diff?t1=<epoch>&t2=<epoch>` | Spawned/terminated ports, thermal spikes, load/busy/memory/process deltas between two epoch-ms timestamps (`404` if either snapshot is missing) |
+| `GET /api/timeline/export.md` · `export.json` | Downloadable Markdown or JSON incident diff report for `?t1=&t2=` (or recent default window) |
+| `POST /api/snapshot/now` | Samples live telemetry immediately and persists a frame (`POST`-only; `GET` returns `405`) |
+| `GET /api/stream` | Loopback-gated SSE stream broadcasting compact frames immediately on connect and every 10 seconds |
+| `GET /api/providers` · `POST /api/ai/analyze` | Detect local sovereign AI providers and run telemetry/diff anomaly triage with deterministic fallback |
 
-## Files
+## Testing
 
-```
-.
-├── bin/
-│   ├── aether-observatory          # POSIX wrapper
-│   └── aether-observatory.js       # ES module CLI
-├── src/
-│   ├── telemetry.js                # /sys/class/thermal + /proc/stat + /proc/meminfo + ss
-│   ├── recorder.js                 # SQLite ring-buffer (8640 rows, 10s cadence)
-│   └── server.js                   # node:http + node:sqlite daemon
-├── public/
-│   ├── index.html                  # Single-page app
-│   ├── css/{tokens,app}.css        # Dual-theme tokens + layout
-│   ├── js/
-│   │   ├── app.js                  # Bootstrap + SSE + drawers + touch hints
-│   │   ├── intro.js                # Braille aperture intro
-│   │   ├── constellation.js        # 3D orbital map, 3 modes
-│   │   ├── sonifier.js             # WebAudio drone + 4 knobs + FFT waterfall
-│   │   └── timemachine.js          # Scrubber + diff + export
-│   ├── favicon.svg
-│   ├── robots.txt
-│   └── sitemap.xml
-└── data/
-    └── aether-flight.db            # SQLite ring-buffer (auto-created)
+```bash
+npm test
 ```
 
-## Verification (what was checked)
+Runs `node --test tests/test_observatory.mjs` against an isolated temporary SQLite database, verifying telemetry parsing (`Package id 0` vs NVMe `Composite`), secret redaction, SQLite ring-buffer, CORS/preflight/method guards, export endpoints, MCP stdio JSON-RPC, and production guardrails.
 
-- ✅ Real telemetry: `/sys/class/thermal` (11 zones), `/proc/stat`, `/proc/meminfo`, `sensors` binary, `ss -tlnp`, `uptime`.
-- ✅ Real constellation: 32+ live nodes from `ss -tlnp` joined with `toolsData.js`.
-- ✅ SQLite ring-buffer: 8640 rows @ 10s cadence, persistent across restarts.
-- ✅ `overflowPx === 0` at 390x844, 820x1180, 1440x900, both themes.
-- ✅ `imgsMissingAlt === 0`, `errors.length === 0` in harness.
-- ✅ Mobile touch targets ≥44px.
-- ✅ JSON-LD valid (WebApplication + FAQPage).
-- ✅ robots.txt + sitemap.xml served.
-- ✅ Coffee link in footer.
-- ✅ No secrets/keys in repo.
+## Open-Access & Support
 
-## License / paywall
-Free. No paywalls, no accounts, no tracking cookies, no external analytics. Voluntary [☕ buy me a coffee](https://buymeacoffee.com/1nc0gn30).
+100% free and open-access — zero paywalls, zero accounts, zero external analytics or CDN fonts.
 
----
-
-**Built in 12 hours. All real. No mocks.**
+- [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
