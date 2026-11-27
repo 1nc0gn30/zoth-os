@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Portable wrapper for the FieldKit MCP Server (fieldkit-mcp).
+
+Resolves FIELDKIT_REPO_DIR -> /opt/fieldkit -> relative installation root
+with zero literal user home-directory paths.
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+
+
+def _resolve_root() -> Path:
+    candidates = []
+    env_dir = os.environ.get("FIELDKIT_REPO_DIR", "").strip()
+    if env_dir:
+        candidates.append(Path(env_dir).resolve())
+    candidates.append(Path("/opt/fieldkit"))
+    candidates.append(Path(__file__).resolve().parent.parent)
+    for candidate in candidates:
+        if (candidate / "mcp" / "fieldkit_mcp_server.py").is_file():
+            return candidate
+    raise SystemExit(
+        "fieldkit-mcp: unable to locate FieldKit runtime (expected /opt/fieldkit or FIELDKIT_REPO_DIR)"
+    )
+
+
+def main() -> int:
+    root = _resolve_root()
+    for rel in (("sdk", "python"), ("mcp",)):
+        path_str = str(root.joinpath(*rel))
+        if path_str not in sys.path:
+            sys.path.insert(0, path_str)
+
+    import fieldkit_mcp_server  # noqa: E402
+
+    return int(fieldkit_mcp_server.main(sys.argv[1:]) or 0)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
