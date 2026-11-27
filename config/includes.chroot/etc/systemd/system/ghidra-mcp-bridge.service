@@ -1,0 +1,19 @@
+[Unit]
+Description=ZothOS GhidraMCP Binary Reverse Engineering Bridge Daemon (v3.6.0)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=/opt/ghidra-mcp-bridge
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /opt/ghidra-mcp-bridge/server.py --host 127.0.0.1 --port 8131
+Restart=on-failure
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

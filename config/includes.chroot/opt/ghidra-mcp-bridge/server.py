@@ -1,234 +1,221 @@
 #!/usr/bin/env python3
-"""Sovereign GhidraMCP Binary Reverse Engineering Daemon.
+"""GhidraMCP Binary Reverse Engineering Loopback Daemon (v3.6.0).
 
-Provides real Model Context Protocol (MCP) bridge endpoints and web workstation:
-- GET /health, /api/health
-- GET /api/status (Ghidra headless status & active bridge)
-- GET /api/tools (MCP Tool registry)
-- GET /api/programs (Target binary database)
-- GET /api/decompile?program=<id>&fn=<name>
-- POST /api/mcp (JSON-RPC 2.0 MCP protocol bridge)
-- Static asset serving from public/
+Hardened loopback HTTP/JSON-RPC 2.0 server:
+- Strict loopback Host validation (403 Forbidden on non-loopback Host)
+- Exact-port loopback CORS Origin allowlist (403 Forbidden on disallowed Origin, zero ACAO: *)
+- All 4 mandatory security headers + Vary: Origin on every response
+- Disabled static directory listings (403 Forbidden JSON)
+- ThreadingHTTPServer with dynamic bound port reporting
+- 1 MiB request body cap (413 Content Too Large)
+- Safe log_message() & full HEAD support across health/API/static endpoints
+- Pure-Python ELF/PE/Mach-O/WASM sections, Shannon entropy, and hex dump endpoints
+- Spec-compliant JSON-RPC 2.0 MCP bridge (8 tools)
+
 Zero external runtime dependencies.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
 
-import sys
-import os
 import json
+import os
+import sys
 import time
-from pathlib import Path
-from http.server import SimpleHTTPRequestHandler, HTTPServer
 import urllib.parse
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 ROOT_DIR = Path(__file__).resolve().parent
 PUBLIC_DIR = ROOT_DIR / "public"
 START_TIME = time.time()
+MAX_BODY_BYTES = 1_048_576  # 1 MiB
 
-PROGRAMS_DB = [
-    {
-        "id": "zoth-vault-daemon",
-        "name": "zoth-vault-daemon.elf",
-        "arch": "x86_64",
-        "format": "ELF 64-bit LSB pie executable",
-        "compiler": "rustc 1.82.0 (LLVM 19.1)",
-        "entry_point": "0x00401020",
-        "total_functions": 42,
-        "strings": [
-            "127.0.0.1:8787",
-            "Zoth Vault Ring-0 Custody Daemon online.",
-            "argon2id_kdf_init: memory cost 65536, iterations 3",
-            "ERR_SECRET_KEY_NOT_FOUND",
-            "/var/run/zoth-vault.sock"
-        ],
-        "functions": {
-            "main": {
-                "address": "0x00401020",
-                "size": 148,
-                "disasm": [
-                    "0x00401020:  endbr64",
-                    "0x00401024:  push   rbp",
-                    "0x00401025:  mov    rbp, rsp",
-                    "0x00401028:  sub    rsp, 0x50",
-                    "0x0040102c:  mov    DWORD PTR [rbp-0x44], edi",
-                    "0x0040102f:  mov    QWORD PTR [rbp-0x50], rsi",
-                    "0x00401033:  lea    rdi, [rbp-0x40]",
-                    "0x00401037:  mov    esi, 0x2253",
-                    "0x0040103c:  call   0x00401200 <vault_init>",
-                    "0x00401041:  test   eax, eax",
-                    "0x00401043:  jne    0x00401080",
-                    "0x00401045:  lea    rdi, [rip+0x20e4]  # \"Zoth Vault Ring-0...\"",
-                    "0x0040104c:  call   0x00401310 <log_info>",
-                    "0x00401051:  lea    rdi, [rbp-0x40]",
-                    "0x00401055:  call   0x004014f0 <event_loop_run>",
-                    "0x0040105a:  leave",
-                    "0x0040105b:  ret"
-                ],
-                "pseudocode": """int main(int argc, char **argv) {
-    vault_config_t config;
-    int status = vault_init(&config, 8787);
-    if (status != 0) {
-        log_error("Failed to bind vault enclave on 127.0.0.1:8787");
-        return 1;
-    }
-    argon2id_kdf_init(&config.argon_ctx, 64 * 1024, 3, 4);
-    chacha20_poly1305_seal_init(&config.aead_ctx);
-    log_info("Zoth Vault Ring-0 Custody Daemon online.");
-    return event_loop_run(&config);
-}"""
-            },
-            "argon2id_kdf_derive": {
-                "address": "0x00401340",
-                "size": 256,
-                "disasm": [
-                    "0x00401340:  push   rbp",
-                    "0x00401341:  mov    rbp, rsp",
-                    "0x00401344:  sub    rsp, 0x80",
-                    "0x00401348:  mov    QWORD PTR [rbp-0x78], rdi",
-                    "0x0040134c:  mov    QWORD PTR [rbp-0x80], rsi",
-                    "0x00401350:  call   0x00402100 <argon2_fill_first_blocks>",
-                    "0x00401355:  leave",
-                    "0x00401356:  ret"
-                ],
-                "pseudocode": """uint8_t *argon2id_kdf_derive(const uint8_t *passphrase, size_t pass_len, const uint8_t *salt, size_t salt_len) {
-    argon2_context_t ctx;
-    ctx.m_cost = 65536; // 64 MB
-    ctx.t_cost = 3;     // 3 passes
-    ctx.lanes  = 4;     // 4 parallel threads
-    ctx.flags  = ARGON2_FLAG_CLEAR_PASSWORD | ARGON2_FLAG_CLEAR_SECRET;
-    return argon2_hash(&ctx, passphrase, pass_len, salt, salt_len);
-}"""
-            }
-        }
-    },
-    {
-        "id": "firmware-auth-arm",
-        "name": "firmware_boot.bin",
-        "arch": "ARM Cortex-M4 (Thumb-2)",
-        "format": "Raw Flash Binary / Microcontroller",
-        "compiler": "arm-none-eabi-gcc 13.2.1",
-        "entry_point": "0x08000100",
-        "total_functions": 28,
-        "strings": [
-            "ZOTH-SECURE-BOOT-v2",
-            "SIGNATURE_VERIFIED",
-            "HALT_TAMPER_DETECTED"
-        ],
-        "functions": {
-            "Reset_Handler": {
-                "address": "0x08000100",
-                "size": 96,
-                "disasm": [
-                    "0x08000100:  ldr    r0, =0x20001000",
-                    "0x08000102:  msr    MSP, r0",
-                    "0x08000106:  bl     0x08000300 <SystemInit>",
-                    "0x0800010a:  bl     0x08000520 <verify_flash_signature>",
-                    "0x0800010e:  cbnz   r0, 0x08000118",
-                    "0x08000110:  bl     0x08000600 <enter_sovereign_enclave>",
-                    "0x08000114:  b      0x08000114",
-                    "0x08000118:  bl     0x08000700 <lockdown_tamper>"
-                ],
-                "pseudocode": """void Reset_Handler(void) {
-    __set_MSP(0x20001000);
-    SystemInit();
-    uint32_t auth_status = verify_flash_signature(FLASH_BASE, FLASH_SIZE);
-    if (auth_status == SIGNATURE_OK) {
-        enter_sovereign_enclave();
-    } else {
-        lockdown_tamper();
-    }
-}"""
-            }
-        }
-    }
-]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-MCP_TOOLS = [
-    {
-        "name": "list_methods",
-        "description": "Enumerate exported and internal decompiled functions for target binary.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {"program_id": {"type": "string"}},
-            "required": ["program_id"]
-        }
-    },
-    {
-        "name": "decompile_function",
-        "description": "Decompile target function address or name to verified C pseudocode AST.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "program_id": {"type": "string"},
-                "function": {"type": "string"}
-            },
-            "required": ["program_id", "function"]
-        }
-    },
-    {
-        "name": "search_strings",
-        "description": "Scan binary data sections for ASCII/UTF-8 string literals and cross-references.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {"program_id": {"type": "string"}},
-            "required": ["program_id"]
-        }
-    },
-    {
-        "name": "annotate_variable",
-        "description": "Rename or re-type local stack/register variable in Ghidra project AST.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "program_id": {"type": "string"},
-                "function": {"type": "string"},
-                "old_name": {"type": "string"},
-                "new_name": {"type": "string"}
-            },
-            "required": ["program_id", "function", "old_name", "new_name"]
-        }
-    }
-]
+from analyzer import (
+    BinaryAnalyzer,
+    MCP_PROTOCOL_VERSION,
+    MCP_TOOLS,
+    PROGRAMS_DB,
+    VERSION,
+    handle_mcp_request,
+)
+
+ANALYZER = BinaryAnalyzer()
+
+CSP_HEADER = (
+    "default-src 'self'; "
+    "script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline'; "
+    "img-src 'self' data: blob:; "
+    "font-src 'self' data:; "
+    "connect-src 'self' http://127.0.0.1:* http://localhost:*; "
+    "frame-ancestors 'self' http://127.0.0.1:* http://localhost:*; "
+    "base-uri 'self'; "
+    "form-action 'self'"
+)
+
+LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+STUDIO_PORTS = {3000}
+
+
+def parse_host_header(host_header: str) -> Tuple[Optional[str], Optional[int]]:
+    """Parse HTTP Host header into (hostname, port)."""
+    raw = (host_header or "").strip().lower()
+    if not raw or "/" in raw or "@" in raw or " " in raw:
+        return None, None
+    if raw.startswith("["):
+        end = raw.find("]")
+        if end == -1:
+            return None, None
+        hostname = raw[1:end]
+        rest = raw[end + 1:]
+        if not rest:
+            return hostname, None
+        if not rest.startswith(":"):
+            return None, None
+        try:
+            return hostname, int(rest[1:])
+        except ValueError:
+            return None, None
+    if ":" in raw:
+        parts = raw.rsplit(":", 1)
+        try:
+            return parts[0], int(parts[1])
+        except ValueError:
+            return None, None
+    return raw, None
+
+
+def validate_loopback_origin(origin: str, server_port: int) -> bool:
+    """Validate Origin strictly against loopback hosts on exact server_port or Studio :3000."""
+    if not origin:
+        return True
+    try:
+        parsed = urllib.parse.urlparse(origin.strip())
+    except Exception:
+        return False
+    if parsed.scheme != "http":
+        return False
+    if parsed.username or parsed.password:
+        return False
+    if parsed.path not in ("", "/") or parsed.params or parsed.query or parsed.fragment:
+        return False
+    hostname = (parsed.hostname or "").lower()
+    if hostname not in LOOPBACK_HOSTS:
+        return False
+    try:
+        port = parsed.port
+    except ValueError:
+        return False
+    if port is None:
+        return False
+    return port == server_port or port in STUDIO_PORTS
+
 
 class GhidraMcpHandler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
     def __init__(self, *args, **kwargs):
+        self._cors_origin: Optional[str] = None
         super().__init__(*args, directory=str(PUBLIC_DIR), **kwargs)
 
-    def do_GET(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
-        query = urllib.parse.parse_qs(parsed.query)
+    def end_headers(self):
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
+        self.send_header("Content-Security-Policy", CSP_HEADER)
+        self.send_header("Vary", "Origin")
+        if self._cors_origin:
+            self.send_header("Access-Control-Allow-Origin", self._cors_origin)
+            self.send_header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        super().end_headers()
 
-        # Health
+    def _validate_request_security(self) -> bool:
+        """Enforce loopback Host and exact-port loopback Origin guards."""
+        self._cors_origin = None
+        server_port = self.server.server_port
+
+        host_hdr = self.headers.get("Host")
+        if host_hdr is not None:
+            hostname, port = parse_host_header(host_hdr)
+            if hostname not in LOOPBACK_HOSTS or (port is not None and port != server_port):
+                self.close_connection = True
+                self.send_json(403, {"error": "Forbidden: non-loopback or mismatched Host header"})
+                return False
+
+        origin_hdr = self.headers.get("Origin")
+        if origin_hdr is not None:
+            if not validate_loopback_origin(origin_hdr, server_port):
+                self.close_connection = True
+                self.send_json(403, {"error": "Forbidden: disallowed CORS Origin"})
+                return False
+            self._cors_origin = origin_hdr.strip()
+
+        return True
+
+    def _parse_int_param(
+        self, query: Dict[str, Any], name: str, default: int, min_val: int, max_val: int
+    ) -> int:
+        raw = query.get(name, [str(default)])[0]
+        try:
+            val = int(raw)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid integer parameter '{name}': {raw}") from exc
+        if val < min_val or val > max_val:
+            raise ValueError(f"Parameter '{name}' must be between {min_val} and {max_val}")
+        return val
+
+    def _handle_api_get(self, path: str, query: Dict[str, Any], head_only: bool = False) -> bool:
+        """Handle API GET/HEAD routes. Returns True if path matched an API endpoint."""
+        server_port = self.server.server_port
+
         if path in ("/health", "/api/health"):
-            self.send_json(200, {
-                "status": "healthy",
-                "service": "ghidra-mcp-bridge",
-                "version": "3.5.0",
-                "protocol": "Model Context Protocol (MCP) 2024-11-05",
-                "ghidra_headless": "READY (Loopback 127.0.0.1:8080)",
-                "port": 8131,
-                "uptime_seconds": round(time.time() - START_TIME, 2),
-                "access": "100% Free & Open-Access (Zero Paywalls)"
-            })
-            return
+            engines = ANALYZER.get_engines_status()
+            self.send_json(
+                200,
+                {
+                    "status": "healthy",
+                    "service": "ghidra-mcp-bridge",
+                    "version": VERSION,
+                    "protocol": f"Model Context Protocol (MCP) {MCP_PROTOCOL_VERSION}",
+                    "ghidra_headless": (
+                        "READY (/usr/share/ghidra/support/analyzeHeadless)"
+                        if engines["ghidra_headless"] == "READY"
+                        else "UNAVAILABLE"
+                    ),
+                    "engines": engines,
+                    "port": server_port,
+                    "uptime_seconds": round(time.time() - START_TIME, 2),
+                    "access": "100% Free & Open-Access (Zero Paywalls)",
+                },
+                head_only=head_only,
+            )
+            return True
 
-        # Bridge Status
         if path == "/api/status":
-            self.send_json(200, {
-                "bridge_status": "ONLINE",
-                "bridge_version": "3.5.0",
-                "active_targets": len(PROGRAMS_DB),
-                "mcp_tools_count": len(MCP_TOOLS),
-                "server_time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            })
-            return
+            engines = ANALYZER.get_engines_status()
+            self.send_json(
+                200,
+                {
+                    "bridge_status": "ONLINE",
+                    "bridge_version": VERSION,
+                    "port": server_port,
+                    "active_targets": len(PROGRAMS_DB),
+                    "mcp_tools_count": len(MCP_TOOLS),
+                    "engines": engines,
+                    "server_time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                },
+                head_only=head_only,
+            )
+            return True
 
-        # MCP Tools list
         if path == "/api/tools":
-            self.send_json(200, {"tools": MCP_TOOLS})
-            return
+            self.send_json(200, {"version": VERSION, "tools": MCP_TOOLS}, head_only=head_only)
+            return True
 
-        # Programs list
         if path == "/api/programs":
             summaries = []
             for p in PROGRAMS_DB:
@@ -240,125 +227,309 @@ class GhidraMcpHandler(SimpleHTTPRequestHandler):
                     "compiler": p["compiler"],
                     "entry_point": p["entry_point"],
                     "functions": list(p["functions"].keys()),
-                    "strings_count": len(p["strings"])
+                    "strings_count": len(p["strings"]),
+                    "is_demo": True,
                 })
-            self.send_json(200, summaries)
-            return
+            for sp in ("/bin/echo", "/bin/ls", "/bin/bash"):
+                if os.path.isfile(sp):
+                    summaries.append({
+                        "id": sp,
+                        "name": Path(sp).name,
+                        "path": sp,
+                        "arch": "x86_64",
+                        "format": "ELF64",
+                        "compiler": "GCC/GNU Binutils",
+                        "entry_point": "Dynamic",
+                        "functions": ["main"],
+                        "strings_count": 100,
+                        "is_demo": False,
+                    })
+            self.send_json(200, summaries, head_only=head_only)
+            return True
 
-        # Decompile endpoint
+        if path in ("/api/sections", "/api/entropy"):
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            try:
+                res = ANALYZER.inspect_sections_and_entropy(prog_id)
+                self.send_json(200, res, head_only=head_only)
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
+
+        if path == "/api/hex":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            try:
+                offset = self._parse_int_param(query, "offset", 0, 0, 100_000_000)
+                length = self._parse_int_param(query, "length", 256, 16, 4096)
+                res = ANALYZER.read_hex_dump(prog_id, offset=offset, length=length)
+                self.send_json(200, res, head_only=head_only)
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
+
+        if path == "/api/inspect":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                res = ANALYZER.inspect_binary(prog_id, force_jail=force_jail)
+                self.send_json(200, res, head_only=head_only)
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
+
+        if path == "/api/methods":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            filter_q = query.get("filter", [None])[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                methods = ANALYZER.list_methods(prog_id, filter_query=filter_q, force_jail=force_jail)
+                self.send_json(
+                    200,
+                    {"program": prog_id, "total": len(methods), "methods": methods},
+                    head_only=head_only,
+                )
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
+
+        if path == "/api/disassemble":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            fn_name = query.get("fn", query.get("function", ["main"]))[0]
+            syntax = query.get("syntax", ["intel"])[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                data = ANALYZER.disassemble_function(prog_id, fn_name, syntax=syntax, force_jail=force_jail)
+                self.send_json(200, data, head_only=head_only)
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
+
         if path == "/api/decompile":
             prog_id = query.get("program", ["zoth-vault-daemon"])[0]
-            fn_name = query.get("fn", ["main"])[0]
+            fn_name = query.get("fn", query.get("function", ["main"]))[0]
+            engine = query.get("engine", ["auto"])[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                data = ANALYZER.decompile_function(prog_id, fn_name, engine=engine, force_jail=force_jail)
+                self.send_json(200, data, head_only=head_only)
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
 
-            prog = next((p for p in PROGRAMS_DB if p["id"] == prog_id), None)
-            if not prog:
-                self.send_json(404, {"error": f"Program '{prog_id}' not found"})
-                return
+        if path == "/api/strings":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            query_str = query.get("query", query.get("q", [None]))[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                min_len = self._parse_int_param(query, "min_len", 4, 1, 256)
+                strings = ANALYZER.search_strings(
+                    prog_id, query=query_str, min_len=min_len, force_jail=force_jail
+                )
+                self.send_json(
+                    200,
+                    {"program": prog_id, "count": len(strings), "strings": strings},
+                    head_only=head_only,
+                )
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
 
-            fn_data = prog["functions"].get(fn_name)
-            if not fn_data:
-                # Fallback to first function
-                first_fn = next(iter(prog["functions"]))
-                fn_name = first_fn
-                fn_data = prog["functions"][first_fn]
+        if path == "/api/xrefs":
+            prog_id = query.get("program", ["zoth-vault-daemon"])[0]
+            target_sym = query.get("target", query.get("sym", ["main"]))[0]
+            force_jail = query.get("jail", ["0"])[0] in ("1", "true")
+            try:
+                xrefs = ANALYZER.get_xrefs(prog_id, target_sym, force_jail=force_jail)
+                self.send_json(
+                    200,
+                    {"program": prog_id, "target": target_sym, "count": len(xrefs), "xrefs": xrefs},
+                    head_only=head_only,
+                )
+            except PermissionError as e:
+                self.send_json(403, {"error": str(e)}, head_only=head_only)
+            except ValueError as e:
+                self.send_json(400, {"error": str(e)}, head_only=head_only)
+            except FileNotFoundError as e:
+                self.send_json(404, {"error": str(e)}, head_only=head_only)
+            return True
 
-            self.send_json(200, {
-                "program": prog["name"],
-                "arch": prog["arch"],
-                "function": fn_name,
-                "address": fn_data["address"],
-                "size_bytes": fn_data["size"],
-                "disasm": fn_data["disasm"],
-                "pseudocode": fn_data["pseudocode"]
-            })
+        return False
+
+    def _is_traversal_attempt(self, raw_path: str) -> bool:
+        decoded = urllib.parse.unquote(raw_path)
+        if ".." in decoded.split("/") or "\\..\\" in decoded or decoded.startswith("/.."):
+            return True
+        return False
+
+    def list_directory(self, path):
+        """Disable directory listings completely."""
+        self.send_json(403, {"error": "Forbidden: directory listing is disabled"})
+        return None
+
+    def do_HEAD(self):
+        if not self._validate_request_security():
             return
+        parsed = urllib.parse.urlparse(self.path)
+        if self._is_traversal_attempt(parsed.path):
+            self.send_json(403, {"error": "Forbidden: path traversal blocked"}, head_only=True)
+            return
+        query = urllib.parse.parse_qs(parsed.query)
+        if self._handle_api_get(parsed.path, query, head_only=True):
+            return
+        super().do_HEAD()
 
+    def do_GET(self):
+        if not self._validate_request_security():
+            return
+        parsed = urllib.parse.urlparse(self.path)
+        if self._is_traversal_attempt(parsed.path):
+            self.send_json(403, {"error": "Forbidden: path traversal blocked"})
+            return
+        query = urllib.parse.parse_qs(parsed.query)
+        if self._handle_api_get(parsed.path, query, head_only=False):
+            return
         super().do_GET()
 
     def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == "/api/mcp":
-            content_len = int(self.headers.get("Content-Length", 0))
-            raw_body = self.rfile.read(content_len).decode("utf-8")
-            try:
-                rpc_req = json.loads(raw_body)
-                rpc_id = rpc_req.get("id")
-                method = rpc_req.get("method")
-                params = rpc_req.get("params", {})
-
-                if method == "tools/list":
-                    res = {"tools": MCP_TOOLS}
-                elif method == "tools/call":
-                    tool_name = params.get("name")
-                    args = params.get("arguments", {})
-                    if tool_name == "list_methods":
-                        prog = next((p for p in PROGRAMS_DB if p["id"] == args.get("program_id")), PROGRAMS_DB[0])
-                        res = {"content": [{"type": "text", "text": json.dumps(list(prog["functions"].keys()))}]}
-                    elif tool_name == "decompile_function":
-                        prog = next((p for p in PROGRAMS_DB if p["id"] == args.get("program_id")), PROGRAMS_DB[0])
-                        fn = prog["functions"].get(args.get("function"), next(iter(prog["functions"].values())))
-                        res = {"content": [{"type": "text", "text": fn["pseudocode"]}]}
-                    elif tool_name == "search_strings":
-                        prog = next((p for p in PROGRAMS_DB if p["id"] == args.get("program_id")), PROGRAMS_DB[0])
-                        res = {"content": [{"type": "text", "text": json.dumps(prog["strings"])}]}
-                    else:
-                        res = {"content": [{"type": "text", "text": f"Executed {tool_name} successfully."}]}
-                else:
-                    res = {"status": "ok"}
-
-                self.send_json(200, {
-                    "jsonrpc": "2.0",
-                    "id": rpc_id,
-                    "result": res
-                })
-            except Exception as e:
-                self.send_json(400, {
-                    "jsonrpc": "2.0",
-                    "error": {"code": -32600, "message": str(e)}
-                })
+        if not self._validate_request_security():
             return
 
-        self.send_json(404, {"error": "Not Found"})
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path != "/api/mcp":
+            self.send_json(404, {"error": "Not Found"})
+            return
 
-    def send_json(self, status_code, data):
+        raw_len = self.headers.get("Content-Length", "0")
+        try:
+            content_len = int(raw_len)
+        except ValueError:
+            self.send_json(400, {"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Invalid Content-Length"}})
+            return
+
+        if content_len < 0:
+            self.send_json(400, {"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Negative Content-Length"}})
+            return
+
+        if content_len > MAX_BODY_BYTES:
+            self.close_connection = True
+            self.send_json(
+                413,
+                {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": -32600,
+                        "message": f"Payload exceeds maximum body cap of {MAX_BODY_BYTES} bytes",
+                    },
+                },
+            )
+            return
+
+        raw_body = self.rfile.read(content_len)
+        try:
+            rpc_req = json.loads(raw_body.decode("utf-8"))
+        except Exception as e:
+            self.send_json(
+                400,
+                {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": f"Parse error: {e}"}},
+            )
+            return
+
+        status_code, response_obj = handle_mcp_request(ANALYZER, rpc_req)
+        if status_code == 204 or response_obj is None:
+            self.send_response(204)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        self.send_json(status_code, response_obj)
+
+    def do_OPTIONS(self):
+        if not self._validate_request_security():
+            return
+        self.send_response(204)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def send_json(self, status_code: int, data: Any, head_only: bool = False):
         payload = json.dumps(data, indent=2).encode("utf-8")
         self.send_response(status_code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
-        self.wfile.write(payload)
+        if not head_only:
+            self.wfile.write(payload)
 
-    def do_OPTIONS(self):
-        self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
+    def send_error(self, code, message=None, explain=None):
+        """Return clean JSON error responses with all security headers."""
+        try:
+            code_int = int(code)
+        except Exception:
+            code_int = 500
+        self.send_json(code_int, {"error": message or f"HTTP {code_int}", "status": code_int})
 
     def log_message(self, format, *args):
-        if "- -" in args[0] or "200" in args[0]:
+        """Safe logging that handles HTTPStatus and non-string args without raising."""
+        try:
+            msg = format % args if args else str(format)
+        except Exception:
+            msg = " ".join(str(a) for a in args) if args else str(format)
+        if '" 200 ' in msg or '" 204 ' in msg:
             return
-        sys.stderr.write(f"[{self.log_date_time_string()}] {args[0]}\n")
+        sys.stderr.write(f"[{self.log_date_time_string()}] {msg}\n")
 
-def run(host="127.0.0.1", port=8131):
+
+def run(host: str = "127.0.0.1", port: int = 8131):
     server_address = (host, port)
-    httpd = HTTPServer(server_address, GhidraMcpHandler)
-    print(f"✦ GhidraMCP Reverse Engineering Bridge running on http://{host}:{port}")
-    print(f"  Health endpoint: http://{host}:{port}/health")
-    print(f"  MCP Tools:       http://{host}:{port}/api/tools")
-    print(f"  Decompile API:   http://{host}:{port}/api/decompile?program=zoth-vault-daemon&fn=main")
+    httpd = ThreadingHTTPServer(server_address, GhidraMcpHandler)
+    actual_port = httpd.server_port
+    engines = ANALYZER.get_engines_status()
+    print(f"✦ GhidraMCP Reverse Engineering Bridge v{VERSION} running on http://{host}:{actual_port}")
+    print(f"  Health endpoint: http://{host}:{actual_port}/health")
+    print(f"  MCP Tools (8):   http://{host}:{actual_port}/api/tools")
+    print(
+        f"  Active Engines:  Ghidra={engines['ghidra_headless']} | r2={engines['radare2']} "
+        f"| objdump={engines['objdump']} | jail={engines['agent_capsule_jail']}"
+    )
+    print(f"  Decompile API:   http://{host}:{actual_port}/api/decompile?program=/bin/echo&fn=main")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("\nStopping GhidraMCP daemon...")
         httpd.server_close()
 
+
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="GhidraMCP Bridge Daemon")
+
+    parser = argparse.ArgumentParser(description=f"GhidraMCP Bridge Daemon v{VERSION}")
     parser.add_argument("--host", default="127.0.0.1", help="Host interface to bind")
     parser.add_argument("--port", type=int, default=8131, help="Port to bind")
     args = parser.parse_args()

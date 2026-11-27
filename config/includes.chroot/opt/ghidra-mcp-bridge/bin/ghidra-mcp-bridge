@@ -1,0 +1,471 @@
+#!/usr/bin/env python3
+"""GhidraMCP Binary Reverse Engineering CLI & Stdio MCP Server (v3.6.0).
+
+Command line interface for binary analysis, ELF/PE/Mach-O/WASM header & section
+parsing, Shannon entropy, hex dump, disassembly, decompilation, strings, xrefs,
+and JSON-RPC 2.0 stdio MCP transport.
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+"""
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
+
+TOOL_ID = "ghidra-mcp-bridge"
+TOOL_REPO = "ghidra-mcp-bridge"
+TOOL_NAME = "GhidraMCP Binary Reverse Engineering Bridge"
+TOOL_DESC = (
+    "Local Model Context Protocol (MCP) binary reverse engineering bridge with "
+    "ELF/PE/Mach-O/WASM section & Shannon entropy parsing, hex dump, disassembly, "
+    "and decompilation."
+)
+TOOL_VERSION = "3.6.0"
+TOOL_CATEGORY = "Security & Enclave"
+TOOL_PORT = 8131
+
+# Resolve installation root: /opt/ghidra-mcp-bridge -> relative __file__ -> workspace fallback
+_SELF_ROOT = Path(__file__).resolve().parent.parent
+_CANDIDATES = [
+    _SELF_ROOT,
+    Path("/opt/ghidra-mcp-bridge"),
+    Path.home() / "NullAITech" / "ghidra-mcp-bridge",
+]
+REPO_DIR = Path("/opt/ghidra-mcp-bridge")
+for _cand in _CANDIDATES:
+    if (_cand / "analyzer.py").exists():
+        REPO_DIR = _cand
+        break
+
+SERVER_PY = REPO_DIR / "server.py"
+STUDIO_URL = f"http://127.0.0.1:3000/tools/{TOOL_ID}"
+LOCAL_PORT_URL = f"http://127.0.0.1:{TOOL_PORT}"
+
+if str(REPO_DIR) not in sys.path:
+    sys.path.insert(0, str(REPO_DIR))
+
+try:
+    from analyzer import BinaryAnalyzer, MCP_TOOLS, PROGRAMS_DB, handle_mcp_request
+    ANALYZER = BinaryAnalyzer()
+except ImportError:
+    ANALYZER = None
+    PROGRAMS_DB = []
+    MCP_TOOLS = []
+    handle_mcp_request = None
+
+
+def _safe_display_path(p: Path) -> str:
+    """Never emit literal user home directories in CLI/JSON output."""
+    s = str(p)
+    home = str(Path.home())
+    if home and s.startswith(home):
+        return "/opt/ghidra-mcp-bridge" if Path("/opt/ghidra-mcp-bridge/analyzer.py").exists() else "~" + s[len(home):]
+    return s
+
+
+def query_health():
+    try:
+        req = urllib.request.Request(f"{LOCAL_PORT_URL}/health", headers={"User-Agent": "ZothOS-CLI"})
+        with urllib.request.urlopen(req, timeout=2.0) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def run_mcp_stdio():
+    """Run spec-compliant JSON-RPC 2.0 MCP server over stdin/stdout (newline-delimited JSON)."""
+    if not ANALYZER or not handle_mcp_request:
+        sys.stderr.write("Error: analyzer module unavailable\n")
+        sys.exit(1)
+
+    for raw_line in sys.stdin:
+        line = raw_line.strip()
+        if not line:
+            continue
+        try:
+            rpc_req = json.loads(line)
+        except Exception as e:
+            err = {
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {"code": -32700, "message": f"Parse error: {e}"},
+            }
+            sys.stdout.write(json.dumps(err) + "\n")
+            sys.stdout.flush()
+            continue
+
+        status_code, response_obj = handle_mcp_request(ANALYZER, rpc_req)
+        if status_code == 204 or response_obj is None:
+            continue
+        sys.stdout.write(json.dumps(response_obj) + "\n")
+        sys.stdout.flush()
+
+
+def main():
+    args = sys.argv[1:]
+
+    # Electron launch shortcut
+    if "--electron" in args or (args and args[0] in ("desktop", "electron")):
+        rem = [a for a in args if a not in ("--electron", "desktop", "electron")]
+        elec = shutil.which("electron") or "/usr/local/bin/electron"
+        main_cjs = REPO_DIR / "electron" / "main.cjs"
+        if main_cjs.exists() and elec and os.path.exists(elec):
+            sys.exit(subprocess.run([elec, str(main_cjs)] + rem, cwd=str(REPO_DIR)).returncode)
+        print(f"✦ Opening web workstation: {LOCAL_PORT_URL} (Studio: {STUDIO_URL})")
+        sys.exit(0)
+
+    # TUI launch shortcut
+    if "--tui" in args or (args and args[0] == "tui"):
+        rem = [a for a in args if a not in ("--tui", "tui")]
+        tui_bin = REPO_DIR / "bin" / "ghidra-mcp-bridge-tui"
+        target_tui = str(tui_bin) if tui_bin.exists() else f"/usr/local/bin/{TOOL_ID}-tui"
+        sys.exit(subprocess.run([target_tui] + rem).returncode)
+
+    parser = argparse.ArgumentParser(
+        prog=TOOL_ID,
+        description=f"{TOOL_NAME} (v{TOOL_VERSION}) — {TOOL_DESC}",
+    )
+    parser.add_argument("--version", action="version", version=f"{TOOL_ID} v{TOOL_VERSION}")
+    parser.add_argument("--status", action="store_true", help="Check local ZothOS installation & daemon status")
+    parser.add_argument("--json", action="store_true", help="Output deterministic JSON telemetry")
+    parser.add_argument("--ui", action="store_true", help="Print local workstation and Studio URLs")
+    parser.add_argument("--jail", action="store_true", help="Run binary analysis inside agent-capsule-jail")
+
+    subparsers = parser.add_subparsers(dest="subcommand", help="Subcommands")
+
+    # mcp (stdio)
+    subparsers.add_parser("mcp", help="Run JSON-RPC 2.0 MCP server over stdio")
+
+    # analyze
+    ana_p = subparsers.add_parser("analyze", help="Inspect binary metadata, format, architecture, entropy, and symbols")
+    ana_p.add_argument("target", help="Binary filesystem path or demo ID (e.g. /bin/echo or zoth-vault-daemon)")
+    ana_p.add_argument("--methods", action="store_true", help="Enumerate functions and symbols")
+    ana_p.add_argument("--strings", nargs="?", const="", default=None, help="Extract strings (optional substring filter)")
+    ana_p.add_argument("--xrefs", metavar="TARGET", help="Search cross-references to symbol")
+
+    # sections / entropy
+    sec_p = subparsers.add_parser("sections", help="Parse ELF/PE/Mach-O/WASM sections and Shannon entropy")
+    sec_p.add_argument("target", help="Binary path or demo ID")
+
+    ent_p = subparsers.add_parser("entropy", help="Compute overall and per-section Shannon entropy")
+    ent_p.add_argument("target", help="Binary path or demo ID")
+
+    # hex
+    hex_p = subparsers.add_parser("hex", help="Print bounded 16-byte-per-line hexadecimal + ASCII dump")
+    hex_p.add_argument("target", help="Binary path or demo ID")
+    hex_p.add_argument("--offset", type=int, default=0, help="Starting byte offset (default: 0)")
+    hex_p.add_argument("--length", type=int, default=256, help="Bytes to display (16-4096, default: 256)")
+
+    # disasm
+    dis_p = subparsers.add_parser("disasm", help="Disassemble function in binary")
+    dis_p.add_argument("target", help="Binary path or demo ID")
+    dis_p.add_argument("func", nargs="?", default="main", help="Function symbol or address (default: main)")
+    dis_p.add_argument("--syntax", choices=["intel", "att"], default="intel", help="Disassembly syntax")
+
+    # decompile
+    dec_p = subparsers.add_parser("decompile", help="Decompile target binary function to C pseudocode AST")
+    dec_p.add_argument("target", nargs="?", default="zoth-vault-daemon", help="Binary path or program ID")
+    dec_p.add_argument("func", nargs="?", default="main", help="Function symbol or address to decompile")
+    dec_p.add_argument("--engine", choices=["auto", "r2", "ghidra"], default="auto", help="Decompilation engine")
+
+    # methods
+    meth_p = subparsers.add_parser("methods", help="List exported and internal function symbols")
+    meth_p.add_argument("target", help="Binary path or demo ID")
+    meth_p.add_argument("--filter", "-f", help="Substring filter for symbol names")
+
+    # strings
+    str_p = subparsers.add_parser("strings", help="Extract strings with hexadecimal file offsets")
+    str_p.add_argument("target", help="Binary path or demo ID")
+    str_p.add_argument("--query", "-q", help="String substring search query")
+    str_p.add_argument("--min-len", "-n", type=int, default=4, help="Minimum string length (1-256)")
+
+    # xrefs
+    xref_p = subparsers.add_parser("xrefs", help="Search cross-references or calls to symbol")
+    xref_p.add_argument("target", help="Binary path or demo ID")
+    xref_p.add_argument("symbol", help="Symbol name or address to find callers for")
+
+    # tools
+    subparsers.add_parser("tools", help="List all 8 Ghidra MCP tools")
+
+    # programs
+    subparsers.add_parser("programs", help="List indexed binary targets")
+
+    # serve
+    srv_p = subparsers.add_parser("serve", help="Run hardened GhidraMCP bridge server daemon")
+    srv_p.add_argument("--host", default="127.0.0.1", help="Host interface to bind")
+    srv_p.add_argument("--port", type=int, default=TOOL_PORT, help="Port to bind")
+
+    parsed = parser.parse_args(args)
+
+    if parsed.ui:
+        if parsed.json:
+            print(json.dumps({
+                "tool": TOOL_ID,
+                "version": TOOL_VERSION,
+                "local_workstation_url": LOCAL_PORT_URL,
+                "studio_workbench_url": STUDIO_URL,
+            }, indent=2))
+        else:
+            print(f"Local Workstation : {LOCAL_PORT_URL}")
+            print(f"Studio Workbench  : {STUDIO_URL}")
+        sys.exit(0)
+
+    if parsed.subcommand == "mcp":
+        run_mcp_stdio()
+        sys.exit(0)
+
+    if parsed.subcommand == "serve":
+        cmd = [sys.executable, str(SERVER_PY), "--host", parsed.host, "--port", str(parsed.port)]
+        print(f"✦ Starting {TOOL_NAME} v{TOOL_VERSION} on http://{parsed.host}:{parsed.port} ...")
+        proc = subprocess.run(cmd, cwd=str(REPO_DIR))
+        sys.exit(proc.returncode)
+
+    if parsed.subcommand == "tools":
+        print(json.dumps(MCP_TOOLS, indent=2))
+        sys.exit(0)
+
+    if parsed.subcommand == "programs":
+        summaries = [
+            {
+                "id": p["id"],
+                "name": p["name"],
+                "arch": p["arch"],
+                "format": p["format"],
+                "compiler": p["compiler"],
+                "entry_point": p["entry_point"],
+                "functions": list(p["functions"].keys()),
+                "is_demo": True,
+            }
+            for p in PROGRAMS_DB
+        ]
+        print(json.dumps(summaries, indent=2))
+        sys.exit(0)
+
+    if parsed.subcommand in ("sections", "entropy"):
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.inspect_sections_and_entropy(parsed.target)
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Binary Sections & Shannon Entropy: {res['name']} ({res['format']} · {res['arch']})")
+                print(f"  Entry Point     : {res['entry_point']}")
+                print(f"  Overall Entropy : {res['overall_entropy']:.4f} bits/byte [{res['overall_status']}]")
+                print(f"  Packed Sections : {res['packed_sections']} / {res['sections_count']}")
+                for s in res["sections"]:
+                    flag = " [PACKED/ENCRYPTED]" if s["packed"] else ""
+                    print(
+                        f"  {s['name']:<22} {s['vaddr']:<14} {s['size']:>8} B  "
+                        f"{s['flags']:<4}  H={s['entropy']:.4f}{flag}"
+                    )
+            sys.exit(0)
+        except Exception as e:
+            print(f"Sections/Entropy Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "hex":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.read_hex_dump(parsed.target, offset=parsed.offset, length=parsed.length)
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Hex Dump: {res['name']} (offset={res['offset']}, len={res['length']}/{res['total_bytes']})")
+                print(res["dump"])
+            sys.exit(0)
+        except Exception as e:
+            print(f"Hex Dump Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "analyze":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            meta = ANALYZER.inspect_binary(parsed.target, force_jail=parsed.jail)
+            if parsed.methods:
+                meta["methods"] = ANALYZER.list_methods(parsed.target, force_jail=parsed.jail)
+            if parsed.strings is not None:
+                meta["strings"] = ANALYZER.search_strings(
+                    parsed.target, query=parsed.strings or None, force_jail=parsed.jail
+                )
+            if parsed.xrefs:
+                meta["xrefs"] = ANALYZER.get_xrefs(parsed.target, parsed.xrefs, force_jail=parsed.jail)
+
+            if parsed.json:
+                print(json.dumps(meta, indent=2))
+            else:
+                print(f"✦ Target Binary Analysis: {meta.get('name')} ({meta.get('format')})")
+                print(f"  Architecture: {meta.get('arch')}")
+                print(f"  Entry Point : {meta.get('entry_point')}")
+                print(f"  Size        : {meta.get('size_bytes', 0):,} bytes")
+                print(f"  Entropy     : {meta.get('overall_entropy', 0.0):.4f} bits/byte")
+                if "sha256" in meta:
+                    print(f"  SHA-256     : {meta.get('sha256')}")
+                print(f"  Functions   : {meta.get('total_functions', 0)}")
+
+                if "methods" in meta:
+                    print(f"\n  --- Function Symbols ({len(meta['methods'])}) ---")
+                    for m in meta["methods"][:25]:
+                        print(f"    {m['address']:<18} {m['type']:<10} {m['name']} ({m.get('size', 0)} bytes)")
+                if "strings" in meta:
+                    print(f"\n  --- Extracted Strings ({len(meta['strings'])}) ---")
+                    for s in meta["strings"][:20]:
+                        print(f"    {s['offset']:<12} {s['value']}")
+                if "xrefs" in meta:
+                    print(f"\n  --- Cross References to '{parsed.xrefs}' ({len(meta['xrefs'])}) ---")
+                    for x in meta["xrefs"][:15]:
+                        print(f"    {x['address']:<18} [{x['type']}] {x['caller_function']}: {x['instruction']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Analysis Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "disasm":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.disassemble_function(
+                parsed.target, parsed.func, syntax=parsed.syntax, force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Disassembly [{res.get('program')}]::{res.get('function')}() ({res.get('arch')}, {res.get('syntax')}):")
+                print(f"  Address: {res.get('address')} | Engine: {res.get('engine')}\n")
+                for line in res.get("disasm", []):
+                    print(f"  {line}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Disassembly Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "decompile":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            res = ANALYZER.decompile_function(
+                parsed.target, parsed.func, engine=parsed.engine, force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"✦ Decompiled [{res.get('program')}]::{res.get('function')}() ({res.get('arch')}):")
+                print(f"  Address: {res.get('address')} | Engine: {res.get('engine_used')} | Size: {res.get('size_bytes')} bytes\n")
+                print(res.get("pseudocode", "// No decompilation generated"))
+            sys.exit(0)
+        except Exception as e:
+            print(f"Decompilation Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "methods":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            methods = ANALYZER.list_methods(parsed.target, filter_query=parsed.filter, force_jail=parsed.jail)
+            if parsed.json:
+                print(json.dumps(methods, indent=2))
+            else:
+                print(f"✦ Function Symbols for {parsed.target} ({len(methods)} total):")
+                for m in methods:
+                    print(f"  {m['address']:<18} {m['type']:<10} {m['name']} ({m.get('size', 0)} bytes)")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Methods Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "strings":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            strs = ANALYZER.search_strings(
+                parsed.target, query=parsed.query, min_len=parsed.min_len, force_jail=parsed.jail
+            )
+            if parsed.json:
+                print(json.dumps(strs, indent=2))
+            else:
+                print(f"✦ Strings for {parsed.target} ({len(strs)} matches):")
+                for s in strs:
+                    print(f"  {s['offset']:<12} {s['value']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Strings Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    if parsed.subcommand == "xrefs":
+        if not ANALYZER:
+            print("Error: Analyzer module not available", file=sys.stderr)
+            sys.exit(1)
+        try:
+            xrefs = ANALYZER.get_xrefs(parsed.target, parsed.symbol, force_jail=parsed.jail)
+            if parsed.json:
+                print(json.dumps(xrefs, indent=2))
+            else:
+                print(f"✦ Cross references to '{parsed.symbol}' in {parsed.target} ({len(xrefs)} found):")
+                for x in xrefs:
+                    print(f"  {x['address']:<18} [{x['type']}] {x['caller_function']}: {x['instruction']}")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Xrefs Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # Default / --status / --json telemetry
+    health = query_health()
+    is_online = health.get("error") is None
+    engines = ANALYZER.get_engines_status() if ANALYZER else {}
+
+    info = {
+        "id": TOOL_ID,
+        "repo": TOOL_REPO,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "category": TOOL_CATEGORY,
+        "installed": (REPO_DIR / "analyzer.py").exists(),
+        "install_dir": _safe_display_path(REPO_DIR),
+        "studio_workbench_url": STUDIO_URL,
+        "local_endpoint": LOCAL_PORT_URL,
+        "daemon_active": is_online,
+        "daemon_telemetry": health if is_online else None,
+        "mcp_tools_count": len(MCP_TOOLS),
+        "engines": engines,
+        "license": "100% Free & Open Access (Zero Paywalls)",
+        "attribution": "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+        "support": {
+            "stripe_buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana_wallet": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+        "status": "READY",
+    }
+
+    if parsed.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    print(f"✦ {TOOL_NAME} (v{TOOL_VERSION}) — [{TOOL_CATEGORY}]")
+    print(f"  Install Dir : {info['install_dir']}")
+    print(f"  Workbench   : {STUDIO_URL}")
+    print(f"  Local Port  : {LOCAL_PORT_URL}")
+    print(f"  Daemon      : {'ONLINE (Live)' if is_online else 'OFFLINE (On-Demand)'}")
+    print(f"  MCP Tools   : {len(MCP_TOOLS)} JSON-RPC 2.0 tools (HTTP /api/mcp + CLI stdio `mcp`)")
+    print(
+        f"  Engines     : Ghidra={engines.get('ghidra_headless')} | r2={engines.get('radare2')} "
+        f"| objdump={engines.get('objdump')} | readelf={engines.get('readelf')} | jail={engines.get('agent_capsule_jail')}"
+    )
+    print(f"  Attribution : {info['attribution']}")
+
+
+if __name__ == "__main__":
+    main()

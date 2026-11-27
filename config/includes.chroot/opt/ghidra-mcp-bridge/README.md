@@ -1,142 +1,116 @@
 <div align="center">
-  <img src="assets/hero-banner.svg" alt="GhidraMCP Bridge — Sovereign Architecture Banner" width="100%" />
+  <img src="assets/hero-banner.svg" alt="GhidraMCP Binary Reverse Engineering Bridge v3.6.0 Banner" width="100%" />
 </div>
 
 <br />
 
-<div align="center">
-  <a href="https://zoth.nullai.tech/tools/ghidra-mcp-bridge"><img src="https://img.shields.io/badge/Zoth_Studio_v2-Workspace-D4AF37?style=for-the-badge&logo=sparkles&logoColor=black" alt="Zoth Studio Workspace" /></a>
-  <a href="http://127.0.0.1:8131"><img src="https://img.shields.io/badge/Daemon-Port_:8131-38BDF8?style=for-the-badge&logo=linux&logoColor=black" alt="Port :8131" /></a>
-  <a href="https://nullai.tech"><img src="https://img.shields.io/badge/Protocol-MCP_2024--11--05-10B981?style=for-the-badge&logo=shield&logoColor=black" alt="MCP Protocol" /></a>
-</div>
+# GhidraMCP Binary Reverse Engineering Bridge (`ghidra-mcp-bridge` v3.6.0)
 
-# ⚡ GhidraMCP Binary Reverse Engineering Bridge (`ghidra-mcp-bridge`)
-
-> **LaurieWired Ghidra Model Context Protocol (MCP) bridge for autonomous binary decompilation, AST method analysis, and project variable annotation in the NullAI Platform.**
+Local-first Model Context Protocol (`MCP 2024-11-05`) binary reverse engineering bridge, pure-Python ELF/PE/Mach-O/WASM header & Shannon entropy parser, and dual-theme loopback workstation (`127.0.0.1:8131`). Inspired by [LaurieWired/GhidraMCP](https://github.com/LaurieWired/GhidraMCP) and maintained for Zoth Studio v2 and ZothOS by **Neal Frazier Tech (`@1nc0gn30`) • NullAI Platform**.
 
 ---
 
-## 🏛️ Architectural Overview
-
-**GhidraMCP Bridge** is an official sovereign reverse engineering tool in the **[Zoth Studio v2](https://zoth.nullai.tech)** (72-Tool Matrix) and **[ZothOS Linux 3.3](https://zothos.nullai.tech)** ecosystem, engineered by **1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30))**.
+## Architecture & Security Model
 
 | Property | Specification |
 | :--- | :--- |
-| **Tool ID** | `ghidra-mcp-bridge` |
+| **Tool ID & Version** | `ghidra-mcp-bridge` · `v3.6.0` |
 | **Category** | `Security & Enclave` |
-| **Daemon Port** | `http://127.0.0.1:8131` |
-| **Workbench Route** | `http://127.0.0.1:3000/tools/ghidra-mcp-bridge` |
-| **Upstream Architecture** | [LaurieWired/GhidraMCP](https://github.com/LaurieWired/GhidraMCP) |
-| **Protocol** | Model Context Protocol (MCP) 2024-11-05 via JSON-RPC 2.0 |
-| **Execution Mode** | Local Enclave & MCP Server |
-| **License** | 100% Free & Open Access (Zero Paywalls) |
+| **Loopback Daemon** | `http://127.0.0.1:8131` (on-demand `ThreadingHTTPServer`, zero third-party Python dependencies) |
+| **Studio Route** | `http://127.0.0.1:3000/tools/ghidra-mcp-bridge` |
+| **CLI & TUI Binaries** | `/usr/local/bin/ghidra-mcp-bridge` (`ghidra-bridge`, `ghidra-mcp`), `/usr/local/bin/ghidra-mcp-bridge-tui` |
+| **Analysis Engines** | Pure-Python `struct` ELF32/ELF64/PE32/PE32+/Mach-O/WASM parser, NSA Ghidra Headless (`analyzeHeadless`), Radare2 (`r2`), GNU Binutils (`objdump`, `readelf`, `nm`, `strings`), `agent-capsule-jail` |
+| **MCP Transports** | HTTP `POST /api/mcp` and CLI stdio `ghidra-mcp-bridge mcp` (`JSON-RPC 2.0`, `protocolVersion: 2024-11-05`, 8 tools) |
+| **Security Guards** | Loopback-only `Host` (`403`), exact-port loopback CORS `Origin` allowlist (`403`, zero `ACAO: *`, `Vary: Origin`), all 4 HTTP security headers, disabled directory listings (`403`), `1 MiB` POST cap (`413`), strict symbol regex allowlist (`^[A-Za-z0-9_.@:$+-]{1,128}$`), executable magic-byte verification |
+| **License** | MIT · 100% Free & Open Access (Zero Paywalls) |
 
 ---
 
-## 💎 Key Capabilities
+## Core Capabilities
 
-- **Autonomous Decompilation**: Exposes NSA Ghidra decompiler engine to LLMs and autonomous coding agents with zero cloud egress.
-- **AST Method & Symbol Inspection**: Enumerates functions, data sections, and cross-references (XREFs) across x86_64, ARM, and MIPS binaries.
-- **Variable & Stack Annotation**: Real-time renaming of decompiled variables and types directly synchronized back to Ghidra project files.
-- **Dual-Pane Workstation**: Side-by-side native assembly instruction streams and syntax-highlighted C pseudocode.
-- **JSON-RPC 2.0 MCP Protocol**: Native compatibility with Claude Code, Cursor, AGY, and Zoth Studio agents.
+- **Pure-Python Multi-Format Binary Parser**: Inspects ELF32, ELF64, PE32, PE32+, Mach-O 32/64-bit, and WASM headers and section tables directly via `struct`, rejecting plaintext or non-executable files.
+- **Per-Section & Whole-File Shannon Entropy**: Computes exact `0.00–8.00 bits/byte` entropy per section and flags `>= 7.0 bits/byte` regions as `PACKED / ENCRYPTED`.
+- **Bounded 16-Byte Hex + ASCII Dump**: Exposes `/api/hex`, CLI `hex`, and MCP `read_hex_dump` with offset and length validation (`16–4096` bytes).
+- **Multi-Engine Disassembly & Decompilation**: Supports Intel/AT&T disassembly (`r2 pdf` / `objdump`) and C pseudocode recovery (`r2 pdc`, NSA Ghidra `analyzeHeadless`, or AST fallback).
+- **Persistent Session Variable Annotations**: `annotate_variable` applies whole-word renames (`\b<old>\b -> <new>`) plus an annotation header comment directly in subsequent `decompile_function` and `disassemble_function` outputs.
+- **Dual-Theme Zero-Egress Web Workstation**: Editorial Ivory Light and Obsidian Gold Dark themes (`?theme=light|dark`, `?embed=1`, `prefers-color-scheme`) with zero external CDN requests.
 
 ---
 
-## 🚀 ZothOS CLI & Subcommands
+## REST API Endpoints (`127.0.0.1:8131`)
 
-Interact with the GhidraMCP bridge directly from your terminal:
+- `GET` / `HEAD /health`, `/api/health`, `/api/status`, `/api/tools`, `/api/programs`
+- `GET` / `HEAD /api/sections?program=<id_or_path>` and `/api/entropy?program=<id_or_path>`
+- `GET /api/hex?program=<id_or_path>&offset=0&length=256`
+- `GET /api/inspect?program=<id_or_path>`
+- `GET /api/methods?program=<id_or_path>&filter=<query>`
+- `GET /api/disassemble?program=<id_or_path>&fn=<symbol>&syntax=<intel|att>`
+- `GET /api/decompile?program=<id_or_path>&fn=<symbol>&engine=<auto|r2|ghidra>`
+- `GET /api/strings?program=<id_or_path>&query=<q>&min_len=4`
+- `GET /api/xrefs?program=<id_or_path>&target=<symbol>`
+- `POST /api/mcp` (JSON-RPC 2.0 MCP endpoint)
+
+---
+
+## Model Context Protocol (MCP) — 8 Registered Tools
+
+Available over both HTTP (`POST http://127.0.0.1:8131/api/mcp`) and stdio (`ghidra-mcp-bridge mcp`):
+
+1. `list_methods` — Enumerate exported, internal, and dynamic function symbols.
+2. `decompile_function` — Decompile function to C pseudocode AST with active annotations applied.
+3. `disassemble_function` — Disassemble function to Intel or AT&T native instructions.
+4. `search_strings` — Extract ASCII/UTF-8 strings with hexadecimal file offsets.
+5. `get_xrefs` — Find callers and cross-references to a symbol or address.
+6. `annotate_variable` — Rename a variable in session store and reflect it in decompile/disassembly output.
+7. `inspect_sections_and_entropy` — Parse binary headers, section table, and per-section Shannon entropy.
+8. `read_hex_dump` — Read a bounded 16-byte-per-line hex and ASCII dump.
+
+---
+
+## ZothOS CLI & TUI Commands
 
 ```bash
-# Check installation and live daemon telemetry
+# Status, JSON telemetry, and workbench URLs
 ghidra-mcp-bridge --status
-# Or deterministic JSON telemetry
-ghidra-mcp --json
+ghidra-mcp-bridge --json
+ghidra-mcp-bridge --ui
 
-# Decompile a function from a target binary
-ghidra-bridge decompile zoth-vault-daemon main
-ghidra-bridge decompile firmware-auth-arm Reset_Handler
+# Real binary inspection, sections, entropy, and hex dump
+ghidra-mcp-bridge analyze /bin/echo --methods --strings POSIX
+ghidra-mcp-bridge sections /bin/echo
+ghidra-mcp-bridge entropy /bin/echo
+ghidra-mcp-bridge hex /bin/echo --offset 0 --length 128
 
-# List available MCP tools
-ghidra-mcp tools
+# Disassembly, decompilation, strings, and cross-references
+ghidra-mcp-bridge disasm /bin/echo main --syntax intel
+ghidra-mcp-bridge decompile /bin/echo main --engine auto
+ghidra-mcp-bridge strings /bin/echo --query POSIX
+ghidra-mcp-bridge xrefs /bin/echo getenv
 
-# List indexed binary targets
-ghidra-mcp programs
+# Start loopback HTTP daemon or stdio MCP server
+ghidra-mcp-bridge serve --host 127.0.0.1 --port 8131
+ghidra-mcp-bridge mcp
 
-# Run local MCP daemon
-ghidra-mcp-bridge serve --port 8131
+# Real toolchain & binary telemetry TUI
+ghidra-mcp-bridge-tui --status
+ghidra-mcp-bridge-tui --status --json
 ```
 
 ---
 
-## ☕ 100% Free Open Access & Sovereign Architecture
-
-Every tool across the Zoth ecosystem is **100% free, open, and unlocked by default**. Zero paywalls, zero license modals, zero blur locks.
-
-If you appreciate the sovereign reverse engineering tooling of ZothOS, consider supporting the continuous development:
-
-* **☕ Buy Us a Coffee (Stripe)**: [buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
-* **◎ Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
-
----
-
-<div align="center">
-  <sub>Engineered by <b>1nc0gn30 • NullAI</b> (<a href="https://github.com/1nc0gn30">@1nc0gn30</a>) &bull; <a href="https://nullai.tech">NullAI Platform</a> &bull; <a href="https://zoth.nullai.tech">Zoth Studio v2</a></sub>
-</div>
-
----
-
-## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
-
-```mermaid
-flowchart LR
-    subgraph ZothOS["🐧 ZothOS v3.4 CLI & Braille TUI"]
-        CLI["ghidra-mcp-bridge --help / --json"]
-        TUI["ghidra-mcp-bridge-tui<br/>Unicode U+2800 2x4 Braille"]
-    end
-
-    subgraph Workstation["⚡ Sovereign Workstation"]
-        WEB["http://127.0.0.1:8131/<br/>REST API & /health"]
-    end
-
-    subgraph Studio["🌌 Zoth Studio v2 & ZothOS-Lite"]
-        GODMODE["http://127.0.0.1:3000/tools/ghidra-mcp-bridge<br/>God-Mode Workstation"]
-        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
-    end
-
-    subgraph SecondBrain["💎 Obsidian Second Brain & STDP"]
-        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
-        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
-        NOTE["Studio/Tools/Studio ghidra-mcp-bridge.md"]
-    end
-
-    CLI --> WEB
-    TUI --> WEB
-    WEB <--> GODMODE
-    WEB <--> LITE
-    WEB --> TRACKER
-    TRACKER <--> NOTE
-    NOTE <--> NEURO
-```
-
-### Cross-Surface Integration Matrix
-
-| Surface | Endpoint / Binary | Capabilities |
-| :--- | :--- | :--- |
-| **Standalone Workstation** | `http://127.0.0.1:8131/` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
-| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/ghidra-mcp-bridge` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
-| **ZothOS v3.4 CLI & TUI** | `ghidra-mcp-bridge` / `ghidra-mcp-bridge-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
-| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
-| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio ghidra-mcp-bridge.md`) |
-| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
+## Tests
 
 ```bash
-# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
-ghidra-mcp-bridge --help
-ghidra-mcp-bridge-tui --status
-ghidra-mcp-bridge-tui --json
-
-# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
-zoth-obsidian-tracker --verify
+PYTHONPATH=. /opt/zothos-ai-env/bin/pytest -q
 ```
 
+---
+
+## Support & Attribution
+
+GhidraMCP Binary Reverse Engineering Bridge is 100% free and open-access software with zero paywalls. Optional support:
+
+- **Stripe**: [☕ Buy Us a Coffee](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **Solana Tip**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+
+MIT License — **Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform** ([GitHub](https://github.com/1nc0gn30/ghidra-mcp-bridge) · [nullai.tech](https://nullai.tech)).

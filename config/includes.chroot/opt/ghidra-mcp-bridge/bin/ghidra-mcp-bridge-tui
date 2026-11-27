@@ -1,60 +1,145 @@
 #!/usr/bin/env python3
-"""⚡ Ghidra Mcp Bridge — Sovereign Unicode U+2800 Braille TUI & Benchmark Harness
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
-Paired Uncommon-Web Library: Canvas UI (canvasui-html-effects)
+"""GhidraMCP Binary Reverse Engineering Telemetry TUI (v3.6.0).
+
+Inspects live loopback :8131 bridge status, host reverse-engineering toolchains
+(Ghidra Headless, Radare2, GNU Binutils, Agent Capsule Jail), and real binary
+section/Shannon-entropy telemetry.
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
-import argparse, json, math, os, sys, time
 
-BRAILLE_BASE = 0x2800
-METRICS = ["AST/Engine Latency (ms)", "Throughput (ops/s)", "Memory Footprint (MB)", "Zero-Trust Audit Status"]
-SUMMARY = "Sovereign Ghidra Mcp Bridge engine with deterministic local execution and real-time telemetry."
-UW_SLUG = "canvasui-html-effects"
-UW_INSTALL = "npx shadcn@latest add https://canvasui.dev/r/liquid-react.json https://canvasui.dev/r/shatter-react.json https://canvasui.dev/r/peel-react.json https://canvasui.dev/r/ripple-react.json https://canvasui.dev/r/cloth-react.json https://canvasui.dev/r/vhs-react.json"
+import argparse
+import json
+import os
+import shutil
+import sys
+import time
+import urllib.request
+from pathlib import Path
 
-def braille_sparkline(vals):
-    out = []
-    for i in range(0, len(vals) - 1, 2):
-        v1 = max(0, min(3, int(vals[i] * 3.99)))
-        v2 = max(0, min(3, int(vals[i+1] * 3.99)))
-        dots1 = (0x40, 0x04, 0x02, 0x01)[v1]
-        dots2 = (0x80, 0x20, 0x10, 0x08)[v2]
-        out.append(chr(BRAILLE_BASE | dots1 | dots2))
-    return "".join(out)
+TOOL_ID = "ghidra-mcp-bridge"
+TOOL_NAME = "GhidraMCP Binary Reverse Engineering Bridge"
+TOOL_VERSION = "3.6.0"
+LOCAL_URL = "http://127.0.0.1:8131"
+
+_SELF_ROOT = Path(__file__).resolve().parent.parent
+REPO_DIR = Path("/opt/ghidra-mcp-bridge")
+for _c in (_SELF_ROOT, Path("/opt/ghidra-mcp-bridge"), Path.home() / "NullAITech" / "ghidra-mcp-bridge"):
+    if (_c / "analyzer.py").exists():
+        REPO_DIR = _c
+        break
+
+if str(REPO_DIR) not in sys.path:
+    sys.path.insert(0, str(REPO_DIR))
+
+try:
+    from analyzer import BinaryAnalyzer, MCP_TOOLS
+    ANALYZER = BinaryAnalyzer()
+except ImportError:
+    ANALYZER = None
+    MCP_TOOLS = []
+
+
+def probe_daemon():
+    t0 = time.perf_counter()
+    try:
+        req = urllib.request.Request(f"{LOCAL_URL}/health", headers={"User-Agent": "ghidra-mcp-bridge-tui"})
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            rtt_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            return True, rtt_ms, data
+    except Exception:
+        return False, None, None
+
+
+def collect_telemetry(target: str = "zoth-vault-daemon"):
+    online, rtt_ms, health = probe_daemon()
+    engines = ANALYZER.get_engines_status() if ANALYZER else {
+        "ghidra_headless": "READY" if os.path.isfile("/usr/share/ghidra/support/analyzeHeadless") else "UNAVAILABLE",
+        "radare2": "READY" if (shutil.which("r2") or shutil.which("radare2")) else "UNAVAILABLE",
+        "objdump": "READY" if shutil.which("objdump") else "UNAVAILABLE",
+        "readelf": "READY" if shutil.which("readelf") else "UNAVAILABLE",
+        "strings": "READY" if shutil.which("strings") else "UNAVAILABLE",
+        "nm": "READY" if shutil.which("nm") else "UNAVAILABLE",
+        "agent_capsule_jail": "READY" if shutil.which("agent-capsule-jail") else "UNAVAILABLE",
+        "pure_python_binary_parser": "READY",
+    }
+    sample_sections = None
+    if ANALYZER:
+        try:
+            sample_sections = ANALYZER.inspect_sections_and_entropy(target)
+        except Exception as e:
+            sample_sections = {"error": str(e)}
+
+    return {
+        "tool": TOOL_ID,
+        "name": TOOL_NAME,
+        "version": TOOL_VERSION,
+        "attribution": "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+        "local_endpoint": LOCAL_URL,
+        "daemon_online": online,
+        "daemon_rtt_ms": rtt_ms,
+        "daemon_version": health.get("version") if isinstance(health, dict) else None,
+        "mcp_tools_count": len(MCP_TOOLS),
+        "engines": engines,
+        "target_telemetry": {
+            "program": sample_sections.get("name") if isinstance(sample_sections, dict) else target,
+            "format": sample_sections.get("format") if isinstance(sample_sections, dict) else None,
+            "arch": sample_sections.get("arch") if isinstance(sample_sections, dict) else None,
+            "overall_entropy": sample_sections.get("overall_entropy") if isinstance(sample_sections, dict) else None,
+            "sections_count": sample_sections.get("sections_count") if isinstance(sample_sections, dict) else 0,
+            "packed_sections": sample_sections.get("packed_sections") if isinstance(sample_sections, dict) else 0,
+        },
+        "support": {
+            "buy_coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+            "solana": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK",
+        },
+    }
+
+
+def render_box(data: dict) -> str:
+    eng = data["engines"]
+    tgt = data["target_telemetry"]
+    status_str = (
+        f"ONLINE ({data['daemon_rtt_ms']} ms · v{data['daemon_version']})"
+        if data["daemon_online"]
+        else "IDLE / OFFLINE (start: ghidra-mcp-bridge serve)"
+    )
+    lines = [
+        "╭──────────────────────────────────────────────────────────────────────────╮",
+        f"│ ✦ {TOOL_NAME:<49} v{TOOL_VERSION:<14} │",
+        "├──────────────────────────────────────────────────────────────────────────┤",
+        f"│ Endpoint   : {data['local_endpoint']:<59} │",
+        f"│ Daemon     : {status_str:<59} │",
+        f"│ MCP Tools  : {str(data['mcp_tools_count']) + ' JSON-RPC 2.0 tools (HTTP /api/mcp + CLI stdio)':<59} │",
+        "├──────────────────────────────────────────────────────────────────────────┤",
+        f"│ Toolchains : Ghidra={eng.get('ghidra_headless', 'N/A'):<11} r2={eng.get('radare2', 'N/A'):<11} objdump={eng.get('objdump', 'N/A'):<11} │",
+        f"│              readelf={eng.get('readelf', 'N/A'):<10} nm={eng.get('nm', 'N/A'):<11} jail={eng.get('agent_capsule_jail', 'N/A'):<14} │",
+        "├──────────────────────────────────────────────────────────────────────────┤",
+        f"│ Target     : {str(tgt.get('program') or 'N/A'):<24} Format: {str(tgt.get('format') or 'N/A'):<10} Arch: {str(tgt.get('arch') or 'N/A'):<10} │",
+        f"│ Entropy    : H={str(tgt.get('overall_entropy')):<10} Sections: {str(tgt.get('sections_count')):<5} Packed: {str(tgt.get('packed_sections')):<18} │",
+        "├──────────────────────────────────────────────────────────────────────────┤",
+        f"│ {data['attribution']:<72} │",
+        "╰──────────────────────────────────────────────────────────────────────────╯",
+    ]
+    return "\n".join(lines)
+
 
 def main():
-    ap = argparse.ArgumentParser(description="Ghidra Mcp Bridge Sovereign TUI & Benchmark")
-    ap.add_argument("--json", action="store_true", help="Output JSON telemetry and exit")
-    ap.add_argument("--benchmark", action="store_true", help="Run deterministic latency benchmark")
-    ap.add_argument("--frames", type=int, default=18, help="TUI frames to render")
+    ap = argparse.ArgumentParser(description=f"{TOOL_NAME} Telemetry TUI (v{TOOL_VERSION})")
+    ap.add_argument("--status", action="store_true", help="Print live toolchain & daemon status and exit")
+    ap.add_argument("--once", action="store_true", help="Render single telemetry snapshot and exit")
+    ap.add_argument("--json", action="store_true", help="Output structured JSON telemetry and exit")
+    ap.add_argument("--target", default="zoth-vault-daemon", help="Target binary or demo ID to inspect")
     args = ap.parse_args()
 
-    t0 = time.perf_counter()
-    samples = [0.5 + 0.45 * math.sin(i * 0.35) for i in range(48)]
-    elapsed_ms = round((time.perf_counter() - t0) * 1000.0 + 0.42, 3)
-
+    telemetry = collect_telemetry(target=args.target)
     if args.json:
-        print(json.dumps({
-            "tool": "ghidra-mcp-bridge",
-            "title": "Ghidra Mcp Bridge",
-            "architect": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
-            "summary": SUMMARY,
-            "uncommon_web": {"slug": UW_SLUG, "install": UW_INSTALL},
-            "audio_lufs": -14.0,
-            "benchmark_ms": elapsed_ms,
-            "metrics": METRICS,
-            "braille_signature": braille_sparkline(samples),
-        }, indent=2))
+        print(json.dumps(telemetry, indent=2))
         return
 
-    print("\033[1;33m╭──────────────────────────────────────────────────────────────────────────╮\033[0m")
-    print(f"\033[1;33m│\033[0m ⚡ \033[1;37mGhidra Mcp Bridge               \033[0m │ \033[36m1nc0gn30 • NullAI Platform\033[0m         \033[1;33m│\033[0m")
-    print("\033[1;33m├──────────────────────────────────────────────────────────────────────────┤\033[0m")
-    print(f"\033[1;33m│\033[0m {SUMMARY[:72]:<72} \033[1;33m│\033[0m")
-    print(f"\033[1;33m│\033[0m Uncommon-Web: \033[32m{UW_SLUG:<24}\033[0m Audio: \033[35m-14.0 LUFS Mastered\033[0m   \033[1;33m│\033[0m")
-    for idx, m in enumerate(METRICS[:4]):
-        wave = braille_sparkline([0.5 + 0.45 * math.sin((i + idx * 3) * 0.4) for i in range(40)])
-        print(f"\033[1;33m│\033[0m  • {m[:24]:<24} \033[33m{wave}\033[0m  PASS   \033[1;33m│\033[0m")
-    print("\033[1;33m╰──────────────────────────────────────────────────────────────────────────╯\033[0m")
+    print(render_box(telemetry))
+
 
 if __name__ == "__main__":
     main()
