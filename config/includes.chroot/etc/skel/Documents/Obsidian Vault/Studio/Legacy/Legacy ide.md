@@ -5,10 +5,12 @@ tags: [studio, legacy]
 
 # ide.html
 
-Local code workstation and diff review
+Hybrid Sovereign IDE, AST symbol outline, static security linter, unified diff workbench, pure expression evaluator, and read-only loopback workspace inspector.
 
 - **Legacy file:** `ide.html`
-- **Now lives at:** `/webgen` → [[Route webgen|/webgen]]
+- **Now lives at:** `/workstations/ide` → [[Workstation ide|/workstations/ide]]
+- **Tool alias route:** `/tools/ide`
+- **Loopback API:** `/api/studio/ide`
 From `zeroEgress.js` `legacyWorkstations`. Static HTML names from the older studio.
 
 ## See also
