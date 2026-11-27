@@ -1,22 +1,91 @@
 #!/usr/bin/env python3
-"""Executable launcher for etsy-connector.
+"""Executable launcher for etsy-connector (v2.6.0).
 
-Engineered by 1nc0gn30 • NullAI Platform.
-100% Python Standard Library.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+100% Python Standard Library — Zero External Dependencies.
 """
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
+from typing import List
 
-# Add src to sys.path
-SRC_DIR = Path(__file__).resolve().parent.parent / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+TOOL_NAME = "etsy-connector"
+VERSION = "2.6.0"
+LOCAL_PORT = 8108
+SUBCOMMANDS = [
+    "mcp",
+    "serve",
+    "status",
+    "desktop",
+    "audit",
+    "profit",
+    "pod",
+    "search",
+    "config",
+    "auth",
+    "shop-update",
+    "draft-digital",
+]
 
-from etsy_connector.cli import main
+
+def _resolve_repo_root() -> Path:
+    """Resolve etsy-connector root without embedding literal user home paths."""
+    candidates: List[Path] = []
+    env_repo = os.environ.get("ZOTH_REPO_DIR", "").strip()
+    if env_repo:
+        candidates.append(Path(env_repo))
+    # Relative to this executable (repo/bin/etsy-connector -> repo)
+    candidates.append(Path(__file__).resolve().parent.parent)
+    # System staging path for ZothOS Live ISO and host installs
+    candidates.append(Path("/opt/etsy-connector"))
+    # User workspace fallback via Path.home() (never hardcoded literal username)
+    candidates.append(Path.home() / "NullAITech" / "etsy-connector")
+
+    for cand in candidates:
+        if (cand / "src" / "etsy_connector" / "__init__.py").is_file():
+            return cand
+    return Path("/opt/etsy-connector")
+
+
+def _emit_manifest() -> int:
+    print(
+        json.dumps(
+            {
+                "tool": TOOL_NAME,
+                "ok": True,
+                "kind": "json-manifest",
+                "version": VERSION,
+                "local_port": LOCAL_PORT,
+                "execution_type": "browser",
+                "studio_route": f"/tools/{TOOL_NAME}",
+                "entry": f"/usr/local/bin/{TOOL_NAME}",
+                "commands": SUBCOMMANDS,
+                "usage": f"run `{TOOL_NAME} --help`; subcommands: {', '.join(SUBCOMMANDS)}",
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def _main() -> int:
+    if sys.argv[1:] == ["--json"]:
+        return _emit_manifest()
+
+    root = _resolve_repo_root()
+    src_dir = root / "src"
+    if src_dir.is_dir() and str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+
+    from etsy_connector.cli import main as cli_main
+
+    return int(cli_main())
+
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(_main())

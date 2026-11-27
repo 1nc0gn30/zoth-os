@@ -1,11 +1,12 @@
 {
   "name": "etsy-connector",
-  "version": "2.5.0",
-  "description": "Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.",
-  "author": "1nc0gn30",
+  "version": "2.6.0",
+  "description": "Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, 0%/12%/15% fee/profit calculator, and Printify & Gelato POD payload generator.",
+  "author": "Neal Frazier Tech (@1nc0gn30)",
   "license": "MIT",
   "scripts": {
-    "serve": "python3 -m http.server 8108 --directory public",
-    "test": "python3 -m unittest discover tests"
+    "start": "python3 server.py --host 127.0.0.1 --port 8108",
+    "serve": "python3 server.py --host 127.0.0.1 --port 8108",
+    "test": "PYTHONPATH=src pytest -q tests"
   }
 }

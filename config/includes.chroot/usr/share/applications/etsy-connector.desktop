@@ -2,18 +2,18 @@
 Version=1.0
 Type=Application
 Name=Etsy Connector
-Comment=Etsy Open API v3 & Antigravity MCP bridge with 13-tag SEO auditor, fee/profit calculator, and Printify payload generator.
+Comment=Etsy Open API v3, 13-tag SEO auditor, 0%/12%/15% fee engine, Printify & Gelato POD bridge, and 8 MCP tools (v2.6.0).
 Exec=/usr/local/bin/etsy-connector desktop
 TryExec=/usr/local/bin/etsy-connector
 Icon=etsy-connector
 Terminal=false
-Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
+Categories=Development;Office;Network;X-Zoth-Commerce;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Etsy Connector Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Etsy Connector TUI" -- /usr/local/bin/etsy-connector-tui
+Exec=/usr/local/bin/zoth-konsole --title "Etsy Connector TUI" -- /usr/local/bin/etsy-connector-tui --once
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8108)

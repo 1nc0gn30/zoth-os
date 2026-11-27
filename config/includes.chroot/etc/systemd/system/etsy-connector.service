@@ -1,20 +1,20 @@
 [Unit]
-Description=ZothOS Etsy Connector & Antigravity MCP Bridge
+Description=ZothOS Etsy Connector & Antigravity MCP Bridge (v2.6.0)
 After=network.target multi-user.target
 Wants=network.target
 
 [Service]
 Type=simple
 User=zoth
-EnvironmentFile=-/etc/zothos/paths.conf
-WorkingDirectory=%h
-ExecStart=/usr/local/bin/zoth-run-repo etsy-connector /usr/bin/python3 -m etsy_connector.web_cockpit --host 127.0.0.1 --port 8108
+WorkingDirectory=/opt/etsy-connector
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/etsy-connector/src
+ExecStart=/usr/bin/python3 /opt/etsy-connector/server.py --host 127.0.0.1 --port 8108
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
-Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
