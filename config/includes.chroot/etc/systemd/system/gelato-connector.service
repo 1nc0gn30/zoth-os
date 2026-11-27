@@ -1,0 +1,20 @@
+[Unit]
+Description=ZothOS Gelato Connector & Antigravity MCP Bridge (v2.6.0)
+After=network.target multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=zoth
+WorkingDirectory=/opt/gelato-connector
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/gelato-connector/src
+ExecStart=/usr/bin/python3 /opt/gelato-connector/server.py --host 127.0.0.1 --port 8116
+Restart=always
+RestartSec=3
+KillMode=process
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

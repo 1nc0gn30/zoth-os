@@ -2,12 +2,12 @@
 Version=1.0
 Type=Application
 Name=Gelato Connector
-Comment=Autonomous zero-dependency Gelato Open API v2 connector, localized 32-country print routing optimizer, multi-currency margin engine, and Ant
+Comment=Zero-dependency Gelato Product v3 & Order v4 API connector, 10-hub local print router, FX-safe margin engine, 300-DPI auditor, and 6-tool MCP suite
 Exec=/usr/local/bin/gelato-connector desktop
 TryExec=/usr/local/bin/gelato-connector
 Icon=gelato-connector
 Terminal=false
-Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
+Categories=Development;Office;Network;X-Zoth-Commerce;
 StartupNotify=true
 Actions=TUI;WebApp;
 

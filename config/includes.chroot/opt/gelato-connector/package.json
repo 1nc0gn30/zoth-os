@@ -1,0 +1,13 @@
+{
+  "name": "gelato-connector",
+  "version": "2.6.0",
+  "description": "Zero-dependency Gelato Product v3 & Order v4 API connector, 10-hub local print routing engine, FX-safe multi-currency margin calculator, 300-DPI bleed auditor, and 6-tool Antigravity MCP suite.",
+  "main": "public/gelato_app.js",
+  "scripts": {
+    "start": "python3 server.py --host 127.0.0.1 --port 8116",
+    "serve": "python3 server.py --host 127.0.0.1 --port 8116",
+    "test": "PYTHONPATH=src pytest -q tests"
+  },
+  "author": "Neal Frazier Tech (@1nc0gn30)",
+  "license": "MIT"
+}

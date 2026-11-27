@@ -1,0 +1,51 @@
+/* ==========================================================================
+   GELATO CONNECTOR v2.6.0 — WAVE CALIBRATION SYSTEM (wave.css)
+   Dual-Theme Accessible Contrast & Keyboard Focus Polish
+   ========================================================================== */
+
+.form-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gauge-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.data-table th {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+.form-control:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.btn:focus-visible,
+button:focus-visible,
+.dropzone:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--azure);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

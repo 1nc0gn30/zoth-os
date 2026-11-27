@@ -1,0 +1,58 @@
+/* ==========================================================================
+   GELATO CONNECTOR v2.6.0 — WAVE STATE DIAGNOSTICS (wave-states.css)
+   Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+   ========================================================================== */
+
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.btn:active,
+button:active {
+  transform: scale(0.98);
+}
+
+.card {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card:hover {
+  border-color: var(--azure);
+}
+
+#auditFeedback:empty::before {
+  content: "Select a substrate or enter pixel dimensions to run the 300-DPI audit.";
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+#hubsTbody:empty::before {
+  content: "Loading 10 bundled local production hubs...";
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 1rem 0.85rem;
+}
+
+#payloadOutput:empty::before {
+  content: "/* Validated Gelato Order API v4 payload will appear here... */";
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+}
+
+.form-control:invalid,
+input:invalid {
+  border-color: var(--ruby) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}

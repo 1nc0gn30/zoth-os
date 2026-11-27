@@ -1,30 +1,38 @@
 #!/usr/bin/env python3
-"""Gelato Connector Executable Launcher.
+"""Gelato Connector Executable Launcher (v2.6.0).
 
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
 100% Python Standard Library — Zero External Runtime Dependencies.
 """
 
-# zothos-repo-shim: run the canonical repo copy so repo-relative paths resolve
-import os as _os, sys as _sys
-_here = _os.path.realpath(__file__)
-_repo = _os.environ.get("ZOTH_REPO_DIR") or '/home/zoth/NullAITech' + "/" + 'gelato-connector'
-_real = _os.path.join(_repo, "bin", 'gelato-connector')
-if _os.path.exists(_real) and _os.path.realpath(_real) != _here:
-    _os.execv(_sys.executable, [_sys.executable, _real] + _sys.argv[1:])
-del _os, _sys, _here, _repo, _real
-
+from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
 
-# Add src to sys.path
-root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-src_dir = os.path.join(root_dir, "src")
-if src_dir not in sys.path:
-    sys.path.insert(0, src_dir)
 
-from gelato_connector.cli import main
+def _resolve_src_dir() -> Path:
+    """Resolve gelato_connector src/ via ZOTH_REPO_DIR, /opt/gelato-connector, or script-relative layout."""
+    candidates = []
+    env_repo = os.environ.get("ZOTH_REPO_DIR", "").strip()
+    if env_repo:
+        candidates.append(Path(env_repo) / "src")
+    here_root = Path(__file__).resolve().parent.parent
+    candidates.append(here_root / "src")
+    candidates.append(Path("/opt/gelato-connector/src"))
+
+    for cand in candidates:
+        if (cand / "gelato_connector").is_dir():
+            return cand
+    return candidates[0]
+
+
+SRC_DIR = _resolve_src_dir()
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from gelato_connector.cli import main  # noqa: E402
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

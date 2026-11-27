@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gelato Connector
+Comment=Zero-dependency Gelato Product v3 & Order v4 API connector, 10-hub local print router, FX-safe margin engine, 300-DPI auditor, and 6-tool MCP suite
+Exec=/usr/local/bin/gelato-connector desktop
+TryExec=/usr/local/bin/gelato-connector
+Icon=gelato-connector
+Terminal=false
+Categories=Development;Office;Network;X-Zoth-Commerce;
+StartupNotify=true
+Actions=TUI;WebApp;
+
+[Desktop Action TUI]
+Name=Launch Gelato Connector Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Gelato Connector TUI" -- /usr/local/bin/gelato-connector-tui
+
+[Desktop Action WebApp]
+Name=Open Local Web Workstation (:8116)
+Exec=xdg-open http://127.0.0.1:8116
