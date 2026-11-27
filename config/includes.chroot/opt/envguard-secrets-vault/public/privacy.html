@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — EnvGuard Secrets Vault v2.6.0</title>
+  <meta name="description" content="Zero-egress privacy policy for EnvGuard Secrets Vault v2.6.0 by Neal Frazier Tech.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://envguard-secrets-vault.netlify.app/privacy.html">
+  <meta property="og:title" content="Privacy Policy — EnvGuard Secrets Vault">
+  <meta property="og:description" content="Zero-egress privacy guarantee: all secret scanning and encryption runs locally.">
+  <meta property="og:url" content="https://envguard-secrets-vault.netlify.app/privacy.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://envguard-secrets-vault.netlify.app/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:image" content="https://envguard-secrets-vault.netlify.app/og-image.png">
+  <style>
+    :root { --bg:#F6F3EC; --surface:#FFFFFF; --surface-alt:#EFEADF; --ink:#1A1712; --muted:#4A453B; --accent:#8C6A1D; --accent-fg:#FFFFFF; --border:#DDD5C5; }
+    [data-theme="dark"] { --bg:#0B0D12; --surface:#131722; --surface-alt:#191F2E; --ink:#F4EFE6; --muted:#C0B8AA; --accent:#E8C46A; --accent-fg:#0B0D12; --border:#272F42; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.65; min-height:100vh; display:flex; flex-direction:column; }
+    header { position:sticky; top:0; z-index:40; background:var(--surface); border-bottom:1px solid var(--border); padding:0.85rem 1.5rem; }
+    .header-inner { max-width:980px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0.75rem; }
+    .brand { display:inline-flex; align-items:center; gap:0.65rem; text-decoration:none; color:var(--ink); font-weight:800; font-size:1.05rem; }
+    .brand img { width:32px; height:32px; border-radius:8px; }
+    nav { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .nav-link, .theme-btn { min-height:44px; display:inline-flex; align-items:center; padding:0.45rem 0.9rem; border-radius:8px; font-size:0.88rem; font-weight:600; text-decoration:none; color:var(--ink); border:1px solid var(--border); background:var(--surface-alt); cursor:pointer; }
+    .nav-link.active { border-color:var(--accent); color:var(--accent); }
+    main { flex:1; max-width:980px; width:100%; margin:0 auto; padding:2.5rem 1.5rem 3.5rem; }
+    h1 { font-size:2rem; font-weight:800; letter-spacing:-0.02em; margin-bottom:0.4rem; }
+    .subtitle { color:var(--muted); margin-bottom:2rem; font-size:0.96rem; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.25rem; }
+    h2 { font-size:1.18rem; font-weight:700; color:var(--accent); margin-bottom:0.6rem; }
+    p, li { color:var(--ink); font-size:0.95rem; margin-bottom:0.6rem; }
+    ul { padding-left:1.35rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:var(--surface-alt); padding:0.15rem 0.4rem; border-radius:5px; font-size:0.86rem; }
+    a { color:var(--accent); font-weight:600; }
+    footer { background:var(--surface); border-top:1px solid var(--border); padding:1.5rem; font-size:0.88rem; color:var(--muted); }
+    .footer-inner { max-width:980px; margin:0 auto; display:flex; flex-direction:column; gap:0.75rem; }
+    .support-strip { display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem; }
+    .coffee-btn { min-height:44px; display:inline-flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; border-radius:8px; background:var(--accent); color:var(--accent-fg); text-decoration:none; font-weight:700; }
+    .solana-pill { font-family:ui-monospace,monospace; font-size:0.8rem; background:var(--surface-alt); color:var(--ink); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; word-break:break-all; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="brand">
+        <img src="/icon.png" alt="EnvGuard Secrets Vault icon">
+        <span>EnvGuard Secrets Vault v2.6.0</span>
+      </a>
+      <nav aria-label="Legal and support navigation">
+        <a href="/" class="nav-link">Workstation</a>
+        <a href="/support.html" class="nav-link">Support</a>
+        <a href="/privacy.html" class="nav-link active">Privacy</a>
+        <a href="/terms.html" class="nav-link">Terms</a>
+        <button type="button" class="theme-btn" id="theme-toggle" aria-label="Toggle color theme">Theme</button>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">Effective 2026-11-26 &middot; Zero-Exposure Local Processing Guarantee</p>
+    <section class="card">
+      <h2>1. Zero Telemetry &amp; Zero External Egress</h2>
+      <p>EnvGuard Secrets Vault does not collect analytics, cookies, tracking pixels, crash dumps, or environment secrets. All static pages load zero third-party fonts or external scripts.</p>
+    </section>
+    <section class="card">
+      <h2>2. Local-Only Cryptographic Execution</h2>
+      <ul>
+        <li>When used statically in a browser, all scanning, masking, PBKDF2 + AES-256-CTR-HMAC-SHA256 encryption, Shamir GF(256) splitting, and rotation checks run purely inside your browser sandbox.</li>
+        <li>When paired with the local Python daemon on <code>127.0.0.1:8088</code>, requests stay strictly on local loopback with Host/Origin validation and zero filesystem path exposure over HTTP.</li>
+        <li>Only your theme preference (<code>envguard-theme</code>) is stored in browser <code>localStorage</code>.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <div class="footer-inner">
+      <div class="support-strip">
+        <a class="coffee-btn" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">&#9749; Buy Us a Coffee</a>
+        <span class="solana-pill">Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</span>
+      </div>
+      <div>Engineered by Neal Frazier Tech (@1nc0gn30) &bull; NullAI Platform &middot; <a href="https://github.com/1nc0gn30/envguard-secrets-vault" target="_blank" rel="noopener noreferrer">GitHub</a> &middot; <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">nullai.tech</a></div>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('theme');
+      const saved = localStorage.getItem('envguard-theme');
+      const initial = (q === 'dark' || q === 'light') ? q : (saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      const apply = (m) => { document.documentElement.setAttribute('data-theme', m); localStorage.setItem('envguard-theme', m); const b = document.getElementById('theme-toggle'); if (b) b.textContent = m === 'dark' ? 'Light Mode' : 'Dark Mode'; };
+      apply(initial);
+      document.getElementById('theme-toggle').addEventListener('click', () => apply(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    })();
+  </script>
+</body>
+</html>
