@@ -2,18 +2,18 @@
 Version=1.0
 Type=Application
 Name=Etsy POD Forge
-Comment=Autonomous 300 DPI canvas generator, photorealistic mockup engine, and Etsy SEO listing synthesizer. Free to use; tips optional.
+Comment=300-DPI Print Canvas, Lifestyle Mockup Engine, 13-Tag Etsy SEO & 0%/12%/15% Margin Studio, 53-Recipe Prompt Vault, and 6 MCP Tools (v2.6.0).
 Exec=/usr/local/bin/etsy-pod-forge desktop
 TryExec=/usr/local/bin/etsy-pod-forge
 Icon=etsy-pod-forge
 Terminal=false
-Categories=X-Zoth-Commerce;Development;Utility;ArtificialIntelligence;
+Categories=Graphics;Development;X-Zoth-Commerce;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
 Name=Launch Etsy POD Forge Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Etsy POD Forge TUI" -- /usr/local/bin/etsy-pod-forge-tui
+Exec=/usr/local/bin/zoth-konsole --title "Etsy POD Forge TUI" -- /usr/local/bin/etsy-pod-forge-tui --once
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8107)

@@ -1,71 +1,88 @@
 #!/usr/bin/env python3
-"""Etsy POD Forge Executable CLI Wrapper.
+"""Executable CLI launcher for etsy-pod-forge (v2.6.0).
 
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Zero hardcoded home-directory paths; resolves ZOTH_REPO_DIR -> relative -> /opt/etsy-pod-forge -> Path.home().
 """
 
-# zothos-json-manifest: deterministic machine-readable manifest for `etsy-pod-forge --json`
-import sys as _zsys
+from __future__ import annotations
 
-
-def _zoth_manifest_subs(_help):
-    for _line in (_help or "").splitlines():
-        if "{" not in _line or "}" not in _line:
-            continue
-        _inner = _line.split("{", 1)[1].split("}", 1)[0]
-        if "," not in _inner:
-            continue
-        _s = [x.strip() for x in _inner.split(",") if x.strip()]
-        if _s and all(x.replace("-", "").replace("_", "").isalnum() for x in _s):
-            return [x for x in _s if x != "help"]
-    return []
-
-
-def _zoth_manifest():
-    import json as _zj, subprocess as _zsp
-    _r = _zsp.run([_zsys.executable, _zsys.argv[0], "--help"],
-                  capture_output=True, text=True, timeout=60)
-    _subs = _zoth_manifest_subs((_r.stdout or "") + (_r.stderr or ""))
-    print(_zj.dumps({"tool": 'etsy-pod-forge', "ok": True, "kind": "json-manifest",
-                     "version": '0.1.0', "local_port": 8107, "execution_type": 'browser',
-                     "studio_route": "/tools/" + 'etsy-pod-forge', "entry": __file__,
-                     "commands": _subs,
-                     "usage": "run `etsy-pod-forge --help`" + ("; subcommands: " + ", ".join(_subs) if _subs else "")},
-                    indent=2, sort_keys=True))
-    raise SystemExit(0)
-
-
-if _zsys.argv[1:] == ["--json"]:
-    _zoth_manifest()
-# zothos-json-manifest-end
-
-
-
-
-
-
-# zothos-repo-shim: run the canonical repo copy so repo-relative paths resolve
-import os as _os, sys as _sys
-_here = _os.path.realpath(__file__)
-_repo = _os.environ.get("ZOTH_REPO_DIR") or '/home/zoth/NullAITech' + "/" + 'etsy-pod-forge'
-_real = _os.path.join(_repo, "bin", 'etsy-pod-forge')
-if _os.path.exists(_real) and _os.path.realpath(_real) != _here:
-    _os.execv(_sys.executable, [_sys.executable, _real] + _sys.argv[1:])
-del _os, _sys, _here, _repo, _real
-
-
+import json
 import os
 import sys
+from pathlib import Path
+from typing import List
 
-# Add src to sys.path
-BIN_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.dirname(BIN_DIR)
-SRC_DIR = os.path.join(REPO_ROOT, "src")
+TOOL_NAME = "etsy-pod-forge"
+VERSION = "2.6.0"
+LOCAL_PORT = 8107
+SUBCOMMANDS = [
+    "generate",
+    "mockup",
+    "listing",
+    "prompts",
+    "serve",
+    "status",
+    "desktop",
+    "mcp",
+    "test",
+]
 
-if SRC_DIR not in sys.path:
-    sys.path.insert(0, SRC_DIR)
 
-from etsy_pod_forge.cli import main
+def _resolve_repo_root() -> Path:
+    """Resolve etsy-pod-forge root without embedding literal user home paths."""
+    candidates: List[Path] = []
+    env_repo = os.environ.get("ZOTH_REPO_DIR", "").strip()
+    if env_repo:
+        candidates.append(Path(env_repo))
+    candidates.append(Path(__file__).resolve().parent.parent)
+    candidates.append(Path("/opt/etsy-pod-forge"))
+    candidates.append(Path.home() / "NullAITech" / "etsy-pod-forge")
+
+    for cand in candidates:
+        if (cand / "src" / "etsy_pod_forge" / "__init__.py").is_file():
+            return cand
+    return Path("/opt/etsy-pod-forge")
+
+
+def _emit_manifest() -> int:
+    print(
+        json.dumps(
+            {
+                "tool": TOOL_NAME,
+                "ok": True,
+                "kind": "json-manifest",
+                "version": VERSION,
+                "local_port": LOCAL_PORT,
+                "execution_type": "browser",
+                "studio_route": f"/tools/{TOOL_NAME}",
+                "entry": f"/usr/local/bin/{TOOL_NAME}",
+                "mcp_tools": 6,
+                "cadres": 5,
+                "prompts": 53,
+                "commands": SUBCOMMANDS,
+                "usage": f"run `{TOOL_NAME} --help`; subcommands: {', '.join(SUBCOMMANDS)}",
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def _main() -> int:
+    if sys.argv[1:] == ["--json"]:
+        return _emit_manifest()
+
+    root = _resolve_repo_root()
+    src_dir = root / "src"
+    if src_dir.is_dir() and str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+
+    from etsy_pod_forge.cli import main as cli_main
+
+    return int(cli_main())
+
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(_main())

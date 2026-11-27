@@ -1,8 +1,8 @@
-"""Prompt Vault: 50+ Battle-Tested AI Image Generation Recipes for Etsy POD.
+"""Prompt Vault: 53 Curated AI Image Generation Recipes for Etsy POD.
 
-Engineered by 1nc0gn30 • NullAI Platform.
-Targeted specifically at the high-LTV 50-75+ women demographic on Etsy:
-Grandma's garden, cozy songbirds, cottagecore, botanical watercolors, and quilting blueprints.
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Covers 5 POD cadres: Grandma's garden apparel, watercolor songbird mugs,
+French seed canvas totes, botanical wall art packs, and quilting blueprints.
 """
 
 from __future__ import annotations
@@ -287,7 +287,7 @@ PROMPT_RECIPES: List[PromptRecipe] = [
         target_product="15oz Ceramic Mug (White / Sage Handle)",
         subject="Sweet smiling golden retriever holding a small wicker basket filled with fresh cut garden roses and daisies in its mouth",
         style="Heartwarming nostalgic watercolor portrait, golden amber highlights, expressive friendly expression",
-        composition="Centered portrait, clean white ground, seamless print sublimation alignment",
+        composition="Centered portrait, clean white ground, aligned print sublimation layout",
         negative_prompt="aggressive dog, photorealism, red eyes, distorted snout, dirty grass",
         aspect_ratio="1:1",
         model="Midjourney v6.1",

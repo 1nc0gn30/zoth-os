@@ -1,20 +1,20 @@
 [Unit]
-Description=ZothOS Etsy Print-on-Demand Studio & Listing Synthesizer
+Description=ZothOS Etsy POD Forge — 300-DPI Print Canvas, Mockup & Listing Studio (v2.6.0)
 After=network.target multi-user.target
 Wants=network.target
 
 [Service]
 Type=simple
 User=zoth
-EnvironmentFile=-/etc/zothos/paths.conf
-WorkingDirectory=%h
-ExecStart=/usr/local/bin/zoth-run-repo etsy-pod-forge /usr/bin/python3 -m etsy_pod_forge.server --host 127.0.0.1 --port 8107
+WorkingDirectory=/opt/etsy-pod-forge
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/etsy-pod-forge/src
+ExecStart=/usr/bin/python3 /opt/etsy-pod-forge/server.py --host 127.0.0.1 --port 8107
 Restart=always
 RestartSec=3
 KillMode=process
 StandardOutput=journal
 StandardError=journal
-Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target

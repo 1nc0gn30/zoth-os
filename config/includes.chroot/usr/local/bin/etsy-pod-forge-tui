@@ -1,61 +1,188 @@
 #!/usr/bin/env python3
-"""⚡ Etsy Pod Forge — Sovereign Unicode U+2800 Braille TUI & Benchmark Harness
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
-Paired Uncommon-Web Library: Canvas UI (canvasui-html-effects)
+"""Etsy POD Forge — Unicode U+2800 Braille TUI & Live Telemetry Monitor (v2.6.0).
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+100% Python Standard Library — Zero synthetic wave placeholders.
 """
-import argparse, json, math, os, sys, time
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.request
+from pathlib import Path
+from typing import Any, Dict, List
 
 BRAILLE_BASE = 0x2800
-METRICS = ["AST/Engine Latency (ms)", "Throughput (ops/s)", "Memory Footprint (MB)", "Zero-Trust Audit Status"]
-SUMMARY = "Sovereign Etsy Pod Forge engine with deterministic local execution and real-time telemetry."
-UW_SLUG = "canvasui-html-effects"
-UW_INSTALL = "npx shadcn@latest add https://canvasui.dev/r/liquid-react.json https://canvasui.dev/r/shatter-react.json https://canvasui.dev/r/peel-react.json https://canvasui.dev/r/ripple-react.json https://canvasui.dev/r/cloth-react.json https://canvasui.dev/r/vhs-react.json"
+VERSION = "2.6.0"
+DEFAULT_PORT = 8107
 
-def braille_sparkline(vals):
-    out = []
-    for i in range(0, len(vals) - 1, 2):
-        v1 = max(0, min(3, int(vals[i] * 3.99)))
-        v2 = max(0, min(3, int(vals[i+1] * 3.99)))
-        dots1 = (0x40, 0x04, 0x02, 0x01)[v1]
-        dots2 = (0x80, 0x20, 0x10, 0x08)[v2]
+
+def _resolve_src() -> None:
+    candidates: List[Path] = []
+    env_repo = os.environ.get("ZOTH_REPO_DIR", "").strip()
+    if env_repo:
+        candidates.append(Path(env_repo))
+    candidates.append(Path(__file__).resolve().parent.parent)
+    candidates.append(Path("/opt/etsy-pod-forge"))
+    candidates.append(Path.home() / "NullAITech" / "etsy-pod-forge")
+    for cand in candidates:
+        src = cand / "src"
+        if (src / "etsy_pod_forge" / "__init__.py").is_file():
+            if str(src) not in sys.path:
+                sys.path.insert(0, str(src))
+            return
+
+
+def braille_bar(values: List[float]) -> str:
+    """Encode normalized real measurements [0.0..1.0] into Unicode U+2800 Braille cells."""
+    if not values:
+        return chr(BRAILLE_BASE)
+    padded = list(values) + ([values[-1]] if len(values) % 2 == 1 else [])
+    out: List[str] = []
+    for i in range(0, len(padded), 2):
+        v1 = max(0, min(3, int(round(padded[i] * 3))))
+        v2 = max(0, min(3, int(round(padded[i + 1] * 3))))
+        dots1 = (0x40, 0x44, 0x46, 0x47)[v1]
+        dots2 = (0x80, 0xA0, 0xB0, 0xB8)[v2]
         out.append(chr(BRAILLE_BASE | dots1 | dots2))
     return "".join(out)
 
-def main():
-    ap = argparse.ArgumentParser(description="Etsy Pod Forge Sovereign TUI & Benchmark")
-    ap.add_argument("--json", action="store_true", help="Output JSON telemetry and exit")
-    ap.add_argument("--status", action="store_true", help="Check live status and render TUI")
-    ap.add_argument("--benchmark", action="store_true", help="Run deterministic latency benchmark")
-    ap.add_argument("--frames", type=int, default=18, help="TUI frames to render")
-    args, _ = ap.parse_known_args()
+
+def _probe_loopback(port: int) -> Dict[str, Any]:
+    url = f"http://127.0.0.1:{port}/health"
+    t0 = time.perf_counter()
+    try:
+        with urllib.request.urlopen(url, timeout=0.6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            return {"online": True, "latency_ms": latency_ms, "health": data}
+    except Exception:
+        return {"online": False, "latency_ms": None, "health": None}
+
+
+def collect_telemetry(port: int = DEFAULT_PORT) -> Dict[str, Any]:
+    """Collect real live :8107 health plus local 5-cadre, 53-prompt, and 0%/12%/15% margin telemetry."""
+    _resolve_src()
+    from etsy_pod_forge.listing_synthesizer import CADRE_SPECS, ProfitMetrics, synthesize_listing
+    from etsy_pod_forge.mcp_server import MCP_TOOLS_DEFINITIONS
+    from etsy_pod_forge.prompt_vault import get_all_prompts, get_prompts_by_cadre
 
     t0 = time.perf_counter()
-    samples = [0.5 + 0.45 * math.sin(i * 0.35) for i in range(48)]
-    elapsed_ms = round((time.perf_counter() - t0) * 1000.0 + 0.42, 3)
+    probe = _probe_loopback(port)
+    prompts_total = len(get_all_prompts())
 
+    cadre_rows: List[Dict[str, Any]] = []
+    margin_vector: List[float] = []
+    for key, spec in CADRE_SPECS.items():
+        kit = synthesize_listing(key)
+        p0 = ProfitMetrics.calculate(spec["default_retail"], spec["default_production"], offsite_ads_rate=0.0)
+        p12 = ProfitMetrics.calculate(spec["default_retail"], spec["default_production"], offsite_ads_rate=0.12)
+        p15 = ProfitMetrics.calculate(spec["default_retail"], spec["default_production"], offsite_ads_rate=0.15)
+        cadre_rows.append({
+            "cadre": key,
+            "dimensions": spec["print_dimensions"],
+            "retail_usd": spec["default_retail"],
+            "production_usd": spec["default_production"],
+            "net_0pct": p0.net_profit,
+            "margin_0pct": p0.margin_percent,
+            "net_12pct": p12.net_profit,
+            "net_15pct": p15.net_profit,
+            "break_even_0pct": p0.break_even_price,
+            "seo_score": kit.seo_score,
+            "prompts": len(get_prompts_by_cadre(key)),
+            "printify_blueprint_id": spec["printify_blueprint_id"],
+            "printify_provider_id": spec["printify_provider_id"],
+        })
+        margin_vector.extend([
+            min(1.0, max(0.0, p0.margin_percent / 100.0)),
+            min(1.0, max(0.0, p12.margin_percent / 100.0)),
+            min(1.0, max(0.0, kit.seo_score / 100.0)),
+        ])
+
+    eval_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+
+    return {
+        "tool": "etsy-pod-forge",
+        "title": "Etsy POD Forge",
+        "version": VERSION,
+        "ok": True,
+        "architect": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+        "local_port": port,
+        "entry": "/usr/local/bin/etsy-pod-forge-tui",
+        "daemon_online": probe["online"],
+        "daemon_latency_ms": probe["latency_ms"],
+        "engine_eval_ms": eval_ms,
+        "cadre_count": len(CADRE_SPECS),
+        "prompt_count": prompts_total,
+        "mcp_tool_count": len(MCP_TOOLS_DEFINITIONS),
+        "cadres": cadre_rows,
+        "braille_signature": braille_bar(margin_vector),
+    }
+
+
+def render_tui(data: Dict[str, Any]) -> None:
+    status_badge = (
+        f"\033[1;32mONLINE ({data['daemon_latency_ms']} ms)\033[0m"
+        if data["daemon_online"]
+        else "\033[1;33mON-DEMAND (IDLE)\033[0m"
+    )
+    print("\033[1;33m╭──────────────────────────────────────────────────────────────────────────────╮\033[0m")
+    print(f"\033[1;33m│\033[0m \033[1;37mETSY POD FORGE v{VERSION:<8}\033[0m │ Port :{data['local_port']} {status_badge:<30}         \033[1;33m│\033[0m")
+    print("\033[1;33m├──────────────────────────────────────────────────────────────────────────────┤\033[0m")
+    print(
+        f"\033[1;33m│\033[0m Cadres: \033[36m{data['cadre_count']}\033[0m  │  "
+        f"Prompt Vault: \033[36m{data['prompt_count']}\033[0m  │  "
+        f"MCP Tools: \033[36m{data['mcp_tool_count']}\033[0m  │  "
+        f"Eval: \033[32m{data['engine_eval_ms']} ms\033[0m        \033[1;33m│\033[0m"
+    )
+    print(f"\033[1;33m│\033[0m Braille Margin/SEO Vector: \033[33m{data['braille_signature']:<47}\033[0m \033[1;33m│\033[0m")
+    print("\033[1;33m├──────────────────────────────────────────────────────────────────────────────┤\033[0m")
+    for row in data["cadres"]:
+        bar = braille_bar([
+            min(1.0, max(0.0, row["margin_0pct"] / 100.0)),
+            min(1.0, max(0.0, row["seo_score"] / 100.0)),
+            min(1.0, max(0.0, row["prompts"] / 12.0)),
+            min(1.0, max(0.0, row["net_0pct"] / 30.0)),
+        ])
+        line = (
+            f" {row['cadre']:<9} ${row['retail_usd']:>5.2f} "
+            f"Net(0%/12%/15%): ${row['net_0pct']:>5.2f}/${row['net_12pct']:>5.2f}/${row['net_15pct']:>5.2f} "
+            f"SEO:{row['seo_score']:>3} {bar}"
+        )
+        print(f"\033[1;33m│\033[0m {line:<76} \033[1;33m│\033[0m")
+    print("\033[1;33m├──────────────────────────────────────────────────────────────────────────────┤\033[0m")
+    print(f"\033[1;33m│\033[0m {'Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform':<76} \033[1;33m│\033[0m")
+    print("\033[1;33m╰──────────────────────────────────────────────────────────────────────────────╯\033[0m")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=f"Etsy POD Forge Braille TUI (v{VERSION})")
+    ap.add_argument("--port", type=int, default=DEFAULT_PORT, help="Loopback server port (default: 8107)")
+    ap.add_argument("--once", action="store_true", help="Render single telemetry snapshot and exit")
+    ap.add_argument("--json", action="store_true", help="Emit live JSON telemetry and exit")
+    ap.add_argument("--status", action="store_true", help="Emit concise status summary and exit")
+    args, _unknown = ap.parse_known_args()
+
+    data = collect_telemetry(port=args.port)
     if args.json:
-        print(json.dumps({
-            "tool": "etsy-pod-forge",
-            "title": "Etsy Pod Forge",
-            "architect": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
-            "summary": SUMMARY,
-            "uncommon_web": {"slug": UW_SLUG, "install": UW_INSTALL},
-            "audio_lufs": -14.0,
-            "benchmark_ms": elapsed_ms,
-            "metrics": METRICS,
-            "braille_signature": braille_sparkline(samples),
-        }, indent=2))
-        return
+        print(json.dumps(data, indent=2))
+        return 0
+    if args.status:
+        state = "ONLINE" if data["daemon_online"] else "IDLE"
+        print(
+            f"etsy-pod-forge v{VERSION} [{state}] port={data['local_port']} "
+            f"cadres={data['cadre_count']} prompts={data['prompt_count']} "
+            f"mcp_tools={data['mcp_tool_count']} braille={data['braille_signature']}"
+        )
+        return 0
 
-    print("\033[1;33m╭──────────────────────────────────────────────────────────────────────────╮\033[0m")
-    print(f"\033[1;33m│\033[0m ⚡ \033[1;37mEtsy Pod Forge                  \033[0m │ \033[36m1nc0gn30 • NullAI Platform\033[0m         \033[1;33m│\033[0m")
-    print("\033[1;33m├──────────────────────────────────────────────────────────────────────────┤\033[0m")
-    print(f"\033[1;33m│\033[0m {SUMMARY[:72]:<72} \033[1;33m│\033[0m")
-    print(f"\033[1;33m│\033[0m Uncommon-Web: \033[32m{UW_SLUG:<24}\033[0m Audio: \033[35m-14.0 LUFS Mastered\033[0m   \033[1;33m│\033[0m")
-    for idx, m in enumerate(METRICS[:4]):
-        wave = braille_sparkline([0.5 + 0.45 * math.sin((i + idx * 3) * 0.4) for i in range(40)])
-        print(f"\033[1;33m│\033[0m  • {m[:24]:<24} \033[33m{wave}\033[0m  PASS   \033[1;33m│\033[0m")
-    print("\033[1;33m╰──────────────────────────────────────────────────────────────────────────╯\033[0m")
+    render_tui(data)
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,7 +1,7 @@
 {
   "name": "etsy-pod-forge",
-  "version": "2.5.0",
-  "description": "Autonomous Print-on-Demand Studio & Etsy SEO Listing Synthesizer",
+  "version": "2.6.0",
+  "description": "300-DPI Print-on-Demand Canvas Generator, Lifestyle Mockup Engine, 13-Tag Etsy SEO & Margin Studio, and 6-Tool Stdio MCP Server",
   "main": "public/forge_engine.js",
   "homepage": "https://etsy-pod.nullai.tech",
   "repository": {
@@ -9,9 +9,10 @@
     "url": "https://github.com/1nc0gn30/etsy-pod-forge.git"
   },
   "scripts": {
-    "start": "python3 -m http.server 8107 --directory public",
-    "serve:public": "python3 -m http.server 8107 --directory public",
-    "test": "pytest tests/",
+    "start": "python3 server.py --host 127.0.0.1 --port 8107",
+    "serve:public": "python3 server.py --host 127.0.0.1 --port 8107",
+    "mcp": "python3 -m etsy_pod_forge.cli mcp",
+    "test": "PYTHONPATH=src pytest -q tests/",
     "test:ui": "python3 scripts/verify_ui.py"
   },
   "keywords": [
@@ -20,9 +21,10 @@
     "print-on-demand",
     "seo",
     "mockups",
-    "zero-cloud",
-    "sovereign"
+    "mcp",
+    "printify",
+    "gelato"
   ],
-  "author": "1nc0gn30 • NullAI Platform",
+  "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
   "license": "MIT"
 }

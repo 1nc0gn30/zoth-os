@@ -4,17 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "etsy-pod-forge"
-version = "0.1.0"
-description = "Autonomous Print-on-Demand Studio, High-Res Canvas Generator & Etsy Listing Synthesizer"
+version = "2.6.0"
+description = "300-DPI Print-on-Demand Canvas Generator, Lifestyle Mockup Engine, Etsy Listing Synthesizer & 6-Tool Stdio MCP Server"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "NullAI", email = "1nc0gn30@users.noreply.github.com"}
+    {name = "Neal Frazier Tech (@1nc0gn30)", email = "1nc0gn30@users.noreply.github.com"}
 ]
 dependencies = [
     "pillow>=10.0.0"
 ]
+
+[project.urls]
+Homepage = "https://zoth.nullai.tech/tools/etsy-pod-forge"
+Repository = "https://github.com/1nc0gn30/etsy-pod-forge"
+Documentation = "https://nullai.tech"
 
 [project.scripts]
 etsy-pod-forge = "etsy_pod_forge.cli:main"

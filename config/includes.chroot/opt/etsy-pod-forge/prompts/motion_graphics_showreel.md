@@ -1,61 +1,58 @@
-# Claude Motion Graphics & Product Showreel Blueprint
-## Product: Etsy POD Forge — Autonomous Commerce Studio for 50-75+ Women Demographic
-**Entity**: NullAI (`@1nc0gn30`) • **Platform**: NullAI Platform  
-**Methodology**: Claude Opus 5.5 Code-to-Motion / Revid.ai Motion Graphics Architecture
+# Motion Graphics & Product Showreel Blueprint
+## Product: Etsy POD Forge (v2.6.0) — 300-DPI Print Canvas, Mockup & Listing Studio
+**Entity**: Neal Frazier Tech (`@1nc0gn30`) • **Platform**: NullAI Platform
+**Format**: 15s Product Showreel & 30s Walkthrough Script
 
 ---
 
-## 🌟 Hero Anchor Shape
-- **Symbol**: **Golden Botanical Wreath & Looming Ceramic Mug Monolith**
-- **Palette**: Deep Obsidian (`#08080B`), Radiant Gold (`#D4AF37`), Antique Blush (`#E0ACAA`), Sage Green (`#8A9A86`).
-- **Kinetic Behavior**: The golden botanical wreath begins as single glowing seed points in 3D space, which rapidly spiral outwards into lush watercolor petals. As the petals reach full bloom, a sleek ceramic 15oz mug and folded Comfort Colors crewneck sweatshirt emerge through the center with soft morning sun caustic flares.
+## Hero Anchor Shape
+- **Symbol**: **Golden Botanical Wreath & Framed Print Plate Monolith**
+- **Palette**: Deep Obsidian (`#0B0D12`), Editorial Ivory (`#F6F3EC`), Burnished Gold (`#D4AF37`), Deep Terracotta (`#9A3412`), Sage (`#8A9A86`).
+- **Kinetic Behavior**: Botanical linework radiates from a 300-DPI registration crosshair into a 5-cadre print grid, morphing cleanly into a folded crewneck sweatshirt, 15oz ceramic mug, cotton canvas tote, oak gallery frame, and barn-star quilt blueprint.
 
 ---
 
-## 🎬 15-Second Viral Showreel Prompt (Revid.ai / Claude Opus 5.5)
+## 15-Second Product Showreel Prompt
 
 ```text
 [STYLE & KINETIC DIRECTION]
-High-end commercial motion design for luxury commerce software. Dark glassmorphic aesthetic with cinematic 60fps fluid camera motion, soft depth-of-field rack focus, and volumetric morning sunlight rays.
+Clean editorial product motion graphics. Alternates between Editorial Ivory Light Mode and Obsidian Gold Dark Mode with 60fps camera transitions, crisp 300-DPI registration marks, and daylight tabletop lighting.
 
-[SCENE 1: 0.0s – 3.2s] — THE UNTAPPED GOLDMINE
-Camera dives into deep obsidian space. Holographic typography slams into view with golden particle dissipation:
-"WOMEN 55+ SPEND 4X MORE ON ETSY."
-Anchor shape expands: A radiant watercolor wildflower bouquet blooms explosively in slow-motion, petal by petal, with delicate gold pollen drifting across the lens.
+[SCENE 1: 0.0s – 3.5s] — FIVE PROVEN POD CADRES
+Camera pans across five crisp print plates on a studio drafting board:
+"5 POD CADRES · 300 DPI PRINT-READY ASSETS."
+Apparel, 15oz ceramic mugs, 12oz cotton totes, 5-ratio wall art, and quilt pattern blueprints snap into alignment.
 
-[SCENE 2: 3.2s – 7.0s] — THE 300 DPI MASTER ENGINE
-Camera sweeps laterally at a 45-degree angle past an ultra-high-resolution canvas interface. A 4500x5400 px master direct-to-garment file renders in real-time, showing vector-crisp botanical lines and personalized grandchildren names ("Emma, Liam, Olivia"). Telemetry meters flare: "300 DPI VERIFIED • 0% DISTORTION".
+[SCENE 2: 3.5s – 7.5s] — REAL 300-DPI CANVAS & LIFESTYLE MOCKUP ENGINE
+4500x5400 px RGBA print art renders over a clean transparency grid with live title and custom name typography.
+A sweep transition composites the transparent print onto a sunlit crewneck sweatshirt, glossy ceramic mug, and oak gallery frame.
 
-[SCENE 3: 7.0s – 11.5s] — INSTANT LIFESTYLE MOCKUPS & 13 TAGS
-Split-second montage of hyper-realistic lifestyle composites:
-- Folded crewneck on sunlit rustic wood with lavender sprigs.
-- Ceramic 15oz mug steaming beside morning window light.
-- Heavy canvas tote bag swinging on farmhouse cast-iron hook.
-13 Etsy search tags cascade into a glassmorphic vault card with green checkmarks. Profit ticker rolls rapidly: "$34.99 RETAIL ➔ $18.72 NET PROFIT (53.5% MARGIN)".
+[SCENE 3: 7.5s – 11.5s] — 13-TAG SEO & EXACT 2026 ETSY FEE MATH
+140-character title meter and 13 unique 20-character tags lock green.
+Margin waterfall updates across 0%, 12%, and 15% Offsite Ads tiers:
+"$34.99 RETAIL -> $12.50 COGS -> $3.77 FEES -> $18.72 NET (53.5% MARGIN)".
+One-click Master ZIP Kit exports print PNG, lifestyle JPEG, listing text, and JSON metadata.
 
-[SCENE 4: 11.5s – 15.0s] — CALL TO ACTION & SOVEREIGN LAUNCH
-Camera snaps to centered heroic monolith. Glowing founding member card floats forward with pure CSS conic border beam:
-"ETSY POD FORGE • DAY 7 REVENUE ENGINE"
-"START YOUR AUTOMATED STORE TODAY — $19 LIFETIME FOUNDING ACCESS"
-Dual checkout badges pulse: Stripe Card & Solana Tip.
-Subtle attribution lockup: "Engineered by 1nc0gn30 • NullAI Platform".
+[SCENE 4: 11.5s – 15.0s] — OPEN-ACCESS STUDIO & 6 MCP TOOLS
+Terminal pane reveals 6 stdio MCP tools (`pod_list_cadres` through `pod_search_prompts`) and 53 curated prompt recipes.
+Title card: "ETSY POD FORGE v2.6.0 — 100% FREE & OPEN-ACCESS".
+Footer lockup: "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform".
 ```
 
 ---
 
-## 🎥 30-Second Launch Film Script & Scene Architecture
+## 30-Second Launch Walkthrough Script
 
 ```text
-00:00 - 00:05 | Hook: "Stop selling generic tech shirts to teenagers. Meet the highest lifetime-value demographic on Etsy: Women aged 50 to 75+ who buy for grandkids, book clubs, and garden circles."
-00:05 - 00:12 | The Problem: "Manual design creation takes hours, mockups look fake, and Etsy search algorithms bury listings without exact 13-tag keyword compliance."
-00:12 - 00:20 | The Solution: "Enter Etsy POD Forge. 5 battle-tested product cadres: Grandma's Garden apparel, songbird ceramic mugs, French seed totes, 300 DPI wall art packs, and quilting pattern blueprints."
-00:20 - 00:26 | Real Economics: "Instant profit calculation accounting for listing fees, payment processing, and DTG production. Average net margin: 53% to 98%."
-00:26 - 00:30 | Call to Action: "Secure Founding Member lifetime access for $19 before general public rollout. Dual Stripe & Solana checkout live now."
+00:00 - 00:06 | Context: "Preparing print-on-demand listings manually means jumping between canvas sizing, mockup compositors, 13-tag SEO checks, and fee spreadsheets."
+00:06 - 00:14 | The Forge: "Etsy POD Forge brings five print-on-demand cadres into one local workstation: apparel, 15oz mugs, heavyweight totes, archival wall art, and quilting blueprints."
+00:14 - 00:22 | Live Economics & Export: "Generate 300-DPI transparent PNGs, composite 1400x1400 lifestyle mockups, audit 140-character titles and 13 tags, calculate 0%, 12%, and 15% Offsite Ads margins, and download a ready-to-upload ZIP kit."
+00:22 - 00:30 | Open Access: "100% free and open-access on your local machine with 53 prompt recipes and 6 stdio MCP tools. Optional Buy Us a Coffee and Solana tips supported."
 ```
 
 ---
 
-## 🎵 Soundtrack & Audio Direction
-- **BPM**: 124 BPM
-- **Track Mood**: Elegant neoclassical strings blended with warm organic acoustic guitar, crisp tactile Foley (linen rustle, ceramic teacup clink, camera shutter clicks), building to a triumphant cinematic sub-bass drop at 11.5s.
-- **Voiceover**: Warm, confident, authoritative mid-Atlantic tone.
+## Soundtrack & Audio Direction
+- **BPM**: 118 BPM
+- **Mood**: Clean acoustic plucked strings, light studio paper/shutter foley, warm low-end bed mastered at -14 LUFS.
+- **Voiceover**: Clear, direct, technical product narration.
