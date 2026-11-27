@@ -23,11 +23,21 @@
     {
       "id": "952d38e38d862c31",
       "type": "group",
-      "x": -1100,
+      "x": -1430,
       "y": -750,
-      "width": 680,
+      "width": 1010,
       "height": 380,
-      "label": "\ud83e\udd16 Hermes Agent CLI Ecosystem",
+      "label": "\ud83e\udd16 Hermes Agent CLI & Gateway Ecosystem",
+      "color": "5"
+    },
+    {
+      "id": "b7c4e91f2a8034d1",
+      "type": "file",
+      "file": "OS/Daemons/Daemon hermes-gateway.md",
+      "x": -1400,
+      "y": -700,
+      "width": 300,
+      "height": 300,
       "color": "5"
     },
     {
@@ -180,6 +190,16 @@
       "toSide": "right",
       "toEnd": "arrow",
       "label": "tool execution",
+      "color": "5"
+    },
+    {
+      "id": "c41d8a93f0b7e612",
+      "fromNode": "5dc4b48b443579ef",
+      "fromSide": "left",
+      "toNode": "b7c4e91f2a8034d1",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "systemd daemon & gateway.sock",
       "color": "5"
     },
     {

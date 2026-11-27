@@ -82,3 +82,55 @@ def test_zero_paywall_or_depay_regressions_in_chroot_opt():
             hits.append(f"{path.relative_to(ROOT)} ({match.group(0)})")
 
     assert not hits, f"Found paywall/DePay regressions in chroot opt/: {hits}"
+
+
+def test_hermes_gateway_chroot_systemd_unit_is_hardened_and_portable():
+    unit = ROOT / "config" / "includes.chroot" / "etc" / "systemd" / "user" / "hermes-gateway.service"
+    assert unit.is_file(), f"Missing chroot user unit: {unit}"
+    text = unit.read_text(encoding="utf-8")
+
+    # Zero literal /home/<user> paths
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", text), "Literal /home/<user> path found in hermes-gateway.service"
+    assert "ConditionPathExists=%h/.hermes/hermes-agent/.hermes/bin/hermes" in text
+    assert "WorkingDirectory=%h/.hermes" in text
+    assert "Environment=HERMES_HOME=%h/.hermes" in text
+    assert "Environment=HERMES_SUPERVISED_CHILD=1" in text
+    assert "UMask=0077" in text
+    assert "NoNewPrivileges=yes" in text
+    assert "PrivateTmp=yes" in text
+    assert "MemoryHigh=3G" in text
+    assert "MemoryMax=4G" in text
+    assert "CPUQuota=400%" in text
+    assert "SyslogIdentifier=hermes-gateway" in text
+    assert "Documentation=https://github.com/1nc0gn30/hermes-zoth" in text
+
+    res = subprocess.run(
+        ["systemd-analyze", "--user", "verify", str(unit)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res.returncode == 0, f"systemd-analyze --user verify failed: {res.stderr}"
+
+
+def test_hermes_and_hermes_gateway_chroot_wrappers():
+    hermes_bin = BIN_DIR / "hermes"
+    gw_bin = BIN_DIR / "hermes-gateway"
+    assert hermes_bin.is_file(), f"Missing {hermes_bin}"
+    assert gw_bin.is_file(), f"Missing {gw_bin}"
+
+    hermes_text = hermes_bin.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", hermes_text), "Literal /home/ path in chroot hermes wrapper"
+    pos_dot_hermes = hermes_text.find("$HERMES_USER_DIR/.hermes/bin/hermes")
+    pos_opt_hermes = hermes_text.find("$HERMES_OPT_DIR/venv/bin/hermes")
+    assert pos_dot_hermes != -1 and pos_opt_hermes != -1 and pos_dot_hermes < pos_opt_hermes, (
+        "chroot hermes wrapper must prioritize $HERMES_USER_DIR/.hermes/bin/hermes before legacy /opt fallback"
+    )
+    res_bash = subprocess.run(["bash", "-n", str(hermes_bin)], capture_output=True, text=True, check=False)
+    assert res_bash.returncode == 0, f"bash -n failed for hermes: {res_bash.stderr}"
+
+    gw_text = gw_bin.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", gw_text), "Literal /home/ path in chroot hermes-gateway wrapper"
+    res_help = subprocess.run(["python3", str(gw_bin), "--help"], capture_output=True, text=True, check=False)
+    assert res_help.returncode == 0 and "hermes-gateway" in res_help.stdout, f"hermes-gateway --help failed: {res_help.stderr}"
+

@@ -1,0 +1,40 @@
+[Unit]
+Description=Hermes Agent Gateway - Messaging Platform Integration
+Documentation=https://github.com/1nc0gn30/hermes-zoth
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+ConditionPathExists=%h/.hermes/hermes-agent/.hermes/bin/hermes
+
+[Service]
+Type=simple
+ExecStart=%h/.hermes/hermes-agent/.hermes/bin/hermes gateway run
+WorkingDirectory=%h/.hermes
+Environment=HERMES_HOME=%h/.hermes
+Environment=HERMES_SUPERVISED_CHILD=1
+Environment="PATH=%h/.hermes/hermes-agent/node_modules/.bin:%h/.hermes/hermes-agent/.hermes/bin:%h/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Restart=always
+RestartSec=5
+RestartForceExitStatus=75
+SuccessExitStatus=75
+RestartPreventExitStatus=78
+KillMode=mixed
+KillSignal=SIGTERM
+ExecReload=/bin/kill -USR1 $MAINPID
+ExecStop=-%h/.hermes/hermes-agent/.hermes/bin/hermes --run-module gateway.systemd_stop_mark
+ExecStopPost=-%h/.hermes/hermes-agent/.hermes/bin/hermes --run-module gateway.cgroup_cleanup
+TimeoutStopSec=70
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hermes-gateway
+
+# Process, resource & security hardening
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryHigh=3G
+MemoryMax=4G
+CPUQuota=400%
+
+[Install]
+WantedBy=default.target

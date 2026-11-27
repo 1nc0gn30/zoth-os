@@ -18,16 +18,17 @@ status: "CANONICAL"
 
 ```mermaid
 flowchart LR
-    subgraph HermesSurfaces["🤖 Hermes Agent Cockpits"]
+    subgraph HermesSurfaces["🤖 Hermes Agent Cockpits & Gateway"]
         CLI["Terminal CLI (hermes chat)"]
-        Desktop["Electron Desktop App"]
+        GW["hermes-gateway.service (127.0.0.1 ephemeral + gateway.sock)"]
+        Desktop["KDE zoth-konsole & Studio Telemetry"]
         TUI["Ink Terminal UI"]
     end
     
     subgraph ModelRouter["⚡ Multi-Provider LLM Router"]
-        M1["Nous Hermes 3"]
-        M2["Anthropic Claude 3.7"]
-        M3["Local Ollama / Qwen"]
+        M1["Nous Hermes / DeepSeek Flash"]
+        M2["AGY-Hermes Proxy (:18000)"]
+        M3["Local Ollama / Qwen (:11434)"]
     end
     
     subgraph MCPConnectors["🔌 Model Context Protocol (MCP)"]
@@ -43,12 +44,13 @@ flowchart LR
 
 ## Functional Taxonomy & Agent Framework
 
-### 1. Multi-Surface Runtime
-Hermes operates across four distinct operational surfaces:
-- **Interactive Chat & CLI:** Rapid terminal interaction (`hermes chat -q "<query>"`).
+### 1. Multi-Surface Runtime & Gateway Supervision
+Hermes operates across five operational surfaces:
+- **User Systemd Gateway Daemon (`hermes-gateway.service`):** Supervised via [[OS/Daemons/Daemon hermes-gateway|Daemon hermes-gateway]], multiplexing 8 profiles over `~/.hermes/gateway.sock` and a dynamically discovered loopback HTTP port (`hermes-gateway status --json`).
+- **Interactive Chat & CLI:** Rapid terminal interaction (`hermes chat -q "<query>"`) launched in KDE Plasma 6 via `/usr/local/bin/zoth-konsole`.
 - **Ink TUI:** Rich terminal user interface with streaming token rendering.
-- **Electron Desktop Workspace:** Native desktop environment with DOM inspection tools.
-- **OpenAI-Compatible Proxy:** Local proxy router for drop-in tool integration.
+- **Zoth Studio Observability:** Dual-theme read-only telemetry panel in `/workstations/connectors` and `/workstations/mission-control` backed by `GET /api/studio/hermes/status`.
+- **OpenAI-Compatible Proxy (`:18000`):** Local `agy-hermes-proxy` router for drop-in tool integration.
 
 ### 2. Model Context Protocol (MCP) Decoupling
 Tools are declared through standardized Model Context Protocol JSON schemas. Eagerly loaded tools execute natively while specialized integrations (Shopify, Etsy, filesystem) are lazily loaded on-demand, minimizing initial agent context overhead.
@@ -73,6 +75,7 @@ $$\text{RTT}_{\text{stdio}} = t_{\text{serialize}} + t_{\text{pipe}} + t_{\text{
 ## Bidirectional Knowledge Graph Links
 
 ### Obsidian Second Brain Notes
+- [[OS/Daemons/Daemon hermes-gateway]] — User systemd daemon (`hermes-gateway.service`), AF_UNIX socket, dynamic loopback port & 8 profiles
 - [[Agents/Hermes Agent CLI]] — Dedicated Hermes agent specification note
 - [[Skills/Skill hermes-agent]] — Complete operational hub and skill reference
 - [[MCP Catalog]] — Full catalog of 153 MCP servers

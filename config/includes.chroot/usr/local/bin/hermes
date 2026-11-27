@@ -18,28 +18,38 @@ HERMES_USER_DIR="$HOME/.hermes/hermes-agent"
 HERMES_OPT_DIR="/opt/hermes-agent"
 
 find_hermes_executable() {
-    # 1. User venv
+    # 1. Current Hermes Agent install (.hermes/bin/hermes, v0.23.3+)
+    if [[ -x "$HERMES_USER_DIR/.hermes/bin/hermes" ]]; then
+        echo "$HERMES_USER_DIR/.hermes/bin/hermes"
+        return 0
+    fi
+    # 2. User venv fallback
     if [[ -x "$HERMES_USER_DIR/venv/bin/python" ]] && [[ -f "$HERMES_USER_DIR/hermes" ]]; then
         echo "$HERMES_USER_DIR/venv/bin/python $HERMES_USER_DIR/hermes"
         return 0
     fi
-    # 2. System pre-installed venv
+    # 3. ZothOS AI environment binary
+    if [[ -x "/opt/zothos-ai-env/bin/hermes" ]]; then
+        echo "/opt/zothos-ai-env/bin/hermes"
+        return 0
+    fi
+    # 4. ~/.local/bin/hermes if not self
+    if [[ -x "$HOME/.local/bin/hermes" ]] && [[ "$HOME/.local/bin/hermes" != "$0" ]]; then
+        echo "$HOME/.local/bin/hermes"
+        return 0
+    fi
+    # 5. Direct hermes-agent CLI in PATH
+    if command -v hermes-agent &>/dev/null; then
+        echo "hermes-agent"
+        return 0
+    fi
+    # 6. Legacy system pre-installed venv (lowest priority fallback)
     if [[ -x "$HERMES_OPT_DIR/venv/bin/hermes" ]]; then
         echo "$HERMES_OPT_DIR/venv/bin/hermes"
         return 0
     fi
     if [[ -x "$HERMES_OPT_DIR/venv/bin/python" ]] && [[ -f "$HERMES_OPT_DIR/hermes" ]]; then
         echo "$HERMES_OPT_DIR/venv/bin/python $HERMES_OPT_DIR/hermes"
-        return 0
-    fi
-    # 3. Direct hermes-agent CLI in PATH
-    if command -v hermes-agent &>/dev/null; then
-        echo "hermes-agent"
-        return 0
-    fi
-    # 4. ~/.local/bin/hermes if not self
-    if [[ -x "$HOME/.local/bin/hermes" ]] && [[ "$HOME/.local/bin/hermes" != "$0" ]]; then
-        echo "$HOME/.local/bin/hermes"
         return 0
     fi
     return 1
