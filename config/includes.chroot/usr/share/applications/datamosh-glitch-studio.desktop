@@ -2,19 +2,24 @@
 Version=1.0
 Type=Application
 Name=Datamosh Glitch Studio
-Comment=100% in-browser parametric video datamosh synthesizer, H.264 I-frame drop corruption, CRT scanlines, procedural cassette brand media, and li
+GenericName=Pixel Sort, Byte-Bend & Datamosh Synthesizer
+Comment=Zero-egress datamosh synthesizer for pixel sorting, header-safe JPEG byte-bending, 8-bitplane slicing, Sierpinski XOR fractals, and optical-flow motion vectors.
 Exec=/usr/local/bin/datamosh-glitch-studio desktop
 TryExec=/usr/local/bin/datamosh-glitch-studio
 Icon=datamosh-glitch-studio
 Terminal=false
-Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
+Categories=Graphics;AudioVideo;Video;Development;X-Zoth-Media;
 StartupNotify=true
-Actions=TUI;WebApp;
+Actions=CLI;TUI;Web;
+
+[Desktop Action CLI]
+Name=Open Datamosh CLI
+Exec=konsole -- /usr/local/bin/datamosh-glitch-studio --help
 
 [Desktop Action TUI]
-Name=Launch Datamosh Glitch Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Datamosh Glitch Studio TUI" -- /usr/local/bin/datamosh-glitch-studio-tui
+Name=Open Braille Telemetry TUI
+Exec=konsole -- /usr/local/bin/datamosh-glitch-studio-tui
 
-[Desktop Action WebApp]
-Name=Open Local Web Workstation (:8081)
-Exec=xdg-open http://127.0.0.1:8081
+[Desktop Action Web]
+Name=Launch Loopback Web Workstation (:8081)
+Exec=/usr/local/bin/datamosh-glitch-studio web
