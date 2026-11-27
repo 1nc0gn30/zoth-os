@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "digital-asset-forge"
+version = "2.6.0"
+description = "High-Res 300 DPI Multi-Ratio Wall Art Pack Generator for Etsy & Shopify Digital Downloads"
+authors = [{ name = "Neal Frazier Tech (@1nc0gn30)", email = "ops@nullai.tech" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+digital-asset-forge = "digital_asset_forge.cli:main"

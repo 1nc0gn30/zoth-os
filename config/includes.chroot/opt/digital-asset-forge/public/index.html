@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Asset Forge v2.6.0 — 300 DPI Wall Art Pack Generator</title>
+  <meta name="description" content="Generate 300 DPI multi-ratio wall art packs (2:3, 3:4, 4:5, 11:14, ISO), downloadable ZIP bundles under Etsy's 20MB limit, buyer printing guides, and 13-tag Etsy SEO copy locally in your browser.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+  <link rel="canonical" href="https://digital-asset-forge.nullai.tech/">
+
+  <!-- Social & OpenGraph Meta Tags -->
+  <meta property="og:title" content="Digital Asset Forge v2.6.0 — 300 DPI Wall Art Pack Generator">
+  <meta property="og:description" content="5-ratio 300 DPI wall art synthesizer, Etsy <=20MB ZIP packer, buyer printing guide builder, and 13-tag Etsy SEO copywriter.">
+  <meta property="og:url" content="https://digital-asset-forge.nullai.tech/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://digital-asset-forge.nullai.tech/assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Digital Asset Forge v2.6.0 — Multi-Ratio Wall Art Pack Generator">
+  <meta name="twitter:description" content="Automate 2:3, 3:4, 4:5, 11:14, and ISO 300 DPI packs, printing guides, and Etsy <=20MB ZIP bundles.">
+  <meta name="twitter:image" content="https://digital-asset-forge.nullai.tech/assets/banner.png">
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var qTheme = params.get("theme");
+      var saved = null;
+      try { saved = localStorage.getItem("daf_theme"); } catch (e) {}
+      var prefLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      var theme = (qTheme === "light" || qTheme === "dark") ? qTheme : (saved === "light" || saved === "dark" ? saved : (prefLight ? "light" : "dark"));
+      document.documentElement.setAttribute("data-theme", theme);
+      if (params.get("embed") === "1") {
+        document.documentElement.classList.add("is-embedded-root");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/style.css">
+
+  <!-- Schema.org JSON-LD Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "Digital Asset Forge",
+        "softwareVersion": "2.6.0",
+        "url": "https://digital-asset-forge.nullai.tech/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web, Linux, macOS, Windows, ZothOS",
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Neal Frazier (@1nc0gn30)",
+          "url": "https://github.com/1nc0gn30"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://digital-asset-forge.nullai.tech/"
+        },
+        "description": "High-Res 300 DPI multi-ratio wall art pack generator for Etsy & Shopify sellers. Formats 2:3, 3:4, 4:5, 11:14, and ISO paper packs with buyer printing guides, 13-tag SEO copy, DPI audit, and <=20MB ZIP bundles."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What print aspect ratios does Digital Asset Forge generate?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Digital Asset Forge calculates 300 DPI dimensions and exports framed PNGs for all 5 standard ratio families: 2:3 (up to 24x36\"), 3:4 (up to 18x24\"), 4:5 (up to 16x20\"), 11:14 (statement prints), and International ISO Paper (A1 to A5)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Digital Asset Forge handle Etsy's 20MB upload limit?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It bin-packs the 5 high-resolution ratio files and buyer printing guide using a greedy 18.0 MB per-archive cap into 2 Etsy-compliant ZIP archives (36.1 MB combined), and builds a real downloadable ZIP bundle containing manifest.json, PRINTING_GUIDE.md, and etsy_listing.json."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Digital Asset Forge free and open access with zero cloud uploads?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Digital Asset Forge is 100% free and open access with zero paywalls and zero external uploads. All canvas framing, DPI auditing, ZIP packaging, and 6 MCP tools run locally on 127.0.0.1:8118 or directly in your browser."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div id="zoth-coffee-support-bar" class="support-bar">
+    <span class="support-label">100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+    <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="support-pill-coffee">☕ Buy Us a Coffee</a>
+    <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" class="support-pill-solana" title="GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip</a>
+  </div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <img src="/assets/icon.png" alt="Digital Asset Forge Logo" width="32" height="32" class="brand-logo">
+        <span class="brand-title">Digital Asset Forge</span>
+        <span class="brand-version">v2.6.0</span>
+        <span id="licenseBadge" class="brand-badge badge-open">100% OPEN ACCESS</span>
+        <span id="daemonBadge" class="brand-badge badge-daemon">PROBING :8118...</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-theme-toggle" type="button" class="btn btn-secondary" aria-label="Toggle Light and Dark Theme">Light Mode</button>
+        <button id="btn-quickstart" type="button" class="btn btn-secondary">Quickstart</button>
+        <button id="btn-export-zip-top" type="button" class="btn btn-primary">Download .zip Pack</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <section class="hero-section" aria-label="Digital Asset Forge Overview">
+      <div class="hero-copy">
+        <div class="hero-eyebrow">300 DPI MULTI-RATIO WALL-ART WORKSTATION · LOCAL :8118</div>
+        <h1 class="hero-headline">300 DPI Wall Art Pack Generator</h1>
+        <p class="hero-tagline">Frame local artwork across 2:3, 3:4, 4:5, 11:14 &amp; ISO A-Series ratios, export high-res PNGs, bin-pack &le;20 MB Etsy ZIP bundles, audit source DPI, and build 13-tag SEO copy with zero cloud uploads.</p>
+        <div class="hero-pills">
+          <span class="hero-pill">5 Print Ratios @ 300 DPI</span>
+          <span class="hero-pill">&le;20 MB Etsy ZIP Packer</span>
+          <span class="hero-pill">13-Tag SEO &amp; Margin Math</span>
+          <span class="hero-pill">6 Stdio MCP Tools</span>
+        </div>
+      </div>
+      <div class="hero-canvas-container">
+        <canvas id="hero-canvas" aria-label="Nested 5-ratio print frame diagram"></canvas>
+      </div>
+    </section>
+
+    <main id="workspace" class="bento-cockpit">
+      <!-- Left Panel: Artwork Controls, Upload & Pack Specs -->
+      <section class="panel-card" aria-labelledby="specs-heading">
+        <div class="panel-header">
+          <h2 id="specs-heading" class="panel-title">Artwork Specs &amp; Framing</h2>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="artwork-file-input">Local Artwork Upload (PNG / JPG / WebP)</label>
+          <div class="file-upload-row">
+            <input type="file" id="artwork-file-input" class="sr-only-input" accept="image/png,image/jpeg,image/webp">
+            <label for="artwork-file-input" class="btn btn-primary" role="button" tabindex="0" id="upload-trigger-label">Upload Local Artwork</label>
+            <button type="button" id="btn-clear-upload" class="btn btn-secondary">Use Preset</button>
+          </div>
+          <div id="upload-meta-note" class="margin-sub" style="margin-top:6px;">Active source: Procedural Fine-Art Preset (Terracotta Arch)</div>
+        </div>
+
+        <div class="form-group">
+          <span class="form-label">Procedural Fine-Art Starters</span>
+          <div class="preset-row" id="preset-buttons">
+            <button type="button" class="btn-chip is-active" data-preset="terracotta">Terracotta Arch</button>
+            <button type="button" class="btn-chip" data-preset="horizon">Sumi-e Horizon</button>
+            <button type="button" class="btn-chip" data-preset="botanical">Botanical Gold</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <span class="form-label">Framing Mode</span>
+          <div class="preset-row" id="fit-mode-buttons">
+            <button type="button" class="btn-chip is-active" data-fit="crop">Crop-to-Fill (Full Bleed)</button>
+            <button type="button" class="btn-chip" data-fit="mat">Fit with Mat Border</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="artwork-title-input">Artwork Title</label>
+          <input type="text" id="artwork-title-input" class="input-control" value="Celestial Obsidian Horizon" maxlength="200">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="artist-name-input">Artist / Shop Brand</label>
+            <input type="text" id="artist-name-input" class="input-control" value="1nc0gn30" maxlength="120">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="price-input">Retail Price (USD)</label>
+            <input type="number" id="price-input" class="input-control" value="6.99" step="0.01" min="0.50" max="5000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="niche-select">Art Niche / Etsy Category</label>
+          <select id="niche-select" class="select-control">
+            <option value="abstract">Abstract Modern / Minimalist</option>
+            <option value="geometric">Geometric / Bauhaus / Mid-Century</option>
+            <option value="botanical">Botanical / Cottagecore / Floral</option>
+            <option value="landscape">Moody Landscape / Panoramic</option>
+          </select>
+        </div>
+
+        <div class="margin-card">
+          <div class="margin-eyebrow">Etsy Net Profit Per Sale</div>
+          <div id="stat-net-margin" class="margin-value">$5.88 (84.1%)</div>
+          <div class="margin-sub">Digital download fulfillment · $0 COGS · $0 shipping</div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Live 5-Ratio Canvas + Pack Manifest Table -->
+      <section class="panel-card" aria-labelledby="manifest-heading">
+        <div class="panel-header">
+          <h2 id="manifest-heading" class="panel-title">5-Ratio Studio Preview &amp; Pack Manifest</h2>
+          <button type="button" id="btn-download-png" class="btn btn-primary">Download 2:3 PNG</button>
+        </div>
+
+        <div class="ratio-selector-row" id="ratio-selector-buttons" aria-label="Select Aspect Ratio">
+          <button type="button" class="btn-chip is-active" data-ratio="2x3">2:3 (24x36")</button>
+          <button type="button" class="btn-chip" data-ratio="3x4">3:4 (18x24")</button>
+          <button type="button" class="btn-chip" data-ratio="4x5">4:5 (16x20")</button>
+          <button type="button" class="btn-chip" data-ratio="11x14">11:14 (11x14")</button>
+          <button type="button" class="btn-chip" data-ratio="iso">ISO (A1-A5)</button>
+        </div>
+
+        <div class="studio-canvas-wrap">
+          <canvas id="artwork-preview-canvas" aria-label="Interactive 5-ratio artwork preview canvas"></canvas>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-tile">
+            <div class="metric-label">Total Included</div>
+            <div id="stat-total-files" class="metric-value">6 Files</div>
+          </div>
+          <div class="metric-tile">
+            <div class="metric-label">Pack Weight</div>
+            <div id="stat-total-size" class="metric-value is-sky">36.1 MB</div>
+          </div>
+          <div class="metric-tile">
+            <div class="metric-label">Etsy ZIP Plan</div>
+            <div id="stat-zip-count" class="metric-value is-emerald">2 ZIPs · PASS</div>
+          </div>
+        </div>
+
+        <div class="manifest-table-wrapper">
+          <table class="manifest-table">
+            <thead>
+              <tr>
+                <th>Ratio</th>
+                <th>Target Filename</th>
+                <th>Max Print</th>
+                <th>300 DPI</th>
+                <th>Est. Size</th>
+              </tr>
+            </thead>
+            <tbody id="manifest-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tabbed Exports: Manifest JSON / Printing Guide / Etsy 13-Tag SEO / 300 DPI Auditor -->
+    <section class="output-section" aria-labelledby="output-heading">
+      <div class="output-header">
+        <h2 id="output-heading" class="panel-title">Pack Deliverables, Etsy SEO &amp; 300 DPI Auditor</h2>
+        <div class="output-actions">
+          <button type="button" id="btn-copy-active" class="btn btn-secondary">Copy Active</button>
+          <button type="button" id="btn-download-manifest" class="btn btn-secondary">Download JSON</button>
+          <button type="button" id="btn-download-guide" class="btn btn-secondary">Download Guide (.md)</button>
+          <button type="button" id="btn-download-zip" class="btn btn-primary">Download .zip Bundle</button>
+        </div>
+      </div>
+
+      <div class="tabs-bar" role="tablist" aria-label="Deliverable Views">
+        <button type="button" role="tab" class="tab-btn is-active" data-tab="manifest" aria-selected="true">Pack Manifest &amp; ZIP Plan</button>
+        <button type="button" role="tab" class="tab-btn" data-tab="guide" aria-selected="false">Buyer Printing Guide</button>
+        <button type="button" role="tab" class="tab-btn" data-tab="etsy" aria-selected="false">Etsy 13-Tag SEO &amp; Copy</button>
+        <button type="button" role="tab" class="tab-btn" data-tab="dpi" aria-selected="false">300 DPI Source Auditor</button>
+      </div>
+
+      <div id="tab-manifest" class="tab-panel is-active" role="tabpanel">
+        <div class="code-container">
+          <pre id="code-preview" class="code-preview">Loading manifest...</pre>
+        </div>
+      </div>
+
+      <div id="tab-guide" class="tab-panel" role="tabpanel">
+        <div class="code-container">
+          <pre id="guide-preview" class="code-preview">Loading buyer printing guide...</pre>
+        </div>
+      </div>
+
+      <div id="tab-etsy" class="tab-panel" role="tabpanel">
+        <div style="margin-bottom: 10px;">
+          <div class="form-label">Optimized Etsy Listing Title (<span id="etsy-title-len">0</span> / 140 chars)</div>
+          <div id="etsy-title-preview" style="font-weight: 700; color: var(--text-main); margin-bottom: 12px;"></div>
+          <div class="form-label">13 Search Ranking Tags (&le; 20 chars each · Click any pill to copy)</div>
+          <div id="etsy-tags-container" class="etsy-tags-grid"></div>
+        </div>
+        <div class="code-container">
+          <pre id="etsy-desc-preview" class="code-preview"></pre>
+        </div>
+      </div>
+
+      <div id="tab-dpi" class="tab-panel" role="tabpanel">
+        <div class="form-grid-2" style="max-width: 720px;">
+          <div class="form-group">
+            <label class="form-label" for="dpi-src-w">Source Pixel Width (px)</label>
+            <input type="number" id="dpi-src-w" class="input-control" value="7200" min="100" max="100000" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dpi-src-h">Source Pixel Height (px)</label>
+            <input type="number" id="dpi-src-h" class="input-control" value="10800" min="100" max="100000" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dpi-target-w">Target Print Width (inches)</label>
+            <input type="number" id="dpi-target-w" class="input-control" value="24" min="1" max="200" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dpi-target-h">Target Print Height (inches)</label>
+            <input type="number" id="dpi-target-h" class="input-control" value="36" min="1" max="200" step="0.1">
+          </div>
+        </div>
+        <button type="button" id="btn-run-dpi" class="btn btn-primary">Run 300 DPI Audit</button>
+        <div id="dpi-audit-result" class="dpi-result-box status-pass">
+          <div>
+            <div id="dpi-rating-title" style="font-weight:800; font-size:1.05rem;">MUSEUM_GRADE · 300.0 DPI</div>
+            <div id="dpi-rating-desc" class="margin-sub">Museum Archival Quality (300+ DPI) — 7200x10800px at 24"x36"</div>
+          </div>
+          <span id="dpi-rating-badge" class="brand-badge badge-open">PASS</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="section-heading">Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h3>Why are 5 different ratio files needed?</h3>
+          <p>Store-bought frames use distinct aspect ratios (8x10 is 4:5 while 24x36 is 2:3). Delivering all 5 ratio families lets buyers print any size without awkward cropping.</p>
+        </div>
+        <div class="faq-card">
+          <h3>How does this stay under Etsy's 20 MB ZIP cap?</h3>
+          <p>The pack planner bin-packs files using a greedy 18.0 MB per-archive cap into 2 compliant ZIPs (36.1 MB combined), and exports a downloadable ZIP with manifest, guide, and Etsy copy.</p>
+        </div>
+        <div class="faq-card">
+          <h3>Does it run offline via CLI, TUI, and MCP?</h3>
+          <p>Yes. Run <code>digital-asset-forge --help</code>, <code>digital-asset-forge-tui --once</code>, or <code>digital-asset-forge mcp</code> for 6 zero-dependency JSON-RPC 2.0 tools.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="app-footer">
+    <p>Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/digital-asset-forge" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a></p>
+    <div class="footer-links">
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/support.html">Creator Support</a>
+      <a href="https://github.com/1nc0gn30/digital-asset-forge" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </footer>
+
+  <script src="/forge-engine.js"></script>
+  <script src="/hero_canvas.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

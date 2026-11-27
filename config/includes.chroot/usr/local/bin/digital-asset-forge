@@ -1,21 +1,30 @@
 #!/usr/bin/env python3
-"""
-Digital Asset Forge Executable Entrypoint
-"""
+"""Digital Asset Forge Executable Entrypoint (Portable ZothOS + Host Resolver)."""
 
-# zothos-repo-shim: run the canonical repo copy so repo-relative paths resolve
-import os as _os, sys as _sys
-_here = _os.path.realpath(__file__)
-_repo = _os.environ.get("ZOTH_REPO_DIR") or '/home/zoth/NullAITech' + "/" + 'digital-asset-forge'
-_real = _os.path.join(_repo, "bin", 'digital-asset-forge')
-if _os.path.exists(_real) and _os.path.realpath(_real) != _here:
-    _os.execv(_sys.executable, [_sys.executable, _real] + _sys.argv[1:])
-del _os, _sys, _here, _repo, _real
-
-import sys
 import os
+import sys
+from pathlib import Path
 
-src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+
+def _resolve_src_dir() -> str:
+    candidates = []
+    env_home = os.environ.get("DIGITAL_ASSET_FORGE_HOME")
+    if env_home:
+        candidates.append(Path(env_home) / "src")
+    env_repo = os.environ.get("ZOTH_REPO_DIR")
+    if env_repo:
+        candidates.append(Path(env_repo) / "src")
+    script_root = Path(__file__).resolve().parent.parent
+    candidates.append(script_root / "src")
+    candidates.append(Path("/opt/digital-asset-forge/src"))
+
+    for cand in candidates:
+        if (cand / "digital_asset_forge" / "__init__.py").is_file():
+            return str(cand)
+    return str(Path("/opt/digital-asset-forge/src"))
+
+
+src_dir = _resolve_src_dir()
 if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 

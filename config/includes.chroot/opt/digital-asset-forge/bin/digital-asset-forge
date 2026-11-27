@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+"""Digital Asset Forge Executable Entrypoint (Portable ZothOS + Host Resolver)."""
+
+import os
+import sys
+from pathlib import Path
+
+
+def _resolve_src_dir() -> str:
+    candidates = []
+    env_home = os.environ.get("DIGITAL_ASSET_FORGE_HOME")
+    if env_home:
+        candidates.append(Path(env_home) / "src")
+    env_repo = os.environ.get("ZOTH_REPO_DIR")
+    if env_repo:
+        candidates.append(Path(env_repo) / "src")
+    script_root = Path(__file__).resolve().parent.parent
+    candidates.append(script_root / "src")
+    candidates.append(Path("/opt/digital-asset-forge/src"))
+
+    for cand in candidates:
+        if (cand / "digital_asset_forge" / "__init__.py").is_file():
+            return str(cand)
+    return str(Path("/opt/digital-asset-forge/src"))
+
+
+src_dir = _resolve_src_dir()
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
+
+from digital_asset_forge.cli import main
+
+if __name__ == "__main__":
+    main()
