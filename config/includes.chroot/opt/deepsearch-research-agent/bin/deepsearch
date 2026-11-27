@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""
+DeepSearch Research Agent & Studio v2.6.0 — Canonical ZothOS CLI Wrapper.
+
+Dynamically resolves runtime root (/opt/deepsearch-research-agent -> script-relative
+repo -> $DEEPSEARCH_HOME) with zero literal home-directory paths anywhere in source
+or JSON output.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import urllib.request
+from pathlib import Path
+from typing import Optional
+
+VERSION = "2.6.0"
+TOOL_ID = "deepsearch-research-agent"
+DEFAULT_PORT = 8122
+
+
+def _resolve_root() -> Path:
+    candidates = [
+        Path("/opt/deepsearch-research-agent"),
+        Path(__file__).resolve().parent.parent,
+    ]
+    env_home = os.environ.get("DEEPSEARCH_HOME")
+    if env_home:
+        candidates.insert(0, Path(env_home).expanduser())
+    for c in candidates:
+        if (c / "src" / "deepsearch_research_agent").is_dir():
+            return c
+    return candidates[0]
+
+
+def _sanitize_path(p: Path) -> str:
+    s = str(p)
+    home = os.path.expanduser("~")
+    if home and s.startswith(home + os.sep):
+        return "~/" + s[len(home) + 1 :]
+    if s == home:
+        return "~"
+    return s
+
+
+def _probe_daemon(port: int = DEFAULT_PORT) -> dict:
+    url = f"http://127.0.0.1:{port}/health"
+    try:
+        with urllib.request.urlopen(url, timeout=1.2) as resp:
+            data = json.loads(resp.read().decode("utf-8", errors="replace"))
+            return {"online": resp.status == 200, "url": f"http://127.0.0.1:{port}", "health": data}
+    except Exception:
+        return {"online": False, "url": f"http://127.0.0.1:{port}", "health": None}
+
+
+def main(argv: Optional[list] = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    root = _resolve_root()
+    src_dir = root / "src"
+    if str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+
+    if args in (["--version"], ["-v"]):
+        print(f"{TOOL_ID} {VERSION}")
+        return 0
+
+    if args == ["--json"] or args == ["--status", "--json"] or args == ["--status"]:
+        probe = _probe_daemon(DEFAULT_PORT)
+        payload = {
+            "tool": TOOL_ID,
+            "name": "DeepSearch Research Agent & Studio",
+            "version": VERSION,
+            "runtime_root": _sanitize_path(root),
+            "port": DEFAULT_PORT,
+            "daemon_online": probe["online"],
+            "local_url": probe["url"],
+            "mcp_tools": [
+                "deepsearch_plan",
+                "deepsearch_execute",
+                "deepsearch_fetch",
+                "deepsearch_corroborate",
+                "deepsearch_evidence_graph",
+                "deepsearch_export_report",
+                "deepsearch_get_diagnostics",
+            ],
+            "open_access": True,
+        }
+        print(json.dumps(payload, indent=2))
+        return 0
+
+    if args and args[0] == "tui":
+        tui_bin = root / "bin" / "deepsearch-research-agent-tui"
+        if not tui_bin.is_file():
+            tui_bin = Path("/usr/local/bin/deepsearch-research-agent-tui")
+        os.execv(sys.executable, [sys.executable, str(tui_bin)] + args[1:])
+
+    if args and args[0] in ("desktop", "web", "gui", "app"):
+        from deepsearch_research_agent.cli import main as cli_main
+        return cli_main(["serve", "--host", "127.0.0.1", "--port", str(DEFAULT_PORT), "--open"])
+
+    from deepsearch_research_agent.cli import main as cli_main
+    return cli_main(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

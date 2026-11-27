@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepSearch Research Agent &amp; Studio v2.6.0 — Multi-Source Grounded Synthesis</title>
+  <meta name="description" content="Zero-dependency 5-stage Tree-of-Thought research workstation with SSRF-guarded extraction, directed citation provenance graphs, contradiction detection, MCP server, and Markdown/JSON/BibTeX exports.">
+  <meta name="author" content="Neal Frazier Tech (@1nc0gn30)">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://deepsearch.nullai.tech/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/icon.png">
+
+  <!-- OpenGraph & Twitter Card -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DeepSearch Research Agent &amp; Studio v2.6.0">
+  <meta property="og:description" content="5-stage Tree-of-Thought research pipeline, citation provenance DAG, contradiction matrix, 7 MCP tools, and Markdown/JSON/BibTeX exports. 100% open access.">
+  <meta property="og:url" content="https://deepsearch.nullai.tech/">
+  <meta property="og:image" content="https://deepsearch.nullai.tech/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="DeepSearch Research Agent &amp; Studio v2.6.0">
+  <meta name="twitter:description" content="Zero-dependency multi-source deep research workstation with citation DAGs, contradiction detection, and BibTeX exports.">
+  <meta name="twitter:image" content="https://deepsearch.nullai.tech/banner.png">
+
+  <!-- Schema.org AEO/SEO Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "@id": "https://deepsearch.nullai.tech/#app",
+        "name": "DeepSearch Research Agent & Studio",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows, Web",
+        "softwareVersion": "2.6.0",
+        "url": "https://deepsearch.nullai.tech/",
+        "description": "Zero-dependency 5-stage Tree-of-Thought research agent with citation provenance graphs, DFS circular-citation detection, contradiction auditing, 7 MCP tools, and Markdown/JSON/BibTeX exports.",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "https://deepsearch.nullai.tech/"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "sameAs": "https://github.com/1nc0gn30"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://deepsearch.nullai.tech/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does DeepSearch Research Agent verify claims and detect circular citations?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "DeepSearch runs a 5-stage pipeline: Tree-of-Thought query decomposition, SSRF-guarded document extraction, fact and metric synthesis, a directed EvidenceGraph with DFS circular-citation detection and TrustRank eigenvector authority scoring, and multi-source contradiction auditing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does DeepSearch send queries or research data to external third-party servers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The local daemon binds exclusively to loopback 127.0.0.1:8122 with zero external telemetry, strict Host and exact-port CORS checks, and a full in-browser deterministic engine for offline static execution."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is DeepSearch Research Agent free to use and export?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every research stage, citation graph, MCP tool, and Markdown, JSON, HTML, ZIP, and BibTeX export is 100% free and open access with zero paywalls. Optional community support is available via Buy Us a Coffee or Solana tip."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var urlTheme = params.get('theme');
+        var stored = localStorage.getItem('deepsearch_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var resolved = (urlTheme === 'dark' || urlTheme === 'light')
+          ? urlTheme
+          : (stored === 'dark' || stored === 'light')
+            ? stored
+            : (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', resolved);
+        if (params.get('embed') === '1') {
+          document.documentElement.setAttribute('data-embed', '1');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root,
+    html[data-theme="light"] {
+      --bg-page: #FAF8F3;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F2EEE4;
+      --bg-input: #FFFFFF;
+      --ink-primary: #0F172A;
+      --ink-secondary: #334155;
+      --ink-muted: #475569;
+      --border-subtle: #DCD5C7;
+      --border-strong: #B89B5E;
+      --accent-primary: #7A5808;
+      --accent-primary-soft: #F7F0DE;
+      --accent-cta-bg: #7A5808;
+      --accent-cta-fg: #FFFFFF;
+      --accent-emerald: #047857;
+      --accent-emerald-bg: #ECFDF5;
+      --accent-cyan: #0369A1;
+      --accent-cyan-bg: #F0F9FF;
+      --accent-crimson: #B91C1C;
+      --accent-crimson-bg: #FEF2F2;
+      --code-bg: #F3EFE6;
+      --code-ink: #0F172A;
+      --chart-grid: #CBD5E1;
+      --chart-axis: #475569;
+      --chart-label: #0F172A;
+      --shadow-card: 0 2px 10px rgba(15, 23, 42, 0.05);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg-page: #08080B;
+      --bg-card: #12121A;
+      --bg-subtle: #181A25;
+      --bg-input: #0D0F16;
+      --ink-primary: #F5F1E6;
+      --ink-secondary: #CBD5E1;
+      --ink-muted: #94A3B8;
+      --border-subtle: #282B3B;
+      --border-strong: #9E822D;
+      --accent-primary: #E2C258;
+      --accent-primary-soft: #221D0E;
+      --accent-cta-bg: #D4AF37;
+      --accent-cta-fg: #08080B;
+      --accent-emerald: #34D399;
+      --accent-emerald-bg: #0B261E;
+      --accent-cyan: #38BDF8;
+      --accent-cyan-bg: #0C2333;
+      --accent-crimson: #F87171;
+      --accent-crimson-bg: #2E1115;
+      --code-bg: #0C0E14;
+      --code-ink: #E2E8F0;
+      --chart-grid: #334155;
+      --chart-axis: #94A3B8;
+      --chart-label: #F1F5F9;
+      --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.45);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-page);
+      color: var(--ink-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .shell {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 14px 16px 36px;
+    }
+
+    /* Compact Header (wraps cleanly on 390px mobile) */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 14px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-strong);
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink-primary);
+    }
+
+    .badge-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-width: 100%;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--ink-primary);
+      white-space: nowrap;
+    }
+
+    .pill-gold {
+      background: var(--accent-primary-soft);
+      border-color: var(--border-strong);
+      color: var(--accent-primary);
+    }
+
+    .pill-emerald {
+      background: var(--accent-emerald-bg);
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    .pill-cyan {
+      background: var(--accent-cyan-bg);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .pill-crimson {
+      background: var(--accent-crimson-bg);
+      border-color: var(--accent-crimson);
+      color: var(--accent-crimson);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Buttons & Inputs: strict >= 44px touch target floor */
+    button, .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--ink-primary);
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    button:hover, .btn-link:hover {
+      border-color: var(--accent-primary);
+      background: var(--bg-subtle);
+    }
+
+    button:focus-visible, .btn-link:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: var(--accent-cta-bg);
+      color: var(--accent-cta-fg);
+      border-color: var(--accent-cta-bg);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      background: var(--accent-cta-bg);
+      color: var(--accent-cta-fg);
+    }
+
+    .btn-subtle {
+      background: var(--bg-subtle);
+      color: var(--ink-primary);
+    }
+
+    /* Above-the-Fold Query Workbench */
+    .workbench {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 14px;
+    }
+
+    .query-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    @media (max-width: 860px) {
+      .query-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .query-grid .field-topic {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .query-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .field label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink-secondary);
+    }
+
+    input[type="text"], input[type="search"], select {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      color: var(--ink-primary);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .run-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Telemetry Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      margin-top: 2px;
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--ink-secondary);
+      margin-top: 2px;
+    }
+
+    /* Navigation Tabs */
+    .tabs-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn[aria-selected="true"] {
+      background: var(--accent-cta-bg);
+      color: var(--accent-cta-fg);
+      border-color: var(--accent-cta-bg);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Two-Column Content Layout */
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 14px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--ink-primary);
+    }
+
+    .export-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .summary-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      border-left: 4px solid var(--accent-primary);
+      font-size: 0.92rem;
+      color: var(--ink-primary);
+      margin-bottom: 14px;
+    }
+
+    .list-clean {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--ink-primary);
+    }
+
+    .persp-item {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      margin-bottom: 10px;
+    }
+
+    .persp-item h3 {
+      margin: 0 0 6px;
+      font-size: 0.94rem;
+      color: var(--ink-primary);
+    }
+
+    .persp-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .persp-body {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--ink-secondary);
+    }
+
+    .query-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      margin-bottom: 8px;
+    }
+
+    .query-item code {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      word-break: break-word;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+      background: var(--bg-subtle);
+    }
+
+    td a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      text-decoration: underline;
+      word-break: break-word;
+    }
+
+    /* Citation Graph & Charts */
+    .svg-stage {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      padding: 10px;
+    }
+
+    .svg-stage svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .node-btn-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .charts-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .charts-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Methodology List (explicit high contrast in BOTH themes!) */
+    .pipeline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pipeline-step {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--ink-primary);
+    }
+
+    .step-num {
+      font-weight: 800;
+      color: var(--accent-primary);
+      font-size: 0.9rem;
+      min-width: 30px;
+    }
+
+    .step-title {
+      font-weight: 800;
+      font-size: 0.94rem;
+      color: var(--ink-primary);
+      margin-bottom: 3px;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--ink-secondary);
+      margin: 0;
+    }
+
+    pre.code-block {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .status-banner {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+      margin-top: 10px;
+    }
+
+    /* Single Support Strip & Footer */
+    .support-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      margin-top: 16px;
+    }
+
+    .support-copy {
+      font-size: 0.85rem;
+      color: var(--ink-secondary);
+    }
+
+    .support-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    footer.site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    /* Embed mode: compact padding */
+    html[data-embed="1"] .shell {
+      padding: 10px 12px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand-row">
+        <img src="/icon.png" alt="DeepSearch Research Agent Emblem" class="brand-icon" width="36" height="36">
+        <div>
+          <h1 class="brand-title">DeepSearch Research Agent &amp; Studio</h1>
+          <div class="badge-group">
+            <span class="pill pill-gold mono">v2.6.0</span>
+            <span class="pill pill-emerald mono">100% OPEN ACCESS</span>
+            <span id="daemonStatusBadge" class="pill pill-cyan mono">PROBING :8122...</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" id="guideBtn" class="btn-subtle" aria-label="Open DeepSearch Quickstart Guide">Quickstart</button>
+        <button type="button" id="themeToggleBtn" class="btn-subtle" aria-label="Toggle Light or Dark Theme">Dark Mode</button>
+      </div>
+    </header>
+
+    <!-- Above-the-Fold Query & Synthesis Workbench -->
+    <section class="workbench" aria-label="Research Query Workbench">
+      <div class="query-grid">
+        <div class="field field-topic">
+          <label for="researchQueryInput">Research Topic or Technical Hypothesis</label>
+          <input
+            type="text"
+            id="researchQueryInput"
+            name="topic"
+            maxlength="500"
+            value="Fault-Tolerant Logical Qubit Surface Codes vs LDPC Error Correction"
+            placeholder="Enter any technical, scientific, or architectural research topic..."
+          >
+        </div>
+        <div class="field">
+          <label for="depthSelect">Investigation Depth</label>
+          <select id="depthSelect" name="depth">
+            <option value="quick">Quick (3 Angles)</option>
+            <option value="deep" selected>Deep (5 Angles)</option>
+            <option value="exhaustive">Exhaustive (8 Angles)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="maxSourcesSelect">Sources Budget</label>
+          <select id="maxSourcesSelect" name="max_sources">
+            <option value="3">3 Sources</option>
+            <option value="5" selected>5 Sources</option>
+            <option value="6">6 Sources</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="preset-row" aria-label="Sample Research Presets">
+          <button type="button" class="btn-subtle preset-btn" data-topic="Fault-Tolerant Logical Qubit Surface Codes vs LDPC Error Correction">Quantum FTQC</button>
+          <button type="button" class="btn-subtle preset-btn" data-topic="eBPF XDP Zero-Trust Packet Isolation vs Cgroup v2 Egress Enforcement">eBPF Zero-Trust</button>
+          <button type="button" class="btn-subtle preset-btn" data-topic="STDP Hebbian Memory Consolidation vs Transformer KV Cache Drift">STDP vs Attention</button>
+          <button type="button" class="btn-subtle preset-btn" data-topic="Byzantine Fault Tolerance Quorum Consensus in Multi-Agent Swarms">BFT Swarms</button>
+        </div>
+        <div class="run-row">
+          <button type="button" id="regenPlanBtn" class="btn-subtle">Regenerate Sub-Queries</button>
+          <button type="button" id="runResearchBtn" class="btn-primary">Run Deep Research</button>
+        </div>
+      </div>
+
+      <div id="executionStatus" class="status-banner mono" role="status" aria-live="polite">
+        Ready — click "Run Deep Research" to execute the 5-stage pipeline via local :8122 API (or offline engine).
+      </div>
+    </section>
+
+    <!-- Live KPI Telemetry -->
+    <section class="kpi-grid" aria-label="Research Metrics Summary">
+      <div class="kpi-card">
+        <div class="kpi-label">Consensus Score</div>
+        <div id="kpiConsensus" class="kpi-value mono">—</div>
+        <div id="kpiRating" class="kpi-sub">Awaiting synthesis</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sources Verified</div>
+        <div id="kpiSources" class="kpi-value mono">—</div>
+        <div id="kpiCred" class="kpi-sub">Mean credibility</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Citation DAG</div>
+        <div id="kpiGraph" class="kpi-value mono">—</div>
+        <div id="kpiCycles" class="kpi-sub">DFS cycle check</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Runtime Mode</div>
+        <div id="kpiMode" class="kpi-value mono">—</div>
+        <div id="kpiDuration" class="kpi-sub">Pipeline latency</div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-bar" role="tablist" aria-label="DeepSearch Workspace Views">
+      <button type="button" class="tab-btn" role="tab" id="tab-dossier" aria-selected="true" aria-controls="panel-dossier">Dossier &amp; Sources</button>
+      <button type="button" class="tab-btn" role="tab" id="tab-graph" aria-selected="false" aria-controls="panel-graph">Citation Graph</button>
+      <button type="button" class="tab-btn" role="tab" id="tab-analytics" aria-selected="false" aria-controls="panel-analytics">Analytics &amp; Charts</button>
+      <button type="button" class="tab-btn" role="tab" id="tab-methodology" aria-selected="false" aria-controls="panel-methodology">Methodology</button>
+      <button type="button" class="tab-btn" role="tab" id="tab-mcp" aria-selected="false" aria-controls="panel-mcp">MCP Hub (7 Tools)</button>
+    </nav>
+
+    <main>
+      <!-- TAB 1: Dossier & Sources -->
+      <section id="panel-dossier" class="tab-panel active" role="tabpanel" aria-labelledby="tab-dossier">
+        <div class="split-grid">
+          <div>
+            <article class="card">
+              <div class="card-head">
+                <h2 id="reportHeading">Executive Research Dossier</h2>
+                <span id="reportExecId" class="pill mono">idle</span>
+              </div>
+              <div id="executiveSummary" class="summary-box"></div>
+              <h3 style="margin:0 0 8px;font-size:0.9rem;">Verified Key Findings</h3>
+              <ul id="keyFindingsList" class="list-clean"></ul>
+              <div class="export-row">
+                <button type="button" id="copyMdBtn" class="btn-subtle">Copy Markdown</button>
+                <button type="button" id="copyBibBtn" class="btn-subtle">Copy BibTeX</button>
+                <button type="button" id="downloadJsonBtn" class="btn-subtle">Download JSON</button>
+                <button type="button" id="downloadZipBtn" class="btn-primary">Download ZIP Bundle</button>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <h2>Multi-Perspective Synthesis</h2>
+                <span id="perspCountBadge" class="pill mono">0 angles</span>
+              </div>
+              <div id="perspectivesContainer"></div>
+            </article>
+          </div>
+
+          <div>
+            <article class="card">
+              <div class="card-head">
+                <h2>Tree-of-Thought Sub-Queries</h2>
+                <span id="subQueryCountBadge" class="pill mono">0 queries</span>
+              </div>
+              <div id="subQueriesContainer"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <h2>Sources &amp; Corroboration</h2>
+                <span id="corrobBadge" class="pill pill-emerald mono">verified</span>
+              </div>
+              <div class="field" style="margin-bottom:10px;">
+                <label for="sourceFilterInput">Filter Sources by Domain, Title, or Stance</label>
+                <input type="search" id="sourceFilterInput" placeholder="e.g., arxiv.org, support, nature.com...">
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Ref</th>
+                      <th>Source &amp; Domain</th>
+                      <th>Authority</th>
+                      <th>Stance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sourcesTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Citation Graph & Lineage Inspector -->
+      <section id="panel-graph" class="tab-panel" role="tabpanel" aria-labelledby="tab-graph">
+        <div class="split-grid">
+          <article class="card">
+            <div class="card-head">
+              <h2>Directed Evidence Provenance DAG</h2>
+              <span id="graphIntegrityBadge" class="pill pill-emerald mono">ZERO CYCLES</span>
+            </div>
+            <div id="graphSvgHost" class="svg-stage" aria-label="Interactive Citation Graph Visualization"></div>
+            <div class="node-btn-grid" id="graphNodeButtons" aria-label="Inspect Citation Graph Nodes"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <h2>Node Lineage &amp; Authority Inspector</h2>
+              <span id="selectedNodeBadge" class="pill pill-gold mono">Select a node</span>
+            </div>
+            <div id="lineageInspectorBody" style="font-size:0.86rem;color:var(--ink-secondary);">
+              Click any node above to trace its upstream primary sources, TrustRank authority score, and DFS cycle status.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- TAB 3: Analytics & Benchmarks -->
+      <section id="panel-analytics" class="tab-panel" role="tabpanel" aria-labelledby="tab-analytics">
+        <div class="charts-two">
+          <article class="card">
+            <div class="card-head">
+              <h2>Source Authority Distribution</h2>
+              <span class="pill mono">α_cred ∈ [0, 100]</span>
+            </div>
+            <div id="barChartHost" class="svg-stage" aria-label="Source Authority Bar Chart"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <h2>Multi-Dimensional Quality Radar</h2>
+              <span class="pill mono">5-Axis Calibration</span>
+            </div>
+            <div id="radarChartHost" class="svg-stage" aria-label="Research Quality Radar Chart"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- TAB 4: Methodology & 5-Stage Pipeline -->
+      <section id="panel-methodology" class="tab-panel" role="tabpanel" aria-labelledby="tab-methodology">
+        <article class="card">
+          <div class="card-head">
+            <h2>5-Stage Deterministic Research Architecture</h2>
+            <span class="pill pill-gold mono">Pure Python 3.9+ Stdlib</span>
+          </div>
+          <ol class="pipeline-list">
+            <li class="pipeline-step">
+              <span class="step-num mono">01</span>
+              <div>
+                <div class="step-title">Tree-of-Thought Query Planner (planner.py)</div>
+                <p class="step-desc">Decomposes any research prompt into domain-specific angles (3 / 5 / 8 depths) and generates exact-match, Boolean, and adversarial sub-queries calibrated to Q_target &gt; 2.0 breadth coverage.</p>
+              </div>
+            </li>
+            <li class="pipeline-step">
+              <span class="step-num mono">02</span>
+              <div>
+                <div class="step-title">SSRF-Guarded Document Fetch &amp; HTML Extractor (crawler.py + url_guard.py)</div>
+                <p class="step-desc">Enforces http/https schemes only, blocks loopback, RFC1918, CGNAT, and link-local IMDS targets (including redirect hops), strips boilerplate HTML, and scores domain credibility α_cred ∈ [0, 100].</p>
+              </div>
+            </li>
+            <li class="pipeline-step">
+              <span class="step-num mono">03</span>
+              <div>
+                <div class="step-title">Directed Evidence Provenance Graph (evidence_graph.py)</div>
+                <p class="step-desc">Constructs directed source-to-claim edges, executes DFS backtracking to catch circular reporting or echo chambers, and computes TrustRank eigenvector authority scores.</p>
+              </div>
+            </li>
+            <li class="pipeline-step">
+              <span class="step-num mono">04</span>
+              <div>
+                <div class="step-title">Cross-Source Contradiction &amp; Stance Matrix (contradiction_detector.py)</div>
+                <p class="step-desc">Audits extracted factual claims for &gt;20% numeric divergence, temporal mismatches, and sentiment polarity conflicts to separate corroborated consensus from disputed claims.</p>
+              </div>
+            </li>
+            <li class="pipeline-step">
+              <span class="step-num mono">05</span>
+              <div>
+                <div class="step-title">Grounded Synthesis &amp; Multi-Format Export (synthesizer.py + report_engine.py)</div>
+                <p class="step-desc">Produces inline-cited Markdown, XSS-escaped HTML, structured JSON, BibTeX (@article / @misc), and ZIP bundles with zero external runtime dependencies.</p>
+              </div>
+            </li>
+          </ol>
+        </article>
+      </section>
+
+      <!-- TAB 5: MCP Hub (Accurate 7 Tools) -->
+      <section id="panel-mcp" class="tab-panel" role="tabpanel" aria-labelledby="tab-mcp">
+        <div class="split-grid">
+          <article class="card">
+            <div class="card-head">
+              <h2>MCP Stdio Client Configuration</h2>
+              <span class="pill pill-emerald mono">JSON-RPC 2.0</span>
+            </div>
+            <p style="margin:0 0 10px;font-size:0.86rem;color:var(--ink-secondary);">
+              Zero third-party API keys required. Connects directly over stdio via the local binary.
+            </p>
+            <pre id="mcpConfigBlock" class="code-block mono"></pre>
+            <div class="export-row">
+              <button type="button" id="copyMcpBtn" class="btn-primary">Copy MCP JSON</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <h2>7 Registered MCP Tools</h2>
+              <span class="pill mono">Protocol 2024-11-05</span>
+            </div>
+            <ul id="mcpToolList" class="list-clean"></ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- Single Clean Open-Access Support Strip -->
+    <section class="support-bar" aria-label="Open Access Community Support">
+      <div class="support-copy">
+        <strong>100% Free &amp; Open Access</strong> — Zero paywalls, zero telemetry, full local execution. Support continued engineering:
+      </div>
+      <div class="support-actions">
+        <a
+          class="btn-link btn-primary"
+          href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+          target="_blank"
+          rel="noopener noreferrer"
+        >☕ Buy Us a Coffee</a>
+        <button
+          type="button"
+          id="copySolanaBtn"
+          class="btn-subtle mono"
+          data-solana="GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+        >◎ Copy Solana Tip</button>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div>Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform</div>
+      <div class="footer-links">
+        <a href="https://github.com/1nc0gn30/deepsearch-research-agent" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/deepsearch-engine.js"></script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+      const SOLANA_WALLET = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+      const MCP_TOOLS = [
+        { name: 'deepsearch_plan', desc: 'Decompose any topic into prioritized angles and Boolean/adversarial sub-queries.' },
+        { name: 'deepsearch_execute', desc: 'Execute the real 5-stage synthesis pipeline (Markdown, HTML, JSON, or BibTeX).' },
+        { name: 'deepsearch_fetch', desc: 'SSRF-guarded HTTP/HTTPS fetch and clean HTML-to-Markdown extraction.' },
+        { name: 'deepsearch_corroborate', desc: 'Cross-validate claims and stance consensus across multiple text sources.' },
+        { name: 'deepsearch_evidence_graph', desc: 'Build citation DAGs, detect DFS circular reporting loops, and compute TrustRank authority.' },
+        { name: 'deepsearch_export_report', desc: 'Render structured dossiers into Markdown, XSS-safe HTML, JSON, or BibTeX.' },
+        { name: 'deepsearch_get_diagnostics', desc: 'Inspect runtime version, OS capabilities, and registered MCP tools.' }
+      ];
+
+      let currentReport = null;
+      let daemonOnline = false;
+      let selectedNodeId = null;
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function clearEl(node) {
+        if (!node) return;
+        while (node.firstChild) node.removeChild(node.firstChild);
+      }
+
+      function makeEl(tag, className, text) {
+        const n = document.createElement(tag);
+        if (className) n.className = className;
+        if (text !== undefined && text !== null) n.textContent = String(text);
+        return n;
+      }
+
+      function makeSvg(tag, attrs, text) {
+        const n = document.createElementNS(SVG_NS, tag);
+        if (attrs) {
+          Object.keys(attrs).forEach((k) => n.setAttribute(k, String(attrs[k])));
+        }
+        if (text !== undefined && text !== null) n.textContent = String(text);
+        return n;
+      }
+
+      function cssVar(name, fallback) {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+      }
+
+      function applyTheme(mode) {
+        const next = mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('deepsearch_theme', next); } catch (e) {}
+        const toggleBtn = $('themeToggleBtn');
+        if (toggleBtn) {
+          toggleBtn.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+        if (currentReport) {
+          renderGraph(currentReport);
+          renderCharts(currentReport);
+        }
+      }
+
+      function setStatus(msg) {
+        const el = $('executionStatus');
+        if (el) el.textContent = msg;
+      }
+
+      function safeHref(url) {
+        const s = String(url || '').trim();
+        return /^https?:\/\//i.test(s) ? s : '#';
+      }
+
+      async function probeDaemonHealth() {
+        const badge = $('daemonStatusBadge');
+        try {
+          const resp = await fetch('/health', { method: 'GET', cache: 'no-store' });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && (data.status === 'ok' || data.healthy === true)) {
+              daemonOnline = true;
+              if (badge) {
+                badge.textContent = `DAEMON LIVE :${data.port || 8122}`;
+                badge.className = 'pill pill-emerald mono';
+              }
+              return true;
+            }
+          }
+        } catch (e) {}
+        daemonOnline = false;
+        if (badge) {
+          badge.textContent = 'IN-BROWSER ENGINE';
+          badge.className = 'pill pill-gold mono';
+        }
+        return false;
+      }
+
+      function renderMcpHub() {
+        const cfg = {
+          mcpServers: {
+            'deepsearch-research-agent': {
+              command: '/usr/local/bin/deepsearch-research-agent',
+              args: ['mcp'],
+              alwaysAllow: MCP_TOOLS.map((t) => t.name)
+            }
+          }
+        };
+        const block = $('mcpConfigBlock');
+        if (block) block.textContent = JSON.stringify(cfg, null, 2);
+
+        const list = $('mcpToolList');
+        if (list) {
+          clearEl(list);
+          MCP_TOOLS.forEach((tool) => {
+            const li = document.createElement('li');
+            const strong = makeEl('strong', 'mono', tool.name);
+            li.appendChild(strong);
+            li.appendChild(document.createTextNode(' — ' + tool.desc));
+            list.appendChild(li);
+          });
+        }
+      }
+
+      function renderSubQueries(plan) {
+        const container = $('subQueriesContainer');
+        const badge = $('subQueryCountBadge');
+        const queries = (plan && plan.sub_queries) || [];
+        if (badge) badge.textContent = `${queries.length} queries`;
+        if (!container) return;
+        clearEl(container);
+        queries.forEach((q) => {
+          const item = makeEl('div', 'query-item');
+          const top = makeEl('div', 'persp-meta');
+          top.appendChild(makeEl('span', 'pill pill-gold mono', q.id || 'Q'));
+          top.appendChild(makeEl('span', 'pill mono', String(q.priority || 'high').toUpperCase()));
+          top.appendChild(makeEl('span', 'pill', q.angle || 'Angle'));
+          item.appendChild(top);
+          item.appendChild(makeEl('code', 'mono', q.query || ''));
+          if (q.rationale) {
+            item.appendChild(makeEl('div', 'persp-body', q.rationale));
+          }
+          container.appendChild(item);
+        });
+      }
+
+      function renderSourcesTable(report, filterText) {
+        const tbody = $('sourcesTableBody');
+        if (!tbody) return;
+        clearEl(tbody);
+
+        const needle = String(filterText || '').trim().toLowerCase();
+        const evalMap = {};
+        const evals = (report.corroboration_matrix && report.corroboration_matrix.source_evaluations) || [];
+        evals.forEach((ev) => {
+          evalMap[String(ev.source_id)] = ev.stance || 'support';
+        });
+
+        const sources = (report.sources || []).filter((s) => {
+          if (!needle) return true;
+          const stance = evalMap[String(s.source_id)] || 'support';
+          const hay = `${s.title || ''} ${s.domain || ''} ${s.url || ''} ${stance}`.toLowerCase();
+          return hay.includes(needle);
+        });
+
+        if (!sources.length) {
+          const tr = document.createElement('tr');
+          const td = makeEl('td', '', 'No sources match the current filter.');
+          td.setAttribute('colspan', '4');
+          tr.appendChild(td);
+          tbody.appendChild(tr);
+          return;
+        }
+
+        sources.forEach((s) => {
+          const tr = document.createElement('tr');
+          tr.appendChild(makeEl('td', 'mono', `[${s.source_id}]`));
+
+          const titleTd = document.createElement('td');
+          const link = document.createElement('a');
+          link.setAttribute('href', safeHref(s.url));
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+          link.textContent = s.title || s.url || 'Source';
+          titleTd.appendChild(link);
+          titleTd.appendChild(makeEl('div', 'kpi-sub mono', s.domain || ''));
+          tr.appendChild(titleTd);
+
+          tr.appendChild(makeEl('td', 'mono', `${Number(s.credibility_score || 0).toFixed(1)}/100`));
+
+          const stance = evalMap[String(s.source_id)] || 'support';
+          const stanceTd = document.createElement('td');
+          const pillCls = stance === 'refute' ? 'pill pill-crimson mono' : stance === 'neutral' ? 'pill pill-gold mono' : 'pill pill-emerald mono';
+          stanceTd.appendChild(makeEl('span', pillCls, stance.toUpperCase()));
+          tr.appendChild(stanceTd);
+          tbody.appendChild(tr);
+        });
+      }
+
+      function inspectNode(graph, nodeId) {
+        selectedNodeId = nodeId;
+        const badge = $('selectedNodeBadge');
+        const body = $('lineageInspectorBody');
+        if (!body || !graph) return;
+        const nodes = graph.nodes || [];
+        const node = nodes.find((n) => n.node_id === nodeId);
+        if (!node) return;
+        if (badge) badge.textContent = node.node_id;
+
+        const trace = window.DeepSearchEngine.traceNodeLineage(graph, nodeId);
+        clearEl(body);
+
+        const title = makeEl('div', 'step-title', node.label || node.node_id);
+        body.appendChild(title);
+
+        const metaRow = makeEl('div', 'persp-meta');
+        metaRow.appendChild(makeEl('span', 'pill pill-gold mono', `TYPE: ${node.node_type}`));
+        metaRow.appendChild(makeEl('span', 'pill pill-cyan mono', `AUTHORITY: ${Number(node.authority_score || 0).toFixed(1)}`));
+        metaRow.appendChild(
+          makeEl(
+            'span',
+            trace.is_grounded ? 'pill pill-emerald mono' : 'pill pill-crimson mono',
+            trace.is_grounded ? 'GROUNDED IN PRIMARY SOURCE' : 'UNGROUNDED / CYCLE'
+          )
+        );
+        body.appendChild(metaRow);
+
+        const pHead = makeEl('div', 'kpi-label', 'Upstream Provenance Paths');
+        pHead.style.marginTop = '10px';
+        body.appendChild(pHead);
+
+        const ul = makeEl('ul', 'list-clean');
+        (trace.paths || []).forEach((p) => {
+          ul.appendChild(makeEl('li', 'mono', p.join(' ← ')));
+        });
+        body.appendChild(ul);
+      }
+
+      function renderGraph(report) {
+        const host = $('graphSvgHost');
+        const btnWrap = $('graphNodeButtons');
+        const badge = $('graphIntegrityBadge');
+        if (!host || !report || !report.evidence_graph) return;
+
+        const graph = report.evidence_graph;
+        const nodes = graph.nodes || [];
+        const edges = graph.edges || [];
+        const cycles = graph.circular_cycles || [];
+
+        if (badge) {
+          badge.textContent = cycles.length ? `${cycles.length} CYCLE(S) FLAGGED` : 'VERIFIED DAG · 0 CYCLES';
+          badge.className = cycles.length ? 'pill pill-crimson mono' : 'pill pill-emerald mono';
+        }
+
+        const W = 760;
+        const sources = nodes.filter((n) => n.node_type === 'primary_source' || String(n.node_id).startsWith('source_'));
+        const insights = nodes.filter((n) => !sources.includes(n) && n.node_type !== 'metric');
+        const metricsNodes = nodes.filter((n) => n.node_type === 'metric');
+        const tiers = [sources, insights, metricsNodes].filter((t) => t.length > 0);
+        const H = tiers.length >= 3 ? 360 : 280;
+        const svg = makeSvg('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Citation Provenance Graph' });
+
+        const bg = cssVar('--bg-card', '#FFFFFF');
+        const gridCol = cssVar('--chart-grid', '#CBD5E1');
+        const textCol = cssVar('--chart-label', '#0F172A');
+        const goldCol = cssVar('--accent-primary', '#7A5808');
+        const emCol = cssVar('--accent-emerald', '#047857');
+        const cyCol = cssVar('--accent-cyan', '#0369A1');
+
+        svg.appendChild(makeSvg('rect', { x: 0, y: 0, width: W, height: H, rx: 10, fill: bg }));
+
+        const pos = {};
+        const boxDims = {};
+        tiers.forEach((tier, tIdx) => {
+          const y = tiers.length === 1 ? H / 2 : 66 + (tIdx * (H - 132)) / (tiers.length - 1);
+          const count = tier.length;
+          const slotW = (W - 40) / Math.max(1, count);
+          const bw = Math.min(126, Math.max(82, Math.floor(slotW - 14)));
+          tier.forEach((n, idx) => {
+            const x = 20 + slotW * (idx + 0.5);
+            pos[n.node_id] = { x, y };
+            boxDims[n.node_id] = bw;
+          });
+        });
+
+        edges.forEach((e) => {
+          const p1 = pos[e.source_id];
+          const p2 = pos[e.target_id];
+          if (!p1 || !p2) return;
+          svg.appendChild(makeSvg('line', {
+            x1: p1.x, y1: p1.y + 22, x2: p2.x, y2: p2.y - 22,
+            stroke: gridCol, 'stroke-width': 1.8
+          }));
+        });
+
+        nodes.forEach((n) => {
+          const p = pos[n.node_id];
+          if (!p) return;
+          const bw = boxDims[n.node_id] || 112;
+          const isSrc = n.node_type === 'primary_source' || String(n.node_id).startsWith('source_');
+          const isMet = n.node_type === 'metric';
+          const stroke = isSrc ? emCol : (n.node_id === selectedNodeId ? goldCol : (isMet ? goldCol : cyCol));
+          const g = makeSvg('g', { style: 'cursor:pointer;' });
+          g.addEventListener('click', () => inspectNode(graph, n.node_id));
+          g.appendChild(makeSvg('rect', {
+            x: p.x - bw / 2, y: p.y - 22, width: bw, height: 44, rx: 8,
+            fill: bg, stroke: stroke, 'stroke-width': 2
+          }));
+          const maxChars = Math.max(9, Math.floor(bw / 7.6));
+          const shortLbl = String(n.label || n.node_id).slice(0, maxChars);
+          g.appendChild(makeSvg('text', {
+            x: p.x, y: p.y - 4, 'text-anchor': 'middle', fill: stroke,
+            'font-size': 9.5, 'font-weight': 700
+          }, isSrc ? 'SOURCE' : (isMet ? 'METRIC' : 'INSIGHT')));
+          g.appendChild(makeSvg('text', {
+            x: p.x, y: p.y + 13, 'text-anchor': 'middle', fill: textCol,
+            'font-size': 10, 'font-weight': 600
+          }, shortLbl));
+          svg.appendChild(g);
+        });
+
+        clearEl(host);
+        host.appendChild(svg);
+
+        if (btnWrap) {
+          clearEl(btnWrap);
+          nodes.forEach((n) => {
+            const b = makeEl('button', 'btn-subtle mono', `${n.node_id} (${Number(n.authority_score || 0).toFixed(0)})`);
+            b.type = 'button';
+            b.addEventListener('click', () => inspectNode(graph, n.node_id));
+            btnWrap.appendChild(b);
+          });
+        }
+
+        if (insights.length) {
+          inspectNode(graph, selectedNodeId && pos[selectedNodeId] ? selectedNodeId : insights[0].node_id);
+        } else if (nodes.length) {
+          inspectNode(graph, nodes[0].node_id);
+        }
+      }
+
+      function renderCharts(report) {
+        const barHost = $('barChartHost');
+        const radarHost = $('radarChartHost');
+        if (!barHost || !radarHost || !report) return;
+
+        const bg = cssVar('--bg-card', '#FFFFFF');
+        const grid = cssVar('--chart-grid', '#CBD5E1');
+        const labelCol = cssVar('--chart-label', '#0F172A');
+        const gold = cssVar('--accent-primary', '#7A5808');
+        const em = cssVar('--accent-emerald', '#047857');
+        const cy = cssVar('--accent-cyan', '#0369A1');
+
+        // 1. Source Credibility Bar Chart
+        const sources = (report.sources || []).slice(0, 6);
+        const bw = 520, bh = 250;
+        const barSvg = makeSvg('svg', { viewBox: `0 0 ${bw} ${bh}`, role: 'img', 'aria-label': 'Source Credibility Bar Chart' });
+        barSvg.appendChild(makeSvg('rect', { x: 0, y: 0, width: bw, height: bh, rx: 10, fill: bg }));
+        barSvg.appendChild(makeSvg('text', { x: 16, y: 26, fill: labelCol, 'font-size': 13, 'font-weight': 700 }, 'Domain Credibility Index (α_cred)'));
+        const left = 148, chartW = bw - left - 54;
+        sources.forEach((s, idx) => {
+          const y = 44 + idx * 32;
+          const val = Math.max(10, Math.min(100, Number(s.credibility_score || 80)));
+          const w = Math.round((val / 100) * chartW);
+          const col = idx % 2 === 0 ? gold : em;
+          barSvg.appendChild(makeSvg('text', { x: left - 10, y: y + 16, 'text-anchor': 'end', fill: labelCol, 'font-size': 11, 'font-weight': 600 }, String(s.domain || `Source ${idx + 1}`).slice(0, 18)));
+          barSvg.appendChild(makeSvg('rect', { x: left, y: y + 2, width: chartW, height: 20, rx: 4, fill: grid, opacity: 0.35 }));
+          barSvg.appendChild(makeSvg('rect', { x: left, y: y + 2, width: w, height: 20, rx: 4, fill: col }));
+          barSvg.appendChild(makeSvg('text', { x: left + chartW + 8, y: y + 16, fill: labelCol, 'font-size': 11, 'font-weight': 700 }, `${val.toFixed(0)}`));
+        });
+        clearEl(barHost);
+        barHost.appendChild(barSvg);
+
+        // 2. Multi-Dimensional Quality Radar Chart
+        const m = report.metrics || {};
+        const dims = [
+          ['Credibility', Number(m.avg_source_credibility || 88)],
+          ['Consensus', Math.round((Number(m.confidence_score || 0.85)) * 100)],
+          ['Verification', Math.round((Number(m.verification_rate || 0.85)) * 100)],
+          ['DAG Integrity', (m.circular_cycles_count || 0) === 0 ? 100 : 45],
+          ['Breadth', Math.min(100, ((report.sources || []).length / 6) * 100)]
+        ];
+        const rw = 420, rh = 270, cx = 210, cyPos = 146, rad = 82;
+        const rSvg = makeSvg('svg', { viewBox: `0 0 ${rw} ${rh}`, role: 'img', 'aria-label': 'Research Quality Radar Chart' });
+        rSvg.appendChild(makeSvg('rect', { x: 0, y: 0, width: rw, height: rh, rx: 10, fill: bg }));
+        rSvg.appendChild(makeSvg('text', { x: 16, y: 26, fill: labelCol, 'font-size': 13, 'font-weight': 700 }, 'DeepSearch Multi-Dimensional Synthesis'));
+
+        [0.33, 0.66, 1.0].forEach((lvl) => {
+          const pts = dims.map((_, i) => {
+            const a = (2 * Math.PI * i) / dims.length - Math.PI / 2;
+            return `${(cx + rad * lvl * Math.cos(a)).toFixed(1)},${(cyPos + rad * lvl * Math.sin(a)).toFixed(1)}`;
+          });
+          rSvg.appendChild(makeSvg('polygon', { points: pts.join(' '), fill: 'none', stroke: grid, 'stroke-width': 1 }));
+        });
+
+        const dataPts = [];
+        dims.forEach(([lbl, val], i) => {
+          const a = (2 * Math.PI * i) / dims.length - Math.PI / 2;
+          const ax = cx + rad * Math.cos(a);
+          const ay = cyPos + rad * Math.sin(a);
+          rSvg.appendChild(makeSvg('line', { x1: cx, y1: cyPos, x2: ax.toFixed(1), y2: ay.toFixed(1), stroke: grid, 'stroke-width': 1 }));
+
+          const norm = Math.max(0.1, Math.min(1.0, val / 100));
+          dataPts.push(`${(cx + rad * norm * Math.cos(a)).toFixed(1)},${(cyPos + rad * norm * Math.sin(a)).toFixed(1)}`);
+
+          const lx = cx + (rad + 22) * Math.cos(a);
+          const ly = cyPos + (rad + 18) * Math.sin(a);
+          const anchor = Math.cos(a) > 0.25 ? 'start' : Math.cos(a) < -0.25 ? 'end' : 'middle';
+          rSvg.appendChild(makeSvg('text', {
+            x: lx.toFixed(1), y: ly.toFixed(1), 'text-anchor': anchor,
+            fill: labelCol, 'font-size': 11, 'font-weight': 700
+          }, lbl));
+        });
+
+        rSvg.appendChild(makeSvg('polygon', { points: dataPts.join(' '), fill: cy, 'fill-opacity': 0.22, stroke: cy, 'stroke-width': 2.5 }));
+        clearEl(radarHost);
+        radarHost.appendChild(rSvg);
+      }
+
+      function renderReport(report) {
+        currentReport = report;
+        const m = report.metrics || {};
+        const confPct = Math.round((Number(m.confidence_score) || 0) * 100);
+
+        $('kpiConsensus').textContent = `${confPct}%`;
+        $('kpiRating').textContent = m.consensus_rating || 'Corroborated';
+        $('kpiSources').textContent = String(m.sources_analyzed || (report.sources || []).length);
+        $('kpiCred').textContent = `Mean α_cred ${Number(m.avg_source_credibility || 85).toFixed(1)}/100`;
+        const g = report.evidence_graph || { total_nodes: 0, total_edges: 0, circular_cycles: [] };
+        $('kpiGraph').textContent = `${g.total_nodes || 0}N / ${g.total_edges || 0}E`;
+        $('kpiCycles').textContent = (g.circular_cycles || []).length === 0 ? '0 circular loops' : `${g.circular_cycles.length} loop(s) flagged`;
+        $('kpiMode').textContent = daemonOnline ? 'LIVE :8122' : 'OFFLINE JS';
+        $('kpiDuration').textContent = `${Number(m.duration_seconds || 0.01).toFixed(3)}s`;
+
+        $('reportHeading').textContent = `Dossier: ${report.topic}`;
+        $('reportExecId').textContent = report.execution_id || 'run';
+        $('executiveSummary').textContent = report.executive_summary || '';
+
+        const kfList = $('keyFindingsList');
+        clearEl(kfList);
+        (report.key_findings || []).forEach((f) => {
+          kfList.appendChild(makeEl('li', '', f));
+        });
+
+        const pCont = $('perspectivesContainer');
+        clearEl(pCont);
+        const perspectives = report.perspectives || [];
+        $('perspCountBadge').textContent = `${perspectives.length} angles`;
+        perspectives.forEach((p) => {
+          const card = makeEl('div', 'persp-item');
+          card.appendChild(makeEl('h3', '', p.angle || 'Perspective'));
+          const meta = makeEl('div', 'persp-meta');
+          meta.appendChild(makeEl('span', 'pill pill-gold mono', p.perspective || 'Analytical'));
+          if (p.consensus_level) {
+            meta.appendChild(makeEl('span', 'pill pill-emerald mono', `${p.consensus_level} (${Number(p.consensus_score || 0).toFixed(1)}%)`));
+          }
+          card.appendChild(meta);
+          card.appendChild(makeEl('p', 'persp-body', String(p.findings || '').replace(/^###[^\n]*\n+/m, '')));
+          pCont.appendChild(card);
+        });
+
+        renderSubQueries(report.plan || window.DeepSearchEngine.decomposeTopic(report.topic, report.depth));
+        renderSourcesTable(report, $('sourceFilterInput') ? $('sourceFilterInput').value : '');
+        renderGraph(report);
+        renderCharts(report);
+      }
+
+      async function executeResearch() {
+        const topic = $('researchQueryInput').value.trim();
+        const depth = $('depthSelect').value;
+        const maxSources = parseInt($('maxSourcesSelect').value, 10) || 5;
+        if (!topic) {
+          setStatus('Enter a research topic to begin.');
+          return;
+        }
+        setStatus(`Executing 5-stage pipeline for "${topic}" (${depth})...`);
+
+        if (daemonOnline) {
+          try {
+            const resp = await fetch('/api/research', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ topic, depth, format: 'json', max_sources: maxSources })
+            });
+            if (resp.ok) {
+              const data = await resp.json();
+              renderReport(data);
+              setStatus(`Completed live :8122 5-stage synthesis for "${topic}" (${data.metrics.sources_analyzed} sources, ${data.metrics.circular_cycles_count} cycles).`);
+              return;
+            }
+          } catch (e) {}
+        }
+
+        const localReport = window.DeepSearchEngine.runLocalSynthesis(topic, depth, maxSources);
+        renderReport(localReport);
+        setStatus(`Completed in-browser deterministic synthesis for "${topic}" (${localReport.metrics.sources_analyzed} sources, 0 cycles).`);
+      }
+
+      async function regenerateSubQueries() {
+        const topic = $('researchQueryInput').value.trim();
+        const depth = $('depthSelect').value;
+        if (!topic) return;
+        setStatus(`Decomposing Tree-of-Thought sub-queries for "${topic}"...`);
+
+        if (daemonOnline) {
+          try {
+            const resp = await fetch('/api/plan', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ topic, depth })
+            });
+            if (resp.ok) {
+              const plan = await resp.json();
+              renderSubQueries(plan);
+              setStatus(`Generated ${plan.sub_queries.length} sub-queries via live /api/plan.`);
+              return;
+            }
+          } catch (e) {}
+        }
+
+        const plan = window.DeepSearchEngine.decomposeTopic(topic, depth);
+        renderSubQueries(plan);
+        setStatus(`Generated ${plan.sub_queries.length} sub-queries via local ToT planner.`);
+      }
+
+      async function downloadZipBundle() {
+        if (!currentReport) return;
+        if (daemonOnline) {
+          try {
+            const resp = await fetch('/api/export-bundle', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ report: currentReport, topic: currentReport.topic })
+            });
+            if (resp.ok) {
+              const blob = await resp.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `deepsearch-${currentReport.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}-bundle.zip`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+              setStatus('Downloaded ZIP research bundle (Markdown, HTML, JSON, BibTeX) from :8122.');
+              return;
+            }
+          } catch (e) {}
+        }
+        // Static fallback: download full JSON dossier
+        downloadJson();
+      }
+
+      function downloadJson() {
+        if (!currentReport) return;
+        const jsonText = window.DeepSearchEngine.exportJson(currentReport);
+        const blob = new Blob([jsonText], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `deepsearch-${currentReport.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        setStatus('Downloaded structured JSON research dossier.');
+      }
+
+      function copyToClipboard(text, okMsg) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => setStatus(okMsg)).catch(() => setStatus(okMsg));
+        } else {
+          setStatus(okMsg);
+        }
+      }
+
+      function bindTabs() {
+        const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+        const panels = Array.from(document.querySelectorAll('.tab-panel'));
+        tabs.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('aria-controls');
+            tabs.forEach((t) => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
+            panels.forEach((p) => p.classList.toggle('active', p.id === targetId));
+            if (currentReport && (targetId === 'panel-graph' || targetId === 'panel-analytics')) {
+              renderGraph(currentReport);
+              renderCharts(currentReport);
+            }
+          });
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        applyTheme(curTheme);
+        bindTabs();
+        renderMcpHub();
+
+        const tutorial = window.createSovereignTutorial && window.createSovereignTutorial({
+          toolId: 'deepsearch-v26',
+          toolName: 'DeepSearch Research Studio v2.6.0',
+          tagline: '5-Stage Tree-of-Thought Research & Citation Provenance',
+          steps: [
+            { title: 'Decompose Any Topic', desc: 'Enter any custom hypothesis and select Quick (3), Deep (5), or Exhaustive (8) angles.' },
+            { title: 'Inspect Citation Provenance', desc: 'Open the Citation Graph tab and click any node to trace root sources and DFS cycle checks.' },
+            { title: 'Export Anywhere', desc: 'Copy grounded Markdown or BibTeX, download JSON, or pull a complete ZIP bundle from :8122.' }
+          ]
+        });
+
+        $('guideBtn').addEventListener('click', () => { if (tutorial) tutorial.open(); });
+        $('themeToggleBtn').addEventListener('click', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          applyTheme(isDark ? 'light' : 'dark');
+        });
+
+        window.addEventListener('message', (ev) => {
+          if (ev.data && (ev.data.type === 'zoth-theme' || ev.data.theme)) {
+            const t = ev.data.theme || ev.data.mode;
+            if (t === 'light' || t === 'dark') applyTheme(t);
+          }
+        });
+
+        document.querySelectorAll('.preset-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            $('researchQueryInput').value = btn.getAttribute('data-topic') || '';
+            executeResearch();
+          });
+        });
+
+        $('runResearchBtn').addEventListener('click', executeResearch);
+        $('regenPlanBtn').addEventListener('click', regenerateSubQueries);
+        $('researchQueryInput').addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') executeResearch();
+        });
+        $('sourceFilterInput').addEventListener('input', (ev) => {
+          if (currentReport) renderSourcesTable(currentReport, ev.target.value);
+        });
+
+        $('copyMdBtn').addEventListener('click', () => {
+          if (!currentReport) return;
+          copyToClipboard(window.DeepSearchEngine.exportMarkdown(currentReport), 'Copied Markdown research dossier to clipboard.');
+        });
+        $('copyBibBtn').addEventListener('click', () => {
+          if (!currentReport) return;
+          const bib = currentReport.bibtex || window.DeepSearchEngine.exportBibtex(currentReport);
+          copyToClipboard(bib, 'Copied BibTeX citations to clipboard.');
+        });
+        $('downloadJsonBtn').addEventListener('click', downloadJson);
+        $('downloadZipBtn').addEventListener('click', downloadZipBundle);
+        $('copyMcpBtn').addEventListener('click', () => {
+          copyToClipboard($('mcpConfigBlock').textContent, 'Copied MCP JSON config to clipboard.');
+        });
+        $('copySolanaBtn').addEventListener('click', () => {
+          copyToClipboard(SOLANA_WALLET, `Copied Solana tip address: ${SOLANA_WALLET}`);
+        });
+
+        await probeDaemonHealth();
+        await executeResearch();
+      });
+    })();
+  </script>
+</body>
+</html>

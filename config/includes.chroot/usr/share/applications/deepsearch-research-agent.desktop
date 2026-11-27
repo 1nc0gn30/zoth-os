@@ -2,19 +2,16 @@
 Version=1.0
 Type=Application
 Name=DeepSearch Research Agent & Studio
-Comment=100% in-browser multi-source deep research agent with grounded inline citations, quantitative benchmark verification, research DAG brand med
+GenericName=Multi-Source Grounded Research Workstation
+Comment=Zero-dependency 5-stage Tree-of-Thought research agent with citation provenance graphs, contradiction detection, MCP server, and BibTeX exports.
 Exec=/usr/local/bin/deepsearch-research-agent desktop
-TryExec=/usr/local/bin/deepsearch-research-agent
-Icon=deepsearch-research-agent
+Icon=/opt/deepsearch-research-agent/public/icon.png
 Terminal=false
-Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
+Categories=Development;Science;Education;Network;X-Zoth-AI;
+Keywords=deepsearch;research;citations;bibtex;mcp;zothos;nullai;
 StartupNotify=true
-Actions=TUI;WebApp;
+Actions=TUI;
 
 [Desktop Action TUI]
-Name=Launch DeepSearch Research Agent & Studio Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "DeepSearch Research Agent & Studio TUI" -- /usr/local/bin/deepsearch-research-agent-tui
-
-[Desktop Action WebApp]
-Name=Open Local Web Workstation (:8122)
-Exec=xdg-open http://127.0.0.1:8122
+Name=Launch Braille Citation-DAG TUI
+Exec=konsole -- /usr/local/bin/deepsearch-research-agent-tui --once
