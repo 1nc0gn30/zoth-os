@@ -2,19 +2,20 @@
 Version=1.0
 Type=Application
 Name=HexStrike Security Arsenal
-Comment=Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.
-Exec=/usr/local/bin/hexstrike-arsenal desktop
+GenericName=Local-First Defensive & Red-Team Terminal
+Comment=156-tool security catalog, HTTP header & Shannon entropy auditor, loopback socket probe, and 8-tool MCP server
+Exec=/usr/local/bin/zoth-konsole --title "HexStrike Security Arsenal" -- /usr/local/bin/hexstrike-arsenal status
 TryExec=/usr/local/bin/hexstrike-arsenal
 Icon=hexstrike-arsenal
 Terminal=false
-Categories=X-Zoth-Security;Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Security;Security;Development;System;Network;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
-Name=Launch HexStrike Security Arsenal Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "HexStrike Security Arsenal TUI" -- /usr/local/bin/hexstrike-arsenal-tui
+Name=Open HexStrike Braille Monitor (TUI)
+Exec=/usr/local/bin/zoth-konsole --title "HexStrike Braille Monitor" -- /usr/local/bin/hexstrike-arsenal-tui --status
 
 [Desktop Action WebApp]
-Name=Open Local Web Workstation (:8138)
-Exec=xdg-open http://127.0.0.1:8138
+Name=Start Loopback Web Workstation (:8138)
+Exec=/usr/local/bin/zoth-konsole --title "HexStrike Daemon :8138" -- /usr/local/bin/hexstrike-arsenal serve --port 8138

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>HexStrike Security Arsenal v3.2 — Local-First Defensive &amp; Red-Team Workstation</title>
+  <meta name="description" content="Local-first 156-tool security catalog, shell-quoted command synthesizer, loopback TCP socket probe, HTTP security header auditor, Shannon entropy analyzer, and 8-tool MCP server.">
+  <meta name="author" content="Neal Frazier (@1nc0gn30) • Neal Frazier Tech">
+  <meta property="og:title" content="HexStrike Security Arsenal v3.2 — Local-First Security Workstation">
+  <meta property="og:description" content="156-tool security catalog, loopback TCP socket sweeper, HTTP header auditor, Shannon entropy analyzer, and 8 JSON-RPC 2.0 MCP tools.">
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/hexstrike-arsenal">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://zoth.nullai.tech/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="HexStrike Security Arsenal v3.2">
+  <meta name="twitter:description" content="Local-first security command synthesizer, loopback port probe, HTTP header auditor, and Shannon entropy analyzer.">
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        "name": "HexStrike Security Arsenal",
+        "softwareVersion": "3.2.0",
+        "url": "https://zoth.nullai.tech/tools/hexstrike-arsenal",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Linux, ZothOS, All modern browsers",
+        "description": "Local-first 156-tool security command synthesizer, loopback TCP socket probe, HTTP security header auditor, Shannon byte entropy analyzer, static repository auditor, and 8-tool MCP server.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier (@1nc0gn30)",
+          "url": "https://nullai.tech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does HexStrike Security Arsenal v3.2 provide?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "HexStrike Security Arsenal v3.2 pairs a 156-tool command synthesizer with real defensive modules: loopback TCP socket probing, live/offline HTTP security header auditing, Shannon byte entropy calculation, local repository static checks, and 8 JSON-RPC 2.0 MCP tools on 127.0.0.1:8138."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does HexStrike send scan telemetry to external servers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The standalone loopback daemon binds strictly to 127.0.0.1:8138, restricts live socket and header probes to loopback targets by default, and keeps all reports and intel files on local disk."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is HexStrike Security Arsenal free and open access?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All 156 catalog modules, CLI commands, MCP tools, and workstation tabs are 100% free with zero paywalls. Optional support is available via Buy Us a Coffee on Stripe or Solana Tip."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('theme');
+        var stored = localStorage.getItem('hexstrike-theme');
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        var mode = (q === 'light' || q === 'dark') ? q : (stored === 'light' || stored === 'dark' ? stored : (prefersLight ? 'light' : 'dark'));
+        document.documentElement.setAttribute('data-theme', mode);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root, html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #07090e;
+      --bg-grad: radial-gradient(circle at 14% 8%, rgba(185, 28, 28, 0.12) 0%, #07090e 58%);
+      --card: #0e131d;
+      --surface: #0a0e16;
+      --surface-input: #06080d;
+      --border: rgba(248, 250, 252, 0.12);
+      --border-accent: rgba(185, 28, 28, 0.45);
+      --gold: #E5C158;
+      --gold-bg: rgba(212, 175, 55, 0.14);
+      --crimson: #B91C1C;
+      --crimson-hover: #991B1B;
+      --crimson-text: #FCA5A5;
+      --crimson-bg: rgba(185, 28, 28, 0.2);
+      --emerald: #34D399;
+      --emerald-bg: rgba(16, 185, 129, 0.14);
+      --emerald-border: rgba(16, 185, 129, 0.45);
+      --cyan: #7DD3FC;
+      --cyan-bg: rgba(56, 189, 248, 0.14);
+      --cyan-border: rgba(56, 189, 248, 0.42);
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+      --chip-closed: #94A3B8;
+      --code-bg: #05070b;
+      --code-text: #7DD3FC;
+      --bar-bg: linear-gradient(90deg, rgba(185, 28, 28, 0.16), rgba(212, 175, 55, 0.12));
+      --bar-border: rgba(212, 175, 55, 0.34);
+      --shadow: 0 14px 36px rgba(0, 0, 0, 0.48);
+      --scroll-track: #0a0e16;
+      --scroll-thumb: #334155;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #FAF8F3;
+      --bg-grad: radial-gradient(circle at 14% 8%, rgba(153, 27, 27, 0.05) 0%, #FAF8F3 60%);
+      --card: #FFFFFF;
+      --surface: #F3EFE6;
+      --surface-input: #FFFFFF;
+      --border: rgba(24, 22, 18, 0.13);
+      --border-accent: rgba(153, 27, 27, 0.35);
+      --gold: #8A6500;
+      --gold-bg: rgba(138, 101, 0, 0.10);
+      --crimson: #991B1B;
+      --crimson-hover: #7F1D1D;
+      --crimson-text: #991B1B;
+      --crimson-bg: rgba(153, 27, 27, 0.09);
+      --emerald: #047857;
+      --emerald-bg: rgba(4, 120, 87, 0.10);
+      --emerald-border: rgba(4, 120, 87, 0.35);
+      --cyan: #0369A1;
+      --cyan-bg: rgba(3, 105, 161, 0.10);
+      --cyan-border: rgba(3, 105, 161, 0.35);
+      --text: #181612;
+      --muted: #475569;
+      --chip-closed: #475569;
+      --code-bg: #F3EFE6;
+      --code-text: #0F172A;
+      --bar-bg: linear-gradient(90deg, #F5EFE2, #F9F5EB);
+      --bar-border: rgba(138, 101, 0, 0.28);
+      --shadow: 0 8px 26px rgba(24, 22, 18, 0.07);
+      --scroll-track: #F3EFE6;
+      --scroll-thumb: #B6ADA0;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) var(--scroll-track); }
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-track { background: var(--scroll-track); }
+    *::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
+
+    html { background: var(--bg); }
+    body {
+      background: var(--bg-grad), var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .bar {
+      background: var(--bar-bg);
+      border-bottom: 1px solid var(--bar-border);
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .bar-left { color: var(--emerald); font-weight: 800; letter-spacing: 0.02em; }
+    .bar-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    .btn {
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12px;
+      font-family: var(--mono);
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+    .btn-gold { background: #D4AF37; color: #111827; border-color: #9A6F0B; }
+    .btn-gold:hover { background: #C29D28; }
+    .btn-crimson { background: var(--crimson); color: #FFFFFF; }
+    .btn-crimson:hover { background: var(--crimson-hover); }
+    .btn-sol { background: #047857; color: #FFFFFF; border-color: #065F46; }
+    .btn-sol:hover { background: #065F46; }
+    .btn-outline { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--gold); }
+    .btn-cyan { background: var(--cyan-bg); color: var(--cyan); border-color: var(--cyan-border); }
+    .btn-filter { min-height: 44px; padding: 8px 14px; background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-filter.active { background: var(--crimson); color: #FFFFFF; border-color: var(--crimson); }
+
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 20px 18px 44px; }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border-accent);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+    }
+    .badge-crimson { background: var(--crimson-bg); color: var(--crimson-text); border: 1px solid var(--border-accent); }
+    .badge-emerald { background: var(--emerald-bg); color: var(--emerald); border: 1px solid var(--emerald-border); }
+    .badge-gold { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--bar-border); }
+
+    h1 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); color: var(--text); margin-bottom: 6px; line-height: 1.25; }
+    h2 { font-size: 0.95rem; font-weight: 800; color: var(--gold); }
+    .subtitle { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(170px, 1fr) minmax(240px, 1.35fr) minmax(220px, 1.2fr) auto;
+      gap: 12px;
+      align-items: end;
+      background: var(--surface);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 1020px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+    label { display: block; font-size: 11px; color: var(--gold); font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.03em; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      background: var(--surface-input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+
+    .tabs-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      min-height: 44px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--crimson);
+      color: #FFFFFF;
+      border-color: var(--crimson);
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 960px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      box-shadow: var(--shadow);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 13px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .table-wrap { overflow-x: auto; max-height: 310px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; background: var(--surface); position: sticky; top: 0; z-index: 1; }
+    tbody tr.clickable:hover { background: var(--crimson-bg); cursor: pointer; }
+
+    .port-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .port-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+    }
+    .port-chip.open {
+      border-color: var(--emerald-border);
+      background: var(--emerald-bg);
+    }
+    .port-num { font-weight: 800; color: var(--text); }
+    .port-chip.open .port-num { color: var(--emerald); }
+    .port-state { font-size: 11px; margin-top: 3px; color: var(--chip-closed); font-weight: 700; }
+    .port-chip.open .port-state { color: var(--emerald); }
+
+    .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    .metric-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px; }
+    .metric-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .metric-val { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-top: 4px; }
+
+    .muted { color: var(--muted); font-size: 11.5px; }
+    .status-pass { color: var(--emerald); font-weight: 800; }
+    .status-miss { color: var(--crimson-text); font-weight: 800; }
+
+    footer {
+      max-width: 1320px;
+      margin: 22px auto 0;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    footer a { color: var(--gold); font-weight: 700; text-decoration: underline; }
+    footer code { background: var(--surface); color: var(--text); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <div class="bar-left">✦ 100% FREE &amp; OPEN ACCESS · HEXSTRIKE ARSENAL v3.2 · LOOPBACK 127.0.0.1:8138</div>
+    <div class="bar-actions">
+      <button id="btnThemeToggle" type="button" class="btn btn-outline" aria-label="Toggle Light and Dark Theme">☀ Light / Dark</button>
+      <a class="btn btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <a class="btn btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK">◎ Solana Tip</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="badges">
+        <span class="badge badge-crimson">156-TOOL CATALOG</span>
+        <span class="badge badge-emerald">LOOPBACK TCP PROBE</span>
+        <span class="badge badge-gold">8 MCP TOOLS · HEADERS &amp; ENTROPY</span>
+      </div>
+      <h1>HexStrike Security Arsenal Workstation</h1>
+      <p class="subtitle">
+        Local-first defensive and penetration audit console: shell-quoted command synthesis across 156 modules, loopback-only TCP socket probing, live/offline HTTP security header grading, and Shannon byte entropy inspection.
+      </p>
+
+      <div class="controls">
+        <div>
+          <label for="targetInput">Loopback / Scoped Target</label>
+          <input id="targetInput" type="text" value="127.0.0.1" autocomplete="off" />
+        </div>
+        <div>
+          <label for="toolSelect">Security Module (156 Loaded)</label>
+          <select id="toolSelect">
+            <option value="nmap">nmap — Nmap Network Scan</option>
+          </select>
+        </div>
+        <div>
+          <label for="portsInput">Loopback TCP Ports (max 64)</label>
+          <input id="portsInput" type="text" value="22,80,443,3000,8094,8138,8787,11434" autocomplete="off" />
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnRunStrike" type="button" class="btn btn-crimson">⚡ Synthesize &amp; Sweep</button>
+          <button id="btnFilterScore" type="button" class="btn btn-cyan">★ Top 10/10</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs-bar" role="tablist" aria-label="Workstation Panels">
+      <button type="button" class="tab-btn active" data-tab="overview" role="tab" aria-selected="true">⚡ Socket Sweep &amp; Catalog</button>
+      <button type="button" class="tab-btn" data-tab="headers" role="tab" aria-selected="false">🛡️ HTTP Header Auditor</button>
+      <button type="button" class="tab-btn" data-tab="entropy" role="tab" aria-selected="false">🔬 Shannon Entropy Analyzer</button>
+    </nav>
+
+    <!-- TAB 1: Overview (Command + Socket Sweep + CVE Matrix + 156 Catalog) -->
+    <div id="pane-overview" class="tab-pane active">
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-header">
+            <h2>⚡ Synthesized Command &amp; Loopback TCP Probe</h2>
+            <span id="scanBadge" class="badge badge-emerald">ENCLAVE READY</span>
+          </div>
+          <pre id="cmdBox">$ nmap -sV -sC -- 127.0.0.1</pre>
+          <div style="margin-top: 14px;">
+            <div class="muted" style="margin-bottom: 6px;">
+              Loopback TCP Probe Telemetry (<span id="scanSummary">Probing 127.0.0.1...</span>):
+            </div>
+            <div id="portGrid" class="port-grid"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>🔥 Reference CVE &amp; EPSS Matrix</h2>
+            <span class="badge badge-crimson">LOCAL ENCLAVE DB</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>CVE ID</th>
+                  <th>CVSS</th>
+                  <th>EPSS</th>
+                  <th>Vulnerability &amp; Remediation</th>
+                </tr>
+              </thead>
+              <tbody id="cveBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>⚔️ HexStrike Security Catalog (<span id="toolCount">156</span> Verified Tools)</h2>
+          <div id="categoryFilters" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-filter active" data-cat="" data-min="1">All Tools</button>
+            <button type="button" class="btn btn-filter" data-cat="Recon" data-min="1">Recon</button>
+            <button type="button" class="btn btn-filter" data-cat="Web" data-min="1">Web</button>
+            <button type="button" class="btn btn-filter" data-cat="Exploit" data-min="1">Exploit</button>
+            <button type="button" class="btn btn-filter" data-cat="" data-min="10">Score 10/10</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Score</th>
+                <th>Tags</th>
+              </tr>
+            </thead>
+            <tbody id="arsenalBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 2: HTTP Header Auditor -->
+    <div id="pane-headers" class="tab-pane">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>🛡️ Defensive HTTP Security Header Auditor</h2>
+          <span id="headerGradeBadge" class="badge badge-gold">READY</span>
+        </div>
+        <p class="subtitle" style="margin-bottom: 12px;">
+          Inspect live loopback endpoints (<code>http://127.0.0.1:*</code>) or paste raw HTTP response headers from any server for honest offline scoring across HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:12px;">
+          <div>
+            <label for="headerUrlInput">Loopback URL to Probe</label>
+            <input id="headerUrlInput" type="text" value="http://127.0.0.1:8138/" />
+          </div>
+          <button id="btnAuditHeadersUrl" type="button" class="btn btn-crimson">Probe Loopback Headers</button>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label for="rawHeadersInput">Or Paste Raw HTTP Response Headers (Offline Mode)</label>
+          <textarea id="rawHeadersInput" placeholder="Strict-Transport-Security: max-age=31536000; includeSubDomains&#10;Content-Security-Policy: default-src 'self'&#10;X-Content-Type-Options: nosniff"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <button id="btnAuditHeadersRaw" type="button" class="btn btn-cyan">Grade Pasted Headers</button>
+        </div>
+        <div id="headerSummary" class="muted" style="margin-bottom:8px;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Header</th>
+                <th>Status</th>
+                <th>Points</th>
+                <th>Observed Value</th>
+              </tr>
+            </thead>
+            <tbody id="headerAuditBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 3: Shannon Entropy Analyzer -->
+    <div id="pane-entropy" class="tab-pane">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>🔬 Shannon Byte Entropy Analyzer (0.0 – 8.0 bits/byte)</h2>
+          <span id="entropyClassBadge" class="badge badge-emerald">READY</span>
+        </div>
+        <p class="subtitle" style="margin-bottom: 12px;">
+          Calculate exact Shannon entropy H(X) = -Σ p(b) log₂ p(b) on UTF-8 text or hexadecimal payloads to identify structured configs vs packed, compressed, or high-entropy secrets.
+        </p>
+        <div style="margin-bottom:12px;">
+          <label for="entropyInput">Input Payload (UTF-8 or Hex Bytes)</label>
+          <textarea id="entropyInput">HexStrike v3.2 defensive entropy baseline sample — 127.0.0.1:8138</textarea>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+          <button id="btnCalcEntropy" type="button" class="btn btn-crimson">Compute Shannon Entropy</button>
+          <button id="btnCalcEntropyHex" type="button" class="btn btn-cyan">Compute as Hex Bytes</button>
+        </div>
+        <div id="entropyMetrics" class="metric-row"></div>
+        <pre id="entropyDetail">Click "Compute Shannon Entropy" to inspect byte frequency distribution.</pre>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/NullAI-HexStrike-AI-Terminal" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) •
+    <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a> •
+    <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a> •
+    Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function clearNode(node) {
+        while (node.firstChild) node.removeChild(node.firstChild);
+      }
+
+      function makeEl(tag, className, text) {
+        var el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text !== undefined && text !== null) el.textContent = String(text);
+        return el;
+      }
+
+      function updateThemeButton() {
+        var btn = document.getElementById('btnThemeToggle');
+        var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        btn.textContent = cur === 'light' ? '☾ Dark Mode' : '☀ Ivory Light';
+      }
+
+      function setTheme(next) {
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('hexstrike-theme', next); } catch (e) {}
+        updateThemeButton();
+      }
+
+      document.getElementById('btnThemeToggle').addEventListener('click', function () {
+        var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(cur === 'light' ? 'dark' : 'light');
+      });
+      updateThemeButton();
+
+      // Tab navigation
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var target = btn.getAttribute('data-tab');
+          tabBtns.forEach(function (b) {
+            var active = b === btn;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          document.querySelectorAll('.tab-pane').forEach(function (pane) {
+            pane.classList.toggle('active', pane.id === 'pane-' + target);
+          });
+        });
+      });
+
+      var allToolsCache = [];
+
+      function populateToolSelect(tools) {
+        var sel = document.getElementById('toolSelect');
+        var prev = sel.value || 'nmap';
+        clearNode(sel);
+        tools.forEach(function (t) {
+          var opt = document.createElement('option');
+          opt.value = t.id;
+          opt.textContent = t.id + ' — ' + t.name + ' (' + t.category + ')';
+          sel.appendChild(opt);
+        });
+        if (tools.some(function (t) { return t.id === prev; })) {
+          sel.value = prev;
+        }
+      }
+
+      async function synthesizeCommand() {
+        var tool = document.getElementById('toolSelect').value || 'nmap';
+        var target = document.getElementById('targetInput').value.trim() || '127.0.0.1';
+        var cmdBox = document.getElementById('cmdBox');
+        try {
+          var r = await fetch('/api/cmd?tool=' + encodeURIComponent(tool) + '&target=' + encodeURIComponent(target));
+          var d = await r.json();
+          if (!r.ok) {
+            cmdBox.textContent = '# [REJECTED] ' + (d.error || 'Invalid input');
+            return;
+          }
+          cmdBox.textContent = '$ ' + d.command + '\n# [HEXSTRIKE-v3.2] Shell-quoted command ready for authorized scope: ' + d.target;
+        } catch (e) {
+          cmdBox.textContent = '# [ERROR] Local daemon unreachable';
+        }
+      }
+
+      async function runFullStrike() {
+        var target = document.getElementById('targetInput').value.trim() || '127.0.0.1';
+        var ports = document.getElementById('portsInput').value.trim() || '22,80,443,3000,8094,8138,8787,11434';
+        await synthesizeCommand();
+        var grid = document.getElementById('portGrid');
+        var summary = document.getElementById('scanSummary');
+        var badge = document.getElementById('scanBadge');
+        try {
+          var r = await fetch('/api/scan?target=' + encodeURIComponent(target) + '&ports=' + encodeURIComponent(ports));
+          var d = await r.json();
+          clearNode(grid);
+          if (!r.ok) {
+            summary.textContent = d.error || 'Scan blocked by loopback policy';
+            badge.textContent = 'LOOPBACK GUARD';
+            return;
+          }
+          summary.textContent = d.open_count + ' Open / ' + d.scanned_count + ' Probed on ' + d.host;
+          badge.textContent = d.open_count + ' OPEN LISTENERS';
+          var openSet = new Set(d.open_ports || []);
+          var probed = (d.open_ports || []).concat(d.closed_ports || []).sort(function (a, b) { return a - b; });
+          probed.forEach(function (p) {
+            var isOpen = openSet.has(p);
+            var chip = makeEl('div', isOpen ? 'port-chip open' : 'port-chip');
+            chip.appendChild(makeEl('div', 'port-num', 'TCP :' + p));
+            chip.appendChild(makeEl('div', 'port-state', isOpen ? '● OPEN (LISTENING)' : '○ CLOSED / FILTERED'));
+            grid.appendChild(chip);
+          });
+        } catch (e) {
+          summary.textContent = 'Loopback probe unavailable';
+        }
+      }
+
+      async function loadCatalog(minScore, category) {
+        try {
+          var r = await fetch('/api/tools?min_score=' + encodeURIComponent(String(minScore)) + '&category=' + encodeURIComponent(category || ''));
+          var d = await r.json();
+          if (!r.ok) return;
+          var tools = d.tools || [];
+          document.getElementById('toolCount').textContent = String(d.count);
+          if (minScore === 1 && !category && tools.length > 0 && allToolsCache.length === 0) {
+            allToolsCache = tools;
+            populateToolSelect(allToolsCache);
+          }
+          var tbody = document.getElementById('arsenalBody');
+          clearNode(tbody);
+          tools.slice(0, 60).forEach(function (t) {
+            var tr = document.createElement('tr');
+            tr.className = 'clickable';
+            tr.addEventListener('click', function () {
+              var sel = document.getElementById('toolSelect');
+              if (!Array.prototype.some.call(sel.options, function (o) { return o.value === t.id; })) {
+                var opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.id + ' — ' + t.name;
+                sel.appendChild(opt);
+              }
+              sel.value = t.id;
+              synthesizeCommand();
+            });
+            var tdId = makeEl('td', '', t.id);
+            tdId.style.color = 'var(--cyan)';
+            tdId.style.fontWeight = '800';
+            var tdName = makeEl('td', '', t.name);
+            var tdCat = document.createElement('td');
+            tdCat.appendChild(makeEl('span', 'badge badge-gold', t.category));
+            var tdScore = makeEl('td', '', String(t.usefulness) + '/10');
+            tdScore.style.color = 'var(--emerald)';
+            tdScore.style.fontWeight = '800';
+            var tdTags = makeEl('td', 'muted', (t.tags || []).join(', '));
+            tr.appendChild(tdId);
+            tr.appendChild(tdName);
+            tr.appendChild(tdCat);
+            tr.appendChild(tdScore);
+            tr.appendChild(tdTags);
+            tbody.appendChild(tr);
+          });
+        } catch (e) {}
+      }
+
+      async function loadStatus() {
+        try {
+          var r = await fetch('/api/status');
+          var d = await r.json();
+          var tbody = document.getElementById('cveBody');
+          clearNode(tbody);
+          (d.cves || []).forEach(function (c) {
+            var tr = document.createElement('tr');
+            var tdId = makeEl('td', '', c.id);
+            tdId.style.color = 'var(--crimson-text)';
+            tdId.style.fontWeight = '800';
+            tdId.style.whiteSpace = 'nowrap';
+            var tdCvss = makeEl('td', '', String(c.cvss));
+            tdCvss.style.color = 'var(--gold)';
+            tdCvss.style.fontWeight = '800';
+            var tdEpss = makeEl('td', '', c.epss);
+            tdEpss.style.color = 'var(--cyan)';
+            var tdDesc = document.createElement('td');
+            var titleDiv = makeEl('div', '', c.title);
+            titleDiv.style.fontWeight = '700';
+            var fixDiv = makeEl('div', 'muted', 'Fix: ' + c.mitigation);
+            tdDesc.appendChild(titleDiv);
+            tdDesc.appendChild(fixDiv);
+            tr.appendChild(tdId);
+            tr.appendChild(tdCvss);
+            tr.appendChild(tdEpss);
+            tr.appendChild(tdDesc);
+            tbody.appendChild(tr);
+          });
+        } catch (e) {}
+      }
+
+      function renderHeaderAudit(d) {
+        var badge = document.getElementById('headerGradeBadge');
+        var summary = document.getElementById('headerSummary');
+        var tbody = document.getElementById('headerAuditBody');
+        clearNode(tbody);
+        if (d.error) {
+          badge.textContent = 'BLOCKED / ERROR';
+          summary.textContent = d.error;
+          return;
+        }
+        badge.textContent = 'SCORE ' + d.score + '/100 (GRADE ' + d.grade + ')';
+        summary.textContent = 'Target: ' + d.target + ' | Mode: ' + d.mode + ' | Observed headers: ' + d.observed_header_count;
+        (d.findings || []).forEach(function (f) {
+          var tr = document.createElement('tr');
+          tr.appendChild(makeEl('td', '', f.header));
+          tr.appendChild(makeEl('td', f.present ? 'status-pass' : 'status-miss', f.status));
+          tr.appendChild(makeEl('td', '', f.earned + '/' + f.weight));
+          tr.appendChild(makeEl('td', 'muted', f.observed_value || 'Not observed'));
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function runHeaderAudit(mode) {
+        var body = mode === 'raw'
+          ? { raw_headers: document.getElementById('rawHeadersInput').value }
+          : { url: document.getElementById('headerUrlInput').value.trim() };
+        try {
+          var r = await fetch('/api/headers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          var d = await r.json();
+          renderHeaderAudit(d);
+        } catch (e) {
+          renderHeaderAudit({ error: 'Header audit request failed' });
+        }
+      }
+
+      async function runEntropyCalc(isHex) {
+        var input = document.getElementById('entropyInput').value;
+        var metrics = document.getElementById('entropyMetrics');
+        var detail = document.getElementById('entropyDetail');
+        var badge = document.getElementById('entropyClassBadge');
+        clearNode(metrics);
+        try {
+          var r = await fetch('/api/entropy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: input, is_hex: isHex }),
+          });
+          var d = await r.json();
+          if (!r.ok) {
+            badge.textContent = 'INPUT ERROR';
+            detail.textContent = d.error || 'Entropy calculation failed';
+            return;
+          }
+          badge.textContent = d.classification;
+          [
+            ['Shannon Entropy', d.shannon_entropy + ' / 8.0 bits'],
+            ['Byte Count', String(d.byte_count)],
+            ['Unique Bytes', String(d.unique_bytes) + ' / 256'],
+            ['Printable ASCII', (d.printable_ascii_ratio * 100).toFixed(1) + '%'],
+          ].forEach(function (pair) {
+            var box = makeEl('div', 'metric-box');
+            box.appendChild(makeEl('div', 'metric-label', pair[0]));
+            box.appendChild(makeEl('div', 'metric-val', pair[1]));
+            metrics.appendChild(box);
+          });
+          detail.textContent = JSON.stringify(d, null, 2);
+        } catch (e) {
+          detail.textContent = 'Entropy request failed';
+        }
+      }
+
+      document.getElementById('toolSelect').addEventListener('change', synthesizeCommand);
+      document.getElementById('btnRunStrike').addEventListener('click', runFullStrike);
+      document.getElementById('btnFilterScore').addEventListener('click', function () { loadCatalog(10, ''); });
+      document.getElementById('btnAuditHeadersUrl').addEventListener('click', function () { runHeaderAudit('url'); });
+      document.getElementById('btnAuditHeadersRaw').addEventListener('click', function () { runHeaderAudit('raw'); });
+      document.getElementById('btnCalcEntropy').addEventListener('click', function () { runEntropyCalc(false); });
+      document.getElementById('btnCalcEntropyHex').addEventListener('click', function () { runEntropyCalc(true); });
+
+      document.querySelectorAll('#categoryFilters .btn-filter').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('#categoryFilters .btn-filter').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          loadCatalog(parseInt(btn.getAttribute('data-min') || '1', 10), btn.getAttribute('data-cat') || '');
+        });
+      });
+
+      loadStatus();
+      loadCatalog(1, '').then(function () {
+        runFullStrike();
+      });
+      runHeaderAudit('url');
+      runEntropyCalc(false);
+    })();
+  </script>
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: 'hexstrike-arsenal',
+          toolName: 'HexStrike Security Arsenal v3.2',
+          tagline: 'Local-first defensive & red-team audit workstation',
+          accentColor: '#B91C1C',
+          steps: [
+            { icon: '⚔️', title: '156-Tool Safe Command Synthesizer', desc: 'Select any security module to generate shell-quoted invocations with strict target validation.' },
+            { icon: '🛡️', title: 'HTTP Header & Loopback Socket Audits', desc: 'Inspect live loopback ports and grade HSTS, CSP, X-Frame-Options, and nosniff headers honestly.' },
+            { icon: '🔬', title: 'Shannon Entropy & MCP Integration', desc: 'Measure byte entropy (0.0-8.0 bits/byte) and connect 8 JSON-RPC 2.0 MCP tools to local coding agents.' }
+          ]
+        });
+      }
+    });
+  </script>
+</body>
+</html>

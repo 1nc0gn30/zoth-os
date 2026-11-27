@@ -1,13 +1,15 @@
-const { app, BrowserWindow, ipcMain, shell, screen } = require('electron');
+/**
+ * Hardened HexStrike Desktop Shell (Electron) — v3.2.0
+ * Enforces webSecurity: true, contextIsolation: true, nodeIntegration: false,
+ * zero arbitrary shell execution (no bash -c / exec nohup), and strict allowlisted IPC.
+ */
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const http = require('http');
 
-app.commandLine.appendSwitch('no-sandbox');
-app.commandLine.appendSwitch('disable-gpu-sandbox');
 app.commandLine.appendSwitch('disable-dev-shm-usage');
-app.commandLine.appendSwitch('enable-transparent-visuals');
 
 app.on('child-process-gone', (event, details) => {
   if (details.type === 'GPU') {
@@ -17,6 +19,19 @@ app.on('child-process-gone', (event, details) => {
 
 let mainWindow = null;
 let activeProcess = null;
+
+// Strictly allowlisted non-shell invocations routed through hexstrike-arsenal CLI
+const ALLOWED_SUBCOMMANDS = new Set(['list', 'tools', 'status', 'headers', 'entropy', 'audit', 'scan']);
+const ALLOWED_EXTERNAL_TOOLS = Object.freeze({
+  burp: ['burpsuite', []],
+  caido: ['caido', []],
+  wireshark: ['wireshark', []],
+  ghidra: ['ghidra', []],
+  msfconsole: ['/usr/local/bin/zoth-konsole', ['--title', 'Metasploit', '--', 'msfconsole']],
+  nmap: ['/usr/local/bin/zoth-konsole', ['--title', 'Nmap Help', '--', 'nmap', '-h']],
+  john: ['/usr/local/bin/zoth-konsole', ['--title', 'John Help', '--', 'john', '--help']],
+  aircrack: ['/usr/local/bin/zoth-konsole', ['--title', 'Aircrack-ng Help', '--', 'aircrack-ng', '--help']],
+});
 
 function createWindow() {
   const iconPath = fs.existsSync('/opt/zoth-studio/public/assets/mascot/hexstrike_logo.png')
@@ -38,40 +53,30 @@ function createWindow() {
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
     frame: true,
     resizable: true,
-    movable: true,
-    minimizable: true,
-    maximizable: true,
-    closable: true,
-    fullscreenable: true,
-    titleBarStyle: 'default',
-    title: 'HEXSTRIKE AI // OFFENSIVE CYBER WARFARE COCKPIT',
+    title: 'HexStrike Security Arsenal // Local Enclave Desktop',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: false
-    }
+      webSecurity: true,
+      sandbox: true,
+    },
   });
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   mainWindow.on('closed', () => {
     if (activeProcess) {
-      try { activeProcess.kill(); } catch (e) {}
+      try {
+        activeProcess.kill('SIGTERM');
+      } catch (e) {}
     }
     mainWindow = null;
   });
 }
 
-// Auto start hexstrike backend daemon in background
-function ensureHexStrikeDaemon() {
-  exec('pgrep -f hexstrike_server || nohup /usr/local/bin/hexstrike_server >/dev/null 2>&1 &');
-}
-
 app.whenReady().then(() => {
-  ensureHexStrikeDaemon();
   createWindow();
-
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
@@ -81,16 +86,37 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// ── Streaming Command Runner ──────────────────────────────────────────
-ipcMain.on('run-cmd', (event, cmdString) => {
+// Strict allowlisted CLI runner (never invokes bash -c or shell=true)
+ipcMain.on('run-cmd', (event, payload) => {
   if (activeProcess) {
-    try { activeProcess.kill('SIGKILL'); } catch (e) {}
+    try {
+      activeProcess.kill('SIGTERM');
+    } catch (e) {}
+    activeProcess = null;
   }
 
-  event.reply('cmd-output', { type: 'start', cmd: cmdString });
+  const tokens =
+    typeof payload === 'string'
+      ? payload.trim().split(/\s+/).filter(Boolean)
+      : Array.isArray(payload)
+      ? payload.map(String)
+      : [];
 
-  const proc = spawn('bash', ['-c', cmdString], {
-    env: { ...process.env, TERM: 'xterm-256color', COLUMNS: '120' }
+  const subcmd = tokens[0] === 'hexstrike' || tokens[0] === 'hexstrike-arsenal' ? tokens[1] : tokens[0];
+  if (!subcmd || !ALLOWED_SUBCOMMANDS.has(subcmd)) {
+    event.reply('cmd-output', {
+      type: 'error',
+      text: `Rejected by HexStrike IPC allowlist. Allowed subcommands: ${Array.from(ALLOWED_SUBCOMMANDS).join(', ')}`,
+    });
+    return;
+  }
+
+  const safeArgs = [subcmd, '--json'];
+  event.reply('cmd-output', { type: 'start', cmd: `hexstrike-arsenal ${safeArgs.join(' ')}` });
+
+  const proc = spawn('/usr/local/bin/hexstrike-arsenal', safeArgs, {
+    shell: false,
+    env: { ...process.env, TERM: 'xterm-256color' },
   });
   activeProcess = proc;
 
@@ -104,7 +130,7 @@ ipcMain.on('run-cmd', (event, cmdString) => {
 
   proc.on('close', (code) => {
     activeProcess = null;
-    event.reply('cmd-output', { type: 'exit', code: code });
+    event.reply('cmd-output', { type: 'exit', code });
   });
 
   proc.on('error', (err) => {
@@ -115,47 +141,53 @@ ipcMain.on('run-cmd', (event, cmdString) => {
 
 ipcMain.on('stop-cmd', () => {
   if (activeProcess) {
-    try { activeProcess.kill('SIGTERM'); } catch (e) {}
+    try {
+      activeProcess.kill('SIGTERM');
+    } catch (e) {}
     activeProcess = null;
   }
 });
 
-// ── AI Security Analysis IPC ─────────────────────────────────────────
+// Local loopback Ollama IPC (127.0.0.1:11434 only)
 ipcMain.on('query-ai', (event, { prompt, context }) => {
   const reqBody = JSON.stringify({
     model: 'llama3.2:latest',
-    prompt: `You are HexStrike AI, an elite cybersecurity and penetration testing copilot on ZothOS.\nContext / Scan Data:\n${context || 'No scan context'}\n\nTask: ${prompt}\n\nProvide actionable, concise tactical analysis, exploit vectors, payload suggestions, and remediation steps. Format in clean markdown with code blocks.`,
-    stream: false
+    prompt: `You are HexStrike Security Arsenal local copilot on ZothOS.\nContext:\n${String(context || '').slice(0, 4000)}\n\nTask: ${String(prompt || '').slice(0, 1000)}\n\nProvide concise defensive remediation steps in markdown.`,
+    stream: false,
   });
 
-  const req = http.request({
-    hostname: '127.0.0.1',
-    port: 11434,
-    path: '/api/generate',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(reqBody)
+  const req = http.request(
+    {
+      hostname: '127.0.0.1',
+      port: 11434,
+      path: '/api/generate',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(reqBody),
+      },
+      timeout: 10000,
     },
-    timeout: 10000
-  }, (res) => {
-    let data = '';
-    res.on('data', (chunk) => data += chunk);
-    res.on('end', () => {
-      try {
-        const json = JSON.parse(data);
-        event.reply('ai-response', { success: true, response: json.response });
-      } catch (e) {
-        event.reply('ai-response', { success: false, error: 'Failed to parse AI response' });
-      }
-    });
-  });
+    (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        if (data.length < 131072) data += chunk;
+      });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          event.reply('ai-response', { success: true, response: parsed.response });
+        } catch (e) {
+          event.reply('ai-response', { success: false, error: 'Failed to parse local AI response' });
+        }
+      });
+    }
+  );
 
-  req.on('error', (err) => {
-    // Fallback AI heuristic response
+  req.on('error', () => {
     event.reply('ai-response', {
-      success: true,
-      response: `[HEXSTRIKE HEURISTIC ENGINE // OFFLINE MODE]\n\nTarget Analysis for: ${prompt}\n\nRecommended Vectors:\n- Run service version audit: \`nmap -sV -sC -Pn -T4 <target>\`\n- Check common web misconfigurations & directory exposure with Gobuster\n- Inspect SSL/TLS ciphers & header posture\n- Test parameter injection surfaces with SQLmap / Caido proxy`
+      success: false,
+      error: 'Local Ollama daemon on 127.0.0.1:11434 is unreachable.',
     });
   });
 
@@ -163,18 +195,18 @@ ipcMain.on('query-ai', (event, { prompt, context }) => {
   req.end();
 });
 
-// ── Launch External Tools ─────────────────────────────────────────────
+// Strictly allowlisted external launcher (no shell interpolation, no arbitrary fallback)
 ipcMain.on('launch-external', (event, tool) => {
-  const tools = {
-    burp: 'burpsuite',
-    caido: 'caido',
-    wireshark: 'wireshark',
-    ghidra: 'ghidra',
-    msfconsole: 'konsole -e msfconsole',
-    nmap: 'konsole -e "nmap -h"',
-    john: 'konsole -e "john --help"',
-    aircrack: 'konsole -e "aircrack-ng --help"'
-  };
-  const cmd = tools[tool] || tool;
-  exec(`nohup ${cmd} >/dev/null 2>&1 &`);
+  const entry = ALLOWED_EXTERNAL_TOOLS[String(tool || '').toLowerCase()];
+  if (!entry) {
+    event.reply('cmd-output', { type: 'error', text: `Unknown external launcher: ${String(tool)}` });
+    return;
+  }
+  const [bin, args] = entry;
+  try {
+    const child = spawn(bin, args, { detached: true, stdio: 'ignore', shell: false });
+    child.unref();
+  } catch (err) {
+    event.reply('cmd-output', { type: 'error', text: err.message });
+  }
 });

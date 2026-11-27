@@ -1,56 +1,58 @@
-#!/usr/bin/env python3
-import sys
-import json
-import argparse
-import webbrowser
+#!/usr/bin/env bash
+# Unified Portable HexStrike Security Arsenal CLI Wrapper (v3.2.0)
+# Resolves repo cleanly via $HOME or /opt/hexstrike-arsenal with zero hardcoded user paths.
+set -euo pipefail
 
-TOOL_META = {
-    "id": "hexstrike-arsenal",
-    "cli": "hexstrike",
-    "name": "HexStrike Security Arsenal",
-    "category": "Security & Recon",
-    "pillar": "Pillar I: Cryptography & Security Protocols",
-    "port": "8138",
-    "workstation_url": "http://127.0.0.1:8138",
-    "studio_url": "http://127.0.0.1:3000/tools/hexstrike-arsenal",
-    "pricing": "100% Free & Open-Access ($0)",
-    "status": "PASS",
-    "overflow_px": 0,
-    "console_errors": 0
+find_hexstrike_root() {
+  local candidates=(
+    "${HEXSTRIKE_ROOT:-}"
+    "$HOME/NullAITech/NullAI-HexStrike-AI-Terminal"
+    "$HOME/NullAITech/hexstrike-arsenal"
+    "/opt/hexstrike-arsenal"
+  )
+  for dir in "${candidates[@]}"; do
+    if [[ -n "$dir" && -f "$dir/cli.py" ]]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+  done
+  return 1
 }
 
-def main():
-    parser = argparse.ArgumentParser(
-        prog="hexstrike",
-        description=f"{TOOL_META['name']} ({TOOL_META['category']}) — ZothOS Sovereign CLI & MCP Engine"
-    )
-    parser.add_argument("--status", action="store_true", help="Display live daemon, port, and sovereign verification telemetry")
-    parser.add_argument("--json", action="store_true", help="Emit deterministic JSON telemetry & verification output")
-    parser.add_argument("--verify", action="store_true", help="Run end-to-end invariant self-test")
-    parser.add_argument("--open", action="store_true", help="Launch web workstation in browser")
-    parser.add_argument("action", nargs="?", default="status", help="Subcommand (status, verify, run, json, serve)")
-    args, unknown = parser.parse_known_args()
+ROOT_DIR="$(find_hexstrike_root || true)"
+if [[ -z "$ROOT_DIR" ]]; then
+  echo "Error: hexstrike-arsenal cli.py not found in \$HOME/NullAITech/NullAI-HexStrike-AI-Terminal or /opt/hexstrike-arsenal" >&2
+  exit 1
+fi
 
-    if args.open:
-        webbrowser.open(TOOL_META["workstation_url"])
-        print(f"Launched {TOOL_META['workstation_url']}")
-        return
+case "${1:-}" in
+  --tui|tui)
+    shift
+    if command -v hexstrike-arsenal-tui >/dev/null 2>&1; then
+      exec hexstrike-arsenal-tui "$@"
+    elif [[ -x "$ROOT_DIR/bin/hexstrike-arsenal-tui" ]]; then
+      exec "$ROOT_DIR/bin/hexstrike-arsenal-tui" "$@"
+    fi
+    ;;
+  desktop|--electron|electron)
+    shift
+    if [[ -f "$ROOT_DIR/electron/main.cjs" ]] && command -v electron >/dev/null 2>&1; then
+      exec electron "$ROOT_DIR/electron/main.cjs" "$@"
+    fi
+    exec python3 "$ROOT_DIR/cli.py" serve --host 127.0.0.1 --port 8138 "$@"
+    ;;
+  web)
+    shift
+    exec python3 "$ROOT_DIR/cli.py" serve --host 127.0.0.1 --port 8138 "$@"
+    ;;
+  --status)
+    shift
+    exec python3 "$ROOT_DIR/cli.py" status "$@"
+    ;;
+  --info|--ui|--studio)
+    shift
+    exec python3 "$ROOT_DIR/cli.py" status "$@"
+    ;;
+esac
 
-    if args.json or args.action == "json":
-        print(json.dumps(TOOL_META, indent=2))
-        return
-
-    print(f"================================================================")
-    print(f"⚡ {TOOL_META['name'].upper()} // ZOTHOS SOVEREIGN CLI ({TOOL_META['cli']})")
-    print(f"================================================================")
-    print(f"  Tool ID          : {TOOL_META['id']}")
-    print(f"  Category         : {TOOL_META['category']}")
-    print(f"  Math Pillar      : {TOOL_META['pillar']}")
-    print(f"  Workstation URL  : {TOOL_META['workstation_url']}")
-    print(f"  Studio God-Mode  : {TOOL_META['studio_url']}")
-    print(f"  Access Tier      : {TOOL_META['pricing']}")
-    print(f"  Verification     : 🟢 PASS (overflowPx: 0, consoleErrors: 0)")
-    print(f"================================================================")
-
-if __name__ == "__main__":
-    main()
+exec python3 "$ROOT_DIR/cli.py" "$@"

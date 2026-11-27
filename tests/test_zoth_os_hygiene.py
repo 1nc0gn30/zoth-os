@@ -180,3 +180,39 @@ def test_hermes_webchat_chroot_unit_opt_and_cli_parity():
     assert res_wc.returncode == 0 and "hermes-webchat" in res_wc.stdout, f"hermes-webchat --help failed: {res_wc.stderr}"
 
 
+def test_hexstrike_chroot_opt_electron_and_cli_parity():
+    opt_dir = OPT_DIR / "hexstrike-arsenal"
+    assert opt_dir.is_dir(), f"Missing chroot opt dir: {opt_dir}"
+    for req in ("server.py", "cli.py", "mcp_server.py", "LICENSE", "README.md"):
+        assert (opt_dir / req).is_file(), f"Missing {req} in chroot /opt/hexstrike-arsenal"
+    assert (opt_dir / "public" / "index.html").is_file(), "Missing public/index.html in chroot /opt/hexstrike-arsenal"
+    assert (opt_dir / "ui" / "src" / "data" / "tools.json").is_file(), "Missing tools.json in chroot /opt/hexstrike-arsenal"
+    assert not (opt_dir / "__pycache__").exists(), "Stale __pycache__ found in chroot /opt/hexstrike-arsenal"
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 1024 * 1024, f"Chroot /opt/hexstrike-arsenal exceeds 1 MiB lean budget ({total_bytes} B)"
+
+    # Hardened legacy Electron /opt/hexstrike-app/main.js
+    elec_main = OPT_DIR / "hexstrike-app" / "main.js"
+    assert elec_main.is_file(), f"Missing {elec_main}"
+    elec_text = elec_main.read_text(encoding="utf-8")
+    assert "webSecurity: true" in elec_text, "chroot /opt/hexstrike-app/main.js must enforce webSecurity: true"
+    assert "webSecurity: false" not in elec_text, "chroot /opt/hexstrike-app/main.js still has webSecurity: false"
+    assert "bash', ['-c'" not in elec_text and 'bash", ["-c"' not in elec_text, "chroot /opt/hexstrike-app/main.js still spawns bash -c"
+    assert "nohup " not in elec_text, "chroot /opt/hexstrike-app/main.js still invokes exec nohup"
+
+    # CLI & TUI wrappers parity and zero literal /home/<user> paths
+    hx_bin = BIN_DIR / "hexstrike-arsenal"
+    hx_alias = BIN_DIR / "hexstrike"
+    hx_tui = BIN_DIR / "hexstrike-arsenal-tui"
+    assert hx_bin.is_file() and hx_alias.is_file() and hx_tui.is_file()
+    assert hx_bin.read_bytes() == hx_alias.read_bytes(), "hexstrike and hexstrike-arsenal chroot wrappers diverged"
+    for p in (hx_bin, hx_tui):
+        txt = p.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", txt), f"Literal /home/ path in {p.name}"
+    res_bash = subprocess.run(["bash", "-n", str(hx_bin)], capture_output=True, text=True, check=False)
+    assert res_bash.returncode == 0, f"bash -n failed for hexstrike-arsenal: {res_bash.stderr}"
+    res_tui = subprocess.run(["python3", str(hx_tui), "--help"], capture_output=True, text=True, check=False)
+    assert res_tui.returncode == 0 and "hexstrike-arsenal-tui" in res_tui.stdout, f"hexstrike-arsenal-tui --help failed: {res_tui.stderr}"
+
+
+
