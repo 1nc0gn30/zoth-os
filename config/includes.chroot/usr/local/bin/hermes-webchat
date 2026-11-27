@@ -1,0 +1,437 @@
+#!/usr/bin/env python3
+"""Portable, read-only-safe CLI wrapper for Hermes WebChat (zoth-webchat.service).
+
+Zero literal home paths; strictly redacts user home directories and secret patterns
+from all JSON and human-readable telemetry output. Never prints or exposes the
+contents of ~/.config/zoth-webchat/token or ~/.hermes/webchat/history.jsonl, and
+never restarts or mutates a running daemon during status/health/url checks.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import secrets
+import stat
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+VERSION = "2.1.0"
+UNIT_NAME = "zoth-webchat.service"
+DEFAULT_PORT = 8178
+
+_HOME_PATH_RE = re.compile(r"(?:file://)?/(?:home|Users)/[A-Za-z0-9._-]+(?=/|\b)")
+_SECRET_PATTERNS = (
+    re.compile(r"\bsk-[A-Za-z0-9_-]{12,}\b"),
+    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{16,}\b"),
+    re.compile(r"\bgithub_pat_[A-Za-z0-9_]{16,}\b"),
+    re.compile(r"\bAIza[0-9A-Za-z_-]{20,}\b"),
+    re.compile(r"\bxox[baprs]-[0-9A-Za-z-]{10,}\b"),
+    re.compile(r"(?i)\bBearer\s+[A-Za-z0-9._~+/=-]{12,}"),
+    re.compile(r"-----BEGIN [A-Z0-9 ]+PRIVATE KEY-----[\s\S]*?-----END [A-Z0-9 ]+PRIVATE KEY-----"),
+)
+_SECRET_KEY_NAMES = frozenset({"token", "secret", "api_key", "apikey", "password", "authorization", "private_key"})
+
+
+def redact_text(value: str) -> str:
+    text = _HOME_PATH_RE.sub("~", value)
+    for pat in _SECRET_PATTERNS:
+        text = pat.sub("[REDACTED]", text)
+    return text
+
+
+def redact_obj(value: Any) -> Any:
+    if isinstance(value, str):
+        return redact_text(value)
+    if isinstance(value, list):
+        return [redact_obj(v) for v in value]
+    if isinstance(value, dict):
+        out: dict[str, Any] = {}
+        for k, v in value.items():
+            if str(k).lower() in _SECRET_KEY_NAMES:
+                out[k] = "[REDACTED]"
+            else:
+                out[k] = redact_obj(v)
+        return out
+    return value
+
+
+def _token_path() -> Path:
+    raw = os.environ.get("WEBCHAT_TOKEN_FILE", "").strip()
+    if raw:
+        return Path(os.path.expanduser(os.path.expandvars(raw)))
+    return Path.home() / ".config" / "zoth-webchat" / "token"
+
+
+def _history_dir() -> Path:
+    raw = os.environ.get("WEBCHAT_HISTORY_DIR", "").strip()
+    if raw:
+        return Path(os.path.expanduser(os.path.expandvars(raw)))
+    hermes_home = os.environ.get("HERMES_HOME", "").strip()
+    base = Path(os.path.expanduser(os.path.expandvars(hermes_home))) if hermes_home else (Path.home() / ".hermes")
+    return base / "webchat"
+
+
+def _run_readonly(cmd: list[str], timeout: float = 2.0) -> tuple[int, str]:
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+        return proc.returncode, proc.stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return 1, ""
+
+
+def read_systemd_unit() -> dict[str, Any]:
+    props = (
+        "Id,ActiveState,SubState,UnitFileState,MainPID,TasksCurrent,"
+        "MemoryCurrent,MemoryPeak,ExecMainStartTimestamp,FragmentPath,"
+        "NoNewPrivileges,PrivateTmp,UMask,MemoryMax,MemoryHigh,CPUQuotaPerSecUSec"
+    )
+    rc, out = _run_readonly(["systemctl", "--user", "show", UNIT_NAME, "-p", props, "--no-pager"], timeout=2.0)
+    if rc != 0 or not out.strip():
+        return {"available": False, "unit": UNIT_NAME, "active": False, "activeState": "unavailable"}
+
+    kv: dict[str, str] = {}
+    for line in out.splitlines():
+        if "=" in line:
+            k, v = line.split("=", 1)
+            kv[k.strip()] = v.strip()
+
+    def _to_int(key: str) -> int | None:
+        raw = kv.get(key, "")
+        if raw.isdigit():
+            val = int(raw)
+            if 0 <= val < 10**16:
+                return val
+        return None
+
+    pid = _to_int("MainPID")
+    if pid == 0:
+        pid = None
+    mem_cur = _to_int("MemoryCurrent")
+    mem_peak = _to_int("MemoryPeak")
+    tasks = _to_int("TasksCurrent")
+    active = kv.get("ActiveState") == "active"
+    return {
+        "available": True,
+        "unit": kv.get("Id") or UNIT_NAME,
+        "active": active,
+        "activeState": kv.get("ActiveState") or "unknown",
+        "subState": kv.get("SubState") or "unknown",
+        "unitFileState": kv.get("UnitFileState") or "unknown",
+        "pid": pid,
+        "tasks": tasks,
+        "startedAt": kv.get("ExecMainStartTimestamp") or None,
+        "memoryCurrentBytes": mem_cur,
+        "memoryPeakBytes": mem_peak,
+        "memoryCurrentMb": round(mem_cur / (1024 * 1024), 1) if mem_cur is not None else None,
+        "memoryPeakMb": round(mem_peak / (1024 * 1024), 1) if mem_peak is not None else None,
+        "fragmentPath": redact_text(kv.get("FragmentPath") or "~/.config/systemd/user/zoth-webchat.service"),
+        "hardening": {
+            "noNewPrivileges": kv.get("NoNewPrivileges") == "yes",
+            "privateTmp": kv.get("PrivateTmp") == "yes",
+            "umask": kv.get("UMask") or "",
+            "memoryHigh": kv.get("MemoryHigh") or "",
+            "memoryMax": kv.get("MemoryMax") or "",
+            "cpuQuota": kv.get("CPUQuotaPerSecUSec") or "",
+        },
+    }
+
+
+def _is_safe_webchat_ip(ip: str) -> bool:
+    if ip in ("127.0.0.1", "::1", "[::1]"):
+        return True
+    # Tailscale CGNAT 100.64.0.0/10
+    parts = ip.split(".")
+    if len(parts) == 4 and all(p.isdigit() for p in parts):
+        a, b = int(parts[0]), int(parts[1])
+        if a == 100 and 64 <= b <= 127:
+            return True
+    return False
+
+
+def discover_listener(pid: int | None = None, port: int = DEFAULT_PORT) -> dict[str, Any]:
+    rc, out = _run_readonly(["ss", "-tlnp"], timeout=2.0)
+    if rc == 0 and out.strip():
+        pid_needle = f"pid={pid}" if pid else None
+        fallback: tuple[str, int] | None = None
+        for line in out.splitlines():
+            if not line.strip().upper().startswith("LISTEN"):
+                continue
+            tokens = line.split()
+            local_addr = next((t for t in tokens if ":" in t and not t.startswith("users:")), "")
+            if not local_addr:
+                continue
+            host_part, _, port_part = local_addr.rpartition(":")
+            if not port_part.isdigit():
+                continue
+            lport = int(port_part)
+            clean_host = host_part.strip("[]")
+            if not _is_safe_webchat_ip(clean_host):
+                continue
+            if pid_needle and pid_needle in line:
+                return {
+                    "host": clean_host,
+                    "port": lport,
+                    "url": f"http://{host_part}:{lport}",
+                    "tailnetOnly": clean_host.startswith("100."),
+                    "discovery": "ss-pid",
+                }
+            if lport == port and fallback is None:
+                fallback = (host_part, lport)
+        if fallback is not None:
+            h, p = fallback
+            ch = h.strip("[]")
+            return {
+                "host": ch,
+                "port": p,
+                "url": f"http://{h}:{p}",
+                "tailnetOnly": ch.startswith("100."),
+                "discovery": "ss-port",
+            }
+    return {"host": None, "port": port, "url": None, "tailnetOnly": False, "discovery": "none"}
+
+
+def stat_mode_octal(path: Path) -> dict[str, Any]:
+    try:
+        st = path.stat()
+        mode = stat.S_IMODE(st.st_mode)
+        return {
+            "exists": True,
+            "mode": f"{mode:04o}",
+            "size": st.st_size,
+            "worldOrGroupPermissive": bool(mode & 0o077),
+        }
+    except OSError:
+        return {"exists": False, "mode": None, "size": None, "worldOrGroupPermissive": False}
+
+
+def probe_health(url: str | None) -> dict[str, Any]:
+    if not url:
+        return {"reachable": False, "status": None, "body": None}
+    for ep in ("/api/health", "/health"):
+        target = f"{url}{ep}"
+        try:
+            req = urllib.request.Request(target, method="GET")
+            with urllib.request.urlopen(req, timeout=1.5) as resp:
+                raw = resp.read(8192).decode("utf-8", errors="replace")
+                try:
+                    body = json.loads(raw)
+                except ValueError:
+                    body = None
+                return {"reachable": True, "endpoint": ep, "status": resp.status, "body": body}
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                continue
+            return {"reachable": True, "endpoint": ep, "status": err.code, "body": None}
+        except Exception:
+            return {"reachable": False, "endpoint": ep, "status": None, "body": None}
+    return {"reachable": True, "endpoint": "/api/health", "status": 404, "body": None}
+
+
+def build_status() -> dict[str, Any]:
+    systemd = read_systemd_unit()
+    port = int(os.environ.get("WEBCHAT_PORT", str(DEFAULT_PORT)))
+    listener = discover_listener(systemd.get("pid"), port=port)
+    health = probe_health(listener.get("url"))
+
+    tok_path = _token_path()
+    hist_dir = _history_dir()
+    hist_file = hist_dir / "history.jsonl"
+
+    tok_dir_stat = stat_mode_octal(tok_path.parent)
+    tok_stat = stat_mode_octal(tok_path)
+    hist_dir_stat = stat_mode_octal(hist_dir)
+    hist_stat = stat_mode_octal(hist_file)
+
+    advisories: list[dict[str, str]] = []
+    if not tok_stat["exists"] or (tok_stat["size"] or 0) == 0:
+        advisories.append({
+            "code": "TOKEN_MISSING",
+            "severity": "warning",
+            "detail": "Token file ~/.config/zoth-webchat/token is missing or empty; run `hermes-webchat token-init`.",
+        })
+    elif tok_stat["worldOrGroupPermissive"]:
+        advisories.append({
+            "code": "TOKEN_PERMS",
+            "severity": "warning",
+            "detail": f"Token file mode is {tok_stat['mode']}; tighten to 0600.",
+        })
+    if tok_dir_stat["exists"] and tok_dir_stat["worldOrGroupPermissive"]:
+        advisories.append({
+            "code": "TOKEN_DIR_PERMS",
+            "severity": "info",
+            "detail": f"Token directory mode is {tok_dir_stat['mode']}; tighten to 0700 during maintenance.",
+        })
+    if hist_stat["exists"] and hist_stat["worldOrGroupPermissive"]:
+        advisories.append({
+            "code": "HISTORY_PERMS",
+            "severity": "info",
+            "detail": f"History file mode is {hist_stat['mode']}; tighten to 0600 during maintenance.",
+        })
+    hardening = systemd.get("hardening") or {}
+    if systemd.get("available") and (not hardening.get("noNewPrivileges") or not hardening.get("privateTmp")):
+        advisories.append({
+            "code": "SYSTEMD_HARDENING_DEFERRED",
+            "severity": "info",
+            "detail": "Hardened %h-portable unit staged in ZothOS chroot; apply during next maintenance window.",
+        })
+    if health.get("status") == 404 and systemd.get("active"):
+        advisories.append({
+            "code": "LIVE_DAEMON_PRE_V2_1",
+            "severity": "info",
+            "detail": "Running daemon predates v2.1.0 (/api/health returned 404); restart during planned maintenance window to activate v2.1.0.",
+        })
+
+    payload = {
+        "ok": bool(systemd.get("active")),
+        "service": "hermes-webchat",
+        "version": VERSION,
+        "checkedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "readOnly": True,
+        "unit": UNIT_NAME,
+        "systemd": systemd,
+        "listener": listener,
+        "health": health,
+        "permissions": {
+            "tokenDir": {"path": redact_text(str(tok_path.parent)), **tok_dir_stat},
+            "tokenFile": {"path": redact_text(str(tok_path)), **tok_stat},
+            "historyDir": {"path": redact_text(str(hist_dir)), **hist_dir_stat},
+            "historyFile": {"path": redact_text(str(hist_file)), **hist_stat},
+        },
+        "advisories": advisories,
+    }
+    return redact_obj(payload)
+
+
+def cmd_token_init(force: bool = False, as_json: bool = False) -> int:
+    tok_path = _token_path()
+    tok_dir = tok_path.parent
+    os.makedirs(tok_dir, mode=0o700, exist_ok=True)
+    os.chmod(tok_dir, 0o700)
+
+    if tok_path.exists() and tok_path.stat().st_size > 0 and not force:
+        os.chmod(tok_path, 0o600)
+        res = redact_obj({
+            "ok": True,
+            "created": False,
+            "path": str(tok_path),
+            "mode": f"{stat.S_IMODE(tok_path.stat().st_mode):04o}",
+            "message": "Token file already exists (pass --force to rotate).",
+        })
+        if as_json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"Token already exists at {res['path']} (mode {res['mode']}); pass --force to rotate.")
+        return 0
+
+    new_tok = secrets.token_hex(32)
+    fd = os.open(str(tok_path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(new_tok + "\n")
+    finally:
+        os.chmod(tok_path, 0o600)
+
+    res = redact_obj({
+        "ok": True,
+        "created": True,
+        "rotated": bool(force),
+        "path": str(tok_path),
+        "mode": "0600",
+        "bytes": 65,
+        "message": "Generated 32-byte (64-hex) bearer token with 0600 permissions (value intentionally not printed).",
+    })
+    if as_json:
+        print(json.dumps(res, indent=2))
+    else:
+        print(f"Initialized bearer token at {res['path']} (mode 0600; secret value not printed).")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="hermes-webchat",
+        description="Read-only-safe CLI for Hermes WebChat (zoth-webchat.service, port 8178).",
+    )
+    parser.add_argument("--version", action="version", version=f"hermes-webchat {VERSION}")
+    sub = parser.add_subparsers(dest="cmd")
+
+    p_status = sub.add_parser("status", help="Show systemd, listener, health, and permission telemetry.")
+    p_status.add_argument("--json", action="store_true", help="Emit JSON output.")
+
+    p_health = sub.add_parser("health", help="Probe /api/health on the active listener.")
+    p_health.add_argument("--json", action="store_true", help="Emit JSON output.")
+
+    p_url = sub.add_parser("url", help="Print the active tailnet/loopback URL.")
+    p_url.add_argument("--json", action="store_true", help="Emit JSON output.")
+
+    p_init = sub.add_parser("token-init", help="Create 0700 dir and 0600 32-byte token (never overwrites without --force).")
+    p_init.add_argument("--force", action="store_true", help="Rotate existing token file.")
+    p_init.add_argument("--json", action="store_true", help="Emit JSON output.")
+
+    args = parser.parse_args(argv)
+    if not args.cmd:
+        parser.print_help()
+        return 0
+
+    if args.cmd == "token-init":
+        return cmd_token_init(force=args.force, as_json=args.json)
+
+    st = build_status()
+    if args.cmd == "status":
+        if args.json:
+            print(json.dumps(st, indent=2))
+        else:
+            sysd = st["systemd"]
+            lst = st["listener"]
+            print(f"hermes-webchat v{VERSION} ({UNIT_NAME})")
+            print(f"  state:    {sysd.get('activeState')} ({sysd.get('subState')}) PID={sysd.get('pid')}")
+            print(f"  listener: {lst.get('url') or 'none'} (discovery={lst.get('discovery')})")
+            print(f"  ram:      {sysd.get('memoryCurrentMb')} MiB current / {sysd.get('memoryPeakMb')} MiB peak")
+            print(f"  token:    {st['permissions']['tokenFile']['path']} (mode={st['permissions']['tokenFile']['mode']})")
+            if st["advisories"]:
+                print("  advisories:")
+                for adv in st["advisories"]:
+                    print(f"    - [{adv['severity'].upper()}] {adv['code']}: {adv['detail']}")
+        return 0
+
+    if args.cmd == "health":
+        out = {
+            "ok": bool(st["systemd"].get("active")),
+            "service": "hermes-webchat",
+            "version": VERSION,
+            "listener": st["listener"],
+            "health": st["health"],
+        }
+        if args.json:
+            print(json.dumps(out, indent=2))
+        else:
+            print(f"ok={out['ok']} url={out['listener'].get('url')} http={out['health'].get('status')}")
+        return 0 if out["ok"] else 1
+
+    if args.cmd == "url":
+        url = st["listener"].get("url")
+        if args.json:
+            print(json.dumps({"ok": bool(url), "url": url, "port": st["listener"].get("port")}))
+        else:
+            print(url or "")
+        return 0 if url else 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

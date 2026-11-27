@@ -1,0 +1,33 @@
+[Unit]
+Description=Hermes WebChat (Zoth Console) - Tailnet-Only Hermes Agent Console
+Documentation=https://github.com/1nc0gn30/hermes-webchat
+After=network-online.target tailscaled.service
+Wants=network-online.target
+ConditionPathExists=%h/.hermes/hermes-agent/.hermes/bin/hermes
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/hermes-webchat
+ExecStart=/usr/bin/python3 /opt/hermes-webchat/server.py
+Environment=HOME=%h
+Environment=HERMES_HOME=%h/.hermes
+Environment=WEBCHAT_SESSION=zoth-webchat
+Environment=WEBCHAT_PORT=8178
+Environment=WEBCHAT_HERMES_BIN=%h/.hermes/hermes-agent/.hermes/bin/hermes
+Environment="PATH=%h/.hermes/hermes-agent/.hermes/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=zoth-webchat
+
+# Process, resource & security hardening
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryHigh=256M
+MemoryMax=512M
+CPUQuota=100%
+
+[Install]
+WantedBy=default.target

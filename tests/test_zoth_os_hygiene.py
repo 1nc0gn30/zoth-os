@@ -134,3 +134,49 @@ def test_hermes_and_hermes_gateway_chroot_wrappers():
     res_help = subprocess.run(["python3", str(gw_bin), "--help"], capture_output=True, text=True, check=False)
     assert res_help.returncode == 0 and "hermes-gateway" in res_help.stdout, f"hermes-gateway --help failed: {res_help.stderr}"
 
+
+def test_hermes_webchat_chroot_unit_opt_and_cli_parity():
+    unit = ROOT / "config" / "includes.chroot" / "etc" / "systemd" / "user" / "zoth-webchat.service"
+    assert unit.is_file(), f"Missing chroot user unit: {unit}"
+    text = unit.read_text(encoding="utf-8")
+
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", text), "Literal /home/<user> path found in zoth-webchat.service"
+    assert "ConditionPathExists=%h/.hermes/hermes-agent/.hermes/bin/hermes" in text
+    assert "WorkingDirectory=/opt/hermes-webchat" in text
+    assert "ExecStart=/usr/bin/python3 /opt/hermes-webchat/server.py" in text
+    assert "UMask=0077" in text
+    assert "NoNewPrivileges=yes" in text
+    assert "PrivateTmp=yes" in text
+    assert "MemoryHigh=256M" in text
+    assert "MemoryMax=512M" in text
+    assert "CPUQuota=100%" in text
+    assert "SyslogIdentifier=zoth-webchat" in text
+    assert "Documentation=https://github.com/1nc0gn30/hermes-webchat" in text
+
+    res = subprocess.run(
+        ["systemd-analyze", "--user", "verify", str(unit)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res.returncode == 0, f"systemd-analyze --user verify failed: {res.stderr}"
+
+    opt_dir = OPT_DIR / "hermes-webchat"
+    assert opt_dir.is_dir(), f"Missing chroot opt dir: {opt_dir}"
+    expected_files = {"server.py", "index.html", "app.js", "app.css", "favicon.svg", "README.md", "LICENSE"}
+    present_files = {p.name for p in opt_dir.iterdir() if p.is_file()}
+    assert expected_files.issubset(present_files), f"Missing chroot /opt/hermes-webchat files: {expected_files - present_files}"
+    assert not (opt_dir / "__pycache__").exists(), "Stale __pycache__ found in chroot /opt/hermes-webchat"
+    assert not (opt_dir / ".git").exists(), ".git directory must not be mirrored into chroot /opt/hermes-webchat"
+    assert not (opt_dir / "tests").exists(), "tests/ must not be mirrored into chroot /opt/hermes-webchat"
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 100 * 1024, f"Chroot /opt/hermes-webchat exceeds 100 KB lean budget ({total_bytes} B)"
+
+    wc_bin = BIN_DIR / "hermes-webchat"
+    assert wc_bin.is_file(), f"Missing {wc_bin}"
+    wc_text = wc_bin.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", wc_text), "Literal /home/ path in chroot hermes-webchat wrapper"
+    res_wc = subprocess.run(["python3", str(wc_bin), "--help"], capture_output=True, text=True, check=False)
+    assert res_wc.returncode == 0 and "hermes-webchat" in res_wc.stdout, f"hermes-webchat --help failed: {res_wc.stderr}"
+
+

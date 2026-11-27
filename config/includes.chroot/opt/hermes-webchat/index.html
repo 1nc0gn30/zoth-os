@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#06070a">
+<title>Zoth Console · Hermes WebChat</title>
+<meta name="description" content="Private tailnet-only web console for the local Hermes Agent CLI with fail-closed bearer auth, SSE streaming, and dual light/dark themes.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Zoth Console · Hermes WebChat">
+<meta property="og:description" content="Private tailnet-only web console for the local Hermes Agent CLI with fail-closed bearer authentication and live SSE streaming.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://github.com/1nc0gn30/hermes-webchat">
+<meta property="og:image" content="https://zoth.nullai.tech/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@1nc0gn30">
+<meta name="twitter:creator" content="@1nc0gn30">
+<meta name="twitter:title" content="Zoth Console · Hermes WebChat">
+<meta name="twitter:description" content="Private tailnet-only web console for the local Hermes Agent CLI with fail-closed auth and dual themes.">
+<meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<main id="main" class="shell">
+  <!-- Offline / daemon unreachable banner -->
+  <div id="offlineBanner" class="offline-banner" role="alert" hidden>
+    <div class="offline-inner">
+      <strong id="offlineTitle">Console daemon unreachable</strong>
+      <p id="offlineMsg">Could not contact the local Hermes WebChat daemon. Verify tailnet connectivity and token configuration, then retry.</p>
+      <div class="offline-actions">
+        <button id="retryBtn" type="button" class="btn-secondary">Retry Connection</button>
+        <button type="button" class="btn-secondary theme-toggle" data-theme-toggle="1" aria-label="Switch color theme">
+          <span aria-hidden="true" data-theme-icon="1">☀</span> <span data-theme-label="1">Light</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Gate -->
+  <section id="gate" class="gate" aria-labelledby="gateHeading" hidden>
+    <form id="gateForm" class="gate-card" autocomplete="off">
+      <div class="gate-top">
+        <div class="gate-mark" aria-hidden="true">◈</div>
+        <button type="button" class="btn-icon theme-toggle" data-theme-toggle="1" aria-label="Switch color theme">
+          <span aria-hidden="true" data-theme-icon="1">☀</span> <span data-theme-label="1">Light</span>
+        </button>
+      </div>
+      <h1 id="gateHeading">Zoth Console</h1>
+      <p class="gate-sub">Tailnet-only Hermes WebChat. Enter the bearer access token stored on the host at<br><code>~/.config/zoth-webchat/token</code></p>
+      <label for="gateInput" class="sr-only">Access token</label>
+      <input id="gateInput" type="password" name="token" placeholder="access token" aria-label="Access token" autocomplete="current-password" spellcheck="false" required>
+      <button id="gateBtn" type="submit" class="btn-primary">Unlock Console</button>
+      <div id="gateErr" class="gate-err" role="alert" hidden></div>
+    </form>
+  </section>
+
+  <!-- Active Authenticated Console -->
+  <section id="app" class="app" aria-labelledby="appHeading" hidden>
+    <header class="hdr">
+      <div class="hdr-l">
+        <span class="mark" aria-hidden="true">◈</span>
+        <h1 id="appHeading" class="title">ZOTH CONSOLE</h1>
+        <span class="sub" id="hdrHost">host</span>
+      </div>
+      <div class="hdr-r">
+        <span class="pill" id="pillState" title="agent state"><i class="dot" aria-hidden="true"></i><b id="stateText">—</b></span>
+        <span class="pill net" id="pillNet" title="tailnet endpoint">—</span>
+        <span class="pill sess" id="pillSession" title="pinned agent session">—</span>
+        <button type="button" class="hdr-btn theme-toggle" data-theme-toggle="1" aria-label="Switch color theme">
+          <span aria-hidden="true" data-theme-icon="1">☀</span> <span data-theme-label="1">Light</span>
+        </button>
+        <button type="button" id="logoutBtn" class="hdr-btn" aria-label="Lock console and sign out">
+          <span aria-hidden="true">🔒</span> Lock
+        </button>
+      </div>
+    </header>
+
+    <div class="log-wrap">
+      <section id="log" class="log" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversation transcript"></section>
+      <button id="jump" class="jump" hidden type="button" aria-label="Jump to latest output"><span aria-hidden="true">▼</span> latest</button>
+    </div>
+
+    <div class="composer">
+      <div class="chips" id="chips" role="toolbar" aria-label="Quick console actions">
+        <button type="button" data-act="status"><span aria-hidden="true">⚙</span> Status</button>
+        <button type="button" data-act="sysinfo"><span aria-hidden="true">▸</span> Host facts</button>
+        <button type="button" data-act="newsess"><span aria-hidden="true">✦</span> New session</button>
+        <button type="button" data-act="copylast">Copy last</button>
+        <button type="button" data-act="exportmd"><span aria-hidden="true">↓</span> Export MD</button>
+        <button type="button" data-act="exportjson"><span aria-hidden="true">↓</span> Export JSON</button>
+        <button type="button" data-act="clearview"><span aria-hidden="true">✕</span> Clear view</button>
+      </div>
+      <div class="row">
+        <label for="input" class="sr-only">Prompt for Hermes agent</label>
+        <textarea id="input" rows="1" placeholder="Ask the Hermes agent…" aria-label="Prompt for Hermes agent" spellcheck="false" autocomplete="off"></textarea>
+        <button id="send" class="send" type="button" aria-label="Send prompt"><span aria-hidden="true">↵</span></button>
+      </div>
+      <div class="foot">
+        <span id="hint">Enter to send · Shift+Enter newline</span>
+        <span id="count" aria-live="off">0</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" aria-label="Attribution and voluntary support">
+  <div class="footer-line">
+    <span>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30/hermes-webchat" target="_blank" rel="noopener noreferrer">@1nc0gn30</a>) · <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer">NullAI Platform</a></span>
+  </div>
+  <div class="footer-line footer-support">
+    <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☕</span> Buy Us a Coffee</a>
+    <span aria-hidden="true">·</span>
+    <span>Solana Tip: <code class="sol-addr">GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></span>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Zoth Console (Hermes WebChat)",
+      "url": "https://github.com/1nc0gn30/hermes-webchat",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux",
+      "softwareVersion": "2.1.0",
+      "description": "Tailnet-only web console for the local Hermes Agent CLI with fail-closed bearer authentication, SSE streaming, and dual light/dark themes.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "Neal Frazier Tech",
+        "url": "https://nullai.tech",
+        "founder": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "sameAs": "https://github.com/1nc0gn30"
+        }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does Hermes WebChat (Zoth Console) do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It provides a private tailnet-only browser console for invoking the local Hermes Agent CLI pinned to a dedicated session and streaming real stdout over Server-Sent Events (SSE)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are sessions and credentials protected?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The server binds exclusively to the private Tailscale interface or loopback, enforces fail-closed bearer authentication stored in an HttpOnly SameSite=Strict cookie, validates Host and Origin headers, and serves strict CSP and security headers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Hermes WebChat free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It is 100% free and open-access under the MIT license with zero paywalls. Voluntary support is available via Buy Us a Coffee or Solana tip."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
