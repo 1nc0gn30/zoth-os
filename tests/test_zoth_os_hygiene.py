@@ -491,6 +491,80 @@ def test_maya_linux_chroot_security_bloat_and_parity():
         assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt)
 
 
+def test_mcp_lens_chroot_security_bloat_and_parity():
+    opt_dir = OPT_DIR / "mcp-lens"
+    assert opt_dir.is_dir(), "Chroot /opt/mcp-lens must exist"
+    for req in (
+        opt_dir / "server.py",
+        opt_dir / "electron" / "main.cjs",
+        opt_dir / "bin" / "mcp-lens",
+        opt_dir / "bin" / "mcp-lens-tui",
+        opt_dir / "src" / "mcp_lens" / "mcp_server.py",
+        opt_dir / "public" / "index.html",
+        opt_dir / "public" / "lens_engine.js",
+        opt_dir / "public" / "style.css",
+        opt_dir / "public" / "llms.txt",
+        opt_dir / "public" / ".well-known" / "mcp.json",
+        opt_dir / "LICENSE",
+        opt_dir / "README.md",
+    ):
+        assert req.is_file(), f"Missing required file in chroot /opt/mcp-lens: {req}"
+
+    assert not list(opt_dir.rglob("*.pyc")), "Stale .pyc bytecode must not exist in chroot /opt/mcp-lens"
+    assert not list(opt_dir.rglob("gpu-*")), "Unused gpu-* bloat must not exist in chroot /opt/mcp-lens"
+
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 1024 * 1024, f"Chroot /opt/mcp-lens exceeds 1 MiB: {total_bytes / 1024:.1f} KiB"
+
+    index_html = (opt_dir / "public" / "index.html").read_text(encoding="utf-8")
+    assert "cdn.tailwindcss.com" not in index_html
+    assert "fonts.googleapis.com" not in index_html
+    assert "onclick=" not in index_html
+
+    engine_js = (opt_dir / "public" / "lens_engine.js").read_text(encoding="utf-8")
+    assert ".innerHTML" not in engine_js
+
+    electron_main = (opt_dir / "electron" / "main.cjs").read_text(encoding="utf-8")
+    assert "sandbox: true" in electron_main
+    assert "before-quit" in electron_main
+    assert "detached: false" in electron_main
+
+    cli_bin = BIN_DIR / "mcp-lens"
+    tui_bin = BIN_DIR / "mcp-lens-tui"
+    assert cli_bin.is_file() and tui_bin.is_file()
+    assert cli_bin.read_bytes() == (opt_dir / "bin" / "mcp-lens").read_bytes()
+    assert tui_bin.read_bytes() == (opt_dir / "bin" / "mcp-lens-tui").read_bytes()
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", cli_bin.read_text(encoding="utf-8"))
+    assert "math.sin" not in tui_bin.read_text(encoding="utf-8")
+    assert "canvasui-asciify-lens" not in tui_bin.read_text(encoding="utf-8")
+
+    desktop = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications" / "mcp-lens.desktop"
+    assert desktop.is_file()
+    dtxt = desktop.read_text(encoding="utf-8")
+    assert "Exec=/usr/local/bin/mcp-lens desktop" in dtxt
+    assert "Categories=X-Zoth-Dev;Development;Utility;ArtificialIntelligence;" in dtxt
+
+    unit = ROOT / "config" / "includes.chroot" / "etc" / "systemd" / "system" / "mcp-lens.service"
+    assert unit.is_file()
+    utxt = unit.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", utxt)
+    assert "WorkingDirectory=%h" in utxt
+
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    for note in (
+        vault_root / "OS" / "CLIs" / "CLI mcp-lens.md",
+        vault_root / "Studio" / "Tools" / "Studio mcp-lens.md",
+        vault_root / "Studio" / "Workstations" / "Workstation mcp-lens.md",
+        vault_root / "OS" / "Units" / "Unit mcp-lens.service.md",
+        vault_root / "OS" / "Desktops" / "Desktop zoth-mcp-lens.md",
+    ):
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert "2.6.0" in ntxt
+        assert "Neal Frazier Tech" in ntxt
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt)
+
+
 
 
 

@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=MCP Lens
-Comment=Zero-dependency real-time stdio/SSE traffic sniffer, token weight auditor, and visual playground for Model Context Protocol.
+Comment=Zero-dependency Python 3.10+ stdio/SSE traffic sniffer, BPE token weight auditor, schema minifier, and 6-tool stdio MCP server.
 Exec=/usr/local/bin/mcp-lens desktop
 TryExec=/usr/local/bin/mcp-lens
 Icon=mcp-lens

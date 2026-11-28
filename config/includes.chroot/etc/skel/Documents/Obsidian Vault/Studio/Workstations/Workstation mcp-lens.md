@@ -2,27 +2,27 @@
 title: "MCP Lens // Traffic Sniffer & Token Auditor"
 tags: [studio, workstation]
 aliases: ["mcp-lens"]
+version: "2.6.0"
 ---
 
-# MCP Lens // Traffic Sniffer & Token Auditor
+# MCP Lens // Traffic Sniffer & Token Auditor (`v2.6.0`)
 
-The **MCP Lens // Traffic Sniffer & Token Auditor** is registered in the Zoth Studio v2 workstations directory (`src/data/workstations.js`) as an integrated tool within the Tool Arsenal.
+The **MCP Lens // Traffic Sniffer & Token Auditor** is registered in the Zoth Studio v2 workstations directory (`src/data/workstations.js` and `public/api/workstations.json`) as an integrated Observe-band tool.
 
 ### Core Functionality
-Zero-dependency real-time stdio/SSE traffic sniffer, token weight auditor, and visual playground for Model Context Protocol.
+Zero-dependency Python 3.10+ stdio/SSE traffic sniffer, BPE token weight auditor, lossless JSON Schema minifier, hardened Dual-Theme Web Cockpit (`127.0.0.1:8109`), and 6-tool stdio JSON-RPC 2.0 MCP server (`mcp-lens mcp`).
 
 ### Workstation Metadata
 - **ID:** `mcp-lens`
+- **Version:** `2.6.0`
 - **Name:** MCP Lens // Traffic Sniffer & Token Auditor
-- **Type:** `integrated_tool` (standalone sovereign micro-tool and CLI utility available in the Tool Arsenal)
+- **Type:** `integrated_tool`
 - **Functional Band:** Observe
-- **Static Entrypoint:** `/studio/mcp-lens.html`
-- **In-App Route:** `/tools/mcp-lens`
+- **Route / Entrypoint:** `/tools/mcp-lens`
 - **Tool Repository ID:** `mcp-lens`
-- **Pull / Launch Command:** `./bin/mcp-lens serve --port 8109`
-
-### Operational Role
-Serves under the Observe band as a real-time protocol inspector for Model Context Protocol (MCP) interactions. It intercepts and visualizes stdio and SSE message frames, measures prompt and response token weight, and offers an interactive testing ground for tool calls and resource schemas.
+- **Launch Command:** `mcp-lens serve --port 8109`
+- **Stdio MCP Server:** `mcp-lens mcp`
+- **Attribution:** Engineered by Neal Frazier Tech (`@1nc0gn30`) • NullAI Platform
 
 ## See also
 

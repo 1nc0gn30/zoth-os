@@ -1,19 +1,20 @@
 ---
 title: "mcp-lens.service"
 tags: [os, systemd]
+version: "2.6.0"
 ---
-# mcp-lens.service
 
-ZothOS MCP Lens - Model Context Protocol Traffic Sniffer & Token Weight Auditor
+# mcp-lens.service (`v2.6.0`)
+
+ZothOS MCP Lens — Model Context Protocol Traffic Sniffer, BPE Token Weight Auditor & Dual-Theme Web Cockpit (`127.0.0.1:8109`).
 
 - **Unit:** `mcp-lens.service`
 - **WantedBy:** `multi-user.target`
-- **ExecStart:** `/usr/bin/python3 ~/NullAITech/mcp-lens/bin/mcp-lens serve --host 127.0.0.1 --port 8109`
-
-- **Description:** ZothOS MCP Lens - Model Context Protocol Traffic Sniffer & Token Weight Auditor
-- **ExecStart:** `/usr/bin/python3 ~/NullAITech/mcp-lens/bin/mcp-lens serve --host 127.0.0.1 --port 8109`
-- **WantedBy:** `multi-user.target`
-- Image unit under `etc/systemd/system`. Loopback daemons unless the unit says otherwise.
+- **WorkingDirectory:** `%h`
+- **ExecStart:** `/usr/local/bin/mcp-lens serve --host 127.0.0.1 --port 8109`
+- **Environment:** `PYTHONUNBUFFERED=1`, `PYTHONDONTWRITEBYTECODE=1`
+- **Security:** Loopback-only (`127.0.0.1:8109`), strict `Host`/`Origin` `403`, all 4 HTTP security headers + CSP, zero hardcoded home directory paths.
+- **Attribution:** Engineered by Neal Frazier Tech (`@1nc0gn30`) • NullAI Platform.
 
 ## See also
 
