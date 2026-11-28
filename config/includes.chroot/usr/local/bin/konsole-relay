@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ -f "$HOME/konsole-relay/konsole_relay.py" ]; then
+  exec /usr/bin/python3 "$HOME/konsole-relay/konsole_relay.py" "$@"
+elif [ -f "/opt/konsole-relay/konsole_relay.py" ]; then
+  exec /usr/bin/python3 "/opt/konsole-relay/konsole_relay.py" "$@"
+else
+  echo "error: konsole_relay.py not found in \$HOME/konsole-relay or /opt/konsole-relay" >&2
+  exit 1
+fi

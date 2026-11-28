@@ -1,0 +1,21 @@
+[Unit]
+Description=konsole-relay (Loopback KDE Konsole D-Bus Relay Daemon)
+Documentation=https://github.com/1nc0gn30/konsole-relay
+After=graphical-session.target
+ConditionPathExists=/opt/konsole-relay/konsole_relay.py
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/konsole-relay/konsole_relay.py serve --port 8797
+Restart=on-failure
+RestartSec=3
+SyslogIdentifier=konsole-relay
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+MemoryHigh=64M
+MemoryMax=128M
+CPUQuota=50%
+
+[Install]
+WantedBy=default.target

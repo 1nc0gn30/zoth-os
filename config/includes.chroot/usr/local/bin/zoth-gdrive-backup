@@ -56,11 +56,13 @@ update_status "1/4" "RUNNING" "Backing up Antigravity skills, Obsidian Vault (Do
 echo "[STAGE 1/4] Backing up Skills, Configs, Documents & Core Tools..." | tee -a "$LOG_FILE"
 rclone copy $HOME/.gemini/config "$REMOTE/home/.gemini/config" --transfers 16 --checkers 32 --fast-list >> "$LOG_FILE" 2>&1
 rclone copy $HOME/Documents "$REMOTE/home/Documents" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
-rclone copy $HOME/konsole-relay "$REMOTE/home/konsole-relay" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
+rclone copy $HOME/konsole-relay "$REMOTE/home/konsole-relay" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" --exclude "**/__pycache__/**" --exclude "*.pyc" --exclude "**/.git/**" >> "$LOG_FILE" 2>&1
 rclone copy $HOME/agent-tools "$REMOTE/home/agent-tools" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
 rclone copy $HOME/1nc0gn30-game "$REMOTE/home/1nc0gn30-game" --transfers 16 --checkers 32 --fast-list --exclude "**/node_modules/**" >> "$LOG_FILE" 2>&1
 rclone copy $HOME/.config/rclone "$REMOTE/home/.config/rclone" --transfers 8 >> "$LOG_FILE" 2>&1
-rclone copy $HOME/.config/konsole-relay "$REMOTE/home/.config/konsole-relay" --transfers 8 >> "$LOG_FILE" 2>&1
+# SECURITY INVARIANT: ~/.config/konsole-relay/{token,audit.log} holds a local-only
+# RCE-capable bearer credential and terminal audit trail. It MUST NEVER be uploaded
+# to Google Drive or any external cloud remote.
 echo "[$(date -Is)] [STAGE 1/4] Completed." | tee -a "$LOG_FILE"
 
 # STAGE 2: Desktop, Pictures, Videos & Livestream Showcase

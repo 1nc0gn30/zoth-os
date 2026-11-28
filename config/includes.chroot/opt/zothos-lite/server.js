@@ -208,9 +208,11 @@ const ZOTHOS_DAEMONS = [
     name: 'Konsole Relay Agent Terminal Bridge',
     port: 8797,
     ramMb: 12,
+    path: '/opt/konsole-relay',
+    cli: 'konsole-relay',
     preinstalled: true,
     defaultRunning: true,
-    description: 'Loopback terminal injection & screen-capture bridge (127.0.0.1:8797) for AZOTH & autonomous coding agents.'
+    description: 'Hardened loopback KDE Konsole D-Bus relay daemon (127.0.0.1:8797, /opt/konsole-relay, konsole-relay.service) with fail-closed 0600 bearer auth and DNS-rebinding guards.'
   }
 ];
 

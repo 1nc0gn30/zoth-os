@@ -246,5 +246,81 @@ def test_jwt_inspector_guard_chroot_opt_and_cli_parity():
     assert not re.search(r"/home/[a-zA-Z0-9._-]+", desk_txt)
 
 
+def test_zoth_gdrive_backup_never_syncs_konsole_relay_secrets():
+    backup_script = BIN_DIR / "zoth-gdrive-backup"
+    assert backup_script.is_file(), f"Missing {backup_script}"
+    text = backup_script.read_text(encoding="utf-8")
+    res_bash = subprocess.run(["bash", "-n", str(backup_script)], capture_output=True, text=True, check=False)
+    assert res_bash.returncode == 0, f"bash -n failed for zoth-gdrive-backup: {res_bash.stderr}"
+
+    active_lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    ]
+    for line in active_lines:
+        assert ".config/konsole-relay" not in line, (
+            f"zoth-gdrive-backup must NEVER sync ~/.config/konsole-relay: {line}"
+        )
+        assert "konsole-relay/token" not in line, (
+            f"zoth-gdrive-backup must NEVER sync konsole-relay/token: {line}"
+        )
+
+
+def test_konsole_relay_chroot_unit_opt_cli_and_vault_parity():
+    unit = ROOT / "config" / "includes.chroot" / "etc" / "systemd" / "user" / "konsole-relay.service"
+    assert unit.is_file(), f"Missing chroot user unit: {unit}"
+    text = unit.read_text(encoding="utf-8")
+
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", text), "Literal /home/<user> path in konsole-relay.service"
+    assert "ConditionPathExists=/opt/konsole-relay/konsole_relay.py" in text
+    assert "ExecStart=/usr/bin/python3 /opt/konsole-relay/konsole_relay.py serve --port 8797" in text
+    assert "Restart=on-failure" in text
+    assert "RestartSec=3" in text
+    assert "SyslogIdentifier=konsole-relay" in text
+    assert "Documentation=https://github.com/1nc0gn30/konsole-relay" in text
+    assert "UMask=0077" in text
+    assert "NoNewPrivileges=yes" in text
+    assert "PrivateTmp=yes" in text
+    assert "MemoryHigh=64M" in text
+    assert "MemoryMax=128M" in text
+    assert "CPUQuota=50%" in text
+
+    res = subprocess.run(
+        ["systemd-analyze", "--user", "verify", str(unit)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res.returncode == 0, f"systemd-analyze --user verify failed: {res.stderr}"
+
+    opt_dir = OPT_DIR / "konsole-relay"
+    assert opt_dir.is_dir(), f"Missing chroot opt dir: {opt_dir}"
+    for req in ("konsole_relay.py", "konsole-relay", "README.md", "LICENSE"):
+        assert (opt_dir / req).is_file(), f"Missing {req} in chroot /opt/konsole-relay"
+    assert not list(opt_dir.rglob("__pycache__")), "Stale __pycache__ found in chroot /opt/konsole-relay"
+    assert not list(opt_dir.rglob("*.pyc")), "Stale .pyc found in chroot /opt/konsole-relay"
+    assert not (opt_dir / ".git").exists(), ".git must not be mirrored into chroot /opt/konsole-relay"
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 100 * 1024, f"Chroot /opt/konsole-relay exceeds 100 KB lean budget ({total_bytes} B)"
+
+    kr_bin = BIN_DIR / "konsole-relay"
+    assert kr_bin.is_file(), f"Missing {kr_bin}"
+    assert kr_bin.read_bytes() == (opt_dir / "konsole-relay").read_bytes(), "chroot CLI wrapper diverged from /opt/konsole-relay"
+    kr_text = kr_bin.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", kr_text), "Literal /home/ path in konsole-relay wrapper"
+    res_bash = subprocess.run(["bash", "-n", str(kr_bin)], capture_output=True, text=True, check=False)
+    assert res_bash.returncode == 0, f"bash -n failed for konsole-relay wrapper: {res_bash.stderr}"
+
+    vault_base = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault" / "OS"
+    for rel in ("Daemons/Daemon konsole-relay.md", "CLIs/CLI konsole-relay.md"):
+        vp = vault_base / rel
+        assert vp.is_file(), f"Missing chroot Vault note: {vp}"
+        vtxt = vp.read_text(encoding="utf-8")
+        assert not re.search(r"(?<![A-Za-z0-9_-])/home/(?!\.config)[a-zA-Z0-9._-]+", vtxt), f"Literal /home/ path in Vault note {rel}"
+        assert "zoth-gdrive-backup" in vtxt or "cloud" in vtxt.lower()
+
+
+
 
 
