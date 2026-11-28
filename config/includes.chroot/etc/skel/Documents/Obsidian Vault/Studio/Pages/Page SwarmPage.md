@@ -5,24 +5,22 @@ tags: [studio, page]
 
 # SwarmPage
 
-React documentation and cockpit page for the **Pantheon Multi-Agent Swarm Hub** in Zoth Studio.
+Technical protocol reference page for the **Pantheon Swarm Multiplexer (`127.0.0.1:8141`)** in Zoth Studio v2.
 
 - **File:** `zoth-studio-v2/src/pages/SwarmPage.jsx`
 - **Route:** [[Route swarm-docs|/swarm/docs]]
+- **Companion Showcase:** [[Page SwarmShowcasePage]] (`[[Route swarm|/swarm]]`)
+- **Live Fleet Supervisor:** [[Workstation mission-control]] (`/workstations/mission-control`)
 
 ## What It Renders
 
-`SwarmPage` provides real-time telemetry, testing harnesses, and process coordination controls for the 21 sovereign Pantheon agent nodes distributed across 5 operational cadres (Architects, Code, Security, Creative, Swarm).
+`SwarmPage` renders `TechnicalReferencePage` (emerald palette) documenting the local-first `NullAITech/zoth-swarm-multiplexer` daemon on `127.0.0.1:8141` (with legacy telemetry fallback reference `:8989`):
 
-Key components and interfaces rendered:
-- **Header & Telemetry Badges:** Air-gapped architecture badges, loopback status indicator, and SHA-256 heartbeat monitor.
-- **View Mode Switcher:** Toggles between interactive Journey walkthrough (`SwarmFrameJourney`), Live Cockpit, and `SovereignFunnel`.
-- **Daemon Multiplexer:** Checks local daemon status via `http://127.0.0.1:8989` and `/api/studio/swarm/status` (`SwarmDaemonMultiplexer`).
-- **Canvas Visualizer:** Interactive 2D canvas network graph displaying live node links and cadre topologies (`SwarmCanvasVisualizer`).
-- **Task Dispatcher:** Interactive job submission and execution console (`SwarmTaskDispatcher`).
-- **Cadre Latency Tester:** Live ping latency measurement across cadre endpoints with timestamped event logs.
-- **Agent Roster:** Expandable directory of Pantheon agents filterable by cadre.
+- **Clone & Local Boot Steps:** `git clone https://github.com/NullAITech/zoth-swarm-multiplexer.git`, `python3 server.py --port 8141`, and optional `1nc0gn30/zoth-egregore` setup.
+- **CLI & Loopback Endpoints:** `zoth-swarm status --json`, `zoth-swarm dispatch --spec task.json`, `GET http://127.0.0.1:8141/health`, and `POST http://127.0.0.1:8141/api/dispatch`.
+- **MCP Server Configuration:** Ready-to-copy JSON contract for `zoth-swarm` pointing to `/opt/zoth-swarm-multiplexer/swarm_cli.py --mcp` with `SWARM_HOST=127.0.0.1`, `SWARM_PORT=8141`, and `MEMORY_ENDPOINT=http://127.0.0.1:8094`.
+- **Architecture Notes:** Git worktree isolation per worker cadre, automated unit-test and Gitleaks verifier gates, and Nous Research Hermes Agent / DeepSeek-Flash / Ollama pairing.
 
 ## See also
 
-[[Zoth Studio]] · [[MOC Pages]] · [[Route swarm-docs|/swarm/docs]] · [[Route swarm|/swarm]]
+[[Zoth Studio]] · [[MOC Pages]] · [[Route swarm-docs|/swarm/docs]] · [[Route swarm|/swarm]] · [[Workstation mission-control]]

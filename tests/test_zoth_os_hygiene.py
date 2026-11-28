@@ -565,6 +565,35 @@ def test_mcp_lens_chroot_security_bloat_and_parity():
         assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt)
 
 
+def test_mission_control_vault_parity_and_hygiene():
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    ws_note = vault_root / "Studio" / "Workstations" / "Workstation mission-control.md"
+    legacy_note = vault_root / "Studio" / "Legacy" / "Legacy mission-control.md"
+    swarm_page_note = vault_root / "Studio" / "Pages" / "Page SwarmPage.md"
+
+    for note in (ws_note, legacy_note, swarm_page_note):
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt), f"Literal /home/ leak in {note.name}"
+        assert "/studio/mission-control.html" not in ntxt, f"Dead /studio/mission-control.html path in {note.name}"
+
+    ws_txt = ws_note.read_text(encoding="utf-8")
+    assert "2.5.0" in ws_txt
+    assert "/workstations/mission-control" in ws_txt
+    assert "/api/studio/mission-control" in ws_txt
+    assert "In-App Route:** `/swarm`" not in ws_txt
+
+    leg_txt = legacy_note.read_text(encoding="utf-8")
+    assert "/workstations/mission-control" in leg_txt
+    assert "Now lives at:** `/swarm`" not in leg_txt
+
+    sp_txt = swarm_page_note.read_text(encoding="utf-8")
+    assert "TechnicalReferencePage" in sp_txt
+    assert "127.0.0.1:8141" in sp_txt
+    assert "SwarmFrameJourney" not in sp_txt
+
+
+
 
 
 

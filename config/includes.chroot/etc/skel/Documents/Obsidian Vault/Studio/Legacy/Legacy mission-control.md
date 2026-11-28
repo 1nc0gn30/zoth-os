@@ -5,12 +5,12 @@ tags: [studio, legacy]
 
 # mission-control.html
 
-Operator mission board for the swarm
+Hybrid fleet supervisor, 91-port loopback telemetry matrix, Hermes/Konsole Relay monitor, Mission DAG/runbook planner, and PBFT quorum triage.
 
-- **Legacy file:** `mission-control.html`
-- **Now lives at:** `/swarm` → [[Route swarm|/swarm]]
-From `zeroEgress.js` `legacyWorkstations`. Static HTML names from the older studio.
+- **Legacy file:** `mission-control.html` (retired static asset)
+- **Now lives at:** `/workstations/mission-control` (alias `/tools/mission-control`) → [[Workstation mission-control|Zoth Mission Control & Fleet Dispatcher]]
+From `src/data/zeroEgress.js` `legacyWorkstations`.
 
 ## See also
 
-[[Zoth Studio]] · [[Studio/Zero Egress|Zero egress]]
+[[Zoth Studio]] · [[Workstation mission-control]] · [[Studio/Zero Egress|Zero egress]]
