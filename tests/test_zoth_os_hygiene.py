@@ -215,4 +215,36 @@ def test_hexstrike_chroot_opt_electron_and_cli_parity():
     assert res_tui.returncode == 0 and "hexstrike-arsenal-tui" in res_tui.stdout, f"hexstrike-arsenal-tui --help failed: {res_tui.stderr}"
 
 
+def test_jwt_inspector_guard_chroot_opt_and_cli_parity():
+    opt_dir = OPT_DIR / "jwt-inspector-guard"
+    assert opt_dir.is_dir(), f"Missing chroot opt dir: {opt_dir}"
+    for req in ("server.py", "pyproject.toml", "LICENSE", "README.md"):
+        assert (opt_dir / req).is_file(), f"Missing {req} in chroot /opt/jwt-inspector-guard"
+    assert (opt_dir / "public" / "index.html").is_file(), "Missing public/index.html in chroot /opt/jwt-inspector-guard"
+    assert (opt_dir / "src" / "jwt_inspector_guard" / "ui_server.py").is_file(), "Missing ui_server.py in chroot /opt/jwt-inspector-guard"
+    assert not list(opt_dir.rglob("__pycache__")), "Stale __pycache__ found in chroot /opt/jwt-inspector-guard"
+    assert not (opt_dir / "tests").exists(), "tests/ must not be mirrored into chroot /opt/jwt-inspector-guard"
+    assert not (opt_dir / ".git").exists(), ".git must not be mirrored into chroot /opt/jwt-inspector-guard"
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 1024 * 1024, f"Chroot /opt/jwt-inspector-guard exceeds 1 MiB lean budget ({total_bytes} B)"
+
+    jwt_bin = BIN_DIR / "jwt-inspector-guard"
+    jwt_tui = BIN_DIR / "jwt-inspector-guard-tui"
+    assert jwt_bin.is_file() and jwt_tui.is_file()
+    for p in (jwt_bin, jwt_tui):
+        txt = p.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", txt), f"Literal /home/ path in {p.name}"
+    res_cli = subprocess.run(["python3", str(jwt_bin), "--version"], capture_output=True, text=True, check=False)
+    assert res_cli.returncode == 0 and "2.6.0" in res_cli.stdout, f"jwt-inspector-guard --version failed: {res_cli.stderr}"
+    res_tui = subprocess.run(["python3", str(jwt_tui), "--status"], capture_output=True, text=True, check=False)
+    assert res_tui.returncode == 0 and "2.6.0" in res_tui.stdout, f"jwt-inspector-guard-tui --status failed: {res_tui.stderr}"
+
+    desktop = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications" / "jwt-inspector-guard.desktop"
+    assert desktop.is_file(), f"Missing chroot desktop file: {desktop}"
+    desk_txt = desktop.read_text(encoding="utf-8")
+    assert "/usr/local/bin/jwt-inspector-guard" in desk_txt
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", desk_txt)
+
+
+
 

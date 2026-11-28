@@ -9,8 +9,8 @@ monetized: false
 price: "$0 (100% Free & Open-Access)"
 status: "active"
 verified: true
-tested_at: "2026-10-31"
-test_status: "PASS (12-Step Gallery Verified)"
+tested_at: "2026-11-27"
+test_status: "PASS (v2.6.0 Hardened Re-Audit)"
 local_port: 8124
 cli_binary: "jwt-inspector-guard"
 overflow_px: 0
@@ -18,148 +18,81 @@ console_errors: 0
 github: "https://github.com/1nc0gn30/jwt-inspector-guard"
 live_url: "http://127.0.0.1:8124"
 studio_url: "http://127.0.0.1:3000/tools/jwt-inspector-guard"
-workstation_shot: "Artifacts/jwt-inspector-guard/jwt-inspector-guard_07_gui_standalone_clean_token.jpg"
-studio_shot: "Artifacts/jwt-inspector-guard/jwt-inspector-guard_10_gui_studio_godmode_inspector.jpg"
-braille_shape: "dungeon_fov"
-braille_archetype: "Recursive Shadowcast FOV & Cellular Grid"
 ---
 
-# JWT Inspector Guard
+# JWT Inspector Guard (`v2.6.0`)
 
-> [!CHECK] Sovereign Verification Passed (100% Free & Operational)
-> **Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform**
-> Verified across Developer & End-User perspectives with a **12-Step Real Verification Screenshot Gallery** (`45 passed in 0.51s` pytest suite, RFC 9449 DPoP proof generator, RFC 7517 JWKS auditor, CVE-2015-9235 `alg:none` fuzzer, weak HMAC dictionary cracker, Standalone `:8124` Workstation, Zoth Studio v2 `:3000` God-Mode Inspector, and Mobile `390px` viewport with **`overflowPx: 0`** and **`consoleErrors: 0`**). Zero paywalls, zero license modals, zero blur locks.
+> [!CHECK] v2.6.0 Hardened Verification Passed (100% Free & Open-Access)
+> **Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform**
+> Verified across standalone `:8124` loopback daemon, Zoth Studio v2 `:3000/tools/jwt-inspector-guard`, ZothOS CLI/TUI/Chroot `/opt/jwt-inspector-guard`, and 11-tool JSON-RPC 2.0 MCP stdio server. Zero external CDN egress, zero paywalls, zero license modals, and zero literal home paths.
 
 ---
 
-## Tool Overview & Telemetry
+## Tool Overview & Architecture
 
 | Parameter | Specification |
 | :--- | :--- |
-| **Tool Identifier** | `jwt-inspector-guard` |
+| **Tool Identifier** | `jwt-inspector-guard` (`v2.6.0`) |
 | **Category** | `Security & Recon` |
-| **Mathematical Pillar** | `Pillar I: Cryptography & Security Protocols` |
-| **Runtime Engine** | `Python 3 Stdlib Crypto Server + Browser Web Crypto API` |
-| **Local Port & URL** | `:8124` • [http://127.0.0.1:8124](http://127.0.0.1:8124) |
-| **Studio God-Mode Route** | [http://127.0.0.1:3000/tools/jwt-inspector-guard](http://127.0.0.1:3000/tools/jwt-inspector-guard) |
-| **CLI Binary** | `/usr/local/bin/jwt-inspector-guard` • `~/.local/bin/jwt-inspector-guard` |
+| **Runtime Engine** | Pure Python 3 Standard Library (`src/jwt_inspector_guard/`) + Browser Web Crypto API |
+| **Core Modules** | `base64_url.py`, `token_parser.py`, `crypto_engine.py`, `claims_validator.py`, `security_linter.py`, `dpop_guard.py`, `jwks_manager.py`, `timing_defense.py`, `catalog.py`, `ui_server.py`, `mcp_server.py`, `cli.py` |
+| **Loopback Server** | On-Demand `http://127.0.0.1:8124` (`python3 server.py --port 8124`) |
+| **Studio Route** | `http://127.0.0.1:3000/tools/jwt-inspector-guard` |
+| **CLI & TUI Binaries** | `/usr/local/bin/jwt-inspector-guard`, `~/.local/bin/jwt-inspector-guard`, `/usr/local/bin/jwt-inspector-guard-tui` |
+| **Chroot Runtime** | `/opt/jwt-inspector-guard` (lean `< 1 MiB` staging) |
 | **GitHub Repository** | [https://github.com/1nc0gn30/jwt-inspector-guard](https://github.com/1nc0gn30/jwt-inspector-guard) |
-| **License & Pricing** | **100% Free & Open-Access** ($0) • Zero Paywalls |
-| **Support Rails** | [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) • Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` |
+| **License & Support** | MIT • 100% Free & Open-Access • [Buy Us a Coffee](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) • SOL: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` |
 
 ---
 
-## 12-Step Developer & End-User Verification Gallery
+## Verified CLI, REST & MCP Commands
 
-### Part I — Developer Perspective (Architecture, Pytest Suite & REST API Contracts)
+### 1. CLI Subcommands
+```bash
+# Platform & cryptographic diagnostics (redacted paths)
+jwt-inspector-guard --json
+jwt-inspector-guard --status
 
-#### Step 1/12 — Developer Repository Architecture & Multi-OS Crypto Diagnostics
-- **Action**: Inspect `src/jwt_inspector_guard` modules (`dpop_guard.py`, `jwks_auditor.py`, `exploit_fuzzer.py`, `security_linter.py`, `timing_guard.py`) and run `jwt-inspector-guard diagnostics --no-color -q`.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_01_dev_repo_architecture.jpg]]
+# Sample catalog (25 presets) & token inspection
+jwt-inspector-guard samples --no-color -q
+jwt-inspector-guard decode <JWT_TOKEN> --json
 
-#### Step 2/12 — Developer Automated Test Suite (`pytest -v` — 45 Passed)
-- **Action**: Execute `PYTHONPATH=src:. pytest -v` covering RFC 9449 DPoP binding, CVE exploit fuzzer, RFC 7517 JWKS rotation, timing defense, and local origin guards (`45 passed in 0.51s`).
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_02_dev_pytest_suite.jpg]]
+# Fail-closed verification (alg:none rejected unless --allow-none is explicitly passed)
+jwt-inspector-guard verify <JWT_TOKEN> -s <SECRET> --json
+jwt-inspector-guard audit <JWT_TOKEN> -s <SECRET> --json
+jwt-inspector-guard crack <JWT_TOKEN> --json
 
-#### Step 3/12 — Developer REST API & Security Linter Contract (`/health` & `POST /api/audit`)
-- **Action**: Verify `/health` and `POST /api/audit` on `:8124` against a CVE-2015-9235 `alg:none` exploit token (`overall_risk_score: 55`, `risk_level: "HIGH"`).
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_03_dev_api_contracts.jpg]]
+# RFC 9449 ECDSA P-256 (ES256) DPoP proofs, RFC 7517 JWKS & empirical timing benchmarks
+jwt-inspector-guard dpop-create --method POST --url https://api.example.com/v1/payments --json
+jwt-inspector-guard dpop-verify <PROOF_JWT> --method POST --url https://api.example.com/v1/payments --json
+jwt-inspector-guard jwks --rotate --json
+jwt-inspector-guard timing --trials 40 --json
 
----
-
-### Part II — End-User CLI / TUI Perspective (Samples Catalog, CVE Audit, Crack, DPoP & JWKS)
-
-#### Step 4/12 — End-User CLI Sample Catalog & Token Decoding (`samples` & `decode`)
-- **Action**: Run `jwt-inspector-guard samples --no-color -q` to list the 12 built-in JWT security presets, then decode `clean-hs256` with `jwt-inspector-guard decode --sample clean-hs256 --no-color -q`.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_04_user_cli_samples_catalog.jpg]]
-
-#### Step 5/12 — End-User CLI CVE Vulnerability Audit & Dictionary Secret Cracker (`audit` & `crack`)
-- **Action**: Run `jwt-inspector-guard audit <cve-2015-9235-token> --no-color -q` (`Score: 40/100 Grade D`) and crack a weak HMAC secret in sub-millisecond time using `jwt-inspector-guard crack <weak-token> --no-color -q` (`CRACKED SECRET: "secret"`).
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_05_user_cli_audit_and_crack.jpg]]
-
-#### Step 6/12 — End-User CLI RFC 9449 DPoP Proof Generator, JWKS Rotation & Constant-Time Audit
-- **Action**: Execute `jwt-inspector-guard dpop --method POST --uri https://api.nullai.tech/v1/vault --no-color -q`, `jwt-inspector-guard jwks --demo --no-color -q`, and `jwt-inspector-guard timing --iterations 200 --no-color -q`.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_06_user_cli_dpop_jwks_timing.jpg]]
-
----
-
-### Part III — End-User GUI Perspective (Standalone `:8124`, Studio `:3000` & Mobile `390px`)
-
-#### Step 7/12 — Standalone GUI (`:8124`): Bearer JWT Stream, JOSE Header & Security Radar
-- **Action**: Open `http://127.0.0.1:8124/` and inspect the live HS256 token stream, Temporal Validation & Epochs, Decoded JOSE Header, and Security Audit Radar (`85/100`).
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_07_gui_standalone_clean_token.jpg]]
-
-#### Step 8/12 — Standalone GUI (`:8124`): 1-Click CVE-2015-9235 (`alg:none`) Exploit Tamper Lab
-- **Action**: Trigger `CVE-2015-9235 (alg:none)` in the 1-Click Tamper & Exploit Lab, dropping the Security Audit score to `40/100` with `[CRITICAL] CVE-2015-9235: Unauthenticated Alg None Vulnerability`.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_08_gui_standalone_cve_tamper_and_dpop.jpg]]
-
-#### Step 9/12 — Standalone GUI (`:8124`): RFC 9449 DPoP Proof Minting & FastAPI Hardening Patch
-- **Action**: Mint an RFC 9449 DPoP Proof token bound to `POST https://api.example.com/v1/payments` (`Status: MINTED VALID`) and synthesize the FastAPI Python JWT Hardening Enclave patch.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_09_gui_standalone_hardening_patch.jpg]]
-
-#### Step 10/12 — Zoth Studio v2 God-Mode (`:3000/tools/jwt-inspector-guard`): Web Crypto Signature Verifier
-- **Action**: Open the Zoth Studio v2 God-Mode route, inspect the decoded JOSE Header and Payload claims, and run Web Crypto HMAC-SHA256 verification.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_10_gui_studio_godmode_inspector.jpg]]
-
-#### Step 11/12 — Zoth Studio v2 God-Mode (`:3000/tools/jwt-inspector-guard`): Sensitive Credential Leak Scanner
-- **Action**: Load the `Sensitive Credential Leak` preset and verify all 4 security findings (`WEAK-SECRET-001`, `TIMING-EXP-002`, `LEAK-CRED-001`, and `PII-EMAIL-001`).
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_11_gui_studio_godmode_cred_leak.jpg]]
-
-#### Step 12/12 — Mobile Responsive Viewport (`390px × 844px`) Verification
-- **Action**: Verify zero horizontal scroll overflow (`scrollWidth <= clientWidth`, `overflowPx: 0`) on a `390×844` mobile viewport.
-![[Artifacts/jwt-inspector-guard/jwt-inspector-guard_12_gui_mobile_390px.jpg]]
-
----
-
-## Test & Verification Matrix
-
-| Verification Check | Target Standard | Result | Status |
-| :--- | :--- | :--- | :--- |
-| **Developer Pytest Suite** | `PYTHONPATH=src:. pytest -v` | `45 passed in 0.51s` | 🟢 **PASS** |
-| **CLI Execution** | `diagnostics` / `samples` / `audit` / `crack` / `dpop` / `jwks` | Returncode 0 | 🟢 **PASS** |
-| **Daemon & API Health** | `http://127.0.0.1:8124/health` & `/api/audit` | HTTP 200 OK | 🟢 **PASS** |
-| **Mobile Viewport (390px)** | Zero horizontal overflow | `overflowPx: 0` | 🟢 **PASS** |
-| **Desktop Viewport (1440px)** | Responsive multi-pane | `overflowPx: 0` | 🟢 **PASS** |
-| **Browser Console Cleanliness** | Zero uncaught runtime errors | `consoleErrors: 0` | 🟢 **PASS** |
-| **Paywall Audit** | No blur gates, license modals, or Solana Tip locks | 100% Open Access | 🟢 **PASS** |
-
-
----
-
-## Sovereign 5-Layer Architecture & Second Brain Topology
-
-```mermaid
-flowchart LR
-    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
-        CLI["/usr/local/bin/jwt-inspector-guard"]
-        TUI["/usr/local/bin/jwt-inspector-guard-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
-    end
-
-    subgraph L2["2. Standalone Workstation"]
-        WEB["http://127.0.0.1:8124<br/>REST API & /health"]
-    end
-
-    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
-        STUDIO["http://127.0.0.1:3000/tools/jwt-inspector-guard<br/>God-Mode Component"]
-        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
-    end
-
-    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
-        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
-        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
-        VAULT["Studio/Tools/Studio jwt-inspector-guard.md"]
-    end
-
-    CLI --> WEB
-    TUI --> WEB
-    WEB <--> STUDIO
-    WEB <--> LITE
-    WEB --> TRACKER
-    TRACKER <--> VAULT
-    VAULT <--> NEURO
+# Unified hardened loopback web server & Braille telemetry TUI
+jwt-inspector-guard serve --host 127.0.0.1 --port 8124 --no-browser
+jwt-inspector-guard-tui --status
+jwt-inspector-guard-tui --json
 ```
 
-### ZothOS v3.4 TUI & Obsidian Second Brain Sync
-- **Unicode `U+2800` Braille TUI**: `jwt-inspector-guard-tui --status` / `jwt-inspector-guard-tui --json`
-- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
-- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]
+### 2. Loopback REST API (`127.0.0.1:8124`)
+- `GET` / `HEAD` `/`, `/health`, `/api/health`, `/api/catalog`, `/api/diagnostics`, `/robots.txt`, `/sitemap.xml`
+- `POST` `/api/decode`, `/api/verify`, `/api/validate`, `/api/audit`, `/api/inspect`, `/api/catalog`, `/api/crack`, `/api/mint`, `/api/entropy`, `/api/tamper`, `/api/jwks`, `/api/timing`, `/api/dpop/create`, `/api/dpop/verify`
+- Enforces strict loopback `Host` (`403`), exact-port `Origin` (`403`), 4 security headers + loopback CSP, `Cache-Control: no-store` on `/api/*`, `1 MiB` body cap (`413`), and strict JSON/numeric validation (`400`).
+
+### 3. 11 JSON-RPC 2.0 MCP Stdio Tools (`jwt-inspector-guard mcp`)
+1. `jwt_decode`
+2. `jwt_verify`
+3. `jwt_encode`
+4. `jwt_audit_security`
+5. `jwt_crack_secret`
+6. `jwt_list_samples`
+7. `jwt_diagnostics`
+8. `jwt_audit_jwks`
+9. `jwt_timing_defense_audit`
+10. `jwt_create_dpop_proof`
+11. `jwt_verify_dpop_proof`
+
+---
+
+## Connected Canon Notes
+[[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[Zoth Memory]] · [[Public Surfaces]]
