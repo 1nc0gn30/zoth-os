@@ -1,31 +1,20 @@
 ---
 title: "Netrunner3DWorld"
-tags: [studio, component]
+tags: [studio, component, retired]
 ---
 
-# Netrunner3DWorld
+# Netrunner3DWorld (Retired)
 
-The `Netrunner3DWorld` component (`zoth-studio-v2/src/components/Netrunner3DWorld.jsx`) is a high-craftsmanship Three.js 3D cyberspace visualization canvas for sovereign memory nodes.
+> **Status: Retired & Removed (`v2.4.0`).** `src/components/Netrunner3DWorld.jsx` (`3,192` lines, `0` active imports, containing 4 unguarded mutating `POST http://127.0.0.1:8094/api/{remember,consolidate}` calls and `Math.random()` loops) has been deleted from `zoth-studio-v2`.
 
-## What It Renders
+## Replacement Component
 
-- **Three.js Scene & Environment:**
-  - **Procedural Starfield:** Spherical distribution of 2,000+ points tinted gold, cyan, and white.
-  - **Obsidian Substrate Floor:** Metallic reflective ground disk overlaid with a procedural canvas cyberspace grid texture.
-  - **Central Oracle Core:** Glowing central monolith and pulsing orbital energy rings representing the Lucy Oracle core.
-- **Memory Nodes & Topology:**
-  - 3D sphere meshes for each memory entry, color-coded by cluster (Lucy Oracle, Kernel, Consensus, Security, Vault, Pantheon).
-  - Dynamic link lines visualizing inter-memory relationships and cluster affinity.
-  - Specular halo shaders on active and selected nodes.
-- **Controls & HUD Overlay:**
-  - **OrbitControls:** Smooth mouse/touch camera orbiting with soft deceleration damping and floor angle limits.
-  - **Playback & Focus Toolbar:** Controls to toggle auto-rotation (Play/Pause), reset camera vantage, focus on the currently selected node, toggle 2D HTML floating labels, and enter fullscreen.
-  - **Interactive Tooltip:** Hover card displaying memory title, cluster tag, and timestamp.
+All Lucy Netrunner Memory Hub workstation rendering now runs through **`src/components/tools/NetrunnerMemoryHubGodModeTool.jsx`** backed by the pure deterministic engine **`src/utils/netrunnerMemoryEngine.js`** (mirrored byte-identically at **`server/netrunner-memory-engine.mjs`**):
 
-## Parent & Integration
-
-Rendered by [[Page MemoryPage|MemoryPage]] (`/memory`) as the primary interactive 3D netrunner topology explorer.
+- **Canonical Routes:** `/workstations/netrunner-memory` and `/tools/netrunner-memory` (overview at `/memory`, technical reference at `/memory/docs`).
+- **Dual-Theme 2D Synaptic Constellation & STDP Curves:** Pure MUI + SVG visualization supporting Editorial Ivory Light Mode and Obsidian Gold Dark Mode with `>= 4.5:1` WCAG AA contrast and zero dark canvas slabs.
+- **Strictly Read-Only `:8094` Telemetry:** Connects exclusively via hardened `GET/HEAD /api/studio/netrunner-memory` and `POST /api/studio/netrunner-memory/evaluate` with zero writes to `127.0.0.1:8094` and zero external egress.
 
 ## See also
 
-[[Zoth Studio]] · [[MOC Components]]
+[[Zoth Studio]] · [[MOC Components]] · [[Workstation netrunner-memory]]

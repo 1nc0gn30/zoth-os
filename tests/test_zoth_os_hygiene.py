@@ -630,6 +630,36 @@ def test_netlify_ax_vault_parity_and_hygiene():
     assert "Neal Frazier Tech" in txt
 
 
+def test_netrunner_memory_vault_parity_and_hygiene():
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    ws_note = vault_root / "Studio" / "Workstations" / "Workstation netrunner-memory.md"
+    legacy_note = vault_root / "Studio" / "Legacy" / "Legacy netrunner-memory.md"
+    comp_note = vault_root / "Studio" / "Components" / "Component Netrunner3DWorld.md"
+
+    for note in (ws_note, legacy_note, comp_note):
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt), f"Literal /home/ leak in {note.name}"
+        assert "/studio/netrunner-memory.html" not in ntxt, f"Dead /studio/netrunner-memory.html path in {note.name}"
+
+    ws_txt = ws_note.read_text(encoding="utf-8")
+    assert "2.4.0" in ws_txt
+    assert "/workstations/netrunner-memory" in ws_txt
+    assert "/api/studio/netrunner-memory" in ws_txt
+    assert "zoth open netrunner-memory" in ws_txt
+    assert "python3 -m neuro_memory_daemon.cli serve --port 8094" in ws_txt
+    assert "Neal Frazier Tech" in ws_txt
+
+    leg_txt = legacy_note.read_text(encoding="utf-8")
+    assert "/workstations/netrunner-memory" in leg_txt
+    assert "Now lives at:** `/memory`" not in leg_txt
+
+    comp_txt = comp_note.read_text(encoding="utf-8")
+    assert "Retired" in comp_txt
+    assert "NetrunnerMemoryHubGodModeTool.jsx" in comp_txt
+    assert "Rendered by [[Page MemoryPage" not in comp_txt
+
+
 
 
 
