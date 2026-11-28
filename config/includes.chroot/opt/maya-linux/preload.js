@@ -1,13 +1,13 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const api = {
+const api = Object.freeze({
   isDesktopApp: true,
   checkSystemDeps: () => ipcRenderer.invoke('check-system-deps'),
   downloadYouTubeAudio: (url) => ipcRenderer.invoke('download-youtube-audio', url),
   downloadYouTubeAudioInTerminal: (url) => ipcRenderer.invoke('download-youtube-audio-terminal', url),
   updateYtdlp: () => ipcRenderer.invoke('update-ytdlp'),
   showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
-  showItemInFolder: (path) => ipcRenderer.invoke('show-item-in-folder', path),
+  showItemInFolder: (filePath) => ipcRenderer.invoke('show-item-in-folder', filePath),
   startNativeExport: (config) => ipcRenderer.invoke('start-native-export', config),
   feedNativeExportFrame: (buffer) => ipcRenderer.invoke('feed-native-export-frame', buffer),
   finishNativeExport: () => ipcRenderer.invoke('finish-native-export'),
@@ -17,16 +17,6 @@ const api = {
   listNeuralVoices: () => ipcRenderer.invoke('list-neural-voices'),
   getCliVideoPath: () => ipcRenderer.invoke('get-cli-video-path'),
   renderMayaMotionPreset: (params) => ipcRenderer.invoke('render-maya-motion-preset', params),
-};
+});
 
-if (process.contextIsolated) {
-  try {
-    contextBridge.exposeInMainWorld('electronAPI', api);
-  } catch (_) {
-    window.electronAPI = api;
-  }
-} else {
-  window.electronAPI = api;
-}
-
-module.exports = api;
+contextBridge.exposeInMainWorld('electronAPI', api);

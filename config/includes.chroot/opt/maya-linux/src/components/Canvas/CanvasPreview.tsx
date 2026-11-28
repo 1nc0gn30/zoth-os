@@ -547,7 +547,7 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex-1 h-full bg-dark-950 flex items-center justify-center p-8 relative overflow-hidden select-none transition-all ${
+      className={`flex-1 min-w-0 h-full bg-dark-950 flex items-center justify-center p-3 sm:p-5 lg:p-6 relative overflow-y-auto overflow-x-hidden select-none transition-all ${
         isDragOver ? 'bg-brand-950/40 ring-4 ring-inset ring-brand-500/50' : ''
       }`}
     >
@@ -650,27 +650,27 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
       ) : (
         <div 
           onClick={onOpenFile}
-          className="max-w-xl w-full flex flex-col items-center justify-center space-y-5 p-8 rounded-3xl border-2 border-dashed border-slate-800 hover:border-brand-500/60 bg-dark-900/50 hover:bg-dark-900/80 transition-all cursor-pointer group shadow-2xl text-center"
+          className="max-w-2xl w-full my-auto flex flex-col items-center justify-center space-y-4 sm:space-y-5 p-4 sm:p-7 rounded-2xl sm:rounded-3xl border-2 border-dashed border-slate-800 hover:border-brand-500/60 bg-dark-900/50 hover:bg-dark-900/80 transition-all cursor-pointer group shadow-2xl text-center"
         >
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-brand-600/30 via-indigo-500/20 to-cyan-500/20 border border-brand-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-brand-500/20">
-            <Upload className="w-8 h-8 text-brand-400" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-brand-600/30 via-indigo-500/20 to-cyan-500/20 border border-brand-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-brand-500/20">
+            <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-brand-400" />
           </div>
           <div className="space-y-1.5">
-            <h3 className="font-bold text-slate-100 text-base">Drag & Drop Screen Recording</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Supports MP4, MOV, and WebM video recordings. Click to select from disk, or synthesize a 60fps procedural edit below.
+            <h2 className="font-bold text-slate-100 text-base sm:text-lg">Drag &amp; Drop Screen Recording</h2>
+            <p className="text-xs text-slate-400 leading-relaxed max-w-md mx-auto">
+              Supports MP4, MOV, and WebM recordings. Click to select from disk, or synthesize a 60fps procedural edit below.
             </p>
           </div>
 
           {onSynthesizeMotion && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="w-full space-y-2 pt-2 border-t border-slate-800/80 text-left"
+              className="w-full space-y-2.5 pt-2.5 border-t border-slate-800/80 text-left"
             >
-              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-amber-400">
+              <div className="flex flex-wrap items-center justify-between gap-1 text-[10px] font-mono uppercase tracking-wider text-amber-400">
                 <span className="flex items-center space-x-1.5">
-                  <Zap className="w-3.5 h-3.5" />
-                  <span>1-Click Zoth &amp; 1nc0gn30 Motion Synth (Zero Still Images)</span>
+                  <Zap className="w-3.5 h-3.5 shrink-0" />
+                  <span>1-Click 60 FPS Motion Synth</span>
                 </span>
                 <span className="text-slate-400">60 FPS + WAV</span>
               </div>
@@ -681,20 +681,13 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
                     type="button"
                     disabled={isSynthesizing}
                     onClick={() => onSynthesizeMotion(preset.id)}
-                    className="p-2.5 rounded-xl bg-dark-950/90 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 flex items-center justify-between transition text-left disabled:opacity-50"
+                    className="min-h-[52px] p-2.5 rounded-xl bg-dark-950/90 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 flex items-center justify-between gap-2 transition text-left disabled:opacity-50"
                   >
-                    <div className="min-w-0 pr-2">
-                      <div className="text-[11px] font-bold text-slate-100 truncate">{preset.title}</div>
-                      <div className="text-[9px] text-slate-400 truncate">{preset.subtitle}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold text-slate-100 truncate">{preset.title}</div>
+                      <div className="text-[10px] text-slate-400 truncate">{preset.subtitle}</div>
                     </div>
-                    <span
-                      className="shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded border"
-                      style={{
-                        color: preset.accentHex,
-                        borderColor: `${preset.accentHex}55`,
-                        backgroundColor: `${preset.accentHex}15`,
-                      }}
-                    >
+                    <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/35 whitespace-nowrap">
                       {preset.badge}
                     </span>
                   </button>
@@ -718,19 +711,19 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
           )}
 
           {/* Studio Feature Chips */}
-          <div className="grid grid-cols-2 gap-2 pt-1 w-full text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 w-full text-left">
             <div className="p-2.5 rounded-xl bg-dark-950/80 border border-slate-800/80 flex items-center space-x-2">
-              <span className="text-base">⚡</span>
-              <div>
-                <div className="text-[11px] font-semibold text-slate-200">3D Device Frames</div>
-                <div className="text-[9px] text-slate-400">iPhone 17 Pro, Mac, Pixel 9</div>
+              <span className="text-base" aria-hidden="true">⚡</span>
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold text-slate-200 truncate">3D Device Frames</div>
+                <div className="text-[10px] text-slate-400 truncate">iPhone 17 Pro, Mac, Pixel 9</div>
               </div>
             </div>
             <div className="p-2.5 rounded-xl bg-dark-950/80 border border-slate-800/80 flex items-center space-x-2">
-              <span className="text-base">🎬</span>
-              <div>
-                <div className="text-[11px] font-semibold text-slate-200">CapCut / 60fps MP4</div>
-                <div className="text-[9px] text-slate-400">Native FFmpeg Pipeline</div>
+              <span className="text-base" aria-hidden="true">🎬</span>
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold text-slate-200 truncate">CapCut / 60fps MP4</div>
+                <div className="text-[10px] text-slate-400 truncate">Native FFmpeg Pipeline</div>
               </div>
             </div>
           </div>

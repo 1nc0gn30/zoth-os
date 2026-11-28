@@ -21,7 +21,7 @@ import { SpeedTimeline } from './models/speedTimeline';
 import { exportVideo } from './services/exportService';
 import { computeAudioDucking, computeAudioFade } from './services/audioService';
 import { generateProceduralMotionProject, MotionSynthPreset } from './services/proceduralMotionSynth';
-import { AudioTrack, StickerItem, SubtitleItem, TextOverlay, MetaEditsConfig, TransitionItem, TypewriterOverlayItem, ImageOverlayItem } from './types/models';
+import { AudioTrack, CanvasAspectRatioType, StickerItem, SubtitleItem, TextOverlay, MetaEditsConfig, TransitionItem, TypewriterOverlayItem, ImageOverlayItem } from './types/models';
 
 const initialProject: ProjectState = {
   videoURL: null,
@@ -129,6 +129,14 @@ const initialProject: ProjectState = {
 
 export const App: React.FC = () => {
   const [project, setProject] = useState<ProjectState>(initialProject);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof document !== 'undefined' && document.documentElement.classList.contains('light')) {
+      return 'light';
+    }
+    return 'dark';
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [copiedSolana, setCopiedSolana] = useState(false);
   const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
   const [isTTSModalOpen, setIsTTSModalOpen] = useState(false);
   const [isStickerModalOpen, setIsStickerModalOpen] = useState(false);
@@ -140,6 +148,35 @@ export const App: React.FC = () => {
   const [isTransitionsModalOpen, setIsTransitionsModalOpen] = useState(false);
   const [isTypewriterModalOpen, setIsTypewriterModalOpen] = useState(false);
   const [isBrandAssetsModalOpen, setIsBrandAssetsModalOpen] = useState(false);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(next);
+      document.documentElement.dataset.theme = next;
+      try {
+        window.localStorage.setItem('maya-theme', next);
+      } catch (_) {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-color-scheme: light)');
+    if (!mq) return;
+    const onChange = (e: MediaQueryListEvent) => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('theme') || window.localStorage.getItem('maya-theme')) return;
+      const next = e.matches ? 'light' : 'dark';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(next);
+      document.documentElement.dataset.theme = next;
+      setTheme(next);
+    };
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
+  }, []);
 
   const historyRef = useRef<ProjectState[]>([]);
   const futureRef = useRef<ProjectState[]>([]);
@@ -405,7 +442,29 @@ export const App: React.FC = () => {
     }).catch(() => {});
   }, []);
 
-  const handleExport = async (transparent: boolean, quality: '1080p' | '1440p' | '4k' = '1080p', fps: number = 60) => {
+  const handleRenderNativeMotion = async (presetId: string) => {
+    const api = (window as any).electronAPI;
+    if (!api?.renderMayaMotionPreset) return;
+    setIsSynthesizing(true);
+    try {
+      const res = await api.renderMayaMotionPreset({ preset: presetId });
+      if (res?.success && res?.outDir) {
+        setExportedFilePath(res.outDir);
+      }
+    } catch (err: any) {
+      console.error('Native motion engine render failed:', err);
+      alert(`Native Motion Engine error: ${err.message || err}`);
+    } finally {
+      setIsSynthesizing(false);
+    }
+  };
+
+  const handleExport = async (
+    transparent: boolean,
+    quality: '1080p' | '1440p' | '4k' = '1080p',
+    fps: number = 60,
+    aspectOverride?: CanvasAspectRatioType
+  ) => {
     const video = videoRef.current;
     const audio = audioRef.current;
     if (!video) return;
@@ -413,7 +472,12 @@ export const App: React.FC = () => {
     video.pause();
     if (audio) audio.pause();
 
+    const effectiveProject: ProjectState = aspectOverride
+      ? { ...project, canvasAspect: aspectOverride }
+      : project;
+
     updateProject({
+      ...(aspectOverride ? { canvasAspect: aspectOverride } : {}),
       isExporting: true,
       exportProgress: 0,
       exportType: transparent ? 'transparent' : 'background',
@@ -422,7 +486,7 @@ export const App: React.FC = () => {
 
     try {
       const result = await exportVideo(
-        project,
+        effectiveProject,
         {
           transparent,
           quality,
@@ -759,11 +823,20 @@ export const App: React.FC = () => {
       {/* Main App Layout */}
       <Header
         project={project}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         onOpenFile={handleOpenFile}
         onSaveProject={handleSaveProject}
         onLoadProject={handleLoadProject}
         onExport={handleExport}
         onSynthesizeMotion={handleSynthesizeMotion}
+        onRenderNativeMotion={
+          typeof window !== 'undefined' && (window as any).electronAPI?.renderMayaMotionPreset
+            ? handleRenderNativeMotion
+            : undefined
+        }
         isSynthesizing={isSynthesizing}
         onOpenTemplates={() => setIsTemplatesModalOpen(true)}
         onOpenTTS={() => setIsTTSModalOpen(true)}
@@ -781,11 +854,34 @@ export const App: React.FC = () => {
         canRedo={futureRef.current.length > 0}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <SettingsSidebar
-          project={project}
-          onChange={updateProject}
-        />
+      <div className="flex-1 flex min-h-0 overflow-hidden relative">
+        {/* Desktop Persistent Sidebar (>= lg) */}
+        <div className="hidden lg:flex shrink-0 h-full">
+          <SettingsSidebar
+            project={project}
+            onChange={updateProject}
+          />
+        </div>
+
+        {/* Mobile / Tablet Collapsible Settings Drawer (< lg) */}
+        {isSidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 z-50 flex"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+            <div
+              className="relative w-80 max-w-[88vw] h-full z-50 shadow-2xl flex"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SettingsSidebar
+                project={project}
+                onChange={updateProject}
+                onClose={() => setIsSidebarOpen(false)}
+              />
+            </div>
+          </div>
+        )}
 
         <CanvasPreview
           project={project}
@@ -820,6 +916,57 @@ export const App: React.FC = () => {
         onOpenTypewriter={() => setIsTypewriterModalOpen(true)}
         onOpenBrandAssets={() => setIsBrandAssetsModalOpen(true)}
       />
+
+      {/* Canonical Attribution & Open-Access Support Bar */}
+      <footer className="shrink-0 border-t border-slate-800/80 bg-dark-900/95 px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-300 z-30">
+        <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 min-w-0">
+          <span className="truncate">
+            Engineered by{' '}
+            <a
+              href="https://github.com/1nc0gn30/maya-linux"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-amber-300 hover:underline"
+            >
+              Neal Frazier Tech (@1nc0gn30)
+            </a>
+            {' • '}
+            <a
+              href="https://nullai.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-brand-300 hover:underline"
+            >
+              NullAI Platform
+            </a>
+          </span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <a
+            href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/35 font-semibold whitespace-nowrap transition"
+          >
+            ☕ Buy Us a Coffee
+          </a>
+          <a
+            href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+            onClick={(e) => {
+              if (navigator.clipboard) {
+                e.preventDefault();
+                navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK').catch(() => {});
+                setCopiedSolana(true);
+                setTimeout(() => setCopiedSolana(false), 2000);
+              }
+            }}
+            title="Solana Tip Address: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+            className="hidden sm:inline-flex items-center px-2 py-1 rounded-md bg-dark-950 hover:bg-slate-800 text-slate-300 border border-slate-800 font-mono text-[10px] whitespace-nowrap transition"
+          >
+            {copiedSolana ? 'SOL Copied!' : 'SOL: GG2e…dXoK'}
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };

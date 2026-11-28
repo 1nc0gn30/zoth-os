@@ -46,16 +46,17 @@ export const SUBTITLE_STYLE_PRESETS: Record<SubtitlePresetStyle, SubtitleStylePr
 };
 
 export const NEURAL_VOICE_PRESETS = [
-  { id: 'en-US-ChristopherNeural', name: 'Christopher (US Male - Deep Authority)', gender: 'Male' },
-  { id: 'en-US-JennyNeural', name: 'Jenny (US Female - Natural & Clear)', gender: 'Female' },
-  { id: 'en-US-GuyNeural', name: 'Guy (US Male - Casual Podcaster)', gender: 'Male' },
-  { id: 'en-US-AriaNeural', name: 'Aria (US Female - Confident Expressive)', gender: 'Female' },
-  { id: 'en-US-AndrewNeural', name: 'Andrew (US Male - Warm Copilot)', gender: 'Male' },
-  { id: 'en-US-AvaNeural', name: 'Ava (US Female - Friendly & Upbeat)', gender: 'Female' },
-  { id: 'en-GB-RyanNeural', name: 'Ryan (UK Male - British Accent)', gender: 'Male' },
-  { id: 'en-GB-SoniaNeural', name: 'Sonia (UK Female - British Accent)', gender: 'Female' },
-  { id: 'en-US-BrianNeural', name: 'Brian (US Male - Approachable)', gender: 'Male' },
-  { id: 'en-US-AnaNeural', name: 'Ana (US Female - Cute & Energetic)', gender: 'Female' },
+  { id: 'espeak-local', name: 'Local Offline Voice (espeak-ng — Zero Cloud)', gender: 'Neutral', offline: true },
+  { id: 'en-US-ChristopherNeural', name: 'Christopher (US Male - Deep Authority) [Cloud]', gender: 'Male', offline: false },
+  { id: 'en-US-JennyNeural', name: 'Jenny (US Female - Natural & Clear) [Cloud]', gender: 'Female', offline: false },
+  { id: 'en-US-GuyNeural', name: 'Guy (US Male - Casual Podcaster) [Cloud]', gender: 'Male', offline: false },
+  { id: 'en-US-AriaNeural', name: 'Aria (US Female - Confident Expressive) [Cloud]', gender: 'Female', offline: false },
+  { id: 'en-US-AndrewNeural', name: 'Andrew (US Male - Warm Copilot) [Cloud]', gender: 'Male', offline: false },
+  { id: 'en-US-AvaNeural', name: 'Ava (US Female - Friendly & Upbeat) [Cloud]', gender: 'Female', offline: false },
+  { id: 'en-GB-RyanNeural', name: 'Ryan (UK Male - British Accent) [Cloud]', gender: 'Male', offline: false },
+  { id: 'en-GB-SoniaNeural', name: 'Sonia (UK Female - British Accent) [Cloud]', gender: 'Female', offline: false },
+  { id: 'en-US-BrianNeural', name: 'Brian (US Male - Approachable) [Cloud]', gender: 'Male', offline: false },
+  { id: 'en-US-AnaNeural', name: 'Ana (US Female - Energetic) [Cloud]', gender: 'Female', offline: false },
 ];
 
 export async function generateAIAudio(params: {

@@ -1,13 +1,16 @@
 {
   "name": "maya-video-editor",
-  "version": "1.2.0",
-  "description": "Wrap screen recordings in beautiful device frames, synthesize 60fps procedural motion edits, and export ready-to-share videos on Linux",
+  "version": "2.0.0",
+  "description": "Wrap screen recordings in device frames, synthesize 60fps procedural motion edits, and export ready-to-share videos on Linux",
   "main": "main.js",
   "homepage": "./",
+  "license": "MIT",
+  "author": "Neal Frazier Tech (@1nc0gn30) <https://nullai.tech>",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "node tests/test_electron_security.mjs",
     "app:dev": "NODE_ENV=development electron .",
     "dist": "npm run build && electron-builder --linux AppImage"
   },
@@ -34,11 +37,6 @@
     }
   },
   "dependencies": {
-    "@types/howler": "^2.2.13",
-    "canvas-confetti": "^1.9.4",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.4.7",
-    "howler": "^2.2.4",
     "lucide-react": "^1.34.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

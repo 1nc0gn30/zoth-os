@@ -20,20 +20,24 @@ Can be invoked standalone or via `maya --render <preset|all> [--out <dir>]`.
 
 import argparse
 import hashlib
+import json
 import math
 import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import wave
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
-VOICE_SCRIPTS_DIR = "/home/zoth/Desktop/zoth-1nc0gn30-videos/scripts"
-if VOICE_SCRIPTS_DIR not in sys.path:
+VOICE_SCRIPTS_DIR = os.environ.get("MAYA_VOICE_SCRIPTS_DIR", "").strip()
+if VOICE_SCRIPTS_DIR and os.path.isdir(VOICE_SCRIPTS_DIR) and VOICE_SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, VOICE_SCRIPTS_DIR)
 
 try:
+    if not VOICE_SCRIPTS_DIR:
+        raise ImportError("Using self-contained Maya fallback engine")
     from voice_engine import (
         BOLD,
         MONO,
@@ -50,16 +54,180 @@ try:
         smooth,
     )
     HAS_VOICE_ENGINE = True
-except Exception as _ve_err:
+except Exception:
     HAS_VOICE_ENGINE = False
     SR = 44100
-    BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-    MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
+
+    def _find_system_font(candidates):
+        for candidate in candidates:
+            if os.path.isfile(candidate):
+                return candidate
+        return ""
+
+    BOLD = _find_system_font([
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    ])
+    MONO = _find_system_font([
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+        BOLD,
+    ])
+    _FONT_CACHE = {}
+
+    def clean_glyph_text(text: str) -> str:
+        replacements = {
+            "\u2014": "-",
+            "\u2013": "-",
+            "\u2018": "'",
+            "\u2019": "'",
+            "\u201c": '"',
+            "\u201d": '"',
+            "\u2026": "...",
+            "\u2022": "·",
+        }
+        out = str(text or "")
+        for src, dst in replacements.items():
+            out = out.replace(src, dst)
+        return out
+
+    def font(font_path: str, size: int):
+        sz = max(8, int(size))
+        key = (font_path or "", sz)
+        if key in _FONT_CACHE:
+            return _FONT_CACHE[key]
+        resolved = font_path if (font_path and os.path.isfile(font_path)) else BOLD
+        try:
+            fnt = ImageFont.truetype(resolved, sz) if resolved else ImageFont.load_default()
+        except Exception:
+            fnt = ImageFont.load_default()
+        _FONT_CACHE[key] = fnt
+        return fnt
+
+    def fit_font(draw, text: str, font_path: str, max_size: int, min_size: int, max_width: int):
+        cleaned = clean_glyph_text(text)
+        for sz in range(int(max_size), int(min_size) - 1, -1):
+            fnt = font(font_path, sz)
+            if draw.textlength(cleaned, font=fnt) <= max_width:
+                return fnt
+        return font(font_path, int(min_size))
+
+    def precompute_caption_layout(draw, text: str, fnt, max_width: int, max_lines_per_page: int = 2):
+        words = clean_glyph_text(text).split()
+        if not words:
+            return {"pages": [], "total_words": 0}
+        lines = []
+        current_words = []
+        word_idx = 0
+        for w in words:
+            trial = " ".join([cw[0] for cw in current_words] + [w])
+            if current_words and draw.textlength(trial, font=fnt) > max_width:
+                lines.append(current_words)
+                current_words = [(w, word_idx)]
+            else:
+                current_words.append((w, word_idx))
+            word_idx += 1
+        if current_words:
+            lines.append(current_words)
+
+        per_page = max(1, int(max_lines_per_page))
+        pages = [lines[i:i + per_page] for i in range(0, len(lines), per_page)]
+        return {"pages": pages, "total_words": len(words)}
+
+    def draw_karaoke_captions_fast(
+        d,
+        layout,
+        speech_progress: float,
+        box_x0: int,
+        box_y0: int,
+        box_w: int,
+        box_h: int,
+        fnt,
+        accent_col,
+        center_align: bool = False,
+    ):
+        pages = layout.get("pages", []) if isinstance(layout, dict) else []
+        total_words = layout.get("total_words", 0) if isinstance(layout, dict) else 0
+        if not pages or total_words <= 0:
+            return
+        prog = max(0.0, min(1.0, float(speech_progress)))
+        active_word_idx = min(total_words - 1, int(prog * total_words))
+        active_page = pages[-1]
+        for page in pages:
+            page_indices = [idx for line in page for _, idx in line]
+            if page_indices and page_indices[0] <= active_word_idx <= page_indices[-1]:
+                active_page = page
+                break
+
+        line_count = len(active_page)
+        line_h = max(24, min(36, box_h // max(1, line_count)))
+        start_y = box_y0 + max(0, (box_h - line_count * line_h) // 2)
+        space_w = d.textlength(" ", font=fnt)
+
+        for li, line in enumerate(active_page):
+            full_line = " ".join(w for w, _ in line)
+            lw = d.textlength(full_line, font=fnt)
+            cx = box_x0 + ((box_w - lw) / 2.0 if center_align else 0.0)
+            cy = start_y + li * line_h
+            for word, idx in line:
+                if idx == active_word_idx:
+                    fill = accent_col
+                elif idx < active_word_idx:
+                    fill = (248, 250, 252)
+                else:
+                    fill = (160, 174, 196)
+                d.text((cx, cy), word, font=fnt, fill=fill)
+                cx += d.textlength(word, font=fnt) + space_w
+
+    def draw_mic_icon(d, cx: int, cy: int, col, scale: float = 1.0):
+        r = max(4, int(6 * scale))
+        h = max(8, int(12 * scale))
+        d.rounded_rectangle([cx - r, cy - h, cx + r, cy + int(2 * scale)], radius=r, fill=col)
+        arc_r = max(6, int(9 * scale))
+        d.arc([cx - arc_r, cy - int(4 * scale), cx + arc_r, cy + arc_r], start=0, end=180, fill=col, width=max(1, int(2 * scale)))
+        d.line([(cx, cy + arc_r), (cx, cy + arc_r + int(4 * scale))], fill=col, width=max(1, int(2 * scale)))
+        d.line([(cx - int(5 * scale), cy + arc_r + int(4 * scale)), (cx + int(5 * scale), cy + arc_r + int(4 * scale))], fill=col, width=max(1, int(2 * scale)))
+
+    def build_background_music(duration_sec: float, root: float = 138.59, seed: int = 0, bpm: int = 138, funky: bool = True) -> np.ndarray:
+        n = max(1, int(float(duration_sec) * SR))
+        t = np.arange(n, dtype=np.float32) / float(SR)
+        beat_hz = max(1.0, float(bpm)) / 60.0
+        beat_phase = (t * beat_hz) % 1.0
+        step_idx = ((t * beat_hz * 2.0).astype(np.int32) + int(seed)) % 4
+        scale_mult = np.array([1.0, 1.1892, 1.4983, 1.7818], dtype=np.float32)
+        arp_freq = float(root) * scale_mult[step_idx]
+        pad = 0.18 * np.sin(2.0 * math.pi * float(root) * t) + 0.10 * np.sin(2.0 * math.pi * float(root) * 1.5 * t)
+        arp_env = np.exp(-beat_phase * 5.0).astype(np.float32)
+        arp = 0.14 * np.sin(2.0 * math.pi * arp_freq * t) * arp_env
+        kick_env = np.exp(-beat_phase * 14.0).astype(np.float32)
+        kick = 0.22 * np.sin(2.0 * math.pi * (55.0 + 95.0 * kick_env) * beat_phase / beat_hz) * kick_env
+        mix = pad + arp + (kick if funky else 0.5 * kick)
+        peak = float(np.max(np.abs(mix))) if n > 0 else 1.0
+        if peak > 1e-6:
+            mix = (mix / peak) * 0.35
+        return mix.astype(np.float32)
+
+    def save_wav(wav_path: str, samples: np.ndarray, sr: int = SR):
+        parent = os.path.dirname(wav_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        clipped = np.clip(np.asarray(samples, dtype=np.float32), -1.0, 1.0)
+        pcm = (clipped * 32767.0).astype(np.int16)
+        with wave.open(wav_path, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(int(sr))
+            wf.writeframes(pcm.tobytes())
+
+    def smooth(x: float) -> float:
+        u = max(0.0, min(1.0, float(x)))
+        return u * u * (3.0 - 2.0 * u)
 
 
-DEFAULT_OUT_DIR = "/home/zoth/Desktop/zoth-1nc0gn30-videos/out"
-VIDEOS_MIRROR_DIR = "/home/zoth/Videos/maya-zoth-edits"
-TMP_WAV_DIR = "/tmp/maya_motion_wavs"
+_XDG_VIDEOS = os.environ.get("XDG_VIDEOS_DIR", os.path.join(os.path.expanduser("~"), "Videos"))
+DEFAULT_OUT_DIR = os.path.join(_XDG_VIDEOS, "maya-zoth-edits")
 
 GOLD = (251, 191, 36)
 CYAN = (0, 240, 255)
@@ -90,7 +258,7 @@ PRESETS = {
             (
                 "onyx",
                 "SOVEREIGN DESKTOP ARCHITECTURE",
-                "ZothOS v3.4 + Maya Pro Engine 1.2 · Zero Still Frames",
+                "ZothOS v3.4 + Maya Pro Engine 2.0 · Zero Still Frames",
                 GOLD,
                 "Welcome inside the ZothOS sovereign core, engineered by incognito with sixty frames per second of pure procedural motion.",
             ),
@@ -811,9 +979,12 @@ def draw_maya_chrome_frame(
 
 
 def open_ffmpeg_60fps_pipe(W: int, H: int, wav_path: str, out_mp4: str, fps: int = 60):
-    os.makedirs(os.path.dirname(out_mp4), exist_ok=True)
+    out_parent = os.path.dirname(out_mp4)
+    if out_parent:
+        os.makedirs(out_parent, exist_ok=True)
+    ffmpeg_bin = shutil.which("ffmpeg") or "/usr/bin/ffmpeg"
     cmd = [
-        "/usr/bin/ffmpeg",
+        ffmpeg_bin,
         "-y",
         "-f",
         "rawvideo",
@@ -851,23 +1022,42 @@ def open_ffmpeg_60fps_pipe(W: int, H: int, wav_path: str, out_mp4: str, fps: int
     return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
-def _synth_voice_or_fallback(agent: str, spoken_text: str) -> np.ndarray:
+def _synth_voice_or_fallback(agent: str, spoken_text: str, tmp_dir: str = None) -> np.ndarray:
     if HAS_VOICE_ENGINE:
         return synthesize_character_line(agent, spoken_text)
-    os.makedirs(TMP_WAV_DIR, exist_ok=True)
-    key = hashlib.sha256(spoken_text.encode("utf-8")).hexdigest()[:12]
-    wav_p = os.path.join(TMP_WAV_DIR, f"espeak_{key}.wav")
-    if not os.path.exists(wav_p):
-        subprocess.run(["/usr/bin/espeak-ng", "-w", wav_p, "-s", "175", spoken_text], check=False)
-    if os.path.exists(wav_p):
-        with wave.open(wav_p, "rb") as wf:
-            raw = wf.readframes(wf.getnframes())
-        arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
-        return arr if len(arr) > 0 else np.zeros(int(SR * 2.5), dtype=np.float32)
+    espeak_bin = shutil.which("espeak-ng") or "/usr/bin/espeak-ng"
+    if not os.path.exists(espeak_bin):
+        return np.zeros(int(SR * 2.5), dtype=np.float32)
+
+    own_tmp = None
+    try:
+        work_dir = tmp_dir
+        if not work_dir:
+            own_tmp = tempfile.TemporaryDirectory(prefix="maya_voice_")
+            work_dir = own_tmp.name
+        key = hashlib.sha256(spoken_text.encode("utf-8")).hexdigest()[:12]
+        wav_p = os.path.join(work_dir, f"espeak_{key}.wav")
+        subprocess.run(
+            [espeak_bin, "-w", wav_p, "-s", "175", "--", spoken_text],
+            check=False,
+            timeout=30,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if os.path.exists(wav_p):
+            with wave.open(wav_p, "rb") as wf:
+                raw = wf.readframes(wf.getnframes())
+            arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+            return arr if len(arr) > 0 else np.zeros(int(SR * 2.5), dtype=np.float32)
+    except Exception:
+        pass
+    finally:
+        if own_tmp is not None:
+            own_tmp.cleanup()
     return np.zeros(int(SR * 2.5), dtype=np.float32)
 
 
-def render_preset(preset_key: str, out_dir: str = DEFAULT_OUT_DIR, mirror_dir: str = VIDEOS_MIRROR_DIR) -> str:
+def render_preset(preset_key: str, out_dir: str = DEFAULT_OUT_DIR, mirror_dir: str = None) -> str:
     if preset_key not in PRESETS:
         raise ValueError(f"Unknown Maya motion preset: {preset_key}")
 
@@ -877,7 +1067,6 @@ def render_preset(preset_key: str, out_dir: str = DEFAULT_OUT_DIR, mirror_dir: s
     accent = cfg["accent"]
     secondary = cfg["secondary"]
     os.makedirs(out_dir, exist_ok=True)
-    os.makedirs(TMP_WAV_DIR, exist_ok=True)
     if mirror_dir:
         os.makedirs(mirror_dir, exist_ok=True)
 
@@ -903,168 +1092,186 @@ def render_preset(preset_key: str, out_dir: str = DEFAULT_OUT_DIR, mirror_dir: s
     seg_infos = []
     cur_t = 0.0
 
-    for sc in cfg["scenes"]:
-        agent, title, sub, col, vo_line = sc
-        voice_pcm = _synth_voice_or_fallback(agent, vo_line)
-        voice_dur = max(0.5, len(voice_pcm) / SR)
-        seg_dur = max(3.2, lead_pad + voice_dur + tail_pad)
-        clean_t = clean_glyph_text(title)
-        clean_s = clean_glyph_text(sub)
-        clean_vo = clean_glyph_text(vo_line)
-        f_title = fit_font(dummy_d, clean_t, BOLD, 32 if is_vertical else 36, 20, card_inner_w)
-        f_sub = fit_font(dummy_d, clean_s, MONO, 18, 13, card_inner_w)
-        cap_layout = precompute_caption_layout(
-            dummy_d, clean_vo, f_cap, card_inner_w - 16, max_lines_per_page=3 if is_vertical else 2
-        )
-        seg_infos.append({
-            "agent": agent,
-            "title": clean_t,
-            "f_title": f_title,
-            "sub": clean_s,
-            "f_sub": f_sub,
-            "col": col,
-            "cap_layout": cap_layout,
-            "voice_pcm": voice_pcm,
-            "voice_dur": voice_dur,
-            "start_t": cur_t,
-            "seg_dur": seg_dur,
-        })
-        cur_t += seg_dur
+    with tempfile.TemporaryDirectory(prefix="maya_motion_") as tmp_wav_dir:
+        for sc in cfg["scenes"]:
+            agent, title, sub, col, vo_line = sc
+            voice_pcm = _synth_voice_or_fallback(agent, vo_line, tmp_dir=tmp_wav_dir)
+            voice_dur = max(0.5, len(voice_pcm) / SR)
+            seg_dur = max(3.2, lead_pad + voice_dur + tail_pad)
+            clean_t = clean_glyph_text(title)
+            clean_s = clean_glyph_text(sub)
+            clean_vo = clean_glyph_text(vo_line)
+            f_title = fit_font(dummy_d, clean_t, BOLD, 32 if is_vertical else 36, 20, card_inner_w)
+            f_sub = fit_font(dummy_d, clean_s, MONO, 18, 13, card_inner_w)
+            cap_layout = precompute_caption_layout(
+                dummy_d, clean_vo, f_cap, card_inner_w - 16, max_lines_per_page=3 if is_vertical else 2
+            )
+            seg_infos.append({
+                "agent": agent,
+                "title": clean_t,
+                "f_title": f_title,
+                "sub": clean_s,
+                "f_sub": f_sub,
+                "col": col,
+                "cap_layout": cap_layout,
+                "voice_pcm": voice_pcm,
+                "voice_dur": voice_dur,
+                "start_t": cur_t,
+                "seg_dur": seg_dur,
+            })
+            cur_t += seg_dur
 
-    total_dur = cur_t
-    total_samples = int(total_dur * SR) + SR // 4
-    voice_track = np.zeros(total_samples, dtype=np.float32)
-    duck_env = np.ones(total_samples, dtype=np.float32) * 0.42
+        total_dur = cur_t
+        total_samples = int(total_dur * SR) + SR // 4
+        voice_track = np.zeros(total_samples, dtype=np.float32)
+        duck_env = np.ones(total_samples, dtype=np.float32) * 0.42
 
-    for seg in seg_infos:
-        st = int((seg["start_t"] + lead_pad) * SR)
-        vp = seg["voice_pcm"]
-        end = min(total_samples, st + len(vp))
-        ln = max(0, end - st)
-        if ln > 0:
-            voice_track[st:end] += vp[:ln]
-            duck_env[max(0, st - int(0.08 * SR)):min(total_samples, end + int(0.12 * SR))] = 0.14
+        for seg in seg_infos:
+            st = int((seg["start_t"] + lead_pad) * SR)
+            vp = seg["voice_pcm"]
+            end = min(total_samples, st + len(vp))
+            ln = max(0, end - st)
+            if ln > 0:
+                voice_track[st:end] += vp[:ln]
+                duck_env[max(0, st - int(0.08 * SR)):min(total_samples, end + int(0.12 * SR))] = 0.14
 
-    seed = int(hashlib.md5(preset_key.encode("utf-8")).hexdigest()[:6], 16)
-    music_bed = build_background_music((total_samples + SR) / SR, root=cfg["root_hz"], seed=seed, bpm=cfg["bpm"], funky=True)
-    if len(music_bed) < total_samples:
-        music_bed = np.pad(music_bed, (0, total_samples - len(music_bed)))
-    master_mix = voice_track * 1.06 + music_bed[:total_samples] * duck_env
+        seed = int(hashlib.md5(preset_key.encode("utf-8")).hexdigest()[:6], 16)
+        music_bed = build_background_music((total_samples + SR) / SR, root=cfg["root_hz"], seed=seed, bpm=cfg["bpm"], funky=True)
+        if len(music_bed) < total_samples:
+            music_bed = np.pad(music_bed, (0, total_samples - len(music_bed)))
+        master_mix = voice_track * 1.06 + music_bed[:total_samples] * duck_env
 
-    wav_path = os.path.join(TMP_WAV_DIR, f"{preset_key}.wav")
-    save_wav(wav_path, master_mix[:int(total_dur * SR)])
+        wav_path = os.path.join(tmp_wav_dir, f"{preset_key}.wav")
+        save_wav(wav_path, master_mix[:int(total_dur * SR)])
 
-    total_frames = int(total_dur * FPS)
-    frame_energy = np.zeros(total_frames, dtype=np.float32)
-    spf = SR // FPS
-    for f in range(total_frames):
-        s0 = f * spf
-        s1 = min(len(voice_track), s0 + spf)
-        if s1 > s0:
-            frame_energy[f] = min(1.0, float(np.sqrt(np.mean(voice_track[s0:s1] ** 2))) * 4.2)
+        total_frames = int(total_dur * FPS)
+        frame_energy = np.zeros(total_frames, dtype=np.float32)
+        spf = SR // FPS
+        for f in range(total_frames):
+            s0 = f * spf
+            s1 = min(len(voice_track), s0 + spf)
+            if s1 > s0:
+                frame_energy[f] = min(1.0, float(np.sqrt(np.mean(voice_track[s0:s1] ** 2))) * 4.2)
 
-    shader = MotionShaderContext(W, H)
-    out_mp4 = os.path.join(out_dir, cfg["filename"])
-    proc = open_ffmpeg_60fps_pipe(W, H, wav_path, out_mp4, fps=FPS)
+        shader = MotionShaderContext(W, H)
+        out_mp4 = os.path.join(out_dir, cfg["filename"])
+        proc = open_ffmpeg_60fps_pipe(W, H, wav_path, out_mp4, fps=FPS)
+        stderr_out = ""
+        ret = -1
+        try:
+            for f in range(total_frames):
+                tt = f / FPS
+                seg = seg_infos[-1]
+                for s in seg_infos:
+                    if s["start_t"] <= tt < s["start_t"] + s["seg_dur"]:
+                        seg = s
+                        break
+                local_t = tt - seg["start_t"]
+                speech_prog = (local_t - lead_pad) / seg["voice_dur"]
+                col = seg["col"]
+                energy = float(frame_energy[f])
 
-    for f in range(total_frames):
-        tt = f / FPS
-        seg = seg_infos[-1]
-        for s in seg_infos:
-            if s["start_t"] <= tt < s["start_t"] + s["seg_dur"]:
-                seg = s
-                break
-        local_t = tt - seg["start_t"]
-        speech_prog = (local_t - lead_pad) / seg["voice_dur"]
-        col = seg["col"]
-        energy = float(frame_energy[f])
+                # 1. Procedural NumPy Plasma / Aurora / Tunnel Shader (Zero Still Images)
+                im = shader.render_bg(tt, cfg["scene_mode"], col, secondary, energy)
+                d = ImageDraw.Draw(im, "RGBA")
 
-        # 1. Procedural NumPy Plasma / Aurora / Tunnel Shader (Zero Still Images)
-        im = shader.render_bg(tt, cfg["scene_mode"], col, secondary, energy)
-        d = ImageDraw.Draw(im, "RGBA")
+                # 2. Continuous Sub-Pixel Braille Cipher Rain
+                draw_braille_matrix(d, W, H, tt, cols=14 if is_vertical else 24, accent=col, secondary=secondary)
 
-        # 2. Continuous Sub-Pixel Braille Cipher Rain
-        draw_braille_matrix(d, W, H, tt, cols=14 if is_vertical else 24, accent=col, secondary=secondary)
+                # 3. Dark viewport backing + Flanking HUD & Stars + 3D Geometry + Maya Browser Frame + Animated Cursor
+                d.rounded_rectangle([vx0, vy0, vx1, vy1], radius=16, fill=(5, 8, 16, 200))
+                draw_viewport_flanking_hud_and_stars(d, vx0, vy0 + 36, vx1, vy1, tt, col, secondary, energy, is_vertical)
+                draw_scene_3d_geometry(d, cfg["scene_mode"], vx0, vy0 + 36, vx1, vy1, tt, col, secondary, energy)
+                draw_maya_cursor_and_ripples(d, vx0, vy0 + 36, vx1 - vx0, vy1 - vy0 - 36, tt, col, secondary)
+                draw_maya_chrome_frame(d, vx0, vy0, vx1, vy1, cfg["window_title"], col, secondary, tt)
 
-        # 3. Dark viewport backing + Flanking HUD & Stars + 3D Geometry + Maya Browser Frame + Animated Cursor
-        d.rounded_rectangle([vx0, vy0, vx1, vy1], radius=16, fill=(5, 8, 16, 200))
-        draw_viewport_flanking_hud_and_stars(d, vx0, vy0 + 36, vx1, vy1, tt, col, secondary, energy, is_vertical)
-        draw_scene_3d_geometry(d, cfg["scene_mode"], vx0, vy0 + 36, vx1, vy1, tt, col, secondary, energy)
-        draw_maya_cursor_and_ripples(d, vx0, vy0 + 36, vx1 - vx0, vy1 - vy0 - 36, tt, col, secondary)
-        draw_maya_chrome_frame(d, vx0, vy0, vx1, vy1, cfg["window_title"], col, secondary, tt)
+                # 4. Top Header Bar + Live Voice Equalizer Bars
+                hdr_h = 80 if is_vertical else 58
+                d.rectangle([0, 0, W, hdr_h], fill=(4, 6, 12, 232))
+                d.line([(0, hdr_h), (W, hdr_h)], fill=(*col, 140), width=2)
+                draw_mic_icon(d, 34, hdr_h // 2, col, scale=1.15)
+                d.text((54, (hdr_h - 26) // 2), clean_hdr, font=f_hdr, fill=WHITE)
 
-        # 4. Top Header Bar + Live Voice Equalizer Bars
-        hdr_h = 80 if is_vertical else 58
-        d.rectangle([0, 0, W, hdr_h], fill=(4, 6, 12, 232))
-        d.line([(0, hdr_h), (W, hdr_h)], fill=(*col, 140), width=2)
-        draw_mic_icon(d, 34, hdr_h // 2, col, scale=1.15)
-        d.text((54, (hdr_h - 26) // 2), clean_hdr, font=f_hdr, fill=WHITE)
+                eq_bars = 12 if is_vertical else 18
+                eq_x0 = (W - eq_bars * 12 - 20) if not is_vertical else (W - eq_bars * 10 - 20)
+                eq_mid = hdr_h // 2
+                for bi in range(eq_bars):
+                    wm = abs(math.sin(bi * 0.65 + tt * 22.0))
+                    bh = max(3, int(16 * (0.25 + 0.75 * energy) * wm))
+                    step = 10 if is_vertical else 12
+                    bx = eq_x0 + bi * step
+                    d.rounded_rectangle([bx, eq_mid - bh, bx + 6, eq_mid + bh], radius=2, fill=col)
 
-        eq_bars = 12 if is_vertical else 18
-        eq_x0 = (W - eq_bars * 12 - 20) if not is_vertical else (W - eq_bars * 10 - 20)
-        eq_mid = hdr_h // 2
-        for bi in range(eq_bars):
-            wm = abs(math.sin(bi * 0.65 + tt * 22.0))
-            bh = max(3, int(16 * (0.25 + 0.75 * energy) * wm))
-            step = 10 if is_vertical else 12
-            bx = eq_x0 + bi * step
-            d.rounded_rectangle([bx, eq_mid - bh, bx + 6, eq_mid + bh], radius=2, fill=col)
+                # 5. Lower-Third Kinetic Typewriter Title & Karaoke Card (Safe Margin & High Contrast)
+                d.rounded_rectangle(
+                    [card_x0, card_y0, card_x1, card_y1],
+                    radius=16,
+                    fill=(6, 9, 18, 240),
+                    outline=col,
+                    width=3,
+                )
+                vis_chars = max(1, int(len(seg["title"]) * min(1.0, local_t / 0.55)))
+                typed_heading = seg["title"][:vis_chars] + ("_" if local_t < 0.65 and int(tt * 8) % 2 == 0 else "")
+                d.text((card_x0 + 22, card_y0 + 16), typed_heading, font=seg["f_title"], fill=col)
+                d.text((card_x0 + 22, card_y0 + (54 if is_vertical else 54)), seg["sub"], font=seg["f_sub"], fill=(210, 222, 238))
 
-        # 5. Lower-Third Kinetic Typewriter Title & Karaoke Card (Safe Margin & High Contrast)
-        d.rounded_rectangle(
-            [card_x0, card_y0, card_x1, card_y1],
-            radius=16,
-            fill=(6, 9, 18, 240),
-            outline=col,
-            width=3,
-        )
-        # Typewriter reveal on the segment heading during first 0.55s
-        vis_chars = max(1, int(len(seg["title"]) * min(1.0, local_t / 0.55)))
-        typed_heading = seg["title"][:vis_chars] + ("_" if local_t < 0.65 and int(tt * 8) % 2 == 0 else "")
-        d.text((card_x0 + 22, card_y0 + 16), typed_heading, font=seg["f_title"], fill=col)
-        d.text((card_x0 + 22, card_y0 + (54 if is_vertical else 54)), seg["sub"], font=seg["f_sub"], fill=(210, 222, 238))
+                cap_top = card_y0 + (86 if is_vertical else 82)
+                cap_bot = card_y1 - 12
+                d.rounded_rectangle(
+                    [card_x0 + 16, cap_top, card_x1 - 16, cap_bot],
+                    radius=12,
+                    fill=(11, 16, 28, 248),
+                    outline=(*secondary, 120),
+                    width=2,
+                )
+                draw_karaoke_captions_fast(
+                    d=d,
+                    layout=seg["cap_layout"],
+                    speech_progress=speech_prog,
+                    box_x0=card_x0 + 28,
+                    box_y0=cap_top + 8,
+                    box_w=card_inner_w - 16,
+                    box_h=(cap_bot - cap_top) - 16,
+                    fnt=f_cap,
+                    accent_col=col,
+                    center_align=is_vertical,
+                )
 
-        cap_top = card_y0 + (86 if is_vertical else 82)
-        cap_bot = card_y1 - 12
-        d.rounded_rectangle(
-            [card_x0 + 16, cap_top, card_x1 - 16, cap_bot],
-            radius=12,
-            fill=(11, 16, 28, 248),
-            outline=(*secondary, 120),
-            width=2,
-        )
-        draw_karaoke_captions_fast(
-            d=d,
-            layout=seg["cap_layout"],
-            speech_progress=speech_prog,
-            box_x0=card_x0 + 28,
-            box_y0=cap_top + 8,
-            box_w=card_inner_w - 16,
-            box_h=(cap_bot - cap_top) - 16,
-            fnt=f_cap,
-            accent_col=col,
-            center_align=is_vertical,
-        )
+                # 6. Attribution + Live Timeline Progress Footer (Clean Non-Intrusive Attribution)
+                if is_vertical:
+                    bar_y = H - 82
+                    d.rectangle([28, bar_y, W - 28, bar_y + 8], fill=(30, 38, 56))
+                    d.rectangle([28, bar_y, 28 + int((W - 56) * (f / max(1, total_frames))), bar_y + 8], fill=col)
+                    attr = "Engineered by Neal Frazier Tech (@1nc0gn30) - NullAI Platform"
+                    aw = d.textlength(attr, font=f_tag)
+                    d.text(((W - aw) // 2, H - 56), attr, font=f_tag, fill=(195, 208, 226))
+                else:
+                    d.rectangle([36, H - 14, W - 36, H - 8], fill=(30, 38, 56))
+                    d.rectangle([36, H - 14, 36 + int((W - 72) * (f / max(1, total_frames))), H - 8], fill=col)
 
-        # 6. Attribution + Live Timeline Progress Footer (Clean Non-Intrusive Attribution)
-        if is_vertical:
-            bar_y = H - 82
-            d.rectangle([28, bar_y, W - 28, bar_y + 8], fill=(30, 38, 56))
-            d.rectangle([28, bar_y, 28 + int((W - 56) * (f / max(1, total_frames))), bar_y + 8], fill=col)
-            attr = "Engineered by Neal Frazier Tech (@1nc0gn30) - NullAI Platform"
-            aw = d.textlength(attr, font=f_tag)
-            d.text(((W - aw) // 2, H - 56), attr, font=f_tag, fill=(195, 208, 226))
-        else:
-            d.rectangle([36, H - 14, W - 36, H - 8], fill=(30, 38, 56))
-            d.rectangle([36, H - 14, 36 + int((W - 72) * (f / max(1, total_frames))), H - 8], fill=col)
+                proc.stdin.write(im.tobytes())
 
-        proc.stdin.write(im.tobytes())
+            proc.stdin.close()
+            stderr_out = proc.stderr.read().decode("utf-8", errors="replace")
+            ret = proc.wait()
+        finally:
+            if proc.poll() is None:
+                try:
+                    if proc.stdin and not proc.stdin.closed:
+                        proc.stdin.close()
+                except Exception:
+                    pass
+                try:
+                    proc.terminate()
+                    proc.wait(timeout=5)
+                except Exception:
+                    try:
+                        proc.kill()
+                    except Exception:
+                        pass
 
-    proc.stdin.close()
-    stderr_out = proc.stderr.read().decode("utf-8", errors="replace")
-    ret = proc.wait()
-    if ret != 0:
-        raise RuntimeError(f"FFmpeg encode failed ({ret}): {stderr_out[-400:]}")
+        if ret != 0:
+            raise RuntimeError(f"FFmpeg encode failed ({ret}): {stderr_out[-400:]}")
 
     if mirror_dir and os.path.abspath(mirror_dir) != os.path.abspath(out_dir):
         shutil.copy2(out_mp4, os.path.join(mirror_dir, cfg["filename"]))
@@ -1086,13 +1293,30 @@ def resolve_preset_names(name: str) -> list:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Maya Linux 60fps Procedural Motion Edit Engine")
+    parser = argparse.ArgumentParser(description="Maya Linux 60fps Procedural Motion Edit Engine v2.0.0")
     parser.add_argument("--list-presets", action="store_true", help="List available motion presets")
+    parser.add_argument("--json", action="store_true", help="Output preset list as JSON")
     parser.add_argument("--render", type=str, help="Preset name or 'all'")
     parser.add_argument("--out", type=str, default=DEFAULT_OUT_DIR, help="Output directory")
+    parser.add_argument("--mirror", type=str, default=None, help="Optional secondary mirror output directory")
     args = parser.parse_args()
 
     if args.list_presets:
+        if args.json:
+            payload = [
+                {
+                    "id": k,
+                    "aliases": v.get("alias", []),
+                    "aspect": v["aspect"],
+                    "width": v["W"],
+                    "height": v["H"],
+                    "fps": v["fps"],
+                    "filename": v["filename"],
+                }
+                for k, v in PRESETS.items()
+            ]
+            print(json.dumps({"version": "2.0.0", "presets": payload}, indent=2))
+            return 0
         for k, v in PRESETS.items():
             aliases = ",".join(v.get("alias", []))
             print(f"{k:28s}  [{v['aspect']:4s} @ {v['fps']}fps]  aliases=({aliases})  -> {v['filename']}")
@@ -1104,7 +1328,7 @@ def main():
 
     keys = resolve_preset_names(args.render)
     for k in keys:
-        render_preset(k, out_dir=args.out)
+        render_preset(k, out_dir=args.out, mirror_dir=args.mirror)
     return 0
 
 

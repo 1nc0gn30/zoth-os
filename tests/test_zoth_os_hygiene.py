@@ -438,6 +438,60 @@ def test_math_pillars_chroot_cli_tui_desktop_opt_and_vault_parity():
         assert "Graph Theory, Chaos Theory" not in ntxt, f"Wrong pillar taxonomy in {note.name}"
 
 
+def test_maya_linux_chroot_security_bloat_and_parity():
+    maya_opt = OPT_DIR / "maya-linux"
+    assert maya_opt.is_dir(), "Chroot /opt/maya-linux must exist"
+    assert not (maya_opt / "public" / "assets" / "audio").exists(), "Dead commercial MP3s must not be in chroot"
+    assert not (maya_opt / "dist" / "assets" / "audio").exists(), "Dead commercial MP3s must not be in dist"
+    assert not (maya_opt / "public" / "PresetPreviews").exists(), "Unreferenced PresetPreviews must be purged"
+    assert not (maya_opt / "__pycache__").exists(), "__pycache__ must not exist in chroot"
+    assert not (maya_opt / "node_modules").exists(), "node_modules must not exist in chroot"
+    assert (maya_opt / "LICENSE").is_file(), "MIT LICENSE must exist"
+
+    total_bytes = sum(p.stat().st_size for p in maya_opt.rglob("*") if p.is_file())
+    assert total_bytes < 10 * 1024 * 1024, f"Chroot /opt/maya-linux too large: {total_bytes / (1024 * 1024):.2f} MiB"
+
+    main_js = (maya_opt / "main.js").read_text(encoding="utf-8")
+    assert "nodeIntegration: false" in main_js
+    assert "contextIsolation: true" in main_js
+    assert "webSecurity: true" in main_js
+    assert "sandbox: true" in main_js
+    assert "setWindowOpenHandler" in main_js
+    assert "will-navigate" in main_js
+    assert "run_ytdlp_" not in main_js
+    assert "--no-check-certificates" not in main_js
+    assert "before-quit" in main_js
+
+    engine_py = (maya_opt / "maya_motion_engine.py").read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", engine_py), "Literal /home/<user> path in maya_motion_engine.py"
+    assert "/tmp/maya_motion_wavs" not in engine_py
+
+    index_html = (maya_opt / "index.html").read_text(encoding="utf-8")
+    assert "fonts.googleapis.com" not in index_html
+    assert "Content-Security-Policy" in index_html
+    assert "SoftwareApplication" in index_html
+
+    cli_bin = BIN_DIR / "maya"
+    assert cli_bin.is_file()
+    cli_txt = cli_bin.read_text(encoding="utf-8")
+    assert 'VERSION="2.0.0"' in cli_txt
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", cli_txt)
+
+    desktop = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications" / "maya-linux.desktop"
+    assert desktop.is_file()
+
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    for note in (
+        vault_root / "OS" / "CLIs" / "CLI maya.md",
+        vault_root / "OS" / "Desktops" / "Desktop maya-linux.md",
+    ):
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert "2.0.0" in ntxt
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt)
+
+
+
 
 
 

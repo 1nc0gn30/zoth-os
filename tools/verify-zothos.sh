@@ -221,7 +221,7 @@ for df in "${DESKTOP_FILES[@]}"; do
     df_basename=$(basename "$df")
     # Skip known third-party packages
     skip=0
-    for prefix in "bitwarden" "maya" "claude-code" "grok" "caido" "web3-solana" "hexstrike" "openai-codex" "opencode" "distributor" "start-here"; do
+    for prefix in "bitwarden" "claude-code" "grok" "caido" "web3-solana" "hexstrike" "openai-codex" "opencode" "distributor" "start-here"; do
         if [[ "$df_basename" == *"$prefix"* ]]; then skip=1; break; fi
     done
     if [[ $skip -eq 1 ]]; then

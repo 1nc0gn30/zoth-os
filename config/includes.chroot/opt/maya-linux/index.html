@@ -1,15 +1,98 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maya - Video Mockup & Animation Studio</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; object-src 'none'; base-uri 'self'"
+    />
+    <title>Maya for Linux — Video Mockup &amp; 60 FPS Motion Studio</title>
+    <meta
+      name="description"
+      content="Open-access Linux desktop video mockup and 60 FPS procedural motion studio. Frame screen recordings in 3D devices, animate zooms and karaoke captions, and export 4K MP4 or CapCut drafts locally."
+    />
+    <meta property="og:title" content="Maya for Linux — Video Mockup & 60 FPS Motion Studio" />
+    <meta
+      property="og:description"
+      content="Local-first Linux video mockup editor and 60 FPS procedural motion engine with 3D device frames, multi-track timeline, CapCut draft export, and native FFmpeg rendering."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/1nc0gn30/maya-linux" />
+    <meta property="og:image" content="https://zoth.nullai.tech/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@1nc0gn30" />
+    <meta name="twitter:creator" content="@1nc0gn30" />
+    <meta name="twitter:title" content="Maya for Linux — Video Mockup & 60 FPS Motion Studio" />
+    <meta
+      name="twitter:description"
+      content="Open-access Linux video mockup studio and headless 60 FPS procedural motion engine by Neal Frazier Tech (@1nc0gn30)."
+    />
+    <meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png" />
     <link rel="icon" type="image/png" href="./app/icon_128.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "Maya for Linux (Studio Pro)",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Linux",
+            "softwareVersion": "2.0.0",
+            "url": "https://github.com/1nc0gn30/maya-linux",
+            "description": "Local-first Linux video mockup editor and 60 FPS procedural motion engine featuring 3D device frames, multi-track timeline, CapCut draft export, and native FFmpeg rendering.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Neal Frazier",
+              "alternateName": "@1nc0gn30",
+              "url": "https://nullai.tech"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Neal Frazier Tech",
+              "url": "https://nullai.tech"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What does Maya for Linux do?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Maya wraps screen recordings in 3D physical and vector device frames, animates zooms, cursor paths, typewriter headings, and karaoke captions on a multi-track timeline, synthesizes 60 FPS procedural motion clips, and exports MP4, transparent WebM, or CapCut drafts."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does Maya for Linux process videos locally and privately?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Canvas compositing, procedural motion synthesis, local offline espeak-ng voice synthesis, and native FFmpeg exports run locally on your machine with zero runtime font CDNs or mandatory cloud uploads."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is Maya for Linux free and open access?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. All features, 4K/60 FPS exports, and CLI motion presets are 100% unlocked with zero paywalls. Optional support is available via Buy Us a Coffee (Stripe) or Solana tip."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
-  <body class="bg-[#0b0d14] text-slate-100 antialiased overflow-hidden select-none font-sans">
+  <body class="antialiased overflow-hidden select-none font-sans">
     <div id="root"></div>
     <script type="module" src="./src/main.tsx"></script>
   </body>

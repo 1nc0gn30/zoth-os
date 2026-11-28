@@ -1,141 +1,88 @@
 <div align="center">
-  <img src="public/app/icon_256.png" width="128" height="128" alt="Maya Linux app icon" />
+  <img src="public/app/icon_256.png" width="128" height="128" alt="Maya Linux video studio icon" />
 
-  # Maya for Linux (Studio Pro)
+  # Maya for Linux (Studio Pro `v2.0.0`)
 
-  **Wrap screen recordings in polished device mockups, customize pacing, apply 3D gyro tilt angles, animate cinematic zooms, place interactive tap ripples, add YouTube/MP3 background music, and export ready-to-share video clips.**
+  **Wrap screen recordings in 3D physical and vector device mockups, edit on a multi-track timeline, synthesize 60 FPS procedural motion clips, and export 4K MP4, transparent WebM, or CapCut drafts locally on Linux.**
 
-  *A high-performance Linux desktop application for creators, developers, and marketers.*
-
-  [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/)
-  [![Package](https://img.shields.io/badge/Package-AppImage%20%7C%20DEB-00599C?style=for-the-badge&logo=appveyor&logoColor=white)](https://github.com/)
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+  [![Platform: Linux](https://img.shields.io/badge/Platform-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/1nc0gn30/maya-linux)
+  [![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-6466FA?style=for-the-badge)](https://github.com/1nc0gn30/maya-linux)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 </div>
 
 ---
 
-## ⬇️ Download & Quick Run (AppImage)
+## What It Does
 
-Maya runs on **Ubuntu, Debian, Fedora, Arch, Pop!_OS, openSUSE, Manjaro**, and any modern Linux distribution with **zero extra setup**.
+Maya for Linux is a local-first desktop video studio (Electron + React 19 / Vite 6 + Python `maya_motion_engine.py`) packaged in ZothOS (`/opt/maya-linux` & `/usr/local/bin/maya`). All utilities, 4K/60 FPS exports, and headless motion presets are 100% open-access with zero paywalls.
+
+### Core Capabilities
+
+- **Device Framing & 3D Mockups**: iPhone 17/16/15 Pro, iPad Pro 11", MacBook Pro 14", Pixel 9 Pro, Apple Watch Ultra 2, Retro Terminal, Browser Frame, and Generic Phone bezel modes across `1:1`, `9:16`, `4:5`, `4:3`, and `16:9` canvases.
+- **Multi-Track Timeline**: Zooms (6 easing curves + beat-sync), Taps, Typewriter stroke headings, Brand overlays, Lower Thirds, Captions, Stickers, Cinema Transitions, Speed segments (`0.25x`–`4x`), non-destructive In/Out trim, and Audio tracks.
+- **60 FPS Procedural Motion Synth (In-App & Headless CLI)**: Generates zero-still-image 3D geometric motion clips with NumPy shaders, sub-pixel Braille streams, and synthesized audio (`zoth-sovereign-core`, `zoth-80-tool-arsenal`, `1nc0gn30-cyber-fortress`, `pantheon-hermes-swarm`, `vaelor-l1-gold-forge`, `world-of-zoth-citadel`).
+- **Dual-Theme & Responsive UI**: Editorial Ivory Light Mode and Obsidian Dark Mode with persistent toggle, collapsible mobile/tablet settings drawer, and WCAG AA contrast.
+- **Native Exports & CapCut Drafts**: Export 1080p/1440p/4K MP4 (60 FPS), 9:16 Vertical Reels/Shorts (`1080x1920`), transparent WebM alpha overlays, or CapCut/JianYing `draft_content.json` folders.
+
+---
+
+## How It Works & System Requirements
+
+- **Runtime Dependencies**: Electron (`v34+`), `ffmpeg` (native RGBA pipe video export & headless motion engine), `python3` with `Pillow` and `numpy` (headless motion engine), optional `espeak-ng` (local offline voice synthesis), optional `yt-dlp` (manual YouTube audio extraction), and optional `edge-tts` (opt-in cloud neural TTS, disclosed in the UI).
+- **Security Architecture**: Strict Electron process isolation (`nodeIntegration: false`, `contextIsolation: true`, `webSecurity: true`, `sandbox: true`), strict `Content-Security-Policy` with zero external font CDNs, `setWindowOpenHandler` / `will-navigate` guards, dialog-gated export paths, and zero shell interpolation in IPC handlers.
+- **Clean-ISO Self-Contained Motion Engine**: `maya_motion_engine.py` bundles self-contained font fitting, karaoke caption layout, vector HUD, procedural audio synthesis, and WAV encoding helpers so headless renders work cleanly on any fresh Linux install without external dev scripts.
+
+---
+
+## ZothOS CLI Commands
 
 ```bash
-# 1. Download the latest AppImage release
-# 2. Make it executable:
-chmod +x Maya-1.1.0.AppImage
-
-# 3. Run:
-./Maya-1.1.0.AppImage
+maya                                               # Launch Maya Studio Pro GUI
+maya /path/to/recording.mp4                        # Open a video directly in Maya
+maya --version                                     # Print version (2.0.0)
+maya --status [--json]                             # Check runtime paths & dependencies
+maya --list-presets [--json]                       # List 6 headless 60fps motion presets
+maya --render zoth-sovereign-core --out ~/Videos/maya-zoth-edits
+maya --render all --out ~/Videos/maya-zoth-edits --mirror ~/Videos/maya-zoth-edits
 ```
 
 ---
 
-## ✨ Features
-
-### 📱 Device Framing & 3D Mockups
-- **iPhone 17 Pro**: Cosmic Orange, Deep Blue, Silver.
-- **iPhone 16 Pro**: Natural Titanium, Black Titanium, White Titanium, Desert Titanium.
-- **iPhone 15 Pro**: Natural Titanium, Black Titanium, White Titanium.
-- **iPad Pro 11"** (Landscape M4), **MacBook Pro 14"**, **Google Pixel 9 Pro**, **Apple Watch Ultra 2**, **Retro Terminal**, and **Browser Frame** with traffic lights.
-- **Generic Phone Mode**: Configurable bezel width, color, and corner radius.
-- **Canvas Aspect Ratios**: **1:1** (Square), **9:16** (Reels / Shorts / TikTok), **4:5** (Portrait), **4:3** (Landscape), **16:9** (YouTube / Widescreen).
-- **Interactive Drag & Drop**: Drop video files directly onto the canvas to start editing instantly.
-
-### 🎬 CapCut & JianYing 1-Click Draft Exporter
-- **Native Draft Export**: Export full multi-track project timelines directly into standard **CapCut** and **JianYing** draft folders (`draft_content.json`), compatible with CapCut Desktop and `capcut-cli` / `cutcli`.
-
-### 🎤 Kinetic Word-by-Word Karaoke Captions
-- **Spoken Word Highlighting**: Real-time word-by-word karaoke subtitle engine with dynamic accent highlights.
-- **Preset Styles**: **Alex Hormozi Impact**, **Neon Glow**, **Glass Card**, **Minimal**, and **Elastic Pop Bounce**.
-
-### ⏱ Multi-Track Timeline & Timecode Ruler
-- **Timecode Ruler**: Precise timestamp ticks (`00:00`, `00:05`, `00:10`) along the timeline.
-- **Zooms Track**: 6 easing curves (*Spring*, *Bouncy*, *Smooth*, *Snappy*, *Gentle*, *Linear*) with focus anchor panning.
-- **Auto-Sync to Audio Beats**: Automatically detect music beats and snap camera zooms & cuts to the rhythm.
-- **Taps Track**: Interactive *Ripple*, *Pulse*, and *Ring* feedback animations with click SFX.
-- **Typewriter Headings**: Animated stroke-typed headlines & explainer text.
-- **SFX Soundboard Library**: Built-in sound effects (Whooshes, Pops, Clicks, Bells, Risers).
-- **Speed Retiming**: Non-destructive retiming from **0.25× to 4×**.
-- **Non-Destructive Trimming**: Mark In (<kbd>I</kbd>) and Out (<kbd>O</kbd>) points on the recording.
-
-### 🚀 4K Ultra HD & Vertical Reel Export Hub
-- **4K 60 FPS & 2K Quad HD**: Render at 3840x2160 or 2560x1440 with max bitrate.
-- **9:16 Vertical Reel Mode**: Direct export for Instagram Reels, YouTube Shorts, and TikTok.
-- **Transparent Alpha (WebM/ProRes)**: Export transparent video overlays for OBS or video editors.
-
-### 🎵 Background Audio & YouTube (`yt-dlp`) Downloader
-- **Direct YouTube Audio Extraction**: Paste any YouTube video URL to automatically extract and attach the audio track using `yt-dlp`.
-- **Custom Audio Upload**: Import local **MP3, WAV, AAC, or OGG** files.
-- **Audio Controls**: Individual timeline volume slider and synchronized playback.
-
-### 🎨 Backgrounds & Branding
-- **8 Curated Gradients & Animated Mesh Shaders**: Brand-aligned Maya presets (`#6466FA`), Aurora, Cyberpunk, Sunset, Deep Ocean, and dynamic PCB/Blueprint/Radial patterns.
-- **Zoth & `1nc0gn30` 1-Click Pro Templates**: *Zoth Sovereign Core*, *`1nc0gn30` Cyber Matrix*, and *NullAI Pantheon Swarm*.
-- **Solid Colors & Video Blur**: Brand palette + custom hex picker + blurred Keynote-style poster backdrop.
-- **Transparent (Alpha)**: Exports transparent video for overlaying onto other video tracks in OBS, DaVinci Resolve, or Kdenlive.
-
-### ⚡ In-App & Headless 60 FPS Procedural Motion Synth (Zero Still Images)
-- **Built-in 60 FPS Synth Presets**: Generate full-motion 3D orbital wireframes, Unicode Braille cipher streams, animated cursor paths, typewriter headers, and procedural WAV audio directly inside Maya with 1 click (`zoth-core`, `1nc0gn30-ops`, `arsenal-80`, `vaelor-l1`).
-- **CLI Headless Motion Renderer (`maya`)**:
-  ```bash
-  maya --list-presets
-  maya --render zoth-sovereign-core --out ~/Videos/maya-zoth-edits
-  maya --render all --out ~/Videos/maya-zoth-edits
-  maya /path/to/video.mp4   # Open directly in Maya Studio Pro
-  ```
-
-### 💾 Saved Projects (`.mayaproj`)
-- Save complete layouts, animation keyframes, callouts, and audio timelines to `.mayaproj` JSON files to easily reopen and edit past projects.
-
----
-
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Key | Action |
 |---|---|
-| <kbd>Space</kbd> | Play / Pause |
-| <kbd>M</kbd> | Mute / Unmute |
-| <kbd>Delete</kbd> / <kbd>Backspace</kbd> | Delete selected Zoom, Tap, Callout, Audio, or Speed block |
+| `Space` | Play / Pause |
+| `M` | Mute / Unmute |
+| `I` / `O` | Set Trim In / Out Point |
+| `S` | Split at Playhead |
+| `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / Redo |
+| `Ctrl+S` / `Ctrl+O` | Save `.mayaproj` / Open Video |
+| `Delete` / `Backspace` | Delete selected timeline event |
+| `?` | Toggle Keyboard Shortcuts Cheat Sheet |
 
 ---
 
-## 🛠 Tech Stack
-
-- **Desktop Framework**: Electron + TypeScript
-- **UI Engine**: React 19 + Tailwind CSS + Framer Motion + Lucide Icons
-- **Compositing**: High-performance HTML5 Canvas 2D / WebGL real-time frame renderer
-- **Audio Extraction**: `yt-dlp`
-- **Packaging**: `electron-builder` (`AppImage`, `.deb`, `.tar.gz`)
-
----
-
-## 📦 Building from Source
-
-### Prerequisites
-Make sure you have Node.js (v18+) and npm installed:
+## Building & Testing from Source
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/maya-linux.git
+git clone https://github.com/1nc0gn30/maya-linux.git
 cd maya-linux
-
-# Install dependencies
 npm install
-
-# Run in Development Mode
-npm run dev
-
-# Or Launch Desktop Electron App in Dev Mode
-npm run app:dev
+npm test                # Run Electron security & packaging checks
+npm run build           # Build production Vite bundle into dist/
+npm run app:dev         # Launch Electron desktop app in dev mode
+npm run dist            # Package release/Maya-2.0.0.AppImage
 ```
-
-### Create the AppImage Package
-```bash
-npm run dist
-```
-The resulting portable `.AppImage` will be generated in `release/Maya-1.1.0.AppImage`.
 
 ---
 
-## 🤝 License
+## Attribution & Open-Access Support
+
+Engineered by **Neal Frazier Tech (@1nc0gn30) • NullAI Platform**  
+- Website: [https://nullai.tech](https://nullai.tech)  
+- Repository: [https://github.com/1nc0gn30/maya-linux](https://github.com/1nc0gn30/maya-linux)  
+- Support Open-Access Tools: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)  
+- Solana Tip Address: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 
 Distributed under the [MIT License](LICENSE).

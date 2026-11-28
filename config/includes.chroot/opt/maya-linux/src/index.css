@@ -2,8 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --maya-canvas: #0b0d14;
+  --maya-panel: #0f111a;
+  --maya-elevated: #151824;
+  --maya-subtle: #1c2030;
+  --maya-border: rgba(148, 163, 184, 0.22);
+  --maya-ink: #f1f5f9;
+  --maya-ink-secondary: #cbd5e1;
+  --maya-ink-muted: #94a3b8;
+  --maya-gold: #fbbf24;
+  --maya-accent: #6466fa;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.dark) {
+    --maya-canvas: #faf8f3;
+    --maya-panel: #ffffff;
+    --maya-elevated: #f3efe6;
+    --maya-subtle: #ebe5d8;
+    --maya-border: rgba(16, 24, 40, 0.14);
+    --maya-ink: #14120f;
+    --maya-ink-secondary: #334155;
+    --maya-ink-muted: #475467;
+    --maya-gold: #7a5600;
+    --maya-accent: #4338ca;
+  }
+}
+
+html.light {
+  color-scheme: light;
+  --maya-canvas: #faf8f3;
+  --maya-panel: #ffffff;
+  --maya-elevated: #f3efe6;
+  --maya-subtle: #ebe5d8;
+  --maya-border: rgba(16, 24, 40, 0.14);
+  --maya-ink: #14120f;
+  --maya-ink-secondary: #334155;
+  --maya-ink-muted: #475467;
+  --maya-gold: #7a5600;
+  --maya-accent: #4338ca;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--maya-canvas);
+  color: var(--maya-ink);
 }
 
 ::-webkit-scrollbar {
@@ -16,16 +68,220 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(148, 163, 184, 0.28);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(148, 163, 184, 0.45);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 input[type="range"] {
   height: 4px;
   border-radius: 2px;
-  background-color: #1c2030;
+  background-color: var(--maya-subtle);
+}
+
+/* =========================================================================
+   Editorial Ivory Light Mode Overrides (Zero Dark Slabs, WCAG AA >= 4.5:1)
+   Covers main workstation, inspector, timeline, and all 11 studio modals.
+   ========================================================================= */
+html.light body,
+html.light .bg-dark-950,
+html.light .bg-dark-950\/95,
+html.light .bg-dark-950\/90,
+html.light .bg-dark-950\/85,
+html.light .bg-dark-950\/80,
+html.light .bg-dark-950\/70,
+html.light .bg-dark-950\/60,
+html.light .bg-dark-950\/40,
+html.light .bg-\[\#0b0d14\] {
+  background-color: #faf8f3 !important;
+}
+
+html.light .bg-dark-900,
+html.light .bg-dark-900\/95,
+html.light .bg-dark-900\/90,
+html.light .bg-dark-900\/80,
+html.light .bg-dark-900\/60,
+html.light .bg-dark-900\/50 {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-dark-950\/40 {
+  background-color: rgba(243, 239, 230, 0.55) !important;
+}
+
+html.light .bg-dark-850,
+html.light .bg-dark-800,
+html.light .bg-slate-900,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-800,
+html.light .bg-slate-800\/90,
+html.light .bg-slate-800\/80 {
+  background-color: #f3efe6 !important;
+}
+
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-slate-800\/60:hover,
+html.light .hover\:bg-slate-800\/40:hover,
+html.light .hover\:bg-slate-700:hover,
+html.light .hover\:bg-slate-700\/90:hover,
+html.light .hover\:bg-slate-700\/80:hover,
+html.light .hover\:bg-slate-900:hover,
+html.light .hover\:bg-dark-900:hover,
+html.light .hover\:bg-dark-900\/80:hover,
+html.light .hover\:bg-dark-850:hover,
+html.light .hover\:bg-dark-800:hover {
+  background-color: #e8e1d3 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-800\/90,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/40,
+html.light .border-slate-700,
+html.light .border-slate-700\/60 {
+  border-color: rgba(16, 24, 40, 0.14) !important;
+}
+
+/* High-contrast editorial ink text (preserves white text on solid accent buttons) */
+html.light .text-white:not(.bg-brand-600):not(.bg-indigo-600):not(.bg-purple-600):not(.bg-pink-600):not(.bg-amber-600):not(.bg-emerald-600):not(.bg-cyan-600):not(.bg-yellow-600):not(.maya-solid-btn),
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #14120f !important;
+}
+
+html.light .bg-brand-600,
+html.light .bg-brand-600 *,
+html.light .bg-indigo-600,
+html.light .bg-indigo-600 *,
+html.light .bg-purple-600,
+html.light .bg-purple-600 *,
+html.light .bg-pink-600,
+html.light .bg-pink-600 *,
+html.light .bg-emerald-600,
+html.light .bg-emerald-600 *,
+html.light .bg-cyan-600,
+html.light .bg-cyan-600 *,
+html.light .maya-solid-btn,
+html.light .maya-solid-btn * {
+  color: #ffffff !important;
+}
+
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-400,
+html.light .text-slate-500,
+html.light .text-slate-600 {
+  color: #475467 !important;
+}
+
+/* Deep editorial ink accents on ivory (>= 5.2:1 contrast) */
+html.light .text-amber-200,
+html.light .text-amber-300,
+html.light .text-amber-400,
+html.light .text-yellow-300,
+html.light .text-yellow-400 {
+  color: #7a5600 !important;
+}
+
+html.light .text-brand-300,
+html.light .text-brand-400,
+html.light .text-indigo-200,
+html.light .text-indigo-300,
+html.light .text-indigo-400 {
+  color: #3730a3 !important;
+}
+
+html.light .text-cyan-300,
+html.light .text-cyan-400 {
+  color: #0369a1 !important;
+}
+
+html.light .text-emerald-200,
+html.light .text-emerald-300,
+html.light .text-emerald-400 {
+  color: #047857 !important;
+}
+
+html.light .text-purple-200,
+html.light .text-purple-300,
+html.light .text-purple-400 {
+  color: #6d28d9 !important;
+}
+
+html.light .text-pink-300,
+html.light .text-pink-400,
+html.light .text-rose-300,
+html.light .text-rose-400,
+html.light .text-red-300,
+html.light .text-red-400 {
+  color: #be123c !important;
+}
+
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/15 {
+  background-color: rgba(154, 111, 11, 0.11) !important;
+}
+html.light .border-amber-500\/30,
+html.light .border-amber-500\/40 {
+  border-color: rgba(122, 86, 0, 0.34) !important;
+}
+
+html.light .bg-indigo-500\/10,
+html.light .bg-brand-500\/10 {
+  background-color: rgba(67, 56, 202, 0.09) !important;
+}
+html.light .border-indigo-500\/30,
+html.light .border-brand-500\/30 {
+  border-color: rgba(67, 56, 202, 0.28) !important;
+}
+
+html.light .bg-cyan-500\/10 {
+  background-color: rgba(3, 105, 161, 0.09) !important;
+}
+html.light .border-cyan-500\/30 {
+  border-color: rgba(3, 105, 161, 0.28) !important;
+}
+
+html.light .bg-purple-500\/10 {
+  background-color: rgba(109, 40, 217, 0.09) !important;
+}
+html.light .border-purple-500\/30 {
+  border-color: rgba(109, 40, 217, 0.28) !important;
+}
+
+html.light .bg-pink-500\/10,
+html.light .bg-rose-500\/10,
+html.light .bg-red-500\/10 {
+  background-color: rgba(190, 18, 60, 0.09) !important;
+}
+html.light .border-pink-500\/30,
+html.light .border-rose-500\/30,
+html.light .border-red-500\/30 {
+  border-color: rgba(190, 18, 60, 0.28) !important;
+}
+
+html.light .bg-yellow-500\/10 {
+  background-color: rgba(122, 86, 0, 0.1) !important;
+}
+html.light .border-yellow-500\/20 {
+  border-color: rgba(122, 86, 0, 0.28) !important;
+}
+
+html.light .hover\:text-white:hover,
+html.light .hover\:text-slate-200:hover {
+  color: #14120f !important;
 }

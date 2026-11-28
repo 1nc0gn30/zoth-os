@@ -66,7 +66,7 @@ export const TransitionsModal: React.FC<TransitionsModalProps> = ({
                 </span>
               </h3>
               <p className="text-xs text-slate-400">
-                Seamless whip pans, crash zooms, optical light leaks, and analog film burns
+                Smooth whip pans, crash zooms, optical light leaks, and analog film burns
               </p>
             </div>
           </div>

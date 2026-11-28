@@ -18,7 +18,7 @@ export const TTSModal: React.FC<TTSModalProps> = ({
   onAddVoiceAndCaptions,
 }) => {
   const [script, setScript] = useState('');
-  const [selectedVoice, setSelectedVoice] = useState<string>('en-US-ChristopherNeural');
+  const [selectedVoice, setSelectedVoice] = useState<string>('espeak-local');
   const [wpm, setWpm] = useState<number>(160);
   const [style, setStyle] = useState<'hormozi' | 'neonGlow' | 'glassCard' | 'minimal'>('hormozi');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -169,6 +169,13 @@ export const TTSModal: React.FC<TTSModalProps> = ({
           </div>
         </div>
 
+        {/* Privacy Notice */}
+        <div className="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 leading-relaxed">
+          {selectedVoice === 'espeak-local'
+            ? 'Offline mode active: speech is synthesized locally via espeak-ng with zero external network egress.'
+            : 'Cloud TTS notice: selecting a [Cloud] neural voice sends script text to Microsoft Edge TTS via edge-tts. Switch to Local Offline Voice (espeak-ng) for zero external egress.'}
+        </div>
+
         {/* Speed / WPM */}
         <div className="space-y-1.5 p-3 rounded-xl bg-dark-950/70 border border-slate-800">
           <div className="flex justify-between text-slate-300 text-[11px]">
@@ -177,6 +184,7 @@ export const TTSModal: React.FC<TTSModalProps> = ({
           </div>
           <input
             type="range"
+            aria-label="Reading Speed Words Per Minute"
             min="110"
             max="220"
             step="10"

@@ -8,7 +8,8 @@ import {
   Sparkles,
   Shield,
   Timer,
-  Wand2
+  Wand2,
+  X
 } from 'lucide-react';
 import { ProjectState } from '../../types/project';
 import { DEVICE_MODELS, CANVAS_ASPECTS, GRADIENT_PRESETS, SOLID_PRESETS } from '../../models/devices';
@@ -18,11 +19,12 @@ import { DEFAULT_PROGRESS_BAR_CONFIG } from '../../services/progressBarService';
 interface SettingsSidebarProps {
   project: ProjectState;
   onChange: (updater: Partial<ProjectState>) => void;
+  onClose?: () => void;
 }
 
 type SidebarTab = 'frame' | 'background' | 'vfx' | 'branding';
 
-export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onChange }) => {
+export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onChange, onClose }) => {
   const [activeTab, setActiveTab] = useState<SidebarTab>('frame');
   const currentModel = DEVICE_MODELS.find(m => m.id === project.deviceModelID) || DEVICE_MODELS[2];
 
@@ -45,7 +47,20 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
   ];
 
   return (
-    <aside className="w-84 border-r border-slate-800/80 bg-dark-900/80 backdrop-blur-md overflow-hidden flex flex-col select-none text-xs">
+    <aside className="w-full lg:w-72 xl:w-80 h-full border-r border-slate-800/80 bg-dark-900/95 backdrop-blur-md overflow-hidden flex flex-col select-none text-xs shrink-0">
+      {/* Mobile / Tablet Drawer Close Header */}
+      {onClose && (
+        <div className="px-3 py-2 border-b border-slate-800/80 bg-dark-950/80 flex items-center justify-between lg:hidden">
+          <span className="font-semibold text-slate-200 text-xs">Frame &amp; Studio Settings</span>
+          <button
+            onClick={onClose}
+            aria-label="Close Settings Drawer"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
       {/* Top Segmented Navigation Tabs */}
       <div className="p-3 border-b border-slate-800/80 bg-dark-950/60">
         <div className="grid grid-cols-4 gap-1 p-1 bg-dark-900 rounded-xl border border-slate-800">
@@ -203,6 +218,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Bezel Width"
                       min="0"
                       max="0.08"
                       step="0.005"
@@ -218,6 +234,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Corner Radius"
                       min="0"
                       max="0.5"
                       step="0.01"
@@ -274,10 +291,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                   onClick={() => onChange({
                     transform3D: { ...project.transform3D, enabled: !project.transform3D.enabled }
                   })}
+                  aria-label="Toggle 3D Studio Tilt and Depth"
                   className={`px-2.5 py-0.5 rounded text-[10px] font-semibold border transition ${
                     project.transform3D.enabled
                       ? 'bg-brand-500/20 text-brand-300 border-brand-500/40'
-                      : 'bg-dark-950 text-slate-500 border-slate-800'
+                      : 'bg-dark-950 text-slate-300 border-slate-700'
                   }`}
                 >
                   {project.transform3D.enabled ? 'ON' : 'OFF'}
@@ -330,6 +348,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Pitch Rotate X"
                       min="-35"
                       max="35"
                       step="1"
@@ -349,6 +368,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Yaw Rotate Y"
                       min="-45"
                       max="45"
                       step="1"
@@ -368,6 +388,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="3D Chassis Extrusion"
                       min="0"
                       max="24"
                       step="2"
@@ -422,6 +443,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                   </div>
                   <input
                     type="range"
+                    aria-label="Device Scale"
                     min="0.4"
                     max="1.5"
                     step="0.01"
@@ -438,6 +460,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                   </div>
                   <input
                     type="range"
+                    aria-label="Drop Shadow Opacity"
                     min="0"
                     max="1"
                     step="0.05"
@@ -627,6 +650,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                       </div>
                       <input
                         type="range"
+                        aria-label="Pattern Opacity"
                         min="0.05"
                         max="0.8"
                         step="0.05"
@@ -698,6 +722,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                 </div>
                 <input
                   type="range"
+                  aria-label="Vignette Depth"
                   min="0"
                   max="1"
                   step="0.05"
@@ -716,6 +741,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                 </div>
                 <input
                   type="range"
+                  aria-label="Camera Shake Jitter"
                   min="0"
                   max="1"
                   step="0.05"
@@ -734,6 +760,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                 </div>
                 <input
                   type="range"
+                  aria-label="RGB Glitch Distortion"
                   min="0"
                   max="1"
                   step="0.05"
@@ -1118,6 +1145,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Progress Bar Height"
                       min="2"
                       max="16"
                       step="1"
@@ -1208,6 +1236,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ project, onCha
                     </div>
                     <input
                       type="range"
+                      aria-label="Watermark Opacity"
                       min="0.1"
                       max="1.0"
                       step="0.05"

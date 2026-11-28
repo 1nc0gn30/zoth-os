@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  :: Maya for Linux (Studio Pro) — Sovereign Creator Video & Device Mockup Studio
-#  Official Repository: https://github.com/1nc0gn30/maya-linux
+#  Maya for Linux (Studio Pro v2.0.0) — Video Mockup & 60 FPS Motion Studio
+#  Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+#  Repository: https://github.com/1nc0gn30/maya-linux
 # ==============================================================================
 
-set -e
+set -euo pipefail
 
+VERSION="2.0.0"
 MAYA_CALLER_PWD="$(pwd)"
 export MAYA_CALLER_PWD
 
@@ -17,18 +19,104 @@ if [[ ! -d "$MAYA_DIR" ]] && [[ -d "$HOME/maya-linux" ]]; then
     MAYA_DIR="$HOME/maya-linux"
 fi
 
+sanitize_path() {
+    local p="${1:-}"
+    if [[ -n "${HOME:-}" && "$p" == "$HOME"* ]]; then
+        printf '~%s' "${p#"$HOME"}"
+    else
+        printf '%s' "$p"
+    fi
+}
+
+print_status_json() {
+    local has_dist="false" has_engine="false" has_electron="false" has_ffmpeg="false" has_ytdlp="false" has_espeak="false"
+    [[ -f "$MAYA_DIR/dist/index.html" ]] && has_dist="true"
+    [[ -f "$MAYA_DIR/maya_motion_engine.py" ]] && has_engine="true"
+    if [[ -x "/usr/local/bin/electron" ]] || [[ -x "/opt/electron/electron" ]] || [[ -x "$MAYA_DIR/node_modules/.bin/electron" ]] || command -v electron &>/dev/null; then
+        has_electron="true"
+    fi
+    command -v ffmpeg &>/dev/null && has_ffmpeg="true"
+    command -v yt-dlp &>/dev/null && has_ytdlp="true"
+    command -v espeak-ng &>/dev/null && has_espeak="true"
+
+    local safe_dir safe_out
+    safe_dir="$(sanitize_path "$MAYA_DIR")"
+    safe_out="~/Videos/maya-zoth-edits"
+
+    cat <<EOF
+{
+  "tool": "maya-linux",
+  "name": "Maya for Linux (Studio Pro)",
+  "version": "$VERSION",
+  "installDir": "$safe_dir",
+  "defaultOutputDir": "$safe_out",
+  "presetsCount": 6,
+  "dependencies": {
+    "distBuilt": $has_dist,
+    "motionEngine": $has_engine,
+    "electron": $has_electron,
+    "ffmpeg": $has_ffmpeg,
+    "ytDlp": $has_ytdlp,
+    "espeakNg": $has_espeak
+  },
+  "attribution": "Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+  "homepage": "https://nullai.tech",
+  "repository": "https://github.com/1nc0gn30/maya-linux",
+  "support": {
+    "coffee": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X",
+    "solana": "GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK"
+  }
+}
+EOF
+}
+
+print_status_human() {
+    local safe_dir
+    safe_dir="$(sanitize_path "$MAYA_DIR")"
+    echo "Maya for Linux (Studio Pro v$VERSION)"
+    echo "  Install Dir:    $safe_dir"
+    echo "  Default Output: ~/Videos/maya-zoth-edits"
+    echo "  Motion Engine:  $([[ -f "$MAYA_DIR/maya_motion_engine.py" ]] && echo 'OK (6 presets)' || echo 'MISSING')"
+    echo "  Built UI Dist:  $([[ -f "$MAYA_DIR/dist/index.html" ]] && echo 'OK' || echo 'MISSING')"
+    echo "  FFmpeg:         $(command -v ffmpeg >/dev/null 2>&1 && echo 'OK' || echo 'MISSING')"
+    echo "  espeak-ng:      $(command -v espeak-ng >/dev/null 2>&1 && echo 'OK (offline TTS)' || echo 'OPTIONAL')"
+    echo "  yt-dlp:         $(command -v yt-dlp >/dev/null 2>&1 && echo 'OK' || echo 'OPTIONAL')"
+    echo "  Attribution:    Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+}
+
 case "${1:-}" in
   --help|-h)
     cat <<EOF
-Maya for Linux (Studio Pro v1.2.0)
+Maya for Linux (Studio Pro v$VERSION)
 
 Usage:
   maya                               Launch Maya Studio Pro desktop GUI
   maya <video.mp4|mov|webm>          Open a video directly inside Maya Studio Pro
-  maya --list-presets                List headless 60fps procedural motion presets
-  maya --render <preset|all> [--out DIR]
+  maya --version                     Print Maya version ($VERSION)
+  maya --status [--json]             Inspect installation & runtime dependencies
+  maya --json                        Print structured JSON status
+  maya --list-presets [--json]       List headless 60fps procedural motion presets
+  maya --render <preset|all> [--out DIR] [--mirror DIR]
                                      Render 60fps procedural motion edits (zero still images)
+
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform (https://nullai.tech)
 EOF
+    exit 0
+    ;;
+  --version|-v)
+    echo "maya $VERSION"
+    exit 0
+    ;;
+  --json)
+    print_status_json
+    exit 0
+    ;;
+  --status)
+    if [[ "${2:-}" == "--json" ]]; then
+        print_status_json
+    else
+        print_status_human
+    fi
     exit 0
     ;;
   --list-presets|--render)

@@ -78,21 +78,22 @@ interface DraggableBlockProps {
 
 function generateRulerTicks(totalSeconds: number): { time: number; label: string; pct: number }[] {
   if (totalSeconds <= 0) return [];
-  let step = 1;
-  if (totalSeconds > 60) step = 10;
-  else if (totalSeconds > 30) step = 5;
-  else if (totalSeconds > 15) step = 2;
+  // Keep <= 5 evenly spaced ruler labels so narrow mobile/tablet tracks never collide
+  const targetMaxTicks = 5;
+  let step = Math.max(2, Math.ceil(totalSeconds / targetMaxTicks));
+  if (totalSeconds > 60) step = 15;
+  else if (totalSeconds > 30) step = 10;
+  else if (totalSeconds > 15) step = 5;
 
   const ticks: { time: number; label: string; pct: number }[] = [];
-  for (let t = 0; t <= totalSeconds; t += step) {
+  for (let t = 0; t < totalSeconds; t += step) {
     const mins = Math.floor(t / 60);
     const secs = Math.floor(t % 60);
     const label = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    ticks.push({
-      time: t,
-      label,
-      pct: (t / totalSeconds) * 100,
-    });
+    const pct = (t / totalSeconds) * 100;
+    if (pct <= 90) {
+      ticks.push({ time: t, label, pct });
+    }
   }
   return ticks;
 }
@@ -738,48 +739,50 @@ export const Timeline: React.FC<TimelineProps> = ({
   }, []);
 
   return (
-    <div className="h-80 border-t border-slate-800/80 bg-dark-950 flex flex-col select-none">
+    <div className="h-48 sm:h-56 lg:h-64 border-t border-slate-800/80 bg-dark-950 flex flex-col select-none shrink-0">
       <AudioImportModal
         isOpen={isAudioModalOpen}
         onClose={() => setIsAudioModalOpen(false)}
         onAudioImported={handleAudioImported}
       />
 
-      {/* Toolbar */}
-      <div className="h-10 border-b border-slate-800/80 px-4 flex items-center justify-between text-xs bg-dark-950/90 z-20">
+      {/* Toolbar — single-row scrollable on narrow viewports, >= 44px mobile tap targets */}
+      <div className="min-h-[52px] lg:min-h-[42px] border-b border-slate-800/80 px-2.5 sm:px-4 py-1 flex items-center justify-between gap-2 text-xs bg-dark-950/90 z-20 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Playback Controls */}
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onTogglePlay}
-            className="w-7 h-7 rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center justify-center transition shadow-sm active:scale-95"
+            aria-label={project.isPlaying ? "Pause Playback" : "Play Timeline"}
+            className="min-h-[44px] min-w-[44px] lg:min-h-[30px] lg:min-w-[30px] rounded-lg bg-brand-600 hover:bg-brand-500 text-white maya-solid-btn flex items-center justify-center transition shadow-sm active:scale-95 shrink-0"
             title={project.isPlaying ? "Pause (Space)" : "Play (Space)"}
           >
             {project.isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
           </button>
           <button
             onClick={onToggleMute}
-            className="w-7 h-7 rounded-lg bg-dark-850 hover:bg-dark-800 text-slate-400 hover:text-slate-200 border border-slate-800 flex items-center justify-center transition"
+            aria-label={project.isMuted ? "Unmute Audio" : "Mute Audio"}
+            className="min-h-[44px] min-w-[44px] lg:min-h-[30px] lg:min-w-[30px] rounded-lg bg-dark-850 hover:bg-dark-800 text-slate-300 hover:text-slate-100 border border-slate-800 flex items-center justify-center transition shrink-0"
             title={project.isMuted ? "Unmute" : "Mute"}
           >
             {project.isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
           </button>
-          <span className="font-mono text-slate-300 text-xs tracking-tight">
-            {formatTime(project.currentSeconds)} <span className="text-slate-600">/</span> {formatTime(totalDuration)}
+          <span className="font-mono text-slate-200 text-xs tracking-tight whitespace-nowrap shrink-0">
+            {formatTime(project.currentSeconds)} <span className="text-slate-400">/</span> {formatTime(totalDuration)}
           </span>
 
           {/* In / Out Video Trim Buttons */}
-          <div className="flex items-center space-x-1 border-l border-slate-800 pl-2">
+          <div className="flex items-center gap-1 border-l border-slate-800 pl-2 shrink-0">
             <button
               onClick={setInPoint}
               title="Set In-point (I)"
-              className="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[10px] font-medium"
+              className="min-h-[44px] lg:min-h-[28px] px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[11px] font-medium whitespace-nowrap shrink-0"
             >
               [ In (I)
             </button>
             <button
               onClick={setOutPoint}
               title="Set Out-point (O)"
-              className="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[10px] font-medium"
+              className="min-h-[44px] lg:min-h-[28px] px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[11px] font-medium whitespace-nowrap shrink-0"
             >
               Out (O) ]
             </button>
@@ -787,7 +790,7 @@ export const Timeline: React.FC<TimelineProps> = ({
               <button
                 onClick={resetTrim}
                 title="Reset Video Trim"
-                className="px-1.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition text-[10px]"
+                className="min-h-[44px] lg:min-h-[28px] px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 transition text-[11px] whitespace-nowrap shrink-0"
               >
                 Reset
               </button>
@@ -795,57 +798,57 @@ export const Timeline: React.FC<TimelineProps> = ({
             <button
               onClick={handleSplitAtPlayhead}
               title="Split at playhead (S)"
-              className="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition text-[10px] font-medium flex items-center space-x-1"
+              className="min-h-[44px] lg:min-h-[28px] px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition text-[11px] font-medium flex items-center gap-1 whitespace-nowrap shrink-0"
             >
-              <Scissors className="w-3 h-3 text-red-400" />
+              <Scissors className="w-3 h-3 text-red-400 shrink-0" />
               <span>Split (S)</span>
             </button>
           </div>
         </div>
 
-        {/* Studio Elements Quick Actions & Dropdowns (Spacious & Clean) */}
-        <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
+        {/* Studio Elements Quick Actions & Dropdowns */}
+        <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
           {/* Quick Direct Actions */}
           <button
             onClick={addTypewriter}
             title="Add Typewriter Stroke Typed Heading"
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition text-[11px] font-medium active:scale-95"
+            className="min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition text-[11px] font-medium active:scale-95 whitespace-nowrap shrink-0"
           >
-            <Type className="w-3 h-3 text-cyan-400" />
+            <Type className="w-3 h-3 text-cyan-400 shrink-0" />
             <span>+ Typewriter</span>
           </button>
 
           <button
             onClick={addBrandAsset}
             title="Add Zoth Studio Navbar Logo or Azoth Master Seal"
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[11px] font-medium active:scale-95"
+            className="min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[11px] font-medium active:scale-95 whitespace-nowrap shrink-0"
           >
-            <Crown className="w-3 h-3 text-amber-400" />
+            <Crown className="w-3 h-3 text-amber-400 shrink-0" />
             <span>+ Brand</span>
           </button>
 
           <button
             onClick={addZoom}
             title="Add Smooth Camera Zoom"
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/30 transition text-[11px] font-medium active:scale-95"
+            className="min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/30 transition text-[11px] font-medium active:scale-95 whitespace-nowrap shrink-0"
           >
-            <Sparkles className="w-3 h-3 text-brand-400" />
+            <Sparkles className="w-3 h-3 text-brand-400 shrink-0" />
             <span>+ Zoom</span>
           </button>
 
           {/* Audio Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setActiveMenu(activeMenu === 'audio' ? null : 'audio')}
-              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-[11px] font-medium border transition ${
+              className={`min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition whitespace-nowrap ${
                 activeMenu === 'audio'
-                  ? 'bg-indigo-600 text-white border-indigo-400'
+                  ? 'bg-indigo-600 text-white border-indigo-400 maya-solid-btn'
                   : 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border-indigo-500/20'
               }`}
             >
-              <Music className="w-3 h-3 text-indigo-400" />
+              <Music className="w-3 h-3 shrink-0" />
               <span>Audio</span>
-              <ChevronDown className="w-2.5 h-2.5" />
+              <ChevronDown className="w-2.5 h-2.5 shrink-0" />
             </button>
             {activeMenu === 'audio' && (
               <div className="absolute top-8 right-0 w-48 bg-dark-900 border border-slate-800 rounded-xl p-1.5 shadow-2xl z-50 space-y-1 animate-in fade-in">
@@ -887,18 +890,18 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
 
           {/* Text & Captions Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setActiveMenu(activeMenu === 'text' ? null : 'text')}
-              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-[11px] font-medium border transition ${
+              className={`min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition whitespace-nowrap ${
                 activeMenu === 'text'
-                  ? 'bg-yellow-600 text-white border-yellow-400'
+                  ? 'bg-yellow-600 text-white border-yellow-400 maya-solid-btn'
                   : 'bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border-yellow-500/20'
               }`}
             >
-              <Subtitles className="w-3 h-3 text-yellow-400" />
+              <Subtitles className="w-3 h-3 shrink-0" />
               <span>Titles</span>
-              <ChevronDown className="w-2.5 h-2.5" />
+              <ChevronDown className="w-2.5 h-2.5 shrink-0" />
             </button>
             {activeMenu === 'text' && (
               <div className="absolute top-8 right-0 w-48 bg-dark-900 border border-slate-800 rounded-xl p-1.5 shadow-2xl z-50 space-y-1 animate-in fade-in">
@@ -928,18 +931,18 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
 
           {/* More FX Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setActiveMenu(activeMenu === 'vfx' ? null : 'vfx')}
-              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-[11px] font-medium border transition ${
+              className={`min-h-[44px] lg:min-h-[28px] flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition whitespace-nowrap ${
                 activeMenu === 'vfx'
-                  ? 'bg-purple-600 text-white border-purple-400'
+                  ? 'bg-purple-600 text-white border-purple-400 maya-solid-btn'
                   : 'bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border-purple-500/20'
               }`}
             >
-              <RotateCw className="w-3 h-3 text-purple-400" />
+              <RotateCw className="w-3 h-3 shrink-0" />
               <span>More</span>
-              <ChevronDown className="w-2.5 h-2.5" />
+              <ChevronDown className="w-2.5 h-2.5 shrink-0" />
             </button>
             {activeMenu === 'vfx' && (
               <div className="absolute top-8 right-0 w-48 bg-dark-900 border border-slate-800 rounded-xl p-1.5 shadow-2xl z-50 space-y-1 animate-in fade-in">
@@ -997,51 +1000,51 @@ export const Timeline: React.FC<TimelineProps> = ({
       </div>
 
       {/* Tracks Area */}
-      <div className="flex-1 flex overflow-x-auto p-3">
+      <div className="flex-1 flex overflow-y-auto overflow-x-auto p-2.5 sm:p-3 min-h-0">
         {/* Track Headers */}
-        <div className="w-24 pr-3 flex flex-col justify-around text-[11px] font-medium text-slate-400 border-r border-slate-800/80 select-none">
-          <div className="flex items-center space-x-1.5 text-indigo-400">
-            <Music className="w-3 h-3" />
+        <div className="w-24 pr-3 pt-5 flex flex-col gap-1.5 text-[11px] font-medium text-slate-400 border-r border-slate-800/80 select-none shrink-0">
+          <div className="h-6 flex items-center space-x-1.5 text-indigo-400">
+            <Music className="w-3 h-3 shrink-0" />
             <span>Audio</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-purple-400">
-            <RotateCw className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-purple-400">
+            <RotateCw className="w-3 h-3 shrink-0" />
             <span>Transit</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-brand-400">
-            <Sparkles className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-brand-400">
+            <Sparkles className="w-3 h-3 shrink-0" />
             <span>Zooms</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-pink-400">
-            <Hand className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-pink-400">
+            <Hand className="w-3 h-3 shrink-0" />
             <span>Taps</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-cyan-400">
-            <Type className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-cyan-400">
+            <Type className="w-3 h-3 shrink-0" />
             <span>Typewriter</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-amber-400">
-            <Crown className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-amber-400">
+            <Crown className="w-3 h-3 shrink-0" />
             <span>Brand</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-emerald-400">
-            <Type className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-emerald-400">
+            <Type className="w-3 h-3 shrink-0" />
             <span>Callouts</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-yellow-400">
-            <Subtitles className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-yellow-400">
+            <Subtitles className="w-3 h-3 shrink-0" />
             <span>Captions</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-amber-400">
-            <Smile className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-amber-400">
+            <Smile className="w-3 h-3 shrink-0" />
             <span>Stickers</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-amber-400">
-            <Gauge className="w-3 h-3" />
+          <div className="h-6 flex items-center space-x-1.5 text-amber-400">
+            <Gauge className="w-3 h-3 shrink-0" />
             <span>Speed</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-slate-300">
-            <Scissors className="w-3 h-3" />
+          <div className="h-8 flex items-center space-x-1.5 text-slate-300">
+            <Scissors className="w-3 h-3 shrink-0" />
             <span>Video</span>
           </div>
         </div>
@@ -1050,17 +1053,17 @@ export const Timeline: React.FC<TimelineProps> = ({
         <div 
           ref={tracksRef}
           onPointerDown={handleTrackPointerDown}
-          className="flex-1 relative ml-3 bg-dark-900/60 rounded-xl border border-slate-800/80 overflow-hidden flex flex-col justify-around py-1 cursor-pointer"
+          className="flex-1 min-w-[220px] relative ml-3 bg-dark-900/60 rounded-xl border border-slate-800/80 overflow-hidden flex flex-col gap-1.5 pt-5 pb-1.5 px-1 cursor-pointer h-max"
         >
-          {/* Timecode Ruler Ticks Background Grid */}
-          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Timecode Ruler Ticks Header & Vertical Grid */}
+          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
             {generateRulerTicks(totalDuration).map(tick => (
               <div
                 key={tick.time}
                 className="absolute top-0 bottom-0 border-l border-slate-800/40 flex flex-col justify-between"
                 style={{ left: `${tick.pct}%` }}
               >
-                <span className="text-[9px] font-mono text-slate-500 pl-1 pt-0.5 select-none opacity-50">
+                <span className="text-[10px] font-mono text-slate-300 pl-1 pt-0.5 select-none whitespace-nowrap">
                   {tick.label}
                 </span>
               </div>
@@ -1666,16 +1669,16 @@ export const Timeline: React.FC<TimelineProps> = ({
             )}
 
             {/* Video track info & metrics */}
-            <div className="h-full flex items-center justify-between px-3 text-xs text-slate-300 font-medium z-0">
-              <div className="flex items-center space-x-2">
-                <Scissors className="w-3.5 h-3.5 text-brand-400" />
-                <span className="font-semibold text-white truncate max-w-[200px]">{project.displayName || 'Video Source Track'}</span>
+            <div className="h-full flex items-center justify-between gap-2 px-2.5 sm:px-3 text-xs text-slate-300 font-medium z-0 min-w-0">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <Scissors className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <span className="font-semibold text-white truncate">{project.displayName || 'Video Source Track'}</span>
               </div>
-              <div className="flex items-center space-x-3 font-mono text-[10px] text-slate-400">
-                <span>In: <strong className="text-slate-200">{formatTime(project.trimStartTime || 0)}</strong></span>
-                <span>•</span>
-                <span>Out: <strong className="text-slate-200">{formatTime(project.trimEndTime || project.videoDuration || totalDuration)}</strong></span>
-                <span>•</span>
+              <div className="flex items-center gap-2 sm:gap-3 font-mono text-[10px] text-slate-300 shrink-0 whitespace-nowrap">
+                <span className="hidden sm:inline">In: <strong className="text-slate-100">{formatTime(project.trimStartTime || 0)}</strong></span>
+                <span className="hidden sm:inline">•</span>
+                <span className="hidden md:inline">Out: <strong className="text-slate-100">{formatTime(project.trimEndTime || project.videoDuration || totalDuration)}</strong></span>
+                <span className="hidden md:inline">•</span>
                 <span className="text-emerald-400 font-bold">Cut: {formatTime((project.trimEndTime || project.videoDuration || totalDuration) - (project.trimStartTime || 0))}</span>
               </div>
             </div>
