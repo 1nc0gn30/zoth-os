@@ -2,34 +2,75 @@
 """
 Zoth Math Pillar TUI (/usr/local/bin/zoth-math-pillar-tui)
 4-Pillar Mathematical Telemetry & Sovereign System HUD (:9995)
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
-import sys, json, urllib.request, time
+import sys
+import json
+import urllib.request
 
-URL = "http://127.0.0.1:9995/api/telemetry"
+ENDPOINTS = (
+    "http://127.0.0.1:9995/active",
+    "http://127.0.0.1:9995/api/status",
+)
+ATTRIBUTION = "Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
+
 
 def fetch():
-    try:
-        req = urllib.request.urlopen(URL, timeout=2.0)
-        return json.loads(req.read().decode())
-    except Exception as e:
-        return {"ok": False, "error": str(e)}
+    last_err = None
+    for url in ENDPOINTS:
+        try:
+            with urllib.request.urlopen(url, timeout=1.5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return {
+                    "ok": True,
+                    "endpoint": url,
+                    "live": bool(data.get("registry")),
+                    "registry": data.get("registry", {}),
+                    "mathMeta": data.get("mathMeta", {}),
+                    "engineered_by": ATTRIBUTION,
+                }
+        except Exception as exc:
+            last_err = str(exc)
+    return {
+        "ok": False,
+        "live": False,
+        "status": "standby",
+        "endpoints_checked": list(ENDPOINTS),
+        "error": last_err or "Daemon on 127.0.0.1:9995 is in standby",
+        "engineered_by": ATTRIBUTION,
+    }
 
-if "--status" in sys.argv or "--json" in sys.argv:
+
+def main():
+    args = sys.argv[1:]
+    if "--help" in args or "-h" in args:
+        print("Usage: zoth-math-pillar-tui [--status] [--json] [--help]")
+        print(f"Queries {ENDPOINTS[0]} (fallback {ENDPOINTS[1]}). Engineered by {ATTRIBUTION}")
+        sys.exit(0)
+
     data = fetch()
-    if "--json" in sys.argv:
+    if "--json" in args:
         print(json.dumps(data, indent=2))
-    else:
-        p = data.get("pillars", {})
-        print("Zoth Math Pillar v2.4.0 [ONLINE :9995]")
-        for k, v in p.items():
-            print(f"  [{k.upper()}] {v.get('title','')}: {v.get('primary_value','')} ({v.get('formula','')})")
-    sys.exit(0)
+        sys.exit(0)
 
-if "--help" in sys.argv or "-h" in sys.argv:
-    print("Usage: zoth-math-pillar-tui [--status] [--json] [--help]")
-    sys.exit(0)
+    state = "ONLINE :9995" if data.get("live") else "STANDBY :9995"
+    print(f"=== ZOTH MATH PILLAR 4-PILLAR TELEMETRY HUD [{state}] ===")
+    if not data.get("live"):
+        print(f"  Status: standby ({data.get('error', 'not running')})")
+        print("  Start with: node /opt/zoth-math-pillar/server.js --port 9995")
+        sys.exit(0)
 
-data = fetch()
-print("=== ZOTH MATH PILLAR 4-PILLAR TELEMETRY HUD (:9995) ===")
-for k, v in data.get("pillars", {}).items():
-    print(f"• {v.get('title', k)}: {v.get('primary_value')} | {v.get('formula')}")
+    meta = data.get("mathMeta", {})
+    all_agent = data.get("registry", {}).get("ALL", {})
+    for key, info in meta.items():
+        print(f"  [{key.upper()}] {info.get('title', key)} | {info.get('formula', '')}")
+    if all_agent:
+        print(
+            f"  Swarm Summary: H={all_agent.get('entropy')} bits/char | "
+            f"PPL={all_agent.get('perplexity')} | {all_agent.get('tokensSec')} tok/s | "
+            f"KV={all_agent.get('kvCacheMb')} MB"
+        )
+
+
+if __name__ == "__main__":
+    main()

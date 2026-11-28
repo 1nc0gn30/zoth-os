@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZothOS Math Pillar HUD</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Fira+Code:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-    :root {
+:root {
       --gold-primary: #FFD700;
       --gold-bright: #FFF099;
       --gold-amber: #FFB300;
@@ -43,15 +42,17 @@
       background: transparent;
       color: var(--text-main);
       overflow-x: hidden;
-      overflow-y: hidden;
+      overflow-y: auto;
       width: 100%;
       max-width: 100%;
-      height: 100vh;
+      min-height: 100vh;
+      height: auto;
     }
 
     #pillar-root {
       width: 100%;
-      height: 100%;
+      min-height: 100vh;
+      height: auto;
       background: linear-gradient(170deg, rgba(12, 15, 23, 0.96) 0%, rgba(6, 8, 12, 0.98) 50%, rgba(9, 11, 18, 0.97) 100%);
       border: 1px solid rgba(255, 215, 0, 0.35);
       border-radius: 14px;
@@ -1575,8 +1576,9 @@
 
     /* ── Footer Bar ────────────────────────────────────────────────────────── */
     footer {
-      height: 25px;
-      padding: 0 14px;
+      min-height: 28px;
+      height: auto;
+      padding: 6px 26px;
       border-top: 1px solid rgba(255, 215, 0, 0.16);
       display: flex;
       align-items: center;
@@ -1635,7 +1637,115 @@
       border-radius: 5px;
       border: 1px solid rgba(255, 215, 0, 0.25);
     }
+
+    @media (max-width: 640px) {
+      header {
+        min-height: 42px;
+        height: auto;
+        padding: 6px 12px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .nav-tabs-bar {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .nav-tab {
+        flex: 1 1 auto;
+        padding: 6px 8px;
+        font-size: 8.5px;
+      }
+      .visual-row-dual {
+        grid-template-columns: 1fr;
+      }
+      .visual-stat-row {
+        grid-template-columns: 1fr;
+      }
+      .pillars-container {
+        grid-template-columns: 1fr;
+      }
+      footer {
+        padding: 8px 16px;
+        gap: 6px;
+      }
+      footer .footer-support {
+        margin-left: 0 !important;
+        word-break: break-all;
+      }
+    }
   </style>
+<!-- SEO/AEO alchemist · Hermes 24h parity mission -->
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:title" content="Zoth Math Pillar HUD" />
+  <meta property="og:description" content="Zoth Math Pillar HUD" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/zoth-math-pillar" />
+  <meta property="og:image" content="https://zoth.nullai.tech/og-zoth.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1nc0gn30" />
+  <meta name="twitter:creator" content="@1nc0gn30" />
+  <meta name="twitter:title" content="Zoth Math Pillar HUD" />
+  <meta name="twitter:description" content="Zoth Math Pillar HUD" />
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-zoth.png" />
+  <!-- Schema.org Graph (SoftwareApplication + FAQPage) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": [
+          "WebApplication",
+          "SoftwareApplication"
+        ],
+        "name": "Zoth Math Pillar HUD",
+        "url": "https://zoth.nullai.tech/tools/zoth-math-pillar",
+        "applicationCategory": "Security & Enclave",
+        "operatingSystem": "Linux, ZothOS, Web",
+        "softwareVersion": "2.0.0",
+        "description": "Zoth Math Pillar HUD",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Zoth Math Pillar HUD?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth Math Pillar HUD is a real-time Shannon entropy, token velocity, and context telemetry HUD from the NullAI / ZothOS sovereign arsenal."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I run Zoth Math Pillar HUD locally?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It then serves on http://127.0.0.1:9995 (assigned local port 9995). It also ships at https://zoth.nullai.tech/tools/zoth-math-pillar as a Zoth Studio route."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Zoth Math Pillar HUD free, or is there a paywall?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "100% Free & Open-Access — no paywall, no blur-lock, no trial gate. Optional support is accepted via Buy Us a Coffee on Stripe at https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X and the Solana tip address GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <div id="pillar-root">
@@ -1679,6 +1789,12 @@
         </linearGradient>
       </defs>
     </svg>
+
+    <div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.14), rgba(212,175,55,0.16)); border-bottom: 1px solid rgba(255,215,0,0.3); padding: 4px 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: 'Fira Code', monospace; font-size: 9.5px; z-index: 20;">
+      <span style="background: #065F46; color: #FFFFFF; padding: 2px 7px; border-radius: 4px; font-weight: 700;">✦ 100% FREE &amp; OPEN ACCESS</span>
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-decoration: none;">☕ Buy Us a Coffee</a>
+      <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied SOL';" title="Solana Tip: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" style="background: #047857; color: #FFFFFF; border: 1px solid #10B981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-family: inherit; font-size: 9.5px; cursor: pointer;">◎ Solana: GG2eQbVh...dXoK</button>
+    </div>
 
     <!-- 1. Header Bar -->
     <header>
@@ -2096,10 +2212,20 @@
     </div>
 
     <!-- 6. Footer Bar -->
-    <footer>
-      <span id="footer-status-text">Ingest: 127.0.0.1:9995 (HTTP/UDP)</span>
+    <footer style="flex-wrap: wrap; gap: 6px;">
+      <span id="footer-status-text">Ingest: 127.0.0.1:9995 · Neal Frazier Tech (@1nc0gn30)</span>
       <span style="color: var(--gold-primary); font-weight: bold; font-family: 'Fira Code', monospace;" id="footer-integral-tokens">
         ∫ v_T dt: 0 tok
+      </span>
+      <span class="footer-support" style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-left: auto; font-family: 'Fira Code', monospace; font-size: 0.72rem;">
+        <a href="https://github.com/1nc0gn30/zoth-os" target="_blank" rel="noopener noreferrer" style="color: var(--cyan-accent); text-decoration: none;">GitHub</a>
+        <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">NullAI</a>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer"
+           title="Support open-access tools"
+           style="color: var(--gold-primary); text-decoration: none; border-bottom: 1px dotted var(--gold-primary);">☕ Buy Us a Coffee</a>
+        <span title="Solana tip address — click to select" style="color: var(--text-muted, #8b8f9a); user-select: all;">
+          ◎ <code style="color: var(--gold-primary); user-select: all;">GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code>
+        </span>
       </span>
     </footer>
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Zoth Math Pillar (zoth-math-pillar / zoth-math-pillar) — Compact Pill HUD & 4-Pillar Mathematical Telemetry Engine (:9995)
-Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+Zoth Math Pillar (zoth-math-pillar) — Compact Pill HUD & 4-Pillar Mathematical Telemetry Engine (:9995)
+Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform
 """
 import os
 import sys
@@ -11,63 +11,136 @@ import urllib.request
 
 APP_DIR = "/opt/zoth-math-pillar"
 PORT = 9995
+ATTRIBUTION = "Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
 
-def get_status():
+
+def parse_agent_arg(args):
+    for i, arg in enumerate(args):
+        if arg == "--agent" and i + 1 < len(args):
+            return args[i + 1].strip() or "ALL"
+        if arg.startswith("--agent="):
+            return arg.split("=", 1)[1].strip() or "ALL"
+    return None
+
+
+def get_status(selected_agent=None):
     live = {}
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/active", timeout=1.5) as r:
-            live = json.loads(r.read().decode())
+            live = json.loads(r.read().decode("utf-8"))
     except Exception:
         live = {"status": "standby"}
-    return {
+    registry = live.get("registry") if isinstance(live, dict) else None
+    payload = {
         "id": "zoth-math-pillar",
         "alias": "zoth-math-pillar",
         "name": "Zoth Math Pillar — Mathematical Telemetry & Compact Pill HUD",
+        "version": "2.3.0",
         "port": PORT,
         "udp_port": 9996,
         "url": f"http://127.0.0.1:{PORT}",
-        "modes": ["Compact Pill Mode (--pill)", "4-Pillar Full HUD", "Braille TUI (zoth-math-pillar-tui)", "Local Web HUD (:9995)"],
+        "modes": [
+            "Compact Pill Mode (--pill)",
+            "4-Pillar Full HUD",
+            "Agent Filter (--agent ALL|Antigravity|Ollama)",
+            "Braille TUI (zoth-math-pillar-tui)",
+            "Local Web HUD (:9995)",
+        ],
         "pillars": [
             "Pillar I: Shannon Entropy H(X) & Perplexity 2^H",
             "Pillar II: Token Flux & Kinematic Velocity (dT/dt)",
             "Pillar III: Context Cylinder & KV Cache Volume",
             "Pillar IV: Empirical Markov Step Transition Matrix",
         ],
-        "live": bool(live.get("registry")),
-        "engineered_by": "1nc0gn30 (@1nc0gn30) • NullAI Platform",
+        "live": bool(registry),
+        "engineered_by": ATTRIBUTION,
         "license": "100% Free & Open Access (Zero Paywalls)",
     }
+    if selected_agent:
+        payload["selected_agent"] = selected_agent
+        if isinstance(registry, dict) and selected_agent in registry:
+            payload["agent_telemetry"] = registry[selected_agent]
+    return payload
 
-def launch_electron(extra_args):
+
+def launch_electron(extra_args, selected_agent=None):
     env = os.environ.copy()
     env.pop("ELECTRON_RUN_AS_NODE", None)
+    if selected_agent:
+        env["ZOTH_MATH_PILLAR_AGENT"] = selected_agent
+    has_display = bool(env.get("DISPLAY") or env.get("WAYLAND_DISPLAY"))
+    if not has_display and "--smoke-test" not in extra_args:
+        status = get_status(selected_agent=selected_agent)
+        status["launch_mode"] = "headless_status"
+        print(json.dumps(status, indent=2))
+        sys.exit(0)
     for e in ["/usr/local/bin/electron", "/usr/bin/electron", "/opt/electron/electron"]:
         if os.path.isfile(e) and os.access(e, os.X_OK):
-            cmd = [e, "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu-sandbox", "--enable-transparent-visuals", APP_DIR] + extra_args
+            cmd = [
+                e,
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu-sandbox",
+                "--enable-transparent-visuals",
+                APP_DIR,
+            ] + extra_args
             if "--smoke-test" in extra_args:
-                if not env.get("DISPLAY") and not env.get("WAYLAND_DISPLAY"):
+                if not has_display:
                     cmd = ["xvfb-run", "-a"] + cmd
                 sys.exit(subprocess.call(cmd, env=env))
-            subprocess.Popen(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-            print(json.dumps({"status": "launched", "tool": "zoth-math-pillar", "mode": "pill" if "--pill" in extra_args else "hud", "port": PORT}))
+            subprocess.Popen(
+                cmd,
+                env=env,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            out = {
+                "status": "launched",
+                "tool": "zoth-math-pillar",
+                "mode": "pill" if "--pill" in extra_args else "hud",
+                "port": PORT,
+                "engineered_by": ATTRIBUTION,
+            }
+            if selected_agent:
+                out["agent"] = selected_agent
+            print(json.dumps(out))
             sys.exit(0)
     print("Electron binary not found", file=sys.stderr)
     sys.exit(1)
 
+
 def main():
     args = sys.argv[1:]
+    selected_agent = parse_agent_arg(args)
     if "tui" in args or "--tui" in args:
         rem = [a for a in args if a not in ("tui", "--tui")]
         os.execv("/usr/local/bin/zoth-math-pillar-tui", ["/usr/local/bin/zoth-math-pillar-tui"] + rem)
     if "--help" in args or "-h" in args:
-        print("Usage: zoth-math-pillar [desktop|--electron] [--pill|--compact] [tui|--tui] [--status] [--json] [--smoke-test]")
+        print(
+            "Usage: zoth-math-pillar [desktop|--electron] [--pill|--compact] "
+            "[--agent ALL|Antigravity|Ollama] [tui|--tui] [--status] [--json] [--smoke-test]"
+        )
+        print(f"Engineered by {ATTRIBUTION}")
         sys.exit(0)
     if "--status" in args or "--json" in args or "status" in args:
-        print(json.dumps(get_status(), indent=2))
+        print(json.dumps(get_status(selected_agent=selected_agent), indent=2))
         sys.exit(0)
-    if "desktop" in args or "--electron" in args or "--pill" in args or "--compact" in args or "--smoke-test" in args or not args:
+    if (
+        selected_agent is not None
+        or "desktop" in args
+        or "--electron" in args
+        or "--pill" in args
+        or "--compact" in args
+        or "--smoke-test" in args
+        or not args
+    ):
         extra = [a for a in args if a not in ("desktop", "--electron")]
-        launch_electron(extra)
+        launch_electron(extra, selected_agent=selected_agent)
+    print(f"Unknown arguments: {' '.join(args)}", file=sys.stderr)
+    print("Run `zoth-math-pillar --help` for usage.", file=sys.stderr)
+    sys.exit(2)
+
 
 if __name__ == "__main__":
     main()

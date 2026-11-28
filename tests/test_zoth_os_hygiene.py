@@ -387,6 +387,58 @@ def test_likeness_desk_chroot_privacy_opt_cli_desktop_and_vault_parity():
     assert not re.search(r"/home/[a-zA-Z0-9._-]+", vtxt)
 
 
+def test_math_pillars_chroot_cli_tui_desktop_opt_and_vault_parity():
+    cli_bin = BIN_DIR / "zoth-math-pillar"
+    tui_bin = BIN_DIR / "zoth-math-pillar-tui"
+    assert cli_bin.is_file() and tui_bin.is_file()
+
+    cli_txt = cli_bin.read_text(encoding="utf-8")
+    tui_txt = tui_bin.read_text(encoding="utf-8")
+    assert "Neal Frazier Tech (@1nc0gn30) • NullAI Platform" in cli_txt
+    assert "--agent" in cli_txt and "parse_agent_arg" in cli_txt
+    assert "/api/telemetry" not in tui_txt
+    assert "127.0.0.1:9995/active" in tui_txt
+    for p in (cli_bin, tui_bin):
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", p.read_text(encoding="utf-8")), f"Literal /home/ path in {p.name}"
+
+    res_cli = subprocess.run(["python3", str(cli_bin), "--agent", "Ollama", "--json"], capture_output=True, text=True, check=False)
+    assert res_cli.returncode == 0 and '"selected_agent": "Ollama"' in res_cli.stdout
+    assert "Neal Frazier Tech" in res_cli.stdout
+
+    res_tui = subprocess.run(["python3", str(tui_bin), "--help"], capture_output=True, text=True, check=False)
+    assert res_tui.returncode == 0 and "127.0.0.1:9995/active" in res_tui.stdout
+
+    desktop = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications" / "zoth-math-pillar.desktop"
+    assert desktop.is_file()
+    desk_txt = desktop.read_text(encoding="utf-8")
+    assert "Categories=X-Zoth-Security;Utility;System;Monitor;ArtificialIntelligence;Development;" in desk_txt
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", desk_txt)
+
+    opt_index = OPT_DIR / "zoth-math-pillar" / "index.html"
+    assert opt_index.is_file()
+    opt_html = opt_index.read_text(encoding="utf-8")
+    assert "fonts.googleapis.com" not in opt_html, "External Google Fonts egress forbidden in chroot /opt/zoth-math-pillar/index.html"
+    assert 'name="viewport"' in opt_html
+
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    expected_notes = [
+        vault_root / "Studio" / "Workstations" / "Workstation math-pillars.md",
+        vault_root / "Studio" / "Pages" / "Page MathPillarsPage.md",
+        vault_root / "Studio" / "Pages" / "Page MathPillarDetailPage.md",
+        vault_root / "OS" / "CLIs" / "CLI zoth-math-pillar.md",
+        vault_root / "OS" / "Desktops" / "Desktop zoth-math-pillar.md",
+        vault_root / "Studio" / "Tools" / "Studio zoth-math-pillar.md",
+    ]
+    for note in expected_notes:
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt), f"Literal /home/ leak in {note.name}"
+        assert "/studio/math-pillars.html" not in ntxt, f"Dead legacy path in {note.name}"
+        assert "Bourne-Again shell script" not in ntxt, f"Stale CLI type in {note.name}"
+        assert "Graph Theory, Chaos Theory" not in ntxt, f"Wrong pillar taxonomy in {note.name}"
+
+
+
 
 
 

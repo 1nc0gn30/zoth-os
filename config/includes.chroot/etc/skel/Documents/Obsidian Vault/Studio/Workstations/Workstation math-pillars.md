@@ -6,22 +6,29 @@ aliases: ["math-pillars"]
 
 # Six Mathematical Pillars Academy
 
-The **Six Mathematical Pillars Academy** is registered in the Zoth Studio v2 workstations directory (`src/data/workstations.js`) under Hardware Enclave Daemons.
+The **Six Mathematical Pillars Academy** (`v2.3.0`) is registered in the Zoth Studio v2 workstations directory (`src/data/workstations.js`) under the Observe band.
 
 ### Core Functionality
-Formal mathematical foundations: STDP plasticity, Shannon entropy, and Byzantine fault bounds.
+Deterministic browser and loopback solver workstation covering all Six Mathematical Pillars plus Byzantine BFT Quorum bounds:
+1. **Pillar I — Linear Algebra**: Arbitrary-dimension dot product, L2 norms, cosine similarity, scaled dot-product attention `softmax(Q·Kᵀ/√d_k)·V`, and KV-cache memory estimator `M_KV = 2·L·H·d_h·S·bytes`.
+2. **Pillar II — Multivariable Calculus**: Multi-step decoupled AdamW trajectory, L2 gradient norm clipping, and LoRA rank budgets `r·(d_in + d_out)`.
+3. **Pillar III — Probability & Information Theory**: Log-sum-exp softmax, top-p nucleus cutoff, Shannon entropy `H(X)`, perplexity `2^H`, and KL divergence `D_KL(P ‖ Q)`.
+4. **Pillar IV — Hessian & Loss Manifolds**: Analytic 2×2 symmetric Hessian eigenvalues, condition number `κ(H)`, definiteness classification, and matrix-free finite-difference HVP.
+5. **Pillar V — Lyapunov & Phase Dynamics**: Clamped exponential divergence `exp(clamp(λ·t, -50, 50))`, dual-trajectory OLS exponent estimation, and coherence index `C = exp(-H/H_max)`.
+6. **Pillar VI — Neuromorphic STDP**: Exact causal LTP / anti-causal LTD with neutral `Δw(0) = 0`, full `[-80, +80] ms` curve, and bounded `[0, 1]` synapse trace.
+7. **Byzantine BFT Quorum**: Exact `N >= 3f + 1`, quorum `Q = 2f + 1`, and `f_max = floor((N - 1) / 3)` verifier.
 
 ### Workstation Metadata
 - **ID:** `math-pillars`
 - **Name:** Six Mathematical Pillars Academy
-- **Type:** `enclave_daemon` (core hardware-anchored zero-egress daemon running on local loopback)
+- **Version:** `2.3.0`
+- **Execution Type:** `hybrid` (100% deterministic in-browser engine mirrored at loopback `:3000`)
 - **Functional Band:** Observe
-- **Static Entrypoint:** `/studio/math-pillars.html`
-- **In-App Route:** `/docs/math`
-
-### Operational Role
-Operates within the Observe band to present and formalize the core mathematical principles governing ZOTHOS and Zoth Studio. It provides rigorous interactive visualizations and documentation covering STDP synaptic plasticity, Shannon information entropy, and Byzantine fault-tolerance boundaries.
+- **Canonical Route:** `/workstations/math-pillars` (alias `/tools/math-pillars`)
+- **Theory Academy Route:** `/docs/math` & `/docs/math/:pillarId`
+- **Loopback API:** `GET`/`HEAD /api/studio/math-pillars`, `POST /api/studio/math-pillars/evaluate`
+- **CLI Command:** `zoth open math-pillars` (`npm run test:math-pillars`)
 
 ## See also
 
-[[Zoth Studio]] · [[MOC Workstations]]
+[[Zoth Studio]] · [[MOC Workstations]] · [[Page MathPillarsPage|MathPillarsPage]] · [[Page MathPillarDetailPage|MathPillarDetailPage]]
