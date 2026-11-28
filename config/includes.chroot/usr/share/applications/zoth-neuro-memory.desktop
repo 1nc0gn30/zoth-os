@@ -2,19 +2,19 @@
 Version=1.0
 Type=Application
 Name=Zoth Memory
-GenericName=Everywhere memory ledger
-Comment=See Grok, Hermes, Zoth Bot, AGY, and Neuro substrate memories
+GenericName=Everywhere Memory Ledger
+Comment=Federated local memory ledger across Grok, Hermes, Zoth Bot, AGY, and Neuro substrate (:8094)
 Exec=xdg-open "http://127.0.0.1:8094/#everywhere"
 TryExec=/usr/bin/xdg-open
-Icon=zoth-neuro-memory
+Icon=/opt/neuro-memory-daemon/assets/icon.png
 Terminal=false
-Categories=X-Zoth-AI;Utility;X-ZothOS-AI;
+Categories=X-Zoth-AI;Utility;ArtificialIntelligence;
 Keywords=memory;everywhere;neuro;grok;hermes;zoth;agy;engram;substrate;stdp;synaptic;
 StartupNotify=true
 Actions=Everywhere;Stream;Graph;Doctor;
 
 [Desktop Action Everywhere]
-Name=Everywhere ledger
+Name=Everywhere Ledger
 Exec=xdg-open "http://127.0.0.1:8094/#everywhere"
 
 [Desktop Action Stream]
@@ -28,4 +28,3 @@ Exec=xdg-open "http://127.0.0.1:8094/#graph"
 [Desktop Action Doctor]
 Name=Substrate Diagnostics & Health
 Exec=/usr/local/bin/zoth-konsole --pause --title "Neuro-Memory Diagnostics" -- /usr/local/bin/neuro-memory doctor
-TryExec=/usr/local/bin/neuro-memory

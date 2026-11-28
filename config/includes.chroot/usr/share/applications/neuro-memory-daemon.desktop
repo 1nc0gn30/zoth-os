@@ -2,12 +2,14 @@
 Version=1.0
 Type=Application
 Name=Neuro-Memory Daemon
-Comment=Biological-fidelity memory substrate with 3D Cosmic Nebula and federated Zoth Memory viewer. CLI zoth-memory / zoth-neuro-memory.
+GenericName=STDP Cognitive Memory Substrate
+Comment=Zero-dependency SQLite WAL STDP memory substrate, 3D WebGL Nebula, and 21-tool MCP server (:8094)
 Exec=/usr/local/bin/neuro-memory-daemon desktop
 TryExec=/usr/local/bin/neuro-memory-daemon
-Icon=neuro-memory-daemon
+Icon=/opt/neuro-memory-daemon/assets/icon.png
 Terminal=false
 Categories=X-Zoth-AI;Development;Utility;ArtificialIntelligence;
+Keywords=memory;everywhere;neuro;stdp;synaptic;mcp;obsidian;
 StartupNotify=true
 Actions=TUI;WebApp;
 
@@ -17,4 +19,4 @@ Exec=/usr/local/bin/zoth-konsole --title "Neuro-Memory Daemon TUI" -- /usr/local
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:8094)
-Exec=xdg-open http://127.0.0.1:8094
+Exec=xdg-open "http://127.0.0.1:8094/"

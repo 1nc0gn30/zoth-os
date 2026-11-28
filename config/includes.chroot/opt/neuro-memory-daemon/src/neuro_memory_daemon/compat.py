@@ -78,14 +78,14 @@ def normalize_path(
 
     path_obj = Path(expanded_user)
     if not path_obj.is_absolute():
-        base = Path(base_dir).resolve() if base_dir is not None else Path.cwd()
+        base = Path(os.path.abspath(os.fspath(base_dir))).resolve() if base_dir is not None else Path.cwd()
         path_obj = base / path_obj
 
     try:
-        return path_obj.resolve()
+        return Path(os.path.abspath(os.fspath(path_obj))).resolve()
     except (OSError, RuntimeError):
         # Fallback if resolve fails due to OS path constraints or symlink loops
-        return path_obj.absolute()
+        return Path(os.path.abspath(os.fspath(path_obj)))
 
 
 def ensure_dir(path: Union[str, Path, os.PathLike]) -> Path:
@@ -171,6 +171,7 @@ def atomic_write(
 
     mode = "w" if isinstance(content, str) else "wb"
     file_encoding = encoding if isinstance(content, str) else None
+    file_newline = "\n" if isinstance(content, str) else None
 
     # Write to a temporary file in the same directory to guarantee same filesystem
     temp_file = tempfile.NamedTemporaryFile(
@@ -179,6 +180,7 @@ def atomic_write(
         prefix=f".{dest.name}.tmp_",
         delete=False,
         encoding=file_encoding,
+        newline=file_newline,
     )
 
     temp_path = Path(temp_file.name)
@@ -260,7 +262,7 @@ def safe_write_text(
 
     dest = normalize_path(file_path)
     dest.parent.mkdir(parents=True, exist_ok=True)
-    with open(dest, "w", encoding=encoding) as f:
+    with open(dest, "w", encoding=encoding, newline="\n") as f:
         f.write(text)
     return dest
 

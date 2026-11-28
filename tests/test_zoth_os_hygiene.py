@@ -660,6 +660,104 @@ def test_netrunner_memory_vault_parity_and_hygiene():
     assert "Rendered by [[Page MemoryPage" not in comp_txt
 
 
+def test_neuro_memory_daemon_chroot_security_bloat_and_parity():
+    opt_dir = OPT_DIR / "neuro-memory-daemon"
+    assert opt_dir.is_dir(), "Chroot /opt/neuro-memory-daemon must exist"
+    for req in (
+        opt_dir / "src" / "neuro_memory_daemon" / "ui_server.py",
+        opt_dir / "src" / "neuro_memory_daemon" / "mcp_server.py",
+        opt_dir / "public" / "index.html",
+        opt_dir / "public" / "zoth-theme.css",
+        opt_dir / "public" / "og-image.png",
+        opt_dir / "public" / "llms.txt",
+        opt_dir / "public" / ".well-known" / "mcp.json",
+        opt_dir / "electron" / "main.cjs",
+        opt_dir / "bin" / "neuro-memory-daemon",
+        opt_dir / "bin" / "neuro-memory",
+        opt_dir / "bin" / "zoth-neuro-memory",
+        opt_dir / "bin" / "zoth-memory",
+        opt_dir / "bin" / "neuro-memory-daemon-tui",
+        opt_dir / "assets" / "icon.png",
+        opt_dir / "assets" / "hero-banner.svg",
+        opt_dir / "neuro-memory.desktop",
+        opt_dir / "pyproject.toml",
+        opt_dir / "package.json",
+        opt_dir / "README.md",
+    ):
+        assert req.is_file(), f"Missing required file in chroot /opt/neuro-memory-daemon: {req}"
+
+    # Zero stale bytecode, .git, or 46MB gpu-* bloat
+    assert not list(opt_dir.rglob("__pycache__")), "Stale __pycache__ in chroot /opt/neuro-memory-daemon"
+    assert not list(opt_dir.rglob("*.pyc")), "Stale .pyc in chroot /opt/neuro-memory-daemon"
+    assert not list(opt_dir.rglob("gpu-*")), "Unused gpu-* bloat in chroot /opt/neuro-memory-daemon"
+    assert not (opt_dir / ".git").exists(), ".git must not be in chroot /opt/neuro-memory-daemon"
+    assert not (opt_dir / "public" / "og-banner.jpg").exists(), "Legacy misnamed og-banner.jpg still present"
+
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 4 * 1024 * 1024, f"Chroot /opt/neuro-memory-daemon exceeds 4 MiB lean budget ({total_bytes} B)"
+
+    # Hardened UI & backend checks
+    ui_py = (opt_dir / "src" / "neuro_memory_daemon" / "ui_server.py").read_text(encoding="utf-8")
+    assert 'Access-Control-Allow-Origin", "*"' not in ui_py
+    assert 'server_version = "Neuro-Memory"' in ui_py
+    assert "MAX_BODY_BYTES = 1_048_576" in ui_py
+    assert "is_relative_to" in ui_py
+
+    idx_html = (opt_dir / "public" / "index.html").read_text(encoding="utf-8")
+    assert "fonts.googleapis.com" not in idx_html
+    assert "sales-funnel-banner" not in idx_html
+    assert "openLicenseModal" not in idx_html
+    assert "v2.9.0" in idx_html
+
+    elec_cjs = (opt_dir / "electron" / "main.cjs").read_text(encoding="utf-8")
+    assert "sandbox: true" in elec_cjs
+    assert "webSecurity: true" in elec_cjs
+    assert "will-navigate" in elec_cjs
+    assert "before-quit" in elec_cjs
+    assert "no-sandbox" not in elec_cjs
+
+    # 4-way CLI/TUI parity & zero literal /home/<user> paths
+    for name in ("neuro-memory-daemon", "neuro-memory", "zoth-neuro-memory", "zoth-memory", "neuro-memory-daemon-tui"):
+        cbin = BIN_DIR / name
+        assert cbin.is_file(), f"Missing chroot CLI {name}"
+        assert cbin.read_bytes() == (opt_dir / "bin" / name).read_bytes(), f"Chroot CLI {name} diverged from /opt"
+        txt = cbin.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", txt), f"Literal /home/ path in {name}"
+        assert "2.9.0" in txt
+        assert "Neal Frazier Tech" in txt
+
+    tui_txt = (BIN_DIR / "neuro-memory-daemon-tui").read_text(encoding="utf-8")
+    assert "math.sin" not in tui_txt
+    assert "canvasui-html-effects" not in tui_txt
+    assert "/api/stats" in tui_txt
+
+    # .desktop files hygiene
+    desk_dir = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications"
+    for dname in ("neuro-memory-daemon.desktop", "zoth-memory.desktop", "zoth-neuro-memory.desktop"):
+        dp = desk_dir / dname
+        assert dp.is_file(), f"Missing chroot desktop file {dname}"
+        dtxt = dp.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", dtxt), f"Literal /home/ path in {dname}"
+        assert "Exec=~" not in dtxt and "Icon=~" not in dtxt
+
+    # Obsidian Vault parity & zero literal /home/<user> paths
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    for rel in (
+        "06-Wiki/Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol.md",
+        "05-Telemetry/Neuro-Memory Cortex Telemetry.md",
+        "Studio/Tools/Studio neuro-memory-daemon.md",
+        "MCP/MCP neuro-memory.md",
+        "OS/Daemons/Daemon neuro_memory.md",
+    ):
+        vp = vault_root / rel
+        assert vp.is_file(), f"Missing chroot Vault note: {rel}"
+        vtxt = vp.read_text(encoding="utf-8")
+        assert "2.9.0" in vtxt, f"Missing v2.9.0 in {rel}"
+        assert "Neal Frazier Tech" in vtxt, f"Missing Neal Frazier Tech in {rel}"
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", vtxt), f"Literal /home/ leak in {rel}"
+
+
+
 
 
 

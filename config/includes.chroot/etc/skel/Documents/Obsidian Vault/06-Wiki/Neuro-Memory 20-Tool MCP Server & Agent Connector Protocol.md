@@ -1,66 +1,69 @@
 ---
-title: "Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol"
+title: "Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol"
 created: "2026-10-26T09:19:00Z"
-updated: "2026-10-26T09:19:00Z"
+updated: "2026-11-28T09:15:00Z"
+version: "2.9.0"
 category: "LLM-Wiki"
 tags: [wiki, llm-synthesized, karpathy-wiki, neuro-memory, mcp, model-context-protocol, obsidian, tools, stdp]
-stdp_engrams: 10
+stdp_engrams: 21
 confidence: 0.99
 status: "CANONICAL"
+author: "Neal Frazier Tech (@1nc0gn30) • NullAI Platform"
 ---
 
-# 🧠 Neuro-Memory 20-Tool MCP Server & Agent Connector Protocol
+# Neuro-Memory 21-Tool MCP Server & Agent Connector Protocol (`v2.9.0`)
 
 > [!abstract] Executive Summary
-> The **Neuro-Memory 20-Tool MCP Server** (`neuro_memory_daemon.mcp_server`) is the open standard cognitive and knowledge bridge linking autonomous AI agents (Claude Desktop, Cursor IDE, Grok Bot, Hermes Agent) to the biomorphic **Spike-Timing-Dependent Plasticity (STDP)** memory substrate and the **1,729+ note Obsidian Second Brain Vault**. Implementing the **Model Context Protocol (MCP)** specification over dual transport layers (`stdio` JSON-RPC 2.0 and RESTful HTTP `:8094`), the server delivers a cohesive 20-tool suite spanning associative engram recall, memory consolidation, fixed-root confined note read/write, spatial JSON Canvas generation, database querying, doctor health audits, and portable cryptographic bundle attestation.
+> The **Neuro-Memory 21-Tool MCP Server** (`neuro_memory_daemon.mcp_server`, `v2.9.0`, Apache-2.0, engineered by **Neal Frazier Tech (@1nc0gn30) • NullAI Platform**) is the open standard cognitive and knowledge bridge linking local AI agents (Claude Desktop, Cursor IDE, Hermes Agent, Antigravity) to the SQLite WAL **Spike-Timing-Dependent Plasticity (STDP)** substrate (`~/.neuro-memory/`) and the **Obsidian Second Brain Vault** (`~/Documents/Obsidian Vault`). Implementing the **Model Context Protocol (MCP `2024-11-05`)** over dual transports (`stdio` JSON-RPC 2.0 via `neuro-memory mcp` and loopback HTTP `POST http://127.0.0.1:8094/api/mcp`), the server exposes **21 verified tools** (`11` cognitive STDP/neuromodulation tools + `10` Obsidian Second Brain & Vaelor bridge tools).
 
 ## Conceptual Architecture
 
 ```mermaid
 flowchart TD
-    subgraph AgentLayer["🤖 Autonomous AI Agent Clients"]
+    subgraph AgentLayer["Local AI Agent Clients"]
         CD["Claude Desktop"]
         CR["Cursor IDE / Windsurf"]
         HA["Hermes Agent CLI"]
-        GK["Grok Bot & Subagent Swarms"]
+        AG["Antigravity & Subagents"]
     end
 
-    subgraph TransportLayer["⚡ Dual MCP Transport Protocol"]
-        STDIO["Stdio JSON-RPC 2.0<br/>(MCP Protocol 2024-11-05)"]
-        HTTP["REST / JSON-RPC Proxy<br/>POST /api/mcp/call (:8094)"]
+    subgraph TransportLayer["Dual Loopback MCP Transport (2024-11-05)"]
+        STDIO["Stdio JSON-RPC 2.0<br/>neuro-memory mcp"]
+        HTTP["Loopback HTTP JSON-RPC 2.0<br/>POST 127.0.0.1:8094/api/mcp"]
     end
 
-    subgraph ToolSuite["🛠️ Complete 20-Tool MCP Architecture"]
-        subgraph CognitiveTools["🧠 Cognitive STDP Memory Suite (1-10)"]
+    subgraph ToolSuite["Complete 21-Tool MCP Architecture"]
+        subgraph CognitiveTools["Cognitive STDP & Neuromodulation Suite (1-11)"]
             T1["memory_store"]
             T2["memory_recall"]
             T3["memory_search"]
             T4["memory_graph"]
-            T5["memory_stats"]
-            T6["memory_consolidate"]
-            T7["memory_decay_status"]
-            T8["memory_reinforce_synapse"]
-            T9["memory_simulate_activation"]
-            T10["memory_prune_decayed"]
+            T5["memory_consolidate"]
+            T6["memory_stats"]
+            T7["memory_diagnostics"]
+            T8["memory_metacognition"]
+            T9["neuro_neuromodulator_status"]
+            T10["neuro_neuromodulate_pulse"]
+            T11["neuro_flashbulb_tag"]
         end
 
-        subgraph ObsidianTools["💎 Obsidian Second Brain Suite (11-20)"]
-            T11["obsidian_vault_search"]
-            T12["obsidian_wiki_synthesize"]
-            T13["obsidian_canvas_generate"]
-            T14["obsidian_doctor_audit"]
-            T15["obsidian_bases_query"]
+        subgraph ObsidianTools["Obsidian Second Brain & Vaelor Suite (12-21)"]
+            T12["obsidian_vault_search"]
+            T13["obsidian_wiki_synthesize"]
+            T14["obsidian_canvas_generate"]
+            T15["obsidian_doctor_audit"]
             T16["obsidian_daily_log"]
             T17["obsidian_backlinks_inspect"]
             T18["obsidian_bundle_export"]
             T19["obsidian_note_read"]
             T20["obsidian_note_write"]
+            T21["obsidian_vaelor_pouw"]
         end
     end
 
-    subgraph Substrates["📦 Unified Storage Substrates"]
-        DB["SQLite & Synaptic Matrices<br/>(41,750+ Engrams · 2M+ Synapses)"]
-        VAULT["Obsidian Vault Root<br/>(1,729+ Notes · Canvases · Bases)"]
+    subgraph Substrates["Local Loopback Substrates"]
+        DB["SQLite WAL STDP Substrate<br/>~/.neuro-memory/"]
+        VAULT["Obsidian Vault Root<br/>~/Documents/Obsidian Vault"]
     end
 
     AgentLayer --> TransportLayer
@@ -69,98 +72,68 @@ flowchart TD
     ObsidianTools --> VAULT
 ```
 
-## Complete 20-Tool MCP Functional Catalog
+## Complete 21-Tool MCP Functional Catalog
 
-### Part I: Cognitive & Biological STDP Memory Tools (1–10)
-| # | Tool Name | Description | Key Arguments |
-|---|-----------|-------------|---------------|
-| 1 | `memory_store` | Ingests a cognitive memory engram into the biomorphic substrate with importance weighting and tags. | `text`, `tags`, `importance`, `category` |
-| 2 | `memory_recall` | Performs associative cue recall leveraging CA3 pattern completion and spreading activation. | `query`, `top_k`, `min_salience` |
-| 3 | `memory_search` | Substrate full-text search across all stored episodic, semantic, and insight memories. | `query`, `limit` |
-| 4 | `memory_graph` | Extracts local synaptic adjacency subgraphs centered on target engram clusters. | `center_id`, `depth`, `min_weight` |
-| 5 | `memory_stats` | Returns real-time biomorphic telemetry (total engrams, active synapses, Shannon entropy). | `none` |
-| 6 | `memory_consolidate` | Triggers sleep replay consolidation, reinforcing recurring paths and shedding noise. | `cycles`, `decay_rate` |
-| 7 | `memory_decay_status` | Inspects Ebbinghaus exponential decay curves and retention scores across working memory. | `memory_ids` |
-| 8 | `memory_reinforce_synapse`| Explicitly reinforces Hebbian synaptic conductance between two memory nodes ($\Delta w$). | `source_id`, `target_id`, `delta` |
-| 9 | `memory_simulate_activation`| Simulates continuous-time spreading activation wave through synaptic connections. | `seed_ids`, `decay`, `steps` |
-| 10| `memory_prune_decayed` | Prunes sub-threshold forgotten engrams while preserving immutable system anchors. | `threshold` |
+### Part I: Cognitive & Biological STDP Memory Tools (1–11)
+| # | Tool Name | Description |
+|---|-----------|-------------|
+| 1 | `memory_store` | Encodes an associative memory engram into SQLite WAL with tags, category, and importance weighting. |
+| 2 | `memory_recall` | Executes CA3/CA1 pattern completion and multi-hop spreading activation recall. |
+| 3 | `memory_search` | Filtered full-text, tag, category, and agent search across stored engrams. |
+| 4 | `memory_graph` | Exports local synaptic adjacency subgraphs (`json`, `mermaid`, `dot`, `ascii`). |
+| 5 | `memory_consolidate` | Runs sleep replay consolidation with Ebbinghaus decay and sub-threshold pruning. |
+| 6 | `memory_stats` | Returns live engram, synapse, density, and category telemetry. |
+| 7 | `memory_diagnostics` | Audits storage integrity, runtime version, and database health. |
+| 8 | `memory_metacognition` | Evaluates epistemic confidence, provenance, and dialectic conflicts. |
+| 9 | `neuro_neuromodulator_status` | Reports NE, DA, ACh, 5-HT levels and Yerkes-Dodson arousal efficiency. |
+| 10 | `neuro_neuromodulate_pulse` | Applies a controlled neuromodulatory delta pulse to plasticity gains. |
+| 11 | `neuro_flashbulb_tag` | Locks a high-salience engram against decay via flashbulb consolidation. |
 
-### Part II: Obsidian Second Brain & Knowledge Graph Tools (11–20)
-| # | Tool Name | Description | Key Arguments |
-|---|-----------|-------------|---------------|
-| 11| `obsidian_vault_search` | Unified search across 1,729+ Vault notes, JSON Canvases, and Obsidian Bases. | `query`, `limit` |
-| 12| `obsidian_wiki_synthesize` | Autonomously compiles and synthesizes a canonical Karpathy LLM Wiki note in `06-Wiki/`. | `topic` |
-| 13| `obsidian_canvas_generate` | Procedurally generates a JSON Canvas 1.0 spatial graph with note cards and color badges. | `topic` |
-| 14| `obsidian_doctor_audit` | Runs comprehensive AST and health audit on 100% of `.canvas`, `.base`, and `.md` files. | `none` |
-| 15| `obsidian_bases_query` | Executes structured SQL/YAML queries against Obsidian Bases (`.base`) dynamic tables. | `base`, `limit` |
-| 16| `obsidian_daily_log` | Appends timestamped engineering logs into today's Daily Sovereign Note in `07-Daily/`. | `entry`, `date` |
-| 17| `obsidian_backlinks_inspect` | Scans notes for incoming citations, outgoing wikilinks, and latent unlinked mentions. | `note` (default: "00 Home") |
-| 18| `obsidian_bundle_export` | Exports cryptographic SHA-256 portable knowledge bundle attestation with top hubs. | `refresh` (default: true) |
-| 19| `obsidian_note_read` | Safely reads vault note with fixed-root confinement, parsing frontmatter and wikilinks. | `path` (default: "00 Home.md") |
-| 20| `obsidian_note_write` | Safely writes Obsidian Flavored Markdown with fixed-root confinement and STDP sync. | `relPath`, `content` |
-
----
-
-## Security Invariants: Strict Fixed-Root Confinement
-
-All filesystem operations in the Obsidian tool suite enforce strict confinement within `~/Documents/Obsidian Vault`:
-- **Realpath Canonicalization:** Input paths are unquoted, normalized, and resolved via `os.path.realpath`.
-- **Root Traversal Rejection:** Any path containing `..` or leading outside the canonical vault directory triggers an immediate HTTP 400 error (`Path traversal forbidden: requested path is outside vault root`).
-- **Secret Shielding:** Symlinks pointing outside the vault boundary are dereferenced and rejected. Credential stores, SSH keys, and system secrets remain completely unreachable by tool invocations.
-
-```python
-# Fixed-root confinement security invariant:
-vault_root = os.path.realpath(str(vault_dir))
-candidate = os.path.realpath(os.path.abspath(os.path.join(vault_root, normalized)))
-if os.path.commonpath([vault_root, candidate]) != vault_root:
-    raise SecurityError("Path traversal forbidden: requested path is outside vault root")
-```
+### Part II: Obsidian Second Brain & Vaelor Bridge Tools (12–21)
+| # | Tool Name | Description |
+|---|-----------|-------------|
+| 12 | `obsidian_vault_search` | Unified search across Vault Markdown notes, JSON Canvases, Bases, and STDP engrams. |
+| 13 | `obsidian_wiki_synthesize` | Compiles or retrieves a canonical Karpathy LLM Wiki note in `06-Wiki/` with realpath confinement. |
+| 14 | `obsidian_canvas_generate` | Procedurally generates a JSON Canvas 1.0 knowledge map inside the vault root with traversal checks. |
+| 15 | `obsidian_doctor_audit` | Audits `.canvas`, `.base`, and `.md` syntax and wikilink graph connectivity. |
+| 16 | `obsidian_daily_log` | Reads or appends timestamped engineering log entries in `07-Daily/YYYY-MM-DD.md`. |
+| 17 | `obsidian_backlinks_inspect` | Inspects outgoing wikilinks, incoming backlinks, and unlinked mentions. |
+| 18 | `obsidian_bundle_export` | Exports a SHA-256 verified portable Second Brain knowledge bundle. |
+| 19 | `obsidian_note_read` | Reads a vault note with strict realpath fixed-root confinement, parsing frontmatter and wikilinks. |
+| 20 | `obsidian_note_write` | Writes Obsidian Flavored Markdown with fixed-root confinement and STDP synchronization. |
+| 21 | `obsidian_vaelor_pouw` | Queries Vaelor L1 status (`127.0.0.1:8140`) or records a PoUW indexing attestation. |
 
 ---
+
+## Security Invariants (`v2.9.0`)
+
+- **Strict Loopback `Host` & `Origin` Guards (`403`)**: Rejects non-loopback `Host` headers and untrusted `Origin` headers across `GET`, `HEAD`, `POST`, `PUT`, `DELETE`, and `OPTIONS`, reflecting only trusted loopback origins (`Vary: Origin`, zero `*` wildcard CORS).
+- **4 HTTP Security Headers & Stripped Banner**: Emits `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, strict loopback `CSP`, and `Server: Neuro-Memory`.
+- **Input & Payload Bounds**: Enforces a `1 MiB` (`413`) request body cap, `400` on invalid `Content-Length` / query params / JSON, and JSON-RPC `-32700` Parse Error on malformed `POST /api/mcp` payloads.
+- **Fixed-Root Vault Confinement**: Enforces `Path.resolve().is_relative_to(vault_dir.resolve())` and rejects `..`, `/`, `\`, and NUL across note, wiki, and `.canvas` endpoints and MCP tools.
 
 ## Multi-Provider Agent Integration
 
-External agent systems integrate with the Neuro-Memory daemon via standardized configuration blocks:
-
-### 1. Claude Desktop Configuration (`claude_desktop_config.json`)
 ```json
 {
   "mcpServers": {
     "neuro-memory": {
-      "command": "/opt/zothos-ai-env/bin/python3",
-      "args": ["-m", "neuro_memory_daemon.mcp_server"],
-      "env": {
-        "PYTHONPATH": "~/NullAITech/neuro-memory-daemon/src",
-        "NEURO_MEMORY_DB": "~/.local/share/neuro_memory/memories.db"
-      }
+      "command": "/usr/local/bin/neuro-memory",
+      "args": ["mcp"]
     }
   }
 }
 ```
 
-### 2. Cursor IDE & Windsurf Configuration (`mcp.json`)
-```json
-{
-  "mcpServers": {
-    "zoth-obsidian-second-brain": {
-      "command": "/opt/zothos-ai-env/bin/python3",
-      "args": ["-m", "neuro_memory_daemon.mcp_server"],
-      "env": {
-        "PYTHONPATH": "~/NullAITech/neuro-memory-daemon/src"
-      }
-    }
-  }
-}
-```
-
----
+- **Canonical Repository**: [https://github.com/1nc0gn30/neuro-memory-daemon](https://github.com/1nc0gn30/neuro-memory-daemon)
+- **Zoth Studio Route**: [https://zoth.nullai.tech/tools/neuro-memory-daemon](https://zoth.nullai.tech/tools/neuro-memory-daemon)
+- **Attribution**: Engineered by **Neal Frazier Tech** (`@1nc0gn30`) • [NullAI Platform](https://nullai.tech)
 
 ## See Also
 
 - [[00 Home]] — Sovereign Second Brain Central Hub
 - [[Zoth Memory]] — Biomorphic Cognitive Memory Substrate
-- [[06-Wiki/Biomorphic STDP & 3D Netrunner Cortex|Biomorphic STDP & 3D Netrunner Cortex]]
-- [[06-Wiki/Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture|Obsidian Second Brain, JSON Canvas 1.0 & Bases Architecture]]
-- [[06-Wiki/Hermes Agent & Multi-Provider MCP Connector Ecosystem|Hermes Agent & Multi-Provider MCP Connector Ecosystem]]
-- [[06-Wiki/Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults|Vaelor Privacy Shield, Social Group Tabs & Inheritance Vaults]]
-- [[Zoth OS]] — Preempt-RT Sovereign Operating System
+- [[Studio neuro-memory-daemon|Neuro-Memory Daemon Studio Walkthrough]]
+- [[Daemon neuro_memory|neuro-memory-daemon]]
+- [[MCP neuro-memory|MCP neuro-memory]]
+- [[Zoth OS]] — Sovereign Operating System
