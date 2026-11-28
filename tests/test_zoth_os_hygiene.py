@@ -616,6 +616,21 @@ def test_models_console_vault_parity_and_hygiene():
     assert "Now lives at:** `/docs`" not in leg_txt
 
 
+def test_netlify_ax_vault_parity_and_hygiene():
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    ws_note = vault_root / "Studio" / "Workstations" / "Workstation netlify-ax.md"
+    assert ws_note.is_file(), f"Missing chroot Vault note: {ws_note}"
+    txt = ws_note.read_text(encoding="utf-8")
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", txt), "Literal /home/ leak in Workstation netlify-ax.md"
+    assert "/studio/netlify-ax.html" not in txt, "Dead /studio/netlify-ax.html path in Workstation netlify-ax.md"
+    assert "2.4.0" in txt
+    assert "/workstations/netlify-ax" in txt
+    assert "/api/studio/netlify-ax" in txt
+    assert "zoth open netlify-ax" in txt
+    assert "Neal Frazier Tech" in txt
+
+
+
 
 
 
