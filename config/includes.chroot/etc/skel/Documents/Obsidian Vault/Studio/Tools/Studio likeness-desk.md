@@ -1,165 +1,103 @@
 ---
 title: "Likeness Desk"
-tags: [studio, tool, verified, open-access]
+tags: [studio, tool, verified, open-access, mcp]
 aliases: ["likeness-desk", "Likeness Desk", "Likeness Desk (AI Video Double)"]
 pillar: "Pillar IV: Real-Time Audio-Visual & Generative Synthesis"
 category: "Voice & Real-Time"
-runs: "daemon"
+version: "2.6.0"
+runs: "on-demand-daemon"
 monetized: false
-price: "$0 (100% Free & Open-Access)"
+price: "$0 (100% Free & Open-Access, MIT)"
 status: "active"
 verified: true
-tested_at: "2026-10-31"
-test_status: "PASS (12-Step Gallery Verified)"
+tested_at: "2026-11-27"
+test_status: "PASS (v2.6.0 — 24 pytest + 10 Studio engine tests)"
 local_port: 9395
 cli_binary: "likeness-desk"
+mcp_tools: ["likeness_status", "likeness_mouth_roi", "likeness_speak", "likeness_diagnostics"]
 overflow_px: 0
 console_errors: 0
 github: "https://github.com/1nc0gn30/likeness-desk"
 live_url: "http://127.0.0.1:9395"
 studio_url: "http://127.0.0.1:3000/tools/likeness-desk"
-workstation_shot: "Artifacts/likeness-desk/likeness-desk_07_gui_standalone_video_double_stage.jpg"
-studio_shot: "Artifacts/likeness-desk/likeness-desk_09_gui_studio_godmode_video_double.jpg"
 braille_shape: "orbit"
 braille_archetype: "Elliptical N-Body Particle Orbit"
 ---
 
-# Likeness Desk (AI Video Double)
+# Likeness Desk (AI Video Double) — `v2.6.0`
 
-> [!CHECK] Sovereign Verification Passed (100% Free & Operational)
-> **Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform**
-> Verified across Developer & End-User perspectives with a **12-Step Real Verification Screenshot Gallery** (`8 passed in 0.40s` pytest suite, Chatterbox Turbo 24kHz voice cloning, Wav2Lip GAN mouth ROI lip-sync on NVIDIA Quadro P1000, Standalone `:9395` Video Double Stage, Zoth Studio v2 `:3000` God-Mode Workstation, and Mobile `390px` viewport with **`overflowPx: 0`** and **`consoleErrors: 0`**). Zero paywalls, zero license modals, zero cloud egress.
+> [!CHECK] Whiteboard Remediation & Re-Audit Verified (`v2.6.0`)
+> **Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform**
+> Verified across standalone `:9395`, Zoth Studio v2 `/tools/likeness-desk`, ZothOS chroot `/opt/likeness-desk`, 4-way CLI/TUI parity, 3-way `.desktop` parity, and 4-tool JSON-RPC 2.0 stdio MCP server (`24 passed` in `pytest` + `10 passed` in `test-likeness-desk-engine.mjs`, `0` secrets, `0` biometric files in ZothOS ISO chroot, triple-viewport × dual-theme Light/Dark verified with `overflowPx: 0` and `consoleErrors: 0`).
 
 ---
 
-## Tool Overview & Telemetry
+## Tool Overview & Verified Contracts
 
 | Parameter | Specification |
 | :--- | :--- |
-| **Tool Identifier** | `likeness-desk` |
+| **Tool Identifier** | `likeness-desk` (`v2.6.0`) |
 | **Category** | `Voice & Real-Time` |
-| **Mathematical Pillar** | `Pillar IV: Real-Time Audio-Visual & Generative Synthesis` |
-| **Runtime Engine** | `Node.js HTTP Server (:9395) + Python Chatterbox Voice (:9396) + Wav2Lip GPU (:9397)` |
+| **Runtime Engine** | Node.js loopback coordinator (`127.0.0.1:9395`) + Chatterbox Turbo CPU voice worker (`:9396`) + Wav2Lip CUDA face worker (`:9397`) |
+| **Safe On-Demand Mode** | `LIKENESS_LAZY_GPU=1` (enforced by Studio `/api/studio/tool/wake` & Electron by default so browsing never warms CUDA) |
 | **Local Port & URL** | `:9395` • [http://127.0.0.1:9395](http://127.0.0.1:9395) |
-| **Studio God-Mode Route** | [http://127.0.0.1:3000/tools/likeness-desk](http://127.0.0.1:3000/tools/likeness-desk) |
-| **CLI Binary** | `/usr/local/bin/likeness-desk` • `~/.local/bin/likeness-desk` • `/usr/local/bin/likeness` |
+| **Studio Route** | [http://127.0.0.1:3000/tools/likeness-desk](http://127.0.0.1:3000/tools/likeness-desk) (`?embed=1&theme=` synced) |
+| **4-Way CLI / TUI Binaries** | `/usr/local/bin/likeness-desk`, `~/.local/bin/likeness-desk`, `~/NullAITech/likeness-desk/bin/likeness-desk`, chroot `/usr/local/bin/likeness-desk` (+ `likeness` alias & `likeness-desk-tui`) |
+| **Stdio MCP Server** | `likeness-desk mcp` (`bin/likeness-desk-mcp`): `likeness_status`, `likeness_mouth_roi`, `likeness_speak`, `likeness_diagnostics` |
 | **GitHub Repository** | [https://github.com/1nc0gn30/likeness-desk](https://github.com/1nc0gn30/likeness-desk) |
-| **License & Pricing** | **100% Free & Open-Access** ($0) • Zero Paywalls |
-| **Support Rails** | [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) • Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` |
+| **License & Pricing** | MIT License — **100% Free & Open-Access** ($0, zero paywalls) |
+| **Optional Support** | [☕ Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) • Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` |
 
 ---
 
-## 12-Step Developer & End-User Verification Gallery
+## Security, Privacy & Honest Optional Egress
 
-### Part I — Developer Perspective (Architecture, Pytest Suite & REST API Contracts)
-
-#### Step 1/12 — Developer Repository Architecture, Engine Workers & Biometric Profile
-- **Action**: Inspect `server.js`, `engine/voice_worker.py`, `engine/face_worker.py`, `models/wav2lip_gan.pth`, `data/face/portrait.jpg`, `data/voice/reference.wav` (16.7s), and `data/profile.json`.
-![[Artifacts/likeness-desk/likeness-desk_01_dev_repo_architecture.jpg]]
-
-#### Step 2/12 — Developer Automated Test Suite (`pytest -v` — 8 Passed)
-- **Action**: Run `pytest -v` verifying biometric assets, `/health`, `/api/status`, `/api/portrait`, `/api/mouth` ROI updates, `/api/speak` WAV/JSON synthesis, `/api/face/render` MP4 generation, and the ZothOS CLI (`8 passed in 0.40s`).
-![[Artifacts/likeness-desk/likeness-desk_02_dev_pytest_suite.jpg]]
-
-#### Step 3/12 — Developer REST API & Wav2Lip Mouth ROI Contract (`/health`, `/api/status`, `POST /api/mouth`)
-- **Action**: Test `GET /health`, `GET /api/status`, and `POST /api/mouth` on `http://127.0.0.1:9395`.
-![[Artifacts/likeness-desk/likeness-desk_03_dev_api_contracts.jpg]]
+1. **Zero Personal Biometrics in Git or ISO Chroot**: Personal voice clips (`reference.wav`), portraits (`portrait.jpg`), motion takes (`idle.webm`/`motion.webm`), and `profile.json` stay strictly in gitignored `~/NullAITech/likeness-desk/data/` (overridable via `LIKENESS_DATA_DIR`). ZothOS chroot `/opt/likeness-desk/data/` ships empty (`.gitkeep` only) and is enforced by `zoth-os/tests/test_zoth_os_hygiene.py`.
+2. **Loopback Hardening (`server.js` `v2.6.0`)**:
+   - Strict `Host` allowlist (`127.0.0.1`, `localhost`, `[::1]` with active port; `403` on DNS-rebinding hosts).
+   - Exact-port `Origin` allowlist (`:9395` and Studio `:3000`; `403` on foreign or arbitrary loopback ports like `:9999`), emitting `Access-Control-Allow-Origin` + `Vary: Origin` on `OPTIONS`, `GET`, `HEAD`, and `POST`.
+   - Emits `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and loopback `Content-Security-Policy` on every response.
+   - Clean HTTP `413 Payload Too Large` without TCP resets, `HEAD` `200`, WebM EBML magic-byte (`0x1A 0x45 0xDF 0xA3`) validation, normalized mouth ROI bounds (`x+w <= 1`, `y+h <= 1`), unique temp upload files, `30s` `ffmpeg` timeouts, and `SIGINT`/`SIGTERM` worker cleanup.
+   - `POST /api/speak` JSON honestly returns `mode: "lazy_preview", synthesized: false` when `LIKENESS_LAZY_GPU=1` is active (never claims fake `"SYNTHESIZED"`).
+3. **Honest Optional Network Egress**:
+   - Voice cloning and Wav2Lip rendering execute 100% locally.
+   - Optional conversational chat (`POST /api/chat`, model configurable via `LIKENESS_CHAT_MODEL`) contacts `api.x.ai` **only** when `XAI_API_KEY` is explicitly configured in the host environment.
+   - The optional browser `Listen` button uses the browser's `SpeechRecognition` API if invoked.
 
 ---
 
-### Part II — End-User CLI / TUI Perspective (Installation, Pipeline Status & Neural Speech Synthesis)
+## CLI, TUI & MCP Commands
 
-#### Step 4/12 — End-User CLI Installation & Subcommand Discovery (`which -a` & `--help`)
-- **Action**: Verify global ZothOS binaries (`/usr/local/bin/likeness-desk`, `~/.local/bin/likeness-desk`, `likeness`) and inspect `likeness-desk --help`.
-![[Artifacts/likeness-desk/likeness-desk_04_user_cli_installation_and_help.jpg]]
+```bash
+# Safe lazy-GPU local start (no heavy CUDA boot)
+LIKENESS_LAZY_GPU=1 likeness-desk serve --port 9395
 
-#### Step 5/12 — End-User CLI Live GPU Pipeline Status & JSON Telemetry (`status` & `--json`)
-- **Action**: Execute `likeness-desk status` and `likeness-desk --json` to inspect live NVIDIA Quadro P1000 GPU readiness and the 16.7s Chatterbox reference profile.
-![[Artifacts/likeness-desk/likeness-desk_05_user_cli_status_and_telemetry.jpg]]
+# Status, redacted JSON telemetry (zero literal user home paths), and URL
+likeness-desk --status
+likeness-desk --json
+likeness-desk --ui
 
-#### Step 6/12 — End-User CLI Neural Speech & Lip-Sync Synthesis (`speak` & `ffprobe`)
-- **Action**: Run `likeness-desk speak "Deploying sovereign AI video double on NVIDIA Quadro P1000 with zero cloud egress."` and verify the generated `preview.wav` (24kHz mono WAV, 698 KB) and `preview.mp4` (Wav2Lip MP4, 286 KB) streams via `ffprobe`.
-![[Artifacts/likeness-desk/likeness-desk_06_user_cli_neural_speech_synthesis.jpg]]
+# Real-status Unicode Braille TUI
+likeness-desk-tui --status
 
----
-
-### Part III — End-User GUI Perspective (Standalone `:9395`, Studio `:3000` & Mobile `390px`)
-
-#### Step 7/12 — Standalone GUI (`:9395`): Video Double Portrait Stage & Mouth ROI Bounding Box
-- **Action**: Open `http://127.0.0.1:9395/` and inspect the live portrait stage with the interactive mouth ROI bounding box, Voice cloning script card, and Face motion capture card.
-![[Artifacts/likeness-desk/likeness-desk_07_gui_standalone_video_double_stage.jpg]]
-
-#### Step 8/12 — Standalone GUI (`:9395`): Interactive Dialogue Transcript & Speech Synthesis
-- **Action**: Enter a custom spoken response in `#talkInput`, trigger speech playback (`Speaking on NVIDIA Quadro P1000`), and verify the live dialogue transcript (`Them:` / `Me:`).
-![[Artifacts/likeness-desk/likeness-desk_08_gui_standalone_talk_and_transcript.jpg]]
-
-#### Step 9/12 — Zoth Studio v2 God-Mode (`:3000/tools/likeness-desk`): Video Double Studio & GPU Synthesis
-- **Action**: Open the Zoth Studio v2 God-Mode route (`DAEMON :9395 ONLINE`), inspect the `Wav2Lip ROI [Quadro P1000]` facial mesh and 24kHz audio spectrum canvas, and click `Speak & Animate Double`.
-![[Artifacts/likeness-desk/likeness-desk_09_gui_studio_godmode_video_double.jpg]]
-
-#### Step 10/12 — Zoth Studio v2 God-Mode (`:3000/tools/likeness-desk`): Lip-Sync Kinematics & Voice Tuning
-- **Action**: Switch to Tab 2 (`Neural Voice & Lip-Sync`) to tune Mouth Aperture Sensitivity (`1.20x`), Speech Cadence (`1.00x`), and Pitch Variance (`1.00x`).
-![[Artifacts/likeness-desk/likeness-desk_10_gui_studio_godmode_lipsync_kinematics.jpg]]
-
-#### Step 11/12 — Zoth Studio v2 God-Mode (`:3000/tools/likeness-desk`): Hardware Enclave & ZothOS CLI
-- **Action**: Switch to Tab 3 (`Hardware Enclave & CLI`) to inspect ZothOS terminal commands (`likeness --status`, `likeness speak`, `likeness --json`).
-![[Artifacts/likeness-desk/likeness-desk_11_gui_studio_godmode_hardware_cli.jpg]]
-
-#### Step 12/12 — Mobile Responsive Viewport (`390px × 844px`) Verification
-- **Action**: Verify zero horizontal scroll overflow (`scrollWidth <= clientWidth`, `overflowPx: 0`) on a `390×844` mobile viewport.
-![[Artifacts/likeness-desk/likeness-desk_12_gui_mobile_390px.jpg]]
-
----
-
-## Test & Verification Matrix
-
-| Verification Check | Target Standard | Result | Status |
-| :--- | :--- | :--- | :--- |
-| **Developer Pytest Suite** | `pytest -v` | `8 passed in 0.40s` | 🟢 **PASS** |
-| **CLI Execution** | `--help` / `status` / `speak` / `--json` | Returncode 0 | 🟢 **PASS** |
-| **Daemon & API Health** | `http://127.0.0.1:9395/health` & `/api/status` | HTTP 200 OK | 🟢 **PASS** |
-| **Mobile Viewport (390px)** | Zero horizontal overflow | `overflowPx: 0` | 🟢 **PASS** |
-| **Desktop Viewport (1440px)** | Responsive multi-pane | `overflowPx: 0` | 🟢 **PASS** |
-| **Browser Console Cleanliness** | Zero uncaught runtime errors | `consoleErrors: 0` | 🟢 **PASS** |
-| **Paywall Audit** | No blur gates, license modals, or Solana Tip locks | 100% Open Access | 🟢 **PASS** |
-
-
----
-
-## Sovereign 5-Layer Architecture & Second Brain Topology
-
-```mermaid
-flowchart LR
-    subgraph L1["1. ZothOS v3.4 CLI & Braille TUI"]
-        CLI["/usr/local/bin/likeness-desk"]
-        TUI["/usr/local/bin/likeness-desk-tui<br/>(U+2800 2x4 Sub-Pixel Braille)"]
-    end
-
-    subgraph L2["2. Standalone Workstation"]
-        WEB["http://127.0.0.1:9395<br/>REST API & /health"]
-    end
-
-    subgraph L3["3. Zoth Studio v2 & ZothOS-Lite"]
-        STUDIO["http://127.0.0.1:3000/tools/likeness-desk<br/>God-Mode Component"]
-        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
-    end
-
-    subgraph L4["4. Obsidian Second Brain & STDP Cortex"]
-        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
-        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
-        VAULT["Studio/Tools/Studio likeness-desk.md"]
-    end
-
-    CLI --> WEB
-    TUI --> WEB
-    WEB <--> STUDIO
-    WEB <--> LITE
-    WEB --> TRACKER
-    TRACKER <--> VAULT
-    VAULT <--> NEURO
+# Zero-dependency JSON-RPC 2.0 stdio MCP server (4 tools)
+likeness-desk mcp
 ```
 
-### ZothOS v3.4 TUI & Obsidian Second Brain Sync
-- **Unicode `U+2800` Braille TUI**: `likeness-desk-tui --status` / `likeness-desk-tui --json`
-- **Zoth Obsidian Tracker (`:8151`)**: `zoth-obsidian-tracker --verify`
-- **Connected Canon Notes**: [[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]
+---
+
+## Verification Matrix (`v2.6.0`)
+
+| Check | Command / Surface | Observed Result | Status |
+| :--- | :--- | :--- | :---: |
+| **Repo Pytest Suite** | `LIKENESS_LAZY_GPU=1 python3 -m pytest -v` | `24 passed` (`0` warnings) | PASS |
+| **Studio Engine Tests** | `node --test scripts/test-likeness-desk-engine.mjs` | `10 passed` | PASS |
+| **ZothOS Hygiene Tests** | `pytest -q tests/test_zoth_os_hygiene.py` | Chroot biometric-free + parity verified | PASS |
+| **Secret Scans** | `gitleaks detect` & `scan-secrets.sh` | `0 leaks` | PASS |
+| **Dual-Theme & Triple-Viewport** | Standalone `:9395` + Studio `/tools/likeness-desk` (`390px`, `820px`, `1440px` × Light/Dark) | `overflowPx: 0`, `consoleErrors: 0`, WCAG AA `>= 4.5:1` | PASS |
+
+---
+
+## Connected Canon Notes
+
+[[00 Home]] · [[Zoth OS]] · [[Zoth Studio]] · [[ZothOS-Lite Web Desktop]] · [[Zoth Memory]] · [[Public Surfaces]]

@@ -2,18 +2,18 @@
 Version=1.0
 Type=Application
 Name=Likeness Desk (AI Video Double)
-Comment=Local video double on GPU; Chatterbox Turbo voice cloning and Wav2Lip photorealistic mouth animation on Quadro P1000 with zero cloud leakage
+Comment=Local GPU voice cloning (Chatterbox Turbo) and Wav2Lip mouth lip-sync studio with optional xAI chat
 Exec=/usr/local/bin/likeness-desk desktop
 TryExec=/usr/local/bin/likeness-desk
-Icon=likeness-desk
+Icon=/opt/likeness-desk/public/icon.png
 Terminal=false
-Categories=X-Zoth-Media;Development;Utility;ArtificialIntelligence;
+Categories=X-Zoth-Media;AudioVideo;Utility;
 StartupNotify=true
 Actions=TUI;WebApp;
 
 [Desktop Action TUI]
-Name=Launch Likeness Desk (AI Video Double) Braille TUI
-Exec=/usr/local/bin/zoth-konsole --title "Likeness Desk (AI Video Double) TUI" -- /usr/local/bin/likeness-desk-tui
+Name=Launch Likeness Desk Braille TUI
+Exec=/usr/local/bin/zoth-konsole --title "Likeness Desk TUI" -- /usr/local/bin/likeness-desk-tui
 
 [Desktop Action WebApp]
 Name=Open Local Web Workstation (:9395)

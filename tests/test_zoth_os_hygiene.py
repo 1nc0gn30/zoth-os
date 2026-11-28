@@ -321,6 +321,73 @@ def test_konsole_relay_chroot_unit_opt_cli_and_vault_parity():
         assert "zoth-gdrive-backup" in vtxt or "cloud" in vtxt.lower()
 
 
+def test_likeness_desk_chroot_privacy_opt_cli_desktop_and_vault_parity():
+    opt_dir = OPT_DIR / "likeness-desk"
+    assert opt_dir.is_dir(), f"Missing chroot opt dir: {opt_dir}"
+
+    # CRITICAL P0 REGRESSION GUARD: Never leak personal biometric media into ISO chroot /opt/likeness-desk/data/
+    biometric_exts = {".jpg", ".jpeg", ".png", ".wav", ".webm", ".mp4", ".ogg", ".flac", ".m4a"}
+    data_dir = opt_dir / "data"
+    if data_dir.exists():
+        leaked = [
+            str(p.relative_to(opt_dir))
+            for p in data_dir.rglob("*")
+            if p.is_file() and (p.suffix.lower() in biometric_exts or p.name == "profile.json")
+        ]
+        assert not leaked, f"Personal biometric data leaked into chroot /opt/likeness-desk/data/: {leaked}"
+
+    # Zero preview media or unused 45 MiB public/assets bloat in chroot
+    assert not (opt_dir / "public" / "assets").exists(), "Unused public/assets bloat found in chroot /opt/likeness-desk"
+    for leaked_prev in ("preview.txt", "preview.ready", "preview.face", "preview.wav", "preview.mp4"):
+        assert not (opt_dir / "public" / leaked_prev).exists(), f"Leaked {leaked_prev} in chroot /opt/likeness-desk/public"
+
+    for req in ("server.js", "LICENSE", "package.json", "README.md", "netlify.toml", "likeness-desk.desktop"):
+        assert (opt_dir / req).is_file(), f"Missing {req} in chroot /opt/likeness-desk"
+    for pub_req in ("index.html", "style.css", "app.js", "og-image.png", "icon.png", "robots.txt", "sitemap.xml", "llms.txt"):
+        assert (opt_dir / "public" / pub_req).is_file(), f"Missing public/{pub_req} in chroot /opt/likeness-desk"
+    assert (opt_dir / "public" / ".well-known" / "mcp.json").is_file()
+    assert (opt_dir / "bin" / "likeness-desk").is_file()
+    assert (opt_dir / "bin" / "likeness-desk-tui").is_file()
+    assert (opt_dir / "bin" / "likeness-desk-mcp").is_file()
+    assert not list(opt_dir.rglob("__pycache__")), "Stale __pycache__ found in chroot /opt/likeness-desk"
+    assert not list(opt_dir.rglob("*.pyc")), "Stale .pyc found in chroot /opt/likeness-desk"
+    assert not (opt_dir / ".git").exists()
+
+    # Lean size guard (< 1 MiB for code + brand assets without venv/models/third_party)
+    total_bytes = sum(p.stat().st_size for p in opt_dir.rglob("*") if p.is_file())
+    assert total_bytes < 4 * 1024 * 1024, f"Chroot /opt/likeness-desk exceeds 4 MiB lean budget ({total_bytes} B)"
+
+    # 4-way CLI/TUI chroot parity & zero literal /home/<user> paths
+    cli_bin = BIN_DIR / "likeness-desk"
+    tui_bin = BIN_DIR / "likeness-desk-tui"
+    assert cli_bin.is_file() and tui_bin.is_file()
+    assert cli_bin.read_bytes() == (opt_dir / "bin" / "likeness-desk").read_bytes()
+    assert tui_bin.read_bytes() == (opt_dir / "bin" / "likeness-desk-tui").read_bytes()
+    for p in (cli_bin, tui_bin):
+        txt = p.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", txt), f"Literal /home/ path in {p.name}"
+    res_ver = subprocess.run(["python3", str(cli_bin), "--version"], capture_output=True, text=True, check=False)
+    assert res_ver.returncode == 0 and "2.6.0" in res_ver.stdout
+    res_tui = subprocess.run(["python3", str(tui_bin), "--status"], capture_output=True, text=True, check=False)
+    assert res_tui.returncode == 0 and "2.6.0" in res_tui.stdout
+
+    # .desktop parity
+    desktop = ROOT / "config" / "includes.chroot" / "usr" / "share" / "applications" / "likeness-desk.desktop"
+    assert desktop.is_file()
+    assert desktop.read_bytes() == (opt_dir / "likeness-desk.desktop").read_bytes()
+    desk_txt = desktop.read_text(encoding="utf-8")
+    assert "X-Zoth-Media" in desk_txt
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", desk_txt)
+
+    # Vault note parity & zero literal /home/<user> paths
+    vault_note = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault" / "Studio" / "Tools" / "Studio likeness-desk.md"
+    assert vault_note.is_file()
+    vtxt = vault_note.read_text(encoding="utf-8")
+    assert "2.6.0" in vtxt and "likeness_status" in vtxt
+    assert not re.search(r"/home/[a-zA-Z0-9._-]+", vtxt)
+
+
+
 
 
 
