@@ -593,6 +593,29 @@ def test_mission_control_vault_parity_and_hygiene():
     assert "SwarmFrameJourney" not in sp_txt
 
 
+def test_models_console_vault_parity_and_hygiene():
+    vault_root = ROOT / "config" / "includes.chroot" / "etc" / "skel" / "Documents" / "Obsidian Vault"
+    ws_note = vault_root / "Studio" / "Workstations" / "Workstation models.md"
+    legacy_note = vault_root / "Studio" / "Legacy" / "Legacy models.md"
+
+    for note in (ws_note, legacy_note):
+        assert note.is_file(), f"Missing chroot Vault note: {note}"
+        ntxt = note.read_text(encoding="utf-8")
+        assert not re.search(r"/home/[a-zA-Z0-9._-]+", ntxt), f"Literal /home/ leak in {note.name}"
+        assert "/studio/models.html" not in ntxt, f"Dead /studio/models.html path in {note.name}"
+
+    ws_txt = ws_note.read_text(encoding="utf-8")
+    assert "2.4.0" in ws_txt
+    assert "/workstations/models" in ws_txt
+    assert "/api/studio/models" in ws_txt
+    assert "zoth open models" in ws_txt
+    assert "Neal Frazier Tech" in ws_txt
+
+    leg_txt = legacy_note.read_text(encoding="utf-8")
+    assert "/workstations/models" in leg_txt
+    assert "Now lives at:** `/docs`" not in leg_txt
+
+
 
 
 
